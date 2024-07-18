@@ -104,11 +104,12 @@ class Skill {
         if(xp_to_add == 0 || !this.is_unlocked) {
             return;
         }
-        
+        xp_to_add = Math.round(xp_to_add*100)/100;
+
         this.total_xp = Math.round(100*(this.total_xp + xp_to_add))/100;
         if (this.current_level < this.max_level) { //not max lvl
 
-            if (xp_to_add + this.current_xp < this.xp_to_next_lvl) { // no levelup
+            if (Math.round(100*(xp_to_add + this.current_xp))/100 < this.xp_to_next_lvl) { // no levelup
                 this.current_xp = Math.round(100*(this.current_xp + xp_to_add))/100;
             }
             else { //levelup
@@ -120,7 +121,7 @@ class Skill {
                 while (this.total_xp >= this.total_xp_to_next_lvl) {
 
                     level_after_xp += 1;
-                    this.total_xp_to_next_lvl = Math.round(this.base_xp_cost * (1 - this.xp_scaling ** (level_after_xp + 1)) / (1 - this.xp_scaling));
+                    this.total_xp_to_next_lvl = Math.round(100*this.base_xp_cost * (1 - this.xp_scaling ** (level_after_xp + 1)) / (1 - this.xp_scaling))/100;
 
                     if(this.rewards?.milestones[level_after_xp]?.unlocks?.skills) {
                         unlocks.skills.push(...this.rewards.milestones[level_after_xp].unlocks.skills);
@@ -129,11 +130,11 @@ class Skill {
                 //probably could be done much more efficiently, but it shouldn't be a problem anyway
 
                 
-                let total_xp_to_previous_lvl = Math.round(this.base_xp_cost * (1 - this.xp_scaling ** level_after_xp) / (1 - this.xp_scaling));
+                let total_xp_to_previous_lvl = Math.round(100*this.base_xp_cost * (1 - this.xp_scaling ** level_after_xp) / (1 - this.xp_scaling))/100;
                 //xp needed for current lvl, same formula but for n-1
 
                 if(level_after_xp == 0) { 
-                    console.warn(`Something went wrong, calculated level of skill: ${this.skill_id} after a levelup was 0.`
+                    console.warn(`Something went wrong, calculated level of skill "${this.skill_id}" after a levelup was 0.`
                     +`\nxp_added: ${xp_to_add};\nprevious level: ${this.current_level};\ntotal xp: ${this.total_xp};`
                     +`\ntotal xp for that level: ${total_xp_to_previous_lvl};\ntotal xp for next level: ${this.total_xp_to_next_lvl}`);
                 }
@@ -141,9 +142,9 @@ class Skill {
                 let gains;
                 if (level_after_xp < this.max_level) { //wont reach max lvl
                     gains = this.get_bonus_stats(level_after_xp);
-                    this.xp_to_next_lvl = Math.round(this.total_xp_to_next_lvl - total_xp_to_previous_lvl);
+                    this.xp_to_next_lvl = Math.round(100*(this.total_xp_to_next_lvl - total_xp_to_previous_lvl))/100;
                     this.current_level = level_after_xp;
-                    this.current_xp = this.total_xp - total_xp_to_previous_lvl;
+                    this.current_xp = Math.round(100*(this.total_xp - total_xp_to_previous_lvl))/100;
                 }
                 else { //will reach max lvl
                     gains = this.get_bonus_stats(this.max_level);
@@ -165,17 +166,21 @@ class Skill {
                     }
                     if (gains.multipliers) {
                         Object.keys(gains.multipliers).forEach(multiplier => {
-                            message += `<br> x${gains.multipliers[multiplier]} ${stat_names[multiplier].replace("_"," ")}`;
+                            message += `<br> x${Math.round(100*gains.multipliers[multiplier])/100} ${stat_names[multiplier].replace("_"," ")}`;
                         });
                     }
                     if (gains.xp_multipliers) {
                         Object.keys(gains.xp_multipliers).forEach(xp_multiplier => {
+                            let name;
                             if(xp_multiplier !== "all" && xp_multiplier !== "hero" && xp_multiplier !== "all_skill") {
+                                name = skills[xp_multiplier].name();
                                 if(!skills[xp_multiplier]) {
                                     console.warn(`Skill ${this.skill_id} tried to reward an xp multiplier for something that doesn't exist: ${xp_multiplier}. I could be a misspelled skill name`);
                                 }
+                            } else {
+                                name = xp_multiplier.replace("_"," ");
                             }
-                            message += `<br> x${gains.xp_multipliers[xp_multiplier]} ${xp_multiplier.replace("_"," ")} xp gain`;
+                            message += `<br> x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name} xp gain`;
                         });
                     }
                 }
@@ -261,7 +266,7 @@ class Skill {
  * @returns all unlocked leveling rewards, formatted to string
  */
 function get_unlocked_skill_rewards(skill_id) {
-    var unlocked_rewards = '';
+    let unlocked_rewards = '';
     
     if(skills[skill_id].rewards){ //rewards
         const milestones = Object.keys(skills[skill_id].rewards.milestones).filter(level => level <= skills[skill_id].current_level);
@@ -342,13 +347,25 @@ function format_skill_rewards(milestone){
     }
     if(milestone.xp_multipliers) {
         const xp_multipliers = Object.keys(milestone.xp_multipliers);
-        if(formatted) {
-            formatted += `, x${milestone.xp_multipliers[xp_multipliers[0]]} ${xp_multipliers[0].replace("_"," ")} xp gain`;
+        let name;
+        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
+            name = skills[xp_multipliers[0]].name();
         } else {
-            formatted = `x${milestone.xp_multipliers[xp_multipliers[0]]} ${xp_multipliers[0].replace("_"," ")} xp gain`;
+            name = xp_multipliers[0].replace("_"," ");
+        }
+        if(formatted) {
+            formatted += `, x${milestone.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
+        } else {
+            formatted = `x${milestone.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
-            formatted += `, x${milestone.xp_multipliers[xp_multipliers[i]]} ${xp_multipliers[i].replace("_"," ")} xp gain`;
+            let name;
+            if(xp_multipliers[i] !== "all" && xp_multipliers[i] !== "hero" && xp_multipliers[i] !== "all_skill") {
+                name = skills[xp_multipliers[i]].name();
+            } else {
+                name = xp_multipliers[i].replace("_"," ");
+            }
+            formatted += `, x${milestone.xp_multipliers[xp_multipliers[i]]} ${name} xp gain`;
         }
     }
     if(milestone.unlocks) {
@@ -486,7 +503,7 @@ function format_skill_rewards(milestone){
                                     description: "It's definitely, unquestionably, undoubtedly better to just use a weapon instead of doing this. But sure, why not?",
                                     get_effect_description: ()=> {
                                         return `Multiplies damage dealt in unarmed combat by ${Math.round(skills["Unarmed"].get_coefficient("multiplicative")*1000)/1000}. 
-Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get_coefficient("multiplicative")**0.5)*1000)/1000}`;
+Multiplies attack speed and attack points in unarmed combat by ${Math.round((skills["Unarmed"].get_coefficient("multiplicative")**0.3333)*1000)/1000}`;
                                     },
                                     max_level_coefficient: 64, //even with 8x more it's still gonna be worse than just using a weapon lol
                                     rewards: {
@@ -820,7 +837,8 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                   names: {0: "Swordsmanship"}, 
                                   description: "The noble art of swordsmanship", 
                                   get_effect_description: ()=> {
-                                      return `Multiplies damage dealt with swords by ${Math.round(skills["Swords"].get_coefficient("multiplicative")*1000)/1000}`;
+                                      return `Multiplies damage dealt with swords by ${Math.round(skills["Swords"].get_coefficient("multiplicative")*1000)/1000}.
+Multiplies attack points with swords by ${Math.round((skills["Swords"].get_coefficient("multiplicative")**0.3333)*1000)/1000}`;
                                   },
                                   rewards: {
                                     milestones: {
@@ -866,7 +884,8 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                 names: {0: "Axe combat"}, 
                                 description: "Ability to fight with use of axes", 
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with axes by ${Math.round(skills["Axes"].get_coefficient("multiplicative")*1000)/1000}`;
+                                    return `Multiplies damage dealt with axes by ${Math.round(skills["Axes"].get_coefficient("multiplicative")*1000)/1000}.
+Multiplies attack points with axes by ${Math.round((skills["Axes"].get_coefficient("multiplicative")**0.3333)*1000)/1000}`;
                                 },
                                 rewards: {
                                     milestones: {
@@ -911,7 +930,8 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                 names: {0: "Spearmanship"}, 
                                 description: "The ability to fight with the most deadly weapon in the history", 
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with spears by ${Math.round(skills["Spears"].get_coefficient("multiplicative")*1000)/1000}`;
+                                    return `Multiplies damage dealt with spears by ${Math.round(skills["Spears"].get_coefficient("multiplicative")*1000)/1000}.
+Multiplies attack points with spears by ${Math.round((skills["Spears"].get_coefficient("multiplicative")**0.3333)*1000)/1000}`;
                                 },
                                 rewards: {
                                     milestones: {
@@ -956,7 +976,8 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                         names: {0: "Hammer combat"}, 
                                         description: "Ability to fight with use of battle hammers. Why bother trying to cut someone, when you can just crack all their bones?", 
                                         get_effect_description: ()=> {
-                                            return `Multiplies damage dealt with battle hammers by ${Math.round(skills["Hammers"].get_coefficient("multiplicative")*1000)/1000}`;
+                                            return `Multiplies damage dealt with battle hammers by ${Math.round(skills["Hammers"].get_coefficient("multiplicative")*1000)/1000}.
+Multiplies attack points with hammers by ${Math.round((skills["Hammers"].get_coefficient("multiplicative")**0.3333)*1000)/1000}`;
                                         },
                                         rewards: {
                                             milestones: {
@@ -1001,7 +1022,8 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                 names: {0: "Dagger combat"},
                                 description: "The looked upon art of fighting (and stabbing) with daggers",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with daggers by ${Math.round(skills["Daggers"].get_coefficient("multiplicative")*1000)/1000}`;
+                                    return `Multiplies damage dealt with daggers by ${Math.round(skills["Daggers"].get_coefficient("multiplicative")*1000)/1000}.
+Multiplies attack points with daggers by ${Math.round((skills["Daggers"].get_coefficient("multiplicative")**0.3333)*1000)/1000}`;
                                 },
                                 rewards: {
                                     milestones: {
@@ -1098,6 +1120,9 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                                 strength: 1,
                                                 max_stamina: 2,
                                             },
+                                            xp_multipliers: {
+                                                "Herbalism": 1.05,
+                                            }
                                         },
                                         6: {
                                             stats: {
@@ -1135,6 +1160,10 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                                             multipliers: {
                                                 strength: 1.05,
                                                 dexterity: 1.05,
+                                            },
+                                            xp_multipliers: {
+                                                "Unarmed": 1.1,
+                                                "Herbalism": 1.1,
                                             }
                                         }
                                     }
@@ -1416,8 +1445,8 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
       return `Multiplies strength by ${value}`;
     },
     
-  });
-  skills["Equilibrium"] = new Skill({skill_id: "Equilibrium",
+    });
+    skills["Equilibrium"] = new Skill({skill_id: "Equilibrium",
     description: "Nothing will throw you off your balance (at least the physical one)",
     names: {0: "Equilibrium"},
     max_level: 50,
@@ -1487,36 +1516,77 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
       return `Multiplies agility by ${value}`;
     },
     
-  });
+    });
+})();
+
+//resource gathering related
+(function(){
+    skills["Woodcutting"] = new Skill({skill_id: "Woodcutting", 
+        names: {0: "Woodcutting"}, 
+        description: "Get better with chopping the wood",
+        base_xp_cost: 10,
+        visibility_treshold: 4,
+        xp_scaling: 1.6,
+    });
+
+    skills["Mining"] = new Skill({skill_id: "Mining",
+        names: {0: "Mining"}, 
+        description: "Get better with mining the ores",
+        base_xp_cost: 10,
+        visibility_treshold: 4,
+        xp_scaling: 1.6,
+    });
+
+    skills["Herbalism"] = new Skill({skill_id: "Herbalism",
+        names: {0: "Herbalism"}, 
+        description: "Knowledge of useful plants and mushrooms",
+        base_xp_cost: 10,
+        visibility_treshold: 4,
+        xp_scaling: 1.6,
+    });
 })();
 
 //crafting skills
-
 (function(){
     skills["Crafting"] = new Skill({
         skill_id: "Crafting", 
         names: {0: "Crafting"}, 
+        description: "The art of preparing different elements and assembling them together",
+        base_xp_cost: 40,
+        xp_scaling: 1.5,
+        max_level: 60,
+    });
+    skills["Smelting"] = new Skill({
+        skill_id: "Smelting", 
+        names: {0: "Smelting"}, 
         description: "The art of crafting",
-        base_xp_cost: 20,
-        max_level: 40,
-
+        base_xp_cost: 40,
+        xp_scaling: 1.5,
+        max_level: 60,
     });
-    skills["Weapon crafting"] = new Skill({
-        skill_id: "Weapon crafting", 
-        names: {0: "Weapon crafting"}, 
-        parent_skill: "Crafting",
-        description: "Ability to craft weapons",
-        base_xp_cost: 20,
-        max_level: 40,
-
+    skills["Forging"] = new Skill({
+        skill_id: "Forging", 
+        names: {0: "Forging"}, 
+        description: "Turning raw metal into something useful",
+        base_xp_cost: 40,
+        xp_scaling: 1.5,
+        max_level: 60,
     });
-    skills["Armor crafting"] = new Skill({
-        skill_id: "Armor crafting", 
-        names: {0: "Armor crafting"}, 
-        parent_skill: "Crafting",
-        description: "Ability to create protective equipment",
-        base_xp_cost: 20,
-        max_level: 40,
+    skills["Cooking"] = new Skill({
+        skill_id: "Cooking", 
+        names: {0: "Cooking"}, 
+        description: "Making the unedible edible",
+        base_xp_cost: 40,
+        xp_scaling: 1.5,
+        max_level: 60,
+    });
+    skills["Alchemy"] = new Skill({
+        skill_id: "Alchemy", 
+        names: {0: "Alchemy"}, 
+        description: "Extracting and enhancing useful properties of the ingredies",
+        base_xp_cost: 40,
+        xp_scaling: 1.5,
+        max_level: 60,
     });
 })();
 
@@ -1526,7 +1596,7 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
         skill_id: "Iron skin",
         names: {0: "Tough skin", 5: "Wooden skin", 10: "Iron skin"},
         description: "As it gets damaged, your skin regenerates to be tougher and tougher",
-        base_xp_cost: 160,
+        base_xp_cost: 400,
         xp_scaling: 1.9,
         max_level: 30,
         max_level_bonus: 30,
@@ -1588,7 +1658,7 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                 },
                 4: {
                     stats: {
-                        max_stamina: 10,
+                        max_stamina: 5,
                     },
                     xp_multipliers: {
                         hero: 1.05,
@@ -1604,7 +1674,7 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                 },
                 8: {
                     stats: {
-                        max_stamina: 15,
+                        max_stamina: 10,
                     },
                     xp_multipliers: {
                         all: 1.05,
@@ -1612,7 +1682,7 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
                 },
                 10: {
                     stats: {
-                        max_stamina: 20,
+                        max_stamina: 10,
                     },
                     xp_multipliers: {
                         all: 1.05,
@@ -1626,10 +1696,10 @@ Multiplies attack speed in unarmed combat by ${Math.round((skills["Unarmed"].get
     skills["Perception"] = new Skill({
         skill_id: "Perception", 
         names: {0: "Perception"}, 
-        description: "Better grasp on your senses allows you to notice small and hidden things", 
+        description: "Better grasp on your senses allows you to notice small and hidden things, as well as to discern the true nature of what you obsere",
         max_level_coefficient: 2,
         get_effect_description: ()=> {
-            return `Increase crit rate and chance to find items when foraging`;
+            return ``;
         },
         rewards: {
             milestones: {

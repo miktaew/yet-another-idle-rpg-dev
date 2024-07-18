@@ -1,9 +1,9 @@
 "use strict";
 
 import { InventoryHaver } from "./inventory.js";
-import { skills } from "./skills.js";
+import { skills, weapon_type_to_skill } from "./skills.js";
 import { update_displayed_character_inventory, update_displayed_equipment, 
-         update_displayed_stats, update_displayed_combat_stats,
+         update_displayed_stats,
          update_displayed_health, update_displayed_stamina, 
          update_displayed_skill_xp_gain, update_all_displayed_skills_xp_gain,
          update_displayed_xp_bonuses } from "./display.js";
@@ -28,9 +28,11 @@ character.base_stats = {
         max_stamina: 40,
         stamina: 40,
         stamina_efficiency: 1,
+        stamina_regeneration: 0, //in combat, currently unusued
         max_mana: 0,
         mana: 0,
         mana_efficiency: 1,
+        mana_regeneration: 0, //in combat, currently unusued
         strength: 10, 
         agility: 10, 
         dexterity: 10, 
@@ -38,12 +40,14 @@ character.base_stats = {
         magic: 0, 
         attack_speed: 1, 
         crit_rate: 0.05, 
-        crit_multiplier: 1.4, 
+        crit_multiplier: 1.2,
         attack_power: 0, 
         defense: 0,
         block_strength: 0,
+        block_chance: 0,
+        evasion_points: 0, //EP
+        attack_points: 0, //AP
 };
-character.combat_stats = {attack_points: 0, evasion_points: 0, block_chance: 0};
 
 character.stats = {};
 character.stats.full = {...character.base_stats};
@@ -55,7 +59,9 @@ character.stats.flat = {
         skills: {},
         equipment: {},
         skill_milestones: {},
-        books: {}
+        books: {},
+        light_level: {},
+        environment: {},
 };
 
 character.stats.multiplier = {
@@ -63,7 +69,9 @@ character.stats.multiplier = {
         skill_milestones: {},
         equipment: {},
         books: {},
-        stance: {}
+        stance: {},
+        light_level: {},
+        environment: {},
 };
 
 character.xp_bonuses = {};
@@ -85,7 +93,11 @@ character.equipment = {
         arms: null, ring: null, 
         weapon: null, "off-hand": null,
         legs: null, feet: null, 
-        amulet: null
+        amulet: null, artifact: null,
+
+        axe: null, 
+        pickaxe: null,
+        sickle: null,
 };
 character.money = 0;
 
@@ -106,7 +118,7 @@ character.add_xp = function ({xp_to_add, use_bonus = true}) {
                 character.xp.current_xp += xp_to_add;
         }
         else { //levelup
-                var level_after_xp = 0;
+                let level_after_xp = 0;
                 
                 while(character.xp.total_xp >= character.xp.total_xp_to_next_lvl) {
                         level_after_xp += 1;
@@ -114,7 +126,7 @@ character.add_xp = function ({xp_to_add, use_bonus = true}) {
                         character.xp.total_xp_to_next_lvl = Math.round(character.xp.base_xp_cost * (1 - character.xp.xp_scaling ** (level_after_xp + 1))/(1 - character.xp.xp_scaling));
                 } //calculates lvl reached after adding xp
 
-                var total_xp_to_previous_lvl = Math.round(character.xp.base_xp_cost * (1 - character.xp.xp_scaling ** level_after_xp)/(1 - character.xp.xp_scaling));
+                let total_xp_to_previous_lvl = Math.round(character.xp.base_xp_cost * (1 - character.xp.xp_scaling ** level_after_xp)/(1 - character.xp.xp_scaling));
                 //xp needed for current lvl, same formula but for n-1
 
                 const gains = character.get_level_bonus(level_after_xp);
@@ -151,7 +163,7 @@ character.get_level_bonus = function (level) {
                 }
 
                 gained_hp += 10 * Math.ceil(i/10);
-                gained_stamina += 5//5 * Math.ceil(i/10);
+                gained_stamina += 5; //5 * Math.ceil(i/10) ?;
         }
 
         character.stats.flat.level.max_health = (character.stats.flat.level.max_health || 0) + gained_hp;
@@ -260,14 +272,6 @@ character.stats.add_all_equipment_bonus = function() {
                 if(character.equipment[slot].getDefense) {
                         character.stats.flat.equipment.defense = (character.stats.flat.equipment.defense || 0) + character.equipment[slot].getDefense();
                 }
-                /*
-                if(character.equipment[slot].getShieldStrength) {
-                        character.stats.flat.equipment.block_strength = (character.stats.flat.equipment.block_strength || 0) + character.equipment[slot].getShieldStrength();
-                }
-                if(character.equipment[slot].getAttack) {
-                        character.stats.multiplier.equipment.attack_power = (character.stats.multiplier.equipment.attack_power || 1) * character.equipment[slot].getAttack();
-                }
-                */
                 let stats = character.equipment[slot].getStats()
 
                 //iterate over stats in slotted item
@@ -282,10 +286,15 @@ character.stats.add_all_equipment_bonus = function() {
                 });
         });
 
-        //add unarmed speed bonus (technically a bonus from equipment, or rather lack of it)
+        //add weapon speed bonus (technically a bonus related to equipment, so its in this function)
         if(character.equipment.weapon == null) {
-                character.stats.multiplier.equipment.attack_speed = (character.stats.multiplier.equipment.attack_speed || 1) * (skills["Unarmed"].get_coefficient("multiplicative")**0.5);
-        } 
+                character.stats.multiplier.skills.attack_power = skills["Unarmed"].get_coefficient();
+                character.stats.multiplier.skills.attack_speed = (skills["Unarmed"].get_coefficient("multiplicative")**0.3333);
+                character.stats.multiplier.skills.attack_points = (skills["Unarmed"].get_coefficient("multiplicative")**0.3333);
+        } else {
+                character.stats.multiplier.skills.attack_power = skills[weapon_type_to_skill[character.equipment.weapon.weapon_type]].get_coefficient();
+                character.stats.multiplier.skills.attack_points = skills[weapon_type_to_skill[character.equipment.weapon.weapon_type]].get_coefficient()**0.3333;
+        }
 }
 
 /**
@@ -317,6 +326,30 @@ character.stats.add_all_stance_bonus = function() {
                 }
         });
 }
+/**
+ * only supports multiplicative penalties for now
+ */
+character.stats.add_location_penalties = function() {
+        let effects = {};
+        let light_modifier = 1;
+        
+        if(current_location) {
+                if(!("connected_locations" in current_location)) {
+                        effects = current_location.get_total_effect().hero_penalty.multipliers;
+                }
+
+                if(current_location.light_level === "dark" || current_location.light_level === "normal" && (current_game_time.hour >= 20 || current_game_time.hour <= 3)) {
+                        light_modifier = 0.5 + 0.5*skills["Night vision"].current_level/skills["Night vision"].max_level;
+                        character.stats.multiplier.light_level.evasion_points = light_modifier;
+                        character.stats.multiplier.light_level.attack_points = light_modifier;
+                }
+        }
+
+        character.stats.multiplier.environment = {};
+        Object.keys(effects).forEach(effect => {
+                character.stats.multiplier.environment[effect] = effects[effect];
+        });
+}
 
 /**
  * full stat recalculation, call whenever something changes
@@ -331,13 +364,25 @@ character.update_stats = function () {
     character.stats.add_all_stance_bonus();
 
     Object.keys(character.stats.full).forEach(function(stat){
-        //just sum all flats
-        //then multiply them by all multipliers
-        const stat_sum = 
-                (character.stats.flat.level[stat] || 0) + (character.stats.flat.skills[stat] || 0) + (character.stats.flat.skill_milestones[stat] || 0) + (character.stats.flat.equipment[stat] || 0);
+        let stat_sum = 0;
+        let stat_mult = 1;
 
-        const stat_mult = 
-                (character.stats.multiplier.skills[stat] || 1) * (character.stats.multiplier.skill_milestones[stat] || 1) * (character.stats.multiplier.equipment[stat] || 1) * (character.stats.multiplier.stance[stat] || 1);
+        if(stat === "block_chance") {
+                stat_sum = base_block_chance + Math.round(skills["Shield blocking"].get_level_bonus() * 10000)/10000;
+        } else if(stat === "attack_points") {
+                stat_sum = Math.sqrt(character.stats.full.intuition) * character.stats.full.dexterity * skills["Combat"].get_coefficient("multiplicative");
+        } else if(stat === "evasion_points") {
+                stat_sum = character.stats.full.agility * Math.sqrt(character.stats.full.intuition) * skills["Evasion"].get_coefficient("multiplicative");
+        } else {
+                //just sum all flats
+                Object.values(character.stats.flat).forEach(piece => {
+                        stat_sum += (piece[stat] || 0);
+                });
+        }
+
+        Object.values(character.stats.multiplier).forEach(piece => {
+                stat_mult *= (piece[stat] || 1);
+        });
 
         character.stats.full[stat] = (character.base_stats[stat] + stat_sum) * stat_mult;
 
@@ -436,7 +481,7 @@ character.take_damage = function ({damage_value, can_faint = true, give_skill_xp
                 damage_taken = Math.max(Math.ceil(10*damage_value)/10, 0);
         }
         else {
-                damage_taken = Math.round(10*Math.max(damage_value - character.stats.full.defense, 1))/10;
+                damage_taken = Math.ceil(10*Math.max(damage_value - character.stats.full.defense, damage_value*0.1, 1))/10;
         }
 
         character.stats.full.health -= damage_taken;
@@ -459,11 +504,18 @@ character.get_character_money = function () {
         return character.money;
 }
 
+/**
+ * @param {Array} items [{item, count},...] 
+ */
 function add_to_character_inventory(items) {
         character.add_to_inventory(items);
         update_displayed_character_inventory();
 }
 
+/**
+ * Removes an item from character's inventory
+ * Takes TWO params, name and either count (for stackables) or inventory id (for unstackables)
+ */
 function remove_from_character_inventory({item_name, item_count, item_id}) {
         character.remove_from_inventory({item_name, item_count, item_id});
         update_displayed_character_inventory();
@@ -488,7 +540,7 @@ function equip_item(item) {
 
 /**
  * equips item and removes it from inventory
- * @param item_info {name, id}
+ * @param item_info - {name, id}
  */
  function equip_item_from_inventory({item_name, item_id}) {
         if(item_name in character.inventory) { //check if its in inventory, just in case
@@ -513,53 +565,26 @@ function unequip_item(item_slot) {
         }
 }
 
+function add_location_penalties() {
+        character.stats.add_location_penalties();
+}
+
 /**
- * updates character main stats (health, strength, etc), stats dependant on enemy are updated in update_combat_stats()
+ * updates character stats + their display 
  */
  function update_character_stats() { //updates character stats
+        character.stats.add_location_penalties();
         character.update_stats();
-    
+
         update_displayed_stats();
         update_displayed_health();
         update_displayed_stamina();
         //update_displayed_mana();
-        update_combat_stats();
 }
 
 /**
  * updates character stats related to combat, things that are more situational and/or based on other stats, kept separately from them
  */
-function update_combat_stats() {
-        let effects = {};
-        let light_modifier = 1;
-        
-        if(current_location) {
-                if(!("connected_locations" in current_location)) {
-                        effects = current_location.get_total_effect().hero_penalty.multipliers;
-                }
-
-                if(current_location.light_level === "dark" || current_location.light_level === "normal" && (current_game_time.hour >= 20 || current_game_time.hour <= 3)) {
-                        light_modifier = 0.5 + 0.5*skills["Night vision"].current_level/skills["Night vision"].max_level;
-                }
-        }
-
-        if(character.equipment["off-hand"] != null && character.equipment["off-hand"].offhand_type === "shield") { //HAS SHIELD
-            character.combat_stats.evasion_points = null;
-            character.combat_stats.block_chance = base_block_chance + Math.round(skills["Shield blocking"].get_level_bonus() * 10000)/10000;
-        }
-
-        character.combat_stats.attack_points = 
-                Math.sqrt(character.stats.full.intuition) * character.stats.full.dexterity 
-                        * skills["Combat"].get_coefficient("multiplicative") * (effects?.hit_chance || 1) * light_modifier;
-    
-        if(character.equipment["off-hand"] == null || character.equipment["off-hand"].offhand_type !== "shield") {
-            character.combat_stats.evasion_points = 
-                character.stats.full.agility * Math.sqrt(character.stats.full.intuition) 
-                        * skills["Evasion"].get_coefficient("multiplicative") * (effects?.evasion || 1) * light_modifier;
-        }
-    
-        update_displayed_combat_stats();
-}
 
 function get_skill_xp_gain(skill_name) {
         return (character.xp_bonuses.total_multiplier.all_skill || 1) * (character.xp_bonuses.total_multiplier.all || 1) * (character.xp_bonuses.total_multiplier[skill_name] || 1);
@@ -574,4 +599,4 @@ function get_hero_xp_gain() {
 }
 
 export {character, add_to_character_inventory, remove_from_character_inventory, equip_item_from_inventory, equip_item, 
-        unequip_item, update_character_stats, update_combat_stats, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain};
+        unequip_item, update_character_stats, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, add_location_penalties};

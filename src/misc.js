@@ -35,7 +35,7 @@ function format_reading_time(time) {
         return '1 hour';
     }
     else {
-        return `${time} minutes`;
+        return `${Math.round(time)} minutes`;
     }
 }
 
@@ -47,13 +47,16 @@ const stat_names = {"strength": "str",
                     "dexterity": "dex",
                     "magic": "magic",
                     "attack_speed": "attack speed",
+                    "attack_power": "attack power",
                     "crit_rate": "crit rate",
                     "crit_multiplier": "crit dmg",
                     "stamina_efficiency": "stamina efficiency",
                     "intuition": "int",
-                    "attack_power": "attack power",
                     "block_strength": "shield strength",
                     "hit_chance": "hit chance",
+                    "evasion": "EP",
+                    "evasion_points": "EP",
+                    "attack_points": "AP",
                 };
 
 function get_hit_chance(attack_points, evasion_points) {

@@ -1,5 +1,7 @@
 "use strict";
 
+import { equip_item_from_inventory } from "./character.js";
+
 
 //extended by character and traders, as their inventories are supposed to work the same way
 class InventoryHaver {
@@ -10,34 +12,40 @@ class InventoryHaver {
 
     /**
      * @description adds items from the list to inventory; don't use this method directly, there are other methods that call this one and take care of display
-     * @param {*} items - [{item, count},...]
+     * @param {Array} items - [{item, count},...]
      */
     add_to_inventory(items) {
+
         for(let i = 0; i < items.length; i++){
-            if(!(items[i].item.getName() in this.inventory)) //not in inventory
+            
+            if(!(items[i].item.id in this.inventory)) //not in inventory
             {
                 if(items[i].item.stackable)
                 {
                     if(!items[i].count) {
                         items[i].count=1;
                     }
-                    this.inventory[items[i].item.getName()] = items[i];
+                    this.inventory[items[i].item.id] = items[i];
                 }
                 else 
                 {
-                    this.inventory[items[i].item.getName()] = [items[i].item];
+                    this.inventory[items[i].item.id] = [items[i].item];
                 }
             }
             else //in inventory 
             {
                 if(items[i].item.stackable)
                 {
-                    this.inventory[items[i].item.getName()].count += (items[i].count || 1);
+                    this.inventory[items[i].item.id].count += (items[i].count || 1);
                 } 
                 else 
                 {
-                    this.inventory[items[i].item.getName()].push(items[i].item);
+                    this.inventory[items[i].item.id].push(items[i].item);
                 }
+            }
+
+            if(items[i].item.tags.tool) {
+                equip_item_from_inventory({item_name: items[i].item.id, item_id: 0});
             }
         }
     }
