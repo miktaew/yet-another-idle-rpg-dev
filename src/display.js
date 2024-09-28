@@ -20,6 +20,7 @@ import { enemy_killcount, enemy_templates } from "./enemies.js";
 import { expo, format_reading_time, stat_names, get_hit_chance, round_item_price } from "./misc.js"
 import { stances } from "./combat_stances.js";
 import { recipes } from "./crafting_recipes.js";
+import { effect_templates } from "./active_effects.js";
 
 let activity_anim; //for the activity animation interval
 
@@ -33,6 +34,8 @@ const location_tooltip = document.getElementById("location_name_tooltip");
 
 //inventory display
 const inventory_div = document.getElementById("inventory_content_div");
+let item_divs = {};
+let item_buying_divs = {};
 const trader_inventory_div = document.getElementById("trader_inventory_div");
 
 //message log
@@ -109,6 +112,8 @@ const stats_divs = {strength: document.getElementById("strength_slot"), agility:
 const other_combat_divs = {attack_points: document.getElementById("hit_chance_slot"), defensive_action: document.getElementById("defensive_action_slot"),
                            defensive_points: document.getElementById("defensive_action_chance_slot")
                           };
+
+let effect_divs = {};
 
 const character_attack_bar = document.getElementById("character_attack_bar");
 
@@ -209,9 +214,9 @@ function create_item_tooltip_content({item, options={}}) {
         }
 
         if(!options.skip_quality && options?.quality?.length == 2) {
-            item_tooltip += `<br><br><b>Quality: <span style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${Math.round(options.quality[0]*100)}% </span> - <span style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${Math.round(options.quality[1]*100)}% </span></b>`;
+            item_tooltip += `<br><br><b>Quality: <span style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${options.quality[0]}% </span> - <span style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${options.quality[1]}% </span></b>`;
         } else {
-            item_tooltip += `<br><br><b style="color: ${rarity_colors[item.getRarity(quality)]}">Quality: ${Math.round(quality*100)}% </b>`;
+            item_tooltip += `<br><br><b style="color: ${rarity_colors[item.getRarity(quality)]}">Quality: ${quality}% </b>`;
         }
 
 
@@ -295,32 +300,17 @@ function create_item_tooltip_content({item, options={}}) {
             }
             });
         }
+        item_tooltip += "<br>";
     } 
     else if (item.item_type === "USABLE") {
-
         item_tooltip += `<br>`;
-        Object.keys(item.use_effect).forEach(function(effect) {
 
-            item_tooltip += `<br>${capitalize_first_letter(effect.replace("_", " "))} `;
-
-            if(item.use_effect[effect].flat) {
-                const sign_1 = item.use_effect[effect].flat > 0? "+":"";
-                item_tooltip += ` ${sign_1}${item.use_effect[effect].flat}`;
-                if(item.use_effect[effect].percent) {
-                    const sign_2 = item.use_effect[effect].percent > 0? "+":"";
-                    item_tooltip += ` and ${sign_2}${item.use_effect[effect].percent}%`;
-                }
-            } else if(item.use_effect[effect].percent) {
-                const sign = item.use_effect[effect].percent > 0? "+":"";
-                item_tooltip += ` ${sign}${item.use_effect[effect].percent}%`;
-            }
-
-            if(item.use_effect[effect].duration) {
-                item_tooltip += ` for ${item.use_effect[effect].duration} ticks`;
-            } else {
-                item_tooltip += ` permanently`;
-            }
-        });
+        if(item.effects.length > 0) {
+            item_tooltip += "<br>Effects: "
+        }
+        for(let i = 0; i < item.effects.length; i++) {
+            item_tooltip += create_effect_tooltip(item.effects[i].effect, item.effects[i].duration).outerHTML;
+        }
     } else if(item.item_type === "BOOK") {
         if(!book_stats[item.name].is_finished) {
             item_tooltip += `<br><br>Time to read: ${item.getRemainingTime()} minutes`;
@@ -328,6 +318,7 @@ function create_item_tooltip_content({item, options={}}) {
         else {
             item_tooltip += `<br><br>Reading it provided ${character.name} with:<br> ${format_rewards(book_stats[item.name].rewards)}`;
         }
+        item_tooltip += "<br>";
     }
     else if(item.tags.component) {
         if(options?.quality && options.quality[0]) {
@@ -335,9 +326,9 @@ function create_item_tooltip_content({item, options={}}) {
         }
 
         if(!options.skip_quality && options?.quality?.length == 2) {
-            item_tooltip += `<br><br><b>Quality: <span style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${Math.round(options.quality[0]*100)}% </span> - <span style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${Math.round(options.quality[1]*100)}% </span></b>`;
+            item_tooltip += `<br><br><b>Quality: <span style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${options.quality[0]}% </span> - <span style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${options.quality[1]}% </span></b>`;
         } else {
-            item_tooltip += `<br><br><b style="color: ${rarity_colors[item.getRarity(quality)]}">Quality: ${Math.round(quality*100)}% </b>`;
+            item_tooltip += `<br><br><b style="color: ${rarity_colors[item.getRarity(quality)]}">Quality: ${quality}% </b>`;
         }
         if(item.component_tier) {
             item_tooltip += `<br><br>Component tier: ${item.component_tier}`;
@@ -361,16 +352,59 @@ function create_item_tooltip_content({item, options={}}) {
             if(item.stats[effect_key].multiplier != null) {
                 item_tooltip += 
                 `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: x${item.stats[effect_key].multiplier}`;
-        }
+            }
         });
+        item_tooltip += "<br>";
+    } else {
+        item_tooltip += "<br>";
     }
-    item_tooltip += `<br><br>Value: ${format_money(round_item_price(item.getValue(quality) * ((options && options.trader) ? traders[current_trader].getProfitMargin() : 1) || 1))}`;
+    item_tooltip += `<br>Value: ${format_money(round_item_price(item.getValue(quality) * ((options && options.trader) ? traders[current_trader].getProfitMargin() : 1) || 1))}`;
 
     if(item.saturates_market) {
         item_tooltip += ` [originally ${format_money(round_item_price(item.getBaseValue(quality) * ((options && options.trader) ? traders[current_trader].getProfitMargin() : 1) || 1))}]`
     }
 
     return item_tooltip;
+}
+
+/** 
+ * @param {Object} item_effect from item effects[]
+ */
+function create_effect_tooltip(effect_name, duration) {
+    const effect = effect_templates[effect_name];
+    const tooltip = document.createElement("div");
+    tooltip.classList.add("active_effect_tooltip");
+
+    const name_span = document.createElement("span");
+    name_span.classList.add("active_effect_name"); 
+    name_span.innerHTML = `'${effect.name}' : `;
+    const duration_span = document.createElement("span");
+    duration_span.classList.add("active_effect_duration");
+    duration_span.innerHTML = ""+ format_time({time: {minutes: duration}});
+    const top_div = document.createElement("div");
+    top_div.classList.add("active_effect_name_and_duration");
+    top_div.appendChild(name_span);
+    top_div.appendChild(duration_span);
+    tooltip.appendChild(top_div);
+
+    const effects_div = document.createElement("div");
+    for(const [key, stat_value] of Object.entries(effect.effects.stats)) {
+        tooltip.innerHTML += `<br>${capitalize_first_letter(key.replaceAll("_", " ").replace("flat","").replace("percent",""))} `;
+        //for regeneration bonuses, it is assumed they are only flat and not multiplicative
+        if(key === "health_regeneration_flat" || key ===  "stamina_regeneration_flat" || key ===  "mana_regeneration_flat") 
+        {   
+            const sign = stat_value.flat > 0? "+":"";
+            tooltip.innerHTML += `: ${sign}${stat_value.flat}`;
+        } else if(key === "health_regeneration_percent" || key === "stamina_regeneration_percent" || key === "mana_regeneration_percent") {
+            const sign = stat_value.percent > 0? "+":"";
+            tooltip.innerHTML += `: ${sign}${stat_value.percent}%`;
+        } else {
+            //
+        }
+    }
+
+    tooltip.appendChild(effects_div);
+    return tooltip;
 }
 
 function end_activity_animation() {
@@ -650,29 +684,27 @@ function create_trade_buttons() {
     trade_button_5.classList.add("trade_ammount_button");
     trade_button_5.innerText = "5";
     trade_button_5.setAttribute("data-trade_ammount", 5);
+    trade_buttons.appendChild(trade_button_5);
 
     const trade_button_10 = document.createElement("div");
     trade_button_10.classList.add("trade_ammount_button");
     trade_button_10.innerText = "10";
     trade_button_10.setAttribute("data-trade_ammount", 10);
+    trade_buttons.appendChild(trade_button_10);
 
     const trade_button_max = document.createElement("div");
     trade_button_max.classList.add("trade_ammount_button");
     trade_button_max.innerText = "all";
     trade_button_max.setAttribute("data-trade_ammount", Infinity);
-
-    trade_buttons.appendChild(trade_button_5);
-    trade_buttons.appendChild(trade_button_10);
     trade_buttons.appendChild(trade_button_max);
-
+    
     return trade_buttons;
 }
 
-function sort_displayed_inventory({sort_by="name", target = "character", change_direction = false}) {
+function sort_displayed_inventory({sort_by = "name", target = "character", change_direction = false}) {
     let plus;
     let minus;
     if(target === "trader") {
-
         if(change_direction){
             if(sort_by && sort_by === trader_inventory_sorting) {
                 if(trader_inventory_sorting_direction === "asc") {
@@ -695,7 +727,6 @@ function sort_displayed_inventory({sort_by="name", target = "character", change_
         trader_inventory_sorting = sort_by || "name";
 
     } else if(target === "character") {
-
         if(change_direction){
             if(sort_by && sort_by === character_inventory_sorting) {
                 if(character_inventory_sorting_direction === "asc") {
@@ -721,7 +752,6 @@ function sort_displayed_inventory({sort_by="name", target = "character", change_
         console.warn(`Something went wrong, no such inventory as '${target}'`);
         return;
     }
-
     [...target.children].sort((a,b) => {
         //equipped items on top
         if(a.classList.contains("equipped_item_control") && !b.classList.contains("equipped_item_control")) {
@@ -746,29 +776,41 @@ function sort_displayed_inventory({sort_by="name", target = "character", change_
         } else if(!a.classList.contains("trader_item_equippable") && b.classList.contains("trader_item_equippable")){
             return -1;
         } 
-        //items being traded on bottom
+
+        if(a.children[0].children[0].children[0].innerText === "[Comp]" && b.children[0].children[0].children[0].innerText !== "[Comp]") {
+            return 1;
+        } else if(a.children[0].children[0].children[0].innerText !== "[Comp]" && b.children[0].children[0].children[0].innerText === "[Comp]") {
+            return -1;
+        }
+
+        if(a.children[0].children[0].children[0].innerText === "[Book]" && b.children[0].children[0].children[0].innerText !== "[Book]") {
+            return 1;
+        } else if(a.children[0].children[0].children[0].innerText !== "[Book]" && b.children[0].children[0].children[0].innerText === "[Book]") {
+            return -1;
+        }
+
+        if(a.getElementsByClassName("item_slot") && !b.getElementsByClassName("item_slot")) {
+            return 1;
+        } else if(!a.getElementsByClassName("item_slot") && b.getElementsByClassName("item_slot")) {
+            return -1;
+        }
 
         //other items by either name or otherwise by value
 
         if(sort_by === "name") {
-            //if they are equippable, take in account the [slot] value displayed in front of item in inventory
+
             const name_a = a.children[0].children[0].children[1].innerText.toLowerCase().replaceAll('"',"");
             const name_b = b.children[0].children[0].children[1].innerText.toLowerCase().replaceAll('"',"");
-
-            //prioritize displaying equipment below stackable items
-            if(name_a[0] === '[' && name_b[0] !== '[') {
-                return 1;
-            } else if(name_a[0] !== '[' && name_b[0] === '[') {
-                return -1;
-            }
-            else if(name_a > name_b) {
+            if(name_a > name_b) {
                 return plus;
             } else if(name_a < name_b) {
                 return minus;
             } else {
-                //if same name, sort based on price (to avoid awkward position changing on some occasions)
-                let value_a = Number.parseInt(a.getAttribute(`data-item_value`));
-                let value_b = Number.parseInt(b.getAttribute(`data-item_value`));
+                //if same name, sort based on quality 
+                //works similar to sorting by value but is more precise
+                //(shouldn't be possible to reach this for quality-less items)
+                let value_a = Number.parseInt(a.dataset.item_quality);
+                let value_b = Number.parseInt(b.dataset.item_quality);
                 
                 if(value_a > value_b) {
                     return plus;
@@ -781,10 +823,17 @@ function sort_displayed_inventory({sort_by="name", target = "character", change_
             
             let value_a = Number.parseInt(a.getAttribute(`data-item_value`));
             let value_b = Number.parseInt(b.getAttribute(`data-item_value`));
-            
+      
             if(value_a > value_b) {
                 return plus;
             } else {
+                if(value_a === value_b && "item_quality" in a.dataset && "item_quality" in b.dataset) {
+                    if(Number.parseInt(a.dataset.item_quality) > Number.parseInt( b.dataset.item_quality)) {
+                        return plus;
+                    } else {
+                        return minus;
+                    }
+                }
                 return minus;
             }
         }
@@ -797,57 +846,27 @@ function update_displayed_trader_inventory({trader_sorting} = {}) {
     trader_inventory_div.textContent = "";
 
     Object.keys(trader.inventory).forEach(function(key) {
-        if(trader.inventory[key] instanceof Array) //unstackables
-        {
-            for(let i = 0; i < trader.inventory[key].length; i++) {
+        let item_count = trader.inventory[key].count;
+        for(let i = 0; i < to_buy.items.length; i++) {
+            
+            if(key === to_buy.items[i].item_key) {
+                item_count -= Number(to_buy.items[i].count);
 
-                let should_continue = false;
-                for(let j = 0; j < to_buy.items.length; j++) {
-                    if(trader.inventory[key][i].id === to_buy.items[j].item.split(" #")[0] && i == Number(to_buy.items[j].item.split(" #")[1])) {
-                        //checks if item is present in to_buy, if so then doesn't add it to displayed in this inventory
-                        should_continue = true;
-                        break;
-                    }
+                if(item_count == 0) {
+                    return;
                 }
-                if(should_continue) {
-                    continue;
-                }
-                trader_inventory_div.appendChild(create_inventory_item_div({key, i, target: "trader"}));
-            }
-        } else //stackables
-        {
-            let item_count = trader.inventory[key].count;
-            for(let i = 0; i < to_buy.items.length; i++) {
-                
-                if(trader.inventory[key].item.name === to_buy.items[i].item.split(" #")[0]) {
-                    item_count -= Number(to_buy.items[i].count);
-
-                    if(item_count == 0) {
-                        return;
-                    }
-                    if(item_count < 0) {
-                        throw 'Something is wrong with trader item count';
-                    }
-
-                    break;
+                if(item_count < 0) {
+                    throw 'Something is wrong with trader item count';
                 }
             }
-
-            trader_inventory_div.appendChild(create_inventory_item_div({key, item_count, target: "trader"}));
         }
+
+        trader_inventory_div.appendChild(create_inventory_item_div({key, item_count, target: "trader"}));
     });
     
     for(let i = 0; i < to_sell.items.length; i++) {
         //add items from to_sell to display
-        // to_sell only contains names, so need to browse character.inventory for items that match
-
-        const item_index = Number(to_sell.items[i].item.split(" #")[1]);
-
-        if(isNaN(item_index)) { //it's stackable, so item_count is needed
-            trader_inventory_div.appendChild(create_inventory_item_div({target: "trader", trade_index: i}));
-        } else { //it's unstackable, no need for item_count as it's always at 1
-            trader_inventory_div.appendChild(create_inventory_item_div({i: item_index, target: "trader", trade_index: i}));
-        }
+        trader_inventory_div.appendChild(create_inventory_item_div({target: "trader", trade_index: i}));
     }
 
     sort_displayed_inventory({sort_by: trader_sorting || "name", target: "trader"});
@@ -858,118 +877,144 @@ function update_displayed_trader_inventory({trader_sorting} = {}) {
  * 
  * if item_name is passed, it will instead only update the display of that one item
  * 
- * currently item_name is only used for books
+ * currently item_key is only used for books
  */
- function update_displayed_character_inventory({item_name, character_sorting="name", sorting_direction="asc"} = {}) {    
-
-    if(item_name) {
-        //recreate only one node
-        const node = inventory_div.querySelector(`[data-character_item="${item_name}"]`);
-        if(node) {
-            node.remove();
-        } else {
-            return;
-        }
-    } else {
-        //recreate all
-        inventory_div.innerHTML = "";
+ function update_displayed_character_inventory({item_key, character_sorting="name", sorting_direction="asc", was_anything_new_added=false} = {}) {    
+    
+    //removal of unneeded divs
+    if(!item_key){
+        Object.keys(item_divs).forEach(div_key => {
+            if(item_divs[div_key].classList.contains("equipped_item_control")) {
+                //since equipment is keyed with slots and not item_keys, there might be something different under it, so needs additional check
+                //div_key is the slot
+                const item_key = item_divs[div_key].dataset.character_item;
+                if(!character.equipment[div_key] || item_key !== character.equipment[div_key].getInventoryKey()) {
+                    //character has nothing in this slot - remove
+                    //character has something else in this slot - remove, will be recreated later
+                    item_divs[div_key].remove();
+                    delete item_divs[div_key];
+                }
+            } else {
+                if(!character.inventory[div_key]) {
+                    item_divs[div_key].remove();
+                    delete item_divs[div_key];
+                }
+            }
+        });
+        Object.keys(item_buying_divs).forEach(div_key => {
+            if(to_buy.items.filter(x => x.item_key === div_key).length === 0){
+                //not in trade list - remove
+                item_buying_divs[div_key].remove();
+                delete item_buying_divs[div_key];
+            }
+        });
     }
 
-    Object.keys(character.inventory).forEach(function(key) {
-        if(item_name) {
-            if(key !== item_name) {
-                return;
-            }
-        }
+    //creation of missing divs and updating of others
+    if(item_key) {
+        const item_count = character.inventory[item_key].count;
+        item_divs[item_key] = create_inventory_item_div(create_inventory_item_div({key: item_key, item_count, target: "character"}));
+        inventory_div.appendChild(item_divs[item_key]);
+        was_anything_new_added = true;
+    } else {
+        Object.keys(character.inventory).forEach(inventory_key => {
+            let item_count = character.inventory[inventory_key].count;
 
-        if(character.inventory[key] instanceof Array) //unstackables
-        { 
-            for(let i = 0; i < character.inventory[key].length; i++) {
-                
-                let should_continue = false;
-                for(let j = 0; j < to_sell.items.length; j++) {
-                    if(character.inventory[key][i].id === to_sell.items[j].item.split(" #")[0] && i == Number(to_sell.items[j].item.split(" #")[1])) {
-                        //checks if item is present in to_sell, if so then doesn't add it to displayed in this inventory
-                        should_continue = true;
-                        break;
-                    }
-                }
-                if(should_continue) {
-                    continue;
-                }
-            
-                inventory_div.appendChild(create_inventory_item_div({key, i, target: "character"}));
-            }
-        } else //stackables
-        {
-            let item_count = character.inventory[key].count;
+            //find if item is in to_sell, if so then grab the count and subtract it
             for(let i = 0; i < to_sell.items.length; i++) {
-                
-                if(character.inventory[key].item.id === to_sell.items[i].item.split(" #")[0]) {
+                if(inventory_key === to_sell.items[i].item_key) {
                     item_count -= Number(to_sell.items[i].count);
 
                     if(item_count == 0) {
+                        item_divs[inventory_key]?.remove();
+                        delete item_divs[inventory_key];
                         return;
                     }
                     if(item_count < 0) {
-                        throw 'Something is wrong with character item count';
+                        //shouldn't be possible to reach but who knows
+                        throw new Error('Something is wrong with character item count');
                     }
-
                     break;
                 }
             }
 
-            inventory_div.appendChild(create_inventory_item_div({key, item_count, target: "character"}));
-        }
-
-    });
-
-    //equipped items
-    Object.keys(character.equipment).forEach(function(key) {
-        if(item_name) {
-            if(key !== item_name) {
-                return;
+            if(!item_divs[inventory_key]) {
+                item_divs[inventory_key] = create_inventory_item_div({key: inventory_key, item_count, target: "character"});
+                inventory_div.appendChild(item_divs[inventory_key]);
+                was_anything_new_added = true;
+            } else {
+                let div_count = Number.parseInt(item_divs[inventory_key].getElementsByClassName("item_count")[0].innerText.replace("x",""));
+                if(Number.isNaN(div_count)) {
+                    div_count = 0;
+                }
+                if(div_count != item_count) {
+                    if(item_count > 1) {
+                        item_divs[inventory_key].getElementsByClassName("item_count")[0].innerText = ` x${item_count}`;
+                    } else {
+                        item_divs[inventory_key].getElementsByClassName("item_count")[0].innerText = ``;
+                    }
+                }
             }
-        }
-        if(character.equipment[key]?.tags.tool) {
-            return;
-        }
-        if(character.equipment[key]) {
-            inventory_div.appendChild(create_inventory_item_div({key, target: "character", is_equipped: true}));
-        }
-    });
+        });
 
+        Object.keys(character.equipment).forEach(equip_slot => {
+            if(!item_divs[equip_slot]) {
+                if(character.equipment[equip_slot]) {
+                    if(character.equipment[equip_slot]?.tags.tool) {
+                        //don't display the equipped tools
+                        return;
+                    }
     
-    //items in to_buy
-    if(!item_name){
-        for(let i = 0; i < to_buy.items.length; i++) {
-            
-            const item_index = Number(to_buy.items[i].item.split(" #")[1]);
+                    item_divs[equip_slot] = create_inventory_item_div({key: equip_slot, target: "character", is_equipped: true});
+                    inventory_div.appendChild(item_divs[equip_slot]);
+                    was_anything_new_added = true;
+                }
+            }
+        });
 
-            if(isNaN(item_index)) { //it's stackable, so item_count is needed
+        for(let i = 0; i < to_buy.items.length; i++) {
+            const key = to_buy.items[i].item_key;
+            if(!item_buying_divs[key]) {
+                item_buying_divs[key] = create_inventory_item_div({target: "character", trade_index: i});
+                inventory_div.appendChild(item_buying_divs[key]);
+            } else {
+                //verify and update count
                 
-                inventory_div.appendChild(create_inventory_item_div({target: "character", trade_index: i}));
-            } else { //it's unstackable, no need for item_count as it's always at 1
-                
-                inventory_div.appendChild(create_inventory_item_div({i: item_index, target: "character", trade_index: i}));
+                let div_count = item_divs[key]?.dataset.item_count ?? 0;
+
+                let item_count = to_buy.items[i].count;
+                if(div_count !== item_count) {
+                    if(item_count > 1) {
+                        item_buying_divs[key].getElementsByClassName("item_count")[0].innerText = ` x${item_count}`;
+                    } else {
+                        item_buying_divs[key].getElementsByClassName("item_count")[0].innerText = ``;
+                    }
+                }
             }
         }
     }
-
-    if(!item_name) {
+    
+    if(!item_key && was_anything_new_added) {
         sort_displayed_inventory({target: "character", sort_by: character_sorting, direction: sorting_direction});
     }
 }
 
 /**
  * creates a single item div for hero/trader, used to fill displayed inventories
- * @param {*} param0 
+ * @param {Object} params
+ * @param {String} params.key 
+ * @param {Number} params.item_count
+ * @param {String} params.target character/trader
+ * @param {Boolean} params.is_equipped
+ * @param {Number} params.trade_index index in to_buy/to_sell
  * @returns 
  */
-function create_inventory_item_div({key, i, item_count, target, is_equipped, trade_index}) {
+function create_inventory_item_div({key, item_count, target, is_equipped, trade_index}) {
     const item_control_div = document.createElement("div");
     const item_div = document.createElement("div");
     const item_name_div = document.createElement("div");
+    const item_additional = document.createElement("div");
+    item_additional.classList.add("item_additional_content");
 
     let target_item;
     let target_class_name;
@@ -982,36 +1027,28 @@ function create_inventory_item_div({key, i, item_count, target, is_equipped, tra
     }
 
     if(is_equipped) {
-        target_item = [character.equipment[key]];
-        i = 0;
+        target_item = character.equipment[key];
+        item_count = item_count ?? 1;
         item_class = "equipped_item";
         target_class_name = "character_item";
     } else {
         item_class = "inventory_item";
         if(target === "character") {
             if(typeof trade_index === "undefined") {
-                target_item = character.inventory[key];
+                target_item = character.inventory[key].item;
+                item_count = item_count || character.inventory[key].count;
             } else {
-                if(typeof i === "undefined") {
-                    target_item = traders[current_trader].inventory[to_buy.items[trade_index].item];
-                    item_count = to_buy.items[trade_index].count;
-                }
-                else {
-                    target_item = traders[current_trader].inventory[to_buy.items[trade_index].item.split(" #")[0]];
-                }
+                target_item = traders[current_trader].inventory[to_buy.items[trade_index].item_key].item;
+                item_count = item_count || to_buy.items[trade_index].count;
             }
             target_class_name = "character_item";
         } else if(target === "trader") {
             if(typeof trade_index === "undefined") {
-                target_item = traders[current_trader].inventory[key];
+                target_item = traders[current_trader].inventory[key].item;
+                item_count = item_count || traders[current_trader].inventory[key].count;
             } else {
-                if(typeof i === "undefined") {
-                    target_item = character.inventory[to_sell.items[trade_index].item];
-                    item_count = to_sell.items[trade_index].count;
-                }
-                else {
-                    target_item = character.inventory[to_sell.items[trade_index].item.split(" #")[0]];
-                }
+                target_item = character.inventory[to_sell.items[trade_index].item_key].item;
+                item_count = item_count || to_sell.items[trade_index].count;
             }
             target_class_name = "trader_item";
         } else {
@@ -1019,113 +1056,107 @@ function create_inventory_item_div({key, i, item_count, target, is_equipped, tra
         }
     }
 
-    if(typeof i !== "undefined") {
-        if(is_equipped) {
-            item_control_div.setAttribute(`data-${target_class_name}`, `${target_item[i].id} #${key}`);
+    if("quality" in target_item) {
+        item_control_div.dataset.item_quality = target_item.quality;
+    }
+
+    if(target_item.tags?.equippable) {
+        if(target_item.tags.tool) {
+            item_name_div.innerHTML = `<span class = "item_slot" >[tool]</span> <span>${target_item.getName()}</span>`;
         } else {
-            item_control_div.setAttribute(`data-${target_class_name}`, `${target_item[i].id} #${i}`);
-        }
- 
-        item_control_div.setAttribute("data-item_value", `${target_item[i].getValue()}`);
-
-        if(target_item[i].tags?.equippable) {
-            if(target_item[i].tags.tool) {
-                item_name_div.innerHTML = `<span class = "item_slot" >[tool]</span> <span>${target_item[i].getName()}</span>`;
-            } else {
-                item_name_div.innerHTML = `<span class = "item_slot" >[${target_item[i].equip_slot}]</span> <span>${target_item[i].getName()}</span>`;
-            }
-            item_name_div.classList.add(`${item_class}_name`);
-            item_div.appendChild(item_name_div);
-
-            item_div.appendChild(create_item_tooltip(target_item[i], options));
-            item_control_div.classList.add(`${item_class}_control`, `${target_class_name}_control`, `${target_class_name}_equippable`);
-            item_control_div.appendChild(item_div);
-            if(typeof trade_index === "undefined" && target !== "trader") {
-                if(!is_equipped) {
-                    let item_equip_span = document.createElement("span");
-                    item_equip_span.innerHTML = "[equip]";
-                    item_equip_span.classList.add("equip_item_button", "item_controls");
-                    item_control_div.appendChild(item_equip_span);
-                } else {
-                    let item_unequip_div = document.createElement("div");
-                    item_unequip_div.innerHTML = "[take off]";
-                    item_unequip_div.classList.add("unequip_item_button", "item_controls");
-                    item_control_div.appendChild(item_unequip_div);
-                }
-            }
-
-            if(typeof trade_index !== "undefined") {
-                item_div.classList.add(`${item_class}`, `${target_class_name}`, `trade_item_equippable`);
-            } else {
-                item_div.classList.add(`${item_class}`, `${target_class_name}`, `item_equippable`);
-            }
-        } else {
-            item_name_div.innerHTML = `<span class = "item_category">[Component] </span><span class="item_name">${target_item[i].getName()}</span>`;
-            item_name_div.classList.add(`${item_class}_name`);
-            item_div.appendChild(item_name_div);
-
-            item_div.appendChild(create_item_tooltip(target_item[i], options));
-            item_control_div.classList.add(`${item_class}_control`, `${target_class_name}_control`, `${target_class_name}_component`);
-            item_control_div.appendChild(item_div);
-
-            item_div.classList.add(`${item_class}`, `${target_class_name}`, "item_component");
-        }
-
-        let item_value_span = document.createElement("span");
-
-        item_value_span.innerHTML = `${format_money(round_item_price(target_item[i].getValue()*price_multiplier), true)}`;
-        item_value_span.classList.add("item_value", "item_controls");
-        item_control_div.appendChild(item_value_span);
-    } else if(typeof item_count !== "undefined") {
-        if(target_item.item.item_type === "BOOK") {
-            item_name_div.innerHTML = '<span class = "item_category">[Book] </span>';
-            item_name_div.classList.add(`${item_class}`);
-            item_name_div.innerHTML += `<span class = "book_name item_name">"${target_item.item.name}" </span><span class="item_count">x${item_count} </span>`;
-
-            if(book_stats[target_item.item.name].is_finished) {
-                item_div.classList.add("book_finished");
-            } else if(get_current_book() === target_item.item.name) {
-                item_control_div.classList.add("book_active");
-            }
-        } else {
-            item_name_div.innerHTML = `<span class = "item_category"></span> <span class = "item_name">${target_item.item.name}</span> <span class="item_count">x${item_count}</span>`;
+            item_name_div.innerHTML = `<span class = "item_slot" >[${target_item.equip_slot}]</span> <span>${target_item.getName()}</span>`;
         }
         item_name_div.classList.add(`${item_class}_name`);
         item_div.appendChild(item_name_div);
 
-        item_div.classList.add(`${item_class}`, `${target_class_name}`, 'item_stackable', `item_${target_item.item.item_type.toLowerCase()}`);
-
-        item_div.appendChild(create_item_tooltip(target_item.item, options));
-
-        item_control_div.classList.add(`${item_class}_control`, `${target_class_name}_control`, `${target_class_name}_${target_item.item.item_type.toLowerCase()}`);
-        item_control_div.setAttribute(`data-${target_class_name}`, `${target_item.item.name}`)
-        item_control_div.setAttribute("data-item_count", `${item_count}`)
-        item_control_div.setAttribute("data-item_value", `${target_item.item.getValue()}`);
+        item_control_div.classList.add(`${item_class}_control`, `${target_class_name}_control`, `${target_class_name}_equippable`);
         item_control_div.appendChild(item_div);
 
-        if(target === "character") {
-            if(target_item.item.item_type === "USABLE") {
-                const item_use_button = document.createElement("div");
-                item_use_button.classList.add("item_use_button");
-                item_use_button.innerText = "[use]";
-                item_control_div.appendChild(item_use_button);
-            } else if(target_item.item.item_type === "BOOK") {
-                const item_read_button = document.createElement("div");
-                item_read_button.classList.add("item_use_button");
-                item_read_button.innerText = "[read]";
-                item_control_div.appendChild(item_read_button);
+        if(typeof trade_index !== "undefined") {
+            item_div.classList.add(`${item_class}`, `${target_class_name}`, `trade_item_equippable`);
+        } else {
+            item_div.classList.add(`${item_class}`, `${target_class_name}`, `item_equippable`);
+        }
+        item_control_div.dataset.item_slot = target_item.equip_slot;
+    } else if(target_item.tags.component) {
+        item_name_div.innerHTML = `<span class = "item_category">[Comp]</span> <span class="item_name">${target_item.getName()}</span>`;
+        item_name_div.classList.add(`${item_class}_name`);
+        item_div.appendChild(item_name_div);
 
-                item_div.classList.add("item_book");
+        item_control_div.classList.add(`${item_class}_control`, `${target_class_name}_control`, `${target_class_name}_component`);
+        item_control_div.appendChild(item_div);
+
+        item_div.classList.add(`${item_class}`, `${target_class_name}`, "item_component");
+    } else if(target_item.tags.book) {
+        item_name_div.innerHTML = '<span class = "item_category">[Book]</span>';
+        item_name_div.classList.add(`${item_class}`);
+        item_name_div.innerHTML += ` <span class = "book_name item_name">"${target_item.name}"</span>`;
+
+        if(book_stats[target_item.name].is_finished) {
+            item_div.classList.add("book_finished");
+        } else if(get_current_book() === target_item.name) {
+            item_control_div.classList.add("book_active");
+        }
+    } else {
+        item_name_div.innerHTML = `<span class = "item_category"></span> <span class = "item_name">${target_item.getName()}</span>`;
+    }
+    
+    if(item_count > 1) {
+        item_name_div.innerHTML += `<span class="item_count"> x${item_count}</span>`;
+    } else {
+        item_name_div.innerHTML += `<span class="item_count"></span>`;
+    }
+
+    item_name_div.classList.add(`${item_class}_name`);
+    item_div.appendChild(item_name_div);
+
+    item_div.classList.add(`${item_class}`, `${target_class_name}`, `item_${target_item.item_type.toLowerCase()}`);
+
+    item_div.appendChild(create_item_tooltip(target_item, options));
+
+    item_control_div.classList.add(`${item_class}_control`, `${target_class_name}_control`, `${target_class_name}_${target_item.item_type.toLowerCase()}`);
+    item_control_div.setAttribute(`data-${target_class_name}`, `${target_item.getInventoryKey()}`)
+    item_control_div.setAttribute("data-item_count", `${item_count}`)
+    item_control_div.setAttribute("data-item_value", `${target_item.getValue()}`);
+    item_control_div.appendChild(item_div);
+
+    if(target === "character") {
+        if(target_item.item_type === "USABLE") {
+            const item_use_button = document.createElement("div");
+            item_use_button.classList.add("item_use_button");
+            item_use_button.innerText = "[use]";
+            item_additional.appendChild(item_use_button);
+        } else if(target_item.item_type === "BOOK") {
+            const item_read_button = document.createElement("div");
+            item_read_button.classList.add("item_use_button");
+            item_read_button.innerText = "[read]";
+            item_additional.appendChild(item_read_button);
+
+            item_div.classList.add("item_book");
+        }
+        if(typeof trade_index === "undefined" && target_item.tags.equippable) {
+            if(!is_equipped) {
+                let item_equip_span = document.createElement("span");
+                item_equip_span.innerHTML = "[equip]";
+                item_equip_span.classList.add("equip_item_button", "item_controls");
+                item_additional.appendChild(item_equip_span);
+            } else {
+                let item_unequip_div = document.createElement("div");
+                item_unequip_div.innerHTML = "[take off]";
+                item_unequip_div.classList.add("unequip_item_button", "item_controls");
+                item_additional.appendChild(item_unequip_div);
             }
         }
+    } 
+    
+    item_additional.appendChild(create_trade_buttons());
 
-        item_control_div.appendChild(create_trade_buttons());
 
-        let item_value_span = document.createElement("span");
-        item_value_span.innerHTML = `${format_money(round_item_price(target_item.item.getValue()*price_multiplier), true)}`;
-        item_value_span.classList.add("item_value", "item_controls");
-        item_control_div.appendChild(item_value_span);
-    }
+    let item_value_span = document.createElement("span");
+    item_value_span.innerHTML = `${format_money(round_item_price(target_item.getValue()*price_multiplier), true)}`;
+    item_value_span.classList.add("item_value", "item_controls");
+    item_additional.appendChild(item_value_span);
+    item_control_div.appendChild(item_additional);
 
     if(typeof trade_index !== "undefined") {
         item_control_div.classList.add('item_to_trade');
@@ -1975,7 +2006,9 @@ function update_displayed_crafting_recipes() {
     Object.keys(recipes).forEach(recipe_category => {
         Object.keys(recipes[recipe_category]).forEach(recipe_subcategory => {
             Object.keys(recipes[recipe_category][recipe_subcategory]).forEach(recipe => {
-                update_displayed_crafting_recipe({category: recipe_category, subcategory: recipe_subcategory, recipe_id: recipe});
+                if(recipe.is_unlocked){
+                    update_displayed_crafting_recipe({category: recipe_category, subcategory: recipe_subcategory, recipe_id: recipe});
+                }
             })
         })
     });
@@ -1998,7 +2031,8 @@ function update_displayed_crafting_recipe({category, subcategory, recipe_id}) {
     } else if(subcategory === "components" || recipe.recipe_type === "component") {
         update_recipe_tooltip({category, subcategory, recipe_id});
     } else if(subcategory === "equipment") {
-        update_recipe_tooltip({category, subcategory, recipe_id, material: null, components: []});
+        //update_recipe_tooltip({category, subcategory, recipe_id, material: null, components: []});
+        //shouldn't actually be needed as tooltip already updates when opening recipe and when selecting components
     } else {
         console.error(`No such crafting subcategory as "${subcategory}"`);
     }
@@ -2035,10 +2069,10 @@ function update_recipe_tooltip({category, subcategory, recipe_id, components}) {
         tooltip.innerHTML = create_recipe_tooltip_content({category, subcategory, recipe_id});
     } else if(subcategory === "components" || recipe.recipe_type === "component") {
         const material_selections_div = crafting_pages[category][subcategory].querySelector(`[data-recipe_id='${recipe_id}']`).children[1];
-
         for(let i = 0; i < material_selections_div.children.length; i++) {
-            const material_id = material_selections_div.children[i].dataset.item_name;
-            const material_recipe = recipe.materials.filter(material => material.material_id === material_id);
+            const material_key = material_selections_div.children[i].dataset.item_key;
+            const {id} = JSON.parse(material_key);
+            const material_recipe = recipe.materials.filter(material => material.material_id === id);
             
             material_selections_div.children[i].children[1].innerHTML = create_recipe_tooltip_content({category, subcategory, recipe_id, material: material_recipe[0]});
         }
@@ -2057,20 +2091,20 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         const success_chance = Math.round(100*recipe.get_success_chance());
         tooltip += `Success chance: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
         for(let i = 0; i < recipe.materials.length; i++) {
-            if(character.inventory[recipe.materials[i].material_id]?.count >=recipe.materials[i].count) {
-                tooltip += `<span style="color:lime"><b>${item_templates[recipe.materials[i].material_id].getName()} x${character.inventory[recipe.materials[i].material_id]?.count || 0}/${recipe.materials[i].count}</b></span><br>`;
+            const key = item_templates[recipe.materials[i].material_id].getInventoryKey();
+            if(character.inventory[key]?.count >= recipe.materials[i].count) {
+                tooltip += `<span style="color:lime"><b>${item_templates[recipe.materials[i].material_id].getName()} x${character.inventory[key]?.count || 0}/${recipe.materials[i].count}</b></span><br>`;
             } else {
-                tooltip += `<span style="color:red"><b>${item_templates[recipe.materials[i].material_id].getName()} x${character.inventory[recipe.materials[i].material_id]?.count || 0}/${recipe.materials[i].count}</b></span><br>`;
+                tooltip += `<span style="color:red"><b>${item_templates[recipe.materials[i].material_id].getName()} x${character.inventory[key]?.count || 0}/${recipe.materials[i].count}</b></span><br>`;
             }
         }
         tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true}})}</div>`;
     } else if(subcategory === "components") {
-        //todo: grab and pass quality for this and further conditions
         tooltip += `Material required:<br>`;
-        if(character.inventory[material.material_id]?.count >= material.count) {
-            tooltip += `<span style="color:lime"><b>${item_templates[material.material_id].getName()} x${character.inventory[material.material_id]?.count || 0}/${material.count}</b></span><br>`;
+        if(character.inventory[item_templates[material.material_id].getInventoryKey()]?.count >= material.count) {
+            tooltip += `<span style="color:lime"><b>${item_templates[material.material_id].getName()} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
         } else {
-            tooltip += `<span style="color:red"><b>${item_templates[material.material_id].getName()} x${character.inventory[material.material_id]?.count || 0}/${material.count}</b></span><br>`;
+            tooltip += `<span style="color:red"><b>${item_templates[material.material_id].getName()} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
         }
         const quality_range = recipe.get_quality_range(station_tier - item_templates[material.result_id].component_tier);
         tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item:item_templates[material.result_id], options: {quality: quality_range}})}</div>`;
@@ -2088,13 +2122,13 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
             tooltip += `Result:<br><div class="recipe_result">Select one component from each category</div>`;
         } else if(components.length == 2) {
             let item = "";
-
+            
             if(recipe.item_type === "Weapon") {
                 item = new Weapon(
                     {
                         components: {
-                            head: components[0].id,
-                            handle: components[1].id,
+                            head: components[0].item.id,
+                            handle: components[1].item.id,
                         },
                     }
                 );
@@ -2102,8 +2136,8 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
                 item = new Armor(
                     {
                         components: {
-                            internal: components[0].id,
-                            external: components[1].id,
+                            internal: components[0].item.id,
+                            external: components[1].item.id,
                         },
                     }
                 );
@@ -2111,8 +2145,8 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
                 item = new Shield(
                     {
                         components: {
-                            shield_base: components[0].id,
-                            handle: components[1].id,
+                            shield_base: components[0].item.id,
+                            handle: components[1].item.id,
                         },
                     }
                 );
@@ -2120,7 +2154,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
                 throw new Error(`Recipe "${category}" -> "${subcategory}" -> "${recipe_id}" has an incorrect item type "${recipe.item_type}"`)
             }
 
-            const quality_range = recipe.get_quality_range(recipe.get_component_quality_weighted(components[0], components[1]), (station_tier-Math.max(components[0].component_tier, components[1].component_tier)) || 0);
+            const quality_range = recipe.get_quality_range(recipe.get_component_quality_weighted(components[0].item, components[1].item), (station_tier-Math.max(components[0].item.component_tier, components[1].item.component_tier)) || 0);
             tooltip += `Result:<br><div class="recipe_result">${create_item_tooltip_content({item, options: {quality: quality_range}})}</div>`;
         } else {
             throw new Error(`Somehow recipe "${category}" -> "${subcategory}" -> "${recipe_id}" received more components than there should be (${components.length} instead of 2)`)
@@ -2133,9 +2167,11 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
 }
 
 /**
- * updates the list of selectable components for equipment crafting
+ * updates the list of selectable components for equipment crafting;
+ * generally called for the recipe that was just used
+ * component_keys is used for automatically selecting two comps
  */
-function update_displayed_component_choice({category, recipe_id}) {
+function update_displayed_component_choice({category, recipe_id, component_keys = {}}) {
     const recipe_div = crafting_pages[category]["equipment"].querySelector(`[data-recipe_id="${recipe_id}"]`);
     const recipe = recipes[category]["equipment"][recipe_id];
 
@@ -2146,46 +2182,67 @@ function update_displayed_component_choice({category, recipe_id}) {
 
     const components = [];
     components.push(Object.values(character.inventory).filter(item=>{
-        return recipe.components[0] === item[0]?.component_type;
+        return recipe.components[0] === item.item.component_type;
     }));
 
     components.push(Object.values(character.inventory).filter(item=>{
-        return recipe.components[1] === item[0]?.component_type;
+        return recipe.components[1] === item.item.component_type;
     }));
 
     for(let i = 0; i < 2; i++) {
         for(let j = 0; j < components[i].length; j++) {
-            for(let k = 0; k < components[i][j].length; k++) {
-                const item_div = document.createElement("div");
-                item_div.innerHTML = `<i class="material-icons icon selected_component_icon"> check </i>${components[i][j][k].name}, ${100*components[i][j][k].quality}% quality`;
-                item_div.classList.add("selectable_component");
-                item_div.dataset.item_name = components[i][j][k].id;
-                item_div.dataset.item_id = k; //ids between inventory and 'components' list should match so this is fine
-                item_div.appendChild(create_item_tooltip(components[i][j][k], {class_name: "recipe_tooltip"}));
-                
-                item_div.addEventListener("click", ()=>{
-                    toggle_exclusive_class({element: item_div, siblings_only: true, class_name: "selected_component"});
-                    const components = [];
-                    const component_1_name = recipe_div.children[1].children[0].children[1].querySelector(".selected_component")?.dataset.item_name;
-                    const component_1_id = recipe_div.children[1].children[0].children[1].querySelector(".selected_component")?.dataset.item_id;
-                    if(component_1_name) {
-                        components.push(character.inventory[component_1_name][component_1_id]);
-                    }
+            const item_div = document.createElement("div");
+            item_div.innerHTML = `<i class="material-icons icon selected_component_icon"> check </i>${components[i][j].item.name}, ${components[i][j].item.quality}%, x${components[i][j].count}`;
+            item_div.classList.add("selectable_component");
+            item_div.dataset.item_key = components[i][j].item.getInventoryKey();
+            item_div.dataset.item_quality = components[i][j].item.quality;
+            item_div.dataset.item_name = components[i][j].item.getName();
+            item_div.dataset.component_tier = components[i][j].item.component_tier;
+            item_div.appendChild(create_item_tooltip(components[i][j].item, {class_name: "recipe_tooltip"}));
+            
+            item_div.addEventListener("click", ()=>{
+                toggle_exclusive_class({element: item_div, siblings_only: true, class_name: "selected_component"});
+                const components = [];
+                const component_1_key = recipe_div.children[1].children[0].children[1].querySelector(".selected_component")?.dataset.item_key;
+                if(component_1_key) {
+                    components.push(character.inventory[component_1_key]);
+                }
 
-                    const component_2_name = recipe_div.children[1].children[1].children[1].querySelector(".selected_component")?.dataset.item_name;
-                    const component_2_id = recipe_div.children[1].children[1].children[1].querySelector(".selected_component")?.dataset.item_id;
-                    if(component_2_name) {
-                        components.push(character.inventory[component_2_name][component_2_id]);
-                    }
-                    update_recipe_tooltip({category, subcategory: "equipment", recipe_id, components});
-                });
-                    
-                component_selections_div[i].children[1].appendChild(item_div);
+                const component_2_key = recipe_div.children[1].children[1].children[1].querySelector(".selected_component")?.dataset.item_key;
+                if(component_2_key) {
+                    components.push(character.inventory[component_2_key]);
+                }
+                update_recipe_tooltip({category, subcategory: "equipment", recipe_id, components});
+            });
+                
+            component_selections_div[i].children[1].appendChild(item_div);
+
+            if(component_keys[item_div.dataset.item_key]) {
+                item_div.click();
             }
         }
     }
     if(!is_element_above_x(recipe_div.querySelector(".recipe_creation_button"), document.getElementById("exit_crafting_button"))) {
         recipe_div.querySelector(".recipe_creation_button").scrollIntoView({block: "end", inline: "nearest"});
+    }
+    
+    for(let i = 0; i < 2; i++) {
+        [...component_selections_div[i].children[1].children].sort((a,b) => {
+            if(a.dataset.component_tier > b.dataset.component_tier) {
+                return -1;
+            } else if (a.dataset.component_tier < b.dataset.component_tier) {
+                return 1;
+            } else if(a.dataset.item_name > b.dataset.item_name) {
+                return 1;
+            } else if(a.dataset.item_name < b.dataset.item_name) {
+                return -1;
+            } else if(a.dataset.item_quality > b.dataset.item_quality) {
+                return -1;
+            } else {
+                return 1;
+            }
+
+        }).forEach(node=>component_selections_div[i].children[1].appendChild(node));
     }
 }
 
@@ -2193,7 +2250,7 @@ function update_displayed_component_choice({category, recipe_id}) {
  * updates the list of selectable materials for component crafting;
  * displays only the materials available in inventory; those that are in too low number are grayed out and unselectable
  */
-function update_displayed_material_choice({category, subcategory, recipe_id}) {
+function update_displayed_material_choice({category, subcategory, recipe_id, refreshing}) {
     const recipe = recipes[category][subcategory][recipe_id];
 
     const material_selections_div = crafting_pages[category][subcategory].querySelector(`[data-recipe_id='${recipe_id}']`).children[1];
@@ -2203,24 +2260,29 @@ function update_displayed_material_choice({category, subcategory, recipe_id}) {
     const materials = Object.values(character.inventory).filter(item=>{
         return recipe.materials.filter(material => material.material_id === item.item?.id).length > 0;
     });
-
     for(let i = 0; i < materials.length; i++) {
-        const material_recipe = recipe.materials.filter(material => material.material_id === materials[i].item.id);
+        const material_recipe = recipe.materials.filter(material => material.material_id === materials[i].item.id)[0];
         const item_div = document.createElement("div");
-        item_div.innerHTML = `<i class="material-icons icon selected_material_icon"> check </i>${item_templates[material_recipe[0].result_id].getName()}`;
+        item_div.innerHTML = `<i class="material-icons icon selected_material_icon"> check </i>${item_templates[material_recipe.result_id].getName()}`;
         item_div.classList.add("selectable_material");
-        item_div.dataset.item_name = materials[i].item.id;
+        item_div.dataset.item_key = materials[i].item.getInventoryKey();
+
+        if(material_recipe.count <= materials[i].count) {
+            item_div.addEventListener("click", (event)=>{
+                item_div.classList.add("selected_material");
+                window.useRecipe(event.target.parentNode);
+                item_div.classList.remove("selected_material"); //this is so stupid
+            });
+        } else {
+            item_div.classList.add("recipe_unavailable");
+        }
         
-        item_div.addEventListener("click", (event)=>{
-            item_div.classList.add("selected_material");
-            window.useRecipe(event.target.parentNode);
-            item_div.classList.remove("selected_material"); //this is so stupid
-        });
-        
-        item_div.append(create_recipe_tooltip({category, subcategory, recipe_id, material: material_recipe[0]}));
+        item_div.append(create_recipe_tooltip({category, subcategory, recipe_id, material: material_recipe}));
         material_selections_div.appendChild(item_div);
     }
-    material_selections_div.lastChild?.scrollIntoView();
+    if(!refreshing) {
+        material_selections_div.lastChild?.scrollIntoView();
+    }
 }
 
 function update_item_recipe_visibility() {
@@ -2275,6 +2337,10 @@ function create_gathering_tooltip(location_activity) {
 
 function update_gathering_tooltip(current_activity) {
     const gathering_tooltip = document.getElementById("gathering_tooltip");
+    if(!gathering_tooltip) {
+        return;
+    }
+    
     const {gathering_time_needed, gained_resources} = current_activity.getActivityEfficiency();
 
     let skill_names = "";
@@ -2350,7 +2416,6 @@ function update_displayed_stats() { //updates displayed stats
     attack_stats.children[4].innerHTML = `Def: ${Math.round(character.stats.full.defense)} `;
 }
 
-
 function update_stat_description(stat) {
     let target;
 
@@ -2404,19 +2469,10 @@ function update_displayed_effects() {
     active_effect_count.innerText = effect_count;
     if(effect_count > 0) {
         active_effects_tooltip.innerHTML = '';
-        Object.keys(active_effects).forEach(function(effect) {
-            const effect_div = document.createElement("div");
-            const effect_desc_div = document.createElement("div");
-            const effect_duration_div = document.createElement("div");
-
-            let sign = active_effects[effect].flat > 0 ? "+":"";
-            effect_desc_div.innerText = `${capitalize_first_letter(effect.replace("_", " "))} ${sign}${active_effects[effect].flat}`;
-
-            effect_duration_div.innerText = active_effects[effect].duration;
-
-            effect_div.appendChild(effect_desc_div);
-            effect_div.append(effect_duration_div);
-            active_effects_tooltip.appendChild(effect_div);
+        effect_divs = {};
+        Object.values(active_effects).forEach(effect => {
+            effect_divs[effect.name] = create_effect_tooltip(effect.name, effect.duration);
+            active_effects_tooltip.appendChild(effect_divs[effect.name]);
         });
     } else {
         active_effects_tooltip.innerHTML = 'No active effects';
@@ -2425,12 +2481,13 @@ function update_displayed_effects() {
 }
 
 function update_displayed_effect_durations() {
-    //it just iterates over all tooltips and decreases their durations by 1
-    //later on might instead make another function for it and call it here
-    for(let i = 0; i < active_effects_tooltip.children.length; i++) {
-        active_effects_tooltip.children[i].children[1].innerText = Number(active_effects_tooltip.children[i].children[1].innerText) - 1;
-    }
-
+    Object.keys(effect_divs).forEach(key => {
+        if(!active_effects[key]?.duration) {
+            effect_divs[key].remove();
+        } else {
+            effect_divs[key].querySelector(".active_effect_duration").innerHTML = format_time({time: {minutes: active_effects[key].duration}});
+        }
+    });
 }
 
 function update_displayed_time() {
@@ -2574,7 +2631,7 @@ function start_activity_display(current_activity) {
     if(activities[current_activity.activity_name].base_skills_names) {
         const needed_xp = skills[activities[current_activity.activity_name].base_skills_names].current_level == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.round(10000*skills[activities[current_activity.activity_name].base_skills_names].current_xp/skills[activities[current_activity.activity_name].base_skills_names].xp_to_next_lvl)/100}%`
         if(activities[current_activity.activity_name].type !== "GATHERING") {
-            action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} xp per in-game minute to ${skills[activities[current_activity.activity_name].base_skills_names].name()} (${needed_xp})`;
+            action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} base xp per in-game minute to ${skills[activities[current_activity.activity_name].base_skills_names].name()} (${needed_xp})`;
         } else {
             action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} base xp per gathering cycle to ${skills[activities[current_activity.activity_name].base_skills_names].name()} (${needed_xp})`;
         }
@@ -2972,8 +3029,11 @@ function update_displayed_stance_list() {
             stance_bar_divs[stance].innerHTML = fav_selection;
             stance_bar_divs[stance].innerHTML += stance_selection;
             stance_bar_divs[stance].innerHTML += stance_info
-
-            stance_bar_divs[stance].appendChild(create_stance_tooltip(stance));
+            
+            const stance_tooltip_row = document.createElement("td");
+            
+            stance_tooltip_row.appendChild(create_stance_tooltip(stance));
+            stance_bar_divs[stance].appendChild(stance_tooltip_row);
             stance_list.append(stance_bar_divs[stance]);
         }
     });

@@ -99,18 +99,58 @@ function getLootPriceModifierMultiple(value, start_count, how_many_to_sell) {
     return sum;
 }
 
+function getArmorSlot(internal) {
+    let equip_slot;
+    if(item_templates[internal].component_type === "helmet interior") {
+        equip_slot = "head";
+    } else if(item_templates[internal].component_type === "chestplate interior") {
+        equip_slot = "torso";
+    } else if(item_templates[internal].component_type === "leg armor interior") {
+        equip_slot = "legs";
+    } else if(item_templates[internal].component_type === "glove interior") {
+        equip_slot = "arms";
+    } else if(item_templates[internal].component_type === "shoes interior") {
+        equip_slot = "feet";
+    } else {
+        console.error(`Component type "${item_templates[internal].component_type}" doesn't correspond to any armor slot!`);
+        return null;
+    }
+    return equip_slot;
+}
+
+function getItemRarity(quality) {
+    let rarity;
+    if(quality < 50) rarity =  "trash";
+    else if(quality < 100) rarity = "common";
+    else if(quality < 130) rarity = "uncommon";
+    else if(quality < 160) rarity = "rare";
+    else if(quality < 200) rarity = "epic";
+    else if(quality < 246) rarity = "legendary";
+    else rarity = "mythical";
+    
+    return rarity;
+}
+
+function getEquipmentValue(components, quality) {
+    let value = 0;
+    Object.values(components).forEach(component => {
+        value += item_templates[component].value;
+    });
+    return round_item_price(value * (quality/100 ) * rarity_multipliers[getItemRarity(quality)]);
+}
+
 class Item {
     constructor({name,
                 description,
                 value = 0, 
-                id,
                 tags = {},
-                }) 
+                id = null,
+                })
     {
         this.name = name; 
         this.description = description;
         this.saturates_market = false;
-        this.id = id || name;
+        this.id = id;
 
         /**
          * Use .getValue() instead of this
@@ -128,18 +168,20 @@ class Item {
     }
 
     createInventoryKey() {
-        let key = '{';
+        const key = {};
+
         if(!this.components) {
-            key += `id: ${this.id}`;
+            key.id = this.id;
         } else {
+            key.components = {};
             Object.keys(this.components).forEach(component => {
-                key += `${component}: ${this.components[component]}`;
+                key.components[component] = this.components[component];
             });
         }
         if(this.quality) {
-            key += `, quality: ${this.quality}`;
+            key.quality = this.quality;
         }
-        return key + '}';
+        return JSON.stringify(key);
     }
 
     getValue() {
@@ -147,7 +189,7 @@ class Item {
             return round_item_price(this.value);
         }
         else {  
-            return Math.max(1, round_item_price(Math.ceil(this.value * getLootPriceModifier(this.value,(Math.max(loot_sold_count[this.getName()]?.sold - loot_sold_count[this.getName()]?.recovered,0)||0)))));
+            return Math.max(1, round_item_price(Math.ceil(this.value * getLootPriceModifier(this.value,(Math.max(loot_sold_count[this.id]?.sold - loot_sold_count[this.id]?.recovered,0)||0)))));
         }
     }
 
@@ -160,7 +202,7 @@ class Item {
             return round_item_price(this.value) * count;
         }
         else {
-            const modifier = getLootPriceModifierMultiple(this.value, (Math.max(loot_sold_count[this.getName()]?.sold - loot_sold_count[this.getName()]?.recovered,0)||0)+additional_count_of_sold, count);
+            const modifier = getLootPriceModifierMultiple(this.value, (Math.max(loot_sold_count[this.id]?.sold - loot_sold_count[this.id]?.recovered,0)||0)+additional_count_of_sold, count);
             return Math.max(count, Math.ceil(round_item_price(this.value) * Math.round(this.value*modifier)/this.value));
         }
     }
@@ -203,28 +245,28 @@ class ItemComponent extends Item {
         this.component_tier = item_data.component_tier || 1;
         this.stats = item_data.stats || {};
         this.tags["equipment component"] = true;
-        this.quality = item_data.quality || 1;
+        this.quality = Math.round(item_data.quality) || 100;
     }
     getRarity(quality){
         if(!quality) {
             if(!this.rarity) {
-                this.rarity = this.calculateRarity(this.quality);
+                this.rarity = getItemRarity(this.quality);
             }
             return this.rarity;
         } else {
-            return this.calculateRarity(quality);
+            return getItemRarity(quality);
         }
 
     }
 
     calculateRarity(quality) {
         let rarity;
-        if(quality < 0.5) rarity =  "trash";
-        else if(quality < 1.0) rarity = "common";
-        else if(quality < 1.3) rarity = "uncommon";
-        else if(quality < 1.6) rarity = "rare";
-        else if(quality < 2.0) rarity = "epic";
-        else if(quality < 2.46) rarity = "legendary";
+        if(quality < 50) rarity =  "trash";
+        else if(quality < 100) rarity = "common";
+        else if(quality < 130) rarity = "uncommon";
+        else if(quality < 160) rarity = "rare";
+        else if(quality < 200) rarity = "epic";
+        else if(quality < 246) rarity = "legendary";
         else rarity = "mythical";
         
         return rarity;
@@ -235,7 +277,7 @@ class ItemComponent extends Item {
     }
 
     getValue(quality) {
-        return round_item_price(this.value * (quality || this.quality));
+        return round_item_price(this.value * (quality/100 || this.quality/100));
     } 
 }
 
@@ -324,7 +366,7 @@ class UsableItem extends Item {
         super(item_data);
         this.item_type = "USABLE";
         this.stackable = true;
-        this.use_effect = item_data.use_effect || {};
+        this.effects = item_data.effects || {};
 
         this.tags["usable"] = true;
     }
@@ -337,7 +379,7 @@ class Equippable extends Item {
         this.stackable = false;
         this.components = {};
 
-        this.quality = Math.round(item_data.quality*100)/100 || 1;
+        this.quality = Math.round(item_data.quality) || 100;
 
         this.tags["equippable"] = true;
     }
@@ -349,26 +391,13 @@ class Equippable extends Item {
     getRarity(quality){
         if(!quality) {
             if(!this.rarity) {
-                this.rarity = this.calculateRarity(this.quality);
+                this.rarity = getItemRarity(this.quality);
             }
             return this.rarity;
         } else {
-            return this.calculateRarity(quality);
+            return getItemRarity(quality);
         }
 
-    }
-
-    calculateRarity(quality) {
-        let rarity;
-        if(quality < 0.5) rarity =  "trash";
-        else if(quality < 1.0) rarity = "common";
-        else if(quality < 1.3) rarity = "uncommon";
-        else if(quality < 1.6) rarity = "rare";
-        else if(quality < 2.0) rarity = "epic";
-        else if(quality < 2.46) rarity = "legendary";
-        else rarity = "mythical";
-        
-        return rarity;
     }
 
     getStats(quality){
@@ -506,7 +535,7 @@ class Shield extends Equippable {
     }
 
     calculateShieldStrength(quality) {
-        return Math.round(10 * Math.ceil(item_templates[this.components.shield_base].shield_strength * (quality) * rarity_multipliers[this.getRarity(quality)]))/10;
+        return Math.round(10 * Math.ceil(item_templates[this.components.shield_base].shield_strength * (quality/100) * rarity_multipliers[this.getRarity(quality)]))/10;
     }
 
     getName() {
@@ -517,7 +546,7 @@ class Shield extends Equippable {
         if(!this.value) {
             //value of shield base + value of handle, both multiplied by quality and rarity
             this.value = (item_templates[this.components.shield_base].value + item_templates[this.components.handle].value)
-                                  * (quality || this.quality) * rarity_multipliers[this.getRarity(quality)];
+                                  * (quality/100 || this.quality/100) * rarity_multipliers[this.getRarity(quality)];
         }
         return round_item_price(this.value);
     } 
@@ -618,19 +647,20 @@ class Armor extends Equippable {
         if(this.components) {
             return Math.ceil(((item_templates[this.components.internal].defense_value || item_templates[this.components.internal].base_defense ||0) + 
                                         (item_templates[this.components.external]?.defense_value || 0 )) 
-                                        * (quality || this.quality) * rarity_multipliers[this.getRarity(quality || this.quality)]
+                                        * (quality/100 || this.quality/100) * rarity_multipliers[this.getRarity(quality || this.quality)]
             )
         } else {
-            return Math.ceil((this.base_defense || 0)  * (quality || this.quality) * rarity_multipliers[this.getRarity(quality || this.quality)]);
+            return Math.ceil((this.base_defense || 0)  * (quality/100 || this.quality/100) * rarity_multipliers[this.getRarity(quality || this.quality)]);
         }
     }
 
     getValue(quality) {
-        if(!this.value) {
+        if(this.components) {
             //value of internal + value of external (if present), both multiplied by quality and rarity
-            this.value = (item_templates[this.components.internal].value + 
-                                   (item_templates[this.components.external]?.value || 0))
-                                  * (quality || this.quality) * rarity_multipliers[this.getRarity(quality)];
+            this.value = (item_templates[this.components.internal].value + (item_templates[this.components.external]?.value || 0))
+                            * (quality/100 || this.quality/100) * rarity_multipliers[this.getRarity(quality)];
+        } else {
+            this.value = item_templates[this.id].value * (quality/100 || this.quality/100) * rarity_multipliers[this.getRarity(quality)];
         }
         return round_item_price(this.value);
     } 
@@ -720,14 +750,14 @@ class Weapon extends Equippable {
             (item_templates[this.components.head].attack_value + item_templates[this.components.handle].attack_value)
             * item_templates[this.components.head].attack_multiplier * item_templates[this.components.handle].attack_multiplier
             * (item_templates[this.components.head].stats?.attack_power?.multiplier || 1) * (item_templates[this.components.handle].stats?.attack_power?.multiplier || 1)
-            * quality * rarity_multipliers[this.getRarity(quality)]
+            * (quality/100) * rarity_multipliers[this.getRarity(quality)]
         );
     }
 
     getValue(quality) {
         if(!this.value) {
             //value of handle + value of head, both multiplied by quality and rarity
-            this.value = (item_templates[this.components.handle].value + item_templates[this.components.head].value) * (quality || this.quality) * rarity_multipliers[this.getRarity(quality)]
+            this.value = (item_templates[this.components.handle].value + item_templates[this.components.head].value) * (quality/100 || this.quality/100) * rarity_multipliers[this.getRarity(quality)]
         }
         return round_item_price(this.value);
     } 
@@ -1013,27 +1043,27 @@ item_templates["Twist liek a snek"] = new Book({
     });
     item_templates["Piece of rough wood"] = new Material({
         name: "Piece of rough wood", 
-        description: "Not very strong, but easy to work with.", 
+        description: "Cheapest form of wood. There's a lot of bark and malformed pieces.", 
         value: 2,
         saturates_market: true,
         price_recovers: true,
-        material_type: "piece of wood",
+        material_type: "raw wood",
     });
     item_templates["Piece of wood"] = new Material({
         name: "Piece of wood", 
-        description: "Average quality wood, useful for crafting thanks to flexible uses.", 
-        value: 5,
+        description: "Average quality wood. There's a lot of bark and malformed pieces.", 
+        value: 4,
         saturates_market: true,
         price_recovers: true,
-        material_type: "piece of wood",
+        material_type: "raw wood",
     });
     item_templates["Piece of ash wood"] = new Material({
         name: "Piece of ash wood", 
-        description: "Strong yet elastic, it's a great crafting material.", 
+        description: "Strong yet elastic, it's best wood you can hope to find around. There's a lot of bark and malformed pieces.",
         value: 7,
         saturates_market: true,
         price_recovers: true,
-        material_type: "piece of wood",
+        material_type: "raw wood",
     });
 
     item_templates["Belmart leaf"] = new Material({
@@ -1141,6 +1171,33 @@ item_templates["Twist liek a snek"] = new Book({
         price_recovers: true,
         material_type: "meat",
     });
+    item_templates["Processed rough wood"] = new Material({
+        name: "Processed rough wood", 
+        description: "Cheapest form of wood, ready to be used. Despite being rather weak, it still has a lot of uses.",
+        value: 6,
+        saturates_market: true,
+        price_recovers: true,
+        material_type: "wood",
+    });
+
+    item_templates["Processed wood"] = new Material({
+        name: "Processed wood", 
+        description: "Average quality wood, ready to be used.",
+        value: 11,
+        saturates_market: true,
+        price_recovers: true,
+        material_type: "wood",
+    });
+
+    item_templates["Processed ash wood"] = new Material({
+        name: "Processed ash wood", 
+        description: "High quality wood, just waiting to be turned into a piece of equipment.",
+        value: 20,
+        saturates_market: true,
+        price_recovers: true,
+        material_type: "wood",
+    });
+
 })();
 
 //spare parts
@@ -2093,88 +2150,57 @@ item_templates["Twist liek a snek"] = new Book({
 //usables:
 (function(){
     item_templates["Stale bread"] = new UsableItem({
-        name: "Stale bread", description: "Big piece of an old bread, still edible", 
+        name: "Stale bread", description: "Big piece of an old bread, still edible.", 
         value: 20,
-        use_effect: {
-            stamina_regeneration: {
-                flat: 1,
-                duration: 60,
-            },
-        }
+        effects: [{effect: "Basic meal", duration: 60}],
     });
 
     item_templates["Fresh bread"] = new UsableItem({
         name: "Fresh bread", 
-        description: "Freshly baked bread, delicious", 
+        description: "Freshly baked bread, delicious.", 
         value: 40,
-        use_effect: {
-            stamina_regeneration: {
-                flat: 1,
-                duration: 120,
-            },
-        }
+        effects: [{effect: "Basic meal", duration: 120}],
     });
 
     item_templates["Weak healing powder"] = new UsableItem({
         name: "Weak healing powder", 
         description: "Not very potent, but can still make body heal noticeably faster for quite a while", 
         value: 40,
-        use_effect: {
-            health_regeneration: {
-                flat: 1,
-                duration: 120,
-            },
-        }
+        effects: [{effect: "Weak healing powder", duration: 120}],
     });
 
     item_templates["Oneberry juice"] = new UsableItem({
         name: "Oneberry juice", 
         description: "Tastes kinda nice and provides a quick burst of healing", 
         value: 80,
-        use_effect: {
-            health_regeneration: {
-                flat: 6,
-                percent: 1,
-                duration: 10,
-            },
-        }
+        effects: [{effect: "Weak healing potion", duration: 10}],
     });
 
     item_templates["Roasted rat meat"] = new UsableItem({
         name: "Roasted rat meat", 
         description: "Smell might be fine now, but it still seems like a bad idea to eat it",
         value: 10,
-        use_effect: {
-            stamina_regeneration: {
-                flat: 2,
-                duration: 30,
-            },
-            health_regeneration: {
-                flat: -0.5,
-                duration: 30,
-            }
-        }
+        effects: [{effect: "Cheap meat meal", duration: 30}, {effect: "Slight food poisoning", duration: 30}],
     });
 
     item_templates["Roasted purified rat meat"] = new UsableItem({
         name: "Roasted purified rat meat", 
         description: "Smells alright and should be safe to eat, yet you still have some doubts",
         value: 20,
-        use_effect: {
-            stamina_regeneration: {
-                flat: 2,
-                duration: 30,
-            },
-        }
+        effects: [{effect: "Cheap meat meal", duration: 30}],
     });
 })();
+
+Object.keys(item_templates).forEach(id => {
+    item_templates[id].id = id;
+})
 
 export {
     item_templates, 
     Item, OtherItem, UsableItem, 
     Armor, Shield, Weapon, Artifact, Book, 
     WeaponComponent, ArmorComponent, ShieldComponent,
-    getItem, setLootSoldCount, recoverItemPrices, round_item_price,
+    getItem, setLootSoldCount, recoverItemPrices, round_item_price, getArmorSlot, getEquipmentValue,
     book_stats, loot_sold_count,
     rarity_multipliers
 };

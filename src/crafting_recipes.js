@@ -16,17 +16,9 @@ const alchemy_recipes = {items: {}};
     non-equipment recipes have a success rate (presented with min-max value, where max should be 1) that shall scale with skill level and with crafting station level
     for equipment recipes, there is no success rate in favor of equipment's "quality" property
 
-    resulting quality of equipment is based on component quality; 100% (with slight variation?) with 100% components and required skill, more at higher levels
+    resulting quality of equipment is based on component quality; 100% (with slight variation) with 100% components and required skill, more at higher levels
     
-    overal max quality achievable scales with related skills?
-    lvl 15/60: 150
-    lvl 30/60: 200
-    lvl 45/60: 250
-    skills can increase quality of resulting item, but they are more required to keep it from getting lower than the components, as higher tier components = higher skill lvl required?
-    
-
-    todo: actually add quality to components!
-    should be savegame compatible
+    overal max quality achievable scales with related skills
 */
 
 class Recipe {
@@ -80,7 +72,8 @@ class ItemRecipe extends Recipe {
 
     get_availability() {
         for(let i = 0; i < this.materials.length; i++) {
-            if(!character.inventory[this.materials[i].material_id] || character.inventory[this.materials[i].material_id].count < this.materials[i].count) {
+            const key = item_templates[this.materials[i].material_id].getInventoryKey();
+            if(!character.inventory[key] || character.inventory[key].count < this.materials[i].count) {
                 return false;
             }
         }
@@ -113,7 +106,7 @@ class ComponentRecipe extends ItemRecipe{
         this.component_type = component_type;
         this.item_type = item_type;
         this.getResult = function(material, station_tier = 1){
-            const result = item_templates[this.materials.filter(x => x.material_id===material.item.id)[0].result_id];
+            const result = item_templates[this.materials.filter(x => x.material_id===material.id)[0].result_id];
             //return based on material used
             let quality = this.get_quality((station_tier-result.component_tier) || 0);
             if(result.tags["clothing"]) {
@@ -137,17 +130,17 @@ class ComponentRecipe extends ItemRecipe{
     get_quality_range(tier = 0) {
         const skill = skills[this.recipe_skill];
         const quality = (140+(3*skill.current_level-skill.max_level)+(20*tier))/100;
-        return [Math.max(0.1,Math.round(100*(quality-0.1))/100), Math.max(0.1,Math.round(100*(quality+0.1))/100)];
+        return [Math.max(10,Math.round(25*(quality-0.15))*4), Math.max(10,Math.round(25*(quality+0.1))*4)];
     }
 
     get_quality_cap() {
         const skill = skills[this.recipe_skill];
-        return Math.min(Math.round(100*(1+2*skill.current_level/skill.max_level))/100,2);
+        return Math.min(Math.round(100*(1+2*skill.current_level/skill.max_level)),200);
     }
 
     get_quality(tier = 0) {
         const quality_range = this.get_quality_range(tier);
-        return Math.min(Math.round(100*((quality_range[1]-quality_range[0])*Math.random()+quality_range[0]))/100, this.get_quality_cap());
+        return Math.min(Math.round(((quality_range[1]-quality_range[0])*Math.random()+quality_range[0])/4)*4, this.get_quality_cap());
     }
 }
 
@@ -156,7 +149,7 @@ class EquipmentRecipe extends Recipe {
         name,
         id,
         components = [], //pair of component types; first letter not capitalized; blade-handle or internal-external
-        is_unlocked = true, //TODO: change to false when unlocking is implemented!
+        is_unlocked = true, //TODO: change to false when unlocking is implemented
         result = null,
         recipe_skill = "Crafting",
         item_type, //Weapon/Armor/Shield
@@ -173,8 +166,8 @@ class EquipmentRecipe extends Recipe {
                 return new Weapon(
                     {
                         components: {
-                            head: component_1.name,
-                            handle: component_2.name,
+                            head: component_1.id,
+                            handle: component_2.id,
                         },
                         quality: quality,
                     }
@@ -207,23 +200,58 @@ class EquipmentRecipe extends Recipe {
 
     get_quality_range(component_quality, tier = 0) {
         const skill = skills[this.recipe_skill];
-        const quality = (40+100*component_quality+(3*skill.current_level-skill.max_level)+20*(tier))/100;
-        return [Math.max(0.1,Math.round(100*quality-0.1)/100), Math.max(0.1,Math.round(100*(quality+0.1))/100)];
+        const quality = (40+component_quality+(3*skill.current_level-skill.max_level)+20*(tier));
+        return [Math.max(10,Math.round(quality-15)), Math.max(10,Math.round(quality+15))];
     }
 
     get_quality_cap() {
         const skill = skills[this.recipe_skill];
-        return Math.min(Math.round(100*(1+2*skill.current_level/skill.max_level))/100,2.5);
+        return Math.min(Math.round(100*(1+2*skill.current_level/skill.max_level)),250);
     }
 
     get_quality(component_quality, tier = 0) {
         const quality_range = this.get_quality_range(component_quality, tier);
-        return Math.min(Math.round(100*((quality_range[1]-quality_range[0])*Math.random()+quality_range[0]))/100, this.get_quality_cap());
+        return Math.min(((quality_range[1]-quality_range[0])*Math.random()+quality_range[0]), this.get_quality_cap());
     }
 
     get_component_quality_weighted(component_1, component_2) {
         return (component_1.quality*component_1.component_tier + component_2.quality*component_2.component_tier)/(component_1.component_tier+component_2.component_tier);
     }
+}
+
+function get_recipe_xp_value({category, subcategory, recipe_id, material_count, result_tier, selected_components, rarity_multiplier}) {
+    //
+    //for components: multiplied by material count (so every component of same tier is equally profitable to craft)
+    //for equipment: based on component tier average
+    if(!category || !subcategory || !recipe_id) {
+        //shouldn't be possible to reach this
+        throw new Error(`Tried to use a recipe but either category, subcategory, or recipe id was not passed: ${category} - ${subcategory} - ${recipe_id}`);
+    }
+    let exp_value = 8;
+    const selected_recipe = recipes[category][subcategory][recipe_id];
+    const skill_level = skills[selected_recipe.recipe_skill].current_level;
+    if(!selected_recipe) {
+        throw new Error(`Tried to use a recipe that doesn't exist: ${category} -> ${subcategory} -> ${recipe_id}`);
+    }
+    if(subcategory === "items") {
+        exp_value = Math.max(exp_value,1.5*selected_recipe.recipe_level[1]);
+        //maybe scale with materials needed?
+        
+        if(selected_recipe.recipe_level[1] < skill_level) {
+            exp_value = exp_value * Math.max(0,Math.min(5,(selected_recipe.recipe_level[1]+6-skill_level))/5);
+        }
+    } else if (subcategory === "components" || selected_recipe.recipe_type === "component") {
+        const result_level = 8*result_tier;
+
+        exp_value = Math.max(exp_value,result_tier * 4 * material_count);
+        exp_value = Math.max(0,exp_value*(rarity_multiplier**0.5 - (result_level/skill_level)))*rarity_multiplier;
+    } else {
+        const result_level = 8*Math.max(selected_components[0].component_tier,selected_components[1].component_tier);
+        exp_value = Math.max(exp_value,(selected_components[0].component_tier+selected_components[1].component_tier) * 4);
+        exp_value = Math.max(0,exp_value*(rarity_multiplier**0.5 - (result_level/skill_level)))*rarity_multiplier;
+    }
+
+    return exp_value;
 }
 
 //weapon components
@@ -296,8 +324,8 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.components["Short hilt"] = new ComponentRecipe({
         name: "Short hilt",
         materials: [
-            {material_id: "Piece of rough wood", count: 4, result_id: "Simple short wooden hilt"},
-            {material_id: "Piece of wood", count: 4, result_id: "Short wooden hilt"},
+            {material_id: "Processed rough wood", count: 1, result_id: "Simple short wooden hilt"},
+            {material_id: "Processed wood", count: 1, result_id: "Short wooden hilt"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -305,8 +333,8 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.components["Medium handle"] = new ComponentRecipe({
         name: "Medium handle",
         materials: [
-            {material_id: "Piece of rough wood", count: 8, result_id: "Simple medium wooden handle"},
-            {material_id: "Piece of wood", count: 8, result_id: "Medium wooden handle"},
+            {material_id: "Processed rough wood", count: 2, result_id: "Simple medium wooden handle"},
+            {material_id: "Processed wood", count: 2, result_id: "Medium wooden handle"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -314,8 +342,8 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.components["Long shaft"] = new ComponentRecipe({
         name: "Long shaft",
         materials: [
-            {material_id: "Piece of rough wood", count: 12, result_id: "Simple long wooden shaft"},
-            {material_id: "Piece of wood", count: 12, result_id: "Long wooden shaft"},
+            {material_id: "Processed rough wood", count: 4, result_id: "Simple long wooden shaft"},
+            {material_id: "Processed wood", count: 4, result_id: "Long wooden shaft"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -327,8 +355,8 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.components["Shield base"] = new ComponentRecipe({
         name: "Shield base",
         materials: [
-            {material_id: "Piece of rough wood", count: 20, result_id: "Crude wooden shield base"}, 
-            {material_id: "Piece of wood", count: 20, result_id: "Wooden shield base"},
+            {material_id: "Processed rough wood", count: 6, result_id: "Crude wooden shield base"}, 
+            {material_id: "Processed wood", count: 6, result_id: "Wooden shield base"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -338,8 +366,8 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.components["Shield handle"] = new ComponentRecipe({
         name: "Shield handle",
         materials: [
-            {material_id: "Piece of rough wood", count: 5, result_id: "Basic shield handle"}, 
-            {material_id: "Piece of wood", count: 5, result_id: "Wooden shield handle"},
+            {material_id: "Processed rough wood", count: 4, result_id: "Basic shield handle"}, 
+            {material_id: "Processed wood", count: 4, result_id: "Wooden shield handle"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -599,7 +627,7 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.items["Piece of wolf rat leather"] = new ItemRecipe({
         name: "Piece of wolf rat leather",
         recipe_type: "material",
-        materials: [{material_id: "Rat pelt", count: 5}], 
+        materials: [{material_id: "Rat pelt", count: 8}], 
         result: {result_id: "Piece of wolf rat leather", count: 1},
         success_chance: [0.4,1],
         recipe_level: [1,5],
@@ -608,7 +636,7 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.items["Piece of wolf leather"] = new ItemRecipe({
         name: "Piece of wolf leather",
         recipe_type: "material",
-        materials: [{material_id: "Wolf pelt", count: 5}], 
+        materials: [{material_id: "Wolf pelt", count: 8}], 
         result: {result_id: "Piece of wolf leather", count: 1},
         success_chance: [0.2,1],
         recipe_skill: "Crafting",
@@ -617,7 +645,7 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.items["Piece of boar leather"] = new ItemRecipe({
         name: "Piece of boar leather",
         recipe_type: "material",
-        materials: [{material_id: "Boar hide", count: 5}], 
+        materials: [{material_id: "Boar hide", count: 8}],
         result: {result_id: "Piece of boar leather", count: 1},
         success_chance: [0.2,1],
         recipe_skill: "Crafting",
@@ -645,7 +673,7 @@ class EquipmentRecipe extends Recipe {
     crafting_recipes.items["Rat meat chunks"] = new ItemRecipe({
         name: "Rat meat chunks",
         recipe_type: "material",
-        materials: [{material_id: "Rat tail", count: 5}], 
+        materials: [{material_id: "Rat tail", count: 8}], 
         result: {result_id: "Rat meat chunks", count: 1},
         success_chance: [0.4,1],
         recipe_level: [1,5],
@@ -669,6 +697,25 @@ class EquipmentRecipe extends Recipe {
         success_chance: [0.1,1],
         recipe_level: [5,15],
         recipe_skill: "Smelting",
+    });
+
+    crafting_recipes.items["Processed rough wood"] = new ItemRecipe({
+        name: "Processed rough wood",
+        recipe_type: "material",
+        materials: [{material_id: "Piece of rough wood", count: 5}], 
+        result: {result_id: "Processed rough wood", count: 1},
+        success_chance: [0.6,1],
+        recipe_level: [1,5],
+        recipe_skill: "Crafting",
+    });
+    crafting_recipes.items["Processed wood"] = new ItemRecipe({
+        name: "Processed wood",
+        recipe_type: "material",
+        materials: [{material_id: "Piece of wood", count: 5}], 
+        result: {result_id: "Processed wood", count: 1},
+        success_chance: [0.2,1],
+        recipe_level: [5,15],
+        recipe_skill: "Crafting",
     });
 })();
 
@@ -748,4 +795,4 @@ const recipes = {
     alchemy: alchemy_recipes
 }
 
-export {recipes}
+export {recipes, get_recipe_xp_value}

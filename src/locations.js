@@ -12,6 +12,7 @@ const location_types = {};
 class Location {
     constructor({
                 name, 
+                id,
                 description, 
                 connected_locations, 
                 is_unlocked = true, 
@@ -25,10 +26,12 @@ class Location {
                 background_noises = [],
                 getBackgroundNoises,
                 crafting = null,
+                tags = {},
             }) {
         // always a safe zone
 
         this.name = name; //needs to be the same as key in locations
+        this.id = id || name;
         this.description = description;
         this.getDescription = getDescription || function(){return description;}
         this.background_noises = background_noises;
@@ -48,12 +51,27 @@ class Location {
         }
         this.light_level = light_level; //not really used for this type
         this.crafting = crafting;
-        /* {is_unlocked: Boolean, use_text: String} */
+        this.tags = tags;
+        this.tags["Safe zone"] = true;
+        /* 
+        crafting: {
+            is_unlocked: Boolean, 
+            use_text: String, 
+            tiers: {
+                crafting: Number,
+                forging: Number,
+                smelting: Number,
+                cooking: Number,
+                alchemy: Number,
+            }
+        },
+         */
     }
 }
 
 class Combat_zone {
     constructor({name, 
+                id,
                  description, 
                  getDescription,
                  is_unlocked = true, 
@@ -71,9 +89,11 @@ class Combat_zone {
                  otherUnlocks,
                  unlock_text,
                  is_challenge = false,
+                 tags = {},
                 }) {
 
         this.name = name;
+        this.id = id || name;
         this.unlock_text = unlock_text;
         this.description = description;
         this.getDescription = getDescription || function(){return description;}
@@ -142,6 +162,9 @@ class Combat_zone {
         } else {
             this.light_level = "normal";
         }
+
+        this.tags = tags;
+        this.tags["Combat zone"] = true;
     }
 
     get_next_enemies() {
@@ -575,12 +598,12 @@ function get_location_type_penalty(type, stage, stat) {
         connected_locations: [], 
         getDescription: function() {
             if(locations["Infested field"].enemy_groups_killed >= 5 * locations["Infested field"].enemy_count) { 
-                return "Medium-sized village built near a small river. It's surrounded by many fields, a few of them infested by huge rats which, while an annoyance, don't seem possible to fully eradicate. Other than that, there's nothing interesting around";
+                return "Medium-sized village, built next to a small river at the foot of the mountains. It's surrounded by many fields, a few of them infested by huge rats which, while an annoyance, don't seem possible to fully eradicate. Other than that, there's nothing interesting around";
             }
             else if(locations["Infested field"].enemy_groups_killed >= 2 * locations["Infested field"].enemy_count) {
-                return "Medium-sized village built near a small river. It's surrounded by many fields, many of them infested by huge rats. Other than that, there's nothing interesting around";
+                return "Medium-sized village, built next to a small river at the foot of the mountains. It's surrounded by many fields, many of them infested by huge rats. Other than that, there's nothing interesting around";
             } else {
-                return "Medium-sized village built near a small river. It's surrounded by many fields, most of them infested by huge rats. Other than that, there's nothing interesting around"; 
+                return "Medium-sized village, built next to a small river at the foot of the mountains. It's surrounded by many fields, most of them infested by huge rats. Other than that, there's nothing interesting around"; 
             }
         },
         getBackgroundNoises: function() {
@@ -650,7 +673,6 @@ function get_location_type_penalty(type, stage, stat) {
         }
     });
     locations["Village"].connected_locations.push({location: locations["Infested field"]});
-    
 
     locations["Nearby cave"] = new Location({ 
         connected_locations: [{location: locations["Village"], custom_text: "Go outside and to the village"}], 
@@ -1081,8 +1103,8 @@ function get_location_type_penalty(type, stage, stat) {
             skill_xp_per_tick: 1,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Low quality iron ore", ammount: [[1,1], [1,1]], chance: [0.3, 0.7]}], 
-                time_period: [20, 10],
+                resources: [{name: "Low quality iron ore", ammount: [[1,1], [1,3]], chance: [0.3, 0.7]}], 
+                time_period: [60, 30],
                 skill_required: [0, 10],
                 scales_with_skill: true,
             },
@@ -1095,8 +1117,8 @@ function get_location_type_penalty(type, stage, stat) {
             skill_xp_per_tick: 3,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Iron ore", ammount: [[1,1], [1,1]], chance: [0.1, 0.6]}], 
-                time_period: [40, 15],
+                resources: [{name: "Iron ore", ammount: [[1,1], [1,3]], chance: [0.1, 0.6]}], 
+                time_period: [120, 45],
                 skill_required: [7, 17],
                 scales_with_skill: true,
             },
@@ -1118,7 +1140,7 @@ function get_location_type_penalty(type, stage, stat) {
             is_unlocked: false,
             gained_resources: {
                 resources: [{name: "Piece of wood", ammount: [[1,1], [1,3]], chance: [0.1, 1]}],
-                time_period: [40, 15],
+                time_period: [120, 45],
                 skill_required: [10, 20],
                 scales_with_skill: true,
             },
@@ -1135,7 +1157,7 @@ function get_location_type_penalty(type, stage, stat) {
                     {name: "Golmoon leaf", ammount: [[1,1], [1,1]], chance: [0.1, 0.7]},
                     {name: "Belmart leaf", ammount: [[1,1], [1,1]], chance: [0.1, 0.7]}
                 ], 
-                time_period: [60, 30],
+                time_period: [120, 60],
                 skill_required: [0, 10],
                 scales_with_skill: true,
             },
@@ -1164,7 +1186,7 @@ function get_location_type_penalty(type, stage, stat) {
                 resources: [
                     {name: "Wool", ammount: [[1,1], [1,3]], chance: [0.1, 1]},
                 ], 
-                time_period: [60, 30],
+                time_period: [120, 60],
                 skill_required: [0, 10],
                 scales_with_skill: true,
             },

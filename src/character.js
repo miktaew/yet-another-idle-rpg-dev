@@ -7,7 +7,7 @@ import { update_displayed_character_inventory, update_displayed_equipment,
          update_displayed_health, update_displayed_stamina, 
          update_displayed_skill_xp_gain, update_all_displayed_skills_xp_gain,
          update_displayed_xp_bonuses } from "./display.js";
-import { current_location, current_stance } from "./main.js";
+import { active_effects, current_location, current_stance } from "./main.js";
 import { current_game_time } from "./game_time.js";
 import { stances } from "./combat_stances.js";
 
@@ -24,15 +24,19 @@ character.name = "Hero";
 character.titles = {};
 character.base_stats = {
         max_health: 40, 
-        health: 40, 
+        health: 40,
+        health_regeneration_flat: 0, //in combat
+        health_regeneration_percent: 0, //in combat
         max_stamina: 40,
         stamina: 40,
+        stamina_regeneration_flat: 0, //in combat
+        stamina_regeneration_percenty: 0, //in combat
         stamina_efficiency: 1,
-        stamina_regeneration: 0, //in combat, currently unusued
         max_mana: 0,
         mana: 0,
+        mana_regeneration_flat: 0, //in combat
+        mana_regeneration_percent: 0, //in combat
         mana_efficiency: 1,
-        mana_regeneration: 0, //in combat, currently unusued
         strength: 10, 
         agility: 10, 
         dexterity: 10, 
@@ -47,6 +51,7 @@ character.base_stats = {
         block_chance: 0,
         evasion_points: 0, //EP
         attack_points: 0, //AP
+        
 };
 
 character.stats = {};
@@ -196,8 +201,7 @@ character.get_level_bonus = function (level) {
                 gains += `<br>Intuition increased by ${gained_int}`;
         }
 
-        gains += `<br>Skill xp gains increased by ${(gained_skill_xp_multiplier-1)*100}%`;
-        
+        gains += `<br>Skill xp gains increased by ${Math.round((gained_skill_xp_multiplier-1)*100)}%`;
         
         return gains;
 }
@@ -207,13 +211,13 @@ character.get_level_bonus = function (level) {
  * called when a new milestone is reached
  * @param {{flats, multipliers}} bonuses 
  */
-character.stats.add_skill_milestone_bonus = function ({flats = {}, multipliers = {}, xp_multipliers = {}}) {
-        Object.keys(character.base_stats).forEach(stat => {
-                if(flats[stat]) {
-                        character.stats.flat.skill_milestones[stat] = (character.stats.flat.skill_milestones[stat] || 0) + flats[stat];
+character.stats.add_skill_milestone_bonus = function ({stats = {}, xp_multipliers = {}}) {
+        Object.keys(stats).forEach(stat => {
+                if(stats[stat].flat) {
+                        character.stats.flat.skill_milestones[stat] = (character.stats.flat.skill_milestones[stat] || 0) + stats[stat].flat;
                 }
-                if(multipliers[stat]) {
-                        character.stats.multiplier.skill_milestones[stat] = (character.stats.multiplier.skill_milestones[stat] || 1) * multipliers[stat];
+                if(stats[stat].multiplier) {
+                        character.stats.multiplier.skill_milestones[stat] = (character.stats.multiplier.skill_milestones[stat] || 1) * stats[stat].multiplier;
                 }
         });
 
@@ -263,6 +267,22 @@ character.stats.add_book_bonus = function ({multipliers = {}, xp_multipliers = {
         });
 }
 
+character.stats.add_active_effect_bonus = function() {
+        character.stats.flat.active_effect = {};
+        character.stats.multiplier.active_effect = {};
+        Object.values(active_effects).forEach(effect => {
+                for(const [key, value] of Object.entries(effect.effects.stats)) {
+                        if(value.flat) {
+                                character.stats.flat.active_effect[key] = (character.stats.flat.active_effect[key] || 0) + value.flat;
+                        }
+
+                        if(value.multiplier) {
+                                character.stats.multiplier.active_effect[key] = (character.stats.multiplier.active_effect[key] || 1) * value.multiplier;
+                        }
+                }
+        });
+}
+
 /**
  * add all stat bonuses from equipment, including def/atk
  * called on equipment changes
@@ -298,7 +318,6 @@ character.stats.add_all_equipment_bonus = function() {
 
         character.stats.add_weapon_type_bonuses();
         //add weapon speed bonus (technically a bonus related to equipment, so its in this function)
-        
 }
 
 character.stats.add_weapon_type_bonuses = function() {
@@ -528,19 +547,18 @@ character.get_character_money = function () {
  * @param {Array} items [{item, count},...] 
  */
 function add_to_character_inventory(items) {
-        character.add_to_inventory(items);
+        const was_anything_new_added = character.add_to_inventory(items);
         for(let i = 0; i < items.length; i++) {
                 if(items[i].item.tags.tool && character.equipment[items[i].item.equip_slot] === null) {
-                        equip_item_from_inventory({item_name: items[i].item.id, item_id: 0});
+                        equip_item_from_inventory(items[i].item.getInventoryKey());
                 }
         }
-        
-        update_displayed_character_inventory();
+        update_displayed_character_inventory({was_anything_new_added});
 }
 
 /**
  * Removes items from character's inventory
- * Takes an array in form of [{item_name, item_count, item_id}] with TWO params, name and either count (for stackables) or inventory id (for unstackables)
+ * Takes an array in form of [{item_key, item_count}]
  */
 function remove_from_character_inventory(items) {
         character.remove_from_inventory(items);
@@ -566,14 +584,14 @@ function equip_item(item) {
 
 /**
  * equips item and removes it from inventory
- * @param item_info - {name, id}
- */
- function equip_item_from_inventory({item_name, item_id}) {
-        if(item_name in character.inventory) { //check if its in inventory, just in case
+ * @param item_key
+ **/
+ function equip_item_from_inventory(item_key) {
+        if(item_key in character.inventory) { //check if its in inventory, just in case
             //add specific item to equipment slot
             // -> id and name tell which exactly item it is, then also check slot in item object and thats all whats needed
-            equip_item(character.inventory[item_name][item_id]);
-            remove_from_character_inventory([{item_name, item_id}]);
+            equip_item(character.inventory[item_key].item);
+            remove_from_character_inventory([{item_key}]);
             
             update_character_stats();
         }
