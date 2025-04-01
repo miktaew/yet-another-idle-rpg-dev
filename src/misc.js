@@ -1,5 +1,29 @@
 "use strict";
 
+const stat_names = {"strength": "str",
+    "health": "hp",
+    "max_health": "hp", //same as for "health"
+    "health_regenaration_flat": "hp regen",
+    "health_regeneration_multiplier": "hp regen",
+    "health_loss_flat": "hp loss",
+    "health_loss_multiplier": "hp loss",
+    "max_stamina": "stamina",
+    "agility": "agl",
+    "dexterity": "dex",
+    "magic": "magic",
+    "attack_speed": "attack speed",
+    "attack_power": "attack power",
+    "crit_rate": "crit rate",
+    "crit_multiplier": "crit dmg",
+    "stamina_efficiency": "stamina efficiency",
+    "intuition": "int",
+    "block_strength": "shield strength",
+    "hit_chance": "hit chance",
+    "evasion": "EP",
+    "evasion_points": "EP",
+    "attack_points": "AP",
+};
+
 function expo(number, precision = 2)
 {
     if(number == 0) {
@@ -30,34 +54,37 @@ function round_item_price(price) {
 function format_reading_time(time) {
     if(time >= 120) {
         return `${Math.floor(time/60)} hours`;
-    }
-    else if(time >= 60) {
+    } else if(time >= 60) {
         return '1 hour';
-    }
-    else {
+    } else {
         return `${Math.round(time)} minutes`;
     }
 }
 
-const stat_names = {"strength": "str",
-                    "health": "hp",
-                    "max_health": "hp", //same as for "health"
-                    "max_stamina": "stamina",
-                    "agility": "agl",
-                    "dexterity": "dex",
-                    "magic": "magic",
-                    "attack_speed": "attack speed",
-                    "attack_power": "attack power",
-                    "crit_rate": "crit rate",
-                    "crit_multiplier": "crit dmg",
-                    "stamina_efficiency": "stamina efficiency",
-                    "intuition": "int",
-                    "block_strength": "shield strength",
-                    "hit_chance": "hit chance",
-                    "evasion": "EP",
-                    "evasion_points": "EP",
-                    "attack_points": "AP",
-                };
+function format_working_time(time) {
+    let formatted = "";
+    const hours = Math.floor(time/60);
+    const minutes = time%60;
+
+    if(hours > 0) {
+        if(hours > 1) {
+            formatted += hours + " hours";
+        } else {
+            formatted += hours + " hour";
+        }
+    }
+    if(minutes > 0) {
+        if(hours > 0) {
+            formatted += " ";
+        }
+        if(minutes > 1) {
+            formatted += minutes + " minutes";
+        } else {
+            formatted += minutes + " minute";
+        }
+    }
+    return formatted;
+}
 
 function get_hit_chance(attack_points, evasion_points) {
     let result = attack_points/(attack_points+evasion_points);
@@ -112,4 +139,4 @@ function compare_game_version(version_a, version_b) {
     return 0;
 }
 
-export { expo, format_reading_time, stat_names, get_hit_chance, compare_game_version, round_item_price};
+export { expo, format_reading_time, format_working_time, stat_names, get_hit_chance, compare_game_version, round_item_price};
