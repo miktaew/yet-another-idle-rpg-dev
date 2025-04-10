@@ -14,7 +14,7 @@ import { current_enemies, options,
     unlocked_beds} from "./main.js";
 import { dialogues } from "./dialogues.js";
 import { activities } from "./activities.js";
-import { format_time, current_game_time } from "./game_time.js";
+import { format_time, current_game_time, is_night } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey } from "./items.js";
 import { get_location_type_penalty, location_types, locations } from "./locations.js";
 import { enemy_killcount, enemy_templates } from "./enemies.js";
@@ -130,7 +130,7 @@ const character_attack_bar = document.getElementById("character_attack_bar");
 //equipment slots
 const equipment_slots_divs = {head: document.getElementById("head_slot"), torso: document.getElementById("torso_slot"),
                               arms: document.getElementById("arms_slot"), ring: document.getElementById("ring_slot"),
-                              weapon: document.getElementById("weapon_slot"), "off-hand": document.getElementById("offhand_slot"),
+                              weapon: document.getElementById("weapon_slot"), "off-hand": document.getElementById("off-hand_slot"),
                               legs: document.getElementById("legs_slot"), feet: document.getElementById("feet_slot"),
                               amulet: document.getElementById("amulet_slot"), artifact: document.getElementById("artifact_slot"),
                               pickaxe: document.getElementById("pickaxe_slot"),
@@ -419,7 +419,7 @@ function create_item_tooltip_content({item, options={}}) {
 /** 
  * @param {Object} item_effect from item effects[]
  */
-function create_effect_tooltip({effect_name, duration, options = {}}) {
+function create_effect_tooltip({effect_name, duration}) {
     const effect = effect_templates[effect_name];
     const tooltip = document.createElement("div");
 
@@ -3042,7 +3042,7 @@ function update_displayed_effect_durations() {
 }
 
 function update_displayed_time() {
-    if(current_game_time.hour >= 20 || current_game_time.hour < 4) {
+    if(is_night(current_game_time)) {
         time_field.innerHTML = current_game_time.toString() + '<span class="material-icons icon icon_night">nightlight_round</span>';
     } else {
         time_field.innerHTML = current_game_time.toString() + '<span class="material-icons icon icon_day">light_mode</span>';
