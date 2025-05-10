@@ -451,10 +451,33 @@ class LocationAction{
             throw new Error('LocationAction cannot have more than 2 sets of conditions!');
         }
         this.conditions = conditions; 
-        //things needed to succeed [{stats, skills, items_by_id: {'item_id': {count, remove?}}, money: {Number, remove?}}, {?}]
+        //things needed to succeed
         //either single set of values or two sets, one for minimum chance provided and one for maximum
         //two-set approach does not apply to items, so it only checks them for conditions[0]
         //if applicable, items get removed both on failure and or success - if action requires them, it's better to have guaranteed success
+        /* 
+            {
+                money: {
+                    number: Number, //how much money to require
+                    remove: Boolean //if should be removed from inventory (false -> its kept)
+                }
+                stats: [
+                    "stat_id": Number //required stat
+                ],
+
+                skills: [
+                    "skill_id": Number //required level
+                ],
+                items_by_id: 
+                [
+                    {
+                        "item_id": {
+                            count: Number,
+                            remove: Boolean
+                    }
+                ]
+            }
+        */
         this.check_conditions_on_finish = check_conditions_on_finish; //means an action with duration can be attempted even if conditions are not met
         this.rewards = rewards; //{unlocks, money, items,move_to}?
         this.attempt_duration = attempt_duration; //0 means instantaneous, otherwise there's a progress bar
@@ -793,7 +816,7 @@ function get_location_type_penalty(type, stage, stat, category) {
                     dexterity: {multiplier: 0.8},
                     intuition: {multiplier: 0.5},
                     stamina_efficiency: {multiplier: 0.75},
-                    health_loss_flat: {flat: 5},
+                    health_loss_flat: {flat: -5},
                 }
             },
             2: {
@@ -804,7 +827,7 @@ function get_location_type_penalty(type, stage, stat, category) {
                     dexterity: {multiplier: 0.3},
                     intuition: {multiplier: 0.2},
                     stamina_efficiency: {multiplier: 0.5},
-                    health_loss_flat: {flat: 50},
+                    health_loss_flat: {flat: -50},
                 }
             }
         }
