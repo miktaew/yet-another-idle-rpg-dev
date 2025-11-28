@@ -18,7 +18,7 @@ class Trader extends InventoryHaver {
                 refresh_time = 4,
                 refresh_shift = 0,
                 inventory_template,
-                profit_margin = 2,
+                profit_margin = 3,
                 is_unlocked = true,
             }) 
     {
@@ -127,7 +127,7 @@ class TradeItem {
     constructor({ item_name,
                   chance = 1,
                   count = [1],
-                  quality = [20, 80]
+                  quality = null,
                 }) 
     {
         this.item_name = item_name;
@@ -152,7 +152,7 @@ class TradeItem {
         inventory_template: "Basic plus",
         is_unlocked: true,
         location_name: "Slums",
-        profit_margin: 3,
+        profit_margin: 5,
     });
     traders["suspicious trader 2"] = new Trader({
         name: "suspicious trader 2",
@@ -160,7 +160,7 @@ class TradeItem {
         inventory_template: "Intermediate",
         is_unlocked: false,
         location_name: "Slums",
-        profit_margin: 2.8, //rise back to 3 once reputation is implemented
+        profit_margin: 4, //rise back to 5 once reputation is implemented
     });
 })();
 
@@ -199,21 +199,27 @@ class TradeItem {
             new TradeItem({item_name: "Leather hat", count: [1], chance: 0.7, quality: [70, 120]}),
             new TradeItem({item_name: "Leather gloves", count: [1], chance: 0.7, quality: [70, 120]}),
 
-
             new TradeItem({item_name: "Wolf leather armor", count: [1], chance: 0.3, quality: [60, 120]}),
             new TradeItem({item_name: "Wolf leather armored pants", count: [1], chance: 0.3, quality: [60, 120]}),
             new TradeItem({item_name: "Wolf leather helmet", count: [1], chance: 0.3, quality: [60, 120]}),
 
+            new TradeItem({item_name: "Rat pelt cape", count: [1,3], chance: 1, quality: [70, 120]}),
+
             new TradeItem({item_name: "Stale bread", count: [4,10]}),
+            new TradeItem({item_name: "Bread kwas", count: [1], chance: 0.6}),
             new TradeItem({item_name: "Fresh bread", count: [2,5]}),
             new TradeItem({item_name: "Weak healing powder", count: [2,5]}),
+            new TradeItem({item_name: "Cooking herbs", count: [1,3]}, 0.5),
 
             new TradeItem({item_name: "ABC for kids", count: [1], chance: 1}),
             new TradeItem({item_name: "Old combat manual", count: [1], chance: 0.5}),
             new TradeItem({item_name: "Butchering and you", count: [1], chance: 0.2}),
             new TradeItem({item_name: "Medicine for dummies", count: [1], chance: 0.2}),
+            new TradeItem({item_name: "Ode to Whimsy, and other poems", count: [1], chance: 0.2}),
+            new TradeItem({item_name: "A Glint On The Sand", count: [1], chance: 0.2}),
             
             new TradeItem({item_name: "Glass phial", count: [5,10], chance: 1}),
+            new TradeItem({item_name: "Glass bottle", count: [4,8], chance: 1}),
 
             new TradeItem({item_name: "Camping supplies", count: [1], chance: 1}),
             new TradeItem({item_name: "Coil of rope", count: [1], chance: 1}),
@@ -263,6 +269,9 @@ class TradeItem {
             new TradeItem({item_name: "Wolf leather armor", count: [1], chance: 0.8, quality: [91, 120]}),
             new TradeItem({item_name: "Wolf leather armored pants", count: [1], chance: 0.8, quality: [91, 120]}),
             new TradeItem({item_name: "Wolf leather helmet", count: [1], chance: 0.8, quality: [91, 120]}),
+
+            new TradeItem({item_name: "Rat pelt cape", count: [1,2], chance: 0.6, quality: [70, 120]}),
+            new TradeItem({item_name: "Wolf pelt cape", count: [1], chance: 0.9, quality: [70, 120]}),
             
             new TradeItem({item_name: "Iron chainmail armor", count: [1], chance: 0.8, quality: [40, 80]}),
             new TradeItem({item_name: "Iron chainmail armor", count: [1], chance: 0.6, quality: [81, 120]}),
@@ -273,14 +282,19 @@ class TradeItem {
             
             new TradeItem({item_name: "Stale bread", count: [4,10]}),
             new TradeItem({item_name: "Fresh bread", count: [2,5]}),
+            new TradeItem({item_name: "Bread kwas", count: [1,3]}),
             new TradeItem({item_name: "Weak healing powder", count: [2,5]}),
             new TradeItem({item_name: "Oneberry juice", count: [2,5]}),
+            new TradeItem({item_name: "Cooking herbs", count: [1,4]}, 0.6),
 
             new TradeItem({item_name: "Twist liek a snek", count: [1], chance: 0.8}),
             new TradeItem({item_name: "Butchering and you", count: [1], chance: 0.6}),
             new TradeItem({item_name: "Medicine for dummies", count: [1], chance: 0.6}),
+            new TradeItem({item_name: "Ode to Whimsy, and other poems", count: [1], chance: 0.4}),
+            new TradeItem({item_name: "A Glint On The Sand", count: [1], chance: 0.4}),
 
             new TradeItem({item_name: "Glass phial", count: [5,10], chance: 1}),
+            new TradeItem({item_name: "Glass bottle", count: [4,8], chance: 1}),
 
             new TradeItem({item_name: "Camping supplies", count: [1], chance: 1}),
             new TradeItem({item_name: "Coil of rope", count: [1], chance: 1}),
@@ -288,7 +302,6 @@ class TradeItem {
             new TradeItem({item_name: "Iron sickle", count: [1], chance: 0.8}),
             new TradeItem({item_name: "Iron pickaxe", count: [1], chance: 0.8}),
             new TradeItem({item_name: "Iron chopping axe", count: [1], chance: 0.8}),
-            
     ];
 
     inventory_templates["Intermediate"] = 
@@ -343,19 +356,28 @@ class TradeItem {
         new TradeItem({item_name: "Steel chainmail armor", count: [1], chance: 0.6, quality: [81, 120]}),
         new TradeItem({item_name: "Steel chainmail pants", count: [1], chance: 0.6, quality: [81, 120]}),
         new TradeItem({item_name: "Steel chainmail helmet", count: [1], chance: 0.6, quality: [81, 120]}),
+
+        new TradeItem({item_name: "Wolf pelt cape", count: [1], chance: 0.9, quality: [70, 120]}),
+        new TradeItem({item_name: "Boar hide cape", count: [1], chance: 0.9, quality: [70, 120]}),
+        new TradeItem({item_name: "Goat hide cape", count: [1], chance: 0.9, quality: [70, 120]}),
         
         
         new TradeItem({item_name: "Fresh bread", count: [4,10]}),
+        new TradeItem({item_name: "Bread kwas", count: [2,5]}),
         new TradeItem({item_name: "Weak healing powder", count: [2,5]}),
         new TradeItem({item_name: "Oneberry juice", count: [2,5]}),
         new TradeItem({item_name: "Healing powder", count: [2,5]}),
         new TradeItem({item_name: "Healing potion", count: [2,5]}),
+        new TradeItem({item_name: "Cooking herbs", count: [2,5]}, 0.8),
 
         new TradeItem({item_name: "Twist liek a snek", count: [1], chance: 1}),
         new TradeItem({item_name: "Butchering and you", count: [1], chance: 1}),
         new TradeItem({item_name: "Medicine for dummies", count: [1], chance: 1}),
+        new TradeItem({item_name: "Ode to Whimsy, and other poems", count: [1], chance: 0.4}),
+        new TradeItem({item_name: "A Glint On The Sand", count: [1], chance: 0.4}),
 
         new TradeItem({item_name: "Glass phial", count: [10,16], chance: 1}),
+        new TradeItem({item_name: "Glass bottle", count: [6,12], chance: 1}),
 
         new TradeItem({item_name: "Camping supplies", count: [1], chance: 1}),
         new TradeItem({item_name: "Coil of rope", count: [1], chance: 1}),
@@ -365,4 +387,4 @@ class TradeItem {
         new TradeItem({item_name: "Iron chopping axe", count: [1], chance: 1}),
     ];
 })();
-export {traders};
+export { traders, inventory_templates, TradeItem };

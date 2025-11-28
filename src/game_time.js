@@ -1,17 +1,17 @@
 "use strict";
 
-function Game_time(new_time) {
+function Game_Time(new_time) {
     this.year = new_time.year;
     this.month = new_time.month;
     this.day = new_time.day;
     this.hour = new_time.hour;
     this.minute = new_time.minute;
-    this.day_count = new_time.day_count;
+    this.day_count = new_time.day_count ?? 1;
     //only hours and minutes should be allowed to be 0
     //day_count is purely for calculating day of the week, by default it always start at monday (so day_count = 1)
 
     this.goUp = function(how_much) {
-        this.minute += how_much || 1;
+        this.minute += how_much ?? 1;
         if(this.minute >= 60) {
             const m = this.minute % 60;
             const h = Math.floor(this.minute/60);
@@ -23,7 +23,7 @@ function Game_time(new_time) {
             const h = this.hour % 24;
             const d = Math.floor((this.hour-1)/24) + 1;
             this.hour = h;
-            this.day += d; 
+            this.day += d;
             this.day_count += d;
         }
     
@@ -42,6 +42,10 @@ function Game_time(new_time) {
         }
     }
 
+    this.goUp(0); 
+    //just in case someone passes a value that's not exactly correct, in a situation where it won't ever get incremented so it won't automatically fix
+    //e.g. in weather when grabbing date for next weather, as a change in month would not be reflected and adding a manual recalculation there would be just stupid
+
     this.loadTime = function(new_time) {
         this.year = new_time.year;
         this.month = new_time.month;
@@ -51,48 +55,72 @@ function Game_time(new_time) {
         this.day_count = new_time.day_count;
     }
 
-    this.getSeason = function() {
-        if(this.month > 9) return "Winter";
-        else if(this.month > 6) return "Autumn";
-        else if(this.month > 3) return "Summer";
-        else return "Spring";
+    /**
+     * 
+     * @param {Number} day_count for how far in future to check, leaving at 0 will just return the current season
+     * @returns 
+     */
+    this.getSeason = function(day_count) {
+        let month;
+        if(day_count) {
+            month = this.month + Math.floor((this.day + day_count)/30);
+        } else {
+            month = this.month;
+        }
+
+        if(month > 9) return seasons[3];
+        else if(month > 6) return seasons[2];
+        else if(month > 3) return seasons[1];
+        else return seasons[0];
+    }
+
+    this.getTimeOfDay = function() {
+        if (this.hour >= 21 || this.hour < 4) return "Night";
+        else if(this.hour >= 4 && this.hour < 8) return "Dawn";
+        else if(this.hour >= 8 && this.hour < 18) return "Day";
+        else return "Dusk";
+    }
+    
+    this.getTimeOfDaySimple = function() {
+        //changing this also requires changing values in get_current_temperature_smoothed() in weather.js
+        if (this.hour >= 21 || this.hour < 4) return "Night";
+        else return "Day";
     }
 
     this.getDayOfTheWeek = function() {
         switch(this.day_count % 7) {
             case 0:
-                return "Sunday";
+                return "Sun";
             case 1: 
-                return "Monday";
+                return "Mon";
             case 2:
-                return "Tuesday";
+                return "Tue";
             case 3: 
-                return "Wednesday";
+                return "Wed";
             case 4:
-                return "Thursday";
+                return "Thu";
             case 5:
-                return "Friday";
+                return "Fri";
             case 6:
-                return "Saturday";
+                return "Sat";
         }
     }	
-
 }
 
-Game_time.prototype.toString = function() {
-    var date_string = this.getDayOfTheWeek() + " ";
-    date_string += ((this.day>9?this.day:`0${this.day}`) + "/");
+Game_Time.prototype.toString = function() {
+    let date_string = ((this.day>9?this.day:`0${this.day}`) + "/");
     date_string += ((this.month>9?this.month:`0${this.month}`) + "/");
     date_string += (this.year + " ");
     date_string += ((this.hour>9?this.hour:`0${this.hour}`) + ":");
-    date_string += this.minute>9?this.minute:`0${this.minute}`;
+    date_string += (this.minute>9?this.minute:`0${this.minute}`) + ", ";
+    date_string += this.getSeason() + ", " + this.getDayOfTheWeek();
     return date_string;
 }
 
 /**
  * 
  * @param {Object} data 
- * @param {Number} data.time {minutes, hours, days, months, years}
+ * @param {Object} data.time {minutes, hours, days, months, years}
  * @param {Boolean} [data.long_names] if it should use "minutes", "hours", etc instead of "m","h"
  * @returns 
  */
@@ -133,18 +161,19 @@ function format_time({time, long_names, round=true}) { //{time, long_names?}
         formatted_time += long_names? `${time.hours} hours ` : `${time.hours}h`;
     }
     if(time.minutes > 0) {
-        formatted_time += long_names? `${time.minutes} minutes ` : `${time.minutes}m`;
+        formatted_time += long_names? `${Math.round(time.minutes)} minutes ` : `${time.minutes}m`;
     }
 
     return formatted_time;
 }
-
 
 function is_night(time) {
     time = time || current_game_time;
     return (time.hour >= 20 || time.hour < 4);
 }
 
-const current_game_time = new Game_time({year: 999, month: 4, day: 1, hour: 8, minute: 0, day_count: 1});
+const seasons = ["Spring","Summer","Autumn","Winter"];
 
-export {current_game_time, format_time, is_night};
+const current_game_time = new Game_Time({year: 999, month: 4, day: 1, hour: 8, minute: 0, day_count: 1});
+
+export {current_game_time, format_time, is_night, seasons, Game_Time};
