@@ -92,7 +92,8 @@ import { end_activity_animation,
          do_enemy_onhit_animation,
          remove_enemy_onhit_animation,
          create_floating_effect,
-         booklist_entry_divs
+         booklist_entry_divs,
+         do_enemy_onstart_animation
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_hit_chance, is_a_older_than_b, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
@@ -1261,6 +1262,8 @@ function set_new_combat({enemies} = {}) {
         clear_character_attack_loop();
         return;
     }
+
+    //remove animations
     for(let i = 0; i < current_enemies?.length; i++) {
         remove_enemy_onhit_animation(i);
     }
@@ -1295,9 +1298,9 @@ function set_new_combat({enemies} = {}) {
     character_timer_adjustment = 0;
     character_timers = [Date.now(), Date.now()];
 
-    //attach loops and remove animations
+    //attach loops and animations
     for(let i = 0; i < current_enemies.length; i++) {
-        remove_enemy_onhit_animation(i);
+        do_enemy_onstart_animation(i);
         do_enemy_attack_loop(i, 0, true);
     }
 
@@ -1838,15 +1841,15 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
         }
     }
 
-    if(cap_gained_xp && typeof xp_to_next_lvl === Number) {
-        //cap on singular gains for non-crafting skills
+    if(cap_gained_xp && typeof skill.xp_to_next_lvl === Number) {
+        //cap on singular gains for non-crafting skills; cap for crafting skills handled in crafting code as it's dependent on how many items are made at once
         xp_to_add = Math.min(xp_to_add, skill.xp_to_next_lvl*skill_xp_gains_cap);
     }
     
     const prev_name = skill.name();
     const was_hidden = skill.visibility_treshold > skill.total_xp;
 
-    let {message, gains, unlocks} = skill.add_xp({xp_to_add: xp_to_add, cap_gained_xp});
+    let {message, gains, unlocks} = skill.add_xp({xp_to_add: xp_to_add});
     const new_name = skill.name();
     if(skill.parent_skill && add_to_parent) {
         if(skill.total_xp > skills[skill.parent_skill].total_xp) {
@@ -4578,6 +4581,7 @@ function load_from_localstorage() {
                 load(JSON.parse(localStorage.getItem(dev_save_key)));
                 log_message("Loaded dev save. If you want to use save from live version, import it through options panel or manually");
             } else {
+                //no need to check if it should import or do a fresh start (in case it's a result of hard reset), as that's already handled elsewhere
                 load(JSON.parse(localStorage.getItem(save_key)));
                 log_message("Dev save was not found. Loaded live version save.");
             }
@@ -4649,6 +4653,7 @@ function hard_reset() {
     if(confirmation === "reset" || confirmation === `"reset"`) {
         if(is_on_dev()) {
             localStorage.removeItem(dev_save_key);
+            localStorage.setItem("skip_live_import", "true");
         } else {
             localStorage.removeItem(save_key);
         }
@@ -5232,7 +5237,7 @@ play_button.addEventListener("click", hide_loading_screen);
 
 
 //check if there's an existing save file, otherwise just do some initial setup
-if(save_key in localStorage || (is_on_dev() && dev_save_key in localStorage)) {
+if(!is_on_dev() && save_key in localStorage || (is_on_dev() && dev_save_key in localStorage || is_on_dev() && !("skip_live_import" in localStorage) && save_key in localStorage )) {
     load_from_localstorage();
     update_character_stats();
     update_displayed_xp_bonuses();

@@ -954,7 +954,7 @@ function get_location_type_penalty(type, stage, stat, category) {
         is_temperature_static: true,
         static_temperature: 18,
         is_under_roof: true,
-        unlock_text: "After a long and ardous fight, you reach a chamber that ends with a massive stone gate. You can see it's guarded by some kind of wolf rats, but much bigger than the ones you fought until now."
+        unlock_text: "After a long and ardous fight, you reach a chamber that ends with a massive stone gate. You can feel it's guarded by some kind of wolf rats, but much bigger than the ones you fought until now."
     });
 
     locations["Nearby cave"].connected_locations.push(
@@ -1343,10 +1343,11 @@ There's another gate on the wall in front of you, but you have a strange feeling
         first_reward: {
             xp: 1000,
             reputation: {slums: 200, town: 50},
+            money: 1840,
         },
         repeatable_reward: {
             traders: [{trader: "suspicious trader 2", skip_message: true}],
-            textlines: [{dialogue: "suspicious man", lines: ["defeated gang", "behave 3"]}],
+            textlines: [{dialogue: "suspicious man", lines: ["defeated gang"]}],
             locks: {
                 traders: ["suspicious trader"],
                 locations: ["Gang hideout"],
@@ -1396,7 +1397,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
 
     locations["Mountain path"] = new Location({
         connected_locations: [{location: locations["Nearby cave"], custom_text: "Climb down to [Nearby Cave]", travel_time: 20, travel_time_skills: ["Climbing"]}],
-        description: "A treacherus path high above the village",
+        description: "A treacherous path high above the village",
         name: "Mountain path",
         is_unlocked: false,
         getBackgroundNoises: function() {
@@ -1945,6 +1946,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
             rewards: {
                 locations: [{location: "Mountain path"}],
                 move_to: {location: "Mountain path"},
+                skill_xp: {
+                    "Climbing": 1000,
+                }
             },
         }),
     };
