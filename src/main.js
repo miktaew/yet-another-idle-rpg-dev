@@ -1574,7 +1574,7 @@ function do_enemy_combat_action(enemy_id) {
     if(character.equipment["off-hand"]?.offhand_type === "shield") { //HAS SHIELD
         if(character.stats.full.block_chance > Math.random()) {//BLOCKED THE ATTACK
             add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: attacker.xp_value/enemy_count_xp_mod});
-            const blocked = character.stats.total_multiplier.block_strength * character.equipment["off-hand"].getShieldStrength();
+            const blocked = character.equipment["off-hand"].getShieldStrength() * character.equipment["off-hand"].tags.ignore_skill?1:character.stats.total_multiplier.block_strength;
 
             if(blocked > damages_dealt[0]) {
                 log_message(character.name + " blocked an attack", "hero_blocked");
@@ -2187,7 +2187,11 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             if(!trader.is_unlocked) {
                 trader.is_unlocked = true;
                 if(!rewards.traders[i].skip_message) {
-                    log_message(`You can now trade with ${trader.name}`, "activity_unlocked");
+                    if(trader.unlock_message) {
+                        log_message(trader.unlock_message, "activity_unlocked");
+                    } else {
+                        log_message(`You can now trade with ${trader.name}`, "activity_unlocked");
+                    }
                 }
             }
         }
