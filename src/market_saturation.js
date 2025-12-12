@@ -189,21 +189,21 @@ function calculate_total_saturation({sold_by_tier, target_tier, cap}) {
 }
 
 /**
- * 
- * @param {Number} value
- * @param {Number} start_count 
- * @param {Number} how_many_to_sell 
+ * @param {Object} data
+ * @param {Number} data.value
+ * @param {Number} data.start_count
+ * @param {Number} data.how_many_to_sell
  * @returns 
  */
-function get_loot_price_modifier_multiple({value, start_count, how_many_to_trade, is_group, is_selling = true, stop_multiplier_at}) {
+function get_loot_price_multiple({value, start_count, how_many_to_trade, is_group, is_selling = true, stop_multiplier_at}) {
     let sum = 0;
     if(is_selling) {
         for(let i = start_count; i < start_count+how_many_to_trade; i++) {
-            sum += get_loot_price_modifier({value, how_many_sold: Math.min(start_count+stop_multiplier_at,i), is_group});
+            sum += round_item_price(value*get_loot_price_modifier({value, how_many_sold: Math.min(start_count+stop_multiplier_at,i), is_group}));
         }
     } else {
         for(let i = start_count; i > start_count-how_many_to_trade; i--) {
-            sum += get_loot_price_modifier({value, how_many_sold: Math.min(start_count+stop_multiplier_at,Math.max(i,0)), is_group});
+            sum += round_item_price(value*get_loot_price_modifier({value, how_many_sold: Math.min(start_count+stop_multiplier_at,Math.max(i,0)), is_group}));
         }
     }
     return sum;
@@ -226,7 +226,6 @@ function get_item_value_with_market_saturation({base_value, group_key, group_tie
  * i.e. when selling
  */
 function add_to_sold({group_key, group_tier, count, region}) {
-    console.log(loot_sold_count[region][group_key])
     if(!loot_sold_count[region][group_key]) {
         loot_sold_count[region][group_key] = new Array(group_tier+1).fill().map(x => ({sold: 0, recovered: 0}));
     }
@@ -253,7 +252,7 @@ export {
     loot_sold_count, group_key_prefix,
     recover_item_prices, trickle_market_saturations, market_region_mapping,
     set_loot_sold_count,
-    get_loot_price_modifier, get_loot_price_modifier_multiple,
+    get_loot_price_modifier, get_loot_price_multiple,
     get_item_value_with_market_saturation,
     add_to_sold, remove_from_sold,
     get_total_tier_saturation, calculate_total_saturation,
