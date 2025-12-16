@@ -3,7 +3,7 @@
 import { traders } from "./traders.js";
 import { current_trader, to_buy, to_sell } from "./trade.js";
 import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "./skills.js";
-import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_effects, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "./character.js";
+import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "./character.js";
 import { current_enemies, options, 
     can_work, current_location, 
     active_effects, enough_time_for_earnings, 
@@ -307,8 +307,7 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
 
     //different function used depending if its in trade (oh the horror...)
     const value_function = is_trade?"getValue":"getBaseValue";
-
-    item_tooltip
+    
     item_tooltip = `<b>${item.getName()}</b>`;
     if(item.description) {
         item_tooltip += `<br>${item.description}`; 
@@ -4197,7 +4196,7 @@ function create_new_skill_bar(skill) {
             }
         })
 
-        if (skill_category_order.indexOf(skill.category) == -1) {
+        if(skill_category_order.indexOf(skill.category) == -1) {
             skill_category_order.push(skill.category);
         }
     }
@@ -4889,7 +4888,8 @@ function update_enemy_attack_bar(enemy_id, num) {
 
 function do_enemy_onhit_animation(enemy_id) {
     const enemy_div = enemies_div.children[enemy_id];
-    enemy_animations[enemy_id] =  enemy_div.animate(onhitAnimation, onhitAnimationTiming);
+    enemy_animations[enemy_id]?.cancel(); //almost certainly unnecessary
+    enemy_animations[enemy_id] = enemy_div.animate(onhitAnimation, onhitAnimationTiming);
 }
 
 function remove_enemy_onhit_animation(enemy_id) {
@@ -4898,6 +4898,7 @@ function remove_enemy_onhit_animation(enemy_id) {
 
 function do_enemy_onstart_animation(enemy_id) {
     const enemy_div = enemies_div.children[enemy_id];
+    enemy_animations[enemy_id]?.cancel(); //almost certainly unnecessary
     enemy_animations[enemy_id] =  enemy_div.animate(onstartAnimation, onstartAnimationTiming);
 }
 

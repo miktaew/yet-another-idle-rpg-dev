@@ -165,7 +165,7 @@ let rain_counter = 0;
 const cold_status_counters = [0,0,0,0];
 
 let was_raining = false;
-let was_night = false;
+let was_starry = false;
 
 //current enemy
 let current_enemies = null;
@@ -1300,7 +1300,10 @@ function set_new_combat({enemies} = {}) {
 
     //attach loops and animations
     for(let i = 0; i < current_enemies.length; i++) {
-        do_enemy_onstart_animation(i);
+        if(options.do_enemy_onhit_animations) {
+            do_enemy_onstart_animation(i);
+        }
+        
         do_enemy_attack_loop(i, 0, true);
     }
 
@@ -1419,7 +1422,7 @@ function set_character_attack_loop({base_cooldown, skip_persistence_xp_for_stanc
         target_count = Math.floor(Math.random()*target_count) || 1;
     }
 
-    let targets=[];
+    let targets = [];
     const alive_targets = current_enemies.filter(enemy => enemy.is_alive).slice(-target_count);
 
     while(alive_targets.length>0) {
@@ -1558,7 +1561,6 @@ function do_enemy_combat_action(enemy_id) {
 
     const enemy_base_damage = attacker.stats.attack;
 
-    //let damage_dealt;
     let damages_dealt = [];
 
     let critted = false;
@@ -1680,8 +1682,8 @@ function do_character_combat_action({target, attack_power, target_count}) {
         }
         //small randomization by up to 20%, then bonus from skill
 
-        const enemy_id = current_enemies.findIndex(enemy => enemy===target);
         if(options.do_enemy_onhit_animations) {
+            const enemy_id = current_enemies.findIndex(enemy => enemy===target);
             do_enemy_onhit_animation(enemy_id);
         }
         if(character.stats.full.crit_rate > Math.random()) {
@@ -1913,8 +1915,7 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
 
             if(skill.is_parent) {
                 update_all_displayed_skills_xp_gain();
-            }
-            else {
+            } else {
                 update_displayed_skill_xp_gain(skill);
             }
 
@@ -2266,6 +2267,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
                     if(skills[source_name]) {
                         which_skills_affect_skill[rewards.skills[i]].push(source_name);
+                        //shouldn't cause issues, as it will only trigger on skill unlocks by other skills
                     } else {
                         console.error(`Tried to register skill "${source_name}" as related to "${rewards.skills[i]}", but the former does not exist!`);
                     }
@@ -4767,57 +4769,74 @@ function update() {
 
         const new_temperature = get_current_temperature_smoothed();
 
-        if(is_raining() && !current_location.is_under_roof) {
-            //can get wet
-            if(rain_counter >= time_until_wet) {
+        if(!current_location.is_under_roof) {
+            //not under roof, background animations can happen
+            if(is_raining()) {
+                if(rain_counter >= time_until_wet) {
                 //been in rain long enough, add wet even if present
-                add_active_effect("Wet",30);
-            } else {
-                //haven't been in rain long enough, increase the counter
-
-                if(new_temperature < 0)
-                    //snowing, doesn't soak the player as much the rain
-                    rain_counter += 0.25
-                else 
-                    rain_counter++;
-            }
-
-            if(!was_raining && options.do_background_animations) {
-                if(new_temperature >= 0) {
-                    window.addEventListener("resize", start_rain_animation);
-                    window.removeEventListener("resize", start_snow_animation);
-                    window.removeEventListener("resize", start_stars_animation);
-                    start_rain_animation();
+                    add_active_effect("Wet",30);
                 } else {
-                    window.addEventListener("resize", start_snow_animation);
-                    window.removeEventListener("resize", start_rain_animation);
+                    //haven't been in rain long enough, increase the counter
+
+                    if(new_temperature < 0)
+                        //snowing, doesn't soak the player as much the rain
+                        rain_counter += 0.25
+                    else 
+                        rain_counter++;
+                }
+
+                if(!was_raining && options.do_background_animations) {
+
                     window.removeEventListener("resize", start_stars_animation);
-                    start_snow_animation();
+
+                    if(new_temperature >= 0) {
+                        window.addEventListener("resize", start_rain_animation);
+                        window.removeEventListener("resize", start_snow_animation);
+                        start_rain_animation();
+                    } else {
+                        window.addEventListener("resize", start_snow_animation);
+                        window.removeEventListener("resize", start_rain_animation);
+                        start_snow_animation();
+                    }
+                }
+
+                was_raining = true && options.do_background_animations;
+            } else {
+                //not raining
+
+                if(rain_counter > 0) {
+                    //not in rain -> reduce rain counter
+                    rain_counter--;
+                }
+                was_raining = false;
+
+                //not in rain -> sky visible
+                if(!was_starry && is_night()) {
+
+                    if(options.do_background_animations) {
+                        window.addEventListener("resize", start_stars_animation);
+                        window.removeEventListener("resize", start_snow_animation);
+                        window.removeEventListener("resize", start_rain_animation);
+                        start_stars_animation();
+                    }
+                    was_starry = true && options.do_background_animations;
+                } else if(was_starry && !is_night()) {
+                    stop_background_animation();
+                    window.removeEventListener("resize", start_stars_animation);
                 }
             }
-            was_raining = true && options.do_background_animations;
         } else {
-            if(was_raining) {
+            //under roof
+            if(was_raining || was_starry) {
+                //was animation - stop doing that
                 stop_background_animation();
+                window.removeEventListener("resize", start_stars_animation);
                 window.removeEventListener("resize", start_snow_animation);
                 window.removeEventListener("resize", start_rain_animation);
-            }
-            if(rain_counter > 0) {
-                //not in rain, reduce rain counter
-                rain_counter--;
             }
             was_raining = false;
+            was_starry = false;
         }
-        
-        if(options.do_background_animations) {
-            //night started or it's night and rain stopped => stars
-            if(!is_raining() && !current_location.is_under_roof && is_night() && (was_raining || !was_night)) {
-                window.addEventListener("resize", start_stars_animation);
-                window.removeEventListener("resize", start_snow_animation);
-                window.removeEventListener("resize", start_rain_animation);
-            }
-        }
-        
 
         //temperature changed => update stats if needed
         if(current_temperature !== new_temperature) {
