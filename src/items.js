@@ -1200,6 +1200,21 @@ book_stats["Shellfish desires"] = new BookData({
     }
 });
 
+book_stats["Wood for Witches"] = new BookData({
+    required_time: 210,
+    literacy_xp_rate: 2,
+    rewards: {
+        recipes: [
+            {category: "alchemy", subcategory: "items", recipe_id: "Sulfur"},
+			{category: "alchemy", subcategory: "items", recipe_id: "Hardwood Brew"},
+            {category: "alchemy", subcategory: "items", recipe_id: "Treated wood"},
+	        {category: "smelting", subcategory: "items", recipe_id: "Alchemical Wood"},
+        ],
+
+    }
+	
+});
+
 //books
 (()=>{
     item_templates["ABC for kids"] = new Book({
