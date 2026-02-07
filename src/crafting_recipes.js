@@ -1076,6 +1076,19 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_skill: "Smelting",
     });
 
+    smelting_recipes.items["Alchemical Wood"] = new ItemRecipe({
+        name: "Alchemical Wood",
+        is_unlocked: false,
+        recipe_type: "material",
+        materials: [{ material_id: "Sulfur", count: 5},
+                    { material_id: "Potash", count: 5},
+                    { material_id: "Piece of ash wood", count: 10},
+        result: {result_id: "Alchemical Wood", count: 1},
+        success_chance: [0.2,1],
+        recipe_level: [15,25],
+        recipe_skill: "Smelting",
+    });
+
     woodworking_recipes.items["Processed rough wood"] = new ItemRecipe({
         name: "Processed rough wood",
         recipe_type: "material",
@@ -1506,6 +1519,18 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [7,15],
         recipe_skill: "Alchemy",
     });
+    alchemy_recipes.items["Sulfur"] = new ItemRecipe({
+        name: "Sulfur",
+        recipe_type: "material",
+        is_unlocked: false,
+        materials: [{material_id: "Low quality iron ore", count: 10},
+        ],
+        result: {result_id: "Sulfur", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [10,20],
+        recipe_skill: "Alchemy",
+    });
+
 })();
 
 //trinkets
