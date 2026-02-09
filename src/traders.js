@@ -417,6 +417,7 @@ class TradeItem {
         new TradeItem({item_name: "Medicine for dummies", count: [1], chance: 1}),
         new TradeItem({item_name: "Ode to Whimsy, and other poems", count: [1], chance: 0.4}),
         new TradeItem({item_name: "A Glint On The Sand", count: [1], chance: 0.4}),
+		new TradeItem({item_name: "Wood for Witches", count: [1], chance: 0.2}),
 
         new TradeItem({item_name: "Glass phial", count: [10,16], chance: 1}),
         new TradeItem({item_name: "Glass bottle", count: [6,12], chance: 1}),
