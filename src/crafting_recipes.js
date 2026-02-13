@@ -1092,7 +1092,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_type: "material",
         materials: [{ material_id: "Sulfur", count: 5},
                     { material_id: "Potash", count: 5},
-                    { material_id: "Processed ash wood", count: 2}], //change to hickory after implementing a source for it
+                    { material_id: "Processed hickory wood", count: 2}],
         result: {result_id: "Alchemical Wood", count: 1},
         success_chance: [0.2,1],
         recipe_level: [15,25],
