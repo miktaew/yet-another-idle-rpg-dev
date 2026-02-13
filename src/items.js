@@ -1532,6 +1532,11 @@ book_stats["Wood for Witches"] = new BookData({
         value: 7,
         material_type: "raw wood",
     });
+    item_templates["Piece of hickory wood"] = new Material({
+        description: "Tough and dense and smells like cat pee, but it's even better than ash",
+        value: 10,
+        material_type: "raw wood",
+    });
 	
     item_templates["Belmart leaf"] = new Material({
         description: "Small, round, dark-green leaves with with very good disinfectant properties",
@@ -1794,6 +1799,11 @@ book_stats["Wood for Witches"] = new BookData({
     item_templates["Processed ash wood"] = new Material({
         description: "High quality wood, just waiting to be turned into a piece of equipment",
         value: 20,
+        material_type: "wood",
+    });
+    item_templates["Processed hickory wood"] = new Material({
+        description: "Top quality wood",
+        value: 35,
         material_type: "wood",
     });
 	item_templates["Alchemical Wood"] = new Material({

@@ -1245,7 +1245,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
 
             return noises;
         },
-        is_unlocked: false,
+        is_unlocked: true,
     });
     locations["Forest road"].connected_locations.push({location: locations["Carya Canyon"], custom_text: "Hike to [Carya Canyon]", travel_time: 120});
     
@@ -1256,12 +1256,12 @@ There's another gate on the wall in front of you, but you have a strange feeling
         enemies_list: ["Warthog"],
         enemy_group_size: [1,1],
         enemy_stat_variation: 0,
-        is_unlocked: false, 
+        is_unlocked: true, 
         name: "Warthog", 
         leave_text: "Looks dangerous",
         parent_location: locations["Carya Canyon"],
         repeatable_reward: {
-            activities: [{location:"Carya Canyon", activity: "woodcutting3"}],
+            activities: [{location:"Carya Canyon", activity: "woodcutting"}],
         },
         unlock_text: "You made it across!",
         is_under_roof: false,
@@ -3050,7 +3050,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 locations: [{location: "Precarious tree bridge"}],
             },
         }),
-        "woodcutting3": new LocationActivity({
+        "woodcutting": new LocationActivity({
             activity_name: "woodcutting",
             starting_text: "Gather wood from the resilient trees",
             skill_xp_per_tick: 16,
