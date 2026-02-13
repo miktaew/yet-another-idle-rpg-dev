@@ -1245,7 +1245,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
 
             return noises;
         },
-        is_unlocked: true,
+        is_unlocked: false,
     });
     locations["Forest road"].connected_locations.push({location: locations["Carya Canyon"], custom_text: "Hike to [Carya Canyon]", travel_time: 120});
     
@@ -1256,7 +1256,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         enemies_list: ["Warthog"],
         enemy_group_size: [1,1],
         enemy_stat_variation: 0,
-        is_unlocked: true, 
+        is_unlocked: false, 
         name: "Warthog", 
         leave_text: "Looks dangerous",
         parent_location: locations["Carya Canyon"],
@@ -2347,6 +2347,21 @@ There's another gate on the wall in front of you, but you have a strange feeling
             require_tool: true,
         }),
     };
+    locations["Carya Canyon"].activities = {
+        "woodcutting": new LocationActivity({
+            activity_name: "woodcutting",
+            starting_text: "Gather wood from the resilient trees",
+            skill_xp_per_tick: 16,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [{name: "Piece of hickory wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
+                time_period: [120, 60],
+                skill_required: [20, 30],
+                scales_with_skill: true,
+            },
+            unlock_text: "Crossing the canyon, you discover that the trees on the other side are extremely tough.",
+        }),
+    };
     locations["Town outskirts"].activities = {
         "herbalism": new LocationActivity({
             activity_name: "herbalism",
@@ -3049,19 +3064,6 @@ There's another gate on the wall in front of you, but you have a strange feeling
             rewards: {
                 locations: [{location: "Precarious tree bridge"}],
             },
-        }),
-        "woodcutting": new LocationActivity({
-            activity_name: "woodcutting",
-            starting_text: "Gather wood from the resilient trees",
-            skill_xp_per_tick: 16,
-            is_unlocked: true,
-            gained_resources: {
-                resources: [{name: "Piece of hickory wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
-                time_period: [120, 60],
-                skill_required: [20, 30],
-                scales_with_skill: true,
-            },
-            unlock_text: "Crossing the canyon, you discover that the trees on the other side are extremely tough.",
         }),
     }
 

@@ -1802,7 +1802,7 @@ book_stats["Wood for Witches"] = new BookData({
         material_type: "wood",
     });
     item_templates["Processed hickory wood"] = new Material({
-        description: "Top quality wood",
+        description: "Top quality wood, suitable for all kinds of projects",
         value: 35,
         material_type: "wood",
     });
