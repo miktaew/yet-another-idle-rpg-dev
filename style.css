@@ -1923,6 +1923,8 @@ i {
 				.enemy_name {
 					text-align: right;
 					margin-top: 1px;
+					padding-right: 10px;
+					width: 390px;
 				}
 				.enemy_stats {
 					padding-right: 10px;

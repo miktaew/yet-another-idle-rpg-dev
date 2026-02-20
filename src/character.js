@@ -8,10 +8,11 @@ import { update_displayed_character_inventory, update_displayed_equipment,
          update_displayed_skill_xp_gain, update_all_displayed_skills_xp_gain,
          update_displayed_skill_level, 
          update_displayed_xp_bonuses, 
-         update_displayed_stamina_efficiency} from "./display.js";
+         update_displayed_stamina_efficiency,
+         update_displayed_item_log} from "./display.js";
 import { active_effects, current_location, current_stance, favourite_consumables, favourite_items, remove_consumable_from_favourites, remove_item_from_favourites } from "./main.js";
 import { current_game_time, is_night } from "./game_time.js";
-import { getItemFromKey, item_templates } from "./items.js";
+import { getItemFromKey, item_templates, item_log } from "./items.js";
 import { skill_consumable_tags } from "./misc.js";
 
 const base_block_chance = 0.75; //+20 from the skill
@@ -674,9 +675,12 @@ character.get_character_money = function () {
  * @param {Array} items [{item_key or item_id, count},...] 
  */
 function add_to_character_inventory(items) {
-        const was_anything_new_added = character.add_to_inventory(items);
+    const was_anything_new_added = character.add_to_inventory(items);
 
-        update_displayed_character_inventory({was_anything_new_added});
+    item_log.log_items(items);
+
+    update_displayed_character_inventory({ was_anything_new_added });
+    update_displayed_item_log();
 }
 
 /**
