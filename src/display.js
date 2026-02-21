@@ -237,7 +237,7 @@ function capitalize_first_letter(some_string) {
 }
 
 function obscure_name(item_id) {
-    return item_log.is_known(item_id) ? item_templates[gained_resources[i].name].getName() : "???";
+    return item_log.is_known(item_id) ? item_templates[item_id].getName() : "???";
 }
 
 function create_floating_effect(text, pos) {

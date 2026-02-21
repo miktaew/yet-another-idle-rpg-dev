@@ -60,13 +60,12 @@ const item_log = {
      */
     log_items(items) {
         for (let i = 0; i < items.length; i++) {
-            console.log(items[i]);
             if (items[i].item_key && items[i].item_key.id) {
-                item_log.log_item(items[i].item_key.id, items[i].count, items[i].quality);
+                this.log_item(items[i].item_key.id, items[i].count, items[i].quality);
             }
             else if (items[i].item_key) {
                 let item = getItemFromKey(items[i].item_key);
-                item_log.log_item(item.id, items[i].count, item.quality);
+                this.log_item(item.id, items[i].count, item.quality);
             }
             else {
                 console.warn("id not included!");

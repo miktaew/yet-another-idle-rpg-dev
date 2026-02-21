@@ -3545,7 +3545,7 @@ function create_save() {
         save_data["active_effects"] = active_effects;
 
         save_data["enemy_killcount"] = enemy_killcount;
-        save_data["item_log"] = item_log;
+        save_data["item_log"] = item_log.items;
 
         save_data["loot_sold_count"] = loot_sold_count;
 
