@@ -344,7 +344,7 @@ const enemy_abilites = {
         xp_value: 80,
         rank: 8,
         tags: ["living", "beast"],
-        stats: {health: 8000, attack: 500, agility: 250, dexterity: 300, intuition: 200, magic: 0, attack_speed: 0.8, defense: 500},
+        stats: {health: 12000, attack: 500, agility: 250, dexterity: 300, intuition: 100, magic: 0, attack_speed: 0.8, defense: 400},
         loot_list: [
             {item_name: "Frog meat", chance: 0.08},
             {item_name: "Frog hide", chance: 0.05},
