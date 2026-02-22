@@ -1287,8 +1287,8 @@ There's another gate on the wall in front of you, but you have a strange feeling
         enemy_count: 50,
         is_unlocked: false,
         enemy_stat_variation: 0.2,
-        name: "Frogs",
-        types: [{type: "aquatic", stage: 1, xp_gain: 5}, {type: "open", stage: 1, xp_gain: 5}],
+        name: "Water's edge",
+        types: [{type: "aquatic", stage: 1, xp_gain: 3}, {type: "open", stage: 1, xp_gain: 5}],
         parent_location: locations["Forest lake"],
         first_reward: {
             xp: 1600,
@@ -2056,7 +2056,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
     locations["Further downstream"].connected_locations.push({location: locations["Fight the giant crab again"], custom_text: "Fight the giant crab again", travel_time: 5});
   
     locations["Forest den traversal"] = new Challenge_zone({
-        description: "A relatively large cave in the depths of the forest, filled with hordes of direwolves. You are trying to find out what's on the other side.",
+        description: "A relatively large cave in the depths of the forest, filled with hordes of direwolves. You are trying to find out what's on the other side",
         enemies_list: ["Direwolf"],
         enemy_count: 50,
         enemy_group_size: [2,3],
@@ -2179,7 +2179,6 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 ], 
                 time_period: [120, 30],
                 skill_required: [0, 10],
-                scales_with_skill: true,
             },
             require_tool: true,
         })
@@ -2302,14 +2301,14 @@ There's another gate on the wall in front of you, but you have a strange feeling
             is_unlocked: false,
             gained_resources: {
                 resources: [
-                    {name: "Cooking herbs", ammount: [[1,1], [1,3]], chance: [0.1, 0.8]},
+                    {name: "Cooking herbs", ammount: [[1,1], [2,4]], chance: [0.1, 1]},
                 ], 
-                time_period: [120, 50],
-                skill_required: [5, 15],
+                time_period: [120, 30],
+                skill_required: [5, 20],
                 scales_with_skill: true,
             },
             require_tool: true,
-            unlock_text: "You learned that some useful herbs can be found right under your nose."
+            unlock_text: "You learned that some useful herbs can be found right under your nose"
         }),
     };
     locations["Town farms"].activities = {
@@ -2455,6 +2454,18 @@ There's another gate on the wall in front of you, but you have a strange feeling
             is_unlocked: true,
             applied_effects: [{ effect: "Wet", duration: 30 }],
         }),
+        "woodcutting": new LocationActivity({
+            activity_name: "woodcutting",
+            starting_text: "Harvest wood from the weeping willows",
+            skill_xp_per_tick: 10,
+            is_unlocked: true,
+            gained_resources: {
+                resources: [{name: "Piece of willow wood", ammount: [[1,1], [2,5]], chance: [0.3, 1]}],
+                time_period: [20, 10],
+                skill_required: [12, 25],
+                scales_with_skill: true,
+            }
+        }),
         "mining": new LocationActivity({
             activity_name: "mining",
             starting_text: "Mine the the shiny underwater vein",
@@ -2482,7 +2493,6 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 ],
                 time_period: [120, 30],
                 skill_required: [10, 20],
-                scales_with_skill: true,
             },
             require_tool: true,
         }),

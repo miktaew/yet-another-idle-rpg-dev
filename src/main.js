@@ -1,7 +1,7 @@
 "use strict";
 
 import { current_game_time, is_night } from "./game_time.js";
-import { item_templates, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity} from "./items.js";
+import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity} from "./items.js";
 import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_market_saturations, set_loot_sold_count, capped_at } from "./market_saturation.js";
 import { locations, favourite_locations, location_types } from "./locations.js";
 import { crafting_skill_xp_gains_cap, skill_categories, skill_xp_gains_cap, skills, weapon_type_to_skill, which_skills_affect_skill } from "./skills.js";
@@ -95,7 +95,8 @@ import { end_activity_animation,
          do_enemy_onstart_animation,
          update_location_kill_count,
          change_completed_quest_visibility,
-         update_fav_display
+         update_fav_display,
+         update_displayed_item_log
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_hit_chance, is_a_older_than_b, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
@@ -305,6 +306,10 @@ time_field.innerHTML = current_game_time.toString();
         character.xp_bonuses.total_multiplier["category_"+category] = 1;
     });
 })();
+
+function random_range(min, max) {
+    return Math.floor(Math.random() * (max-min) + min);
+}
 
 function option_uniform_textsize(option) {
     //doesn't really force same textsize, just changes some variables so they match
@@ -3542,6 +3547,7 @@ function create_save() {
         save_data["active_effects"] = active_effects;
 
         save_data["enemy_killcount"] = enemy_killcount;
+        save_data["item_log"] = item_log.items;
 
         save_data["loot_sold_count"] = loot_sold_count;
 
@@ -4864,6 +4870,15 @@ function load(save_data) {
             })
         }
 
+        if (save_data.item_log) {
+            item_log.items = save_data.item_log;
+        }
+        //else {
+        //    item_log.items = {};    //overwrite so as not duplicate entries every time the save is loaded
+        //    item_log.first_run();
+        //}
+        update_displayed_item_log();
+
         update_character_stats();
         update_displayed_character_inventory();
 
@@ -5317,7 +5332,7 @@ function update() {
                     for(let i = 0; i < gained_resources.length; i++) {
                         if(Math.random() > (1-gained_resources[i].chance)) {
                             const count = Math.floor(Math.random()*(gained_resources[i].count[1]-gained_resources[i].count[0]+1))+gained_resources[i].count[0];
-
+                            
                             items.push({item_key: item_templates[gained_resources[i].name].getInventoryKey(), count: count});
 
                             gathered_materials[gained_resources[i].name] = (gathered_materials[gained_resources[i].name] || 0) + count;

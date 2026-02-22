@@ -19,7 +19,7 @@ import { current_enemies, game_options,
 import { dialogues } from "./dialogues.js";
 import { activities } from "./activities.js";
 import { format_time, current_game_time, seasons } from "./game_time.js";
-import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey } from "./items.js";
+import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, get_location_type_penalty, location_types, locations } from "./locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
 import { expo, format_reading_time, stat_names, get_hit_chance, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
@@ -148,8 +148,9 @@ const quest_list = document.getElementById("quest_list");
 const quest_hiding_button = document.getElementById("quest_hiding_button");
 
 const data_entry_divs = {
-                            reputation: document.getElementById("data_tab_reputation_div"),
-                        };
+    reputation: document.getElementById("data_tab_reputation_div"),
+    item_log: document.getElementById("data_tab_item_log_div")
+};
 
 let skill_sorting = "name";
 let skill_sorting_direction = "asc";
@@ -233,6 +234,10 @@ const default_dialogue_return_text = "Nevermind";
 
 function capitalize_first_letter(some_string) {
     return some_string.charAt(0).toUpperCase() + some_string.slice(1);
+}
+
+function obscure_name(item_id) {
+    return item_log.is_known(item_id) ? item_templates[item_id].getName() : "???";
 }
 
 function create_floating_effect(text, pos) {
@@ -3381,7 +3386,7 @@ function create_gathering_tooltip(location_activity) {
     tooltip_content += `Every ${format_working_time(gathering_time_needed)}, chance to find:`;
     for(let i = 0; i < gained_resources.length; i++) {
         const name = item_templates[gained_resources[i].name].getName();
-        tooltip_content += `<br>x${gained_resources[i].count[0]===gained_resources[i].count[1]?gained_resources[i].count[0]:`${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${name}" at ${Math.round(100*gained_resources[i].chance)}%`;
+        tooltip_content += `<br>x${gained_resources[i].count[0]===gained_resources[i].count[1]?gained_resources[i].count[0]:`${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${obscure_name(name)}" at ${Math.round(100*gained_resources[i].chance)}%`;
     }
 
     gathering_tooltip.innerHTML = tooltip_content;
@@ -3418,8 +3423,8 @@ function update_gathering_tooltip(activity) {
         tooltip_content = `<span class="activity_efficiency_info">Efficiency scaling:<br>"${skill_names}" skill lvl ${activity.gained_resources.skill_required[0]} to ${activity.gained_resources.skill_required[1]}</span><br><br>`;
     }
     tooltip_content += `Every ${format_working_time(gathering_time_needed)}, chance to find:`;
-    for(let i = 0; i < gained_resources.length; i++) {
-        tooltip_content += `<br>x${gained_resources[i].count[0]===gained_resources[i].count[1]?gained_resources[i].count[0]:`${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${gained_resources[i].name}" at ${Math.round(100*gained_resources[i].chance)}%`;
+    for (let i = 0; i < gained_resources.length; i++) {
+        tooltip_content += `<br>x${gained_resources[i].count[0] === gained_resources[i].count[1] ? gained_resources[i].count[0] : `${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${obscure_name(gained_resources[i].name)} " at ${Math.round(100*gained_resources[i].chance)}%`;
     }
     gathering_tooltip.innerHTML = tooltip_content;
 }
@@ -3856,6 +3861,30 @@ function update_displayed_reputation() {
         }
     });
 }
+
+//TODO proof of concept, needs display polishing + maybe move to dedicated tab?
+function update_displayed_item_log() {
+    data_entry_divs.item_log.innerHTML = "";
+
+    let html = "<table><tr><th width='100%'>Item</th><th>Best</th><th>Total</th></tr>";
+
+    Object.values(item_log.items).forEach(item => {
+        let name = item_templates[item.id]?.getName() || item;
+            //crafted items don't have this, I guess... Maybe it would have been better to save the whole key, sans quality?
+
+        html += `<tr><td>${name}</td ><td>`;
+        if (item.quality_highest > 0) {
+            html += `${item.quality_lowest}-${item.quality_highest}%`;    //TODO color
+        }
+        html += `</td><td>${item.number}</td></tr>`;
+        //TODO tooltips
+    });
+
+    html += "</table>";
+
+    data_entry_divs.item_log.innerHTML = html;
+}
+
 
 /**
  * 
@@ -5579,5 +5608,6 @@ export {
     hide_loading_screen, set_loading_screen_versions, set_loading_screen_errors_warning, 
     set_loading_screen_progress, hide_loading_text, show_play_button, set_loading_screen_warnings_warning, set_play_button_text,
     create_floating_effect,
-    update_fav_display
+    update_fav_display,
+    update_displayed_item_log
 }
