@@ -1028,9 +1028,10 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
     });
 
     skills["Strength of mind"] = new Skill({
-        names: {0: "Strength of mind"}, 
+        names: {0: "Strength of mind", 15: "Iron will", 30: "Heart of steel"}, 
         description: "Resist and reject the unnatural influence. Turn your psyche into an iron fortress",
         category: "Environmental",
+        flavour_text: "Blessed is the mind too small for doubt.", //40k ref
         base_xp_cost: 400,
         max_level: 40,
         xp_scaling: 1.7,
@@ -1677,6 +1678,11 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
                                             xp_multipliers: {
                                                 all: 1.1,
                                                 "Meditation": 1.2,
+                                            },
+                                            unlocks: {
+                                                recipes: [
+                                                    {category: "crafting", subcategory: "items", recipe_id: "Simple dream catcher"},
+                                                ]
                                             }
                                         }
                                     }
@@ -2004,6 +2010,10 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
     });
     skills["Swimming"] = new Skill({
         description: "A nice, gentle, and relaxing exercise. Just remember to be careful",
+        get_effect_description: ()=> {
+            let value = get_total_skill_coefficient({skill_id:"Swimming",scaling_type:"multiplicative"})
+            return `Multiplies agility and stamina by ${Math.round(value*100)/100}. Reduces environmental penalty in aquatic areas.`;
+        },
         names: {0: "Swimming"},
         max_level: 50,
         category: "Activity",
@@ -2094,10 +2104,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
                 }
             }
         },
-        get_effect_description: ()=> {
-            let value = get_total_skill_coefficient({skill_id:"Swimming",scaling_type:"multiplicative"})
-            return `Multiplies agility and stamina by ${Math.round(value*100)/100}`;
-        },
+        
     });
 
     skills["Equilibrium"] = new Skill({
@@ -2320,6 +2327,89 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         base_xp_cost: 10,
         visibility_treshold: 4,
         xp_scaling: 1.6,
+        milestones: {
+            1: {
+                stats: {
+                    intuition: {flat: 1},
+                }
+            },
+            3: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    Persistence: 1.1,
+                }
+            },
+            5: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                }
+            },
+            7: {    
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            9: {
+                stats: {
+                    intuition: {flat: 2},
+                }
+            },
+            10: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                    dexterity: {flat: 2},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                    Meditation: 1.1,
+                }
+            },
+            12: {    
+                stats: {
+                    intuition: {flat: 4},
+                },
+                xp_multipliers: {
+                    "Presence sensing": 1.2
+                }
+            },
+            15: {    
+                stats: {
+                    intuition: {multiplier: 1.05},
+                    dexterity: {flat: 3},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                    "Swimming": 1.05,
+                    "Animal handling": 1.05
+                }
+            },
+            18: {
+                stats: {
+                    intuition: {flat: 5}
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                    Persistence: 1.1
+                }
+            },
+            20: {    
+                stats: {
+                    intuition: { multiplier: 1.1, flat: 5 },
+                    dexterity: {flat: 5},
+                },
+                xp_multipliers: {
+                    all: 1.05,
+                    "Presence sensing": 1.2,
+                    Meditation: 1.2
+                }
+            },
+        }
     });
 })();
 
@@ -2327,7 +2417,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
 (function(){
     skills["Crafting mastery"] = new Skill({
         skill_id: "Crafting mastery", 
-        names: {0: "Crafting mastery"}, 
+        names: {0: "Crafting proficiency", 15: "Crafting mastery"}, 
         description: "A mastery of the minor crafting branches like tinkering, woodworking, or butchering",
         category: skill_category_crafting,
         base_xp_cost: 40,

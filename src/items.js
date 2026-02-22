@@ -52,6 +52,52 @@ const rarity_multipliers = {
 };
 
 const item_templates = {};
+const item_log = {
+    items: {},
+
+    /**
+     * @param {Array} items [{item_key or item_id, count},...] - same as add_to_character_inventory()
+     */
+    log_items(items) {
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].item_key && items[i].item_key.id) {
+                this.log_item(items[i].item_key.id, items[i].count, items[i].quality);
+            }
+            else if (items[i].item_key) {
+                let item = getItemFromKey(items[i].item_key);
+                this.log_item(item.id, items[i].count, item.quality);
+            }
+            else {
+                console.warn("id not included!");
+            }
+        }
+    },
+
+    log_item(item_id, number = 1, quality = 0) {
+        if (!this.items[item_id]) {
+            this.items[item_id] = {
+                id: item_id,
+                number: 0,
+                quality_highest: 0,
+                quality_lowest: Number.POSITIVE_INFINITY
+            }
+        }
+
+        this.items[item_id].number += number
+        this.items[item_id].quality_highest = Math.max(this.items[item_id].quality_highest, quality);
+        this.items[item_id].quality_lowest = Math.min(this.items[item_id].quality_lowest, quality);
+    },
+
+    is_known(item_id) {
+        return this.items.hasOwnProperty(item_id);
+    }
+
+    //first_run() {
+    //    Object.values(character.inventory).forEach(item => {
+    //        this.log_item(item.item.id, item.count, item.item.quality)
+    //    });
+    //}
+}
 
 function getArmorSlot(internal) {
     let equip_slot;
@@ -1360,6 +1406,7 @@ book_stats["Wood for Witches"] = new BookData({
         name: "Boar meat",
         description: "Fatty meat of a wild boar, all it needs is to be cooked",
         value: 20,
+        material_type: "raw meat",
     });
     item_templates["High quality boar tusk"] = new Material({
         name: "High quality boar tusk",
@@ -1393,6 +1440,7 @@ book_stats["Wood for Witches"] = new BookData({
         name: "Goat meat",
         description: "Lean meat of a goat, it's pretty tough and needs to be cooked for a long time",
         value: 25,
+        material_type: "raw meat",
     });
     item_templates["Mountain goat hide"] = new Material({
         name: "Mountain goat hide",
@@ -1427,6 +1475,7 @@ book_stats["Wood for Witches"] = new BookData({
         name: "Alligator meat",
         description: "A lean chunk of alligator meat. It's tough, with a strange but not unappealing smell",
         value: 40,
+        material_type: "raw meat",
     });
     item_templates["Alligator skin"] = new Material({
         name: "Alligator skin",
@@ -1439,6 +1488,7 @@ book_stats["Wood for Witches"] = new BookData({
         name: "Turtle meat",
         description: "A lean cut of turtle meat. It's tender and versatile, but difficult to prepare",
         value: 40,
+        material_type: "raw meat",
     });
     item_templates["Turtle shell"] = new Material({
         name: "Turtle shell",
@@ -1451,6 +1501,7 @@ book_stats["Wood for Witches"] = new BookData({
         name: "Giant snake meat",
         description: "A lean cut of snake meat. It's rubbery, and looks difficult to cook",
         value: 40,
+        material_type: "raw meat",
     });
     item_templates["Giant snake skin"] = new Material({
         name: "Giant snake skin",
@@ -1464,6 +1515,7 @@ book_stats["Wood for Witches"] = new BookData({
         name: "Frog meat",
         description: "Surprisingly tender meat from a frog",
         value: 50,
+        material_type: "raw meat",
     });
     item_templates["Frog hide"] = new Material({
         name: "Frog hide", 
@@ -1490,7 +1542,7 @@ book_stats["Wood for Witches"] = new BookData({
     });
     item_templates["Atratan ore"] = new Material({
         name: "Atratan ore",
-        description: "A dark-colored ore said to have minuscule magical effects, but used almost excluvisely for refining all types of iron",
+        description: "A dark-colored ore said to have minuscule magical effects, but used almost exclusively for refining all types of iron",
         value: 6,
         material_type: "raw metal",
     });
@@ -1537,9 +1589,15 @@ book_stats["Wood for Witches"] = new BookData({
         value: 10,
         material_type: "raw wood",
     });
+    //right now mostly meant as an additional source of charcoal, hopefully more uses after magic and housing
+    item_templates["Piece of willow wood"] = new Material({
+        description: "Not suitable for weapons, bu may have other uses",
+        value: 5,
+        material_type: "raw wood",
+    });
 	
     item_templates["Belmart leaf"] = new Material({
-        description: "Small, round, dark-green leaves with with very good disinfectant properties",
+        description: "Small, round, dark-green leaves with very good disinfectant properties",
         value: 8,
         material_type: "disinfectant herb",
     });
@@ -1610,7 +1668,6 @@ book_stats["Wood for Witches"] = new BookData({
         value: 5,
         material_type: "small fish",
     });
-
     item_templates["Minnow"] = new Material({
         name: "Minnow",
         description: "One of the variety of small fish that inhabit rivers and streams",
@@ -1624,7 +1681,6 @@ book_stats["Wood for Witches"] = new BookData({
         value: 50,
         material_type: "medium fish",
     });
-
     item_templates["Trout"] = new Material({
         name: "Trout",
         description: "A fish large enough for a full meal and common in most rivers, making it a convenient source of food. So far, this has not effected their population",
@@ -1638,7 +1694,6 @@ book_stats["Wood for Witches"] = new BookData({
         value: 50,
         material_type: "medium fish",
     });
-
     item_templates["Catfish"] = new Material({
         name: "Catfish",
         description: "A large fish with whiskers. Usually found near the bottom of lakes, where it feeds on ratfish and pretty much everything else it can hunt",
@@ -1737,7 +1792,12 @@ book_stats["Wood for Witches"] = new BookData({
         value: 90,
         material_type: "piece of leather"
     }),
-	
+
+    item_templates["Piece of frog leather"] = new Material({
+        description: "The toxins have been removed and the slime coagulated into a waxy coating",
+        value: 60,
+        material_type: "piece of leather"
+    });	
 	item_templates["Piece of alligator leather"] = new Material({
         description: "Strong and flexible, but too uncomfortable to use as clothing",
         value: 150,
@@ -1749,15 +1809,18 @@ book_stats["Wood for Witches"] = new BookData({
         material_type: "piece of leather"
     }),
 
-    item_templates["Piece of frog leather"] = new Material({
-        description: "The toxins have been removed and the slime coagulated into a waxy coating",
-        value: 60,
-        material_type: "piece of leather"
-    });
     item_templates["Animal fat"] = new Material({
         description: "White, thick, oily substance, rendered from animal tissue",
         value: 40,
         material_type: "fat",
+    });
+    item_templates["Sinew"] = new Material({
+        description: "Strong, elastic fiber, rendered from animal tissue",
+        value: 5,
+    });
+    item_templates["Sinew string"] = new Material({
+        description: "Tough, durable fiber, processed from animal tissue",
+        value: 20,
     });
     item_templates["Wool cloth"] = new Material({
         description: "Thick and warm, might possibly absorb some punches",
@@ -1816,6 +1879,15 @@ book_stats["Wood for Witches"] = new BookData({
         value: 40,
         material_type: "bone",
     });
+
+    item_templates["Wicker"] = new Material({
+        description: "Light but sturdy plant fibers, ready to be woven into useable items",
+        value: 10,
+    });
+    item_templates["Willow bark"] = new Material({
+        description: "Wood bark with medicinal properties, carefully scraped from the wood",
+        value: 25,
+    });
 	
     item_templates["Potash"] = new Material({
         description: "An alchemical substance derived from plant ash, sought after for production of bleach, soap and glass",
@@ -1830,7 +1902,11 @@ book_stats["Wood for Witches"] = new BookData({
         description: "Molten piece of glass, yet to be shaped into something useful",
         value: 100
     });
-
+    item_templates["Metal fishing hook"] = new Material({
+        name: "Metal fishing hook",
+        description: "A small hook made of metal",
+        value: 10
+    });
 })();
 
 //spare parts
@@ -3263,7 +3339,7 @@ book_stats["Wood for Witches"] = new BookData({
         component_tier: 3,
         component_stats: {
             cold_tolerance: {
-                    flat: 1,
+                flat: 1,
             }
         },
     });
@@ -3304,6 +3380,20 @@ book_stats["Wood for Witches"] = new BookData({
         },
         component_bonus_skill_levels: {
             "Swimming": 1,
+        }
+    });
+
+    item_templates["Sun hat"] = new Armor({
+        name: "Sun hat", 
+        description: "A wicker hat with a wide brim",
+        value: 100,
+        component_type: "helmet interior",
+        base_defense: 0,
+        component_tier: 2,
+        component_stats: {
+            heat_tolerance: {
+                flat: 2,
+            }
         }
     });
 
@@ -3712,7 +3802,7 @@ book_stats["Wood for Witches"] = new BookData({
     });
     item_templates["Batrachian cape"] = new Cape({
         name: "Batrachian cape", 
-        description: "A slippery cape made from frogskin. Technically waterproof, but doesn't cover your entire body.",
+        description: "A slippery cape made from frogskin. Technically waterproof, but doesn't cover your entire body",
         value: 1000,
         item_tier: 4,
         base_defense: 4,
@@ -4192,11 +4282,30 @@ book_stats["Wood for Witches"] = new BookData({
             },
         }
     });
+
+    item_templates["Simple dream catcher"] = new Artifact({
+        name: "Simple dream catcher",
+        description: "Sinew netting stretched over a willow hoop. You don't know how it works or what it does, but it makes you feel safer. It's design came to you in a dream",
+        value: 0,
+        stats: {},
+        base_bonus_skill_levels: {
+            "Sleeping": 2,
+            "Strength of mind": 2
+        }
+    });
 	
 })();
 
 //amulets:
-(function(){
+(function () {
+    item_templates["Wool scarf"] = new Amulet({
+        value: 100,
+        stats: {
+            cold_tolerance: {
+                flat: 5,
+            }
+        },
+    });
     item_templates["Warrior's necklace"] = new Amulet({
         value: 1000,
         tags: {unique: true, unsellable: true},
@@ -4306,6 +4415,26 @@ book_stats["Wood for Witches"] = new BookData({
         description: "Little more than a piece of string tied to a stick, but sufficient to get a catch",
         value: 10,
         equip_slot: "fishing_pole",
+    });
+
+    item_templates["Wooden fishing pole"] = new Tool({
+        name: "Wooden fishing pole",
+        description: "A simple, but proper fishing pole",
+        value: 200,
+        equip_slot: "fishing_pole",
+        base_bonus_skill_levels: {
+            "Fishing": 3,
+        }
+    });
+
+    item_templates["Ash wood fishing pole"] = new Tool({
+        name: "Ash wood fishing pole",
+        description: "A decent fishing pole",
+        value: 500,
+        equip_slot: "fishing_pole",
+        base_bonus_skill_levels: {
+            "Fishing": 5,
+        }
     });
 })();
 
@@ -4575,6 +4704,7 @@ Object.keys(item_templates).forEach(id => {
 
 export {
     item_templates,
+    item_log,
     Item, OtherItem, UsableItem,
     Armor, Shield, Weapon, Cape, Artifact, Book,
     Material, WeaponComponent, ArmorComponent, ShieldComponent,

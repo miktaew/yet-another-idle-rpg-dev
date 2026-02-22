@@ -57,9 +57,17 @@ class Enemy {
         this.stats.max_health = stats.health;
         this.loot_list = loot_list;
         this.tags = {};
-        for(let i = 0; i <tags.length; i++) {
-            this.tags[tags[i]] = true;
+
+        if(tags.length) {
+            for(let i = 0; i < tags.length; i++) {
+                this.tags[tags[i]] = true;
+            }
+        } else if(Object.keys(tags).length) {
+            Object.keys(tags).forEach(tag => {
+                this.tags[tag] = true;
+            })
         }
+
         this.tags[size] = true;
 
         this.add_to_bestiary = add_to_bestiary; //generally set it false only for SOME of challenges and keep true for everything else
@@ -352,7 +360,7 @@ const enemy_abilites = {
         xp_value: 80,
         rank: 8,
         tags: ["living", "beast"],
-        stats: {health: 8000, attack: 500, agility: 250, dexterity: 300, intuition: 200, magic: 0, attack_speed: 0.8, defense: 500},
+        stats: {health: 12000, attack: 500, agility: 250, dexterity: 300, intuition: 100, magic: 0, attack_speed: 0.8, defense: 400},
         loot_list: [
             {item_name: "Frog meat", chance: 0.08},
             {item_name: "Frog hide", chance: 0.05},
