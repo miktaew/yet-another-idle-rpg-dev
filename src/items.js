@@ -1246,6 +1246,20 @@ book_stats["Shellfish desires"] = new BookData({
     }
 });
 
+book_stats["Wood for Witches"] = new BookData({
+    required_time: 420,
+    literacy_xp_rate: 4,
+    rewards: {
+        recipes: [
+            {category: "alchemy", subcategory: "items", recipe_id: "Potash"},
+            {category: "alchemy", subcategory: "items", recipe_id: "Sulfur"},
+	        {category: "smelting", subcategory: "items", recipe_id: "Alchemical Wood"},
+        ],
+
+    }
+	
+});
+
 //books
 (()=>{
     item_templates["ABC for kids"] = new Book({
@@ -1287,6 +1301,11 @@ book_stats["Shellfish desires"] = new BookData({
         name: "Shellfish desires",
         description: "A cookbook detailing various methods of cleaning and preparing crab, clam, snail, turtle, and other aquatic animals",
         value: 1620
+    });
+    item_templates["Wood for Witches"] = new Book({
+        name: "Wood for Witches",
+        description: "A dusty old tome explaining how to treat wood with alchemy to produce stronger wood",
+        value: 2000
     });
 	
 })();
@@ -1565,6 +1584,11 @@ book_stats["Shellfish desires"] = new BookData({
         value: 7,
         material_type: "raw wood",
     });
+    item_templates["Piece of hickory wood"] = new Material({
+        description: "Tough and dense and smells like cat pee, but it's even better than ash",
+        value: 10,
+        material_type: "raw wood",
+    });
     //right now mostly meant as an additional source of charcoal, hopefully more uses after magic and housing
     item_templates["Piece of willow wood"] = new Material({
         description: "Not suitable for weapons, bu may have other uses",
@@ -1840,6 +1864,16 @@ book_stats["Shellfish desires"] = new BookData({
         value: 20,
         material_type: "wood",
     });
+    item_templates["Processed hickory wood"] = new Material({
+        description: "Top quality wood, suitable for all kinds of projects",
+        value: 35,
+        material_type: "wood",
+    });
+	item_templates["Alchemical Wood"] = new Material({
+        description: "Extremely resilient wood, produced with alchemy",
+        value: 50,
+        material_type: "wood",
+    });
     item_templates["Processed weak monster bone"] = new Material({
         description: "Polished and cleaned bones of a weak monster, just waiting to be turned into a piece of equipment",
         value: 40,
@@ -1858,6 +1892,10 @@ book_stats["Shellfish desires"] = new BookData({
     item_templates["Potash"] = new Material({
         description: "An alchemical substance derived from plant ash, sought after for production of bleach, soap and glass",
         value: 25
+    });
+	item_templates["Sulfur"] = new Material({
+        description: "A yellow substance used in alchemy",
+        value: 30
     });
     item_templates["Raw Glass"] = new Material({
         name: "Raw glass",
@@ -2103,6 +2141,28 @@ book_stats["Shellfish desires"] = new BookData({
             }
         }
     });
+	item_templates["Short hickory wood hilt"] = new WeaponComponent({
+        name: "Short hickory wood hilt", description: "A short handle for a sword or maybe a dagger",
+        component_type: "short handle",
+        value: 48,
+        component_tier: 4,
+        component_stats: {
+            attack_speed: {
+                multiplier: 1.15,
+            }
+        }
+    });
+	item_templates["Short alchemical wood hilt"] = new WeaponComponent({
+        name: "Short alchemical wood hilt", description: "A short handle for a sword or maybe a dagger",
+        component_type: "short handle",
+        value: 64,
+        component_tier: 5,
+        component_stats: {
+            attack_speed: {
+                multiplier: 1.2,
+            }
+        }
+    });
 	
     item_templates["Simple medium wooden handle"] = new WeaponComponent({
         name: "Simple medium wooden handle", description: "A medium handle for an axe or a hammer",
@@ -2129,6 +2189,28 @@ book_stats["Shellfish desires"] = new BookData({
         component_stats: {
             attack_speed: {
                 multiplier: 1.05,
+            }
+        }
+    });
+	item_templates["Medium hickory wood handle"] = new WeaponComponent({
+        name: "Short hickory wood hilt", description: "A medium handle for an axe or a hammer",
+        component_type: "medium handle",
+        value: 128,
+        component_tier: 4,
+        component_stats: {
+            attack_speed: {
+                multiplier: 1.1,
+            }
+        }
+    });
+	item_templates["medium alchemical wood handle"] = new WeaponComponent({
+        name: "Short alchemical wood hilt", description: "A medium handle for an axe or a hammer",
+        component_type: "medium handle",
+        value: 172,
+        component_tier: 5,
+        component_stats: {
+            attack_speed: {
+                multiplier: 1.15,
             }
         }
     });
@@ -2162,6 +2244,29 @@ book_stats["Shellfish desires"] = new BookData({
         component_type: "long handle",
         value: 150,
         component_tier: 3,
+		
+    });
+	item_templates["Long hickory wood shaft"] = new WeaponComponent({
+        name: "Long hickory wood shaft", description: "A long shaft for a spear",
+        component_type: "long handle",
+        value: 200,
+        component_tier: 4,
+        component_stats: {
+            attack_speed: {
+                multiplier: 1.05,
+            }
+        }
+    });
+	item_templates["medium alchemical wood handle"] = new WeaponComponent({
+        name: "Short alchemical wood hilt", description: "A long shaft for a spear",
+        component_type: "long handle",
+        value: 250,
+        component_tier: 5,
+        component_stats: {
+            attack_speed: {
+                multiplier: 1.1,
+            }
+        }
     });
 	
     item_templates["Cheap short iron hilt"] = new WeaponComponent({
@@ -3888,6 +3993,33 @@ book_stats["Shellfish desires"] = new BookData({
             }
         }
     });
+	item_templates["Hickory wood shield base"] = new ShieldComponent({
+        name: "Hickory wood shield base",
+        description: "Strong wooden shield base, more resistant than weaker metals",
+        value: 160,
+        shield_strength: 12,
+        shield_name: "Hickory wood shield",
+        component_tier: 4,
+        component_type: "shield base",
+        component_stats: {
+            attack_speed: {
+                multiplier: 0.90,
+            }
+        }
+    });item_templates["Alchemical wood shield base"] = new ShieldComponent({
+        name: "Alchemical wood shield base",
+        description: "Shield base made of alchemical wood, stronger than steel",
+        value: 200,
+        shield_strength: 16,
+        shield_name: "Alchemical wood shield",
+        component_tier: 5,
+        component_type: "shield base",
+        component_stats: {
+            attack_speed: {
+                multiplier: 0.90,
+            }
+        }
+    });
     item_templates["Crude iron shield base"] = new ShieldComponent({
         name: "Crude iron shield base",
         description: "Heavy shield base made of low quality iron",
@@ -3978,6 +4110,30 @@ book_stats["Shellfish desires"] = new BookData({
             }
         }
     });
+	item_templates["Hickory wood shield handle"] = new ShieldComponent({
+        name: "Hickory wood shield handle",
+        description: "An exceptional wooden handle for holding the shield",
+        value: 64,
+        component_tier: 4,
+        component_type: "shield handle",
+        component_stats: {
+            block_strength: {
+                multiplier: 1.25,
+            }
+        }
+    });
+	item_templates["Alchemical wood shield handle"] = new ShieldComponent({
+        name: "Alchemical wood shield handle",
+        description: "A perfect wooden handle for holding the shield",
+        value: 82,
+        component_tier: 5,
+        component_type: "shield handle",
+        component_stats: {
+            block_strength: {
+                multiplier: 1.3,
+            }
+        }
+    });
 
 })();
 
@@ -4014,6 +4170,18 @@ book_stats["Shellfish desires"] = new BookData({
         components: {
             shield_base: "Ash wood shield base",
             handle: "Ash wood shield handle",
+        }
+    });
+	item_templates["Hickory wood shield"] = new Shield({
+        components: {
+            shield_base: "Hickory wood shield base",
+            handle: "Hickory wood shield handle",
+        }
+    });
+	item_templates["Alchemical wood shield"] = new Shield({
+        components: {
+            shield_base: "Alchemical wood shield base",
+            handle: "Alchemical wood shield handle",
         }
     });
 

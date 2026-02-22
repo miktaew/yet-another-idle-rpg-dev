@@ -546,6 +546,19 @@ function get_location_type_penalty(type, stage, stat, category) {
                         multiplier: 0.5,
                     }
                 }        
+            },
+            4: {
+                description: "Are you trying to die? One step the wrong way and you fall to your death!",
+                related_skill: "Tight maneuvers",
+                effects: {
+                    evasion_points: {
+                        multiplier: 0.05
+                    },
+                    dexterity: {
+                        multiplier: 0.5,
+                    }
+                },
+                scaling_lvl: 50,
             }
         }
     });
@@ -1212,10 +1225,49 @@ There's another gate on the wall in front of you, but you have a strange feeling
             xp: 500,
             textlines: [{dialogue: "farm supervisor", lines: ["defeated boars"]}],
             activities: [{location: "Forest road", activity: "woodcutting2"}],
-        }
+        },
+        rewards_with_clear_requirement: [
+            {
+                required_clear_count: 5,
+                actions: [{action: "What was that noise?", location:"Forest road"}]
+            }
+        ],
     });
     locations["Forest road"].connected_locations.push({location: locations["Forest clearing"], custom_text: "Go towards the [Forest clearing] in the north", travel_time: 60});
 
+    locations["Carya Canyon"] = new Location({ 
+        connected_locations: [{location: locations["Forest road"], travel_time: 300}],
+        description: "The forest ends abruptly, giving way to a deep canyon past which you see some really nice trees",
+        name: "Carya Canyon",
+        getBackgroundNoises: function() {
+            let noises = ["*The wind howls through the canyon*", "*Don't fall in now*", "*A pebble clatters in the depths*"];
+
+            return noises;
+        },
+        is_unlocked: false,
+    });
+    locations["Forest road"].connected_locations.push({location: locations["Carya Canyon"], custom_text: "Hike to [Carya Canyon]", travel_time: 120});
+    
+    locations["Precarious tree bridge"] = new Challenge_zone({
+        description: "A warthog heard the commotion and is guarding the way across.", 
+        enemy_count: 1, 
+        types: [],
+        enemies_list: ["Warthog"],
+        enemy_group_size: [1,1],
+        enemy_stat_variation: 0,
+        is_unlocked: false, 
+        name: "Warthog", 
+        leave_text: "Looks dangerous",
+        parent_location: locations["Carya Canyon"],
+        repeatable_reward: {
+            activities: [{location:"Carya Canyon", activity: "woodcutting"}],
+        },
+        unlock_text: "You made it across!",
+        is_under_roof: false,
+        temperature_range_modifier: 1,
+    });
+    locations["Carya Canyon"].connected_locations.push({location: locations["Precarious tree bridge"], custom_text: "To to cross the [Precarious tree bridge]", travel_time: 30});
+    
     locations["Forest den"] = new Combat_zone({
         description: "A relatively large cave in the depths of the forest, filled with hordes of direwolves",
         enemies_list: ["Direwolf"],
@@ -2293,6 +2345,21 @@ There's another gate on the wall in front of you, but you have a strange feeling
             require_tool: true,
         }),
     };
+    locations["Carya Canyon"].activities = {
+        "woodcutting": new LocationActivity({
+            activity_name: "woodcutting",
+            starting_text: "Gather wood from the resilient trees",
+            skill_xp_per_tick: 16,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [{name: "Piece of hickory wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
+                time_period: [120, 60],
+                skill_required: [20, 30],
+                scales_with_skill: true,
+            },
+            unlock_text: "Crossing the canyon, you discover that the trees on the other side are extremely tough.",
+        }),
+    };
     locations["Town outskirts"].activities = {
         "herbalism": new LocationActivity({
             activity_name: "herbalism",
@@ -2911,6 +2978,36 @@ There's another gate on the wall in front of you, but you have a strange feeling
             },
             unlock_text: "At some point during your fights, you notice a path trodden by animals. There's a lot of footprints that look like wolf's, except much larger..."
         }),
+
+        "What was that noise?": new GameAction({
+            action_id: "What was that noise?",
+            starting_text: "What was that noise you heard while fighting boars?",
+            description: "Time to investigate",
+            action_text: "Following the sounds",
+            success_text: "The sound was the wind howling through a canyon.",
+            failure_texts: {
+                random_loss: [
+                    "Oh look a squirrel!",
+                ],
+                conditional_loss: [
+                    "After wandering around for a while, you fail to perceive the source of the sound...",
+                ]
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Perception": 15
+                    }
+                }
+            ],
+            attempt_duration: 180,
+            success_chances: [0.7],
+            rewards: {
+                locations: [{location: "Carya Canyon"}],
+            },
+            unlock_text: "While fighting the boars, you heard a strange noise from the north. What could it be?"
+        }),
+
         "search predator": new GameAction({
             action_id: "search predator",
             starting_text: "Search for the predator that hunts direwolves",
@@ -2948,6 +3045,38 @@ There's another gate on the wall in front of you, but you have a strange feeling
             unlock_text: "At some point during your fights you notice a direwolf with terrible scars, clearly inflicted by an even larger predator. What could have it been?",
         }),
     };
+
+    locations["Carya Canyon"].actions = {
+        "Make a bridge": new GameAction({
+            action_id: "Make a bridge",
+            starting_text: "Cut down a tall tree to cross the canyon",
+            description: "Nothing could possibly go wrong",
+            action_text: "Chop chop",
+            success_text: "The tree creaks and groans, then crashes down on the other side",
+            is_unlocked: true,
+            failure_texts: {
+                random_loss: [
+                    "The tree was too small and falls right in. Try again with a bigger one.",
+                ],
+                conditional_loss: [
+                    "The tree falls the wrong way and vanishes into the depths, better improve your chopping skills.",
+                ]
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Woodcutting": 20,
+                    }
+                }
+            ],
+            attempt_duration: 240,
+            success_chances: [0.7],
+            rewards: {
+                locations: [{location: "Precarious tree bridge"}],
+            },
+        }),
+    }
+
     locations["Town farms"].actions = {
         "dig for ants 1": new GameAction({
             action_id: "dig for ants 1",
