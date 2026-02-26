@@ -117,7 +117,7 @@ const translations = {
         "craftsman remind 3": "Could you remind me how to get crafting materials?",
         "craftsman remind 3 answ": "Ahh, there's multiple ways of that. You can gain them from fallen foes, you can gather them around, or you can even buy them if you have some spare coin.",
         "craftsman remind 4": "How do I get better at crafting?",
-        "craftsman remind 4 answ": "Ahh, there aren't any secrets, you just need to keep practicing it. Just don't spend your entire life working on same louse materials, try to work on stronger stuff when you feel confident. There's a limit to how much you can learn by working with rat leather, isn't there?",
+        "craftsman remind 4 answ": "Ahh, there aren't any secrets, you just need to keep practicing it. Just don't spend your entire life working with the same lousy materials, try to work on stronger stuff when you feel confident. There's a limit to how much you can learn by working with rat leather, isn't there?",
         "craftsman about guard": "So what's the story of that village guard girl?",
         "craftsman about guard answ": "Ahhh, our little warrioress... She once wanted to be an adventurer, but I believe it didn't work out for her. Hard work is not enough when talent is lacking nor can it allow one to conquer fate, I'm afraid. Still, she's a good girl and keeps us safe now.",
         //
