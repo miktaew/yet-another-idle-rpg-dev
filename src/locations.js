@@ -311,6 +311,18 @@ class Combat_zone {
 
         return {base_penalty: effects, hero_penalty: hero_effects};
     }
+    //Small utility function
+    get_clear_text(){
+        var clears = Math.floor(this.enemy_groups_killed / this.enemy_count);
+        let more = false;
+        for(let reward of this.rewards_with_clear_requirement){
+            if(clears < reward.required_clear_count){
+                more = true;
+                break;
+            }
+        }
+        return "Clears: ["+ clears +"]" + (more ? "*":"");
+    }
 }
 
 class Challenge_zone extends Combat_zone {

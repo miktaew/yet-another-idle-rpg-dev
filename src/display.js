@@ -2543,7 +2543,7 @@ function update_displayed_combat_location(location) {
 
 
     enemy_count_div.children[0].children[1].innerText = location.enemy_count - location.enemy_groups_killed % location.enemy_count + " / " + location.enemy_count;
-    clear_count_div.children[0].children[0].innerText = "Clears: [" + Math.floor(location.enemy_groups_killed / location.enemy_count) +"]";
+    clear_count_div.children[0].children[0].innerText = location.get_clear_text();
 
     action = create_location_choices({location: location, category: "travel", is_combat: true});
 
@@ -2565,7 +2565,7 @@ function update_displayed_combat_location(location) {
 
 function update_location_kill_count(location) {
     enemy_count_div.children[0].children[1].innerText = location.enemy_count - location.enemy_groups_killed % location.enemy_count + " / " + location.enemy_count;
-    clear_count_div.children[0].children[0].innerText = "Clears: [" + Math.floor(location.enemy_groups_killed / location.enemy_count) +"]";
+    clear_count_div.children[0].children[0].innerText = location.get_clear_text()
 }
 
 function create_location_types_display(current_location){
