@@ -546,7 +546,7 @@ const translations = {
         //
         "guard description": "You see a tall woman in light armor, with a spear in her hand and two daggers on her belt. "
                 +"Her sharp fuzzy ears rotate every now and then towards any new sound, while her fluffy tail remains motionless. There's a scar across her face."
-                +" When she spots you, she looks at you as if you were a prey, but then her expression softens a lot.",
+                +" When she spots you, she looks at you as if you were prey, but then her expression softens a lot.",
         "guard hi answ": "Hey there. I heard you've been helping around a lot, good job cutie~ \n "
                 +"*[As she says that, she bends forward and pats your head a few times with a surprisingly gentle touch, her tail slightly wagging]*",
         "guard serious answ": "Ohhh, someone wants to impress the cute fluffy wolf lady? Sorry, but I'm way too strong for you~",
