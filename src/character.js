@@ -862,6 +862,10 @@ function get_total_skill_level(skill_id) {
         return skills[skill_id].current_level + (character.bonus_skill_levels.full[skill_id] || 0);
 }
 
+function get_skill_modifier(skill_id, level_range) {
+    return Math.min(1, Math.max(0, (get_total_skill_level(skill_id) - level_range[0] + 1) / (level_range[1] - level_range[0] + 1)));
+}
+
 function get_total_level_bonus(skill_id) {
         return skills[skill_id].get_level_bonus(get_total_skill_level(skill_id));
 }
@@ -901,7 +905,7 @@ function get_effect_with_bonuses(active_effect) {
 
 export {character, add_to_character_inventory, remove_from_character_inventory, equip_item_from_inventory, equip_item, 
         unequip_item, update_character_stats, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_skill_xp_gain_bonus, add_location_penalties,
-        get_total_skill_level, get_total_level_bonus, get_total_skill_coefficient, get_effect_with_bonuses,
+        get_total_skill_level, get_skill_modifier, get_total_level_bonus, get_total_skill_coefficient, get_effect_with_bonuses,
         time_until_wet, time_until_cold, time_until_cold_when_wet, 
         cold_status_temperatures, cold_status_effects,
         get_character_cold_tolerance, lowest_tolerable_temperature, is_rat, tool_slots

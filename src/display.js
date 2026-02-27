@@ -2231,7 +2231,7 @@ function create_location_choices({location, category, is_combat = false}) {
                 }
             }
             job_tooltip_content += `Pays ${format_money(location.activities[key].get_payment())} per every ` +  
-                    `${format_working_time(location.activities[key].working_period)} worked`;
+                    `${format_working_time(location.activities[key].gathering_time_needed)} worked`;
             
             job_tooltip.innerHTML = job_tooltip_content;
             activity_div.appendChild(job_tooltip);
@@ -2287,6 +2287,12 @@ function create_location_choices({location, category, is_combat = false}) {
             activity_div.classList.add("activity_div", "start_activity", "location_choice");
             activity_div.setAttribute("data-activity", key);
             activity_div.setAttribute("onclick", "start_activity(this.getAttribute('data-activity'));");
+
+            if(can_work(location.activities[key])) {
+                activity_div.classList.add("start_activity");
+            } else {
+                activity_div.classList.add("activity_unavailable");
+            }
 
             activity_div.appendChild(create_gathering_tooltip(location.activities[key]));
     
@@ -3375,12 +3381,23 @@ function create_gathering_tooltip(location_activity) {
 
     let skill_names = "";
     let tooltip_content = "";
+
+    //TODO mayhap extract to its own method
+    if(location_activity.availability_seasons) {
+        if(location_activity.availability_seasons.length === 3) {
+            const unavailable_seasons = seasons.filter(x => !location_activity.availability_seasons.includes(x));
+            tooltip_content += `Not available during ${unavailable_seasons.join(", ")} <br>`;
+        } else {
+            tooltip_content += `Available during ${location_activity.availability_seasons.join(", ")} <br>`;
+        }
+    }
+
     for(let i = 0; i < activities[location_activity.activity_name].base_skills_names.length; i++) {
         skill_names += skills[activities[location_activity.activity_name].base_skills_names[i]].name();
     }
 
     if(location_activity.gained_resources.scales_with_skill) {
-        tooltip_content = `<span class="activity_efficiency_info">Efficiency scaling:<br>"${skill_names}" skill lvl ${location_activity.gained_resources.skill_required[0]} to ${location_activity.gained_resources.skill_required[1]}</span><br><br>`;
+        tooltip_content += `<span class="activity_efficiency_info">Efficiency scaling:<br>"${skill_names}" skill lvl ${location_activity.gained_resources.skill_required[0]} to ${location_activity.gained_resources.skill_required[1]}</span><br><br>`;
     }
 
     tooltip_content += `Every ${format_working_time(gathering_time_needed)}, chance to find:`;
@@ -3869,7 +3886,7 @@ function update_displayed_item_log() {
     let html = "<table><tr><th width='100%'>Item</th><th>Best</th><th>Total</th></tr>";
 
     Object.values(item_log.items).forEach(item => {
-        let name = item_templates[item.id]?.getName() || item;
+        let name = item_templates[item.id]?.getName() || item.id;
             //crafted items don't have this, I guess... Maybe it would have been better to save the whole key, sans quality?
 
         html += `<tr><td>${name}</td ><td>`;
@@ -4029,59 +4046,31 @@ function exit_displayed_trade() {
 }
 
 function start_activity_display(current_activity) {
+    const base_activity = activities[current_activity.activity_name];
+    const is_job = base_activity.type === "JOB";
+
     clear_action_div();
     const action_status_div = document.createElement("div");
-    action_status_div.innerText = activities[current_activity.activity_name].action_text;
+    action_status_div.innerText = base_activity.action_text;
     action_status_div.id = "action_status_div";
+
     const action_xp_div = document.createElement("div");
-    if(activities[current_activity.activity_name].base_skills_names) {
-
-        const percent_xp = get_total_skill_level(activities[current_activity.activity_name].base_skills_names) == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.round(10000*skills[activities[current_activity.activity_name].base_skills_names].current_xp/skills[activities[current_activity.activity_name].base_skills_names].xp_to_next_lvl)/100}%`
-        const curr_xp = get_total_skill_level(activities[current_activity.activity_name].base_skills_names) == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.floor(skills[activities[current_activity.activity_name].base_skills_names].current_xp)}`;
-        const needed_xp = get_total_skill_level(activities[current_activity.activity_name].base_skills_names) == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.ceil(skills[activities[current_activity.activity_name].base_skills_names].xp_to_next_lvl)}`;
-
-        if(activities[current_activity.activity_name].type !== "GATHERING") {
-            action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} base xp per in-game minute to `;
-        } else {
-            action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} base xp per gathering cycle to `;
-        }
-        
-        if(curr_xp !== "Max") {
-            action_xp_div.innerText += ` ${skills[activities[current_activity.activity_name].base_skills_names].name()} (${percent_xp}  [${expo(curr_xp)} / ${expo(needed_xp)}])`;
-        } else {
-            action_xp_div.innerText += ` ${skills[activities[current_activity.activity_name].base_skills_names].name()} (Maxxed out!)`;
-        }
-
-        if(activities[current_activity.activity_name].type !== "GATHERING") {
-            const time_needed = Math.ceil((needed_xp-curr_xp)/(current_activity.skill_xp_per_tick*get_skill_xp_gain(skills[activities[current_activity.activity_name].base_skills_names].skill_id)));
-            if(!isNaN(time_needed)) {
-                action_xp_div.innerHTML += `<br>Next level in ${format_reading_time(time_needed)} (${format_time({time: {minutes: time_needed/60}, long_names: true})}realtime)`;
-            }
-        } else {
-            const time_needed = Math.ceil(current_activity.gathering_time_needed * (needed_xp-curr_xp)/(current_activity.skill_xp_per_tick*get_skill_xp_gain(skills[activities[current_activity.activity_name].base_skills_names].skill_id)));
-            if(!isNaN(time_needed)) {
-                action_xp_div.innerHTML += `<br>Next level in ${format_reading_time(time_needed)} (${format_time({time: {minutes: time_needed/60}, long_names: true})}realtime)`;
-            }
-        }
-            
-    } else {
+    action_xp_div.id = "action_xp_div";
+    if (!base_activity.base_skills_names) {
         console.warn(`Activity "${current_activity.activity_name}" has no skills assigned!`);
     }
-    action_xp_div.id = "action_xp_div";
 
     const action_end_div = document.createElement("div");
     action_end_div.setAttribute("onclick", "end_activity()");
     action_end_div.id = "action_end_div";
 
-
     const action_end_text = document.createElement("div");
     action_end_text.innerText = `Finish ${current_activity.activity_name}`;
     action_end_text.id = "action_end_text";
 
-
     action_end_div.appendChild(action_end_text);
 
-    if(activities[current_activity.activity_name].type === "JOB") {
+    if(is_job) {
         const action_end_earnings = document.createElement("div");
         action_end_earnings.innerHTML = `(earnings: ${format_money(0)})`;
         action_end_earnings.id = "action_end_earnings";
@@ -4092,7 +4081,7 @@ function start_activity_display(current_activity) {
     action_div.appendChild(action_status_div);
     action_div.appendChild(action_xp_div);
 
-    if(current_activity.gained_resources) {
+    if(current_activity.gathering_time_needed != 1) {
         const action_progress_bar_max = document.createElement("div");
         const action_progress_bar = document.createElement("div");
         action_progress_bar_max.appendChild(action_progress_bar);
@@ -4100,74 +4089,77 @@ function start_activity_display(current_activity) {
         action_progress_bar.style.width = 385*current_activity.gathering_time/current_activity.gathering_time_needed+"px";
         action_progress_bar_max.id = "gathering_progress_bar_max";
         action_div.appendChild(action_progress_bar_max);
-        action_progress_bar_max.appendChild(create_gathering_tooltip(current_activity));
+        if (current_activity.gained_resources) {
+            action_progress_bar_max.appendChild(create_gathering_tooltip(current_activity));
+        }
     }
     
     action_div.appendChild(action_end_div);
 
-    if(activities[current_activity.activity_name].type === "JOB") 
+    if(is_job) 
     {
         const time_info_div = document.createElement("div");
         time_info_div.id = "time_for_earnings_div";
-
-        if(!enough_time_for_earnings(current_activity)) {
-            time_info_div.innerHTML = `There's not enough time left to earn more, but ${character.name} might still learn something...`;
-        }
-        else {
-            time_info_div.innerHTML = `Next earnings in: ${format_working_time(current_activity.working_period - current_activity.working_time)}`;
-        }
         action_div.insertBefore(time_info_div, action_div.children[2]);
     }
 
     start_activity_animation();
+    update_displayed_ongoing_activity(current_activity);
 }
 
-function update_displayed_ongoing_activity(current_activity, is_job){
-    if(is_job) {
+function update_displayed_ongoing_activity(current_activity) {
+    const base_activity = activities[current_activity.activity_name];
+
+    if(base_activity.type === "JOB") {
         document.getElementById("action_end_earnings").innerHTML = `(earnings: ${format_money(current_activity.earnings)})`
         const time_info_div = document.getElementById("time_for_earnings_div");
         
         if(!enough_time_for_earnings(current_activity)) {
             time_info_div.innerHTML = `There's not enough time left to earn more, but ${character.name} might still learn something...`;
         } else {
-            time_info_div.innerHTML = `Next earnings in: ${format_working_time(current_activity.working_period - current_activity.working_time%current_activity.working_period)}`;
+            time_info_div.innerHTML = `Next earnings in: ${format_working_time(current_activity.gathering_time_needed - current_activity.gathering_time%current_activity.gathering_time_needed)}`;
         }
     }
+
     const action_xp_div = document.getElementById("action_xp_div");
     if(!action_xp_div) {
         console.warn(`Failed to find htmlElement with id "action_xp_div" for activity "${current_activity.activity_id}"`);
         return;
     }
 
-    const percent_xp = get_total_skill_level(activities[current_activity.activity_name].base_skills_names) == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.round(10000*skills[activities[current_activity.activity_name].base_skills_names].current_xp/skills[activities[current_activity.activity_name].base_skills_names].xp_to_next_lvl)/100}%`
-    const curr_xp = get_total_skill_level(activities[current_activity.activity_name].base_skills_names) == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.floor(skills[activities[current_activity.activity_name].base_skills_names].current_xp)}`;
-    const needed_xp = get_total_skill_level(activities[current_activity.activity_name].base_skills_names) == skills[activities[current_activity.activity_name].base_skills_names].max_level? "Max": `${Math.ceil(skills[activities[current_activity.activity_name].base_skills_names].xp_to_next_lvl)}`;
-    
-    if(activities[current_activity.activity_name].type !== "GATHERING") {
-        action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} base xp per in-game minute to `;
-    } else {
-        action_xp_div.innerText = `Getting ${current_activity.skill_xp_per_tick} base xp per gathering cycle to `;
-    }
-
-    if(curr_xp !== "Max") {
-        action_xp_div.innerText += ` ${skills[activities[current_activity.activity_name].base_skills_names].name()} (${percent_xp}  [${expo(curr_xp)} / ${expo(needed_xp)}])`;
-    } else {
-        action_xp_div.innerText += ` ${skills[activities[current_activity.activity_name].base_skills_names].name()} (Maxxed out!)`;
-    }
-
-    if(activities[current_activity.activity_name].type !== "GATHERING") {
-        const time_needed = Math.ceil((needed_xp-curr_xp)/(current_activity.skill_xp_per_tick*get_skill_xp_gain(skills[activities[current_activity.activity_name].base_skills_names].skill_id)));
-        if(!isNaN(time_needed)) {
-            action_xp_div.innerHTML += `<br>Next level in ${format_reading_time(time_needed)} (${format_time({time: {minutes: time_needed/60}, long_names: true})}realtime)`;
+    const skill_names = current_activity.skill_names || base_activity.base_skills_names;
+    for (var i = 0; i < skill_names.length; i++) {
+        if (i > 0) {
+            action_xp_div.innerHTML += "<br><br>";
         }
-    } else {
-        const time_needed = Math.ceil(current_activity.gathering_time_needed * (needed_xp-curr_xp)/(current_activity.skill_xp_per_tick*get_skill_xp_gain(skills[activities[current_activity.activity_name].base_skills_names].skill_id)));
-        if(!isNaN(time_needed)) {
-            action_xp_div.innerHTML += `<br>Next level in ${format_reading_time(time_needed)} (${format_time({time: {minutes: time_needed/60}, long_names: true})}realtime)`;
+        else {
+            action_xp_div.innerText = "";
+        }
+
+        const skill = skills[skill_names[i]];
+        const xp_rate = current_activity.skill_xp_per_tick[i];
+        const is_maxed = get_total_skill_level(skill.skill_id) == skill.max_level;
+
+        if (base_activity.type !== "GATHERING") {
+            action_xp_div.innerText += `Getting ${xp_rate} base xp per in-game minute to `;
+        } else {
+            action_xp_div.innerText += `Getting ${xp_rate} base xp per gathering cycle to `;
+        }
+
+        if (is_maxed) {
+            action_xp_div.innerText += ` ${skill.name()} (Maxed out!)`;
+        } else {
+            const percent_xp = is_maxed ? "Max" : `${Math.round(10000 * skill.current_xp / skill.xp_to_next_lvl) / 100}%`
+            const curr_xp = is_maxed ? "Max" : `${Math.floor(skill.current_xp)}`;
+            const needed_xp = is_maxed ? "Max" : `${Math.ceil(skill.xp_to_next_lvl)}`;
+            const time_needed = Math.ceil((needed_xp - curr_xp) / (xp_rate * get_skill_xp_gain(skill.skill_id))) * current_activity.gathering_time_needed;
+
+            action_xp_div.innerText += ` ${skill.name()} (${percent_xp}  [${expo(curr_xp)} / ${expo(needed_xp)}])`;
+            action_xp_div.innerHTML += `<br>Next level in ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}realtime)`;
         }
     }
 
-    if(current_activity.gained_resources) {
+    if(current_activity.gathering_time_needed != 1) {
         document.getElementById("gathering_progress_bar").style.width = 385*current_activity.gathering_time/current_activity.gathering_time_needed+"px";
     }
 }

@@ -104,7 +104,17 @@ function Game_Time(new_time) {
             case 6:
                 return "Sat";
         }
-    }	
+    }
+
+    //point in the lunar cycle, from 0 to 1
+    this.getMoonPhase = function () {
+        return this.day_count % 29.5 / 29.5;
+    }
+
+    this.getMoonPhaseName = function (phase) {
+        const phases = ["Full", "Waning", "New", "Waxing"];
+        return phases[Math.floor(phase * phases.length)];
+    }
 }
 
 Game_Time.prototype.toString = function() {
