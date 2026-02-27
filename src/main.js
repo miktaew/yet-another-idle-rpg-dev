@@ -307,10 +307,6 @@ time_field.innerHTML = current_game_time.toString();
     });
 })();
 
-function random_range(min, max) {
-    return Math.floor(Math.random() * (max-min) + min);
-}
-
 function option_uniform_textsize(option) {
     //doesn't really force same textsize, just changes some variables so they match
     const checkbox = document.getElementById("options_textsize");
@@ -683,16 +679,11 @@ function start_activity(selected_activity) {
             current_activity = null;
             return;
         }
-
-        current_activity.earnings = 0;
-        current_activity.working_time = 0;
-
     } else if(activities[current_activity.activity_name].type === "TRAINING") {
         if(!can_work(current_activity)) {
             current_activity = null;
             return;
         }
-        //
     } else if(activities[current_activity.activity_name].type === "GATHERING") { 
         
         let has_proper_tool = !activities[current_activity.activity_name].required_tool_type || character.equipment[activities[current_activity.activity_name].required_tool_type];
@@ -707,9 +698,7 @@ function start_activity(selected_activity) {
     } else throw `"${activities[current_activity.activity_name].type}" is not a valid activity type!`;
 
     current_activity.gathering_time = 0;
-    if(current_activity.gained_resources) {
-        current_activity.gathering_time_needed = current_activity.getActivityEfficiency().gathering_time_needed;
-    }
+    current_activity.gathering_time_needed = current_activity.getActivityEfficiency().gathering_time_needed;
 
     add_to_content_stack({content_type: "activity", data: {activity: current_activity}});
 
@@ -1196,7 +1185,7 @@ function enough_time_for_earnings(selected_job) {
         //if enough time for at least 1 working period
         if(selected_job.availability_time.end > selected_job.availability_time.start) {
             //ends on the same day
-            if(current_game_time.hour * 60 + current_game_time.minute + selected_job.working_period - selected_job.working_time%selected_job.working_period > selected_job.availability_time.end*60
+            if(current_game_time.hour * 60 + current_game_time.minute + selected_job.gathering_time_needed - selected_job.gathering_time%selected_job.gathering_time_needed > selected_job.availability_time.end*60
                 ||  //not enough time left for another work period
                 current_game_time.hour * 60 + current_game_time.minute < selected_job.availability_time.start*60
                 ) {  //too early to start (shouldn't be allowed to start and get here at all)
@@ -1213,13 +1202,13 @@ function enough_time_for_earnings(selected_job) {
             if(current_game_time.hour * 60 + current_game_time.minute > selected_job.availability_time.start*60
                 //timer is past the starting hour, so it's the same day as job starts
                 && 
-                current_game_time.hour * 60 + current_game_time.minute + selected_job.working_period  - selected_job.working_time%selected_job.working_period > selected_job.availability_time.end*60 + 24*60
+                current_game_time.hour * 60 + current_game_time.minute + selected_job.working_period  - selected_job.gathering_time%selected_job.gathering_time_needed > selected_job.availability_time.end*60 + 24*60
                 //time available on this day + time available on next day are less than time needed
                 ||
                 current_game_time.hour * 60 + current_game_time.minute < selected_job.availability_time.start*60
                 //timer is less than the starting hour, so it's the next day
                 &&
-                current_game_time.hour * 60 + current_game_time.minute + selected_job.working_period  - selected_job.working_time%selected_job.working_period > selected_job.availability_time.end*60
+                current_game_time.hour * 60 + current_game_time.minute + selected_job.working_period  - selected_job.gathering_time%selected_job.gathering_time_needed > selected_job.availability_time.end*60
                 //time left on this day is not enough to finish
                 ) {  
                 return false;
@@ -3448,8 +3437,7 @@ function create_save() {
         }); //save activities' unlocked status (this is separate from unlock status in location)
 
         if(current_activity) {
-            save_data["current_activity"] = {activity_id: current_activity.id, 
-                                             working_time: current_activity.working_time, 
+            save_data["current_activity"] = {activity_id: current_activity.id,
                                              earnings: current_activity.earnings,
                                              gathering_time: current_activity.gathering_time,
                                              gathered_materials: current_activity.gathered_materials,
@@ -4902,7 +4890,6 @@ function load(save_data) {
                 
                 start_activity(activity_id);
                 if(activities[current_location.activities[activity_id].activity_name].type === "JOB") {
-                    current_activity.working_time = save_data.current_activity.working_time;
                     current_activity.earnings = save_data.current_activity.earnings * ((is_from_before_eco_rework == 1)*10 || 1);
                     document.getElementById("action_end_earnings").innerHTML = `(earnings: ${format_money(current_activity.earnings)})`;
                 } else if(activities[current_location.activities[activity_id].activity_name].type === "GATHERING") {
@@ -5308,78 +5295,63 @@ function update() {
                     }
                 }
 
-                //add xp to all related skills
-                if(activities[current_activity.activity_name].type !== "GATHERING"){
-                    for(let i = 0; i < activities[current_activity.activity_name].base_skills_names?.length; i++) {
-                        add_xp_to_skill({skill: skills[activities[current_activity.activity_name].base_skills_names[i]], xp_to_add: current_activity.skill_xp_per_tick});
-                    }
-                }
-
                 if(activities[current_activity.activity_name].type === "TRAINING") {
                     add_xp_to_skill({skill: skills["Breathing"], xp_to_add: 0.5});
                 } else {
                     add_xp_to_skill({skill: skills["Breathing"], xp_to_add: 0.1});
                 }
 
+                //ticks are varied for gathering activities, 1 second for most other activities
                 current_activity.gathering_time += 1;
-                if(current_activity.gained_resources && current_activity.gathering_time >= current_activity.gathering_time_needed) { 
+                if(current_activity.gathering_time >= current_activity.gathering_time_needed) { 
                     const {gathering_time_needed, gained_resources} = current_activity.getActivityEfficiency();
-
-                    current_activity.gathering_time_needed = gathering_time_needed;
-
                     const items = [];
 
-                    for(let i = 0; i < gained_resources.length; i++) {
-                        if(Math.random() > (1-gained_resources[i].chance)) {
-                            const count = Math.floor(Math.random()*(gained_resources[i].count[1]-gained_resources[i].count[0]+1))+gained_resources[i].count[0];
+                    //add xp
+                    const skill_names = current_activity.skill_names || activities[current_activity.activity_name].base_skills_names;
+                    for (let i = 0; i < skill_names?.length; i++) {
+                        add_xp_to_skill({skill: skills[skill_names[i]], xp_to_add: current_activity.skill_xp_per_tick[i]});
+                    }
+
+                    //add resource drops (if defined)
+                    if (gained_resources) {
+                        update_gathering_tooltip(current_activity);
+
+                        for(let i = 0; i < gained_resources.length; i++) {
+                            if(Math.random() > (1-gained_resources[i].chance)) {
+                                const count = random_range(gained_resources[i].count[0], gained_resources[i].count[1]);
                             
-                            items.push({item_key: item_templates[gained_resources[i].name].getInventoryKey(), count: count});
+                                items.push({item_key: item_templates[gained_resources[i].name].getInventoryKey(), count: count});
 
-                            gathered_materials[gained_resources[i].name] = (gathered_materials[gained_resources[i].name] || 0) + count;
-                        }
-                    }
-
-                    if(items.length > 0) {
-                        if(game_options.log_every_gathering_period) {
-                            log_loot({loot_list: items});
+                                gathered_materials[gained_resources[i].name] = (gathered_materials[gained_resources[i].name] || 0) + count;
+                            }
                         }
 
-                        for(let i = 0; i < items.length; i++) {
-                            current_activity.gathered_materials[items[i].item_key] = (current_activity.gathered_materials[items[i].item_key] + items[i].count || items[i].count);
-                        }
+                        if (items.length > 0) {
+                            if(game_options.log_every_gathering_period) {
+                                log_loot({loot_list: items});
+                            }
+
+                            for(let i = 0; i < items.length; i++) {
+                                current_activity.gathered_materials[items[i].item_key] = (current_activity.gathered_materials[items[i].item_key] + items[i].count || items[i].count);
+                            }
                         
-                        add_to_character_inventory(items);
-                    }
-
-                    let leveled = false;
-                    if(activities[current_activity.activity_name].type === "GATHERING"){
-                        for(let i = 0; i < activities[current_activity.activity_name].base_skills_names?.length; i++) {
-                            leveled = add_xp_to_skill({skill: skills[activities[current_activity.activity_name].base_skills_names[i]], xp_to_add: current_activity.skill_xp_per_tick}) || leveled;
+                            add_to_character_inventory(items);
                         }
-                        
-                        //if(leveled) {
-                            update_gathering_tooltip(current_activity);
-                        //}
                     }
 
-                    current_activity.gathering_time = 0;
-                }
 
-                //if job: payment
-                if(activities[current_activity.activity_name].type === "JOB") {
-                    current_activity.working_time += 1;
-
-                    if(current_activity.working_time % current_activity.working_period == 0) { 
-                        //finished working period, add money
+                    //if job: payment
+                    if (activities[current_activity.activity_name].type === "JOB") {
                         current_activity.earnings += current_activity.get_payment();
                     }
 
-                    update_displayed_ongoing_activity(current_activity, true);
+                    current_activity.gathering_time = 0;
+                    current_activity.gathering_time_needed = gathering_time_needed;
                 }
-                if(activities[current_activity.activity_name].type !== "JOB") {
-                    update_displayed_ongoing_activity(current_activity, false);
-                }
-    
+
+                update_displayed_ongoing_activity(current_activity);
+
                 if(!can_work(current_activity)) {
                     end_activity();
                 }

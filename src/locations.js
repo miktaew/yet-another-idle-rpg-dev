@@ -4,10 +4,11 @@ import { enemy_templates, Enemy } from "./enemies.js";
 import { skills } from "./skills.js";
 import { current_game_time } from "./game_time.js";
 import { activities } from "./activities.js";
-import { get_total_skill_level, is_rat } from "./character.js";
+import { get_total_skill_level, get_skill_modifier, is_rat } from "./character.js";
 import { GameAction } from "./actions.js";
 import { fill_market_regions, market_regions } from "./market_saturation.js";
 import { global_flags } from "./main.js";
+import { slerp } from "./misc.js";
 const locations = {}; //contains all the created locations
 const location_types = {};
 
@@ -325,10 +326,11 @@ class LocationActivity{
                  starting_text, 
                  get_payment = ()=>{return 1},
                  is_unlocked = true, 
-                 working_period = 60,
+                 working_period = 1,
                  infinite = true,
                  availability_time,
                  availability_seasons,
+                 skill_names = null,
                  skill_xp_per_tick = 1,
                  unlock_text,
                  gained_resources,
@@ -359,8 +361,9 @@ class LocationActivity{
         
         this.availability_time = availability_time; //if not infinite -> hours between which it's available; used only for work and for training
         this.availability_seasons = availability_seasons; //if not infinite -> seasons when it's available; used for work and for training
-        
-        this.skill_xp_per_tick = skill_xp_per_tick; //skill xp gained per game tick (default -> 1 in-game minute)
+
+        this.skill_names = skill_names;
+        this.skill_xp_per_tick = skill_xp_per_tick.length ? skill_xp_per_tick : [skill_xp_per_tick]; //skill xp gained per game tick (default -> 1 in-game minute)
 
         this.require_tool = require_tool; //if false, can be started without tool equipped
 
@@ -388,26 +391,29 @@ class LocationActivity{
         }
     }
 
-    getActivityEfficiency = function() {
+    getActivityEfficiency = function () {
+        let gathering_time_needed = this.working_period;
+        const gained_resources = [];
+
+        if (!this.gained_resources) {
+            return {gathering_time_needed, gained_resources};
+        }
+
         let skill_modifier = 1;
         if(this.gained_resources.skill_required && this.gained_resources.skill_required.length == 2){
             let skill_level_sum = 0;
-            for(let i = 0; i < activities[this.activity_name].base_skills_names?.length; i++) {
-                skill_level_sum += Math.min(
-                    this.gained_resources.skill_required[1]-this.gained_resources.skill_required[0]+1, Math.max(0,get_total_skill_level(activities[this.activity_name].base_skills_names[i])-this.gained_resources.skill_required[0]+1)
-                )/(this.gained_resources.skill_required[1]-this.gained_resources.skill_required[0]+1);
+            for (let i = 0; i < activities[this.activity_name].base_skills_names?.length; i++) {
+                skill_level_sum += get_skill_modifier(activities[this.activity_name].base_skills_names[i], this.gained_resources.skill_required);
             }
             skill_modifier = (skill_level_sum/(activities[this.activity_name].base_skills_names?.length || 1));
         }
-        const gathering_time_needed = Math.floor(this.gained_resources.time_period[0]*(this.gained_resources.time_period[1]/this.gained_resources.time_period[0])**skill_modifier);
-
-        const gained_resources = [];
+        gathering_time_needed = Math.floor(slerp(this.gained_resources.time_period, skill_modifier));
 
         for(let i = 0; i < this.gained_resources.resources.length; i++) {
 
-            const chance = this.gained_resources.resources[i].chance[0]*(this.gained_resources.resources[i].chance[1]/this.gained_resources.resources[i].chance[0])**skill_modifier;
-            const min = Math.round(this.gained_resources.resources[i].ammount[0][0]*(this.gained_resources.resources[i].ammount[1][0]/this.gained_resources.resources[i].ammount[0][0])**skill_modifier);
-            const max = Math.round(this.gained_resources.resources[i].ammount[0][1]*(this.gained_resources.resources[i].ammount[1][1]/this.gained_resources.resources[i].ammount[0][1])**skill_modifier);
+            const chance = slerp(this.gained_resources.resources[i].chance, skill_modifier);
+            const min = Math.round(slerp([this.gained_resources.resources[i].ammount[0][0], this.gained_resources.resources[i].ammount[1][0]], skill_modifier));
+            const max = Math.round(slerp([this.gained_resources.resources[i].ammount[0][1], this.gained_resources.resources[i].ammount[1][1]], skill_modifier));
             gained_resources.push({name: this.gained_resources.resources[i].name, count: [min,max], chance: chance});
         }
 
@@ -2196,8 +2202,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Piece of rough wood", ammount: [[1,1], [1,3]], chance: [0.5, 1]}], 
                 time_period: [20, 10],
-                skill_required: [0, 10],
-                scales_with_skill: true,
+                skill_required: [0, 10]
             },
             require_tool: true,
         }),
@@ -2210,8 +2215,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{ name: "Silica Sand", ammount: [[1, 1], [1, 3]], chance: [0.4, 1.0] }],
                 time_period: [120, 60],
-                skill_required: [0, 10],
-                scales_with_skill: true,
+                skill_required: [0, 10]
             },
             require_tool: true,
             unlock_text: "You realize that the river near the village might contain the type of sand you need",
@@ -2264,8 +2268,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Low quality iron ore", ammount: [[1,1], [1,3]], chance: [0.4, 0.8]}], 
                 time_period: [60, 30],
-                skill_required: [0, 10],
-                scales_with_skill: true,
+                skill_required: [0, 10]
             },
             unlock_text: "As you clear the area of wolf rats, you notice a vein of an iron ore",
         }),
@@ -2277,8 +2280,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Iron ore", ammount: [[1,1], [1,3]], chance: [0.3, 0.7]}],
                 time_period: [90, 40],
-                skill_required: [7, 17],
-                scales_with_skill: true,
+                skill_required: [7, 17]
             },
             unlock_text: "Going deeper, you find a vein of an iron ore that seems to be of much higher quality",
         }),
@@ -2290,8 +2292,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Atratan ore", ammount: [[1,1], [1,3]], chance: [0.3, 0.7]}],
                 time_period: [120, 60],
-                skill_required: [12, 25],
-                scales_with_skill: true,
+                skill_required: [12, 25]
             },
             unlock_text: "As you finish the fight and get a time to look around, you notice a metal vein of different color than iron. You recall another ore called Atratan, this must be it.",
         }),
@@ -2310,8 +2311,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Piece of wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
                 time_period: [90, 40],
-                skill_required: [7, 17],
-                scales_with_skill: true,
+                skill_required: [7, 17]
             },
         }),
         "woodcutting2": new LocationActivity({
@@ -2322,8 +2322,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Piece of ash wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
                 time_period: [120, 60],
-                skill_required: [12, 25],
-                scales_with_skill: true,
+                skill_required: [12, 25]
             },
             unlock_text: "Finishing your fight, you notice that the trees on the side of the clearing look really healthy and sturdy, they could be a useful material.",
         }),
@@ -2339,8 +2338,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     {name: "Belmart leaf", chance: [0.1, 0.7]}
                 ], 
                 time_period: [120, 45],
-                skill_required: [0, 10],
-                scales_with_skill: true,
+                skill_required: [0, 10]
             },
             require_tool: true,
         }),
@@ -2371,8 +2369,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     {name: "Cooking herbs", ammount: [[1,1], [2,4]], chance: [0.1, 1]},
                 ], 
                 time_period: [120, 30],
-                skill_required: [5, 20],
-                scales_with_skill: true,
+                skill_required: [5, 20]
             },
             require_tool: true,
             unlock_text: "You learned that some useful herbs can be found right under your nose"
@@ -2401,8 +2398,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     {name: "Wool", ammount: [[1,1], [1,3]], chance: [0.1, 1]},
                 ], 
                 time_period: [120, 60],
-                skill_required: [0, 10],
-                scales_with_skill: true,
+                skill_required: [0, 10]
             },
         }),
     };
@@ -2425,8 +2421,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     { name: "Silver thistle", chance: [0.1, 0.5] },
                 ],
                 time_period: [120, 60],
-                skill_required: [7, 17],
-                scales_with_skill: true,
+                skill_required: [7, 17]
             },
             require_tool: true,
         }),
@@ -2453,8 +2448,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Flax", ammount: [[1,1], [1,3]], chance: [0.4, 0.8]}], 
                 time_period: [120, 60],
-                skill_required: [14, 21],
-                scales_with_skill: true,
+                skill_required: [14, 21]
             },
             require_tool: true,
         }),
@@ -2479,8 +2473,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{ name: "Clam", ammount: [[1, 3], [1, 3]], chance: [0.34, 1.0] }],
                 time_period: [60, 30],
-                skill_required: [10, 20],
-                scales_with_skill: true,
+                skill_required: [10, 20]
             },
             require_tool: true,
         }),
@@ -2529,8 +2522,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Piece of willow wood", ammount: [[1,1], [2,5]], chance: [0.3, 1]}],
                 time_period: [20, 10],
-                skill_required: [12, 25],
-                scales_with_skill: true,
+                skill_required: [12, 25]
             }
         }),
         "mining": new LocationActivity({
@@ -2541,8 +2533,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             gained_resources: {
                 resources: [{name: "Silver ore", ammount: [[1,1], [1,3]], chance: [0.3, 0.7]}],
                 time_period: [100, 50],
-                skill_required: [10, 20],
-                scales_with_skill: true,
+                skill_required: [10, 20]
             },
             unlock_text: "You discover a vein of silver at the bottom of the lake!",
         }),
@@ -2597,8 +2588,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     {name: "Cooking herbs", ammount: [[1,1], [1,2]], chance: [0.3, 0.6]}
                 ], 
                 time_period: [90, 45],
-                skill_required: [21, 28],
-                scales_with_skill: true,
+                skill_required: [21, 28]
             }
         }),
     };

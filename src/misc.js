@@ -51,6 +51,18 @@ const crafting_tags_to_skills = {
     "medicine": "Medicine",
 }
 
+function clamp(x, min, max) {
+    return Math.max(Math.min(x, max), min);
+}
+
+function random_range(min, max) {
+    return Math.floor(Math.random() * (max-min) + min);
+}
+
+function slerp(arr, t) {
+    return arr[0] * (arr[1] / arr[0]) ** t;
+}
+
 function expo(number, precision = 3)
 {
     number = Number.parseFloat(number);
@@ -230,7 +242,8 @@ function select_outline_class(color_hex) {
     }
 }
 
-export { expo, format_reading_time, format_working_time, 
+export {
+    expo, random_range, clamp, slerp, format_reading_time, format_working_time, 
         get_hit_chance, round_item_price,
         compare_game_version, is_a_older_than_b,
         stat_names, task_type_names, skill_consumable_tags, crafting_tags_to_skills,
