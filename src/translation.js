@@ -117,7 +117,7 @@ const translations = {
         "craftsman remind 3": "Could you remind me how to get crafting materials?",
         "craftsman remind 3 answ": "Ahh, there's multiple ways of that. You can gain them from fallen foes, you can gather them around, or you can even buy them if you have some spare coin.",
         "craftsman remind 4": "How do I get better at crafting?",
-        "craftsman remind 4 answ": "Ahh, there aren't any secrets, you just need to keep practicing it. Just don't spend your entire life working on same louse materials, try to work on stronger stuff when you feel confident. There's a limit to how much you can learn by working with rat leather, isn't there?",
+        "craftsman remind 4 answ": "Ahh, there aren't any secrets, you just need to keep practicing it. Just don't spend your entire life working with the same lousy materials, try to work on stronger stuff when you feel confident. There's a limit to how much you can learn by working with rat leather, isn't there?",
         "craftsman about guard": "So what's the story of that village guard girl?",
         "craftsman about guard answ": "Ahhh, our little warrioress... She once wanted to be an adventurer, but I believe it didn't work out for her. Hard work is not enough when talent is lacking nor can it allow one to conquer fate, I'm afraid. Still, she's a good girl and keeps us safe now.",
         //
@@ -546,7 +546,7 @@ const translations = {
         //
         "guard description": "You see a tall woman in light armor, with a spear in her hand and two daggers on her belt. "
                 +"Her sharp fuzzy ears rotate every now and then towards any new sound, while her fluffy tail remains motionless. There's a scar across her face."
-                +" When she spots you, she looks at you as if you were a prey, but then her expression softens a lot.",
+                +" When she spots you, she looks at you as if you were prey, but then her expression softens a lot.",
         "guard hi answ": "Hey there. I heard you've been helping around a lot, good job cutie~ \n "
                 +"*[As she says that, she bends forward and pats your head a few times with a surprisingly gentle touch, her tail slightly wagging]*",
         "guard serious answ": "Ohhh, someone wants to impress the cute fluffy wolf lady? Sorry, but I'm way too strong for you~",

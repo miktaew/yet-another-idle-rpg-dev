@@ -1699,7 +1699,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 return "You manage to deal a wounding crack to the giant crab's shell, driving it into a rage as it flees through the forest."
                         +" With a moment of peace, you take stock of your surroundings. And if the amount of crabs on the river's shore are any indication,"
                         +" this might be the enormous crab nest you had heard about. You can't even tell where the shore meets the riverbank with the amount of crabs around here."
-                        +" The giant crab's trail is easy to spot, but it's just not possible to follow it without getting attacked by the smaller crabs. You will likely nead to get through "
+                        +" The giant crab's trail is easy to spot, but it's just not possible to follow it without getting attacked by the smaller crabs. You will likely need to get through "
                         +" multiple groups of them on your way";
             }},
         getBackgroundNoises: function() {
