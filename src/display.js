@@ -238,9 +238,7 @@ const default_dialogue_return_text = "Nevermind";
  */
 function clear_HTML_content(element) {
     if(!element) {return;}
-    while(element.firstChild) {
-        element.removeChild(element.lastChild);
-    }
+    element.replaceChildren();
 }
 
 /**
@@ -4567,7 +4565,7 @@ function update_displayed_skill_xp_gain(skill) {
         return;
     }
     const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*get_skill_xp_gain(skill.skill_id))/100 || 1;
-    skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1].innerText = `XP gain: x${xp_gain}<br><span>XP cost scaling: x${skill.xp_scaling}</span>`;
+    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], `XP gain: x${xp_gain}<br><span>XP cost scaling: x${skill.xp_scaling}</span>`);
 }
 
 function update_all_displayed_skills_xp_gain(){
