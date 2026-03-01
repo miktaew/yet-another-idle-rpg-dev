@@ -5,8 +5,8 @@
         
         <script type="module" src="resources/js/HackTimer/HackTimer.min.js"></script>
 
-        <script type='module' src="dist/bundle.js?version=v0.5.1.10"></script>
-        <!--script type="module" src="src/main.js"></script-->
+        <!--script type='module' src="dist/bundle.js?version=v0.5.1.10"></script-->
+        <script type="module" src="src/main.js"></script>
 
         <!--Icons-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -14,6 +14,8 @@
         <!--favicon-->
         <link rel="icon" href="https://miktaew.github.io/yet-another-idle-rpg-dev/favicon.ico" type="image/x-icon">
 
+        <meta charset="UTF-8">
+        
         <meta name="google-site-verification" content="IgjSYOU5-uUlX2dSA22IZ-aU9GvRbmQ5uie5qjuRWQg">
         
         <meta name="description" content="A text-based idle RPG game inspired by Proto23, with heavy focus on progression through skill leveling, created by Miktaew.">
@@ -1304,7 +1306,7 @@
             function startTrade(trader_key) {
                 in_trade = true;
                 total_price = 0;
-                trade_price_value.innerHTML = format_money(total_price);
+                trade_price_value.innerText = format_money(total_price);
                 document.documentElement.style.setProperty('--trade_ammount_button_display', 'inline-block');
                 document.documentElement.style.setProperty('--item_use_button_display', 'none');
 
@@ -1313,7 +1315,7 @@
             function exitTrade() {
                 in_trade = false;
                 total_price = 0;
-                trade_price_value.innerHTML = format_money(total_price);
+                trade_price_value.innerText = format_money(total_price);
                 document.documentElement.style.setProperty('--trade_ammount_button_display', 'none');
                 document.documentElement.style.setProperty('--item_use_button_display', 'inline-block');
 
@@ -1326,7 +1328,7 @@
 
             function cancelTrade() {
                 total_price = 0;
-                trade_price_value.innerHTML = format_money(total_price);
+                trade_price_value.innerText = format_money(total_price);
 
                 const accept_button = document.getElementById("accept_trade_button");
                 accept_button.style.cursor = "pointer";
@@ -1338,7 +1340,7 @@
             function acceptTrade() {
                 if(check_trade_cost()) {
                     total_price = 0;
-                    trade_price_value.innerHTML = format_money(total_price);
+                    trade_price_value.innerText = format_money(total_price);
                     accept_trade();
                 } else {
                     console.log("You can't afford this");
@@ -1472,7 +1474,7 @@
                             );
             
             function prepareGame() { //called on body loaded
-                document.getElementById("changelog_button").children[0].innerHTML = get_game_version();
+                document.getElementById("changelog_button").children[0].innerText = get_game_version();
 
                 document.body.addEventListener('keyup', (event)=>{
                     if(event.key === "Escape") {

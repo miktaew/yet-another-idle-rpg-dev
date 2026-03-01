@@ -98,7 +98,7 @@ import { end_activity_animation,
          update_fav_display,
          update_displayed_item_log
         } from "./display.js";
-import { compare_game_version, crafting_tags_to_skills, get_hit_chance, is_a_older_than_b, skill_consumable_tags } from "./misc.js";
+import { compare_game_version, crafting_tags_to_skills, get_hit_chance, is_a_older_than_b, random_range, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, recipes } from "./crafting_recipes.js";
 import { game_version, get_game_version } from "./game_version.js";
@@ -294,7 +294,7 @@ name_field.value = character.name;
 name_field.addEventListener("change", () => character.name = name_field.value.toString().trim().length>0?name_field.value:"Hero");
 
 const time_field = document.getElementById("time_div");
-time_field.innerHTML = current_game_time.toString();
+time_field.innerText = current_game_time.toString();
 
 (function setup(){
     Object.keys(skills).forEach(skill => {
@@ -697,6 +697,7 @@ function start_activity(selected_activity) {
         current_activity.gathered_materials = {};
     } else throw `"${activities[current_activity.activity_name].type}" is not a valid activity type!`;
 
+    current_activity.earnings = 0;
     current_activity.gathering_time = 0;
     current_activity.gathering_time_needed = current_activity.getActivityEfficiency().gathering_time_needed;
 
@@ -3625,7 +3626,7 @@ function load(save_data) {
         let any_warnings = false;
 
         current_game_time.loadTime(save_data["current time"]);
-        time_field.innerHTML = current_game_time.toString();
+        time_field.innerText = current_game_time.toString();
         //set game time
 
         Object.keys(save_data.global_flags||{}).forEach(flag => {
@@ -4891,7 +4892,7 @@ function load(save_data) {
                 start_activity(activity_id);
                 if(activities[current_location.activities[activity_id].activity_name].type === "JOB") {
                     current_activity.earnings = save_data.current_activity.earnings * ((is_from_before_eco_rework == 1)*10 || 1);
-                    document.getElementById("action_end_earnings").innerHTML = `(earnings: ${format_money(current_activity.earnings)})`;
+                    document.getElementById("action_end_earnings").innerText = `(earnings: ${format_money(current_activity.earnings)})`;
                 } else if(activities[current_location.activities[activity_id].activity_name].type === "GATHERING") {
                     current_activity.gathered_materials = save_data.current_activity.gathered_materials || {};
                 }
@@ -5195,15 +5196,15 @@ function update() {
             was_starry = false;
         }
 
-        //temperature changed => update stats if needed
+        //temperature changed => update stats if needed, update display
         if(current_temperature !== new_temperature) {
             if(!were_stats_updated) {
                 update_character_stats();
             }
-        }
-        //update temperature display every tick, it's just easiest this way
-        update_displayed_temperature();
 
+            update_displayed_temperature();
+        }
+        
         current_temperature = new_temperature;
 
         //add cold status if applicable
