@@ -59,15 +59,13 @@ const item_log = {
      * @param {Array} items [{item_key or item_id, count},...] - same as add_to_character_inventory()
      */
     log_items(items) {
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].item_key && items[i].item_key.id) {
-                this.log_item(items[i].item_key.id, items[i].count, items[i].quality);
-            }
-            else if (items[i].item_key) {
+        for(let i = 0; i < items.length; i++) {
+            if(items[i].item_id) {
+                this.log_item(items[i].item_id, items[i].count, items[i].quality);
+            } else if(items[i].item_key) {
                 let item = getItemFromKey(items[i].item_key);
                 this.log_item(item.id, items[i].count, item.quality);
-            }
-            else {
+            } else {
                 console.warn("id not included!");
             }
         }
@@ -89,7 +87,7 @@ const item_log = {
     },
 
     is_known(item_id) {
-        return this.items.hasOwnProperty(item_id);
+        return this.items[item_id];
     }
 
     //first_run() {

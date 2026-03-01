@@ -1595,7 +1595,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                                                         {location: locations["Town square"], travel_time: 40}
                                                     );
 
-    locations["Cat café"] = new Location({ 
+    locations["Cat cafe"] = new Location({ 
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: `A cat café in the center of town. There are multiple kitties of all kinds, but two females especially catch your eyes
  - a chubby mackerel tabby with a white belly and neck, and a slender tortoishell that seems blind on the right eye. There's a single worker in the café, a person of ambiguous gender with with long ponytail and glasses.`,
@@ -1610,7 +1610,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         static_temperature: 20,
     });
 
-    locations["Town square"].connected_locations.push({location: locations["Cat café"], travel_time: 4});
+    locations["Town square"].connected_locations.push({location: locations["Cat cafe"], travel_time: 4});
 
     locations["Mountain path"] = new Location({
         connected_locations: [{location: locations["Nearby cave"], custom_text: "Climb down to [Nearby Cave]", travel_time: 20, travel_time_skills: ["Climbing"]}],
@@ -3084,7 +3084,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         }),
         "dig for ants 2": new GameAction({
             action_id: "dig for ants 2",
-            action_name: "Search for ant nests",
+            action_name: "Search for second ant nest",
             starting_text: "Dig in search of red ant nests",
             description: "They live somewhere down there",
             action_text: "Digging",
@@ -3098,7 +3098,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         }),
         "dig for ants 3": new GameAction({
             action_id: "dig for ants 3",
-            action_name: "Search for ant nests",
+            action_name: "Search for third ant nests",
             starting_text: "Dig in search of red ant nests",
             description: "They live somewhere down there",
             action_text: "Digging",
