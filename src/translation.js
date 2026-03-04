@@ -34,4 +34,4 @@ const translationManager = {
     }
 };
 
-export { translationManager };
+export { translationManager, translations };
