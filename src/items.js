@@ -146,6 +146,7 @@ class Item {
                 saturates_market,
                 material_type = null,
                 quality = null,
+                rarity,
                 id = null, //passed only on loading, no need to provide it when creating new item objects as it will be filled automatically in that case
                 components = null,
                 getName = ()=>{return this.name},
@@ -1175,6 +1176,7 @@ book_stats["Medicine for dummies"] = new BookData({
             {category: "alchemy", subcategory: "items", recipe_id: "Oneberry juice"},
             {category: "alchemy", subcategory: "items", recipe_id: "Healing powder"},
             {category: "alchemy", subcategory: "items", recipe_id: "Healing potion"},
+            {category: "alchemy", subcategory: "items", recipe_id: "Potion of sapping"}, //not a medicine, but has to be somewhere
         ],
         skill_xp: {
             "Medicine": 20,
@@ -1251,11 +1253,9 @@ book_stats["Wood for Witches"] = new BookData({
         recipes: [
             {category: "alchemy", subcategory: "items", recipe_id: "Potash"},
             {category: "alchemy", subcategory: "items", recipe_id: "Sulfur"},
-	        {category: "smelting", subcategory: "items", recipe_id: "Alchemical Wood"},
+            {category: "smelting", subcategory: "items", recipe_id: "Alchemical Wood"},
         ],
-
     }
-	
 });
 
 //books
@@ -1613,6 +1613,11 @@ book_stats["Wood for Witches"] = new BookData({
         description: "Rare herb that usually grows high up in mountains, a potent healing ingredient",
         value: 20,
         material_type: "healing herb",
+    });
+
+    item_templates["Tree sap"] = new Material({
+        description: "A sticky substance from within a tree",
+        value: 5,
     });
 	
     item_templates["Cooking herbs"] = new Material({
@@ -3742,7 +3747,7 @@ book_stats["Wood for Witches"] = new BookData({
             cold_tolerance: {
                 flat: 4,
             }
-        }
+        },
     });
     item_templates["Boar hide cape"] = new Cape({
         name: "Boar hide cape",
@@ -4532,6 +4537,13 @@ book_stats["Wood for Witches"] = new BookData({
         effects: [{effect: "Healing potion", duration: 10}],
         recovery_chances: {"Glass phial": 0.75},
         tags: {"medicine": true},
+    });
+    item_templates["Potion of sapping"] = new UsableItem({
+        name: "Potion of sapping",
+        description: "A dark colored, bitter tasting potion, with no positive effects. Why would you even drink it?!",
+        value: 50,
+        effects: [{effect: "Potion of sapping", duration: 360}],
+        recovery_chances: {"Glass phial": 0.75},
     });
     item_templates["Healing balm"] = new UsableItem({
         name: "Healing balm",

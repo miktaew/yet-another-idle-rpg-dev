@@ -173,6 +173,15 @@ class ActiveEffect {
         },
         tags: {"buff": true, "medicine": true},
     });
+    effect_templates["Potion of sapping"] = new ActiveEffect({
+        name: "Potion of sapping",
+        effects: {
+            stats: {
+                stamina_regeneration_flat: {flat: -5},
+                stamina_regeneration_percent: {flat: -5},
+            }
+        },
+    });
 
     effect_templates["Cheap meat meal"] = new ActiveEffect({
         name: "Cheap meat meal",
@@ -231,7 +240,7 @@ class ActiveEffect {
         },
         tags: {"buff": true, "food": true},
     });
-		effect_templates["Simple seafood soup"] = new ActiveEffect({
+	effect_templates["Simple seafood soup"] = new ActiveEffect({
         name: "Simple seafood soup",
         effects: {
             stats: {
@@ -241,7 +250,7 @@ class ActiveEffect {
         },
         tags: {"buff": true, "food": true},
     });
-		effect_templates["Varied meat meal"] = new ActiveEffect({
+	effect_templates["Varied meat meal"] = new ActiveEffect({
         name: "Varied meat meal",
         effects: {
             stats: {
@@ -251,7 +260,7 @@ class ActiveEffect {
         },
         tags: {"buff": true, "food": true},
     });
-		effect_templates["Varied seafood meal"] = new ActiveEffect({
+	effect_templates["Varied seafood meal"] = new ActiveEffect({
         name: "Varied seafood meal",
         effects: {
             xp_multipliers: {

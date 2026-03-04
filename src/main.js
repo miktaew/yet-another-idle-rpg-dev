@@ -109,6 +109,7 @@ import { ReputationManager } from "./reputation.js";
 import { quests, questManager, active_quests } from "./quests.js";
 import { get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
+import { translationManager } from "./translation.js";
 
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -131,9 +132,8 @@ const play_button = document.getElementById("loading_screen_play_button");
 
 const languages = {
     english: "english",
-    mofu_english: "mofu_english",
 };
-let language = languages.mofu_english;
+let language = languages.english;
 
 let is_loading_error = false;
 
@@ -498,11 +498,9 @@ function option_mofu_mofu_mode(option) {
     if(checkbox.checked) {
         game_options.mofu_mofu_mode = true;
         global_flags.is_mofu_mofu_enabled = true;
-        language = languages.mofu_english;
     } else {
         game_options.mofu_mofu_mode = false;
         global_flags.is_mofu_mofu_enabled = false;
-        language = languages.english;
     }
 }
 
@@ -3642,11 +3640,8 @@ function load(save_data) {
             if(languages[save_data.language]) {
                 language = save_data.language;
             } else {
-                console.warn(`Language ${save_data.language} could not be found.`);
-                if(game_options.mofu_mofu_mode) {
-                    language = languages.mofu_english;
-                } else {
-                    language = languages.english;
+                if(save_data.language !== "mofu_english") {
+                    console.warn(`Language ${save_data.language} could not be found.`);
                 }
             }
             
@@ -5429,6 +5424,8 @@ function update() {
 
         if(character.stats.full.stamina > character.stats.full.max_stamina) {
             character.stats.full.stamina = character.stats.full.max_stamina
+        } else if(character.stats.full.stamina < 0) {
+            character.stats.full.stamina = 0;
         }
 
         if(character.stats.full.stamina_regeneration_flat || character.stats.full.stamina_regeneration_percent) {
@@ -5697,7 +5694,7 @@ function add_all_active_effects(duration){
 
 //add_to_character_inventory([{item_id: "Iron sword", count: 20, quality: 100}]);
 //add_to_character_inventory([{item_id: "Iron sword", count: 20, quality: 120}]);
-//add_to_character_inventory([{item_id: "Camping supplies", count: 20}]);
+//add_to_character_inventory([{item_id: "Potion of sapping", count: 20}]);
 
 //add_stuff_for_testing();
 //add_all_stuff_to_inventory();
@@ -5710,6 +5707,8 @@ sort_displayed_inventory({sort_by: "name", target: "character"});
 if(game_options.skip_play_button) {
     play_button.click();
 }
+
+translationManager.init(language);
 
 if(is_on_dev()) {
     log_message("It looks like you are playing on the dev release. It is recommended to keep the developer console open (in Chrome/Firefox/Edge it's at F12 => 'Console' tab) in case of any errors/warnings appearing in there.", "notification");

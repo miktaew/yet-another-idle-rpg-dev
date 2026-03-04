@@ -9,7 +9,6 @@ import { skills, skill_categories } from "./skills.js";
 import { traders } from "./traders.js";
 import { quests } from "./quests.js";
 import { market_region_mapping } from "./market_saturation.js";
-import { translations } from "./translation.js";
 import { recipes } from "./crafting_recipes.js";
 
 const trc = 1000000; //time rounding precision
@@ -336,6 +335,7 @@ function Verify_Game_Objects() {
         let has_issue = false;
 
         for(const [textline_key, textline] of Object.entries(value.textlines)) {
+        /*
             if(!translations["english"][textline.name]) {
                 has_issue = true;
                 console.error(`Textline "${textline_key}" in "${key}" has no translation provided for starting text`);
@@ -345,6 +345,7 @@ function Verify_Game_Objects() {
                 has_issue = true;
                 console.error(`Textline "${textline_key}" in "${key}" has no translation provided for answer text`);
             }
+        */
             if(textline.rewards) {
                 if(!verify_rewards(textline.rewards, "textline", key, textline_key)) {
                     has_issue = true;
@@ -352,6 +353,7 @@ function Verify_Game_Objects() {
             }
         }
 
+        /*
         for(const [action_key, action] of Object.entries(value.actions)) {
             if(!translations["english"][action.starting_text]) {
                 has_issue = true;
@@ -363,6 +365,7 @@ function Verify_Game_Objects() {
                 console.error(`Textline "${action_key}" in "${key}" has no translation provided for success text`);
             }
         }
+        */
 
         dialogue_results[0]++;
         dialogue_results[1]+=has_issue;

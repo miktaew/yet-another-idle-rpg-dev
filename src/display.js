@@ -3992,7 +3992,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(language,dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translationManager.getText(language, dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'))`);
