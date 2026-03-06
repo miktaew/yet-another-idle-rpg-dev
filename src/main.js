@@ -2485,6 +2485,11 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                 }
             });
         }
+        if(rewards.locks.dialogues) {
+            for(let i = 0; i < rewards.locks.dialogues.length; i++) {
+                dialogues[rewards.locks.dialogues[i]].is_finished = true;
+            }
+        }
         if(rewards.locks.locations) {
             for(let i = 0; i < rewards.locks.locations.length; i++) {
                 was_any_location_availability_changed = lock_location({location: locations[rewards.locks.locations[i]]}) || was_any_location_availability_changed;
