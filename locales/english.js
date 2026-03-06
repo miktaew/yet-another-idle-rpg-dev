@@ -154,7 +154,7 @@ const english = {
             +" \n [Mouse] The big rats, like on the fields... \n [Cat] I would prefer mice, at least those are cute. \n [Mouse] Shut up. \n "
             +"[Cat] So if you could help us with them, it would be great!",
     "millers young": "Aren't you two a bit too young to have a job?",
-    "millers young answ": "Nope, we are both adults, even if barely, but we will take that as a compliment~ \n *[They both smirk as they say that, apparently happy with their looks]*",
+    "millers young answ": "Nope, we are both adults, even if barely, but we will take that as a compliment~",
     "millers sure": "Sure, I can deal with them.",
     "millers sure answ": "[Red] Ehehe, thank you~ \n [Gray] We will get you some reward for it later. \n [Red] A bit of money, and maybe a kiss or two~",
     "mofu#millers sure answ": "[Cat] Ehehe, thank you~ \n [Mouse] We will get you some reward for it later. \n [Cat] A bit of money, and maybe a kiss or two~",

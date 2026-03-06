@@ -5662,6 +5662,8 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
 
 
 if(!is_loading_error) {
+    set_loading_screen_progress("Translating the meows");
+    translationManager.init(language);
     set_loading_screen_progress("Waiting for you to click 'PLAY'");
     hide_loading_text();
     show_play_button();
@@ -5712,8 +5714,6 @@ sort_displayed_inventory({sort_by: "name", target: "character"});
 if(game_options.skip_play_button) {
     play_button.click();
 }
-
-translationManager.init(language);
 
 if(is_on_dev()) {
     log_message("It looks like you are playing on the dev release. It is recommended to keep the developer console open (in Chrome/Firefox/Edge it's at F12 => 'Console' tab) in case of any errors/warnings appearing in there.", "notification");
