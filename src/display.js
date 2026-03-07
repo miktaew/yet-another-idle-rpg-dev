@@ -835,8 +835,9 @@ function end_activity_animation(remove) {
     }
 
     message.classList.add(class_to_add, group_to_add);
+    message.innerText = message_to_add;
 
-    insert_HTML(message, message_to_add + "<div class='message_border'> </>");
+    insert_HTML(message, "<div class='message_border'> </>");
 
     message_log.appendChild(message);
 
