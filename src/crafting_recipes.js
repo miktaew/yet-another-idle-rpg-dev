@@ -1604,12 +1604,24 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [7,15],
         recipe_skill: "Alchemy",
     });
+
+    alchemy_recipes.items["Potion of sapping"] = new ItemRecipe({
+        name: "Potion of sapping",
+        recipe_type: "usable",
+        is_unlocked: false,
+        materials: [{material_id: "Tree sap", count: 2},
+                    {material_id: "Glass phial", count: 1},
+        ],
+        result: {result_id: "Potion of sapping", count: 1},
+        success_chance: [0.2,1],
+        recipe_level: [3,15],
+        recipe_skill: "Alchemy",
+    });
     alchemy_recipes.items["Sulfur"] = new ItemRecipe({
         name: "Sulfur",
         recipe_type: "material",
         is_unlocked: false,
-        materials: [{material_id: "Low quality iron ore", count: 10},
-        ],
+        materials: [{material_id: "Low quality iron ore", count: 10}],
         result: {result_id: "Sulfur", count: 1},
         success_chance: [0.1,1],
         recipe_level: [10,20],

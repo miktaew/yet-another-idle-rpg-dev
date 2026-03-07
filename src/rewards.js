@@ -84,6 +84,7 @@
 
         locks: {
             locations: [String] //an array with location keys
+            dialogues: [String] //an array with dialogue keys
             textlines: {
                 "dialogue_key": [String] //an array with textline keys
             },

@@ -2214,7 +2214,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 1,
             is_unlocked: true,
             gained_resources: {
-                resources: [{name: "Piece of rough wood", ammount: [[1,1], [1,3]], chance: [0.5, 1]}], 
+                resources: [{name: "Piece of rough wood", ammount: [[1,1], [1,3]], chance: [0.5, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}], 
                 time_period: [20, 10],
                 skill_required: [0, 10]
             },
@@ -2323,7 +2323,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 5,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Piece of wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
+                resources: [{name: "Piece of wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}],
                 time_period: [90, 40],
                 skill_required: [7, 17]
             },
@@ -2334,7 +2334,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 12,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Piece of ash wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
+                resources: [{name: "Piece of ash wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}],
                 time_period: [120, 60],
                 skill_required: [12, 25]
             },
@@ -2364,7 +2364,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 16,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Piece of hickory wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
+                resources: [{name: "Piece of hickory wood", ammount: [[1,1], [1,3]], chance: [0.3, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}],
                 time_period: [120, 60],
                 skill_required: [20, 30],
                 scales_with_skill: true,
@@ -2534,7 +2534,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 10,
             is_unlocked: true,
             gained_resources: {
-                resources: [{name: "Piece of willow wood", ammount: [[1,1], [2,5]], chance: [0.3, 1]}],
+                resources: [{name: "Piece of willow wood", ammount: [[1,1], [2,5]], chance: [0.3, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}],
                 time_period: [20, 10],
                 skill_required: [12, 25]
             }

@@ -109,6 +109,7 @@ import { ReputationManager } from "./reputation.js";
 import { quests, questManager, active_quests } from "./quests.js";
 import { get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
+import { translationManager } from "./translation.js";
 
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -131,9 +132,8 @@ const play_button = document.getElementById("loading_screen_play_button");
 
 const languages = {
     english: "english",
-    mofu_english: "mofu_english",
 };
-let language = languages.mofu_english;
+let language = languages.english;
 
 let is_loading_error = false;
 
@@ -498,11 +498,9 @@ function option_mofu_mofu_mode(option) {
     if(checkbox.checked) {
         game_options.mofu_mofu_mode = true;
         global_flags.is_mofu_mofu_enabled = true;
-        language = languages.mofu_english;
     } else {
         game_options.mofu_mofu_mode = false;
         global_flags.is_mofu_mofu_enabled = false;
-        language = languages.english;
     }
 }
 
@@ -2487,6 +2485,11 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                 }
             });
         }
+        if(rewards.locks.dialogues) {
+            for(let i = 0; i < rewards.locks.dialogues.length; i++) {
+                dialogues[rewards.locks.dialogues[i]].is_finished = true;
+            }
+        }
         if(rewards.locks.locations) {
             for(let i = 0; i < rewards.locks.locations.length; i++) {
                 was_any_location_availability_changed = lock_location({location: locations[rewards.locks.locations[i]]}) || was_any_location_availability_changed;
@@ -3640,11 +3643,8 @@ function load(save_data) {
             if(languages[save_data.language]) {
                 language = save_data.language;
             } else {
-                console.warn(`Language ${save_data.language} could not be found.`);
-                if(game_options.mofu_mofu_mode) {
-                    language = languages.mofu_english;
-                } else {
-                    language = languages.english;
+                if(save_data.language !== "mofu_english") {
+                    console.warn(`Language ${save_data.language} could not be found.`);
                 }
             }
             
@@ -5438,6 +5438,8 @@ function update() {
 
         if(character.stats.full.stamina > character.stats.full.max_stamina) {
             character.stats.full.stamina = character.stats.full.max_stamina
+        } else if(character.stats.full.stamina < 0) {
+            character.stats.full.stamina = 0;
         }
 
         if(character.stats.full.stamina_regeneration_flat || character.stats.full.stamina_regeneration_percent) {
@@ -5669,6 +5671,8 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
 
 
 if(!is_loading_error) {
+    set_loading_screen_progress("Translating the meows");
+    translationManager.init(language);
     set_loading_screen_progress("Waiting for you to click 'PLAY'");
     hide_loading_text();
     show_play_button();
@@ -5706,7 +5710,7 @@ function add_all_active_effects(duration){
 
 //add_to_character_inventory([{item_id: "Iron sword", count: 20, quality: 100}]);
 //add_to_character_inventory([{item_id: "Iron sword", count: 20, quality: 120}]);
-//add_to_character_inventory([{item_id: "Camping supplies", count: 20}]);
+//add_to_character_inventory([{item_id: "Potion of sapping", count: 20}]);
 
 //add_stuff_for_testing();
 //add_all_stuff_to_inventory();

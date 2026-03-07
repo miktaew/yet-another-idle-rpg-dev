@@ -3803,7 +3803,7 @@ function update_displayed_time() {
 function update_displayed_temperature() {
     const temperature = get_current_temperature_smoothed();
     let displayed_temperature = game_options.use_uncivilised_temperature_scale?celsius_to_fahrenheit(temperature):temperature;
-
+    let html_content;
     const temperature_unit = game_options.use_uncivilised_temperature_scale?"°F":"°C";
 
     //whether temperature is low enough to give any cold effect
@@ -3822,21 +3822,23 @@ function update_displayed_temperature() {
     clear_HTML_content(weather_field);
 
     if(current_location.is_under_roof) {
-        insert_HTML(weather_field,  displayed_temperature +temperature_unit);
+        html_content = displayed_temperature + temperature_unit;
     } else {
         if(is_raining()) {
             if(temperature > 0) {
                 //rain/clouds
-                insert_HTML(weather_field, `<span class="material-icons icon">cloud</span><span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>");
+                html_content = `<span class="material-icons icon">cloud</span><span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>";
             } else {
                 //snow
-                insert_HTML(weather_field,  `<span class="material-icons icon">ac_unit</span><span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>");
+                html_content =  `<span class="material-icons icon">ac_unit</span><span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>";
             }
         } else {
             //normal weather, no icon
-            insert_HTML(weather_field,  `<span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>");
+            html_content =  `<span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>";
         }
     }
+
+    insert_HTML(weather_field, html_content);
 
     weather_field.appendChild(create_temperature_tooltip());
 }
@@ -4014,7 +4016,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(language,dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translationManager.getText(language, dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'))`);
