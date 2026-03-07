@@ -1649,6 +1649,13 @@ There's another gate on the wall in front of you, but you have a strange feeling
             sleeping_xp_per_tick: 8,
             text_to_sleep: "Take a nap on the bedroll",
         },
+        crafting: {
+            is_unlocked: true,
+            use_text: "Cook something on a campfire",
+            tiers: {
+                cooking: 1
+            }
+        },
         is_unlocked: false,
         getBackgroundNoises: function() {
             let noises = ["You hear a rock tumble and fall down. It takes a very long time to hit the ground...", "Strong wind whooshes past you", "A pair of birds flies right above you"];
@@ -1793,6 +1800,13 @@ There's another gate on the wall in front of you, but you have a strange feeling
             is_unlocked: false,
             sleeping_xp_per_tick: 8,
             text_to_sleep: "Take a nap on the cot",
+        },
+        crafting: {
+            is_unlocked: false,
+            use_text: "Cook something on a campfire",
+            tiers: {
+                cooking: 1
+            }
         },
         temperature_modifier: 1.5,
         unlock_text: "It's just a shame no one will ever believe you caught one ~this~ big",        //intended to show up after beating the giant crab for the second time, playing off the old "fisherman lying about the size of his catch" trope
@@ -3154,6 +3168,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             success_chances: [1],
             rewards: {
                 housing: ["Lake beach"],
+                crafting: ["Lake beach"],
                 activities: [
                     {location:"Lake beach", activity: "swimming"}, 
                     {location:"Lake beach", activity: "sand"}, 

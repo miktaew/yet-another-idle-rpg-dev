@@ -2660,8 +2660,30 @@ function open_crafting_window() {
     action_div.style.display = "none";
     document.getElementById("crafting_window").style.display = "block";
 
-    if(!selected_crafting_category || !selected_crafting_subcategory) {
-        switch_crafting_recipes_page("crafting");
+    //only show available categories
+    let first_available_category = null;
+
+    const elements = document.getElementById('crafting_mainpage_buttons').children;
+    for (let i = 0; i < elements.length; i++) {
+        let is_available = current_location.crafting.tiers[elements[i].dataset.crafting_category]
+
+        elements[i].style.display = is_available ? "" : "none";
+        //TODO maybe just graying it out would make more obvious what is happening?
+
+        if (is_available && !first_available_category) {
+            first_available_category = elements[i];
+        }
+        if (!is_available && selected_crafting_category == elements[i].dataset.crafting_category) {
+            selected_crafting_category = null;
+        }
+    }
+
+    if (!selected_crafting_category || !selected_crafting_subcategory) {
+        if (!first_available_category) {
+            throw new Error(`${current_location} has crafting enabled but no available crafting stations!`);
+        }
+
+        first_available_category.click();
     }
 
     update_displayed_crafting_recipes();

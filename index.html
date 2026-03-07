@@ -673,13 +673,13 @@
 
                     <div id = "crafting_window" class="crafting_window">
                         <div id="crafting_mainpage_buttons" class="activable_buttons crafting_mainpage_buttons">
-                            <div class="crafting_mainpage_button active_selection_button" onclick="switchCraftingRecipesPage('crafting')">Tinkering</div>
-                            <div class="crafting_mainpage_button" onclick="switchCraftingRecipesPage('butchering')">Butchering</div>
-                            <div class="crafting_mainpage_button" onclick="switchCraftingRecipesPage('cooking')">Cooking</div>
-                            <div class="crafting_mainpage_button" onclick="switchCraftingRecipesPage('woodworking')">Woodworking</div>
-                            <div class="crafting_mainpage_button" onclick="switchCraftingRecipesPage('smelting')">Smelting</div>
-                            <div class="crafting_mainpage_button" onclick="switchCraftingRecipesPage('forging')">Forging</div>
-                            <div class="crafting_mainpage_button" onclick="switchCraftingRecipesPage('alchemy')">Alchemy</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="crafting" onclick="switchCraftingRecipesPage('crafting')">Tinkering</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="butchering" onclick="switchCraftingRecipesPage('butchering')">Butchering</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="cooking" onclick="switchCraftingRecipesPage('cooking')">Cooking</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="woodworking" onclick="switchCraftingRecipesPage('woodworking')">Woodworking</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="smelting" onclick="switchCraftingRecipesPage('smelting')">Smelting</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="forging" onclick="switchCraftingRecipesPage('forging')">Forging</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="alchemy" onclick="switchCraftingRecipesPage('alchemy')">Alchemy</div>
                         </div>
                         <div id="crafting_subpage_buttons" class="crafting_subpage_buttons activable_buttons">
                             <div class="crafting_subpage_button active_selection_button" data-crafting_subcategory="items" onclick="switchCraftingRecipesSubpage('items')">Items/trinkets</div>
