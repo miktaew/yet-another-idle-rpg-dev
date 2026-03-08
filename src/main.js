@@ -2245,9 +2245,11 @@ function get_location_rewards(location) {
  * @param {Boolean} rewards_data.inform_overall //if unlocks are to be logged
  * @param {Boolean} rewards_data.inform_textline //if textline unlock is to be logged (requires inform_overall to also be true)
  * @param {String} rewards_data.source_name //in case it's needed for logging a message
+ * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
  */
 function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
     let was_any_location_availability_changed = false;
+    let is_current_location_reload_needed = false;
 
     if(rewards.messages && !is_from_loading) {
         for(let i = 0; i < rewards.messages.length; i++) {
@@ -2488,6 +2490,9 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         if(rewards.locks.dialogues) {
             for(let i = 0; i < rewards.locks.dialogues.length; i++) {
                 dialogues[rewards.locks.dialogues[i]].is_finished = true;
+                if(current_location.dialogues.includes(rewards.locks.dialogues[i])) {
+                    is_current_location_reload_needed = true;
+                }
             }
         }
         if(rewards.locks.locations) {
@@ -2556,6 +2561,8 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         } else {
             current_location = locations[rewards.move_to.location];
         }
+    } else if(is_current_location_reload_needed) {
+        change_location({location_id: current_location.id});
     }
 }
 
