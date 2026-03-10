@@ -2175,7 +2175,6 @@ function create_location_choice_dropdown({name, icon, class_name}) {
  */
 function create_location_choices({location, category, is_combat = false}) {
     let choice_list = [];
-    //that's a lot of ifs for same argument, maybe switch to switch instead?
 
     if(category === "talk") {
         for(let i = 0; i < location.dialogues.length; i++) { 
@@ -2183,17 +2182,10 @@ function create_location_choices({location, category, is_combat = false}) {
                 continue;
             } 
 
-            const lines_available = location.dialogues.filter(dialogue => {
-                    let lines_available = false;
-                    Object.keys(dialogues[dialogue].textlines).forEach(line => {
-                        if(lines_available) {
-                            return;
-                        } else {
-                            lines_available = dialogues[dialogue].textlines[line].is_unlocked && !dialogues[dialogue].textlines[line].is_finished;
-                        }
-                    });
-                    return lines_available;
-            }).length > 0;
+            const lines_available = Object.values(dialogues[location.dialogues[i]].textlines).filter(textline => {
+                return textline.is_unlocked && !textline.is_finished;
+            }).length;
+            
             if(!lines_available) {
                 continue;
             }
