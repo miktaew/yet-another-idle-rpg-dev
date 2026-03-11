@@ -89,9 +89,9 @@
 
 	--onclick_button_color: rgb(75, 99, 145);
 
-	--outline_white: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+	--outline_white: -1px -1px 0 #ffffff80, 1px -1px 0 #ffffff80, -1px 1px 0 #ffffff80, 1px 1px 0 #ffffff80;
 	--outline_white_default: var(var(--outline_white));
-	--outline_black: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	--outline_black: -1px -1px 0 #00000080, 1px -1px 0 #00000080, -1px 1px 0 #00000080, 1px 1px 0 #00000080;
 	--outline_black_default: var(var(--outline_black));
 }
 
@@ -726,7 +726,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .outline_black_static {
-	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+	text-shadow: -1px -1px 0 #00000080, 1px -1px 0 #00000080, -1px 1px 0 #00000080, 1px 1px 0 #00000080;
 }
 
 .recipe_tooltip {
@@ -1320,13 +1320,18 @@ input[type=checkbox], input[type=radio] {
 	border-bottom: 1px solid white;
 	padding: 3px;
 }
+
 .selectable_component, .selectable_material {
 	border-bottom: 1px dotted white;
 	padding: 3px;
 	padding-left: 10px;
 }
 
-.selected_recipe .crafting_selection {
+.selectable_component {
+	display: none;
+}
+
+.selected_recipe .crafting_selection, .selected_recipe .selectable_component {
 	display: block;
 }
 

@@ -24,7 +24,7 @@ import { favourite_locations, get_location_type_penalty, location_types, locatio
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
 import { expo, format_reading_time, stat_names, get_hit_chance, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
-import { get_recipe_xp_value, recipes } from "./crafting_recipes.js";
+import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { effect_templates } from "./active_effects.js";
 import { player_storage } from "./storage.js";
 import { quests } from "./quests.js";
@@ -2653,8 +2653,30 @@ function open_crafting_window() {
     action_div.style.display = "none";
     document.getElementById("crafting_window").style.display = "block";
 
-    if(!selected_crafting_category || !selected_crafting_subcategory) {
-        switch_crafting_recipes_page("crafting");
+    //only show available categories
+    let first_available_category = null;
+
+    const elements = document.getElementById('crafting_mainpage_buttons').children;
+    for (let i = 0; i < elements.length; i++) {
+        let is_available = current_location.crafting.tiers[elements[i].dataset.crafting_category]
+
+        elements[i].style.display = is_available ? "" : "none";
+        //TODO maybe just graying it out would make more obvious what is happening?
+
+        if (is_available && !first_available_category) {
+            first_available_category = elements[i];
+        }
+        if (!is_available && selected_crafting_category == elements[i].dataset.crafting_category) {
+            selected_crafting_category = null;
+        }
+    }
+
+    if (!selected_crafting_category || !selected_crafting_subcategory) {
+        if (!first_available_category) {
+            throw new Error(`${current_location} has crafting enabled but no available crafting stations!`);
+        }
+
+        first_available_category.click();
     }
 
     update_displayed_crafting_recipes();
@@ -2751,7 +2773,11 @@ function create_displayed_crafting_recipes() {
     update_item_recipe_visibility();
 }
 
-function add_crafting_recipe_to_display({category, subcategory, recipe_id}) {
+function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
+    if (!recipes[category] || !recipes[category][subcategory] || !recipes[category][subcategory][recipe_id]) {
+        throw new Error(`No such recipe as "${subcategory}/${subcategory}/${recipe_id}"`);
+    }
+
     const recipe = recipes[category][subcategory][recipe_id];
     if(!recipe.is_unlocked) {
         return;
@@ -2780,31 +2806,7 @@ function add_crafting_recipe_to_display({category, subcategory, recipe_id}) {
                 window.useRecipe(event.target.parentNode, Number(event.target.dataset.craft_ammount));
             }
         });
-
-        const craft_ammount_buttons = document.createElement("div");
-        craft_ammount_buttons.classList.add("craft_ammount_buttons");
-        
-        const button_5 = document.createElement("div");
-        button_5.innerText = "5";
-        button_5.dataset.craft_ammount = 5;
-        button_5.classList.add("craft_ammount_button");
-        craft_ammount_buttons.append(button_5);
-
-        const button_10 = document.createElement("div");
-        button_10.innerText = "10";
-        button_10.dataset.craft_ammount = 10;
-        button_10.classList.add("craft_ammount_button");
-        craft_ammount_buttons.append(button_10);
-
-        const button_all = document.createElement("div");
-        button_all.innerText = "all";
-        button_all.dataset.craft_ammount = Infinity;
-        button_all.classList.add("craft_ammount_button");
-
-        craft_ammount_buttons.append(button_all);
-
-        recipe_div.append(craft_ammount_buttons);
-
+        recipe_div.append(create_craft_amount_buttons());
         recipe_div.append(create_recipe_tooltip({category, subcategory, recipe_id}));
     } else if(subcategory === "components") {
         recipe_name_span.classList.add("recipe_name");
@@ -2858,30 +2860,25 @@ function add_crafting_recipe_to_display({category, subcategory, recipe_id}) {
         
         set_HTML(recipe_div.children[0], '<i class="material-icons icon crafting_dropdown_icon"> keyboard_double_arrow_down </i>' +  recipe_div.children[0].innerText);
 
-        const component_selection_1 = document.createElement("div"); //weapon head or internal armor
-        set_HTML(component_selection_1, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>Select a [${recipe.components[0]}]</span>`);
-        
-        const component_1_list = document.createElement("div");
-        component_1_list.classList.add("folded_crafting_selection");
-        component_selection_1.appendChild(component_1_list);
-
-        const component_selection_2 = document.createElement("div"); //weapon handle or external armor
-        set_HTML(component_selection_2, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>Select a [${recipe.components[1]}]</span>`);
-        
-        const component_2_list = document.createElement("div");
-        component_2_list.classList.add("folded_crafting_selection");
-        component_selection_2.appendChild(component_2_list);
-
         const component_selections = document.createElement("div");
-        component_selections.append(component_selection_1);
-        component_selections.append(component_selection_2);
+
+        for (var i = 0; i < recipe.components.length; i++) {
+            const component_selection = document.createElement("div");
+
+            set_HTML(component_selection, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>Select a [${recipe.components[i]}]</span>`);
+        
+            const component_list = document.createElement("div");
+            component_selection.appendChild(component_list);
+
+            component_selections.append(component_selection);
+        }
 
         recipe_div.addEventListener("click", (event)=>{
             if(event.target.classList.contains("recipe_name") || event.target.classList.contains("crafting_dropdown_icon")) {
 
                 remove_class_from_all("selected_component_list");
                 remove_class_from_all("selected_component_category");
-                
+
                 toggle_exclusive_class({element: recipe_div, class_name: "selected_recipe"});
 
                 window.updateDisplayedComponentChoice({category, subcategory, recipe_id});
@@ -2890,56 +2887,11 @@ function add_crafting_recipe_to_display({category, subcategory, recipe_id}) {
             }
         });
 
-        component_selection_1.parentNode.children[0].addEventListener("click", (event)=>{
-            //unfold a list for selection; its content already loaded by a different function
-            if(event.target.classList.contains("crafting_selection") || event.target.classList.contains("subcrafting_dropdown_icon")) {
-                component_selection_1.children[1].classList.toggle("selected_component_list");
-                component_selection_1.children[0].classList.toggle("selected_component_category");
-                if(recipe_div.querySelectorAll(".folded_crafting_selection").item(0).lastChild 
-                    && !is_element_above_x(recipe_div.querySelectorAll(".folded_crafting_selection").item(0).lastChild, document.getElementById("exit_crafting_button"))) 
-                {
-                    recipe_div.querySelectorAll(".folded_crafting_selection").item(0).lastChild.scrollIntoView({block: "end", inline: "nearest"});
-                }
-            }
-        });
-        component_selection_2.parentNode.children[1].addEventListener("click", (event)=>{
-            //unfold a list for selection; its content already loaded by a different function
-            if(event.target.classList.contains("crafting_selection")  || event.target.classList.contains("subcrafting_dropdown_icon")) {
-                component_selection_2.children[1].classList.toggle("selected_component_list");
-                component_selection_2.children[0].classList.toggle("selected_component_category");
-                if(!is_element_above_x(recipe_div.querySelector(".recipe_creation_button"), document.getElementById("exit_crafting_button"))) {
-                    recipe_div.querySelector(".recipe_creation_button").scrollIntoView({block: "end", inline: "nearest"});
-                }
-            }
-        });
-
         const accept_recipe_button = document.createElement("div");
         insert_HTML(accept_recipe_button, "<span class='recipe_creation_span'>Create</span>");
+
         accept_recipe_button.classList.add("recipe_creation_button");
-
-        const craft_ammount_buttons = document.createElement("div");
-        craft_ammount_buttons.classList.add("craft_ammount_buttons");
-        
-        const button_5 = document.createElement("div");
-        button_5.innerText = "5";
-        button_5.dataset.craft_ammount = 5;
-        button_5.classList.add("craft_ammount_button");
-        craft_ammount_buttons.append(button_5);
-
-        const button_10 = document.createElement("div");
-        button_10.innerText = "10";
-        button_10.dataset.craft_ammount = 10;
-        button_10.classList.add("craft_ammount_button");
-        craft_ammount_buttons.append(button_10);
-
-        const button_all = document.createElement("div");
-        button_all.innerText = "all";
-        button_all.dataset.craft_ammount = Infinity;
-        button_all.classList.add("craft_ammount_button");
-
-        craft_ammount_buttons.append(button_all);
-
-        accept_recipe_button.append(craft_ammount_buttons);
+        accept_recipe_button.append(create_craft_amount_buttons());
 
         accept_recipe_button.addEventListener("click", (event)=>{
             if(event.target.classList.contains("recipe_creation_button")) {
@@ -2959,6 +2911,32 @@ function add_crafting_recipe_to_display({category, subcategory, recipe_id}) {
     }
 
     get_recipe_page(category, subcategory).appendChild(recipe_div);
+}
+
+function create_craft_amount_buttons() {
+    const craft_amount_buttons = document.createElement("div");
+    craft_amount_buttons.classList.add("craft_ammount_buttons");
+        
+    const button_5 = document.createElement("div");
+    button_5.innerText = "5";
+    button_5.dataset.craft_ammount = 5;
+    button_5.classList.add("craft_ammount_button");
+    craft_amount_buttons.append(button_5);
+
+    const button_10 = document.createElement("div");
+    button_10.innerText = "10";
+    button_10.dataset.craft_ammount = 10;
+    button_10.classList.add("craft_ammount_button");
+    craft_amount_buttons.append(button_10);
+
+    const button_all = document.createElement("div");
+    button_all.innerText = "all";
+    button_all.dataset.craft_ammount = Infinity;
+    button_all.classList.add("craft_ammount_button");
+
+    craft_amount_buttons.append(button_all);
+
+    return craft_amount_buttons;
 }
 
 /**
@@ -2995,9 +2973,19 @@ function update_displayed_crafting_recipe({category, subcategory, recipe_id}) {
             recipe_div.classList.add("recipe_unavailable");
         }
         update_recipe_tooltip({category, subcategory, recipe_id});
-    } else if(subcategory === "components" || recipe.recipe_type === "component") {
+    } else if (subcategory === "components" || recipe.recipe_type === "component") {
+        //if(recipe.get_availability().available_ammount) {
+        //    recipe_div.classList.remove("recipe_unavailable");
+        //} else {
+        //    recipe_div.classList.add("recipe_unavailable");
+        //}
         update_recipe_tooltip({category, subcategory, recipe_id});
-    } else if(subcategory === "equipment") {
+    } else if (subcategory === "equipment") {
+        //if(recipe.get_availability().available_ammount) {
+        //    recipe_div.classList.remove("recipe_unavailable");
+        //} else {
+        //    recipe_div.classList.add("recipe_unavailable");
+        //}
         //update_recipe_tooltip({category, subcategory, recipe_id, material: null, components: []});
         //shouldn't actually be needed as tooltip already updates when opening recipe and when selecting components
     } else {
@@ -3013,16 +3001,16 @@ function create_recipe_tooltip({category, subcategory, recipe_id, material, comp
     const tooltip = document.createElement("div");
     tooltip.classList.add("recipe_tooltip");
     if(subcategory === "items") {
-        insert_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id}));
+        set_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id}));
         tooltip.classList.add("items_recipe_tooltip");
     } else if(subcategory === "components" || recipe.recipe_type === "component") {
         if(!material) {
             throw new Error(`Component recipes require passing a material, but recipe "${category}" -> "${subcategory}" -> "${recipe_id}" had none!`);
         }
-        insert_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, material}));
+        set_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, material}));
         tooltip.classList.add("component_recipe_tooltip");
     } else if(subcategory === "equipment") {
-        insert_HTML(tooltip,  create_recipe_tooltip_content({category, subcategory, recipe_id, material, components}));
+        set_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, material, components}));
         tooltip.classList.add("equipment_recipe_tooltip");
     } else {
         console.error(`No such crafting subcategory as "${subcategory}"`);
@@ -3049,7 +3037,7 @@ function update_recipe_tooltip({category, subcategory, recipe_id, components}) {
     if(subcategory === "items") {
         const tooltip = crafting_pages[category][subcategory].querySelector(`[data-recipe_id="${recipe_id}"]`).querySelector(`.${subcategory}_recipe_tooltip`);
 
-        insert_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id}));
+        set_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id}));
     } else if(subcategory === "components" || recipe.recipe_type === "component" || recipe.recipe_type === "componentless") {
         const material_selections_div = crafting_pages[category][subcategory].querySelector(`[data-recipe_id='${recipe_id}']`).children[1];
         for(let i = 0; i < material_selections_div.children.length; i++) {
@@ -3061,14 +3049,14 @@ function update_recipe_tooltip({category, subcategory, recipe_id, components}) {
             const {id} = JSON.parse(material_key);
             const material_recipe = recipe.materials.filter(material => material.material_id === id);
             
-            insert_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, material: material_recipe[0]}));
+            set_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, material: material_recipe[0]}));
         }
     } else if(subcategory === "equipment") {
         const tooltip = crafting_pages[category][subcategory].querySelector(`[data-recipe_id="${recipe_id}"]`)?.querySelector(`.${subcategory}_recipe_tooltip`);
         if(!tooltip) {
             return;
         }
-        insert_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, components}));
+        set_HTML(tooltip, create_recipe_tooltip_content({category, subcategory, recipe_id, components}));
     } else {
         console.error(`No such crafting subcategory as "${subcategory}"`);
     }
@@ -3078,63 +3066,43 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
     const recipe = recipes[category][subcategory][recipe_id];
     const station_tier = current_location?.crafting?.tiers[category] || 1;
     let tooltip = "";
-    if(subcategory === "items") {
+
+    if(subcategory === "items") {   //TODO base on result present? class?
         const success_chance = Math.round(100*recipe.get_success_chance(station_tier));
         tooltip += `Success chance: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
-        for(let i = 0; i < recipe.materials.length; i++) {
-            if(recipe.materials[i].material_id) {
-                const key = item_templates[recipe.materials[i].material_id].getInventoryKey();
-                if(character.inventory[key]?.count >= recipe.materials[i].count) {
-                    tooltip += `<span style="color:lime"><b>${item_templates[recipe.materials[i].material_id].getName()} x${character.inventory[key]?.count || 0}/${recipe.materials[i].count}</b></span><br>`;
-                } else {
-                    tooltip += `<span style="color:red"><b>${item_templates[recipe.materials[i].material_id].getName()} x${character.inventory[key]?.count || 0}/${recipe.materials[i].count}</b></span><br>`;
-                }
-            } else if(recipe.materials[i].material_type) {
-                //check if mat type available, grab all that fit
+        for (let i = 0; i < recipe.materials.length; i++) {
+            const material = find_recipe_material(recipe.materials[i]);
 
-                let mats = [];
-                Object.keys(character.inventory).forEach(key => {
-                    if(character.inventory[key].item.material_type === recipe.materials[i].material_type) {
-                        mats.push(character.inventory[key]);
-                    }
-                });
+            //base type
+            let main_name = recipe.materials[i].material_type ? "Any " + recipe.materials[i].material_type + ":" : obscure_name(recipe.materials[i].material_id);
+            let any_available = recipe.materials[i].count <= material.count;
 
-                mats = mats.sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue());
-                let any_available = false;
+            tooltip += `<span style="color:${any_available?"lime":"red"}"><b>${main_name} x${material.count}/${recipe.materials[i].count}</b></span><br>`;
+
+            //specific items - either material type, or materials with quality
+            if (recipe.materials[i].material_type || (material.items.length > 0 && material.items[0].quality)) {
                 let mat_list = "";
-                for(let j = 0; j < mats.length; j++) {
-                    if(mats[j].count >= recipe.materials[i].count) {
-                        any_available = true;
-                        mat_list += `<span style="color:lime"><b>${mats[j].item.getName()} x${mats[j].count || 0}/${recipe.materials[i].count}</b></span><br>`;
-                    } else {
-                        mat_list  += `<span style="color:red"><b>${mats[j].item.getName()} x${mats[j].count || 0}/${recipe.materials[i].count}</b></span><br>`;
-                    }
+                for (let j = 0; j < material.items.length; j++) {
+                    let sub_name = material.items[j].item.getName();
+                    mat_list += `<span style="color:${material.items[j].count >= recipe.materials[i].count?"lime":"red"}"><b>${sub_name} x${material.items[j].count || 0}/${recipe.materials[i].count}</b></span><br>`;
                 }
 
-                if(mats.length > 0) {
-                    if(any_available) {
-                        tooltip+=`<span style="color:lime"><b>Any ${recipe.materials[i].material_type} x${recipe.materials[i].count}:</b></span><br>`;
-                    } else {
-                        tooltip+=`<span style="color:red"><b>Any ${recipe.materials[i].material_type} x${recipe.materials[i].count}:</b></span><br>`;
-                    }
-                    tooltip+=`<div class="crafting_tooltip_mat_list">${mat_list}</div>`;
-
-                } else {
-                    tooltip+=`<span style="color:red"><b>Any ${recipe.materials[i].material_type} x${recipe.materials[i].count}:</b></span><br>`;
-                }
+                tooltip+=`<div class="crafting_tooltip_mat_list">${mat_list}</div>`;
             }
         }
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id});
         tooltip += `<br>XP value: ${xp_val_1}`;
         tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
-    } else if(subcategory === "components"  || recipe.recipe_type === "component") {
+    } else if(!components) {
         //some component
+        let name = obscure_name(item_templates[material.material_id].getName());
 
+        //TODO maybe allow material type?
         tooltip += `Material required:<br>`;
         if(character.inventory[item_templates[material.material_id].getInventoryKey()]?.count >= material.count) {
-            tooltip += `<span style="color:lime"><b>${item_templates[material.material_id].getName()} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
+            tooltip += `<span style="color:lime"><b>${name} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
         } else {
-            tooltip += `<span style="color:red"><b>${item_templates[material.material_id].getName()} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
+            tooltip += `<span style="color:red"><b>${name} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
         }
 
         const quality_range = recipe.get_quality_range(station_tier - item_templates[material.result_id].component_tier);
@@ -3144,24 +3112,10 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
 
         tooltip += `<br>XP value: ${xp_val_1} - ${xp_val_2}<br>`;
         tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[material.result_id], options: {quality: quality_range}})}</div>`;
-    } else if(subcategory === "equipment") {
-        if(!components) {
-            //it's a componentless equipment recipe
-            tooltip += `Material required:<br>`;
-            if(character.inventory[item_templates[material.material_id].getInventoryKey()]?.count >= material.count) {
-                tooltip += `<span style="color:lime"><b>${item_templates[material.material_id].getName()} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
-            } else {
-                tooltip += `<span style="color:red"><b>${item_templates[material.material_id].getName()} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
-            }
-
-            const quality_range = recipe.get_quality_range(station_tier - item_templates[material.result_id].item_tier);
-            const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id, material_count: material.count, result_tier: item_templates[material.result_id].item_tier, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[0])]});
-            const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, material_count: material.count, result_tier: item_templates[material.result_id].item_tier, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
-            tooltip += `<br>XP value: ${xp_val_1} - ${xp_val_2}<br>`;
-            tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[material.result_id], options: {quality: quality_range}})}</div>`;
-        } else if(components.length < 2) {
+    } else {
+        if (components.length < recipe.components.length) {
             tooltip += `Result:<br><div class="recipe_result">Select one component from each category</div>`;
-        } else if(components.length == 2) {
+        } else if(components.length == recipe.components.length) {
             let item = "";
             
             if(recipe.item_type === "Weapon") {
@@ -3194,16 +3148,17 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
             } else {
                 throw new Error(`Recipe "${category}" -> "${subcategory}" -> "${recipe_id}" has an incorrect item type "${recipe.item_type}"`)
             }
-            const quality_range = recipe.get_quality_range(recipe.get_component_quality_weighted(components[0].item, components[1].item), (station_tier-Math.max(components[0].item.component_tier, components[1].item.component_tier)) || 0);
-            const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: [item_templates[components[0].item.id], item_templates[components[1].item.id]], rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[0])]});
-            const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: [item_templates[components[0].item.id], item_templates[components[1].item.id]], rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
+
+            const component_stats = get_component_stats(components);
+            const quality_range = recipe.get_quality_range(station_tier - component_stats.max_tier, component_stats.weighted_quality);
+
+            const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: components, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[0])]});
+            const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: components, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
             tooltip += `<br>XP value: ${xp_val_1} - ${xp_val_2}<br>`;
             tooltip += `Result:<br><div class="recipe_result">${create_item_tooltip_content({item, options: {quality: quality_range}})}</div>`;
         } else {
-            throw new Error(`Somehow recipe "${category}" -> "${subcategory}" -> "${recipe_id}" received more components than there should be (${components.length} instead of 2)`)
+            throw new Error(`Somehow recipe "${category}" -> "${subcategory}" -> "${recipe_id}" received more components than there should be (${components.length} instead of ${recipe.components.length})`)
         }
-    } else {
-        console.error(`No such crafting subcategory as "${subcategory}"`);
     }
 
     return tooltip;
@@ -3214,36 +3169,43 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
  * generally called for the recipe that was just used
  * component_keys is used for automatically selecting two comps
  */
-function update_displayed_component_choice({category, recipe_id, component_keys = {}}) {
-    const recipe_div = crafting_pages[category]["equipment"].querySelector(`[data-recipe_id="${recipe_id}"]`);
-    const recipe = recipes[category]["equipment"][recipe_id];
+function update_displayed_component_choice({category, subcategory, recipe_id, component_keys = {}}) {
+    const recipe_div = crafting_pages[category][subcategory].querySelector(`[data-recipe_id="${recipe_id}"]`);
+    const recipe = recipes[category][subcategory][recipe_id];
 
-    const component_selections_div = crafting_pages[category]["equipment"].querySelector(`[data-recipe_id='${recipe_id}']`).children[1].children;
-    
-    clear_HTML_content(component_selections_div[0].children[1]);
-    clear_HTML_content(component_selections_div[1].children[1]);
+    if (!recipe.components) {
+        return;
+    }
 
-    const components = [];
-    components.push(Object.values(character.inventory).filter(item=>{
-        return recipe.components[0] === item.item.component_type;
-    }));
+    const component_selections_div = crafting_pages[category][subcategory].querySelector(`[data-recipe_id='${recipe_id}']`).children[1].children;
 
-    components.push(Object.values(character.inventory).filter(item=>{
-        return recipe.components[1] === item.item.component_type;
-    }));
+    for (var i = 0; i < recipe.components.length; i++) {
+        clear_HTML_content(component_selections_div[i].children[1]);
 
-    for(let i = 0; i < 2; i++) {
-        for(let j = 0; j < components[i].length; j++) {
+        const components = Object.values(character.inventory)
+            .filter(item => recipe.components[i] === item.item.component_type)
+            .sort((a, b) => {
+                if (a.item.component_tier != b.item.component_tier) {
+                    return b.item.component_tier - a.item.component_tier;
+                } else if (a.item.item_name != b.item.item_name) {
+                    return b.item.item_name - b.item.item_name;
+                } else {
+                    return b.item.item_quality - a.item.item_quality;
+                }
+            });
+
+        for(let j = 0; j < components.length; j++) {
             const item_div = document.createElement("div");
-            insert_HTML(item_div, `<i class="material-icons icon selected_component_icon"> check </i>${components[i][j].item.name}, ${components[i][j].item.quality}%, x${components[i][j].count}`);
+            insert_HTML(item_div, `<i class="material-icons icon selected_component_icon"> check </i>${components[j].item.name}, ${components[j].item.quality}%, x${components[j].count}`);
             item_div.classList.add("selectable_component");
-            item_div.dataset.item_key = components[i][j].item.getInventoryKey();
-            item_div.dataset.item_quality = components[i][j].item.quality;
-            item_div.dataset.item_name = components[i][j].item.getName();
-            item_div.dataset.component_tier = components[i][j].item.component_tier;
-            item_div.appendChild(create_item_tooltip(components[i][j].item, {class_name: "recipe_tooltip"}));
+            item_div.dataset.item_key = components[j].item.getInventoryKey();
+            item_div.dataset.item_quality = components[j].item.quality;
+            item_div.dataset.item_name = components[j].item.getName();
+            item_div.dataset.component_tier = components[j].item.component_tier;
+            item_div.appendChild(create_item_tooltip(components[j].item, {class_name: "recipe_tooltip"}));
             
-            item_div.addEventListener("click", ()=>{
+            item_div.addEventListener("click", () => {
+                //TODO loop
                 toggle_exclusive_class({element: item_div, siblings_only: true, class_name: "selected_component"});
                 const components = [];
                 const component_1_key = recipe_div.children[1].children[0].children[1].querySelector(".selected_component")?.dataset.item_key;
@@ -3255,7 +3217,7 @@ function update_displayed_component_choice({category, recipe_id, component_keys 
                 if(component_2_key) {
                     components.push(character.inventory[component_2_key]);
                 }
-                update_recipe_tooltip({category, subcategory: "equipment", recipe_id, components});
+                update_recipe_tooltip({category, subcategory, recipe_id, components});
             });
                 
             component_selections_div[i].children[1].appendChild(item_div);
@@ -3265,27 +3227,9 @@ function update_displayed_component_choice({category, recipe_id, component_keys 
             }
         }
     }
+
     if(!is_element_above_x(recipe_div.querySelector(".recipe_creation_button"), document.getElementById("exit_crafting_button"))) {
         recipe_div.querySelector(".recipe_creation_button").scrollIntoView({block: "end", inline: "nearest"});
-    }
-    
-    for(let i = 0; i < 2; i++) {
-        [...component_selections_div[i].children[1].children].sort((a,b) => {
-            if(Number.parseInt(a.dataset.component_tier) > Number.parseInt(b.dataset.component_tier)) {
-                return -1;
-            } else if (Number.parseInt(a.dataset.component_tier) < Number.parseInt(b.dataset.component_tier)) {
-                return 1;
-            } else if(a.dataset.item_name > b.dataset.item_name) {
-                return 1;
-            } else if(a.dataset.item_name < b.dataset.item_name) {
-                return -1;
-            } else if(Number.parseInt(a.dataset.item_quality) > Number.parseInt(b.dataset.item_quality)) {
-                return -1;
-            } else {
-                return 1;
-            }
-
-        }).forEach(node=>component_selections_div[i].children[1].appendChild(node));
     }
 }
 
@@ -3300,21 +3244,29 @@ function update_displayed_material_choice({category, subcategory, recipe_id, ref
     
     clear_HTML_content(material_selections_div);
 
-    const materials = Object.values(character.inventory).filter(item=>{
-        return recipe.materials.filter(material => material.material_id === item.item?.id).length > 0;
-    });
+    if (!recipe.materials) {
+        return;
+    }
 
-    for(let i = 0; i < materials.length; i++) {
-        const material_recipe = recipe.materials.filter(material => material.material_id === materials[i].item.id)[0];
+    for (let i = 0; i < recipe.materials.length; i++) {
+        const material_recipe = recipe.materials[i];
+
+        //hide undiscovered recipes
+        if (!item_log.is_known(material_recipe.material_id)) {
+            continue;
+        }
+
+        const material = find_recipe_material(material_recipe); //TODO currently doesn't support item types or items with quality
+
         const item_div = document.createElement("div");
         const name_span = document.createElement("span");
         insert_HTML(name_span, `<i class="material-icons icon selected_material_icon"> check </i>${item_templates[material_recipe.result_id].getName()}`);
         name_span.classList.add("recipe_comp_name");
         item_div.append(name_span);
         item_div.classList.add("selectable_material");
-        item_div.dataset.item_key = materials[i].item.getInventoryKey();
+        item_div.dataset.item_key = item_templates[material_recipe.material_id].getInventoryKey();
 
-        if(material_recipe.count <= materials[i].count) {
+        if(material_recipe.count <= material.count) {
             item_div.addEventListener("click", (event)=>{
                 item_div.classList.add("selected_material");
                 if(event.target.classList.contains("selectable_material")) {
@@ -3330,30 +3282,7 @@ function update_displayed_material_choice({category, subcategory, recipe_id, ref
             item_div.classList.add("recipe_unavailable");
         }
 
-        const craft_ammount_buttons = document.createElement("div");
-        craft_ammount_buttons.classList.add("craft_ammount_buttons");
-        
-        const button_5 = document.createElement("div");
-        button_5.innerText = "5";
-        button_5.dataset.craft_ammount = 5;
-        button_5.classList.add("craft_ammount_button");
-        craft_ammount_buttons.append(button_5);
-
-        const button_10 = document.createElement("div");
-        button_10.innerText = "10";
-        button_10.dataset.craft_ammount = 10;
-        button_10.classList.add("craft_ammount_button");
-        craft_ammount_buttons.append(button_10);
-
-        const button_all = document.createElement("div");
-        button_all.innerText = "all";
-        button_all.dataset.craft_ammount = Infinity;
-        button_all.classList.add("craft_ammount_button");
-
-        craft_ammount_buttons.append(button_all);
-
-        item_div.append(craft_ammount_buttons);
-
+        item_div.append(create_craft_amount_buttons());
         item_div.append(create_recipe_tooltip({category, subcategory, recipe_id, material: material_recipe}));
         material_selections_div.appendChild(item_div);
     }
