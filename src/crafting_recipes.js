@@ -3,6 +3,7 @@
 import { character, get_total_skill_level } from "./character.js";
 import { Armor, ArmorComponent, Cape, Shield, ShieldComponent, Weapon, WeaponComponent, item_templates } from "./items.js";
 import { skills } from "./skills.js";
+import { clamp, random_range } from "./misc.js";
 
 const crafting_recipes = {items: {}, components: {}, equipment: {}};
 const cooking_recipes = {items: {}};
@@ -50,6 +51,30 @@ class Recipe {
         this.recipe_level = recipe_level;
         this.recipe_skill = recipe_skill;
     }
+
+    get_success_chance(station_tier=1) {
+        const level = clamp(get_total_skill_level(this.recipe_skill), 0, this.recipe_level[1]) - this.recipe_level[0] + 1;
+        const skill_modifier = Math.min(1,(0||(level+(station_tier-1))/(this.recipe_level[1]-this.recipe_level[0]+1)));
+        return this.success_chance[0]*(this.success_chance[1]/this.success_chance[0])**skill_modifier;
+    }
+
+    get_quality_range(tier = 0, component_quality) {
+        const skill = skills[this.recipe_skill];
+        if (component_quality) {
+            const quality = (3 * get_total_skill_level(this.recipe_skill) - skill.max_level) + 50 + component_quality + (10 * tier);
+            return [
+                clamp(Math.round(quality - 15), 10, this.get_quality_cap()),
+                clamp(Math.round(quality + 15), 10, this.get_quality_cap())
+            ];
+        }
+        else {
+            const quality = (3 * get_total_skill_level(this.recipe_skill) - skill.max_level) + 130 + (15 * tier);
+            return [
+                clamp(Math.round(quality - 15), 10, this.get_quality_cap()),
+                clamp(Math.round(quality + 10), 10, this.get_quality_cap()),
+            ];
+        }
+    }
 }
 
 class ItemRecipe extends Recipe {
@@ -73,42 +98,20 @@ class ItemRecipe extends Recipe {
         }
     }
 
-    get_success_chance(station_tier=1) {
-        const level = Math.min(this.recipe_level[1]-this.recipe_level[0]+1, Math.max(0,get_total_skill_level(this.recipe_skill)-this.recipe_level[0]+1));
-        const skill_modifier = Math.min(1,(0||(level+(station_tier-1))/(this.recipe_level[1]-this.recipe_level[0]+1)));
-        return this.success_chance[0]*(this.success_chance[1]/this.success_chance[0])**skill_modifier;
-    }
-
     get_availability() {
-        let ammount = Infinity;
+        let amount = Infinity;
         let materials = [];
-        for(let i = 0; i < this.materials.length; i++) {
-            if(this.materials[i].material_id) {
-                const key = item_templates[this.materials[i].material_id].getInventoryKey();
-                if(!character.inventory[key]) {
-                    return 0;
-                }
-                ammount = Math.floor(Math.min(character.inventory[key].count / this.materials[i].count, ammount));
-            } else if (this.materials[i].material_type) {
-                let mats = [];
+        for (let i = 0; i < this.materials.length; i++) {
+            let material = find_recipe_material(this.materials[i]);
+            amount = Math.floor(Math.min(material.count / this.materials[i].count, amount));
+            materials.push(material);
 
-                //going through possible items and checking for their presence would surely be faster
-                Object.keys(character.inventory).forEach(key => {
-                    if(character.inventory[key].item.material_type === this.materials[i].material_type && character.inventory[key].count >= this.materials[i].count) {
-                        mats.push(character.inventory[key]);
-                    }
-                });
-                if(mats.length == 0) {
-                    return 0;
-                }
-
-                mats = mats.sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue());
-                ammount = Math.floor(Math.min(mats[0].count / this.materials[i].count, ammount));
-                materials.push(mats[0].item.id);
+            if (amount == 0) {
+                break;
             }
         }
         
-        return {available_ammount: ammount, materials};
+        return {available_ammount: amount, materials};
     }
 }
 
@@ -129,7 +132,7 @@ class ComponentRecipe extends ItemRecipe{
         this.getResult = function(material, station_tier = 1){
             const result = item_templates[this.materials.filter(x => x.material_id===material.id)[0].result_id];
             //return based on material used
-            let quality = this.get_quality((station_tier-result.component_tier) || 0);
+            let quality = this.roll_quality((station_tier-result.component_tier) || 0);
             if(result.tags["clothing"]) {
                 //means its a clothing (wearable internal part of armor)
                 return new Armor({...item_templates[result.id], quality: quality});
@@ -148,12 +151,6 @@ class ComponentRecipe extends ItemRecipe{
         }
     }
 
-    get_quality_range(tier = 0) {
-        const skill = skills[this.recipe_skill];
-        const quality = (130+(3*get_total_skill_level(this.recipe_skill) - skill.max_level)+(15*tier))/100;
-        return [Math.max(10,Math.min(this.get_quality_cap(),Math.round(25*(quality-0.15))*4)), Math.max(10,Math.min(this.get_quality_cap(), Math.round(25*(quality+0.1))*4))];
-    }
-
     get_quality_cap() {
         if(this.item_type === "Armor") {
             return get_crafting_quality_caps(this.recipe_skill).equipment;
@@ -162,17 +159,9 @@ class ComponentRecipe extends ItemRecipe{
         }
     }
 
-    /**
-     * checks if quality is completely capped, that is every created item will have the exact same value
-     * @returns {Boolean}
-     */
-    get_is_quality_capped() {
-        return this.get_quality_range()[0] >= this.get_quality_cap();
-    }
-
-    get_quality(tier = 0) {
+    roll_quality(tier = 0) {
         const quality_range = this.get_quality_range(tier);
-        return Math.round(((quality_range[1]-quality_range[0])*Math.random()+quality_range[0])/4)*4;
+        return Math.round(random_range(quality_range[0], quality_range[1])/4)*4;
     }
 }
 
@@ -191,32 +180,18 @@ class ComponentlessEquipRecipe extends ItemRecipe{
         this.getResult = function(material, station_tier = 1){
             const result = item_templates[this.materials.filter(x => x.material_id===material.id)[0].result_id];
             //return based on material used
-            let quality = this.get_quality((station_tier-result.item_tier) || 0);
+            let quality = this.roll_quality((station_tier-result.item_tier) || 0);
             return new Cape({...item_templates[result.id], quality: quality});
         }
-    }
-
-    get_quality_range(tier = 0) {
-        const skill = skills[this.recipe_skill];
-        const quality = (130+(3*get_total_skill_level(this.recipe_skill) - skill.max_level)+(15*tier))/100;
-        return [Math.max(10,Math.min(this.get_quality_cap(),Math.round(25*(quality-0.15))*4)), Math.max(10,Math.min(this.get_quality_cap(), Math.round(25*(quality+0.1))*4))];
     }
 
     get_quality_cap() {
         return get_crafting_quality_caps(this.recipe_skill).equipment;
     }
 
-    /**
-     * checks if quality is completely capped, that is every created item will have the exact same value
-     * @returns {Boolean}
-     */
-    get_is_quality_capped() {
-        return this.get_quality_range()[0] >= this.get_quality_cap();
-    }
-
-    get_quality(tier = 0) {
+    roll_quality(tier = 0) {
         const quality_range = this.get_quality_range(tier);
-        return Math.round(((quality_range[1]-quality_range[0])*Math.random()+quality_range[0])/4)*4;
+        return Math.round(random_range(quality_range[0], quality_range[1])/4)*4;
     }
 }
 
@@ -234,17 +209,17 @@ class EquipmentRecipe extends Recipe {
         super({name, id, is_unlocked, recipe_type: "equipment", result, getResult: null, recipe_level: [1,1], recipe_skill, success_rate: [1,1]})
         this.components = components;
         this.item_type = item_type;
-        this.getResult = function(component_1, component_2, station_tier = 1){
-            const comp_quality_weighted = this.get_component_quality_weighted(component_1, component_2);
-            let quality = this.get_quality(comp_quality_weighted, (station_tier-Math.max(component_1.component_tier, component_2.component_tier)) || 0);
+        this.getResult = function (components, station_tier = 1) {
+            const component_stats = get_component_stats(components);
+            let quality = this.roll_quality(component_stats.weighted_quality, station_tier - component_stats.max_tier);
             
             //return based on components used
             if(this.item_type === "Weapon") {
                 return new Weapon(
                     {
                         components: {
-                            head: component_1.id,
-                            handle: component_2.id,
+                            head: components[0].item.id,
+                            handle: components[1].item.id,
                         },
                         quality: quality,
                     }
@@ -253,8 +228,8 @@ class EquipmentRecipe extends Recipe {
                 return new Armor(
                     {
                         components: {
-                            internal: component_1.id,
-                            external: component_2.id,
+                            internal: components[0].item.id,
+                            external: components[1].item.id,
                         },
                         quality: quality,
                     }
@@ -263,8 +238,8 @@ class EquipmentRecipe extends Recipe {
                 return new Shield(
                     {
                         components: {
-                            shield_base: component_1.id,
-                            handle: component_2.id,
+                            shield_base: components[0].item.id,
+                            handle: components[1].item.id,
                         },
                         quality: quality,
                     }
@@ -275,26 +250,66 @@ class EquipmentRecipe extends Recipe {
         }
     }
 
-    get_quality_range(component_quality, tier = 0) {
-        const skill = skills[this.recipe_skill];
-        const quality = (50+component_quality+(3*get_total_skill_level(this.recipe_skill)-skill.max_level)+10*(tier));
-        return [Math.max(10,Math.min(this.get_quality_cap(),Math.round(quality-15))), Math.max(10,Math.min(this.get_quality_cap(), Math.round(quality+15)))];
-    }
-
     get_quality_cap() {
         return get_crafting_quality_caps(this.recipe_skill).equipment;
     }
 
-    get_quality(component_quality, tier = 0) {
-        const quality_range = this.get_quality_range(component_quality, tier);
-        return Math.round(((quality_range[1]-quality_range[0])*Math.random()+quality_range[0])/2)*2;
-    }
-
-    get_component_quality_weighted(component_1, component_2) {
-        return (component_1.quality*component_1.component_tier + component_2.quality*component_2.component_tier)/(component_1.component_tier+component_2.component_tier);
+    roll_quality(component_quality, tier = 0) {
+        const quality_range = this.get_quality_range(tier, component_quality);
+        return Math.round(random_range(quality_range[0], quality_range[1])/2)*2;
     }
 }
 
+/**
+ * @param {material_id/material_type, count, result_id?} material
+ * @returns { count, items[] } - items: [{item_key, count, item_id (if no key), quality (optional if no key)},...] - same as inventory
+ */
+function find_recipe_material(material) {
+    let count = 0;
+    let items = [];
+
+    if (material.material_id) {
+        const material_id = material.material_id;
+        const key = item_templates[material_id].getInventoryKey();
+        if (character.inventory[key]) {
+            //material without quality exists, no need to search further
+            count = character.inventory[key].count;
+            items = [character.inventory[key]];
+        }
+        return { count, items };
+    }
+
+    Object.values(character.inventory)
+        .filter(item => (material.material_id && item.id === material.material_id) || (material.material_type && item.item.material_type === material.material_type))
+        .sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue())
+        .forEach(item => {
+            count += item.count;
+            items.push(item);
+        });
+
+    return { count, items };
+}
+
+function get_component_stats(components) {
+    let total_quality = 0;
+    let total_tier = 0;
+    let max_tier = 0;
+
+    for (let i in components) {
+        let component = components[i].item;
+
+        total_quality += component.quality * component.component_tier;
+        total_tier += component.component_tier;
+        max_tier = Math.max(max_tier, component.component_tier);
+    }
+
+    let result_level = max_tier * 8;
+    let weighted_quality = total_quality / total_tier;
+
+    return { total_quality, total_tier, max_tier, result_level, weighted_quality };
+}
+
+//TODO decouple from categories
 function get_recipe_xp_value({category, subcategory, recipe_id, material_count, result_tier, selected_components, rarity_multiplier}) {
     //
     //for components: multiplied by material count (so every component of same tier is equally profitable to craft)
@@ -330,15 +345,18 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         }
         //penalty kicks in when skill level is more than 8*item_tier, but is delayed by sqrt of rarity multiplier
     } else {
-        const result_level = 8*Math.max(selected_components[0].component_tier,selected_components[1].component_tier);
-        exp_value = Math.max(exp_value,(selected_components[0].component_tier+selected_components[1].component_tier) * 4)**1.1;
+        //TODO
 
-        if(result_level > skill_level*rarity_multiplier**0.5) {
+        const component_stats = get_component_stats(selected_components);
+
+        exp_value = Math.max(exp_value, component_stats.total_tier * 4)**1.1;
+
+        if(component_stats.result_level > skill_level*rarity_multiplier**0.5) {
             //full value
             exp_value = Math.max(1,exp_value*rarity_multiplier);
         } else {
             //scaled value
-            exp_value = Math.max(1,exp_value*rarity_multiplier*Math.max(0,Math.min(5,result_level*rarity_multiplier**0.5+5-skill_level))/5);
+            exp_value = Math.max(1,exp_value*rarity_multiplier*Math.max(0,Math.min(5,component_stats.result_level*rarity_multiplier**0.5+5-skill_level))/5);
         }
         //penalty kicks in when skill level is more than 8*item_tier, but is delayed by sqrt of rarity multiplier
     }
@@ -1722,4 +1740,4 @@ Object.keys(recipes).forEach(recipe_category => {
     });
 });
 
-export { recipes, get_recipe_xp_value, get_crafting_quality_caps, ItemRecipe }
+export { recipes, find_recipe_material, get_recipe_xp_value, get_crafting_quality_caps, get_component_stats, ItemRecipe }

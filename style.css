@@ -1327,7 +1327,11 @@ input[type=checkbox], input[type=radio] {
 	padding-left: 10px;
 }
 
-.selected_recipe .crafting_selection {
+.selectable_component {
+	display: none;
+}
+
+.selected_recipe .crafting_selection, .selected_recipe .selectable_component {
 	display: block;
 }
 

@@ -100,7 +100,7 @@ import { end_activity_animation,
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_hit_chance, is_a_older_than_b, random_range, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
-import { get_recipe_xp_value, recipes } from "./crafting_recipes.js";
+import { get_recipe_xp_value, get_component_stats, recipes } from "./crafting_recipes.js";
 import { game_version, get_game_version } from "./game_version.js";
 import { ActiveEffect, effect_templates } from "./active_effects.js";
 import { open_storage, close_storage, move_item_to_storage, remove_item_from_storage, player_storage, is_storage_open } from "./storage.js";
@@ -2650,7 +2650,6 @@ function clear_enemies() {
     }
 }
 
-//TODO oh goodness...
 function use_recipe(target, ammount_wanted_to_craft = 1) {
 
     const category = target.parentNode.parentNode.dataset.crafting_category;
@@ -2729,7 +2728,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
 
                     for (var j = 0; j < materials[i].items.length && to_remove > 0; j++) {
                         const removed = Math.min(materials[i].items[j].count, to_remove);
-                        const key = materials[i].items[j].item_key;
+                        const key = materials[i].items[j].item.inventory_key;
+
                         remove_from_character_inventory([{ item_key: key, item_count: removed }]);
 
                         to_remove -= removed;
@@ -2906,14 +2906,14 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 if(!component_1_key) {
                     return;
                 }
-                if(!character.inventory[component_1_key] || character.inventory[component_1_key].count) {
+                if(!character.inventory[component_1_key] || !character.inventory[component_1_key].count) {
                     //a probably unnecessary check to see if they are actually in inventory
                     //no need to check how many there is as crafting always takes only 1
                     throw new Error(`Tried to create item with components that are not present in the inventory!`);
                 }
 
                 ammount_that_can_be_crafted = Math.min(ammount_that_can_be_crafted, character.inventory[component_1_key].count);
-                comp.push(character.inventory[component_1_key].item);
+                comp.push(character.inventory[component_1_key]);
                 component_keys[component_1_key] = true;
             }
 
@@ -2923,14 +2923,17 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
             let crafted_items = {};
             let crafted_count = 0;
             const all_crafted = {};
-            const result = selected_recipe.getResult(comp[0], comp[1], station_tier);
+            const result = selected_recipe.getResult(comp, station_tier);
 
             let quality;
-            const comp_quality_weighted = selected_recipe.get_component_quality_weighted(comp[0], comp[1]);
-            const comp_tier_max = Math.max(comp[0].component_tier, comp[1].component_tier)
+
+            const component_stats = get_component_stats(comp);
+
+            const comp_quality_weighted = component_stats.weighted_quality;
+            const comp_tier_max = component_stats.max_tier;
 
             for(let i = 0; i < ammount_that_can_be_crafted; i++) {
-                quality = selected_recipe.roll_quality(comp_quality_weighted, (station_tier-Math.max(comp_tier_max)) || 0);
+                quality = selected_recipe.roll_quality(comp_quality_weighted, station_tier-comp_tier_max);
 
                 crafted_items[quality] = (crafted_items[quality]+1 || 1);
                 all_crafted[quality] = (all_crafted[quality]+1 || 1);
@@ -2988,11 +2991,11 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
             add_to_character_inventory(to_add);
 
             //remove used mats
-            remove_from_character_inventory([
-                { item_key: comp[0].getInventoryKey(), item_count: ammount_that_can_be_crafted },
-                { item_key: comp[1].getInventoryKey(), item_count: ammount_that_can_be_crafted }]);
+            for (let i in comp) {
+                remove_from_character_inventory([{ item_key: comp[i].item.getInventoryKey(), item_count: ammount_that_can_be_crafted }]);
+            }
 
-            update_displayed_component_choice({category, recipe_id, component_keys});
+            update_displayed_component_choice({ category, subcategory, recipe_id, component_keys });
         }  
     }
 }
