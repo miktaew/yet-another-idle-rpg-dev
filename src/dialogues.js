@@ -51,11 +51,11 @@ class Textline {
                             stances: [],
                             flags: [],
                             items: [],
-                            locks: {textlines: {}}, //for lines to be locked in diferent dialogues and possibly for other stuff
+                            locks: {},
                             //reputation reward from textlines is currently not supported
                             },
                 branches_into = [],
-                locks_lines = [], //for lines to be locked in same dialogue
+                locks_lines = [], //for lines to be locked in >same< dialogue
                 //it's a simplified version of doing rewards: {locks: textlines: {...blah blah blah, values from it are actually autofilled in that form in a script at the end of this file
                 otherUnlocks,
                 required_flags,
