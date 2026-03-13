@@ -7,6 +7,21 @@ const component_types = {
     LONG_BLADE: "long blade",
     AXE_HEAD: "axe head",
     HAMMER_HEAD: "hammer head",
+
+    SHORT_HANDLE: "short handle",
+    MEDIUM_HANDLE: "medium handle",
+    LONG_HANDLE: "long handle",
+};
+
+const component_type_names = {
+    SHORT_BLADE: "short blade",
+    LONG_BLADE: "long blade",
+    AXE_HEAD: "axe head",
+    HAMMER_HEAD: "hammer head",
+
+    SHORT_HANDLE: "short hilt", //
+    MEDIUM_HANDLE: "medium handle",
+    LONG_HANDLE: "long shaft", //
 }
 
 /**
@@ -17,62 +32,111 @@ const material_properties = {
         tier: 1,
         weight: 100,
         strength: 100,
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
+    },
+    "rough wood": {
+        tier: 1,
+        weight: 60,
+        name: "simple",
+        types: [
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
     "iron": {
         tier: 2,
         weight: 100,
         strength: 100,
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
     "steel": {
         tier: 3,
         weight: 100,
         strength: 100,
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
     "white iron": {
         tier: 4,
-        weight: 120,
-        strength: 120,
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        weight: 130,
+        strength: 100,
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
     "black iron": {
         tier: 4,
         weight: 80,
-        strength: 100,
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        strength: 110,
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
     "white steel": {
         tier: 5,
-        weight: 120,
-        strength: 120,
+        weight: 130,
+        strength: 100,
         name: "white",
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
     "black steel": {
         tier: 5,
         weight: 80,
-        strength: 100,
+        strength: 110,
         name: "black",
-        types: [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD]
+        types: [
+            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
+    },
+
+    "hickory wood": {
+        tier: 5,
+        weight: 60,
+        name: "hickory",
+        types: [
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
     },
 };
 
 const weight_impact_per_type = {
-    "short handle": 0,
-    "medium handle": 1,
-    "long handle": 3,
+    "short handle": 1,
+    "medium handle": 3,
+    "long handle": 5.5,
 
     "short blade": 0,
-    "long blade": 1,
-    "axe head": 3,
-    "hammer head": 4,
+    "long blade": 0.5,
+    "axe head": 5,
+    "hammer head": 12,
+};
+
+const weight_impact_on_speed_per_type = {
+    "short handle": 1,
+    "medium handle": 6,
+    "long handle": 20,
+
+    "short blade": 0.5,
+    "long blade": 2,
+    "axe head": 4,
+    "hammer head": 5,
 };
 
 const strength_impact_per_type = {
-    "short blade": 4,
-    "long blade": 4,
+    "short blade": 8,
+    "long blade": 7,
     "axe head": 2,
     "hammer head": 1,
 }
@@ -97,8 +161,13 @@ const crafting_component_manager = {
             const material = material_properties[material_key];
             for(let i = 0; i < material.types.length; i++) {
                 let description;
-                let attack_value;
-                let attack_speed;
+                let attack_value = 0;
+                let attack_speed = 1;
+                let attack_multiplier = 1;
+
+                const item_id = capitalize_first_letter(material.name || material_key) + " " + material.types[i];
+                let item;
+
                 switch(material.types[i]) {
                     case component_types.SHORT_BLADE:
                         description = `A short blade made of ${material_key}, perfect for a dagger or a spear`;
@@ -113,31 +182,65 @@ const crafting_component_manager = {
                         description = `A hammer head made of ${material_key}`;
                         break;       
                 }
+                
+                if(material.types[i] === component_types.SHORT_BLADE || material.types[i] === component_types.LONG_BLADE || material.types[i] === component_types.AXE_HEAD || material.types[i] === component_types.HAMMER_HEAD) {
+                    //WEAPON HEADS
+                    attack_value = base_attack * (1 + strength_impact_per_type[material.types[i]]*(material.strength/100)) * material.tier * (1 + weight_impact_per_type[material.types[i]]*(material.weight/100))/8;
 
-                //attack_value = base_attack * material.strength * material.tier/100 * (1 + weight_impact_per_type[material.types[i]]*(1+(material.weight-100)/100));
-                //todo: include strength impact
-
-                attack_speed = (1 + (material.tier-1)/10)/(1 + (weight_impact_per_type[material.types[i]]*material.weight)/1000);
-                //todo: nothing? this seems to give fine values
-
-                const item_id = capitalize_first_letter(material.name || material_key) + " " + material.types[i];
-                const item = new WeaponComponent({ 
-                    name: item_id,
-                    description,
-                    component_type: material.types[i],
-                    value: Math.round(material.tier * 35 * material_count_per_type[material_key]/10)*10 + 10,
-                    name_prefix: capitalize_first_letter(material.name || material_key),
-                    component_tier: material.tier,
-                    attack_value: Math.floor(attack_value),
-                                 
-                    component_stats: {
-                        attack_speed: {
-                            multiplier: attack_speed, 
+                    attack_speed = Math.round(100*
+                        (1 + (material.tier-1)/10)/(1 + (weight_impact_on_speed_per_type[material.types[i]]*material.weight)/1000)
+                    )/100;
+                
+                    item = new WeaponComponent({ 
+                        name: item_id,
+                        description,
+                        component_type: material.types[i],
+                        value: Math.round(material.tier * 35 * material_count_per_type[material_key]/10)*10 + 10,
+                        name_prefix: capitalize_first_letter(material.name || material_key),
+                        component_tier: material.tier,
+                        attack_value: Math.floor(attack_value),
+                                    
+                        component_stats: {
+                            attack_speed: {
+                                multiplier: attack_speed,
+                            },
                         }
-                    }
-                });
+                    });
 
-                console.log(item_id, item.attack_value, "/", item.component_stats.attack_speed.multiplier);
+                    //console.log(item_id, item.attack_value, item.component_stats.attack_speed.multiplier);
+
+                } else if(material.types[i] === component_types.SHORT_HANDLE|| material.types[i] === component_types.MEDIUM_HANDLE || material.types[i] ===  component_types.LONG_HANDLE) {
+                    //WEAPON HANDLES
+                    
+                    attack_multiplier = Math.round(100*(
+                        1 + (1 + material.tier/20) * (1 + weight_impact_per_type[material.types[i]]*(material.weight))/1000
+                    ))/100;
+
+                    attack_speed = Math.round(100*
+                        (1 + material.tier/20)/(1 + (weight_impact_on_speed_per_type[material.types[i]]*(material.weight - 50))/1000)
+                    )/100;
+
+                    item = new WeaponComponent({ 
+                        name: item_id,
+                        description,
+                        component_type: material.types[i],
+                        value: Math.round(material.tier * 35 * material_count_per_type[material_key]/10)*10 + 10,
+                        name_prefix: capitalize_first_letter(material.name || material_key),
+                        component_tier: material.tier,
+                                    
+                        component_stats: {
+                            attack_speed: {
+                                multiplier: attack_speed,
+                            },
+                            attack_power: {
+                                multiplier: attack_multiplier,
+                            }
+                        }
+                    });
+
+                    //console.log(item_id, item.component_stats.attack_power?.multiplier, "/", item.component_stats.attack_speed?.multiplier);
+                }
+
                 if(!item_templates[item_id]) {
                     item_templates[item_id] = item;
                 } else {
