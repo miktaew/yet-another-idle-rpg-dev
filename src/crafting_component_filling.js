@@ -25,9 +25,18 @@ const component_type_names = {
 }
 
 /**
- * 100 is a default, balanced value
+ * 100 is a default value
+ * 50 is the minimum for weapon handles, going lower will result in heavier components of same material being faster (i.e. long faster than short)
  */
 const material_properties = {
+    "rough wood": {
+        tier: 1,
+        weight: 60,
+        name: "simple",
+        types: [
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
+    },
     "cheap iron": {
         tier: 1,
         weight: 100,
@@ -37,10 +46,9 @@ const material_properties = {
             component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
         ]
     },
-    "rough wood": {
-        tier: 1,
+    "wood": {
+        tier: 2,
         weight: 60,
-        name: "simple",
         types: [
             component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
         ]
@@ -54,12 +62,27 @@ const material_properties = {
             component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
         ]
     },
+    "ash wood": {
+        tier: 3,
+        weight: 60,
+        types: [
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
+    },
     "steel": {
         tier: 3,
         weight: 100,
         strength: 100,
         types: [
             component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
+    },
+    "hickory wood": {
+        tier: 4,
+        weight: 60,
+        name: "hickory",
+        types: [
             component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
         ]
     },
@@ -78,6 +101,14 @@ const material_properties = {
         strength: 110,
         types: [
             component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
+            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+        ]
+    },
+    "alchemical wood": {
+        tier: 5,
+        weight: 60,
+        name: "alchemical",
+        types: [
             component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
         ]
     },
@@ -102,20 +133,12 @@ const material_properties = {
         ]
     },
 
-    "hickory wood": {
-        tier: 5,
-        weight: 60,
-        name: "hickory",
-        types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
-        ]
-    },
 };
 
 const weight_impact_per_type = {
     "short handle": 1,
     "medium handle": 3,
-    "long handle": 5.5,
+    "long handle": 8,
 
     "short blade": 0,
     "long blade": 0.5,
@@ -125,8 +148,8 @@ const weight_impact_per_type = {
 
 const weight_impact_on_speed_per_type = {
     "short handle": 1,
-    "medium handle": 6,
-    "long handle": 20,
+    "medium handle": 5,
+    "long handle": 12,
 
     "short blade": 0.5,
     "long blade": 2,
@@ -212,13 +235,13 @@ const crafting_component_manager = {
                 } else if(material.types[i] === component_types.SHORT_HANDLE|| material.types[i] === component_types.MEDIUM_HANDLE || material.types[i] ===  component_types.LONG_HANDLE) {
                     //WEAPON HANDLES
                     
-                    attack_multiplier = Math.round(100*(
-                        1 + (1 + material.tier/20) * (1 + weight_impact_per_type[material.types[i]]*(material.weight))/1000
+                    attack_multiplier = Math.floor(100*(
+                        1 + (1 + material.tier/20) * (1 + weight_impact_per_type[material.types[i]]*(material.weight - 40))/1000
                     ))/100;
 
-                    attack_speed = Math.round(100*
+                    attack_speed = Math.floor(100*(
                         (1 + material.tier/20)/(1 + (weight_impact_on_speed_per_type[material.types[i]]*(material.weight - 50))/1000)
-                    )/100;
+                    ))/100;
 
                     item = new WeaponComponent({ 
                         name: item_id,
@@ -238,13 +261,12 @@ const crafting_component_manager = {
                         }
                     });
 
-                    //console.log(item_id, item.component_stats.attack_power?.multiplier, "/", item.component_stats.attack_speed?.multiplier);
+                    console.log(item_id, item.component_stats.attack_power?.multiplier, "/", item.component_stats.attack_speed?.multiplier);
                 }
 
                 if(!item_templates[item_id]) {
                     item_templates[item_id] = item;
                 } else {
-                    continue;
                     console.error(`Item templates already include something with an id of "${item_id}",`
                         + ` please either remove it or remove "${material.types[i]}" from component types for material "${material_key}"`);
                 }
