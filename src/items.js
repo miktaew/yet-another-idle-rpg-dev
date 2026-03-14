@@ -15,8 +15,7 @@
             200-246%    legendary      orange     x2
             247-250%    mythical       ????       x2.5
 
-            quality affects only attack/defense/max block, while additional multiplier affects all positive stats
-            (i.e flat bonuses over 0 and multiplicative bonuses over 1)
+            quality affects only attack/defense/max block, while additional multiplier affects all stats (except negative effects) - normally for flat bonuses, cubic root for multipliers
 
     basic idea for weapons:
 
@@ -505,11 +504,7 @@ class Equippable extends Item {
             //iterate over stats and apply rarity bonus if possible
             Object.keys(stats).forEach(stat => {
                 if(stats[stat].multiplier){
-                    if(stats[stat].multiplier >= 1) {
-                        stats[stat].multiplier = Math.round(100 * (1 + (stats[stat].multiplier - 1) * rarity_multipliers[this.getRarity(quality)]))/100;
-                    } else {
-                        stats[stat].multiplier = Math.round(100 * stats[stat].multiplier)/100;
-                    }
+                    stats[stat].multiplier = Math.round(100 * (stats[stat].multiplier * rarity_multipliers[this.getRarity(quality)]**0.33))/100;
                 }
 
                 if(stats[stat].flat){
@@ -525,12 +520,7 @@ class Equippable extends Item {
             Object.keys(used_stats).forEach(stat => {
                 stats[stat] = {};
                 if(used_stats[stat].multiplier){
-                    stats[stat].multiplier = 1;
-                    if(used_stats[stat].multiplier >= 1) {
-                        stats[stat].multiplier = Math.round(100 * (1 + (used_stats[stat].multiplier - 1) * rarity_multipliers[this.getRarity(quality)]))/100;
-                    } else {
-                        stats[stat].multiplier = Math.round(100 * used_stats[stat].multiplier)/100;
-                    }
+                    stats[stat].multiplier = Math.round(100 * (used_stats[stat].multiplier * rarity_multipliers[this.getRarity(quality)]**0.33))/100;
                 }
 
                 if(used_stats[stat].flat){
@@ -1544,6 +1534,18 @@ book_stats["Wood for Witches"] = new BookData({
         value: 6,
         material_type: "raw metal",
     });
+    item_templates["White iron ore"] = new Material({
+        name: "White iron ore",
+        description: "A dense and heavy cousin of iron, with a surprising white gleam. Extremely strong after being smelt, at the cost of very high mass.",
+        value: 10,
+        material_type: "raw metal",
+    });
+    item_templates["Black iron ore"] = new Material({
+        name: "Black iron ore",
+        description: "A light and strong cousing of iron, with a seemingly impossible black gleam. After being smelt, very strong and very light.",
+        value: 10,
+        material_type: "raw metal",
+    });
     item_templates["Silver ore"] = new Material({
         name: "Silver ore", 
         description: "Peculiar for its ability to direct or disrupt magic",
@@ -1730,6 +1732,31 @@ book_stats["Wood for Witches"] = new BookData({
         value: 40,
         material_type: "metal",
     });
+
+    item_templates["White iron ingot"] = new Material({
+        description: "A cousin of iron, much heavier but also very much stronger",
+        value: 70,
+        material_type: "metal",
+    });
+
+    item_templates["Black iron ingot"] = new Material({
+        description: "A cousin of iron, lighter and much stronger",
+        value: 70,
+        material_type: "metal",
+    });
+
+    item_templates["White steel ingot"] = new Material({
+        description: "A very strong and very heavy alloy",
+        value: 120,
+        material_type: "metal",
+    });
+
+    item_templates["Black steel ingot"] = new Material({
+        description: "A strong and light alloy",
+        value: 120,
+        material_type: "metal",
+    });
+
     item_templates["Turtle shellplate"] = new Material({        //treated as a metal material/chainmail instead of leather
         description: "Small, dense plates capable of reflecting mighty blows. Useless in their current form, but can be turned into something useful with enough effort and focus",
         value: 60,
@@ -1844,6 +1871,28 @@ book_stats["Wood for Witches"] = new BookData({
     item_templates["Steel chainmail"] = new Material({
         description: "Dozens of tiny steel rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
         value: 18,
+        material_type: "chainmail",
+    });
+
+    item_templates["White iron chainmail"] = new Material({
+        description: "Dozens of tiny white iron rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        value: 25,
+        material_type: "chainmail",
+    });
+    item_templates["Black iron chainmail"] = new Material({
+        description: "Dozens of tiny black iron rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        value: 25,
+        material_type: "chainmail",
+    });
+
+    item_templates["White steel chainmail"] = new Material({
+        description: "Dozens of tiny white steel rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        value: 40,
+        material_type: "chainmail",
+    });
+    item_templates["Black steel chainmail"] = new Material({
+        description: "Dozens of tiny black steel rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        value: 40,
         material_type: "chainmail",
     });
 	
@@ -2196,7 +2245,7 @@ book_stats["Wood for Witches"] = new BookData({
         }
     });
 	item_templates["Medium hickory wood handle"] = new WeaponComponent({
-        name: "Short hickory wood hilt", description: "A medium handle for an axe or a hammer",
+        name: "Medium hickory wood handle", description: "A medium handle for an axe or a hammer",
         component_type: "medium handle",
         value: 128,
         component_tier: 4,
@@ -2206,8 +2255,8 @@ book_stats["Wood for Witches"] = new BookData({
             }
         }
     });
-	item_templates["medium alchemical wood handle"] = new WeaponComponent({
-        name: "Short alchemical wood hilt", description: "A medium handle for an axe or a hammer",
+	item_templates["Medium alchemical wood handle"] = new WeaponComponent({
+        name: "Medium alchemical wood handle", description: "A medium handle for an axe or a hammer",
         component_type: "medium handle",
         value: 172,
         component_tier: 5,
@@ -2260,8 +2309,8 @@ book_stats["Wood for Witches"] = new BookData({
             }
         }
     });
-	item_templates["medium alchemical wood handle"] = new WeaponComponent({
-        name: "Short alchemical wood hilt", description: "A long shaft for a spear",
+	item_templates["Long alchemical wood shaft"] = new WeaponComponent({
+        name: "Long alchemical wood shaft", description: "A long shaft for a spear",
         component_type: "long handle",
         value: 250,
         component_tier: 5,
@@ -2588,7 +2637,6 @@ book_stats["Wood for Witches"] = new BookData({
             handle: "Medium wooden handle",
         }
     });
-	
 })();
 
 //armor components:
