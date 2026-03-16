@@ -602,7 +602,76 @@ function format_skill_rewards(milestone){
                                     category: "Combat",
                                     get_effect_description: ()=> {
                                         return `Increases block chance by flat ${Math.round(get_total_level_bonus("Shield blocking")*1000)/10}%. Increases blocked damage by ${Math.round(get_total_level_bonus("Shield blocking")*5000)/10}%, and blocks ${get_total_skill_level("Shield blocking")}% of attack damage before other calculations.`;
-                                    }});
+                                    },
+                                    milestones: {
+                                        1: {
+                                            stats: {
+                                                "strength": {flat: 1},
+                                            }
+                                        },
+                                        3: {
+                                            stats: {
+                                                "strength": {flat: 1},
+                                            },
+                                            xp_multipliers: {
+                                                Weightlifting: 1.05,
+                                            }
+                                        },
+                                        5: {
+                                            stats: {
+                                                "strength": {flat: 1},
+                                                "dexterity": {flat: 1},
+                                                "agility": {flat: 1}
+                                            },
+                                        },
+                                        7: {
+                                            stats: {
+                                                "strength": {flat: 1},
+                                            },
+                                            xp_multipliers: {
+                                                Fortitude: 1.05,
+                                            }
+                                        },
+                                        10: {
+                                            stats: {
+                                                "strength": {
+                                                    flat: 1,
+                                                    multiplier: 1.05,
+                                                },
+                                                "dexterity": {flat: 2},
+                                                "agility": {flat: 1}
+                                            },
+                                            xp_multipliers: {
+                                                Perception: 1.1,
+                                            }
+                                        },
+                                        12: {
+                                            stats: {
+                                                "strength": {flat: 2},
+                                            },
+                                            xp_multipliers: {
+                                                Weightlifting: 1.05,
+                                            }
+                                        },
+                                        15: {
+                                            stats: {
+                                                "strength": {flat: 4},
+                                                "dexterity": {flat: 4},
+                                                "agility": {flat: 2}
+                                            }
+                                        },
+                                        20: {
+                                            xp_multipliers: {
+                                                Weightlifting: 1.2,
+                                                Fortitude: 1.2,
+                                                Combat: 1.2,
+                                            },
+                                            stats: {
+                                                "strength": {multiplier: 1.05}
+                                            }
+                                        }
+                                    }
+                                });
     
      skills["Unarmed"] = new Skill({ 
                                     names: {0: "Unarmed", 10: "Brawling", 20: "Martial arts"}, 

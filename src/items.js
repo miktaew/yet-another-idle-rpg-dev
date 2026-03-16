@@ -15,7 +15,8 @@
             200-246%    legendary      orange     x2
             247-250%    mythical       ????       x2.5
 
-            quality affects only attack/defense/max block, while additional multiplier affects all stats (except negative effects) - normally for flat bonuses, cubic root for multipliers
+            quality affects only attack/defense/max block, while additional multiplier affects all stats (except negative effects):
+                normally for flat bonuses, cubic root for multipliers (with exception of attack speed on armor)
 
     basic idea for weapons:
 
@@ -30,7 +31,7 @@
 
         so, as a result, attack damage goes blunt > axe > spear > sword > dagger
         and attack speed goes               dagger > sword > spear > axe > blunt
-        which kinda makes spears very average, but they also get bonus crit so whatever
+        which kinda makes spears very average, but they also get bonus crit
 */
 
 //as a note, try to not give dexterity/agility from weapons and instead use attack_points/evasion_points, this is in regards of possible skill checks;
@@ -503,8 +504,25 @@ class Equippable extends Item {
 
             //iterate over stats and apply rarity bonus if possible
             Object.keys(stats).forEach(stat => {
-                if(stats[stat].multiplier){
-                    stats[stat].multiplier = Math.round(100 * (stats[stat].multiplier * rarity_multipliers[this.getRarity(quality)]**0.33))/100;
+                if(stats[stat].multiplier) {
+                    if(!this.tags["weapon"] && stat === "attack_speed") {
+                        //special treatment for atk spd when not on weapon, since this stat is way too powerful
+                        if(stats[stat].multiplier > 1) {
+                            //multiply value over 1 by rarity
+                            stats[stat].multiplier = Math.round(100 * (1+(stats[stat].multiplier-1) * rarity_multipliers[this.getRarity(quality)]))/100;
+                        } else {
+                            if(rarity_multipliers[this.getRarity(quality)] >= 2) {
+                                //penalty is removed
+                                stats[stat].multiplier = 1;
+                            } else {
+                                //penalty is reduced
+                                stats[stat].multiplier = Math.round(100 * (stats[stat].multiplier + (1 - stats[stat].multiplier) * rarity_multipliers[this.getRarity(quality)]/2))/100;
+                                //e.g. 90% multi on eq with 1.6 rarity multi should result in 90% + (10%*1.6/2 = 8%) = 98%
+                            }
+                        }
+                    } else {
+                        stats[stat].multiplier = Math.round(100 * (stats[stat].multiplier * rarity_multipliers[this.getRarity(quality)]**0.33))/100;
+                    }
                 }
 
                 if(stats[stat].flat){
@@ -519,7 +537,23 @@ class Equippable extends Item {
             let used_stats = this.component_stats || this.base_stats || {};
             Object.keys(used_stats).forEach(stat => {
                 stats[stat] = {};
-                if(used_stats[stat].multiplier){
+
+                if(!this.tags["weapon"] && stat === "attack_speed") {
+                    //special treatment for atk spd on armor, since this stat is way too powerful
+                    if(used_stats[stat].multiplier > 1) {
+                        //multiply value over 1 by rarity
+                        stats[stat].multiplier = Math.round(100 * (1+(used_stats[stat].multiplier-1) * rarity_multipliers[this.getRarity(quality)]))/100;
+                    } else {
+                        if(rarity_multipliers[this.getRarity(quality)] >= 2) {
+                            //penalty is removed
+                            stats[stat].multiplier = 1;
+                        } else {
+                            //penalty is reduced
+                            stats[stat].multiplier = Math.round(100 * (used_stats[stat].multiplier + (1 - used_stats[stat].multiplier) * rarity_multipliers[this.getRarity(quality)]/2))/100;
+                            //e.g. 90% multi on eq with 1.6 rarity multi should result in 90% + (10%*1.6/2 = 8%) = 98%
+                        }
+                    }
+                } else {
                     stats[stat].multiplier = Math.round(100 * (used_stats[stat].multiplier * rarity_multipliers[this.getRarity(quality)]**0.33))/100;
                 }
 
@@ -4116,10 +4150,10 @@ book_stats["Wood for Witches"] = new BookData({
     item_templates["Turtleshell shield base"] = new ShieldComponent({
         name: "Turtleshell shield base",
         description: "Dense turtle shellplate base, although it's quite heavy",
-        value: 650,
+        value: 450,
         shield_strength: 24,
         shield_name: "Turtleshell shield",
-        component_tier: 5,
+        component_tier: 4,
         component_type: "shield base",
         component_stats: {
             attack_speed: {

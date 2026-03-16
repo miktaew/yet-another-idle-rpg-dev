@@ -2280,9 +2280,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 1,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Low quality iron ore", ammount: [[1,1], [1,3]], chance: [0.4, 0.8]}], 
+                resources: [{name: "Low quality iron ore", ammount: [[1,1], [1,3]], chance: [0.4, 1]}], 
                 time_period: [60, 30],
-                skill_required: [0, 10]
+                skill_required: [0, 13]
             },
             unlock_text: "As you clear the area of wolf rats, you notice a vein of an iron ore",
         }),
@@ -2292,9 +2292,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 5,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Iron ore", ammount: [[1,1], [1,3]], chance: [0.3, 0.7]}],
+                resources: [{name: "Iron ore", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
                 time_period: [90, 40],
-                skill_required: [7, 17]
+                skill_required: [7, 21]
             },
             unlock_text: "Going deeper, you find a vein of an iron ore that seems to be of much higher quality",
         }),
@@ -2304,9 +2304,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 12,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Atratan ore", ammount: [[1,1], [1,3]], chance: [0.3, 0.7]}],
+                resources: [{name: "Atratan ore", ammount: [[1,1], [1,3]], chance: [0.3, 1]}],
                 time_period: [120, 60],
-                skill_required: [12, 25]
+                skill_required: [12, 28]
             },
             unlock_text: "As you finish the fight and get a time to look around, you notice a metal vein of different color than iron. You recall another ore called Atratan, this must be it.",
         }),
@@ -2432,10 +2432,10 @@ There's another gate on the wall in front of you, but you have a strange feeling
             is_unlocked: false,
             gained_resources: {
                 resources: [
-                    { name: "Silver thistle", chance: [0.1, 0.5] },
+                    { name: "Silver thistle", chance: [0.1, 1] },
                 ],
                 time_period: [120, 60],
-                skill_required: [7, 17]
+                skill_required: [7, 24]
             },
             require_tool: true,
         }),
@@ -2460,9 +2460,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
             skill_xp_per_tick: 9,
             is_unlocked: false,
             gained_resources: {
-                resources: [{name: "Flax", ammount: [[1,1], [1,3]], chance: [0.4, 0.8]}], 
+                resources: [{name: "Flax", ammount: [[1,1], [1,3]], chance: [0.4, 1]}], 
                 time_period: [120, 60],
-                skill_required: [14, 21]
+                skill_required: [14, 24]
             },
             require_tool: true,
         }),
