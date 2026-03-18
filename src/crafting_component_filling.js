@@ -1,6 +1,27 @@
 "use strict";
-import { item_templates, ShieldComponent, WeaponComponent } from "./items.js";
+import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";
 import { capitalize_first_letter } from "./display.js";
+
+
+
+
+/*
+    GENERATES CRAFTING COMPONENTS BASED ON PROVIDED PROPERTIES AND PARAMETERS
+    EACH MATERIAL CAN SPECIFY WHICH COMPONENT TYPES TO CREATE, USE THAT TO SKIP ONES YOU WANT TO FILL YOURSELF
+    DOES NOT (YET?) SUPPORT CUSTOM DESCRIPTIONS FOR EACH TYPE
+
+    DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE NAMES MATCH
+
+    STATS:
+        tier - affects multiple stats and value
+        weight - affects weapon dmg, attack speed (negatively), and shield block
+        strength - affects weapon dmg and shield block
+        handling - affects dexterity on clothing
+        warmth - affects cold resistance
+
+*/
+
+
 
 const base_value = 35; //todo: base it on material prices instead
 
@@ -16,6 +37,18 @@ const component_types = {
     
     SHIELD_HANDLE: "shield handle",
     SHIELD_BASE: "shield base",
+
+    HELMET_INTERIOR: "helmet interior",
+    CHESTPLATE_INTERIOR: "chestplate interior",
+    LEG_ARMOR_INTERIOR: "leg armor interior",
+    SHOE_INTERIOR: "shoes interior",
+    GLOVE_INTERIOR: "glove interior",
+
+    HELMET_EXTERIOR: "helmet exterior",
+    CHESTPLATE_EXTERIOR: "chestplate exterior",
+    LEG_ARMOR_EXTERIOR: "leg armor exterior",
+    SHOE_EXTERIOR: "shoes exterior",
+    GLOVE_EXTERIOR: "glove exterior",
 };
 
 /**
@@ -42,6 +75,17 @@ const material_properties = {
             component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
             component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "cheap leather": {
+        tier: 1,
+        weight: 60,
+        strength: 40,
+        handling: 50,
+        warmth: 100,
+        types: [
+            component_types.HELMET_INTERIOR, component_types.CHESTPLATE_INTERIOR, component_types.LEG_ARMOR_INTERIOR, component_types.SHOE_INTERIOR
+            //no glove, material implied to be too crappy for them
         ]
     },
     "wood": {
@@ -212,10 +256,74 @@ const material_count_per_type = {
     
     "shield handle": 4,
     "shield base": 6,
+
+    "helmet interior": 3,
+    "chestplate interior": 5,
+    "leg armor interior": 3,
+    "glove interior": 2,
+    "shoes interior": 2,
+
+    "helmet exterior": 3,
+    "chestplate exterior": 5,
+    "leg armor exterior": 3,
+    "glove exterior": 2,
+    "shoes exterior": 2,
 };
+
+const type_to_name = (comp_type)=>{
+    switch(comp_type) {
+        case "chestplate interior": 
+            return "vest";
+        case "helmet interior":
+            return "hat";
+        case "leg armor interior":
+            return "pants";
+        case "glove interior":
+            return "gloves";
+        case "shoes interior":
+            return "shoes";
+        case "chestplate exterior": 
+            return "chestplate armor";
+        case "helmet exterior":
+            return "helmet armor";
+        case "leg exterior":
+            return "greaves";
+        case "glove exterior":
+            return "glove armor";
+        case "shoes exterior":
+            return "shoe armor";
+        default:
+            return comp_type;
+    }
+}
 
 const base_attack = 3;
 
+
+/**
+ * quickie for adding stats to component_stats
+ * @param {*} target component_stats
+ * @param {*} properties e.g. {agility: {multiplier: some_value}}
+ */
+const add_properties = (target, properties) => {
+    Object.keys(properties).forEach(property => {
+        if(!target[property]) {
+            target[property] = {};
+        }
+
+        Object.keys(properties[property]).forEach(subproperty => {
+            if(!target[property][subproperty]) {
+                target[property][subproperty] = properties[property][subproperty];
+            } else {
+                if(subproperty === "flat") {
+                    target[property][subproperty] += properties[property][subproperty];
+                } else if(subproperty === "multiplier") {
+                    target[property][subproperty] *= properties[property][subproperty];
+                }
+            }
+        });
+    });
+}
 
 const crafting_component_manager = {
 
@@ -229,7 +337,7 @@ const crafting_component_manager = {
                 let description;
                 let component_stats = structuredClone(material.additional_stats) || {};
 
-                const item_id = capitalize_first_letter(material.name || material_key) + " " + material.types[i];
+                const item_id = capitalize_first_letter(material.name || material_key) + " " + type_to_name(material.types[i]);
                 let item;
 
                 switch(material.types[i]) {
@@ -246,6 +354,8 @@ const crafting_component_manager = {
                         description = `A hammer head made of ${material_key}`;
                         break;       
                 }
+
+                let material_count = material_count_per_type[material.types[i]];
                 
                 if(material.types[i] === component_types.SHORT_BLADE || material.types[i] === component_types.LONG_BLADE || material.types[i] === component_types.AXE_HEAD || material.types[i] === component_types.HAMMER_HEAD) {
                     //WEAPON HEADS
@@ -290,7 +400,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count_per_type[material_key]/10)*10 + 10,
+                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
                         attack_value: Math.floor(attack_value),
@@ -331,7 +441,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count_per_type[material_key]/10)*10 + 10,
+                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
                         component_stats,
@@ -341,7 +451,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count_per_type[material_key]/10)*10 + 10,
+                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
                         component_stats: {
@@ -355,7 +465,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count_per_type[material_key]/10)*10 + 10,
+                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
 
@@ -369,7 +479,49 @@ const crafting_component_manager = {
                             }
                         }
                     });
+                } else if(material.types[i] === component_types.HELMET_INTERIOR|| material.types[i] === component_types.CHESTPLATE_INTERIOR 
+                        || material.types[i] ===  component_types.LEG_ARMOR_INTERIOR || material.types[i] ===  component_types.SHOE_INTERIOR || material.types[i] ===  component_types.GLOVE_INTERIOR
+                    ) {
+
+                        let agility_multiplier = 1;
+                        let dexterity_multiplier = 1;
+                        let attack_speed_multiplier = 1;
+
+                        if(material.types[i] ===  component_types.SHOE_INTERIOR) {
+                            agility_multiplier = 1 + material.tier * 0.05;
+                            attack_speed_multiplier = 1.1 + Math.round((material.tier-1)*4)/100;
+                        } else {
+                            if(material.types[i] ===  component_types.GLOVE_INTERIOR) {
+                                dexterity_multiplier = 1 + Math.round(material.tier * 0.05 * material.handling)/100;
+                            }
+
+                            agility_multiplier = Math.min(1,Math.round(100*(1 - (material_count*(material.weight-50))/2500))/100);
+                        }
+
+                        if(agility_multiplier !== 1) {
+                            add_properties(component_stats, {agility: {multiplier: agility_multiplier}});
+                        }
+                        if(dexterity_multiplier !== 1) {
+                            add_properties(component_stats, {dexterity: {multiplier: dexterity_multiplier}});
+                        }
+                        if(attack_speed_multiplier !== 1) {
+                            add_properties(component_stats, {attack_speed: {multiplier: attack_speed_multiplier}});
+                        }
+
+                        item = new Armor({ 
+                            name: item_id,
+                            description,
+                            component_type: material.types[i],
+                            value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                            name_prefix: capitalize_first_letter(material.name || material_key),
+                            component_tier: material.tier,
+                            base_defense: Math.floor(material.tier * material_count * material.strength/100),
+                            component_stats,
+                        });
+
+                        console.log(item_id, component_stats.agility?.multiplier, component_stats.dexterity, component_stats.attack_speed);
                 }
+
                 if(!item_templates[item_id]) {
                     item_templates[item_id] = item;
                 } else {
