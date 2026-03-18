@@ -178,7 +178,7 @@ class Skill {
                     this.current_level = this.max_level;
                     this.total_xp_to_next_lvl = "Already reached max lvl";
                     this.current_xp = "Max";
-                    this.xp_to_next_lvl = "Max";
+                    this.xp_to_next_lvl = Infinity;
                 }
 
                 skill_name = skill_name===unknown_skill_name?this.name():skill_name;
@@ -186,15 +186,15 @@ class Skill {
                 let message = `${skill_name} has reached level ${this.current_level}`;
 
                 if (Object.keys(gains.stats).length > 0 || Object.keys(gains.xp_multipliers).length > 0) { 
-                    message += `<br><br> Thanks to ${skill_name} reaching new milestone, %HeroName% gained: `;
+                    message += `\n\n Thanks to ${skill_name} reaching new milestone, %HeroName% gained: `;
 
                     if (gains.stats) {
                         Object.keys(gains.stats).forEach(stat => {
                             if(gains.stats[stat].flat) {
-                                message += `<br> +${gains.stats[stat].flat} ${stat_names[stat].replace("_"," ")}`;
+                                message += `\n +${gains.stats[stat].flat} ${stat_names[stat].replace("_"," ")}`;
                             }
                             if(gains.stats[stat].multiplier) {
-                                message += `<br> x${Math.round(100*gains.stats[stat].multiplier)/100} ${stat_names[stat].replace("_"," ")}`;
+                                message += `\n x${Math.round(100*gains.stats[stat].multiplier)/100} ${stat_names[stat].replace("_"," ")}`;
                             }   
                         });
                     }
@@ -212,9 +212,9 @@ class Skill {
                             }
 
                             if(xp_multiplier.includes("category_")) {
-                                message += `<br> x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name.replace("category_", "")} skills xp gain`;
+                                message += `\n x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name.replace("category_", "")} skills xp gain`;
                             } else {
-                                message += `<br> x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name} xp gain`;
+                                message += `\n x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name} xp gain`;
 
                             }
                         });
