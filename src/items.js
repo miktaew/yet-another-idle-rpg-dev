@@ -3653,7 +3653,7 @@ book_stats["Wood for Witches"] = new BookData({
                 multiplier: 1.05,
             },
             agility: {
-                multiplier: 1.15,
+                multiplier: 1.2,
             },
             cold_tolerance: {
                 flat: 1,
