@@ -1222,7 +1222,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         is_unlocked: false,
         enemy_stat_variation: 0.2,
         name: "Forest clearing", 
-        types: [{type: "open", stage: 2, xp_gain: 3}],
+        types: [{type: "open", stage: 2, xp_gain: 7}],
         parent_location: locations["Forest road"],
         first_reward: {
             xp: 1000,
