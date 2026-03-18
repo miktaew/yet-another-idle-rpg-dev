@@ -194,12 +194,12 @@ const english = {
     "millers how2 answ": "[Red] Kinda boring, but at least company is good. \n[Gray] What he said.",
     "mofu#millers how2 answ": "[Cat] Kinda boring, but at least company is good. \n[Mouse] What he said.",
     "millers about guard": "Do you know anything about that girl who guards the village?",
-    "millers about guard answ": "[Red] Nope, nothing. She just happens to have same name and looks, as far as oral descriptions go, as one the continent's top ten adventurers who retired just before she returned."
+    "millers about guard answ": "[Red] Nope, nothing. She just happens to be exactly same in very single aspect, as far as oral descriptions go, as one the continent's top ten adventurers who retired just before she returned."
                             +" \n[Gray] Obviously it's a total coincidence, right? *[The two exchange amused looks]*"
                             +" \n[Red] Jokes aside, no one here besides us managed to make that connection, that's just sooo stupid~"
                             +" \n[Gray] When they hear how there was a powerful adventurer who happens to match her perfectly, they all just assume that it's a pure coincidence and a completely different person."
                             +" \n[Red] She doesn't seem to care much about it, probably prefers peace and quiet. Let her have them, I'm sure she went through a lot, and with her here we can feel safer than ever.",
-    "mofu#millers about guard answ": "[Cat] Nope, nothing. She just happens to have same name and looks, as far as oral descriptions go, as one the continent's top ten adventurers who retired just before she returned."
+    "mofu#millers about guard answ": "[Cat] Nope, nothing. She just happens to be exactly same in very single aspect, as far as oral descriptions go, as one the continent's top ten adventurers who retired just before she returned."
                             +" \n[Mouse] Obviously it's a total coincidence, right? Two completely unrelated wolves. *[The two exchange amused looks]*"
                             +" \n[Cat] Jokes aside, no one here besides us managed to make that connection, that's just sooo stupid~"
                             +" \n[Mouse] When they hear how there was a powerful adventurer who happens to match her perfectly, they all just assume that it's a pure coincidence and a completely different person."
@@ -229,7 +229,7 @@ const english = {
     "sus situation": "By the way, how are things in this slum?",
     "sus situation answ": "A-as you can see and hear boss, it's pretty b-bad, but it can't be helped without taking out the g-gang...",
     "sus gang": "What gang?",
-    "sus gang answ": "It's j-just a gang, they don't have any name, boss. Their hideout is over t-there, you should stay away from it. Almost every k-killer and thug around t-the slum is a part of their group...",
+    "sus gang answ": "It's j-just a gang, they don't call themselves anything special, boss. Their hideout is over t-there, you should stay away from it. Almost every k-killer and thug around t-the slum is a part of their group...",
     "sus gang defeated": "That gang you mentioned? I dealt with them.",
     "sus gang defeated answ":  "I know boss, we all heard the commotion! You're the best! I think the local trader already pulled out some gear he was hiding from them, you should check it out! \n*[Pauses for a moment]* I wish I had shown you my defensive tricks before that, it might have made your job easier...",
     "sus behave 2": "Are you behaving yourself?",
