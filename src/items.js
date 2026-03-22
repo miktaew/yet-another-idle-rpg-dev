@@ -1804,18 +1804,18 @@ book_stats["Wood for Witches"] = new BookData({
     });
     item_templates["Piece of wolf rat leather"] = new Material({
         description: "It's slightly damaged and seems useless for anything that requires precise work",
-        value: 10,
+        value: 20,
         material_type: "piece of leather",
     });
     item_templates["Processed rat pelt"] = new Material({
         description: "Processed pelt of a huge rat. It's of a barely acceptable quality, but it's still a miracle with how terrible the basic material was",
-        value: 15,
+        value: 20,
         material_type: "processed pelt",
     });
 	
     item_templates["Piece of wolf leather"] = new Material({
         description: "Somewhat strong, should offer some protection when turned into armor",
-        value: 20,
+        value: 30,
         material_type: "piece of leather",
     });
     item_templates["Processed wolf pelt"] = new Material({
@@ -1826,7 +1826,7 @@ book_stats["Wood for Witches"] = new BookData({
 	
     item_templates["Piece of boar leather"] = new Material({
         description: "Thick and resistant leather, too stiff for clothes but perfect for armor",
-        value: 30,
+        value: 45,
         material_type: "piece of leather",
     });
     item_templates["Processed boar hide"] = new Material({
@@ -1837,7 +1837,7 @@ book_stats["Wood for Witches"] = new BookData({
 	
     item_templates["Piece of goat leather"] = new Material({
         description: "Thick and resistant, just barely elastic enough to be used for clothing",
-        value: 40,
+        value: 60,
         material_type: "piece of leather"
     }),
     item_templates["Processed goat hide"] = new Material({
@@ -1848,7 +1848,7 @@ book_stats["Wood for Witches"] = new BookData({
 	
     item_templates["Piece of bear leather"] = new Material({
         description: "Strong and resistant, but too thick for clothing",
-        value: 60,
+        value: 90,
         material_type: "piece of leather"
     });
     item_templates["Processed bear hide"] = new Material({
@@ -1899,34 +1899,34 @@ book_stats["Wood for Witches"] = new BookData({
 
     item_templates["Iron chainmail"] = new Material({
         description: "Dozens of tiny iron rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
-        value: 12,
+        value: 30,
         material_type: "chainmail",
     });
     item_templates["Steel chainmail"] = new Material({
         description: "Dozens of tiny steel rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
-        value: 18,
+        value: 60,
         material_type: "chainmail",
     });
 
     item_templates["White iron chainmail"] = new Material({
         description: "Dozens of tiny white iron rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
-        value: 25,
+        value: 105,
         material_type: "chainmail",
     });
     item_templates["Black iron chainmail"] = new Material({
         description: "Dozens of tiny black iron rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
-        value: 25,
+        value: 105,
         material_type: "chainmail",
     });
 
     item_templates["White steel chainmail"] = new Material({
         description: "Dozens of tiny white steel rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
-        value: 40,
+        value: 180,
         material_type: "chainmail",
     });
     item_templates["Black steel chainmail"] = new Material({
         description: "Dozens of tiny black steel rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
-        value: 40,
+        value: 180,
         material_type: "chainmail",
     });
 	
