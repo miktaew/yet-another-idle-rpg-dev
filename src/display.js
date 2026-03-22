@@ -689,6 +689,8 @@ function end_activity_animation(remove) {
         return;
     }
 
+    message_to_add = message_to_add.replace("%HeroName%", character.name);
+
     let message = document.createElement("div");
     message.classList.add("message_common");
 
@@ -1278,7 +1280,25 @@ function update_displayed_trader_inventory({item_key, trader_sorting="name", sor
 
     if(item_key) {
         //key passed -> deal only with this singular item
-        const item_count = trader.inventory[item_key].count;
+        let item_count = trader.inventory[item_key].count;
+
+        //find if item is in to_buy, if so then grab the count and subtract it
+        for(let i = 0; i < to_buy.items.length; i++) {
+                if(item_key === to_buy.items[i].item_key) {
+                    item_count -= Number(to_buy.items[i].count);
+
+                    if(item_count == 0) {
+                        trader_item_divs[item_key]?.remove();
+                        delete trader_item_divs[item_key];
+                        return;
+                    }
+                    if(item_count < 0) {
+                        //shouldn't be possible to reach but who knows
+                        throw new Error('Something is wrong with trader item count');
+                    }
+                    break;
+                }
+        }
 
         was_anything_new_added = trader_item_divs[item_key];
         const item_div = create_inventory_item_div({key: item_key, item_count, target: "trader", is_trade: true});
@@ -1297,7 +1317,7 @@ function update_displayed_trader_inventory({item_key, trader_sorting="name", sor
         Object.keys(trader.inventory).forEach(inventory_key => {
             let item_count = trader.inventory[inventory_key].count;
 
-            //find if item is in to_sell, if so then grab the count and subtract it
+            //find if item is in to_buy, if so then grab the count and subtract it
             for(let i = 0; i < to_buy.items.length; i++) {
                 if(inventory_key === to_buy.items[i].item_key) {
                     item_count -= Number(to_buy.items[i].count);
@@ -1380,6 +1400,8 @@ function update_displayed_trader_inventory({item_key, trader_sorting="name", sor
  * 
  * if item_key/equip_slot is passed, it will instead only update the display of that one item
  * 
+ * @param {Object} data
+ * @param {Boolean} data.is_trade whethere player is in trade, affecting whether displayed price be basic or trade-specific
  */
 function update_displayed_character_inventory({item_key, equip_slot, character_sorting, sorting_direction="asc", was_anything_new_added=false, is_trade=false, skip_sorting=false} = {}) {    
     //removal of unneeded divs
@@ -1414,7 +1436,24 @@ function update_displayed_character_inventory({item_key, equip_slot, character_s
     //creation of missing divs and updating of others
     if(item_key) {
         //specific item to be updated
-        const item_count = character.inventory[item_key].count;
+        let item_count = character.inventory[item_key].count;
+
+        //find if item is in to_sell, if so then grab the count and subtract it
+        for(let i = 0; i < to_sell.items.length; i++) {
+            if(item_key === to_sell.items[i].item_key) {
+                item_count -= Number(to_sell.items[i].count);
+                if(item_count == 0) {
+                    item_divs[item_key]?.remove();
+                    delete item_divs[item_key];
+                    return;
+                }
+                if(item_count < 0) {
+                    //shouldn't be possible to reach but who knows
+                    throw new Error('Something is wrong with character item count');
+                }
+                break;
+            }
+        }
 
         was_anything_new_added = trader_item_divs[item_key];
         const item_div = create_inventory_item_div({key: item_key, item_count, target: "character", is_trade: is_trade});
@@ -1426,6 +1465,7 @@ function update_displayed_character_inventory({item_key, equip_slot, character_s
             item_divs[item_key] = item_div;
             inventory_div.appendChild(item_div);
         }
+
     } else if(equip_slot){
         //specific item slot to be updated
         const equip_div = create_inventory_item_div({key: equip_slot, target: "character", is_equipped: true, is_trade});
@@ -4117,7 +4157,7 @@ function update_displayed_ongoing_activity(current_activity) {
         if (is_maxed) {
             action_xp_div.innerText += ` ${skill.name()} (Maxed out!)`;
         } else {
-            const percent_xp = is_maxed ? "Max" : `${Math.round(10000 * skill.current_xp / skill.xp_to_next_lvl) / 100}%`
+            const percent_xp = is_maxed ? "Max" : `${Math.floor(10000 * skill.current_xp / skill.xp_to_next_lvl) / 100}%`
             const curr_xp = is_maxed ? "Max" : `${Math.floor(skill.current_xp)}`;
             const needed_xp = is_maxed ? "Max" : `${Math.ceil(skill.xp_to_next_lvl)}`;
             const time_needed = Math.ceil((needed_xp - curr_xp) / (xp_rate * get_skill_xp_gain(skill.skill_id))) * current_activity.gathering_time_needed;

@@ -51,6 +51,13 @@ const component_types = {
     GLOVE_EXTERIOR: "glove exterior",
 };
 
+const ALL_WEAPON_HEADS = [component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD];
+const ALL_WEAPON_HANDLES = [component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE];
+const ALL_SHIELD_COMPS = [component_types.SHIELD_HANDLE, component_types.SHIELD_BASE];
+
+const ALL_INTERIORS = [component_types.HELMET_INTERIOR, component_types.CHESTPLATE_INTERIOR, component_types.LEG_ARMOR_INTERIOR, component_types.SHOE_INTERIOR, component_types.GLOVE_INTERIOR];
+const ALL_EXTERIORS = [component_types.HELMET_EXTERIOR, component_types.CHESTPLATE_EXTERIOR, component_types.LEG_ARMOR_EXTERIOR, component_types.SHOE_EXTERIOR, component_types.GLOVE_EXTERIOR];
+
 /**
  * 100 is a default value for most cases
  * 50 is the minimum weight for weapon handles, going lower will result in heavier components of same material being faster (i.e. long faster than short)
@@ -63,8 +70,8 @@ const material_properties = {
         strength: 60,
         name: "simple",
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE, 
-            component_types.SHIELD_HANDLE, component_types.SHIELD_BASE,
+            ...ALL_WEAPON_HANDLES,
+            ...ALL_SHIELD_COMPS
         ]
     },
     "cheap iron": {
@@ -72,8 +79,8 @@ const material_properties = {
         weight: 100,
         strength: 100,
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ]
     },
@@ -93,8 +100,8 @@ const material_properties = {
         weight: 60,
         strength: 60,
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
-            component_types.SHIELD_HANDLE, component_types.SHIELD_BASE,
+            ...ALL_WEAPON_HANDLES,
+            ...ALL_SHIELD_COMPS,
         ]
     },
     "iron": {
@@ -102,9 +109,27 @@ const material_properties = {
         weight: 100,
         strength: 100,
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "wolf leather": {
+        tier: 2,
+        weight: 60,
+        strength: 60,
+        warmth: 100,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "iron chainmail": {
+        tier: 2,
+        weight: 100,
+        strength: 100,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
         ]
     },
     "ash wood": {
@@ -112,8 +137,8 @@ const material_properties = {
         weight: 60,
         strength: 60,
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
-            component_types.SHIELD_HANDLE, component_types.SHIELD_BASE,
+            ...ALL_WEAPON_HANDLES,
+            ...ALL_SHIELD_COMPS,
         ]
     },
     "week bone": {
@@ -121,7 +146,7 @@ const material_properties = {
         weight: 80,
         strength: 80,
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HANDLES,
         ]
     },
     "steel": {
@@ -129,9 +154,27 @@ const material_properties = {
         weight: 100,
         strength: 100,
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "steel chainmail": {
+        tier: 3,
+        weight: 100,
+        strength: 100,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "steel plate": {
+        tier: 3,
+        weight: 160,
+        strength: 160,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
         ]
     },
     "hickory wood": {
@@ -140,8 +183,8 @@ const material_properties = {
         strength: 60,
         name: "hickory",
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
-            component_types.SHIELD_HANDLE, component_types.SHIELD_BASE,
+            ...ALL_WEAPON_HANDLES,
+            ...ALL_SHIELD_COMPS
         ]
     },
     "turtleshell": {
@@ -149,8 +192,8 @@ const material_properties = {
         weight: 80,
         strength: 80,
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
-            component_types.SHIELD_HANDLE, component_types.SHIELD_BASE,
+            ...ALL_WEAPON_HANDLES,
+            ...ALL_SHIELD_COMPS
         ],
         additional_stats: {
             attack_points: {
@@ -163,9 +206,27 @@ const material_properties = {
         weight: 130,
         strength: 100,
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "white iron chainmail": {
+        tier: 4,
+        weight: 130,
+        strength: 100,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "white iron plate": {
+        tier: 4,
+        weight: 200,
+        strength: 200,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
         ]
     },
     "black iron": {
@@ -173,9 +234,27 @@ const material_properties = {
         weight: 80,
         strength: 110,
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "black iron chainmail": {
+        tier: 4,
+        weight: 80,
+        strength: 110,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "black iron plate": {
+        tier: 4,
+        weight: 140,
+        strength: 180,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
         ]
     },
     "alchemical wood": {
@@ -184,8 +263,8 @@ const material_properties = {
         strength: 60,
         name: "alchemical",
         types: [
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
-            component_types.SHIELD_HANDLE, component_types.SHIELD_BASE,
+            ...ALL_WEAPON_HANDLES,
+            ...ALL_SHIELD_COMPS,
         ]
     },
     "white steel": {
@@ -194,9 +273,27 @@ const material_properties = {
         strength: 100,
         name: "white",
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "white chainmail": {
+        tier: 5,
+        weight: 100,
+        strength: 120,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "white plate": {
+        tier: 5,
+        weight: 200,
+        strength: 240,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
         ]
     },
     "black steel": {
@@ -205,9 +302,27 @@ const material_properties = {
         strength: 110,
         name: "black",
         types: [
-            component_types.SHORT_BLADE, component_types.LONG_BLADE, component_types.AXE_HEAD, component_types.HAMMER_HEAD,
-            component_types.SHORT_HANDLE, component_types.MEDIUM_HANDLE, component_types.LONG_HANDLE,
+            ...ALL_WEAPON_HEADS,
+            ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
+        ]
+    },
+    "black chainmail": {
+        tier: 5,
+        weight: 80,
+        strength: 110,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "black plate": {
+        tier: 5,
+        weight: 140,
+        strength: 180,
+        warmth: 80,
+        types: [
+            ...ALL_EXTERIORS,
         ]
     },
 
@@ -270,6 +385,11 @@ const material_count_per_type = {
     "shoes exterior": 2,
 };
 
+/**
+ * exactly what it says
+ * @param {*} comp_type 
+ * @returns proper name used in items, defaulting to comp type if not needed
+ */
 const type_to_name = (comp_type)=>{
     switch(comp_type) {
         case "chestplate interior": 
@@ -286,7 +406,7 @@ const type_to_name = (comp_type)=>{
             return "chestplate armor";
         case "helmet exterior":
             return "helmet armor";
-        case "leg exterior":
+        case "leg armor exterior":
             return "greaves";
         case "glove exterior":
             return "glove armor";
@@ -357,7 +477,7 @@ const crafting_component_manager = {
 
                 let material_count = material_count_per_type[material.types[i]];
                 
-                if(material.types[i] === component_types.SHORT_BLADE || material.types[i] === component_types.LONG_BLADE || material.types[i] === component_types.AXE_HEAD || material.types[i] === component_types.HAMMER_HEAD) {
+                if(ALL_WEAPON_HEADS.includes(material.types[i])) {
                     //WEAPON HEADS
 
                     let attack_value = base_attack * (1 + strength_impact_per_type[material.types[i]]*(material.strength/100)) * material.tier * (1 + weight_impact_per_type[material.types[i]]*(material.weight/100))/8;
@@ -412,7 +532,7 @@ const crafting_component_manager = {
                         }
                     });
 
-                } else if(material.types[i] === component_types.SHORT_HANDLE|| material.types[i] === component_types.MEDIUM_HANDLE || material.types[i] ===  component_types.LONG_HANDLE) {
+                } else if(ALL_WEAPON_HANDLES.includes(material.types[i])) {
                     //WEAPON HANDLES
                     
                     let attack_multiplier = Math.floor(100*(
@@ -479,9 +599,7 @@ const crafting_component_manager = {
                             }
                         }
                     });
-                } else if(material.types[i] === component_types.HELMET_INTERIOR|| material.types[i] === component_types.CHESTPLATE_INTERIOR 
-                        || material.types[i] ===  component_types.LEG_ARMOR_INTERIOR || material.types[i] ===  component_types.SHOE_INTERIOR || material.types[i] ===  component_types.GLOVE_INTERIOR
-                    ) {
+                } else if(ALL_INTERIORS.includes(material.types[i])) {
 
                         let agility_multiplier = 1;
                         let dexterity_multiplier = 1;
@@ -518,8 +636,57 @@ const crafting_component_manager = {
                             base_defense: Math.floor(material.tier * material_count * material.strength/100),
                             component_stats,
                         });
+                } else if(ALL_EXTERIORS.includes(material.types[i])) {
 
-                        console.log(item_id, component_stats.agility?.multiplier, component_stats.dexterity, component_stats.attack_speed);
+                        let agility_multiplier = 1;
+                        let attack_speed_multiplier = 1;
+                        let cold_tolerance_bonus = 0;
+                        let stamina_efficiency_multiplier = 1;
+
+                        agility_multiplier = Math.min(1,Math.round(100*(
+                                1 - (material_count*(material.weight-50))/2500
+                            ))/100);
+
+                        attack_speed_multiplier = Math.min(1,Math.round(100*(
+                            1 - (material_count*(material.weight-50))/5000
+                        ))/100);
+
+                        stamina_efficiency_multiplier = Math.min(1,Math.round(100*(
+                            1 - (material_count*(material.weight-50))/2500
+                        ))/100);
+
+                        cold_tolerance_bonus = (material.warmth-100)/20;
+                        
+
+                        if(agility_multiplier !== 1) {
+                            add_properties(component_stats, {agility: {multiplier: agility_multiplier}});
+                        }
+
+                        if(attack_speed_multiplier !== 1) {
+                            add_properties(component_stats, {attack_speed: {multiplier: attack_speed_multiplier}});
+                        }
+
+                        if(cold_tolerance_bonus !== 1) {
+                            add_properties(component_stats, {cold_tolerance: {flat: cold_tolerance_bonus}});
+                        }
+
+                        if(stamina_efficiency_multiplier !== 1) {
+                            add_properties(component_stats, {stamina_efficiency: {multiplier: stamina_efficiency_multiplier}});
+                        }
+
+                        item = new ArmorComponent({ 
+                            name: item_id,
+                            description,
+                            component_type: material.types[i],
+                            value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                            name_prefix: capitalize_first_letter(material.name || material_key),
+                            component_tier: material.tier,
+                            defense_value: Math.floor(material.tier * material_count * material.strength/100),
+                            component_stats,
+                        });
+
+                        //if(material.types[i] === component_types.CHESTPLATE_EXTERIOR)
+                        //console.log(item_id, item.defense_value, component_stats.agility?.multiplier, component_stats.attack_speed?.multiplier);
                 }
 
                 if(!item_templates[item_id]) {

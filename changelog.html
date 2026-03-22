@@ -65,18 +65,22 @@
 <button type="button" class="collapsible">v0.5.2?</button>
 <div class="content"><pre>
 v0.5.2
-    - most of woodcutting actions now have a small chance to drop tree sap, which can be used to make a potion that will quickly deplete your stamina, for all fans of the 'Persistence' skill
     
+    - most of woodcutting actions now have a small chance to drop tree sap, which can be used to make a potion that will quickly deplete your stamina, for all fans of the 'Persistence' skill    
     - added milestones on "Shield blocking" skill
     - multiplicative bonuses on items now have a better scaling with item rarity (with exception of attack speed on armor)
     - some of resource gathering activities now scale up to 100% chance but had slightly increased lvl needed for full efficiency
     - greatly reduced material costs of chainmail
+    - changed action texts for ant nest searches to make it easier to understand that they are subsequent actions and not one that's bugged
 
     - changed the way DOM is manipulated by moving away from using innerHTML
     - updated translationManager to use translations provided in separate files instead of cramming everything in one
     - rewards objects can now include dialogue locking
+    - active effects' code will now skip stat updates if effect was already present and only had its duration extended
+    - stat recalcs will now update shield tooltips only when needed (i.e. when that stat actually changed)
 
-    - changed action texts for ant nest searches to make it easier to understand that they are subsequent actions and not one that's bugged
+    - fixed a minor issue that could have caused problems with crafting xp gains if someone were to reach max level in a crafting skill (wasn't possible without cheating)
+    - fixed a minor display bug where if a shield was marked for trade, it would [purely visually] reappear in original owner's inventory if a stat recalc happened in the meantime
 
     courtesy of OnonokiNonon:
         * an item log

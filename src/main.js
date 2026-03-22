@@ -110,6 +110,7 @@ import { quests, questManager, active_quests } from "./quests.js";
 import { get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
 import { translationManager } from "./translation.js";
+import { crafting_component_manager } from "./crafting_component_filling.js";
 
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -1888,7 +1889,7 @@ function kill_player({is_combat = true} = {}) {
         }
     }
 
-    add_active_effect("Recovering", 5);
+    add_active_effect("Recovering", 2);
 }
 
 function use_stamina({stamina_to_use = 1, skip_persistence_xp_for_stance_change = false}) {
@@ -2045,8 +2046,6 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
         //not undefined => levelup happened and levelup message was returned
             leveled = true;
 
-            message = message.replace("%HeroName%", character.name);
-
             update_displayed_skill_bar(skill, true);
 
             if(typeof should_info === "undefined" || should_info)
@@ -2087,48 +2086,6 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
                         }
                     });
                 }
-                /*
-                Object.keys(character.inventory).forEach(inv_key => {
-                    //update equippable/useable item
-                    const item = getItemFromKey(inv_key);
-                    if(item.tags.usable) {
-                        const effects = item.effects;
-                        for(let i = 0; i < effects.length; i++) {
-                            if(effect_templates[effects[i].effect].effects?.bonus_skill_levels?.[skill.skill_id]) {
-                                update_displayed_character_inventory({item_key: inv_key});
-                                return;
-                            }
-                        }
-                    } else if(item.tags.equippable) {
-                        const bonuses = item.getBonusSkillLevels();
-                        if(bonuses[skill.skill_id]) {
-                            update_displayed_character_inventory({item_key: inv_key});
-                        }
-                    }
-                });
-                Object.keys(character.equipment).forEach(eq_slot => {
-                    //update equipped item
-                    if(!character.equipment[eq_slot]) {
-                        return;
-                    }
-                    const bonuses = character.equipment[eq_slot].getBonusSkillLevels(); {
-                        if(bonuses[skill.skill_id]) {
-                            update_displayed_equipment();
-                            update_displayed_character_inventory({equip_slot: eq_slot});
-                        }
-                    }
-                });
-                */
-
-                /*
-                Object.keys(booklist_entry_divs).forEach(book_id => {
-                    //update anthology entry
-                    const bonuses = book_stats[book_id]?.bonuses?.xp_multipliers || {};
-                    if(bonuses[skill.skill_id]) {
-                        update_booklist_entry(book_id, true);
-                    }
-                });
-                */
 
                 update_displayed_effects();
                 //a bit lazy, but there shouldn't ever be enough to have any performance impact
@@ -2681,11 +2638,11 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 let {result_id, count} = selected_recipe.getResult();
 
                 const recipe_skill = skills[selected_recipe.recipe_skill];
-                const needed_xp = recipe_skill.total_xp_to_next_lvl - recipe_skill.total_xp;
+                const needed_xp = (recipe_skill.total_xp_to_next_lvl - recipe_skill.total_xp) || Infinity;
                 //const xp_per_craft = get_recipe_xp_value({category, subcategory, recipe_id});
                 const xp_per_craft = Math.min(recipe_skill.xp_to_next_lvl*crafting_skill_xp_gains_cap, get_recipe_xp_value({category, subcategory, recipe_id})*get_skill_xp_gain(recipe_skill.skill_id));
                 const estimated_xp_per_craft = xp_per_craft * success_chance;
-                const needed_crafts = Math.ceil(needed_xp/(estimated_xp_per_craft));
+                const needed_crafts = Math.ceil(needed_xp/estimated_xp_per_craft);
                 
                 attempted_crafting_ammount = Math.min(needed_crafts, ammount_that_can_be_crafted);
                 successful_crafting_ammount = Math.floor(attempted_crafting_ammount*success_chance);
@@ -2726,7 +2683,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 for (let i = 0; i < selected_recipe.materials.length; i++) {
                     let to_remove = selected_recipe.materials[i].count * attempted_crafting_ammount;
 
-                    for (var j = 0; j < materials[i].items.length && to_remove > 0; j++) {
+                    for (let j = 0; j < materials[i].items.length && to_remove > 0; j++) {
                         const removed = Math.min(materials[i].items[j].count, to_remove);
                         const key = materials[i].items[j].item.inventory_key;
 
@@ -3224,34 +3181,44 @@ function change_item_favourite_status(target, item_key) {
 
 function add_active_effect(effect_key, duration){
     let do_not_apply_because_stronger_is_active = false; //readable names are good, right?
-    Object.keys(active_effects).forEach(effect => {
-        if(do_not_apply_because_stronger_is_active) {
-            return;
-        }
-        Object.keys(effect_templates[effect].group_tags).forEach(group_tag => {
+    const was_already_active = active_effects[effect_key];
+
+    if(!was_already_active) {
+        Object.keys(active_effects).forEach(effect => {
             if(do_not_apply_because_stronger_is_active) {
                 return;
             }
-            if(group_tag in effect_templates[effect_key].group_tags) {
-                if(effect_templates[effect].group_tags[group_tag] > effect_templates[effect_key].group_tags[group_tag]) {
-                    //stronger effect is active, skip
-                    do_not_apply_because_stronger_is_active = true; 
-                } else {
-                    //aply the effect normally, remove the weaker
-                    delete active_effects[effect];
+            Object.keys(effect_templates[effect].group_tags).forEach(group_tag => {
+                if(do_not_apply_because_stronger_is_active) {
+                    return;
                 }
-            }
+                if(group_tag in effect_templates[effect_key].group_tags) {
+                    if(effect_templates[effect].group_tags[group_tag] > effect_templates[effect_key].group_tags[group_tag]) {
+                        //stronger effect is active, skip
+                        do_not_apply_because_stronger_is_active = true; 
+                    } else {
+                        //existing effect is weaker, aply the effect normally, remove the weaker
+                        delete active_effects[effect];
+                    }
+                }
+            });
         });
-    });
 
-    if(do_not_apply_because_stronger_is_active) {
-        //shouldn't need any recalculations or display updates as nothing was changed
-        return;
+        if(do_not_apply_because_stronger_is_active) {
+            //shouldn't need any recalculations or display updates as nothing was changed
+            return;
+        }
+    } else {
+        delete active_effects[effect_key];
     }
     active_effects[effect_key] = new ActiveEffect({...effect_templates[effect_key], duration});
-    character.stats.add_active_effect_bonus();
     update_displayed_effects();
-    update_character_stats();
+    
+    if(!was_already_active) {
+        character.stats.add_active_effect_bonus();
+        update_character_stats();
+    }
+    
 }
 
 /**
@@ -5646,6 +5613,9 @@ window.run = run;
 //Verify_Game_Objects();
 window.Verify_Game_Objects = Verify_Game_Objects;
 
+
+crafting_component_manager.fill_components();
+
 set_loading_screen_progress("Waking up from a nyap...");
 
 play_button.addEventListener("click", run);
@@ -5762,13 +5732,13 @@ if(is_on_dev()) {
     }
 }
 
-export { current_enemies, 
-        current_location, 
-        can_work, active_effects, 
-        enough_time_for_earnings, add_xp_to_skill, 
-        get_current_book, 
-        last_location_with_bed, 
-        last_combat_location, 
+export { current_enemies,
+        current_location,
+        can_work, active_effects,
+        enough_time_for_earnings, add_xp_to_skill,
+        get_current_book,
+        last_location_with_bed,
+        last_combat_location,
         current_stance, selected_stance,
         faved_stances, game_options,
         global_flags,

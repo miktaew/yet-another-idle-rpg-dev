@@ -804,29 +804,33 @@ function get_character_heat_tolerance() {
  * updates character stats + their display 
  */
 function update_character_stats() {
-        character.stats.add_location_penalties();
-        character.update_stats();
+    
+    const initial_block_strength = character.stats.full.block_strength;
 
-        update_displayed_stats();
-        update_displayed_health();
-        update_displayed_stamina();
-        update_displayed_stamina_efficiency();
-        
-        //update_displayed_mana();
+    character.stats.add_location_penalties();
+    character.update_stats();
 
-        //update display of shields in case the changes affected block strength
+    update_displayed_stats();
+    update_displayed_health();
+    update_displayed_stamina();
+    update_displayed_stamina_efficiency();
+    
+    //update_displayed_mana();
+
+    //update display of shields if the changes affected block strength
+    if(initial_block_strength !== character.stats.full.block_strength) {
         Object.keys(character.inventory).forEach(inv_key => {
-                //update equippable/useable/book item
                 const item = getItemFromKey(inv_key);
                 if(item.tags.shield) {
-                        update_displayed_character_inventory({item_key: inv_key});
+                    update_displayed_character_inventory({item_key: inv_key});
                 }
         });
 
         if(character.equipment["off-hand"]) {
-                update_displayed_equipment();
-                update_displayed_character_inventory({equip_slot: "off-hand"});
+            update_displayed_equipment();
+            update_displayed_character_inventory({equip_slot: "off-hand"});
         }
+    }
 }
 
 /**
