@@ -1,6 +1,7 @@
 "use strict";
 import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";
 import { capitalize_first_letter } from "./display.js";
+import { component_name_mapping } from "./misc.js";
 
 
 
@@ -12,6 +13,11 @@ import { capitalize_first_letter } from "./display.js";
 
     DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE NAMES MATCH
 
+    CAPES ARE SKIPPED, AS THEY ARE EXPECTED TO BE MUCH MORE VARIED IN STATS
+
+    THIS IS ONLY A TOOL TO MAKE ADDING NEW MATERIALS TAKE LESS WORK,
+    IF NEEDED ANYTHING CAN BE SKIPPED IN FAVOUR OF ADDING IT MANUALLY IN item.js
+
     STATS:
         tier - affects multiple stats and value
         weight - affects weapon dmg, attack speed (negatively), and shield block
@@ -19,6 +25,19 @@ import { capitalize_first_letter } from "./display.js";
         handling - affects dexterity on clothing
         warmth - affects cold resistance
 
+    "name": {
+        tier: Number,
+        weight: Number,
+        strength: Number,
+        warmth: Number,
+        handling: Number,
+        types: Array,
+        additional_stats: {
+            stat_name: {
+                stat bonus type (multiplier/flat): Number,
+            }
+        }
+    },
 */
 
 
@@ -62,13 +81,16 @@ const ALL_EXTERIORS = [component_types.HELMET_EXTERIOR, component_types.CHESTPLA
  * 100 is a default value for most cases
  * 50 is the minimum weight for weapon handles, going lower will result in heavier components of same material being faster (i.e. long faster than short)
  * 60 is the minimum strength for shield bases
+ * 
+ * 
  */
 const material_properties = {
     "rough wood": {
         tier: 1,
         weight: 60,
         strength: 60,
-        name: "simple",
+        base_value: 4,
+        name: "simple wooden",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS
@@ -87,9 +109,9 @@ const material_properties = {
     "cheap leather": {
         tier: 1,
         weight: 60,
-        strength: 40,
+        strength: 100,
         handling: 50,
-        warmth: 100,
+        warmth: 110,
         types: [
             component_types.HELMET_INTERIOR, component_types.CHESTPLATE_INTERIOR, component_types.LEG_ARMOR_INTERIOR, component_types.SHOE_INTERIOR
             //no glove, material implied to be too crappy for them
@@ -102,7 +124,8 @@ const material_properties = {
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS,
-        ]
+        ],
+        name: "wooden",
     },
     "iron": {
         tier: 2,
@@ -114,15 +137,6 @@ const material_properties = {
             component_types.SHIELD_BASE,
         ]
     },
-    "wolf leather": {
-        tier: 2,
-        weight: 60,
-        strength: 60,
-        warmth: 100,
-        types: [
-            ...ALL_EXTERIORS,
-        ]
-    },
     "iron chainmail": {
         tier: 2,
         weight: 100,
@@ -131,6 +145,35 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ]
+    },
+    "wolf leather": {
+        tier: 2,
+        weight: 60,
+        strength: 60,
+        warmth: 100,
+        types: [
+            ...ALL_EXTERIORS,
+        ],
+    },
+    "leather": { //this is wolf leather too
+        tier: 2,
+        weight: 60,
+        strength: 70,
+        warmth: 110,
+        handling: 20,
+        types: [
+            ...ALL_INTERIORS,
+        ],
+    },
+    "wool": {
+        tier: 2,
+        weight: 50,
+        strength: 50,
+        warmth: 140,
+        handling: 80,
+        types: [
+            ...ALL_INTERIORS,
+        ],
     },
     "ash wood": {
         tier: 3,
@@ -141,7 +184,7 @@ const material_properties = {
             ...ALL_SHIELD_COMPS,
         ]
     },
-    "week bone": {
+    "weak bone": {
         tier: 3,
         weight: 80,
         strength: 80,
@@ -177,11 +220,29 @@ const material_properties = {
             ...ALL_EXTERIORS,
         ]
     },
-    "hickory wood": {
+    "boar leather": {
+        tier: 3,
+        weight: 60,
+        strength: 60,
+        warmth: 100,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "goat leather": {
+        tier: 3,
+        weight: 60,
+        strength: 100,
+        warmth: 110,
+        handling: 20,
+        types: [
+            ...ALL_INTERIORS,
+        ]
+    },
+    "hickory": {
         tier: 4,
         weight: 60,
         strength: 60,
-        name: "hickory",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS
@@ -193,13 +254,22 @@ const material_properties = {
         strength: 80,
         types: [
             ...ALL_WEAPON_HANDLES,
-            ...ALL_SHIELD_COMPS
         ],
         additional_stats: {
             attack_points: {
                 multiplier: 1.1,
             }
         }
+    },
+    "turtleshell plate": {
+        tier: 4,
+        weight: 80,
+        strength: 80,
+        types: [
+            ...ALL_SHIELD_COMPS,
+            ...ALL_EXTERIORS,
+        ],
+        name: "turtleshell"
     },
     "white iron": {
         tier: 4,
@@ -257,11 +327,38 @@ const material_properties = {
             ...ALL_EXTERIORS,
         ]
     },
+    "bear leather": {
+        tier: 4,
+        weight: 60,
+        strength: 60,
+        warmth: 100,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "turtle shellplate": {
+        tier: 4,
+        weight: 100,
+        strength: 140,
+        warmth: 100,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "linen": {
+        tier: 4,
+        weight: 50,
+        strength: 50,
+        warmth: 110,
+        handling: 80,
+        types: [
+            ...ALL_INTERIORS,
+        ],
+    },
     "alchemical wood": {
         tier: 5,
         weight: 60,
         strength: 60,
-        name: "alchemical",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS,
@@ -325,8 +422,48 @@ const material_properties = {
             ...ALL_EXTERIORS,
         ]
     },
-
+    "alligator": {
+        tier: 5,
+        weight: 60,
+        strength: 60,
+        warmth: 90,
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "snakeskin": {
+        tier: 5,
+        weight: 60,
+        strength: 100,
+        warmth: 90,
+        handling: 100,
+        types: [
+            ...ALL_INTERIORS,
+        ],
+        additional_stats: {
+            attack_speed: {
+                multiplier: 1.02,
+            }
+        }
+    },
 };
+
+const custom_names = {"linen":{}, "wool":{}, "iron chainmail": {}, "steel chainmail": {}, "snakeskin": {}};
+custom_names["linen"][component_types.HELMET_INTERIOR] = "Linen bandanna";
+custom_names["linen"][component_types.LEG_ARMOR_INTERIOR] = "Linen leggings";
+custom_names["wool"][component_types.CHESTPLATE_INTERIOR] = "Wool shirt";
+custom_names["iron chainmail"][component_types.CHESTPLATE_EXTERIOR] = "Iron chainmail vest";
+custom_names["steel chainmail"][component_types.CHESTPLATE_EXTERIOR] = "Steel chainmail vest";
+custom_names["snakeskin"][component_types.LEG_ARMOR_INTERIOR] = "Snakeskin leggings";
+custom_names["snakeskin"][component_types.SHOE_INTERIOR] = "Snakeskin boots";
+
+
+const armor_names = {};
+armor_names[component_types.CHESTPLATE_EXTERIOR] = "armor";
+armor_names[component_types.GLOVE_EXTERIOR] = "gloves";
+armor_names[component_types.HELMET_EXTERIOR] = "helmet";
+armor_names[component_types.SHOE_EXTERIOR] = "shoes";
+armor_names[component_types.LEG_ARMOR_EXTERIOR] = "armored pants";
 
 /**
  * weight impact on dmg
@@ -453,12 +590,16 @@ const crafting_component_manager = {
     fill_components: () => {
         Object.keys(material_properties).forEach(material_key => {
             const material = material_properties[material_key];
+            
             for(let i = 0; i < material.types.length; i++) {
                 let description;
                 let component_stats = structuredClone(material.additional_stats) || {};
 
-                const item_id = capitalize_first_letter(material.name || material_key) + " " + type_to_name(material.types[i]);
+                const item_id = custom_names[material_key]?.[material.types[i]] || (capitalize_first_letter(material.name || material_key) + " " + type_to_name(material.types[i]));
                 let item;
+
+                let material_count = material_count_per_type[material.types[i]];
+                const item_value = (material.value ? Math.round(material.tier * material.value * material_count)  : Math.round(material.tier * base_value * material_count/10)*10 + 10);
 
                 switch(material.types[i]) {
                     case component_types.SHORT_BLADE:
@@ -474,8 +615,6 @@ const crafting_component_manager = {
                         description = `A hammer head made of ${material_key}`;
                         break;       
                 }
-
-                let material_count = material_count_per_type[material.types[i]];
                 
                 if(ALL_WEAPON_HEADS.includes(material.types[i])) {
                     //WEAPON HEADS
@@ -516,11 +655,12 @@ const crafting_component_manager = {
                     }
                     
                 
-                    item = new WeaponComponent({ 
+                    item = new WeaponComponent({
                         name: item_id,
+                        id: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                        value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
                         attack_value: Math.floor(attack_value),
@@ -611,9 +751,9 @@ const crafting_component_manager = {
                         } else {
                             if(material.types[i] ===  component_types.GLOVE_INTERIOR) {
                                 dexterity_multiplier = 1 + Math.round(material.tier * 0.05 * material.handling)/100;
+                            } else {
+                                agility_multiplier = Math.min(1,Math.round(100*(1 - (material_count*(material.weight-50))/2500))/100);
                             }
-
-                            agility_multiplier = Math.min(1,Math.round(100*(1 - (material_count*(material.weight-50))/2500))/100);
                         }
 
                         if(agility_multiplier !== 1) {
@@ -626,14 +766,14 @@ const crafting_component_manager = {
                             add_properties(component_stats, {attack_speed: {multiplier: attack_speed_multiplier}});
                         }
 
-                        item = new Armor({ 
+                        item = new Armor({
                             name: item_id,
                             description,
                             component_type: material.types[i],
                             value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
                             name_prefix: capitalize_first_letter(material.name || material_key),
                             component_tier: material.tier,
-                            base_defense: Math.floor(material.tier * material_count * material.strength/100),
+                            base_defense: Math.floor(material.tier * material_count * (material.strength-50)/100),
                             component_stats,
                         });
                 } else if(ALL_EXTERIORS.includes(material.types[i])) {
@@ -666,7 +806,7 @@ const crafting_component_manager = {
                             add_properties(component_stats, {attack_speed: {multiplier: attack_speed_multiplier}});
                         }
 
-                        if(cold_tolerance_bonus !== 1) {
+                        if(cold_tolerance_bonus !== 0) {
                             add_properties(component_stats, {cold_tolerance: {flat: cold_tolerance_bonus}});
                         }
 
@@ -674,9 +814,10 @@ const crafting_component_manager = {
                             add_properties(component_stats, {stamina_efficiency: {multiplier: stamina_efficiency_multiplier}});
                         }
 
-                        item = new ArmorComponent({ 
+                        item = new ArmorComponent({
                             name: item_id,
                             description,
+                            full_armor_name: capitalize_first_letter(material.name || material_key) + " " + armor_names[material.types[i]],
                             component_type: material.types[i],
                             value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
                             name_prefix: capitalize_first_letter(material.name || material_key),
@@ -684,16 +825,13 @@ const crafting_component_manager = {
                             defense_value: Math.floor(material.tier * material_count * material.strength/100),
                             component_stats,
                         });
-
-                        //if(material.types[i] === component_types.CHESTPLATE_EXTERIOR)
-                        //console.log(item_id, item.defense_value, component_stats.agility?.multiplier, component_stats.attack_speed?.multiplier);
                 }
 
                 if(!item_templates[item_id]) {
                     item_templates[item_id] = item;
+                    //if(!Object.values(component_name_mapping).includes(item_id))
+                    //console.warn(`Neither item templates nor mapping include something with an id of "${item_id}", so add it to mapping`);
                 } else {
-                    continue;
-                    //todo remove the continue;
                     //todo: make sure this wont be needed by removing old stuff and replacing items in old saves
                     console.error(`Item templates already include something with an id of "${item_id}",`
                         + ` please either remove it or remove "${material.types[i]}" from component types for material "${material_key}"`);

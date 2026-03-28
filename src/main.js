@@ -1,7 +1,7 @@
 "use strict";
 
 import { current_game_time, is_night } from "./game_time.js";
-import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity} from "./items.js";
+import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity, Weapon} from "./items.js";
 import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_market_saturations, set_loot_sold_count, capped_at } from "./market_saturation.js";
 import { locations, favourite_locations, location_types } from "./locations.js";
 import { crafting_skill_xp_gains_cap, skill_categories, skill_xp_gains_cap, skills, weapon_type_to_skill, which_skills_affect_skill } from "./skills.js";
@@ -98,7 +98,7 @@ import { end_activity_animation,
          update_fav_display,
          update_displayed_item_log
         } from "./display.js";
-import { compare_game_version, crafting_tags_to_skills, get_hit_chance, is_a_older_than_b, random_range, skill_consumable_tags } from "./misc.js";
+import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, random_range, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, get_component_stats, recipes } from "./crafting_recipes.js";
 import { game_version, get_game_version } from "./game_version.js";
@@ -110,7 +110,6 @@ import { quests, questManager, active_quests } from "./quests.js";
 import { get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
 import { translationManager } from "./translation.js";
-import { crafting_component_manager } from "./crafting_component_filling.js";
 
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -3730,7 +3729,6 @@ function load(save_data) {
         */
         update_displayed_reputation();
 
-
         set_loading_screen_progress("Checking out your books");
         
         if(save_data.skill_category_order) {
@@ -3828,6 +3826,8 @@ function load(save_data) {
                         components = {head, handle};
                     }
 
+                    Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                     if(!item_templates[components.head]){
                         console.warn(`Skipped item: weapon head component "${components.head}" couldn't be found!`);
                         any_warnings = true;
@@ -3848,6 +3848,8 @@ function load(save_data) {
                         components = {shield_base, handle};
                     }
 
+                    Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                     if(!item_templates[components.shield_base]){
                         console.warn(`Skipped item: shield base component "${components.shield_base}" couldn't be found!`);
                         any_warnings = true;
@@ -3859,6 +3861,7 @@ function load(save_data) {
                         equip_item(item, true);
                     }
                 } else if(save_data.character.equipment[key].equip_slot === "artifact" || save_data.character.equipment[key].tags?.tool) {
+                    //no components
                     equip_item(getItem({...item_templates[save_data.character.equipment[key].id]}), true);
                 } else { //armor
                     
@@ -3870,6 +3873,9 @@ function load(save_data) {
                         equip_item(item, true);
                     } else if(save_data.character.equipment[key].components) {
                         let components = save_data.character.equipment[key].components;
+                        
+                        Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                         if(!item_templates[components.internal]){
                             console.warn(`Skipped item: internal armor component "${components.internal}" couldn't be found!`);
                             any_warnings = true;
@@ -3899,6 +3905,7 @@ function load(save_data) {
             if(is_JSON(key)) {
                 //case where this is False is left as compatibility for saves before v0.4.4
                 let {id, components, quality} = JSON.parse(key);
+                
                 if(id && !quality) { 
                     //id is just a key of item_templates
                     //if it's present, item is "simple" (no components)
@@ -3915,6 +3922,8 @@ function load(save_data) {
                         return;
                     }
                 } else if(components) {
+                    Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                     const {head, handle, shield_base, internal, external} = components;
                     if(head) { //weapon
                         if(!item_templates[head]){
@@ -3926,7 +3935,8 @@ function load(save_data) {
                             any_warnings = true;
                             return;
                         } else {
-                            item_list.push({item_key: key, count: save_data.character.inventory[key].count, quality: quality});
+                            const item = getItem({components, quality, equip_slot: "weapon", item_type: "EQUIPPABLE"});
+                            item_list.push({item_key: item.getInventoryKey(), count: save_data.character.inventory[key].count, quality: quality});
                         }
                     } else if(shield_base){ //shield
                         if(!item_templates[shield_base]){
@@ -3938,7 +3948,8 @@ function load(save_data) {
                             any_warnings = true;
                             return;
                         } else {
-                            item_list.push({item_key: key, count: save_data.character.inventory[key].count, quality: quality});
+                            const item = getItem({components, quality, equip_slot: "off-hand", item_type: "EQUIPPABLE"});
+                            item_list.push({item_key: item.getInventoryKey(), count: save_data.character.inventory[key].count, quality: quality});
                         }
                     } else if(internal) { //armor
                         if(!item_templates[internal]){
@@ -3954,7 +3965,8 @@ function load(save_data) {
                             if(!equip_slot) {
                                 return;
                             }
-                            item_list.push({item_key: key, count: save_data.character.inventory[key].count, quality: quality});
+                            const item = getItem({components, quality, equip_slot:  getArmorSlot(internal), item_type: "EQUIPPABLE"});
+                            item_list.push({item_key: item.getInventoryKey(), count: save_data.character.inventory[key].count, quality: quality});
                         }
                     } else {
                         console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
@@ -3979,6 +3991,8 @@ function load(save_data) {
                                     components = {head, handle};
                                 }
 
+                                Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                                 if(!item_templates[components.head]){
                                     console.warn(`Skipped item: weapon head component "${components.head}" couldn't be found!`);
                                     any_warnings = true;
@@ -3999,6 +4013,8 @@ function load(save_data) {
                                     components = {shield_base, handle};
                                 }
 
+                                Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                                 if(!item_templates[components.shield_base]){
                                     console.warn(`Skipped item: shield base component "${components.shield_base}" couldn't be found!`);
                                     any_warnings = true;
@@ -4016,9 +4032,11 @@ function load(save_data) {
                                     //compatibility for armors from before v0.4.3
                                     //const item = getItem({item_type: "EQUIPPABLE", equip_slot: "weapon", components});
                                     item_list.push({item_key: key, count: 1});
-                                }
-                                else if(save_data.character.inventory[key][i].components) {
+                                } else if(save_data.character.inventory[key][i].components) {
                                     let components = save_data.character.inventory[key][i].components;
+
+                                    Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                                     if(!item_templates[components.internal]){
                                         console.warn(`Skipped item: internal armor component "${components.internal}" couldn't be found!`);
                                         any_warnings = true;
@@ -4068,6 +4086,9 @@ function load(save_data) {
                             return;
                         }
                     } else if(components) {
+
+                        Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                         const {head, handle, shield_base, internal, external} = components;
                         if(head) { //weapon
                             if(!item_templates[head]){
@@ -4079,7 +4100,8 @@ function load(save_data) {
                                 any_warnings = true;
                                 return;
                             } else {
-                                storage_item_list.push({item_key: key, count: save_data.player_storage.inventory[key].count, quality: quality});
+                                const item = getItem({components, quality, equip_slot: "weapon", item_type: "EQUIPPABLE"});
+                                storage_item_list.push({item_key: item.getInventoryKey(), count: save_data.player_storage.inventory[key].count, quality: quality});
                             }
                         } else if(shield_base){ //shield
                             if(!item_templates[shield_base]){
@@ -4091,7 +4113,8 @@ function load(save_data) {
                                 any_warnings = true;
                                 return;
                             } else {
-                                storage_item_list.push({item_key: key, count: save_data.player_storage.inventory[key].count, quality: quality});
+                                const item = getItem({components, quality, equip_slot: "off-hand", item_type: "EQUIPPABLE"});
+                                storage_item_list.push({item_key: item.getInventoryKey(), count: save_data.player_storage.inventory[key].count, quality: quality});
                             }
                         } else if(internal) { //armor
                             if(!item_templates[internal]){
@@ -4107,7 +4130,8 @@ function load(save_data) {
                                 if(!equip_slot) {
                                     return;
                                 }
-                                storage_item_list.push({item_key: key, count: save_data.player_storage.inventory[key].count, quality: quality});
+                                const item = getItem({components, quality, equip_slot: getArmorSlot(internal), item_type: "EQUIPPABLE"});
+                                storage_item_list.push({item_key: item.getInventoryKey(), count: save_data.player_storage.inventory[key].count, quality: quality});
                             }
                         } else {
                             console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
@@ -4220,6 +4244,10 @@ function load(save_data) {
                                 //id is just a key of item_templates
                                 //if it's present, item is "simple" (no components)
                                 //and if it has no quality, it's something non-equippable
+
+                                id = get_component_name(id);
+
+
                                 if(item_templates[id]) {
                                     trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count});
                                 } else {
@@ -4228,7 +4256,11 @@ function load(save_data) {
                                     return;
                                 }
                             } else if(components) {
+
+                                Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                                 const {head, handle, shield_base, internal, external} = components;
+
                                 if(head) { //weapon
                                     if(!item_templates[head]){
                                         console.warn(`Skipped item: weapon head component "${head}" couldn't be found!`);
@@ -4239,7 +4271,8 @@ function load(save_data) {
                                         any_warnings = true;
                                         return;
                                     } else {
-                                        trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count, quality});
+                                        const item = getItem({components, quality, equip_slot: "weapon", item_type: "EQUIPPABLE"});
+                                        trader_item_list.push({item_key: item.getInventoryKey(), count: save_data.traders[trader].inventory[key].count, quality});
                                     }
                                 } else if(shield_base){ //shield
                                     if(!item_templates[shield_base]){
@@ -4251,8 +4284,8 @@ function load(save_data) {
                                         any_warnings = true;
                                         return;
                                     } else {
-                                        //const item = getItem({components, quality, equip_slot: "off-hand", item_type: "EQUIPPABLE"});
-                                        trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count, quality});
+                                        const item = getItem({components, quality, equip_slot: "off-hand", item_type: "EQUIPPABLE"});
+                                        trader_item_list.push({item_key: item.getInventoryKey(), count: save_data.traders[trader].inventory[key].count, quality});
                                     }
                                 } else if(internal) { //armor
                                     if(!item_templates[internal]){
@@ -4267,12 +4300,15 @@ function load(save_data) {
                                         if(!getArmorSlot(internal)) {
                                             return;
                                         }
-                                        trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count, quality});
+
+                                        const item = getItem({components, quality, equip_slot: getArmorSlot(internal), item_type: "EQUIPPABLE"});
+                                        trader_item_list.push({item_key: item.getInventoryKey(), count: save_data.traders[trader].inventory[key].count, quality});
                                     }
                                 } else {
                                     console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
                                 }
                             } else if(quality) { //no comps but quality (clothing / artifact?)
+                                
                                 trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count, quality});
                             } else {
                                 console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} is incorrect!`);
@@ -4291,6 +4327,8 @@ function load(save_data) {
                                                 const {head, handle} = save_data.traders[trader].inventory[key][i];
                                                 components = {head, handle};
                                             }
+
+                                            Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
 
                                             if(!item_templates[components.head]){
                                                 console.warn(`Skipped item: weapon head component "${components.head}" couldn't be found!`);
@@ -4313,6 +4351,8 @@ function load(save_data) {
                                                 components = {shield_base, handle};
                                             }
 
+                                            Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                                             if(!item_templates[components.shield_base]){
                                                 console.warn(`Skipped item: shield base component "${components.shield_base}" couldn't be found!`);
                                                 any_warnings = true;
@@ -4332,6 +4372,9 @@ function load(save_data) {
                                                 trader_item_list.push({item_key: item.getInventoryKey(), count: 1, quality: quality*100});
                                             } else if(save_data.traders[trader].inventory[key][i].components) {
                                                 let components = save_data.traders[trader].inventory[key][i].components;
+
+                                                Object.keys(components).forEach(comp => components[comp] = get_component_name(components[comp]));
+
                                                 if(!item_templates[components.internal]){
                                                     console.warn(`Skipped item: internal armor component "${components.internal}" couldn't be found!`);
                                                     any_warnings = true;
@@ -5612,9 +5655,6 @@ window.run = run;
 
 //Verify_Game_Objects();
 window.Verify_Game_Objects = Verify_Game_Objects;
-
-
-crafting_component_manager.fill_components();
 
 set_loading_screen_progress("Waking up from a nyap...");
 

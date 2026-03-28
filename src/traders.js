@@ -287,8 +287,8 @@ class TradeItem {
 
             new TradeItem({item_name: "Wooden shield", count: [1], quality: [40, 80]}),
             new TradeItem({item_name: "Wooden shield", count: [1], chance: 0.8, quality: [81, 120]}),
-            new TradeItem({item_name: "Crude iron shield", count: [1], quality: [40, 80]}),
-            new TradeItem({item_name: "Crude iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
+            new TradeItem({item_name: "Cheap iron shield", count: [1], quality: [40, 80]}),
+            new TradeItem({item_name: "Cheap iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
             new TradeItem({item_name: "Iron shield", count: [1], chance: 0.6, quality: [40, 80]}),
             new TradeItem({item_name: "Iron shield", count: [1], chance: 0.4, quality: [81, 120]}),
             new TradeItem({item_name: "Steel shield", count: [1], chance: 0.3, quality: [81, 100]}),
@@ -364,8 +364,8 @@ class TradeItem {
 
         new TradeItem({item_name: "Wooden shield", count: [1], quality: [40, 80]}),
         new TradeItem({item_name: "Wooden shield", count: [1], chance: 0.8, quality: [81, 120]}),
-        new TradeItem({item_name: "Crude iron shield", count: [1], quality: [40, 80]}),
-        new TradeItem({item_name: "Crude iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
+        new TradeItem({item_name: "Cheap iron shield", count: [1], quality: [40, 80]}),
+        new TradeItem({item_name: "Cheap iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
         new TradeItem({item_name: "Iron shield", count: [1], chance: 0.6, quality: [40, 80]}),
         new TradeItem({item_name: "Iron shield", count: [1], chance: 0.4, quality: [81, 120]}),
         new TradeItem({item_name: "Steel shield", count: [1], chance: 0.4, quality: [81, 120]}),
