@@ -3536,7 +3536,7 @@ function update_bar_tooltips(){
  * health bar tooltip, max health only
  */
 function update_health_bar_tooltip() {
-    let html_content = "<b>Max health:</b> " + Math.round(character.stats.full.max_health) + "<br>";
+    let html_content = "<b>Max health:</b> " + Math.ceil(character.stats.full.max_health) + "<br>";
     html_content += create_stat_breakdown("max_health");
 
     if(character.stats.full.health_regeneration_flat) {
