@@ -1,10 +1,6 @@
 "use strict";
-import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";
+import { Armor, ArmorComponent, item_log, item_templates, ShieldComponent, WeaponComponent } from "./items.js";
 import { capitalize_first_letter } from "./display.js";
-import { component_name_mapping } from "./misc.js";
-
-
-
 
 /*
     GENERATES CRAFTING COMPONENTS BASED ON PROVIDED PROPERTIES AND PARAMETERS
@@ -13,10 +9,13 @@ import { component_name_mapping } from "./misc.js";
 
     DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE NAMES MATCH
 
+    PROVIDED DATA HAS NO DIRECT RELATION TO MATERIALS DEFINED IN items.js, ALLOWING SLIGHTLY INCREASED DEGREE OF FREEDOM,
+    e.g. YOU CAN SPLIT SOME MATERIAL INTO MULTIPLE SEPARATE ENTRIES USED FOR DIFFERENT COMPONENTS
+
     CAPES ARE SKIPPED, AS THEY ARE EXPECTED TO BE MUCH MORE VARIED IN STATS
 
     THIS IS ONLY A TOOL TO MAKE ADDING NEW MATERIALS TAKE LESS WORK,
-    IF NEEDED ANYTHING CAN BE SKIPPED IN FAVOUR OF ADDING IT MANUALLY IN item.js
+    IF NEEDED ANYTHING CAN BE SKIPPED IN FAVOUR OF ADDING IT MANUALLY IN items.js
 
     STATS:
         tier - affects multiple stats and value
@@ -42,7 +41,7 @@ import { component_name_mapping } from "./misc.js";
 
 
 
-const base_value = 35; //todo: base it on material prices instead
+const base_value = 35; // * tier * mat_count
 
 const component_types = {
     SHORT_BLADE: "short blade",
@@ -89,12 +88,11 @@ const material_properties = {
         tier: 1,
         weight: 60,
         strength: 60,
-        base_value: 4,
         name: "simple wooden",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS
-        ]
+        ],
     },
     "cheap iron": {
         tier: 1,
@@ -104,7 +102,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 35,
     },
     "cheap leather": {
         tier: 1,
@@ -135,7 +134,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 80,
     },
     "iron chainmail": {
         tier: 2,
@@ -144,7 +144,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        base_value: 120,
     },
     "wolf leather": {
         tier: 2,
@@ -167,7 +168,7 @@ const material_properties = {
     },
     "wool": {
         tier: 2,
-        weight: 50,
+        weight: 40,
         strength: 50,
         warmth: 140,
         handling: 80,
@@ -200,7 +201,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 120,
     },
     "steel chainmail": {
         tier: 3,
@@ -209,7 +211,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 240,
     },
     "steel plate": {
         tier: 3,
@@ -218,7 +221,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 360,
     },
     "boar leather": {
         tier: 3,
@@ -279,7 +283,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 160,
     },
     "white iron chainmail": {
         tier: 4,
@@ -288,7 +293,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 320,
     },
     "white iron plate": {
         tier: 4,
@@ -297,7 +303,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 480,
     },
     "black iron": {
         tier: 4,
@@ -307,7 +314,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 160,
     },
     "black iron chainmail": {
         tier: 4,
@@ -316,7 +324,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 320,
     },
     "black iron plate": {
         tier: 4,
@@ -325,7 +334,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 480,
     },
     "bear leather": {
         tier: 4,
@@ -373,7 +383,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 200,
     },
     "white chainmail": {
         tier: 5,
@@ -382,7 +393,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 400,
     },
     "white plate": {
         tier: 5,
@@ -391,7 +403,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 600,
     },
     "black steel": {
         tier: 5,
@@ -402,7 +415,8 @@ const material_properties = {
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
-        ]
+        ],
+        value: 200,
     },
     "black chainmail": {
         tier: 5,
@@ -411,7 +425,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 400,
     },
     "black plate": {
         tier: 5,
@@ -420,7 +435,8 @@ const material_properties = {
         warmth: 80,
         types: [
             ...ALL_EXTERIORS,
-        ]
+        ],
+        value: 600
     },
     "alligator": {
         tier: 5,
@@ -433,7 +449,7 @@ const material_properties = {
     },
     "snakeskin": {
         tier: 5,
-        weight: 60,
+        weight: 60, //a bit heavier than usual but with separate atk spd bonus
         strength: 100,
         warmth: 90,
         handling: 100,
@@ -505,6 +521,10 @@ const material_count_per_type = {
     "long blade": 3,
     "axe head": 4,
     "hammer head": 4,
+
+    "short handle": 1,
+    "medium handle": 2,
+    "long handle": 4,
     
     "shield handle": 4,
     "shield base": 6,
@@ -599,7 +619,7 @@ const crafting_component_manager = {
                 let item;
 
                 let material_count = material_count_per_type[material.types[i]];
-                const item_value = (material.value ? Math.round(material.tier * material.value * material_count)  : Math.round(material.tier * base_value * material_count/10)*10 + 10);
+                const item_value = (material.value ? Math.round(material.value * material_count) : Math.round(material.tier * base_value * material_count))+10;
 
                 switch(material.types[i]) {
                     case component_types.SHORT_BLADE:
@@ -701,7 +721,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                        value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
                         component_stats,
@@ -711,7 +731,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                        value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
                         component_stats: {
@@ -725,7 +745,7 @@ const crafting_component_manager = {
                         name: item_id,
                         description,
                         component_type: material.types[i],
-                        value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                        value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
                         component_tier: material.tier,
 
@@ -736,7 +756,8 @@ const crafting_component_manager = {
                         component_stats: {
                             attack_speed: {
                                 multiplier: Math.min(1,Math.floor(100*(1-((material.weight-50)/200)))/100)
-                            }
+                            },
+                            attack_power: Math.min(1,Math.floor(100*(1-((material.weight-50)/250)))/100)
                         }
                     });
                 } else if(ALL_INTERIORS.includes(material.types[i])) {
@@ -744,6 +765,7 @@ const crafting_component_manager = {
                         let agility_multiplier = 1;
                         let dexterity_multiplier = 1;
                         let attack_speed_multiplier = 1;
+                        let cold_tolerance_bonus = 0;
 
                         if(material.types[i] ===  component_types.SHOE_INTERIOR) {
                             agility_multiplier = 1 + material.tier * 0.05;
@@ -752,9 +774,12 @@ const crafting_component_manager = {
                             if(material.types[i] ===  component_types.GLOVE_INTERIOR) {
                                 dexterity_multiplier = 1 + Math.round(material.tier * 0.05 * material.handling)/100;
                             } else {
-                                agility_multiplier = Math.min(1,Math.round(100*(1 - (material_count*(material.weight-50))/2500))/100);
+                                agility_multiplier = Math.round(100*(1 - (material_count*(material.weight-50))/2500))/100;
                             }
+                            attack_speed_multiplier = Math.max(1,(1+(material.tier-1)/100) * (1+(50-material.weight)/500));
                         }
+
+                        cold_tolerance_bonus = (material.warmth-100)/20;
 
                         if(agility_multiplier !== 1) {
                             add_properties(component_stats, {agility: {multiplier: agility_multiplier}});
@@ -765,12 +790,15 @@ const crafting_component_manager = {
                         if(attack_speed_multiplier !== 1) {
                             add_properties(component_stats, {attack_speed: {multiplier: attack_speed_multiplier}});
                         }
+                        if(cold_tolerance_bonus !== 0) {
+                            add_properties(component_stats, {cold_tolerance: {flat: cold_tolerance_bonus}});
+                        }
 
                         item = new Armor({
                             name: item_id,
                             description,
                             component_type: material.types[i],
-                            value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                            value: item_value,
                             name_prefix: capitalize_first_letter(material.name || material_key),
                             component_tier: material.tier,
                             base_defense: Math.floor(material.tier * material_count * (material.strength-50)/100),
@@ -819,7 +847,7 @@ const crafting_component_manager = {
                             description,
                             full_armor_name: capitalize_first_letter(material.name || material_key) + " " + armor_names[material.types[i]],
                             component_type: material.types[i],
-                            value: Math.round(material.tier * base_value * material_count/10)*10 + 10,
+                            value: item_value,
                             name_prefix: capitalize_first_letter(material.name || material_key),
                             component_tier: material.tier,
                             defense_value: Math.floor(material.tier * material_count * material.strength/100),
@@ -829,10 +857,7 @@ const crafting_component_manager = {
 
                 if(!item_templates[item_id]) {
                     item_templates[item_id] = item;
-                    //if(!Object.values(component_name_mapping).includes(item_id))
-                    //console.warn(`Neither item templates nor mapping include something with an id of "${item_id}", so add it to mapping`);
                 } else {
-                    //todo: make sure this wont be needed by removing old stuff and replacing items in old saves
                     console.error(`Item templates already include something with an id of "${item_id}",`
                         + ` please either remove it or remove "${material.types[i]}" from component types for material "${material_key}"`);
                 }
