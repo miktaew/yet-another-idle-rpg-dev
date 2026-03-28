@@ -208,15 +208,16 @@ class Skill {
                                     console.warn(`Skill ${this.skill_id} tried to reward an xp multiplier for something that doesn't exist: ${xp_multiplier}. I could be a misspelled skill name`);
                                 }
                             } else {
-                                name = xp_multiplier.replace("_"," ");
+                                
+                                if(xp_multiplier.includes("category_")) {
+                                    name = xp_multiplier.replace("category_", " skills");
+                                } else {
+                                    name = xp_multiplier.replace("_"," ");
+                                }
                             }
 
-                            if(xp_multiplier.includes("category_")) {
-                                message += `\n x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name.replace("category_", "")} skills xp gain`;
-                            } else {
-                                message += `\n x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name} xp gain`;
-
-                            }
+                            message += `\n x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name} xp gain`;
+                            
                         });
                     }
                 }
