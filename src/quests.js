@@ -410,7 +410,7 @@ const questManager = {
         is_hidden: true,
         quest_rewards: {
             global_activities: ["swimming"],
-            messages: ["With all the training you have done so far, the idea of submerging yourself in the river passing by the village is really tempting"],
+            messages: ["With all the training you have done so far, the idea of submerging yourself in nearby waters is really tempting"],
         },
         quest_tasks: [
             new QuestTask({
@@ -428,6 +428,10 @@ const questManager = {
                     all: {
                         enter_location: {
                             "Village": {
+                                target: 1,
+                                restrictions: {season: "Winter"}, //won't trigger in winter
+                            },
+                            "Forest lake": {
                                 target: 1,
                                 restrictions: {season: "Winter"}, //won't trigger in winter
                             },
