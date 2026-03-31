@@ -2629,12 +2629,15 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
             const { available_ammount, materials } = selected_recipe.get_availability();    //TODO check, using new method
             let ammount_that_can_be_crafted = Math.min(ammount_wanted_to_craft, available_ammount);
 
-
             let attempted_crafting_ammount = ammount_that_can_be_crafted; //ammount that will be attempted (e.g. 100)
             let successful_crafting_ammount; //ammount that will succeed (e.g. 100 * 75.6% success = 75.6 -> 75 + 60% for another 1)
+            //all 3 are 'crafting actions', not result counts
+
             if(ammount_that_can_be_crafted > 0) { 
                 const success_chance = selected_recipe.get_success_chance(station_tier);
                 let {result_id, count} = selected_recipe.getResult();
+
+                const scale_results = selected_recipe.scale_results && count > 1;
 
                 const recipe_skill = skills[selected_recipe.recipe_skill];
                 const needed_xp = (recipe_skill.total_xp_to_next_lvl - recipe_skill.total_xp) || Infinity;
@@ -2692,16 +2695,24 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     }
                 }
 
-                if(successful_crafting_ammount > 0) {
-                    add_to_character_inventory([{item_key: item_templates[result_id].getInventoryKey(), count: count*successful_crafting_ammount}]);
+                const final_result_count =  count * successful_crafting_ammount; 
+                //recipe is either full success or full fail
+
+                const fuzzy_result = count * attempted_crafting_ammount * success_chance;
+                const fuzzy_final_result_count = Math.floor(fuzzy_result) + (Math.random()<(fuzzy_result - Math.floor(fuzzy_result))?1:0);
+                //recipe can be a partial success; ignores successful_crafting_ammount for crafting gains but still uses it for xp as of now
+ 
+                const final_count = scale_results ? fuzzy_final_result_count : final_result_count;
+
+                if(final_count) {
+                    add_to_character_inventory([{item_key: item_templates[result_id].getInventoryKey(), count: final_count}]);
                     let msg = `Created ${item_templates[result_id].getName()}`;
                     if(attempted_crafting_ammount > 1) {
-                        msg+=` [${count*successful_crafting_ammount} out of ${count*attempted_crafting_ammount}]`;
+                        msg+=` [${final_count} out of ${count*attempted_crafting_ammount}]`;
                     } else {
-                        msg+= ` x${count*successful_crafting_ammount}`;
+                        msg+= ` x${final_count}`;
                     }
                     log_message(msg, "crafting");
-
                 } else {
                     let msg = `Failed to create ${item_templates[result_id].getName()}`;
                     if(attempted_crafting_ammount > 1) {

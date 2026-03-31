@@ -3109,7 +3109,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
 
     if(subcategory === "items") {   //TODO base on result present? class?
         const success_chance = Math.round(100*recipe.get_success_chance(station_tier));
-        tooltip += `Success chance: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
+        tooltip += `Success rate: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
         for (let i = 0; i < recipe.materials.length; i++) {
             const material = find_recipe_material(recipe.materials[i]);
 
@@ -3132,7 +3132,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         }
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id});
         tooltip += `<br>XP value: ${xp_val_1}`;
-        tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
+        tooltip += `<br>Result: ${recipe.getResult().count}x<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
     } else if(!components) {
         //some component
         let name = obscure_name(item_templates[material.material_id].getName());

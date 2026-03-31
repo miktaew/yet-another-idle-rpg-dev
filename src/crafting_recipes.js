@@ -41,12 +41,15 @@ class Recipe {
         getResult,
         recipe_level = [1,1],
         recipe_skill,
+        scale_results = true, //only matters for recipes rewarding multiple of an item, checked in use_recipe to scale result count with skill;
+                              //false will mean that recipe can only succeed or fail, true will mean it can succeed partially
     }) {
         this.name = name;
         this.id = id;
         this.is_unlocked = is_unlocked;
         this.recipe_type = recipe_type;
         this.result = result;
+        this.scale_results = scale_results;
         this.getResult = getResult || function(){return this.result};
         this.recipe_level = recipe_level;
         this.recipe_skill = recipe_skill;
