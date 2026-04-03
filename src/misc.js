@@ -240,6 +240,9 @@ function select_outline_class(color_hex) {
     }
 }
 
+/**
+ * for loading older saves
+ */
 const component_name_mapping = {
     "Simple short wooden hilt" : "Simple wooden short handle",
     "Short wooden hilt" : "Wooden short handle",
@@ -289,6 +292,15 @@ const component_name_mapping = {
     "Alligator leather armor": "Alligator armor",
 };
 
+/**
+ * for loading older saves
+ */
+const item_mapping = {
+    "Piece of rough wood": {item_id: "Rough wood log", item_count: 0.2},
+    "Piece of wood": {item_id: "Wood log", item_count: 0.2},
+    "Piece of ash wood": {item_id: "Ash wood log", item_count: 0.2},
+}
+
 
 /**
  * Translates component names from pre-autofilling to post-autofilling
@@ -299,6 +311,10 @@ function get_component_name(name) {
     return component_name_mapping[name] || name;
 }
 
+function get_item_mapping(item_id) {
+    return item_mapping[item_id] || {item_id, item_count: 1};
+}
+
 export {
     expo, random_range, clamp, slerp, format_reading_time, format_working_time, 
         get_hit_chance, round_item_price,
@@ -306,5 +322,6 @@ export {
         stat_names, task_type_names, skill_consumable_tags, crafting_tags_to_skills,
         celsius_to_fahrenheit,
         select_outline_class,
-        component_name_mapping, get_component_name
+        component_name_mapping, get_component_name,
+        get_item_mapping
     };

@@ -98,7 +98,7 @@ import { end_activity_animation,
          update_fav_display,
          update_displayed_item_log
         } from "./display.js";
-import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, random_range, skill_consumable_tags } from "./misc.js";
+import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, get_component_stats, recipes } from "./crafting_recipes.js";
 import { game_version, get_game_version } from "./game_version.js";
@@ -2707,7 +2707,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 if(final_count) {
                     add_to_character_inventory([{item_key: item_templates[result_id].getInventoryKey(), count: final_count}]);
                     let msg = `Created ${item_templates[result_id].getName()}`;
-                    if(attempted_crafting_ammount > 1) {
+                    if(attempted_crafting_ammount > 1 || scale_results) {
                         msg+=` [${final_count} out of ${count*attempted_crafting_ammount}]`;
                     } else {
                         msg+= ` x${final_count}`;
@@ -2715,7 +2715,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     log_message(msg, "crafting");
                 } else {
                     let msg = `Failed to create ${item_templates[result_id].getName()}`;
-                    if(attempted_crafting_ammount > 1) {
+                    if(attempted_crafting_ammount > 1 || scale_results) {
                         msg+=` [0 out of ${count*attempted_crafting_ammount}]`;
                     } else {
                         msg+= ` x${count*attempted_crafting_ammount}`;
@@ -3921,11 +3921,16 @@ function load(save_data) {
                     //id is just a key of item_templates
                     //if it's present, item is "simple" (no components)
                     //and if it has no quality, it's something non-equippable
+                    const mapped_item = get_item_mapping(id);
+                    id = mapped_item.item_id;
                     if(item_templates[id]) {
+                        const new_item_key = item_templates[id].getInventoryKey();
+                        item_list.push({item_key: new_item_key, count: Math.round(mapped_item.item_count * save_data.character.inventory[key].count), quality: quality});
+
                         if(id === "Coal" && is_a_older_than_b(save_data["game version"], "v0.4.6.12")) {
                             item_list.push({item_key: item_templates["Charcoal"].getInventoryKey(), count: save_data.character.inventory[key].count, quality: quality});
                         } else {
-                            item_list.push({item_key: key, count: save_data.character.inventory[key].count, quality: quality});
+                            item_list.push({item_key: new_item_key, count: Math.round(mapped_item.item_count * save_data.character.inventory[key].count), quality: quality});
                         }
                     } else {
                         console.warn(`Inventory item "${key}" from save on version "${save_data["game version"]} couldn't be found!`);
@@ -3987,7 +3992,7 @@ function load(save_data) {
                 } else {
                     console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} is incorrect!`);
                 }
-            } else { //older savefile
+            } else { //older savefile, probably can be deleted at this point
                 if(Array.isArray(save_data.character.inventory[key])) { //is a list of unstackable items (equippables or books), needs to be added 1 by 1
                     for(let i = 0; i < save_data.character.inventory[key].length; i++) {
                         if(save_data.character.inventory[key][i].item_type === "EQUIPPABLE" ) {
@@ -4089,8 +4094,13 @@ function load(save_data) {
                         //id is just a key of item_templates
                         //if it's present, item is "simple" (no components)
                         //and if it has no quality, it's something non-equippable
+
+                        const mapped_item = get_item_mapping(id);
+                        id = mapped_item.item_id;
+
                         if(item_templates[id]) {
-                            storage_item_list.push({item_key: key, count: save_data.player_storage.inventory[key].count, quality: quality});
+                            const new_item_key = item_templates[id].getInventoryKey();
+                            storage_item_list.push({item_key: new_item_key, count: Math.round(mapped_item.item_count * save_data.player_storage.inventory[key].count), quality: quality});
                         } else {
                             console.warn(`Inventory item "${key}" from save on version "${save_data["game version"]} couldn't be found!`);
                             any_warnings = true;
@@ -4254,13 +4264,14 @@ function load(save_data) {
                             if(id && !quality) { 
                                 //id is just a key of item_templates
                                 //if it's present, item is "simple" (no components)
-                                //and if it has no quality, it's something non-equippable
+                                //and if it has no quality, it's something non-equippable and not a component
 
-                                id = get_component_name(id);
-
+                                const mapped_item = get_item_mapping(id);
+                                id = mapped_item.item_id;
 
                                 if(item_templates[id]) {
-                                    trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count});
+                                    const new_item_key = item_templates[id].getInventoryKey();
+                                    trader_item_list.push({item_key: new_item_key, count: Math.round(mapped_item.item_count * save_data.traders[trader].inventory[key].count), quality: quality});
                                 } else {
                                     console.warn(`Inventory item "${key}" from save on version "${save_data["game version"]} couldn't be found!`);
                                     any_warnings = true;

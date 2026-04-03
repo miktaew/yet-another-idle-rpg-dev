@@ -2011,6 +2011,31 @@ function update_displayed_normal_location(location) {
 
     update_location_icon(location);
 
+    /////////////////////////////////
+    //add butttons to change location
+
+    const available_locations = location.connected_locations.filter(loc => (loc.location.is_unlocked && !loc.location.is_finished && !loc.location.is_challenge));
+    if(available_locations.length > 0) {
+        location_choice_divs["locations"] = create_location_choice_dropdown({name: "Move somewhere else", icon: "directions", class_name: "choice_travel"});
+
+        location_choice_divs["locations"].append(...create_location_choices({location: location, category: "travel"}));
+    }
+    
+    /////////////////////////////
+    //add buttons for fast travel
+
+    const available_fast_travel = 
+    [
+        ...Object.keys(favourite_locations).filter(key => (key !== current_location.id)), 
+        ...Object.keys(unlocked_beds).filter(key => (key !== current_location.id && locations[key].is_unlocked && !locations[key].is_finished))
+    ];
+
+    if((available_fast_travel.length + (last_combat_location?1:0)) > 0) {
+        location_choice_divs["fast_travel"] = create_location_choice_dropdown({name: "Fast travel", icon: "directions", class_name: "choice_travel"});
+
+        location_choice_divs["fast_travel"].append(...create_location_choices({location: location, category: "fast_travel"}));
+    }
+
     /////////////////////////////
     //add button to open crafting
     if(global_flags.is_crafting_unlocked) {
@@ -2019,7 +2044,8 @@ function update_displayed_normal_location(location) {
             crafting_button.classList.add("location_choices", "choice_craft");
             crafting_button.setAttribute("onclick", 'openCraftingWindow()');
             insert_HTML(crafting_button, `<i class="material-icons">construction</i> ${location.crafting.use_text}`);
-            action_div.appendChild(crafting_button);
+            location_choice_divs["crafting"] = crafting_button;
+            //action_div.appendChild(crafting_button);
         }
     }
 
@@ -2134,16 +2160,6 @@ function update_displayed_normal_location(location) {
         location_choice_divs["actions"].append(...create_location_choices({location: location, category: "action"}));
     }
 
-    /////////////////////////////////
-    //add butttons to change location
-
-    const available_locations = location.connected_locations.filter(loc => (loc.location.is_unlocked && !loc.location.is_finished && !loc.location.is_challenge));
-    if(available_locations.length > 0) {
-        location_choice_divs["locations"] = create_location_choice_dropdown({name: "Move somewhere else", icon: "directions", class_name: "choice_travel"});
-
-        location_choice_divs["locations"].append(...create_location_choices({location: location, category: "travel"}));
-    }
-
     ////////////////////////////
     //add buttons for challenges
 
@@ -2154,20 +2170,6 @@ function update_displayed_normal_location(location) {
         location_choice_divs["challenges"].append(...create_location_choices({location: location, category: "challenge"}));
     }
 
-    /////////////////////////////
-    //add buttons for fast travel
-
-    const available_fast_travel = 
-    [
-        ...Object.keys(favourite_locations).filter(key => (key !== current_location.id)), 
-        ...Object.keys(unlocked_beds).filter(key => (key !== current_location.id && locations[key].is_unlocked && !locations[key].is_finished))
-    ];
-
-    if((available_fast_travel.length + (last_combat_location?1:0)) > 0) {
-        location_choice_divs["fast_travel"] = create_location_choice_dropdown({name: "Fast travel", icon: "directions", class_name: "choice_travel"});
-
-        location_choice_divs["fast_travel"].append(...create_location_choices({location: location, category: "fast_travel"}));
-    }
 
     action_div.append(...Object.values(location_choice_divs));
 }
@@ -2833,7 +2835,8 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
 
     if(subcategory === "items") {
         recipe_name_span.classList.add("recipe_item_name");
-        set_HTML(recipe_div.children[0], '<i class="material-icons icon" style="visibility:hidden"> keyboard_double_arrow_down </i>' + recipe_div.children[0].innerText);
+        const result_count = recipe.getResult().count;
+        set_HTML(recipe_div.children[0], '<i class="material-icons icon" style="visibility:hidden"> keyboard_double_arrow_down </i>' + recipe_div.children[0].innerText + (result_count>1?` x${result_count}`:''));
         //invisible icon added just so it properly matches in height and text position with recipes in other subcategories
         if(!recipe.get_availability().available_ammount) {
             recipe_div.classList.add("recipe_unavailable");
@@ -3132,7 +3135,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         }
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id});
         tooltip += `<br>XP value: ${xp_val_1}`;
-        tooltip += `<br>Result: ${recipe.getResult().count}x<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
+        tooltip += `<br>Result: <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
     } else if(!components) {
         //some component
         let name = obscure_name(item_templates[material.material_id].getName());

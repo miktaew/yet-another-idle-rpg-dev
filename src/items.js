@@ -1628,33 +1628,33 @@ book_stats["Wood for Witches"] = new BookData({
         material_type: "coal",
     });
 	
-    item_templates["Piece of rough wood"] = new Material({
-        description: "Cheapest form of wood. There's a lot of bark and malformed pieces",
-        value: 2,
+    item_templates["Rough wood log"] = new Material({
+        description: "A big log of cheap and weak wood. At least it should be very easy to work with",
+        value: 10,
         material_type: "raw wood",
         getName: ()=>{
-            if(is_rat()) return "Piece of rat wood";
-            else return "Piece of rough wood";
+            if(is_rat()) return "Rat wood log";
+            else return "Rough wood log";
         }
     });
-    item_templates["Piece of wood"] = new Material({
-        description: "Average quality wood. There's a lot of bark and malformed pieces",
-        value: 4,
+    item_templates["Wood log"] = new Material({
+        description: "Average quality wood. It might have some reasonable uses",
+        value: 20,
         material_type: "raw wood",
     });
-    item_templates["Piece of ash wood"] = new Material({
-        description: "Strong yet elastic, it's best wood you can hope to find around. There's a lot of bark and malformed pieces",
-        value: 7,
+    item_templates["Ash wood log"] = new Material({
+        description: "A strong wood log, it should work great for most of your purposes",
+        value: 35,
         material_type: "raw wood",
     });
-    item_templates["Piece of hickory wood"] = new Material({
-        description: "Tough and dense and smells like cat pee, but it's even better than ash",
-        value: 10,
+    item_templates["Hickory wood log"] = new Material({
+        description: "A very strong wood log, it should work great almost anything",
+        value: 50,
         material_type: "raw wood",
     });
     //right now mostly meant as an additional source of charcoal, hopefully more uses after magic and housing
     item_templates["Piece of willow wood"] = new Material({
-        description: "Not suitable for weapons, bu may have other uses",
+        description: "Not suitable for weapons, but may have other uses",
         value: 5,
         material_type: "raw wood",
     });
