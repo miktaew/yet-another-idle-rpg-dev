@@ -111,7 +111,7 @@ body {
 
 @-moz-document url-prefix(){
     body {
-        scrollbar-color: silver #191928;
+        scrollbar-color: silver #ffffff;
 		scrollbar-width: thin;
     }
 }
@@ -668,10 +668,8 @@ input[type=checkbox], input[type=radio] {
 	font-weight: normal;
 	background-color: var(--tooltip_background_color);
 	border-radius: 10px;
-	margin-left: 30px;
-	margin-top: 20px;
 	padding: 5px;
-	position: absolute;
+	position: fixed;
 	z-index: 1000;
 	pointer-events: none;
 	font-size: 14px;
@@ -792,7 +790,7 @@ input[type=checkbox], input[type=radio] {
 	background-color: var(--tooltip_background_color);
 	border-radius: 10px;
 	padding: 5px;
-	position: absolute;
+	position: fixed;
 	z-index: 1000;
 	max-width: 300px;
 	width: max-content;
@@ -2259,7 +2257,7 @@ i {
 	z-index: 1000;
 	width: 300px;
 	font-size: 16px;
-	position: absolute;
+	position: fixed;
 	pointer-events: none;
 	background-color: var(--tooltip_background_color);
 	border-radius: 10px;

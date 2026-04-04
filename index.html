@@ -1445,7 +1445,7 @@
             function retarget_clicked_to_class(clicked_element, target_classes, break_classes) {
                 let end = false;
                 while(true) {
-                    if(!clicked_element.classList) {
+                    if(!clicked_element?.classList) {
                         return;
                     }
                     for(let i = 0; i < target_classes?.length; i++) {
@@ -1480,15 +1480,51 @@
                     if(event.key === "Escape") {
                         closeOptions();
                     }
-                }, false)
+                });
+
+                let mouse_position = [0, 0];
+
+                document.body.addEventListener('mousemove', (event)=>{
+                    mouse_position = [event.pageX, event.pageY];
+                });
+                
+
+                function get_scrollbar_thickness() {
+
+                    const test_div = document.createElement('div');
+                    
+                    test_div.style.cssText = 
+                    `
+                        position: absolute;
+                        top: -999px;
+                        left: -999px;
+                        width: 100px;
+                        height: 100px;
+                        overflow: scroll;
+                        overflow-x: scroll;
+                        box-sizing: border-box;
+                        padding: 0;
+                        border: 0;
+                    `;
+
+                    document.body.appendChild(test_div);
+                    const scrollbarHeight = test_div.offsetHeight - test_div.clientHeight;
+
+                    document.body.removeChild(test_div);
+
+                    return scrollbarHeight;
+                }
+                const scrollbar_thickness = get_scrollbar_thickness();
 
                 let tooltip_move_ticks = 60;
                 let tooltip_wait = 0;
 
+                const tooltip_shift = 10;
+
                 //mostly sets up event listeners
                 /////////////////////
                 //(un)equipping items:
-                const inventory_div = document.getElementById("inventory_div");
+                const inventory_div = document.getElementById("inventory_content_div");
                 inventory_div.onclick = function(event) {
                     let clicked_element = event.target;
                     if(clicked_element.classList.contains("equip_item_button")) {
@@ -1524,124 +1560,72 @@
                 }
 
                 const item_tooltip_margin = Number(getComputedStyle(document.querySelector('.item_tooltip'))["margin-left"].replace("px",""));
-                //margin-left of tooltip elements
-
-                ///////////////
-                //character item tooltips
-                inventory_div.addEventListener('mousemove', move_item_tooltip, false);
-                function move_item_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control"], []);
-
-                        //set horizontal position
-                        document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - 20}px`);
-
-                        if(!hovered_element) {
-                            return;
-                        }
-                        
-                        //calculate vertical position so it doesnt go under bottom edge
-                        const tooltip_height = hovered_element.children[0].children[2].scrollHeight;
-
-                        const body = document.getElementsByTagName("body")[0];
-                        const scrollbar_X_visible = (body.scrollWidth - body.clientWidth) > 0;
-
-                        const bottom_edge_position = 
-                            window.innerHeight - tooltip_height - item_tooltip_margin + window.scrollY + 10 - (scrollbar_X_visible?10:0);
-                        
-                        if(event.pageY > bottom_edge_position) {
-                            
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${bottom_edge_position - 400}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.pageY - 400}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
+                //margin-left of tooltip elements; should be 0 in most cases
 
                 const storage_div = document.getElementById("storage_div");
-                ///////////////////////
-                //storage item tooltips
-                storage_div.addEventListener('mousemove', move_storage_item_tooltip, false);
-                function move_storage_item_tooltip(event) {
+                const trader_inventory_div = document.getElementById("trader_inventory_div");
+                ///////////////
+                //character item, storage item, trader item tooltips
+                inventory_div.addEventListener('mousemove', move_item_tooltip);
+                storage_div.addEventListener('mousemove', move_item_tooltip);
+                trader_inventory_div.addEventListener('mousemove', move_item_tooltip);
+                function move_item_tooltip(event, custom) {
                     if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control"], []);
-
-                        //set horizontal position
-                        document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - 400}px`);
-
+                        event = custom || event;
+                        //let hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control"], []);
+                        let hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control", "trader_item_control"], []);
+                        
                         if(!hovered_element) {
                             return;
                         }
-                        
+
                         //calculate vertical position so it doesnt go under bottom edge
-                        const tooltip_height = hovered_element.children[0].children[1].scrollHeight;
+                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
+                        const tooltip_height = tooltip.scrollHeight;
+                        //const tooltip_height = hovered_element.children[0].children[2].scrollHeight;
 
-                        const body = document.getElementsByTagName("body")[0];
-                        const scrollbar_X_visible = (body.scrollWidth - body.clientWidth) > 0;
+                        let scrollbar_height = 0;
+                        const scrollbar_X_visible = (document.documentElement.scrollWidth - document.documentElement.clientWidth) > 0;
+                        //checks for horizontal scrollbar because it's the one that will appear at bottom, by comparing scrollWidth with clientWidth
+
+                        if(scrollbar_X_visible) {
+                            scrollbar_height = scrollbar_thickness;
+                        }
 
                         const bottom_edge_position = 
-                            window.innerHeight - tooltip_height - item_tooltip_margin + window.scrollY - (scrollbar_X_visible?10:0);
+                            (window.innerHeight + window.scrollY) - tooltip_height - item_tooltip_margin - scrollbar_height;
+                        //not truly bottom edge of the window since it's reduced by tooltip_height, but close enough
+
+                        //set horizontal position
+                        document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - window.scrollX + tooltip_shift}px`);
                         
                         if(event.pageY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${bottom_edge_position - 350}px`);
+                            //element's bottom would be below screen bottom, so instead set it right above it
+                            document.documentElement.style.setProperty('--item_tooltip_top', `${bottom_edge_position}px`);
                         } else {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.pageY - 350}px`);
+                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.pageY + tooltip_shift}px`);
                         }
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
                 }
-
-                //////////////////////
-                //trader item tooltips
-                const trader_inventory_div = document.getElementById("trader_inventory_div");
-                trader_inventory_div.addEventListener('mousemove', move_trader_item_tooltip, false);
-                function move_trader_item_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        if(event.target.id === "trader_inventory_div") {
-                            return;
-                        }
-
-                        let hovered_element = retarget_clicked_to_class(event.target, ["trader_item_control"]);
-
-                        const tooltip_width = hovered_element.children[0].children[1].scrollWidth;
-                        const tooltip_height = hovered_element.children[0].children[1].scrollHeight;
-
-                        const body = document.getElementsByTagName("body")[0];
-                        const scrollbar_Y_visible = (body.scrollHeight - body.clientHeight) > 0;
-                        const scrollbar_X_visible = (body.scrollWidth - body.clientWidth) > 0;
-
-                        const right_edge_position = 
-                            window.innerWidth - tooltip_width  - item_tooltip_margin + window.scrollX - (scrollbar_Y_visible?10:0);
-                        const bottom_edge_position = 
-                            window.innerHeight - tooltip_height - item_tooltip_margin + window.scrollY - (scrollbar_X_visible?10:0);
-                    
-                        if(event.pageX > right_edge_position) {
-                            document.documentElement.style.setProperty('--item_tooltip_left', `${right_edge_position - 420}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - 420}px`);
-                        }
-                        
-                        if(event.pageY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${bottom_edge_position - 400}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.pageY - 400}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
+                
+                //prevents item tooltips from initially appearing in wrong spot on some occassions
+                inventory_div.addEventListener('mouseenter', set_initial_item_tooltip_position);
+                storage_div.addEventListener('mouseenter', set_initial_item_tooltip_position);
+                trader_inventory_div.addEventListener('mouseenter', set_initial_item_tooltip_position);
+                inventory_div.addEventListener('scroll', set_initial_item_tooltip_position);
+                storage_div.addEventListener('scroll', set_initial_item_tooltip_position);
+                trader_inventory_div.addEventListener('scroll', set_initial_item_tooltip_position);
+                function set_initial_item_tooltip_position(event) {
+                    const target = document.elementFromPoint(...mouse_position);
+                    move_item_tooltip(event,{target, pageX: mouse_position[0], pageY: mouse_position[1]});
                 }
-
-                trader_inventory_div.addEventListener('mouseenter', (event) => {
-                    document.documentElement.style.setProperty('--item_tooltip_top', `${event.pageY - 370}px`);
-                    document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - 370}px`);
-                });
-                //prevents trader item tooltip from initially appearing in wrong spot on some occassions
-
+                
                 //item slots / worn equipment tooltips
                 let equipment_div = document.getElementById("character_equipment_div");
                 let tools_div = document.getElementById("character_tools_div");
-                equipment_div.addEventListener('mousemove', move_equipment_tooltip, false);
-                tools_div.addEventListener('mousemove', move_equipment_tooltip, false);
+                equipment_div.addEventListener('mousemove', move_equipment_tooltip);
+                tools_div.addEventListener('mousemove', move_equipment_tooltip);
                 function move_equipment_tooltip(event) {
                     if(Date.now() >= tooltip_wait) {
                         let hovered_element = event.target;
@@ -1755,21 +1739,22 @@
                             return;
                         }
 
-                        const tooltip_height = hovered_element.children[0].children[2].scrollHeight;
+                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
+                        const tooltip_height = tooltip.scrollHeight;
                         
                         const body = document.getElementsByTagName("body")[0];
                         const scrollbar_X_visible = (body.scrollWidth - body.clientWidth) > 0;
 
                         const bottom_edge_position = 
-                            window.innerHeight - tooltip_height + window.scrollY - 44 - (scrollbar_X_visible?10:0);
+                            window.innerHeight - tooltip_height + window.scrollY - 30 - (scrollbar_X_visible?10:0);
                         //size of window - size of tooltip + scrolling position - some-value-not-sure-why - 10 (for scrollbar if its visible)
 
-                        document.documentElement.style.setProperty('--skill_tooltip_left', `${event.pageX - 1150}px`);
+                        document.documentElement.style.setProperty('--skill_tooltip_left', `${event.pageX + tooltip_shift}px`);
 
                         if(event.pageY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--skill_tooltip_top', `${bottom_edge_position - 320}px`);
+                            document.documentElement.style.setProperty('--skill_tooltip_top', `${bottom_edge_position + tooltip_shift}px`);
                         } else {
-                            document.documentElement.style.setProperty('--skill_tooltip_top', `${event.pageY - 320}px`);
+                            document.documentElement.style.setProperty('--skill_tooltip_top', `${event.pageY + tooltip_shift}px`);
                         }
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
@@ -1785,22 +1770,23 @@
                             return;
                         }
 
-                        const tooltip_height = hovered_element.children[3].scrollHeight;
+                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
+                        const tooltip_height = tooltip.scrollHeight;
                         
                         const body = document.getElementsByTagName("body")[0];
                         const scrollbar_X_visible = (body.scrollWidth - body.clientWidth) > 0;
 
                         const bottom_edge_position = 
-                            window.innerHeight - tooltip_height + window.scrollY - 33 - (scrollbar_X_visible?10:0);
+                            window.innerHeight - tooltip_height + window.scrollY - 30 - (scrollbar_X_visible?10:0);
                         
-                        //size of window - size of tooltip + scrolling position - 23 (not sure where it comes from) - 10 (for scrollbar if its visible)
+                        //size of window - size of tooltip + scrolling position - some number(?) - 10 (for scrollbar if its visible)
 
-                        document.documentElement.style.setProperty('--stance_tooltip_left', `${event.pageX - 1150}px`);
+                        document.documentElement.style.setProperty('--stance_tooltip_left', `${event.pageX + tooltip_shift}px`);
 
                         if(event.pageY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--stance_tooltip_top', `${bottom_edge_position - 380}px`);
+                            document.documentElement.style.setProperty('--stance_tooltip_top', `${bottom_edge_position + tooltip_shift}px`);
                         } else {
-                            document.documentElement.style.setProperty('--stance_tooltip_top', `${event.pageY - 380}px`);
+                            document.documentElement.style.setProperty('--stance_tooltip_top', `${event.pageY + tooltip_shift}px`);
                         }
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
