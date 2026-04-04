@@ -1485,7 +1485,7 @@
                 let mouse_position = [0, 0];
 
                 document.body.addEventListener('mousemove', (event)=>{
-                    mouse_position = [event.pageX, event.pageY];
+                    mouse_position = [event.clientX, event.clientY];
                 });
                 
 
@@ -1593,17 +1593,17 @@
                         }
 
                         const bottom_edge_position = 
-                            (window.innerHeight + window.scrollY) - tooltip_height - item_tooltip_margin - scrollbar_height;
+                            (window.innerHeight) - tooltip_height - item_tooltip_margin - scrollbar_height;
                         //not truly bottom edge of the window since it's reduced by tooltip_height, but close enough
 
                         //set horizontal position
-                        document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - window.scrollX + tooltip_shift}px`);
+                        document.documentElement.style.setProperty('--item_tooltip_left', `${event.clientX + tooltip_shift}px`);
                         
-                        if(event.pageY > bottom_edge_position) {
+                        if(event.clientY > bottom_edge_position) {
                             //element's bottom would be below screen bottom, so instead set it right above it
                             document.documentElement.style.setProperty('--item_tooltip_top', `${bottom_edge_position}px`);
                         } else {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.pageY + tooltip_shift}px`);
+                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.clientY + tooltip_shift}px`);
                         }
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
@@ -1618,7 +1618,7 @@
                 trader_inventory_div.addEventListener('scroll', set_initial_item_tooltip_position);
                 function set_initial_item_tooltip_position(event) {
                     const target = document.elementFromPoint(...mouse_position);
-                    move_item_tooltip(event,{target, pageX: mouse_position[0], pageY: mouse_position[1]});
+                    move_item_tooltip(event,{target, clientX: mouse_position[0], clientY: mouse_position[1]});
                 }
                 
                 //item slots / worn equipment tooltips
