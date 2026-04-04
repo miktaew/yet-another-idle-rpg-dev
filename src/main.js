@@ -3925,7 +3925,6 @@ function load(save_data) {
                     id = mapped_item.item_id;
                     if(item_templates[id]) {
                         const new_item_key = item_templates[id].getInventoryKey();
-                        item_list.push({item_key: new_item_key, count: Math.round(mapped_item.item_count * save_data.character.inventory[key].count), quality: quality});
 
                         if(id === "Coal" && is_a_older_than_b(save_data["game version"], "v0.4.6.12")) {
                             item_list.push({item_key: item_templates["Charcoal"].getInventoryKey(), count: save_data.character.inventory[key].count, quality: quality});
