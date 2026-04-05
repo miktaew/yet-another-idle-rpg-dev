@@ -1562,6 +1562,30 @@
                 const item_tooltip_margin = Number(getComputedStyle(document.querySelector('.item_tooltip'))["margin-left"].replace("px",""));
                 //margin-left of tooltip elements; should be 0 in most cases
 
+                //not truly bottom edge of the window since it's reduced by tooltip_height, but close enough
+                const get_bottom_edge_position = (tooltip_height) => {
+                    let scrollbar_height = 0;
+                    const scrollbar_X_visible = (document.documentElement.scrollWidth - document.documentElement.clientWidth) > 0;
+                    //checks for horizontal scrollbar because it's the one that will appear at bottom, by comparing scrollWidth with clientWidth
+
+                    if(scrollbar_X_visible) {
+                        scrollbar_height = scrollbar_thickness;
+                    }
+
+                    const bottom_edge_position = 
+                        (window.innerHeight) - tooltip_height - item_tooltip_margin - scrollbar_height;
+
+                    return bottom_edge_position;
+                }
+
+                const move_unrestricted_tooltip = (event, top_variable, left_variable) => {
+                    if(Date.now() >= tooltip_wait) {
+                        document.documentElement.style.setProperty(top_variable, `${event.clientY + tooltip_shift}px`);
+                        document.documentElement.style.setProperty(left_variable, `${event.clientX + tooltip_shift}px`);
+                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
+                    }
+                }
+
                 const storage_div = document.getElementById("storage_div");
                 const trader_inventory_div = document.getElementById("trader_inventory_div");
                 ///////////////
@@ -1572,8 +1596,7 @@
                 function move_item_tooltip(event, custom) {
                     if(Date.now() >= tooltip_wait) {
                         event = custom || event;
-                        //let hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control"], []);
-                        let hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control", "trader_item_control"], []);
+                        const hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control", "trader_item_control"], []);
                         
                         if(!hovered_element) {
                             return;
@@ -1582,20 +1605,9 @@
                         //calculate vertical position so it doesnt go under bottom edge
                         const tooltip = hovered_element.querySelector('[class*="tooltip"]');
                         const tooltip_height = tooltip.scrollHeight;
-                        //const tooltip_height = hovered_element.children[0].children[2].scrollHeight;
 
-                        let scrollbar_height = 0;
-                        const scrollbar_X_visible = (document.documentElement.scrollWidth - document.documentElement.clientWidth) > 0;
-                        //checks for horizontal scrollbar because it's the one that will appear at bottom, by comparing scrollWidth with clientWidth
-
-                        if(scrollbar_X_visible) {
-                            scrollbar_height = scrollbar_thickness;
-                        }
-
-                        const bottom_edge_position = 
-                            (window.innerHeight) - tooltip_height - item_tooltip_margin - scrollbar_height;
-                        //not truly bottom edge of the window since it's reduced by tooltip_height, but close enough
-
+                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
+                       
                         //set horizontal position
                         document.documentElement.style.setProperty('--item_tooltip_left', `${event.clientX + tooltip_shift}px`);
                         
@@ -1622,16 +1634,16 @@
                 }
                 
                 //item slots / worn equipment tooltips
-                let equipment_div = document.getElementById("character_equipment_div");
-                let tools_div = document.getElementById("character_tools_div");
+                const equipment_div = document.getElementById("character_equipment_div");
+                const tools_div = document.getElementById("character_tools_div");
                 equipment_div.addEventListener('mousemove', move_equipment_tooltip);
                 tools_div.addEventListener('mousemove', move_equipment_tooltip);
                 function move_equipment_tooltip(event) {
                     if(Date.now() >= tooltip_wait) {
                         let hovered_element = event.target;
                         if(hovered_element.classList.contains("equipment_slot_div")){
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${ event.pageY - 150}px`);
-                            document.documentElement.style.setProperty('--item_tooltip_left', `${event.pageX - 50}px`);
+                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.clientY + tooltip_shift}px`);
+                            document.documentElement.style.setProperty('--item_tooltip_left', `${event.clientX + tooltip_shift}px`);
                         }
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
@@ -1639,11 +1651,11 @@
 
                 const crafting_window = document.getElementById("crafting_window");
                 crafting_window.addEventListener('mouseenter', (event) => {
-                    document.documentElement.style.setProperty('--recipe_tooltip_top', `${event.pageY - 370}px`);
-                    document.documentElement.style.setProperty('--recipe_tooltip_left', `${event.pageX - 370}px`);
+                    document.documentElement.style.setProperty('--recipe_tooltip_top', `${event.clientY + tooltip_shift}px`);
+                    document.documentElement.style.setProperty('--recipe_tooltip_left', `${event.clientX + tooltip_shift}px`);
                 });
 
-                crafting_window.addEventListener('mousemove', move_recipe_tooltip, false);
+                crafting_window.addEventListener('mousemove', move_recipe_tooltip);
                 function move_recipe_tooltip(event) {
                     if(Date.now() >= tooltip_wait) {
                         let hovered_element = retarget_clicked_to_class(event.target, 
@@ -1661,71 +1673,43 @@
                         }
 
                         //set horizontal position
-                        document.documentElement.style.setProperty('--recipe_tooltip_left', `${event.pageX - 400}px`);
+                        document.documentElement.style.setProperty('--recipe_tooltip_left', `${event.clientX + tooltip_shift}px`);
 
-                        let tooltip_height = tooltip.scrollHeight;
+                        const tooltip_height = tooltip.scrollHeight;
 
-                        const body = document.getElementsByTagName("body")[0];
-                        const scrollbar_X_visible = (body.scrollWidth - body.clientWidth) > 0;
+                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
 
-                        const bottom_edge_position = 
-                            window.innerHeight - tooltip_height + window.scrollY - 30 - (scrollbar_X_visible?10:0);
-                        if(event.pageY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--recipe_tooltip_top', `${bottom_edge_position - 350}px`);
+                        if(event.clientY > bottom_edge_position) {
+                            document.documentElement.style.setProperty('--recipe_tooltip_top', `${bottom_edge_position}px`);
                         } else {
-                            document.documentElement.style.setProperty('--recipe_tooltip_top', `${event.pageY - 350}px`);
+                            document.documentElement.style.setProperty('--recipe_tooltip_top', `${event.clientY + tooltip_shift}px`);
                         }
                         
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
                 }
-                //stats tooltips
-                let stats_div = document.getElementById("character_stats_div");
-                stats_div.addEventListener('mousemove', move_stat_tooltip, false);
-                function move_stat_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        document.documentElement.style.setProperty('--stat_tooltip_top', `${event.pageY - 140}px`);
-                        document.documentElement.style.setProperty('--stat_tooltip_left', `${event.pageX}px`);
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
 
-                let bar_divs = document.getElementsByClassName("character_bar_tooltip");
-                Array.from(bar_divs).forEach(bar_div => bar_div.parentNode.addEventListener('mousemove', move_bar_tooltip, false));
-                function move_bar_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        document.documentElement.style.setProperty('--bar_tooltip_top', `${event.pageY}px`);
-                        document.documentElement.style.setProperty('--bar_tooltip_left', `${event.pageX}px`);
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
 
-                let temperature_div = document.getElementById("weather_div");
-                temperature_div.addEventListener('mousemove', move_temperature_tooltip, false);
-                function move_temperature_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        document.documentElement.style.setProperty('--temperature_tooltip_top', `${event.pageY}px`);
-                        document.documentElement.style.setProperty('--temperature_tooltip_left', `${event.pageX - 780}px`);
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
+                const stats_div = document.getElementById("character_stats_div");
+                const bar_divs = document.getElementsByClassName("character_bar_tooltip");
+                const temperature_div = document.getElementById("weather_div");
+                const location_actions_div = document.getElementById("location_actions_div");
+                const location_name_div = document.getElementById("location_name_div");
+
+                stats_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--stat_tooltip_top', '--stat_tooltip_left'));
+                Array.from(bar_divs).forEach(bar_div => bar_div.parentNode.addEventListener('mousemove', 
+                                                        (event) => move_unrestricted_tooltip(event, '--bar_tooltip_top', '--bar_tooltip_left'))
+                                                    );
+                
+                temperature_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--temperature_tooltip_top', '--temperature_tooltip_left'));
+                location_actions_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--job_tooltip_top', '--job_tooltip_left'));
+                location_name_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--location_desc_tooltip_top', '--location_desc_tooltip_left'));
 
                 //unequip item
                 equipment_div.onclick = function(event) {
                     let clicked_element = event.target;
                     if(clicked_element.classList.contains("equipment_slot_div") && !clicked_element.classList.contains("equipment_slot_empty")) {
                         unequip_item(clicked_element.id.replace("_slot", ""));
-                    }
-                }
-
-                //activities tooltips (including the tooltip for resource gathering, since it shares a class with them)
-                const location_actions_div = document.getElementById("location_actions_div");
-                location_actions_div.addEventListener('mousemove', move_activity_tooltip, false);
-                function move_activity_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        document.documentElement.style.setProperty('--job_tooltip_top', `${event.pageY - 410}px`);
-                        document.documentElement.style.setProperty('--job_tooltip_left', `${event.pageX - 420}px`);
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
                 }
 
@@ -1821,9 +1805,6 @@
                     }
                 }
 
-                //location desc tooltip (for combat locations)
-                let location_name_div = document.getElementById("location_name_div");
-                location_name_div.addEventListener('mousemove', move_location_desc_tooltip, false);
                 function move_location_desc_tooltip(event) {
                     if(Date.now() >= tooltip_wait) {
                         let hovered_element = event.target;
@@ -2107,6 +2088,7 @@
                     }
                 }
 
+                //activate stances when related field on list is clicked, using labels didn't have sufficient coverage
                 document.getElementById("stance_list").addEventListener("click", event => {
                     if(event.target.classList.contains("stances_button_radio")) {
                         event.target.children[0].click();

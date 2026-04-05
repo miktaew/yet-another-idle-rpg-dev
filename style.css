@@ -688,6 +688,8 @@ input[type=checkbox], input[type=radio] {
 
 .recipe_tooltip {
 	width: 250px;
+    top: var(--recipe_tooltip_top);
+	left: var(--recipe_tooltip_left);
 }
 
 .location_tooltip {
@@ -701,10 +703,8 @@ input[type=checkbox], input[type=radio] {
 	font-weight: normal;
 	background-color: var(--tooltip_background_color);
 	border-radius: 10px;
-	margin-left: 30px;
-	margin-top: 20px;
 	padding: 5px;
-	position: absolute;
+	position: fixed;
 	z-index: 1000;
 	width: 200px;
 	pointer-events: none;
@@ -727,15 +727,10 @@ input[type=checkbox], input[type=radio] {
 	text-shadow: -1px -1px 0 #00000080, 1px -1px 0 #00000080, -1px 1px 0 #00000080, 1px 1px 0 #00000080;
 }
 
-.recipe_tooltip {
-	top: var(--recipe_tooltip_top);
-	left: var(--recipe_tooltip_left);
-}
 .job_tooltip {
 	top: var(--job_tooltip_top);
 	left: var(--job_tooltip_left);
 	font-size: 16px;
-	width: 250px;
 }
 
 .equipment_slot_div:hover .item_tooltip, .trader_item_control:hover .item_tooltip, .inventory_item_control:hover .item_tooltip, 
@@ -749,7 +744,7 @@ input[type=checkbox], input[type=radio] {
 	background-color: var(--tooltip_background_color);
 	border-radius: 10px;
 	padding: 5px;
-	position: absolute;
+	position: fixed;
 	z-index: 10;
 	width: 300px;
 	pointer-events: none;
@@ -770,7 +765,7 @@ input[type=checkbox], input[type=radio] {
 	background-color: var(--tooltip_background_color);
 	border-radius: 10px;
 	padding: 5px;
-	position: absolute;
+	position: fixed;
 	z-index: 10;
 	max-width: 350px;
 	min-width: 100px;
@@ -1287,11 +1282,6 @@ input[type=checkbox], input[type=radio] {
 	display: block;
 }
 
-.recipe_tooltip {
-	display: none;
-	position: absolute;
-	font-size: 14px;
-}
 .crafting_tooltip_mat_list {
 	padding-left: 20px;
 }
@@ -2403,18 +2393,16 @@ i {
 		}
 		#temperature_tooltip {
 			display: none;
-			position: absolute;
+			position: fixed;
 			z-index: 1000;
 			font-style: italic;
 			background-color: var(--tooltip_background_color);
 			border-radius: 10px;
-			margin-left: 30px;
 			padding: 5px;
 			width: 300px;
 			height: auto;
 			font-size: 16px;
 			border-radius: 10px;
-			padding: 5px;
 			top: var(--temperature_tooltip_top);
 			left: var(--temperature_tooltip_left);
 			text-align: left;
