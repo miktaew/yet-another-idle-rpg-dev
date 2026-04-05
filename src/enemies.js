@@ -403,7 +403,7 @@ const enemy_abilites = {
             {item_name: "Oneberry", chance: 0.005},
             {item_name: "Golmoon leaf", chance: 0.005},
             {item_name: "Belmart leaf", chance: 0.005},
-            {item_name: "Piece of wood", chance: 0.005},
+            {item_name: "Wood log", chance: 0.002},
         ],
     });
 
