@@ -2193,7 +2193,7 @@ i {
 						background-color: var(--tooltip_background_color);
 						border-radius: 10px;
 						padding: 5px;
-						position: absolute;
+						position: fixed;
 						z-index: 1000;
 						width: 360px;
 						top: var(--bestiary_entry_tooltip_top);
@@ -2346,7 +2346,7 @@ i {
 				background-color: var(--tooltip_background_color);
 				border-radius: 10px;
 				padding: 5px;
-				position: absolute;
+				position: fixed;
 				z-index: 1000;
 				width: 200px;
 				top: var(--location_type_tooltip_top);
