@@ -75,7 +75,7 @@
                         <input type = "text" id = "character_name_field"> 
                     </div>
 
-                    <div id = "character_xp_div">
+                    <div id = "character_xp_div" class="character_bar_parent_div">
                         <div id ="character_xp_bar_max">
                             <div id = "character_xp_bar_current">
                                 
@@ -87,7 +87,7 @@
                         </div>
                     </div>
                     
-                    <div id = "character_stamina_div">
+                    <div id = "character_stamina_div" class="character_bar_parent_div">
                         <div id ="character_stamina_bar_max">
                             <div id = "character_stamina_bar_current">
                             </div>
@@ -98,7 +98,7 @@
                         <div id="character_stamina_tooltip" class="character_bar_tooltip">
                         </div>
                     </div>
-                    <div id = "character_mana_div">
+                    <div id = "character_mana_div" class="character_bar_parent_div">
                         <div id ="character_mana_bar_max">
                             <div id = "character_mana_bar_current">
                             </div>
@@ -110,7 +110,7 @@
                         </div>
                     </div>
 
-                    <div id = "character_health_div"> 
+                    <div id = "character_health_div" class="character_bar_parent_div"> 
                         <div id = "character_healthbar_max"> 
                             <div id = "character_healthbar_current">
                             </div>
@@ -125,7 +125,7 @@
                 <div id = "time_and_location" class = "box_div">
                     <div id = "time_and_weather_div"> 
                         <div id = "time_div"> </div>
-                        <div id = "weather_div">123 </div>
+                        <div id = "weather_div" class = "weather_div"> </div>
                     </div>
                 
                     
@@ -1594,7 +1594,8 @@
                     return right_edge_position;
                 }
 
-                const move_unrestricted_tooltip = (event, top_variable, left_variable) => {
+                const move_unrestricted_tooltip = (event, top_variable, left_variable, target_classes) => {
+                    
                     if(Date.now() >= tooltip_wait) {
                         document.documentElement.style.setProperty(top_variable, `${event.clientY + tooltip_shift}px`);
                         document.documentElement.style.setProperty(left_variable, `${event.clientX + tooltip_shift}px`);
@@ -1602,39 +1603,70 @@
                     }
                 }
 
+                const move_restricted_tooltip = ({event, top_variable, left_variable, target_classes, break_classes = [], left_side}) => {
+                     if(Date.now() >= tooltip_wait) {
+                        let hovered_element = event.target;
+                        if(target_classes?.length > 0) {
+                            hovered_element = retarget_clicked_to_class(event.target,target_classes,break_classes);
+                        }
+                        
+                        if(!hovered_element) {
+                            return;
+                        }
+
+                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
+                        if(!tooltip) {
+                            return;
+                        }
+                        const tooltip_height = tooltip.scrollHeight;
+                        const tooltip_width = tooltip.scrollWidth;
+
+                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
+                        const right_edge_position = get_right_edge_position(tooltip_width);
+
+                        if(event.clientY > bottom_edge_position) {
+                            document.documentElement.style.setProperty(top_variable, `${bottom_edge_position}px`);
+                        } else {
+                            document.documentElement.style.setProperty(top_variable, `${event.clientY + tooltip_shift}px`);
+                        }
+
+                        if(event.clientX > right_edge_position && !left_side) {
+                            document.documentElement.style.setProperty(left_variable, `${right_edge_position}px`);
+                        } else {
+                            document.documentElement.style.setProperty(left_variable, `${event.clientX + (left_side?-(tooltip.scrollWidth+tooltip_shift):tooltip_shift)}px`);
+                        }
+
+                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
+                    }
+                }
+
+                const crafting_window = document.getElementById("crafting_window");
                 const storage_div = document.getElementById("storage_div");
                 const trader_inventory_div = document.getElementById("trader_inventory_div");
+                const skills_div = document.getElementById("skill_list_div");
+                const stances_tab = document.getElementById("stance_list");
+                const location_types_div = document.getElementById("location_types_div");
+                const bestiary_box_div = document.getElementById("bestiary_box_div");
+                const books_box_div = document.getElementById("books_box_div");
+
+                const stats_div = document.getElementById("character_stats_div");
+                const bar_divs = document.getElementsByClassName("character_bar_tooltip");
+                const temperature_div = document.getElementById("weather_div");
+                const location_actions_div = document.getElementById("location_actions_div");
+                const location_name_div = document.getElementById("location_name_div");
+
                 ///////////////
                 //character item, storage item, trader item tooltips
                 inventory_div.addEventListener('mousemove', move_item_tooltip);
                 storage_div.addEventListener('mousemove', move_item_tooltip);
                 trader_inventory_div.addEventListener('mousemove', move_item_tooltip);
                 function move_item_tooltip(event, custom) {
-                    if(Date.now() >= tooltip_wait) {
-                        event = custom || event;
-                        const hovered_element = retarget_clicked_to_class(event.target, ["inventory_item_control", "equipped_item_control", "trader_item_control"], []);
-                        
-                        if(!hovered_element) {
-                            return;
-                        }
-
-                        //calculate vertical position so it doesnt go under bottom edge
-                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
-                        const tooltip_height = tooltip.scrollHeight;
-
-                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
-                       
-                        //set horizontal position
-                        document.documentElement.style.setProperty('--item_tooltip_left', `${event.clientX + tooltip_shift}px`);
-                        
-                        if(event.clientY > bottom_edge_position) {
-                            //element's bottom would be below screen bottom, so instead set it right above it
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${bottom_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
+                    move_restricted_tooltip({
+                        event: custom || event, 
+                        left_variable: '--item_tooltip_left', 
+                        top_variable: '--item_tooltip_top', 
+                        target_classes: ["inventory_item_control", "equipped_item_control", "trader_item_control"]
+                    });
                 }
                 
                 //prevents item tooltips from initially appearing in wrong spot on some occassions
@@ -1655,62 +1687,55 @@
                 equipment_div.addEventListener('mousemove', move_equipment_tooltip);
                 tools_div.addEventListener('mousemove', move_equipment_tooltip);
                 function move_equipment_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = event.target;
-                        if(hovered_element.classList.contains("equipment_slot_div")){
-                            document.documentElement.style.setProperty('--item_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                            document.documentElement.style.setProperty('--item_tooltip_left', `${event.clientX + tooltip_shift}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
+                    move_restricted_tooltip({
+                                            event, 
+                                            top_variable: "--item_tooltip_top",
+                                            left_variable: "--item_tooltip_left",
+                                            target_classes: ["equipment_slot_div"],
+                                        }
+                    );
                 }
-
-                const crafting_window = document.getElementById("crafting_window");
-                crafting_window.addEventListener('mouseenter', (event) => {
-                    document.documentElement.style.setProperty('--recipe_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                    document.documentElement.style.setProperty('--recipe_tooltip_left', `${event.clientX + tooltip_shift}px`);
-                });
-
-                crafting_window.addEventListener('mousemove', move_recipe_tooltip);
-                function move_recipe_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target, 
-                            ["recipe_div", "selectable_component", "selectable_material", "recipe_creation_button"], 
-                            ["crafting_subpage_button", "crafting_subpage_buttons", "crafting_category", "crafting_mainpage_buttons", "crafting_mainpage_button", "crafting_window"]
-                        );
-
-                        if(!hovered_element) {
-                            return;
-                        }
-
-                        const tooltip = hovered_element.getElementsByClassName("recipe_tooltip")[0];
-                        if(!tooltip) {
-                            return;
-                        }
-
-                        //set horizontal position
-                        document.documentElement.style.setProperty('--recipe_tooltip_left', `${event.clientX + tooltip_shift}px`);
-
-                        const tooltip_height = tooltip.scrollHeight;
-
-                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
-
-                        if(event.clientY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--recipe_tooltip_top', `${bottom_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--recipe_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        }
-                        
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
-
-
-                const stats_div = document.getElementById("character_stats_div");
-                const bar_divs = document.getElementsByClassName("character_bar_tooltip");
-                const temperature_div = document.getElementById("weather_div");
-                const location_actions_div = document.getElementById("location_actions_div");
-                const location_name_div = document.getElementById("location_name_div");
+                crafting_window.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                                                                event, 
+                                                                                top_variable: "--recipe_tooltip_top",
+                                                                                left_variable: "--recipe_tooltip_left",
+                                                                                target_classes: ["recipe_div", "selectable_component", "selectable_material", "recipe_creation_button"],
+                                                                                break_classes: ["crafting_subpage_button", "crafting_subpage_buttons", "crafting_category", "crafting_mainpage_buttons", "crafting_mainpage_button", "crafting_window"],
+                                                                            }));
+                skills_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                                                                event, 
+                                                                                top_variable: "--skill_tooltip_top",
+                                                                                left_variable: "--skill_tooltip_left",
+                                                                                target_classes: ["skill_div"],
+                                                                                break_classes: ["skill_category_div", "skill_list", "skill_list_div", "icon"],
+                                                                            }));
+                stances_tab.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                                                                event, 
+                                                                                top_variable: "--stance_tooltip_top",
+                                                                                left_variable: "--stance_tooltip_left",
+                                                                                target_classes: ["stance_list_entry"],
+                                                                                break_classes: ["stance_list_header"],
+                                                                            }));
+                location_types_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                                                                event, 
+                                                                                top_variable: "--location_type_tooltip_top",
+                                                                                left_variable: "--location_type_tooltip_left",
+                                                                                target_classes: ["location_type_div"],
+                                                                            }));
+                bestiary_box_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                                                                event, 
+                                                                                top_variable: "--bestiary_entry_tooltip_top",
+                                                                                left_variable: "--bestiary_entry_tooltip_left",
+                                                                                target_classes: ["bestiary_entry_div"],
+                                                                                left_side: true,
+                                                                            }));
+                books_box_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                                                                event, 
+                                                                                top_variable: "--bestiary_entry_tooltip_top",
+                                                                                left_variable: "--bestiary_entry_tooltip_left",
+                                                                                target_classes: ["anthology_entry_div"],
+                                                                                left_side: true,
+                                                                            }));
 
                 stats_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--stat_tooltip_top', '--stat_tooltip_left'));
                 Array.from(bar_divs).forEach(bar_div => bar_div.parentNode.addEventListener('mousemove', 
@@ -1720,7 +1745,7 @@
                 temperature_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--temperature_tooltip_top', '--temperature_tooltip_left'));
                 location_actions_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--job_tooltip_top', '--job_tooltip_left'));
                 location_name_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--location_desc_tooltip_top', '--location_desc_tooltip_left'));
-
+                
                 //unequip item
                 equipment_div.onclick = function(event) {
                     let clicked_element = event.target;
@@ -1729,143 +1754,10 @@
                     }
                 }
 
-                //skill tooltips
-                const skills_div = document.getElementById("skill_list_div");
-                skills_div.addEventListener('mousemove', move_skill_tooltip);
-                function move_skill_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target,["skill_div"],["skill_category_div", "skill_list", "skill_list_div", "icon"]);
-                        if(!hovered_element) {
-                            return;
-                        }
-
-                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
-                        const tooltip_height = tooltip.scrollHeight;
-
-                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
-
-                        document.documentElement.style.setProperty('--skill_tooltip_left', `${event.clientX + tooltip_shift}px`);
-
-                        if(event.clientY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--skill_tooltip_top', `${bottom_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--skill_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
-
-                //stance tooltips
-                const stances_tab = document.getElementById("stance_list");
-                stances_tab.addEventListener('mousemove', move_stance_tooltip, false);
-                function move_stance_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target,["stance_list_entry"],["stance_list_header"]);
-                        if(!hovered_element) {
-                            return;
-                        }
-
-                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
-                        const tooltip_height = tooltip.scrollHeight;
-
-                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
-                        
-                        document.documentElement.style.setProperty('--stance_tooltip_left', `${event.clientX + tooltip_shift}px`);
-
-                        if(event.clientY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--stance_tooltip_top', `${bottom_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--stance_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
-
-                //location type tooltips
-                let location_types_div = document.getElementById("location_types_div");
-                location_types_div.addEventListener('mousemove', move_location_type_tooltip, false);
-                function move_location_type_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = event.target;
-
-                        if(!hovered_element.classList.contains("location_type_div")) {
-                            return;
-                        } 
-                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
-                        const tooltip_width = tooltip.scrollWidth;
-
-                        const right_edge_position = get_right_edge_position(tooltip_width);
-
-                        if(event.clientX > right_edge_position) {
-                            document.documentElement.style.setProperty('--location_type_tooltip_left', `${right_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--location_type_tooltip_left', `${event.clientX + tooltip_shift}px`);
-                        }
-
-                        document.documentElement.style.setProperty('--location_type_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
-
-                //bestiary entry tooltips
-                const bestiary_box_div = document.getElementById("bestiary_box_div");
-                bestiary_box_div.addEventListener('mousemove', move_bestiary_entry_tooltip, false);
-                function move_bestiary_entry_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target,["bestiary_entry_div"],[]);
-                        if(!hovered_element) {
-                            return;
-                        }
-                        
-                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
-                        const tooltip_height = tooltip.scrollHeight;
-
-                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
-                        
-                        document.documentElement.style.setProperty('--bestiary_entry_tooltip_left', `${event.clientX - tooltip_shift - tooltip.scrollWidth}px`);
-                        //reduced by tooltip_shift and another value because it's to be displayed on the left side, not on the right side
-
-                        if(event.clientY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--bestiary_entry_tooltip_top', `${bottom_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--bestiary_entry_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
-
-                //book list entry tooltips
-                const books_box_div = document.getElementById("books_box_div");
-                books_box_div.addEventListener('mousemove', move_anthology_entry_tooltip, false);
-                function move_anthology_entry_tooltip(event) {
-                    if(Date.now() >= tooltip_wait) {
-                        let hovered_element = retarget_clicked_to_class(event.target,["anthology_entry_div"],[]);
-                        if(!hovered_element) {
-                            return;
-                        }
-                        
-                        const tooltip = hovered_element.querySelector('[class*="tooltip"]');
-                        const tooltip_height = tooltip.scrollHeight;
-
-                        const bottom_edge_position = get_bottom_edge_position(tooltip_height);
-                        
-                        //uses same vars as bestiary for now
-                        document.documentElement.style.setProperty('--bestiary_entry_tooltip_left', `${event.clientX - tooltip_shift - tooltip.scrollWidth}px`);
-                        //reduced by tooltip_shift and another value because it's to be displayed on the left side, not on the right side
-
-                        if(event.clientY > bottom_edge_position) {
-                            document.documentElement.style.setProperty('--bestiary_entry_tooltip_top', `${bottom_edge_position}px`);
-                        } else {
-                            document.documentElement.style.setProperty('--bestiary_entry_tooltip_top', `${event.clientY + tooltip_shift}px`);
-                        }
-                        tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
-                    }
-                }
-
-                //active effects tooltip
+                //active effects tooltip, a bit more complicated so can't be handled by main tooltip function yet
                 const active_effects_div = document.getElementById("effects_div");
                 const effects_tooltip = document.getElementById("effects_tooltip");
-                active_effects_div.addEventListener('mousemove', move_effects_tooltip, false);
+                active_effects_div.addEventListener('mousemove', move_effects_tooltip);
                 function move_effects_tooltip(event) {
                     if(Date.now() >= tooltip_wait) {
                         const hovered_element = event.target;
