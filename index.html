@@ -1526,6 +1526,8 @@
                 /////////////////////
                 //(un)equipping items:
                 const inventory_div = document.getElementById("inventory_content_div");
+                const equipment_div = document.getElementById("character_equipment_div");
+
                 inventory_div.onclick = function(event) {
                     let clicked_element = event.target;
                     if(clicked_element.classList.contains("equip_item_button")) {
@@ -1554,7 +1556,14 @@
                         change_item_favourite_status(target, clicked_element.parentNode.parentNode.parentNode.dataset.character_item);
                     }
                 }
+                equipment_div.onclick = function(event) {
+                    let clicked_element = event.target;
+                    if(clicked_element.classList.contains("equipment_slot_div") && !clicked_element.classList.contains("equipment_slot_empty")) {
+                        unequip_item(clicked_element.id.replace("_slot", ""));
+                    }
+                }
 
+                //
                 const location_icon_span = document.getElementById("location_icon_span");
                 location_icon_span.onclick = (event) => {
                     handleLocationIconClick();
@@ -1668,7 +1677,6 @@
                 const storage_div = document.getElementById("storage_div");
                 const trader_inventory_div = document.getElementById("trader_inventory_div");
 
-                const equipment_div = document.getElementById("character_equipment_div");
                 const tools_div = document.getElementById("character_tools_div");
 
                 const crafting_window = document.getElementById("crafting_window");
@@ -1795,14 +1803,6 @@
                         }
                     ));
                 });
-                
-                //unequip item
-                equipment_div.onclick = function(event) {
-                    let clicked_element = event.target;
-                    if(clicked_element.classList.contains("equipment_slot_div") && !clicked_element.classList.contains("equipment_slot_empty")) {
-                        unequip_item(clicked_element.id.replace("_slot", ""));
-                    }
-                }
 
                 //active effects tooltip, a bit more complicated so can't be handled by main tooltip function yet
                 const active_effects_div = document.getElementById("effects_div");
