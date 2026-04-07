@@ -1594,7 +1594,7 @@
                     return right_edge_position;
                 }
 
-                const move_unrestricted_tooltip = (event, top_variable, left_variable, target_classes) => {
+                const move_unrestricted_tooltip = ({event, top_variable, left_variable}) => {
                     
                     if(Date.now() >= tooltip_wait) {
                         document.documentElement.style.setProperty(top_variable, `${event.clientY + tooltip_shift}px`);
@@ -1640,9 +1640,38 @@
                     }
                 }
 
-                const crafting_window = document.getElementById("crafting_window");
+                const move_item_tooltip = (event, custom)  => {
+                    move_restricted_tooltip({
+                        event: custom || event, 
+                        left_variable: '--item_tooltip_left', 
+                        top_variable: '--item_tooltip_top', 
+                        target_classes: ["inventory_item_control", "equipped_item_control", "trader_item_control"]
+                    });
+                }
+
+                const move_equipment_tooltip = (event) => {
+                    move_restricted_tooltip({
+                                            event, 
+                                            top_variable: "--item_tooltip_top",
+                                            left_variable: "--item_tooltip_left",
+                                            target_classes: ["equipment_slot_div"],
+                                        }
+                    );
+                }
+
+                //prevents item tooltips from initially appearing in wrong spot on some occassions
+                const set_initial_item_tooltip_position = (event) => {
+                    const target = document.elementFromPoint(...mouse_position);
+                    move_item_tooltip(event,{target, clientX: mouse_position[0], clientY: mouse_position[1]});
+                }
+
                 const storage_div = document.getElementById("storage_div");
                 const trader_inventory_div = document.getElementById("trader_inventory_div");
+
+                const equipment_div = document.getElementById("character_equipment_div");
+                const tools_div = document.getElementById("character_tools_div");
+
+                const crafting_window = document.getElementById("crafting_window");
                 const skills_div = document.getElementById("skill_list_div");
                 const stances_tab = document.getElementById("stance_list");
                 const location_types_div = document.getElementById("location_types_div");
@@ -1655,96 +1684,117 @@
                 const location_actions_div = document.getElementById("location_actions_div");
                 const location_name_div = document.getElementById("location_name_div");
 
+                const elements_with_restricted_tooltips = [
+                    {
+                        element: crafting_window,
+                        top_variable: "--recipe_tooltip_top",
+                        left_variable: "--recipe_tooltip_left",
+                        target_classes: ["recipe_div", "selectable_component", "selectable_material", "recipe_creation_button"],
+                        break_classes: ["crafting_subpage_button", "crafting_subpage_buttons", "crafting_category", "crafting_mainpage_buttons", "crafting_mainpage_button", "crafting_window"],
+                    },
+                    {
+                        element: skills_div,
+                        top_variable: "--skill_tooltip_top",
+                        left_variable: "--skill_tooltip_left",
+                        target_classes: ["skill_div"],
+                        break_classes: ["skill_category_div", "skill_list", "skill_list_div", "icon"],
+                    },
+                    {
+                        element: stances_tab,
+                        top_variable: "--stance_tooltip_top",
+                        left_variable: "--stance_tooltip_left",
+                        target_classes: ["stance_list_entry"],
+                        break_classes: ["stance_list_header"],
+                    },
+                    {
+                        element: location_types_div,
+                        top_variable: "--location_type_tooltip_top",
+                        left_variable: "--location_type_tooltip_left",
+                        target_classes: ["location_type_div"],
+                    },
+                    {
+                        element: bestiary_box_div,
+                        top_variable: "--bestiary_entry_tooltip_top",
+                        left_variable: "--bestiary_entry_tooltip_left",
+                        target_classes: ["bestiary_entry_div"],
+                        left_side: true,
+                    },
+                    {
+                        element: books_box_div,
+                        top_variable: "--bestiary_entry_tooltip_top",
+                        left_variable: "--bestiary_entry_tooltip_left",
+                        target_classes: ["anthology_entry_div"],
+                        left_side: true,
+                    }
+                ];
+
+                const elements_with_unrestricted_tooltips = [
+                    ...Array.from(bar_divs).map(el => {return {
+                        element: el.parentNode,
+                        top_variable: '--bar_tooltip_top',
+                        left_variable: '--bar_tooltip_left',
+                    }}),
+                    {
+                        element: stats_div,
+                        top_variable: '--stat_tooltip_top',
+                        left_variable: '--stat_tooltip_left',
+                    },
+                    {
+                        element: temperature_div,
+                        top_variable: '--temperature_tooltip_top',
+                        left_variable: '--temperature_tooltip_left',
+                    },
+                    {
+                        element: location_actions_div,
+                        top_variable: '--job_tooltip_top',
+                        left_variable: '--job_tooltip_left',
+                    },
+                    {
+                        element: location_name_div,
+                        top_variable: '--location_desc_tooltip_top',
+                        left_variable: '--location_desc_tooltip_left',
+                    },
+                    
+                ];
+
+                const inventory_display_elements = [
+                    inventory_div,
+                    storage_div,
+                    trader_inventory_div,
+                ];
+
+                const equipment_display_elements = [
+                    equipment_div,
+                    tools_div,
+                ]
+
                 ///////////////
                 //character item, storage item, trader item tooltips
-                inventory_div.addEventListener('mousemove', move_item_tooltip);
-                storage_div.addEventListener('mousemove', move_item_tooltip);
-                trader_inventory_div.addEventListener('mousemove', move_item_tooltip);
-                function move_item_tooltip(event, custom) {
-                    move_restricted_tooltip({
-                        event: custom || event, 
-                        left_variable: '--item_tooltip_left', 
-                        top_variable: '--item_tooltip_top', 
-                        target_classes: ["inventory_item_control", "equipped_item_control", "trader_item_control"]
-                    });
-                }
-                
-                //prevents item tooltips from initially appearing in wrong spot on some occassions
-                inventory_div.addEventListener('mouseenter', set_initial_item_tooltip_position);
-                storage_div.addEventListener('mouseenter', set_initial_item_tooltip_position);
-                trader_inventory_div.addEventListener('mouseenter', set_initial_item_tooltip_position);
-                inventory_div.addEventListener('scroll', set_initial_item_tooltip_position);
-                storage_div.addEventListener('scroll', set_initial_item_tooltip_position);
-                trader_inventory_div.addEventListener('scroll', set_initial_item_tooltip_position);
-                function set_initial_item_tooltip_position(event) {
-                    const target = document.elementFromPoint(...mouse_position);
-                    move_item_tooltip(event,{target, clientX: mouse_position[0], clientY: mouse_position[1]});
-                }
-                
-                //item slots / worn equipment tooltips
-                const equipment_div = document.getElementById("character_equipment_div");
-                const tools_div = document.getElementById("character_tools_div");
-                equipment_div.addEventListener('mousemove', move_equipment_tooltip);
-                tools_div.addEventListener('mousemove', move_equipment_tooltip);
-                function move_equipment_tooltip(event) {
-                    move_restricted_tooltip({
-                                            event, 
-                                            top_variable: "--item_tooltip_top",
-                                            left_variable: "--item_tooltip_left",
-                                            target_classes: ["equipment_slot_div"],
-                                        }
-                    );
-                }
-                crafting_window.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                                                                                event, 
-                                                                                top_variable: "--recipe_tooltip_top",
-                                                                                left_variable: "--recipe_tooltip_left",
-                                                                                target_classes: ["recipe_div", "selectable_component", "selectable_material", "recipe_creation_button"],
-                                                                                break_classes: ["crafting_subpage_button", "crafting_subpage_buttons", "crafting_category", "crafting_mainpage_buttons", "crafting_mainpage_button", "crafting_window"],
-                                                                            }));
-                skills_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                                                                                event, 
-                                                                                top_variable: "--skill_tooltip_top",
-                                                                                left_variable: "--skill_tooltip_left",
-                                                                                target_classes: ["skill_div"],
-                                                                                break_classes: ["skill_category_div", "skill_list", "skill_list_div", "icon"],
-                                                                            }));
-                stances_tab.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                                                                                event, 
-                                                                                top_variable: "--stance_tooltip_top",
-                                                                                left_variable: "--stance_tooltip_left",
-                                                                                target_classes: ["stance_list_entry"],
-                                                                                break_classes: ["stance_list_header"],
-                                                                            }));
-                location_types_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                                                                                event, 
-                                                                                top_variable: "--location_type_tooltip_top",
-                                                                                left_variable: "--location_type_tooltip_left",
-                                                                                target_classes: ["location_type_div"],
-                                                                            }));
-                bestiary_box_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                                                                                event, 
-                                                                                top_variable: "--bestiary_entry_tooltip_top",
-                                                                                left_variable: "--bestiary_entry_tooltip_left",
-                                                                                target_classes: ["bestiary_entry_div"],
-                                                                                left_side: true,
-                                                                            }));
-                books_box_div.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                                                                                event, 
-                                                                                top_variable: "--bestiary_entry_tooltip_top",
-                                                                                left_variable: "--bestiary_entry_tooltip_left",
-                                                                                target_classes: ["anthology_entry_div"],
-                                                                                left_side: true,
-                                                                            }));
+                inventory_display_elements.forEach(element => {
+                    element.addEventListener('mousemove', move_item_tooltip);
+                    element.addEventListener('mouseenter', set_initial_item_tooltip_position);
+                    element.addEventListener('scroll', set_initial_item_tooltip_position);
+                });
 
-                stats_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--stat_tooltip_top', '--stat_tooltip_left'));
-                Array.from(bar_divs).forEach(bar_div => bar_div.parentNode.addEventListener('mousemove', 
-                                                        (event) => move_unrestricted_tooltip(event, '--bar_tooltip_top', '--bar_tooltip_left'))
-                                                    );
+                equipment_display_elements.forEach(element => {
+                    element.addEventListener('mousemove', move_equipment_tooltip);
+                });
                 
-                temperature_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--temperature_tooltip_top', '--temperature_tooltip_left'));
-                location_actions_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--job_tooltip_top', '--job_tooltip_left'));
-                location_name_div.addEventListener('mousemove', (event) => move_unrestricted_tooltip(event, '--location_desc_tooltip_top', '--location_desc_tooltip_left'));
+                elements_with_restricted_tooltips.forEach(entry => {
+                    entry.element.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                            event, 
+                            ...entry,
+                        }
+                    ));
+                });
+
+                elements_with_unrestricted_tooltips.forEach(entry => {
+                    entry.element.addEventListener('mousemove', (event) => move_unrestricted_tooltip({
+                            event, 
+                            ...entry,
+                        }
+                    ));
+                });
                 
                 //unequip item
                 equipment_div.onclick = function(event) {
