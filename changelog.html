@@ -69,12 +69,13 @@ v0.5.2
     
     - most of woodcutting actions now have a small chance to drop tree sap, which can be used to make a potion that will quickly deplete your stamina, for all fans of the 'Persistence' skill    
     - added milestones on "Shield blocking" skill
-    - multiplicative bonuses on items now have a better scaling with item rarity (with exception of attack speed on armor)
+    - multiplicative effects on items now have a better scaling with item rarity (with some exceptions, like attack speed on armor)
     - some of resource gathering activities now scale up to 100% chance but had slightly increased lvl needed for full efficiency
     - greatly reduced material costs of chainmail
     - changed action texts for ant nest searches to make it easier to understand that they are subsequent actions and not one that's bugged
 
     - changed the way DOM is manipulated by moving away from using innerHTML
+    - refactored tooltip movement code, reducing it to a much more manageable form
     - updated translationManager to use translations provided in separate files instead of cramming everything in one
     - rewards objects can now include dialogue locking
     - crafting recipes' results can now be fuzzy (instead of success/failure, it can be a partial success)
@@ -96,7 +97,7 @@ v0.5.2
         * added cooking stations to mountain camp and to lake camp
     courtesy of Bram-Nordvegr:
         * a new location and a new challenge zone
-        * a few new types of wood
+        * a two new types of wood
         * some new recipes
     courtesy of Nicholas Biles:
         * text fixes/tweaks
