@@ -565,16 +565,18 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         item_tooltip += `<br>Material type: ${item.material_type}<br>`;
     }
 
-    if(!options.skip_quality && options?.quality?.length == 2) { 
-        //ignore quality, instead use quality passed as param
-        item_tooltip += `<br>Value: ${format_money(
+    if(!item.tags.unique) {
+        if(!options.skip_quality && options?.quality?.length == 2) { 
+            //ignore quality, instead use quality passed as param
+            item_tooltip += `<br>Value: ${format_money(
             round_item_price(
                 item[value_function]({quality:options.quality[0], region:current_location?.market_region})))} - ${format_money(round_item_price(item.getBaseValue({quality:options.quality[1]})
             ))}`;
-    } else {
-        item_tooltip += `<br>Value: ${format_money(round_item_price(item[value_function]({quality, region:current_location?.market_region, multiplier: ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1)})))}`;
-        if(item.saturates_market) {
-            item_tooltip += ` [originally ${format_money(round_item_price(item.getBaseValue({quality, region:current_location?.market_region}) * ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1) || 1))}]`
+        } else {
+            item_tooltip += `<br>Value: ${format_money(round_item_price(item[value_function]({quality, region:current_location?.market_region, multiplier: ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1)})))}`;
+            if(item.saturates_market) {
+                item_tooltip += ` [originally ${format_money(round_item_price(item.getBaseValue({quality, region:current_location?.market_region}) * ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1) || 1))}]`
+            }
         }
     }
 
@@ -3745,7 +3747,7 @@ function update_displayed_time() {
 
 function update_displayed_temperature() {
     const temperature = get_current_temperature_smoothed();
-    let displayed_temperature = game_options.use_uncivilised_temperature_scale?celsius_to_fahrenheit(temperature):temperature;
+    let displayed_temperature = Math.round(10*(game_options.use_uncivilised_temperature_scale?celsius_to_fahrenheit(temperature):temperature))/10;
     let html_content;
     const temperature_unit = game_options.use_uncivilised_temperature_scale?"°F":"°C";
 
@@ -3770,14 +3772,14 @@ function update_displayed_temperature() {
         if(is_raining()) {
             if(temperature > 0) {
                 //rain/clouds
-                html_content = `<span class="material-icons icon">cloud</span><span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>";
+                html_content = `<span class="material-icons icon">cloud</span><span class="${temperature_class}">` + displayed_temperature + temperature_unit+"</span>";
             } else {
                 //snow
-                html_content =  `<span class="material-icons icon">ac_unit</span><span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>";
+                html_content =  `<span class="material-icons icon">ac_unit</span><span class="${temperature_class}">` + displayed_temperature + temperature_unit+"</span>";
             }
         } else {
             //normal weather, no icon
-            html_content =  `<span class="${temperature_class}">` + displayed_temperature +temperature_unit+"</span>";
+            html_content =  `<span class="${temperature_class}">` + displayed_temperature + temperature_unit+"</span>";
         }
     }
 
