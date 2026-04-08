@@ -41,9 +41,11 @@ const task_type_names = {
 }
 
 //skill-tag mapping for when consumables are used
+//also gets used for effects from other sources
 const skill_consumable_tags = {
     "Medicine": "medicine",
-    "Gluttony": "food"
+    "Gluttony": "food",
+    "Poison resistance": "poison",
 }
 
 //additional skill-tag mapping for crafting

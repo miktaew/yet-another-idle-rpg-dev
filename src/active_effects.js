@@ -11,7 +11,7 @@ class ActiveEffect {
      * @param {Number} effect_data.duration
      * @param {Object} effect_data.effects {stats}
      */
-    constructor({name, id, description = null, duration, effects, tags, potency, group_tags, affected_by_travel = true}) {
+    constructor({name, id, description = null, duration, effects, tags, potency, group_tags, affected_by_travel = true, base_xp_value = 1}) {
         this.name = name;
         this.id = id;
         this.description = description;
@@ -24,6 +24,7 @@ class ActiveEffect {
             this.effects.stats = {};
         }
         this.affected_by_travel = affected_by_travel;
+        this.base_xp_value = base_xp_value; //used only for xp gains on effects from sources other than consumables, with xp gains being affected by duration
         this.tags = tags || {};
         this.group_tags = group_tags || {}; //used for grouping and prioritizing highest in group; instead of simple 'true', values are Numbers with higher = more important
         this.tags["effect"] = true;
@@ -181,6 +182,7 @@ class ActiveEffect {
                 stamina_regeneration_percent: {flat: -5},
             }
         },
+        //not tagged as poison/debuff since its supposed to be from a utility item (quick way to reduce stamina)
     });
 
     effect_templates["Cheap meat meal"] = new ActiveEffect({
@@ -283,7 +285,7 @@ class ActiveEffect {
             }
         },
         tags: { "debuff": true, "poison": true },
-        group_tags: {psychedelic: 1}
+        group_tags: {psychedelic: 1},
     });
     effect_templates["Confusion"] = new ActiveEffect({
         name: "Confusion",
@@ -294,8 +296,8 @@ class ActiveEffect {
             }
         },
         tags: {"debuff": true, "poison": true},
-        group_tags: {psychedelic: 2}
-        });
+        group_tags: {psychedelic: 2},
+    });
     effect_templates["Hallucinations"] = new ActiveEffect({
         name: "Hallucinations",
         description: "A psychedelic substance is making it hard to tell what's real",
@@ -305,7 +307,7 @@ class ActiveEffect {
             }
         },
         tags: {"debuff": true, "poison": true},
-        group_tags: {psychedelic: 3}
+        group_tags: {psychedelic: 3},
     });
 
     effect_templates["Sticky"] = new ActiveEffect({
@@ -319,6 +321,7 @@ class ActiveEffect {
             }
         },
         tags: { "debuff": true },
+        base_xp_value: 2,
     });
 
     effect_templates["Weak necrotizing venom"] = new ActiveEffect({

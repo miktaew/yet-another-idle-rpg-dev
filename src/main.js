@@ -2735,6 +2735,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                             update_character_stats();
                             Object.keys(character.inventory).forEach(item_key => {
                                 if(character.inventory[item_key].item.tags.medicine) {
+                                    //update display if medicine skill leveled up, as it would affect tooltips
                                     update_displayed_character_inventory({item_key});
                                 }
                             });
@@ -3077,13 +3078,15 @@ function use_item(item_key) {
     const item_effects = item_templates[id].effects;
     let used = false;
     for(let i = 0; i < item_effects.length; i++) {
+        used = add_active_effect(item_effects[i].effect,item_effects[i].duration, true) || used;
+        /*
         const duration = item_templates[id].effects[i].duration;
         if(!active_effects[item_effects[i].effect] || active_effects[item_effects[i].effect].duration < duration) {
 
             active_effects[item_effects[i].effect] = new ActiveEffect({...effect_templates[item_effects[i].effect], duration});
             used = true;
         }
-        //goes through item effects, checking if it has any that is either not currently active or with longer duration than any active
+        */
     }
     
     if(used) {
@@ -3189,9 +3192,17 @@ function change_item_favourite_status(target, item_key) {
     }
 }
 
-function add_active_effect(effect_key, duration){
+/**
+ * 
+ * @param {String} effect_key 
+ * @param {Number} duration 
+ * @param {Boolean} was_xp_added whether this code should skip xp gain for relevant skill (if such exists) 
+ * @returns {Boolean} whether effect was in fact applied (it wasn't active, it had shorter duration, or a weaker was active)
+ */
+function add_active_effect(effect_key, duration, was_xp_added){
     let do_not_apply_because_stronger_is_active = false; //readable names are good, right?
     const was_already_active = active_effects[effect_key];
+    const old_duration = active_effects[effect_key]?.duration ?? 0;
 
     if(!was_already_active) {
         Object.keys(active_effects).forEach(effect => {
@@ -3228,7 +3239,28 @@ function add_active_effect(effect_key, duration){
         character.stats.add_active_effect_bonus();
         update_character_stats();
     }
-    
+
+    //no need to check for whether effect was activated, code won't reach this point if it wasn't
+    if(!was_xp_added) {
+        //update consuming-related skills if relevant tags are present
+        Object.keys(skill_consumable_tags).forEach(skill_id => {
+            if(effect_templates[effect_key].tags[skill_consumable_tags[skill_id]]) {
+                let leveled = add_xp_to_skill({skill: skills[skill_id], xp_to_add: (effect_templates[effect_key].base_xp_value * active_effects[effect_key].duration **.3333)});
+                //if levelup, update all related tooltips
+                if(leveled) {
+                    character.stats.add_active_effect_bonus();
+                    update_character_stats();
+                    Object.keys(character.inventory).forEach(item_key => {
+                        if(character.inventory[item_key].item.tags[skill_consumable_tags[skill_id]]) {
+                            update_displayed_character_inventory({item_key});
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    return old_duration < active_effects[effect_key].duration;
 }
 
 /**

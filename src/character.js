@@ -886,23 +886,35 @@ function get_effect_with_bonuses(active_effect) {
         let multiplier = 1;
         Object.keys(skill_consumable_tags).forEach(skill_id => {
                 if(active_effect.tags[skill_consumable_tags[skill_id]]) {
-                        multiplier *= get_total_skill_coefficient({scaling_type: "multiplicative", skill_id: skill_id});
+                    multiplier *= get_total_skill_coefficient({scaling_type: "multiplicative", skill_id: skill_id});
                 }
         });
-
         let boosted = {stats: {}, bonus_skill_levels: {...active_effect.effects.bonus_skill_levels}, xp_multipliers: {...active_effect.effects.xp_multipliers}};
         for(const [key, value] of Object.entries(active_effect.effects.stats)) {
                 boosted.stats[key] = {};
                 if(value.flat) {
-                        if(key.includes("_percent")) {
-                                //this exclusively means percent based regeneration and is therefore treated as multiplicative effect
-                                boosted.stats[key].flat = value.flat*(multiplier>0?multiplier:1);
+                    if(key.includes("_percent")) {
+                        //this exclusively means percent based regeneration and is therefore treated as multiplicative effect
+                        if(value.flat > 0) {
+                            boosted.stats[key].flat = value.flat*(multiplier>1?multiplier:1);
                         } else {
-                                boosted.stats[key].flat = value.flat*(multiplier>0?multiplier:1)**2;
+                            boosted.stats[key].flat = value.flat/(multiplier>1?multiplier:1);
                         }
+                    } else {
+                        if(value.flat > 0) {
+                            boosted.stats[key].flat = value.flat*(multiplier>1?multiplier:1)**2;
+                        } else {
+                            boosted.stats[key].flat = value.flat/(multiplier>1?multiplier:1);
+                        }
+                    }
                 } else if(value.multiplier) {
+                    if(value.multiplier > 1) {
                         boosted.stats[key].multiplier = value.multiplier*(multiplier>1?multiplier:1);
-                }      
+                    } else {
+                        boosted.stats[key].multiplier = 1 + (value.multiplier-1)/(multiplier>1?multiplier:1);
+                    }
+                }
+
         }
         return boosted;
 }

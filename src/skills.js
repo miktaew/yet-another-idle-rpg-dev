@@ -286,7 +286,6 @@ class Skill {
     }
     get_coefficient({scaling_type, skill_level}) { //starts from 1
         //maybe lvl as param, with current lvl being used if it's undefined?
-
         switch (scaling_type) {
             case "flat":
                 return 1 + Math.round((this.max_level_coefficient - 1) * (skill_level || this.current_level) / this.max_level * 1000) / 1000;
@@ -2949,7 +2948,22 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Medicine",scaling_type:"multiplicative"});
             return `Multiplies additive effects of medicines by ${Math.round((value**2)*100)/100} and multiplicative effects by ${Math.round(value*100)/100}`;
-          },
+        },
+    });
+    skills["Poison resistance"] = new Skill({
+        names: {0: "Poison resistance"}, 
+        description: "As your body suffers from poisons more and more, it slowly builds up a resistance to them",
+        category: "Character",
+        max_level: 30,
+        visibility_treshold: 5,
+        max_level_coefficient: 10,
+        get_effect_description: ()=> {
+            let value = get_total_skill_coefficient({skill_id:"Poison resistance",scaling_type:"multiplicative"});
+            return `Multiplies effects of poisons by ${Math.round(value*100)/100}`;
+        },
+        milestones: {
+            //todo
+        }
     });
     skills["Gluttony"] = new Skill({
         names: {0: "Gluttony"}, 

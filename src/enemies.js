@@ -214,7 +214,7 @@ const enemy_abilites = {
         loot_list: [
             {item_name: "Rat tail", chance: 0.08},
             {item_name: "Rat fang", chance: 0.08},
-        ]
+        ],
     });
 
     enemy_templates["Starving wolf"] = new Enemy({
