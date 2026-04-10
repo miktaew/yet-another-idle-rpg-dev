@@ -330,8 +330,8 @@ class LocationActivity{
                  infinite = true,
                  availability_time,
                  availability_seasons,
-                 skill_names = null,
-                 skill_xp_per_tick = 1,
+                 gained_skills, //{skill_1: xp_gain, skill_2: xp_gain, ...}
+                 skill_xp_per_tick = 1, //only used for default skill (activity_name key in activities)
                  unlock_text,
                  gained_resources,
                  require_tool = false,
@@ -362,7 +362,7 @@ class LocationActivity{
         this.availability_time = availability_time; //if not infinite -> hours between which it's available; used only for work and for training
         this.availability_seasons = availability_seasons; //if not infinite -> seasons when it's available; used for work and for training
 
-        this.skill_names = skill_names;
+        this.gained_skills = gained_skills;
         this.skill_xp_per_tick = skill_xp_per_tick.length ? skill_xp_per_tick : [skill_xp_per_tick]; //skill xp gained per game tick (default -> 1 in-game minute)
 
         this.require_tool = require_tool; //if false, can be started without tool equipped
@@ -2574,10 +2574,10 @@ There's another gate on the wall in front of you, but you have a strange feeling
         "enduring": new LocationActivity({
             activity_name: "enduring",
             starting_text: "Harden your resolve by sitting underneath the waterfall",
-            skill_xp_per_tick: 2,
             applied_effects: [{effect: "Wet", duration: 30}],
             infinite: false,
             availability_seasons: ["Spring", "Summer", "Autumn"],
+            gained_skills: {"Iron skin": 2, "Persistence": 1},
         }),
         "meditating": new LocationActivity({
             activity_name: "meditating",

@@ -4141,7 +4141,10 @@ function update_displayed_ongoing_activity(current_activity) {
         return;
     }
 
-    const skill_names = current_activity.skill_names || base_activity.base_skills_names;
+    const is_obj = typeof current_activity.gained_skills === "object";
+
+    const skill_names = is_obj ? Object.keys(current_activity.gained_skills) : base_activity.base_skills_names;
+    const xp_rates = is_obj ? Object.values(current_activity.gained_skills) : current_activity.skill_xp_per_tick;
     for(let i = 0; i < skill_names.length; i++) {
         if(i > 0) {
             insert_HTML(action_xp_div, "<br><br>");
@@ -4150,7 +4153,7 @@ function update_displayed_ongoing_activity(current_activity) {
         }
 
         const skill = skills[skill_names[i]];
-        const xp_rate = current_activity.skill_xp_per_tick[i];
+        const xp_rate = xp_rates[i];
         const is_maxed = get_total_skill_level(skill.skill_id) == skill.max_level;
 
         if (base_activity.type !== "GATHERING") {

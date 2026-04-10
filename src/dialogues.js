@@ -964,14 +964,25 @@ class DialogueAction extends GameAction {
                 rewards: {
                     money: 4000,
                     quest_progress: [{quest_id: "Ploughs to swords", task_index: 1}],
-                    textlines: [{dialogue: "farm supervisor", lines: ["troubled"]}],
+                    textlines: [{dialogue: "farm supervisor", lines: ["troubled", "troubled unavailable"]}],
                 }
+            }),
+            "troubled unavailable": new Textline({
+                is_unlocked: false,
+                name: "sup troubled unavailable",
+                text: "sup troubled unavailable answ",
+                locks_lines: ["troubled unavailable"],
+                display_conditions: {
+                    season: {
+                        yes: "Winter",
+                    }
+                },
             }),
             "troubled": new Textline({
                 is_unlocked: false,
                 name: "sup troubled",
                 text: "sup troubled answ",
-                locks_lines: ["troubled"],
+                locks_lines: ["troubled", "troubled unavailable"],
                 display_conditions: {
                     season: {
                         not: "Winter",

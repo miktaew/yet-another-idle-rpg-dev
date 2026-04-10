@@ -276,6 +276,8 @@ const english = {
     "sup things answ": "Nothing to complain about. Trouble is rare, pay is good, and the soil is as fertile as my wife!",
     "sup defeated boars": "I took care of those boars",
     "sup defeated boars answ": "Really? That's great! Here, this is for you.",
+    "sup troubled unavailable": "Is there any other help you need?",
+    "sup troubled unavailable answ": "I might have something for you after the winter ends",
     "sup troubled": "You look troubled",
     "sup troubled answ": "Troubled? I'm fuming, I'm going insane here! Those damn accursed ants, they keep destroying crops by eating their roots over and over again!"
         + " If I could, I would drop everything, grab a sword and a shovel and go find their damn nests, and then slaughter every last one of them! Not just soldiers and workers, but queens and larvae too!"

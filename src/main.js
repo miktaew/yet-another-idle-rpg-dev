@@ -4278,6 +4278,18 @@ function load(save_data) {
             }
         }
 
+        if(is_a_older_than_b(save_data["game version"], "v0.5.2")) {
+            //dealt with boars but didn't yet start task to deal with ants -> unlock additional line that explains that more work will be available after winter ends
+            if(dialogues["farm supervisor"].textlines["defeated boars"].is_finished && !dialogues["farm supervisor"].textlines["troubled"].is_finished) {
+                process_rewards({
+                    rewards: {
+                        textlines: [{dialogue: "farm supervisor", lines: ["troubled unavailable"]}]
+                    },
+                    inform_overall: false,
+                });
+            }
+        }
+
         Object.keys(save_data.traders).forEach(function(trader) { 
             let trader_item_list = [];
             if(traders[trader]){
@@ -5391,9 +5403,16 @@ function update() {
                     const items = [];
 
                     //add xp
-                    const skill_names = current_activity.skill_names || activities[current_activity.activity_name].base_skills_names;
-                    for (let i = 0; i < skill_names?.length; i++) {
-                        add_xp_to_skill({skill: skills[skill_names[i]], xp_to_add: current_activity.skill_xp_per_tick[i]});
+                    if(current_activity.gained_skills) {
+                        const gained_skills = current_activity.gained_skills;
+                        Object.keys(gained_skills).forEach(skill_key => {
+                            add_xp_to_skill({skill: skills[skill_key], xp_to_add: gained_skills[skill_key]});
+                        });
+                    } else {
+                        const skill_names = activities[current_activity.activity_name].base_skills_names;
+                        for (let i = 0; i < skill_names?.length; i++) {
+                            add_xp_to_skill({skill: skills[skill_names[i]], xp_to_add: current_activity.skill_xp_per_tick[i]});
+                        }
                     }
 
                     //add resource drops (if defined)
@@ -5740,7 +5759,6 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
 
     last_rewarded_export = Date.now() - 1000*60*60*16; //reduces timer by 16 hours, making first reward export appear in 4 hours from starting
 }
-
 
 
 if(!is_loading_error) {
