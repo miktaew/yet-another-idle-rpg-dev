@@ -4018,8 +4018,10 @@ function load(save_data) {
                     } else {
                         console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
                     }
-                } else if(quality) { //no comps but quality (clothing / artifact?)
-                    item_list.push({item_key: key, count: save_data.character.inventory[key].count, quality: quality});
+                } else if(quality) { //no comps but quality (clothing / artifact /)
+                    const item_id = get_component_name(id);
+                    const new_item_key = item_templates[item_id].getInventoryKey();
+                    item_list.push({item_key: new_item_key, count: save_data.character.inventory[key].count, quality: quality});
                 } else {
                     console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} is incorrect!`);
                 }
@@ -4189,7 +4191,9 @@ function load(save_data) {
                             console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
                         }
                     } else if(quality) { //no comps but quality (clothing / artifact?)
-                        storage_item_list.push({item_key: key, count: save_data.player_storage.inventory[key].count, quality: quality});
+                        const item_id = get_component_name(id);
+                        const new_item_key = item_templates[item_id].getInventoryKey();
+                        storage_item_list.push({item_key: new_item_key, count: save_data.player_storage.inventory[key].count, quality: quality});
                     } else {
                         console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} is incorrect!`);
                     }
@@ -4373,8 +4377,9 @@ function load(save_data) {
                                     console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
                                 }
                             } else if(quality) { //no comps but quality (clothing / artifact?)
-                                
-                                trader_item_list.push({item_key: key, count: save_data.traders[trader].inventory[key].count, quality});
+                                const item_id = get_component_name(id);
+                                const new_item_key = item_templates[item_id].getInventoryKey();
+                                trader_item_list.push({item_key: new_item_key, count: save_data.traders[trader].inventory[key].count, quality});
                             } else {
                                 console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} is incorrect!`);
                             }

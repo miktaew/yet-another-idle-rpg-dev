@@ -292,6 +292,9 @@ const component_name_mapping = {
     "Alligator leather glove armor": "Alligator glove armor",
     "Alligator leather shoe armor": "Alligator shoe armor",
     "Alligator leather armor": "Alligator armor",
+
+    "Steel chainmail shoes": "Steel chainmail shoe armor",
+    "Steel chainmail glove": "Steel chainmail glove armor",
 };
 
 /**
