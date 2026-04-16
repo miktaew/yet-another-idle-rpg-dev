@@ -116,6 +116,11 @@ body {
     }
 }
 
+@font-face {
+    font-family: inkFree;
+    src: url(resources/fonts/Inkfree.ttf);
+}
+
 input[type=checkbox], input[type=radio] {
 	accent-color: rgb(0, 127, 255);
 }
@@ -144,7 +149,7 @@ input[type=checkbox], input[type=radio] {
 	#loading_screen_game_title {
 		width: 950px;
 		font-size: 96px;
-		font-family:'Ink Free';
+		font-family: inkFree;
 		font-weight: bold;
 		position: fixed;
 		justify-content: center;
@@ -153,7 +158,7 @@ input[type=checkbox], input[type=radio] {
 	#loading_screen_author {
 		width: fit-content;
 		font-size: 35px;
-		font-family:'Ink Free';
+		font-family: inkFree;
 		font-weight: lighter;
 		text-align: right;
 		position: absolute;
