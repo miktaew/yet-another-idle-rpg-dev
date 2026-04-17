@@ -1,5 +1,10 @@
 "use strict";
 
+const night_time = {
+    start: 20,
+    end: 4,
+}
+
 function Game_Time(new_time) {
     this.year = new_time.year;
     this.month = new_time.month;
@@ -187,11 +192,11 @@ function format_time({time, long_names, round=true}) { //{time, long_names?}
 
 function is_night(time) {
     time = time || current_game_time;
-    return (time.hour >= 20 || time.hour < 4);
+    return (time.hour >= night_time.start || time.hour < night_time.end);
 }
 
 const seasons = ["Spring","Summer","Autumn","Winter"];
 
 const current_game_time = new Game_Time({year: 999, month: 4, day: 1, hour: 8, minute: 0, day_count: 1});
 
-export {current_game_time, format_time, is_night, seasons, Game_Time};
+export {current_game_time, format_time, is_night, seasons, Game_Time, night_time};

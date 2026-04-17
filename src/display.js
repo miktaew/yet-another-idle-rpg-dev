@@ -28,7 +28,7 @@ import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes
 import { effect_templates } from "./active_effects.js";
 import { player_storage } from "./storage.js";
 import { quests } from "./quests.js";
-import { get_current_temperature_smoothed, is_raining } from "./weather.js";
+import { get_current_light_level, get_current_light_level_for_roofed_location, get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { PointyStarParticle, RainParticle, SnowParticle } from "./particles.js";
 import { get_game_version } from "./game_version.js";
 import { process_conditions } from "./conditions.js";
@@ -5410,6 +5410,25 @@ function do_background_animation() {
     }, 1000/60);
 }
 
+function set_light_based_background_color(is_sky_visible) {
+    let background_color_value;
+    let background_visibility;
+    if(is_sky_visible) {
+        background_visibility = (get_current_light_level()-40)/60;
+        if(is_raining()) {
+            background_color_value = window.getComputedStyle(document.body).getPropertyValue("--rain_background_color");
+        } else {
+            background_color_value = window.getComputedStyle(document.body).getPropertyValue("--default_background_color");
+        }
+    } else {
+        background_visibility = get_current_light_level_for_roofed_location()/100;
+        background_color_value = window.getComputedStyle(document.body).getPropertyValue("--indoor_background_color");
+    }
+
+    document.documentElement.style.setProperty('--background_color', background_color_value);
+    document.documentElement.style.setProperty('--background_opacity', background_visibility);
+}
+
 function update_export_button_tooltip(time_passed, time_until_reward) {
     if(time_passed > time_until_reward) {
         //just say reward is available
@@ -5617,5 +5636,6 @@ export {
     create_floating_effect,
     update_fav_display,
     update_displayed_item_log,
-    set_HTML
+    set_HTML,
+    set_light_based_background_color
 }

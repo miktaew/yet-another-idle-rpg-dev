@@ -90,9 +90,15 @@
 	--onclick_button_color: rgb(75, 99, 145);
 
 	--outline_white: -1px -1px 0 #ffffff80, 1px -1px 0 #ffffff80, -1px 1px 0 #ffffff80, 1px 1px 0 #ffffff80;
-	--outline_white_default: var(var(--outline_white));
+	--outline_white_default: var(--outline_white);
 	--outline_black: -1px -1px 0 #00000080, 1px -1px 0 #00000080, -1px 1px 0 #00000080, 1px 1px 0 #00000080;
-	--outline_black_default: var(var(--outline_black));
+	--outline_black_default: var(--outline_black);
+
+    --default_background_color: rgb(0, 78, 180);
+    --background_color: var(--default_background_color);
+    --rain_background_color: rgb(54, 54, 54);
+    --indoor_background_color: rgb(53, 32, 0);
+    --background_opacity: 1;
 }
 
 body {
@@ -247,7 +253,19 @@ input[type=checkbox], input[type=radio] {
 	left: 0px;
 	width: 100%;
 	height: 100%;
+	z-index: -2;
+}
+
+#light_based_background_div {
+	position: absolute;
+	pointer-events: none;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
 	z-index: -1;
+    background-color: var(--background_color);
+    opacity: var(--background_opacity);
 }
 
 #foreground_canvas {

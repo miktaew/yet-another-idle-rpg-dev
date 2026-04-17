@@ -96,7 +96,8 @@ import { end_activity_animation,
          update_location_kill_count,
          change_completed_quest_visibility,
          update_fav_display,
-         update_displayed_item_log
+         update_displayed_item_log,
+         set_light_based_background_color
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
@@ -262,6 +263,7 @@ const game_options = {
     auto_use_when_longest_runs_out: true, //this can't actually be changed by a player; despite the name, it actually decides whether to first use longest-duration item or shortest-duration item?
     use_uncivilised_temperature_scale: false, //true -> swap Celsius for Fahrenheit
     do_background_animations: false,
+    change_background_color: false,
     skip_play_button: false, //not really skips, just automatically clicks it right after loading
     mofu_mofu_mode: true,
     do_enemy_onhit_animations: true,
@@ -468,6 +470,21 @@ function option_do_background_animations(option) {
         window.removeEventListener("resize", start_snow_animation);
         window.removeEventListener("resize", start_rain_animation);
         window.removeEventListener("resize", start_stars_animation);
+    }
+
+    if(option !== undefined) {
+        checkbox.checked = option;
+    }
+}
+
+function option_change_background_color(option) {
+    const checkbox = document.getElementById("options_change_background_color");
+    if(checkbox.checked || option) {
+        game_options.change_background_color = true;
+        set_light_based_background_color(!current_location.is_under_roof);
+    } else {
+        game_options.change_background_color = false;
+        document.documentElement.style.setProperty('--background_opacity', 0);
     }
 
     if(option !== undefined) {
@@ -3716,6 +3733,9 @@ function load(save_data) {
         game_options.do_background_animations = save_data.options?.do_background_animations;
         option_do_background_animations(game_options.do_background_animations);
 
+        game_options.change_background_color = save_data.options?.change_background_color;
+        option_change_background_color(game_options.change_background_color);
+
         game_options.skip_play_button = save_data.options?.skip_play_button;
         option_skip_play_button(game_options.skip_play_button);
 
@@ -5282,6 +5302,11 @@ function update() {
                     window.removeEventListener("resize", start_stars_animation);
                 }
             }
+
+            if(game_options.change_background_color) {
+                set_light_based_background_color(true);
+            }
+            
         } else {
             //under roof
             if(was_raining || was_starry) {
@@ -5293,6 +5318,9 @@ function update() {
             }
             was_raining = false;
             was_starry = false;
+            if(game_options.change_background_color) {
+                set_light_based_background_color(false);
+            }
         }
 
         //temperature changed => update stats if needed, update display
@@ -5622,6 +5650,8 @@ function run() {
         
     start_date = Date.now();
     update();
+
+    set_light_based_background_color(!current_location.is_under_roof);
 }
 
 window.equip_item = character_equip_item;
@@ -5706,6 +5736,7 @@ window.option_log_all_gathering = option_log_all_gathering;
 window.option_log_gathering_result = option_log_gathering_result;
 window.option_use_uncivilised_temperature_scale = option_use_uncivilised_temperature_scale;
 window.option_do_background_animations = option_do_background_animations;
+window.option_change_background_color = option_change_background_color;
 window.option_skip_play_button = option_skip_play_button;
 window.option_mofu_mofu_mode = option_mofu_mofu_mode;
 window.option_do_enemy_onhit_animations = option_do_enemy_onhit_animations;
@@ -5738,7 +5769,6 @@ set_loading_screen_progress("Waking up from a nyap...");
 play_button.addEventListener("click", run);
 play_button.addEventListener("click", hide_loading_screen);
 
-
 //check if there's an existing save file, otherwise just do some initial setup
 if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in localStorage || !("skip_live_import" in localStorage) && save_key in localStorage )) {
     load_from_localstorage();
@@ -5764,7 +5794,6 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
 
     last_rewarded_export = Date.now() - 1000*60*60*16; //reduces timer by 16 hours, making first reward export appear in 4 hours from starting
 }
-
 
 if(!is_loading_error) {
     set_loading_screen_progress("Translating the meows");

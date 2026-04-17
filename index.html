@@ -1044,6 +1044,10 @@
                     <label for="options_do_background_animations">Enable rain/snow/stars animations</label>
                 </div>
                 <div class="options_choice">
+                    <input type="checkbox" id="options_change_background_color" name="options_change_background_color" onclick = "option_change_background_color()">
+                    <label for="options_change_background_color">Enable light-level based background color change</label>
+                </div>
+                <div class="options_choice">
                     <input type="checkbox" id="options_do_enemy_onhit_animations" name="options_do_enemy_onhit_animations" onclick = "option_do_enemy_onhit_animations()" checked>
                     <label for="options_do_enemy_onhit_animations">Enable on-hit / on-appear animations for enemies</label>
                 </div>
@@ -1066,6 +1070,10 @@
         <canvas id="foreground_canvas">
 
         </canvas>
+
+        <div id="light_based_background_div">
+
+        </div>
 
         <canvas id="background_canvas">
 
