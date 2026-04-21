@@ -2962,7 +2962,71 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
             return `Multiplies effects of poisons by ${Math.round(value*100)/100}`;
         },
         milestones: {
-            //todo
+            milestones: {
+            3: {
+                xp_multipliers: {
+                    Fortitude: 1.05,
+                    Persistence: 1.05,
+                }
+            },
+            5: {
+                stats: {
+                    max_health: {
+                        flat: 20,
+                    }
+                },
+                xp_multipliers: {
+                    Regeneration: 1.1,
+                }
+            },
+            7: {
+                stats: {
+                    health_regeneration_flat: {
+                        flat: 0.1,
+                    }
+                }
+            },
+            10: {
+                stats: {
+                    max_stamina: {
+                        flat: 20,
+                    },
+                },
+                xp_multipliers: {
+                    Fortitude: 1.1,
+                    Persistence: 1.1,
+                }
+            },
+            12: {
+                stats: {
+                    health_regeneration_flat: {
+                        flat: 0.1,
+                    }
+                },
+                xp_multipliers: {
+                    Regeneration: 1.1,
+                }
+            },
+            15: {
+                xp_multipliers: {
+                    Fortitude: 1.1,
+                    Persistence: 1.1,
+                }
+            },
+            20: {
+                stats: {
+                    max_stamina: {
+                        multiplier: 1.1,
+                    },
+                    max_health: {
+                        multiplier: 1.1,
+                    }
+                },
+                xp_multipliers: {
+                    Fortitude: 1.2,
+                    Persistence: 1.2,
+                }
+            },
         }
     });
     skills["Gluttony"] = new Skill({
