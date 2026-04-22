@@ -2962,7 +2962,6 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
             return `Multiplies effects of poisons by ${Math.round(value*100)/100}`;
         },
         milestones: {
-            milestones: {
             3: {
                 xp_multipliers: {
                     Fortitude: 1.05,
