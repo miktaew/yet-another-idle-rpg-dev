@@ -2244,12 +2244,20 @@ i {
 	height: 420px;
 }
 
+#skill_hiding_div {
+    text-align: right;
+    bottom: 30px;
+    border-top: 1px solid white;
+    width: 385px;
+    padding-right: 15px;
+}
+
 #skill_list_div, #stance_list_div, #magic_list_div {
 	height: 389px;
 }
 		#skill_list {
 			overflow-y: scroll;
-			height: 366px;
+			height: 346px;
 			padding-bottom:3px;
 		}
 

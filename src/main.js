@@ -647,6 +647,7 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
     }
 
     update_displayed_temperature();
+    set_light_based_background_color(!current_location.is_under_roof);
     update_character_stats();
 
     if("connected_locations" in current_location) { 

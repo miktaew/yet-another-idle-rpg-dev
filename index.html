@@ -698,6 +698,10 @@
                         <div id = "skill_list_div">
                             <div id = "skill_list">
                             </div>
+                            <div id="skill_hiding_div">
+                                <input type="checkbox" id="options_hide_max_level_skills" name="options_hide_max_level_skills" onclick = "option_hide_max_level_skills()">
+                                <label for="options_hide_max_level_skills">Hide max level skills</label>
+                            </div>
                             <div id="skill_sorting_buttons" class="activable_buttons">
                                 <div id="skill_sort_by_name" class="skill_sorting_button active_selection_button" onclick='sortSkills({sort_by:"name"})'>
                                     Sort by name
@@ -1034,10 +1038,6 @@
                 <div class="options_choice">
                     <input type="checkbox" id="options_use_uncivilised_temperature_scale" name="options_use_uncivilised_temperature_scale" onclick = "option_use_uncivilised_temperature_scale()">
                     <label for="options_use_uncivilised_temperature_scale">Use Fahrenheit instead of Celsius</label>
-                </div>
-                <div class="options_choice">
-                    <input type="checkbox" id="options_hide_max_level_skills" name="options_hide_max_level_skills" onclick = "option_hide_max_level_skills()">
-                    <label for="options_hide_max_level_skills">Hide max level skills</label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_do_background_animations" name="options_do_background_animations" onclick = "option_do_background_animations()">
