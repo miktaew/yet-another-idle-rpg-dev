@@ -647,7 +647,10 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
     }
 
     update_displayed_temperature();
-    set_light_based_background_color(!current_location.is_under_roof);
+    if(game_options.change_background_color) {
+        set_light_based_background_color(!current_location.is_under_roof);
+    }
+    
     update_character_stats();
 
     if("connected_locations" in current_location) { 
@@ -926,14 +929,14 @@ function unlock_global_activity({activity_id}) {
         
         let message = "";
         if(activities[activity_id].unlock_text) {
-           message = activities[activity_id].unlock_text+":<br>";
+           message = activities[activity_id].unlock_text+":\n";
         }
         log_message(message + `Gained the ability of "${activities[activity_id].name}"`, "activity_unlocked");
     }
 }
 
 /**
- * @description Unlocks an activity and adds a proper message to the message log. NOT called on loading a save.
+ * @description Unlocks an activity and adds a proper message to the message log
  * @param {Object} activity_data {activity, location_name}
  */
 function unlock_activity(activity_data) {
@@ -943,9 +946,16 @@ function unlock_activity(activity_data) {
         if(!activity_data.skip_message) {
             let message = "";
             if(locations[activity_data.location].activities[activity_data.activity.activity_id].unlock_text) {
-                message = locations[activity_data.location].activities[activity_data.activity.activity_id].unlock_text+":<br>";
+                message = locations[activity_data.location].activities[activity_data.activity.activity_id].unlock_text+":\n";
             }
-            if(activities[activity_data.activity.activity_name].type !== "GATHERING" || global_flags.is_gathering_unlocked) {
+
+            if(
+                (activities[activity_data.activity.activity_name].type !== "GATHERING" || global_flags.is_gathering_unlocked) 
+                && 
+                activities[activity_data.activity.activity_name].is_unlocked
+                &&
+                activities[activity_data.activity.activity_name].base_skills_names.filter(skill_id => skills[skill_id].is_unlocked).length > 0
+            ) {
                 log_message(message + `Unlocked activity "${activity_data.activity.activity_name}" in location "${activity_data.location}"`, "activity_unlocked");
             }
         }
@@ -961,12 +971,12 @@ function unlock_action(action_data) {
             let message = "";
             if(action_data.location) {
                 if(locations[action_data.location].actions[action_data.action.action_id].unlock_text) {
-                    message = locations[action_data.location].actions[action_data.action.action_id].unlock_text+":<br>";
+                    message = locations[action_data.location].actions[action_data.action.action_id].unlock_text+":\n";
                     log_message(message + `Unlocked action "${action_data.action.action_name}" in location "${action_data.location}"`, "activity_unlocked");
                 }
             } else if(action_data.dialogue) {
                 if(dialogues[action_data.dialogue].actions[action_data.action.action_id].unlock_text) {
-                    message = dialogues[action_data.dialogue].actions[action_data.action.action_id].unlock_text+":<br>";
+                    message = dialogues[action_data.dialogue].actions[action_data.action.action_id].unlock_text+":\n";
                     log_message(message + `Unlocked action "${action_data.action.action_name}" wit "${action_data.dialogue}"`, "activity_unlocked");
                 }
             }
@@ -2266,13 +2276,12 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
     }
     
     if(rewards.locations) {
-        //if(source_type === "location") {
-            for(let i = 0; i < rewards.locations.length; i++) {
-               was_any_location_availability_changed = 
-                    unlock_location({location: locations[rewards.locations[i].location], skip_message: (inform_overall && rewards.locations[i].skip_message || is_from_loading)}) 
-                    || was_any_location_availability_changed;
-                    
-            }
+        for(let i = 0; i < rewards.locations.length; i++) {
+            was_any_location_availability_changed = 
+                unlock_location({location: locations[rewards.locations[i].location], skip_message: (inform_overall && rewards.locations[i].skip_message || is_from_loading)}) 
+                || was_any_location_availability_changed;
+                
+        }
     }
 
     if(rewards.flags) {
@@ -2343,7 +2352,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.global_activities) {
         for(let i = 0; i < rewards.global_activities?.length; i++) {
-                unlock_global_activity({activity_id: rewards.global_activities[i]});
+            unlock_global_activity({activity_id: rewards.global_activities[i]});
         }
     }
 
@@ -3734,9 +3743,6 @@ function load(save_data) {
         game_options.do_background_animations = save_data.options?.do_background_animations;
         option_do_background_animations(game_options.do_background_animations);
 
-        game_options.change_background_color = save_data.options?.change_background_color;
-        option_change_background_color(game_options.change_background_color);
-
         game_options.skip_play_button = save_data.options?.skip_play_button;
         option_skip_play_button(game_options.skip_play_button);
 
@@ -4999,9 +5005,12 @@ function load(save_data) {
         create_displayed_crafting_recipes();
         change_location({location_id: save_data["current location"], skip_travel_time: true, do_quest_events: false, skip_combat: true});
 
-        //temperature is location dependent so display setting is loaded after location is set
+        //temperature and background are location dependent so display settings are loaded after location is set
         game_options.use_uncivilised_temperature_scale = save_data.options?.use_uncivilised_temperature_scale;
         option_use_uncivilised_temperature_scale(game_options.use_uncivilised_temperature_scale);
+
+        game_options.change_background_color = save_data.options?.change_background_color;
+        option_change_background_color(game_options.change_background_color);
 
         //set activity if any saved
         if(save_data.current_activity) {
@@ -5652,7 +5661,9 @@ function run() {
     start_date = Date.now();
     update();
 
-    set_light_based_background_color(!current_location.is_under_roof);
+    if(game_options.change_background_color) {
+        set_light_based_background_color(!current_location.is_under_roof);
+    }
 }
 
 window.equip_item = character_equip_item;

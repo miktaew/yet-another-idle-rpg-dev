@@ -224,21 +224,21 @@ class Hero extends InventoryHaver {
         
                 character.xp_bonuses.multiplier.levels.all_skill = (character.xp_bonuses.multiplier.levels.all_skill || 1) * total_skill_xp_multiplier;
 
-                let gains = `<br>HP increased by ${gained_hp}<br>Stamina increased by ${gained_stamina}`;
+                let gains = `\nHP increased by ${gained_hp}\nStamina increased by ${gained_stamina}`;
                 if(gained_str > 0) {
-                        gains += `<br>Strength increased by ${gained_str}`;
+                        gains += `\nStrength increased by ${gained_str}`;
                 }
                 if(gained_agi > 0) {
-                        gains += `<br>Agility increased by ${gained_agi}`;
+                        gains += `\nAgility increased by ${gained_agi}`;
                 }
                 if(gained_dex > 0) {
-                        gains += `<br>Dexterity increased by ${gained_dex}`;
+                        gains += `\nDexterity increased by ${gained_dex}`;
                 }
                 if(gained_int > 0) {
-                        gains += `<br>Intuition increased by ${gained_int}`;
+                        gains += `\nIntuition increased by ${gained_int}`;
                 }
         
-                gains += `<br>Skill xp gains increased by ${Math.round((gained_skill_xp_multiplier-1)*100)}%`;
+                gains += `\nSkill xp gains increased by ${Math.round((gained_skill_xp_multiplier-1)*100)}%`;
                 
                 return gains;
         }

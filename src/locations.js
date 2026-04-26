@@ -331,7 +331,7 @@ class LocationActivity{
                  availability_time,
                  availability_seasons,
                  gained_skills, //{skill_1: xp_gain, skill_2: xp_gain, ...}
-                 skill_xp_per_tick = 1, //only used for default skill (activity_name key in activities)
+                 skill_xp_per_tick = 1, //only used for default skills (attached to activity of activity_name key in activities)
                  unlock_text,
                  gained_resources,
                  require_tool = false,
@@ -2272,7 +2272,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             starting_text: "Sit down and meditate in front of the gate",
             skill_xp_per_tick: 4,
             is_unlocked: false,
-            unlock_text: "As you finish fighting your enemies and it becomes quiet, you feel a strange sense of tranquility. This spot in front of the mysterious gate, surrounded by calm and darkness, seems perfect to sit down and focus your mind."
+            unlock_text: "As you finish fighting your enemies and it becomes quiet, you feel a strange sense of tranquility. This spot in front of the mysterious gate, surrounded by calm and darkness, seems perfect to sit down and focus your mind"
         }),
         "mining": new LocationActivity({
             activity_name: "mining",

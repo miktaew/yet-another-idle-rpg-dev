@@ -98,7 +98,7 @@
     --background_color: var(--default_background_color);
     --rain_background_color: rgb(54, 54, 54);
     --indoor_background_color: rgb(53, 32, 0);
-    --background_opacity: 1;
+    --background_opacity: 0;
 }
 
 body {
