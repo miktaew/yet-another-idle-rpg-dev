@@ -62,9 +62,9 @@
     </head>
 
 <div id="header">Click on blocks to unfold their content</div>
-<button type="button" class="collapsible">v0.5.2?</button>
+<button type="button" class="collapsible">v0.5.3</button>
 <div class="content"><pre>
-v0.5.2
+v0.5.3
     - most of equipment components are now auto-generated based on certain set of properties; this changes balance of equipment by a lot in some cases
     
     - most of woodcutting actions now have a small chance to drop tree sap, which can be used to make a potion that will quickly deplete your stamina, for all fans of the 'Persistence' skill    
@@ -78,15 +78,16 @@ v0.5.2
     - added simple background color change for day-night cycle, affected by weather, with separate color for roofed locations; disabled by default, just like background animations
     - moved the 'hide maxxed skills' option from options panel to skill box
 
-    - changed the way DOM is manipulated by moving away from using innerHTML
-    - refactored tooltip movement code, reducing it to a much more manageable form
-    - updated translationManager to use translations provided in separate files instead of cramming everything in one
-    - rewards objects can now include dialogue locking
     - crafting recipes' results can now be fuzzy (instead of success/failure, it can be a partial success)
     - active effects' code will now skip stat updates if effect was already present and only had its duration extended
     - stat recalcs will now update shield tooltips only when needed (i.e. when that stat actually changed)
-    - any logged message will now replace "%HeroName%" with character name
     - font used on loading page is now included in files, in case your system does not support it by default
+
+    - updated translationManager to use translations provided in separate files instead of cramming everything in one
+    - changed the way DOM is manipulated by moving away from using innerHTML
+    - refactored tooltip movement code, reducing it to a much more manageable form
+    - rewards objects can now include dialogue locking
+    - any logged message will now replace "%HeroName%" with character name
 
     - fixed a minor issue that could have caused problems with crafting xp gains if someone were to reach max level in a crafting skill (wasn't possible without cheating)
     - fixed a minor display bug where if a shield was marked for trade, it would [purely visually] reappear in original owner's inventory if a stat recalc happened in the meantime
