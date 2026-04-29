@@ -9,7 +9,8 @@ import { update_displayed_character_inventory, update_displayed_equipment,
          update_displayed_skill_level, 
          update_displayed_xp_bonuses, 
          update_displayed_stamina_efficiency,
-         update_displayed_item_log} from "./display.js";
+         update_displayed_item_log,
+         update_displayed_location_types} from "./display.js";
 import { active_effects, current_location, current_stance, favourite_consumables, favourite_items, remove_consumable_from_favourites, remove_item_from_favourites } from "./main.js";
 import { current_game_time, is_night } from "./game_time.js";
 import { getItemFromKey, item_templates, item_log } from "./items.js";
@@ -774,19 +775,23 @@ function unequip_item(item_slot, already_calculated=false) {
  * @param {*} item 
  */
 function manage_changed_skill_bonuses(item) {
-        const bonus_skill_levels = Object.keys(item.getBonusSkillLevels());
-        if(bonus_skill_levels.length > 0) {
-                for(let i = 0; i < bonus_skill_levels.length; i++) {
-                        if(bonus_skill_levels[i].includes("category_")) {
-                                continue;
-                        }
-                        update_displayed_skill_level(skills[bonus_skill_levels[i]]);
-                }
+    const bonus_skill_levels = Object.keys(item.getBonusSkillLevels());
+    if(bonus_skill_levels.length > 0) {
+        for(let i = 0; i < bonus_skill_levels.length; i++) {
+            if(bonus_skill_levels[i].includes("category_")) {
+                continue;
+            }
+            update_displayed_skill_level(skills[bonus_skill_levels[i]]);
         }
+
+        if(current_location?.tags["combat zone"]) {
+            update_displayed_location_types(current_location);
+        }
+    }
 }
 
 function add_location_penalties() {
-        character.stats.add_location_penalties();
+    character.stats.add_location_penalties();
 }
 
 function add_weather_effects() {
@@ -794,10 +799,10 @@ function add_weather_effects() {
 }
 
 function get_character_cold_tolerance() {
-        return character.get_character_cold_tolerance();
+    return character.get_character_cold_tolerance();
 }
 function get_character_heat_tolerance() {
-        return character.get_character_heat_tolerance();
+    return character.get_character_heat_tolerance();
 }
 
 /**

@@ -218,7 +218,7 @@ function Verify_Game_Objects() {
                     }
                 }   
             });
-        } else if(location.tags["Combat zone"]) {
+        } else if(location.tags["combat zone"]) {
 
             if(location.parent_location == undefined) {
                 console.error(`Combat location "${key}" refers to a non-existent parent"`);

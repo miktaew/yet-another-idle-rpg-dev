@@ -207,7 +207,7 @@ class Combat_zone {
         }
 
         this.tags = tags;
-        this.tags["Combat zone"] = true;
+        this.tags["combat zone"] = true;
 
         this.is_temperature_static = is_temperature_static; //true -> uses static temperature, either provided or default
         this.static_temperature = static_temperature;
