@@ -425,7 +425,7 @@ const questManager = {
             }),
             new QuestTask({
                 task_condition: {
-                    all: {
+                    any: {
                         enter_location: {
                             "Village": {
                                 target: 1,
