@@ -97,7 +97,9 @@ import { end_activity_animation,
          change_completed_quest_visibility,
          update_fav_display,
          update_displayed_item_log,
-         set_light_based_background_color
+         set_light_based_background_color,
+         update_displayed_current_loot,
+         unsassign_dynamic_loot_message,
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags } from "./misc.js";
 import { stances } from "./combat_stances.js";
@@ -197,6 +199,12 @@ let current_activity;
 let game_action_interval;
 let current_game_action;
 
+//loot from currently active source (combat location or specific activity), used for display if dynamic loot logging option is enabled
+const current_loot = {
+    recent: {},
+    total: {},
+}
+
 //time needed to travel from A to B
 let travel_times = {};
 let pathfinder;
@@ -256,11 +264,12 @@ const game_options = {
     uniform_text_size_in_action: false,
     auto_return_to_bed: true,
     remember_message_log_filters: false,
-    remember_sorting_options: false,
+    remember_sorting_options: false, //not in use?
     combat_disable_autoswitch: false,
-    log_every_gathering_period: true,
-    log_total_gathering_gain: true,
-    auto_use_when_longest_runs_out: true, //this can't actually be changed by a player; despite the name, it actually decides whether to first use longest-duration item or shortest-duration item?
+
+    do_dynamic_loot_message: false,
+
+    auto_use_when_longest_runs_out: true, //can't actually be changed by a player; despite the name, it decides whether to first use longest-duration item or shortest-duration item
     use_uncivilised_temperature_scale: false, //true -> swap Celsius for Fahrenheit
     do_background_animations: false,
     change_background_color: false,
@@ -398,34 +407,6 @@ function option_combat_autoswitch(option) {
         game_options.disable_combat_autoswitch = true;
     } else {
         game_options.disable_combat_autoswitch = false;
-    }
-
-    if(option !== undefined) {
-        checkbox.checked = option;
-    }
-}
-
-function option_log_all_gathering(option) {
-    const checkbox = document.getElementById("options_log_all_gathering");
-
-    if(checkbox.checked || option) {
-        game_options.log_every_gathering_period = true;
-    } else {
-        game_options.log_every_gathering_period = false;
-    }
-
-    if(option !== undefined) {
-        checkbox.checked = option;
-    }
-}
-
-function option_log_gathering_result(option) {
-    const checkbox = document.getElementById("options_log_gathering_result");
-
-    if(checkbox.checked || option) {
-        game_options.log_total_gathering_gain = true;
-    } else {
-        game_options.log_total_gathering_gain = false;
     }
 
     if(option !== undefined) {
@@ -587,6 +568,21 @@ function option_use_text_outlines_for_bars(option) {
     }
 }
 
+function option_do_dynamic_loot_message(option) {
+    const checkbox = document.getElementById("options_dynamic_message");
+    clear_loot_information(); //reset it in both cases
+
+    if(option !== undefined) {
+        checkbox.checked = option;
+    }
+
+    if(checkbox.checked) {
+        game_options.do_dynamic_loot_message = true;
+    } else {
+        game_options.do_dynamic_loot_message = false;
+    }
+}
+
 /**
  * 
  * @param {Object} params
@@ -630,6 +626,8 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
     if(location.crafting) {
         update_displayed_crafting_recipes();
     }
+
+    clear_loot_information();
     
     current_location = location;
 
@@ -727,23 +725,24 @@ function start_activity(selected_activity) {
 
 function end_activity() {
     
-    log_message(`${character.name} finished ${current_activity.activity_name}`, "activity_finished");
+    log_message(`%HeroName% finished ${current_activity.activity_name}`, "activity_finished");
     
     if(current_activity.earnings) {
-        log_message(`${character.name} earned ${format_money(current_activity.earnings)}`, "activity_money");
+        log_message(`%HeroName% earned ${format_money(current_activity.earnings)}`, "activity_money");
         add_money_to_character(current_activity.earnings);
     }
 
-    if(current_activity.gathered_materials && game_options.log_total_gathering_gain) {
+    if(current_activity.gathered_materials) {
         const loot = []; 
         Object.keys(current_activity.gathered_materials).forEach(mat_key => {
             loot.push({item_key: mat_key, count: current_activity.gathered_materials[mat_key]});
         });
 
-        log_loot({loot_list: loot, is_a_summary: true});
+        process_current_loot({loot_list: loot});
     }
     end_activity_animation(); //clears the "animation"
     current_activity = null;
+    clear_loot_information();
     remove_from_content_stack(content_stack_removal_options.TOP);
 }
 
@@ -1699,7 +1698,7 @@ function do_enemy_combat_action(enemy_id) {
             const blocked = character.equipment["off-hand"].getShieldStrength() * (character.equipment["off-hand"].tags.ignore_skill?1:character.stats.total_multiplier.block_strength);
 
             if(blocked > damages_dealt[0]) {
-                log_message(character.name + " blocked an attack", "hero_blocked");
+                log_message("%HeroName% blocked an attack", "hero_blocked");
                 return; //damage fully blocked, nothing more can happen 
             } else {
                 damages_dealt = damages_dealt.map(val => Math.max(0,val-blocked));
@@ -1715,7 +1714,7 @@ function do_enemy_combat_action(enemy_id) {
             const xp_to_add = character.wears_armor() ? attacker.xp_value : attacker.xp_value * 1.5; 
             //50% more evasion xp if going without armor
             add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add/enemy_count_xp_mod});
-            log_message(character.name + " evaded an attack", "enemy_missed");
+            log_message("%HeroName% evaded an attack", "enemy_missed");
             return; //damage fully evaded, nothing more can happen
         } else {
             add_xp_to_skill({skill: skills["Evasion"], xp_to_add: attacker.xp_value/(2*enemy_count_xp_mod)});
@@ -1742,17 +1741,17 @@ function do_enemy_combat_action(enemy_id) {
 
     if(critted) {
         if(partially_blocked) {
-            log_message(character.name + " partially blocked, was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
+            log_message("%HeroName% partially blocked, was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
         } 
         else {
-            log_message(character.name + " was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
+            log_message("%HeroName% was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
         }
     } else {
         if(partially_blocked) {
-            log_message(character.name + " partially blocked, was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
+            log_message("%HeroName% partially blocked, was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
         }
         else {
-            log_message(character.name + " was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
+            log_message("%HeroName% was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
         }
     }
 
@@ -1852,7 +1851,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
 
             let loot = target.get_loot({drop_chance_modifier: 1/target_count**0.6667});
             if(loot.length > 0) {
-                log_loot({loot_list: loot, is_combat: true});
+                process_current_loot({loot_list: loot, is_combat: true});
                 loot = loot.map(x => {return {item_key: item_templates[x.item_id].getInventoryKey(), count: x.count}});
                 add_to_character_inventory(loot);
             }
@@ -1862,7 +1861,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
 
         update_displayed_health_of_enemies();
     } else {
-        log_message(character.name + " has missed", "hero_missed");
+        log_message("%HeroName% has missed", "hero_missed");
     }
 }
 
@@ -1905,7 +1904,7 @@ function kill_enemy(target, do_quest_events = true) {
 function kill_player({is_combat = true} = {}) {
     if(is_combat) {
         total_deaths++;
-        log_message(character.name + " has lost consciousness", "hero_defeat");
+        log_message("%HeroName% has lost consciousness", "hero_defeat");
 
         update_displayed_health();
         if(game_options.auto_return_to_bed && last_location_with_bed) {
@@ -2243,7 +2242,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.money && typeof rewards.money === "number" && !only_unlocks) {
         if(inform_overall) {
-            log_message(`${character.name} earned ${format_money(rewards.money)}`);
+            log_message(`%HeroName% earned ${format_money(rewards.money)}`);
         }
         add_money_to_character(rewards.money);
     }
@@ -2268,7 +2267,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         Object.keys(rewards.skill_xp).forEach(skill_key => {
             if(typeof rewards.skill_xp[skill_key] === "number") {
                 if(inform_overall) {
-                    log_message(`${character.name} gained ${rewards.skill_xp[skill_key]}xp to ${skills[skill_key].name()}`);
+                    log_message(`%HeroName% gained ${rewards.skill_xp[skill_key]}xp to ${skills[skill_key].name()}`);
                 }
                 add_xp_to_skill({skill: skills[skill_key], xp_to_add: rewards.skill_xp[skill_key], cap_gained_xp: false});
             }
@@ -2516,7 +2515,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                 count = rewards.items[i].count || 1;
             }
             
-            log_message(`${character.name} obtained "${item.getName()} x${count}"`);
+            log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
             add_to_character_inventory([{item_key: item.getInventoryKey(), count}]);
         }
     }
@@ -2547,6 +2546,31 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
     } else if(is_current_location_reload_needed) {
         change_location({location_id: current_location.id});
     }
+}
+
+function process_current_loot({loot_list, is_combat}) {
+    current_loot.recent = {};
+
+    loot_list.forEach(loot_list_entry => {
+        const key = loot_list_entry.item_id || loot_list_entry.item_key;
+
+        current_loot.recent[key] = {item_id: loot_list_entry.item_id, item_key: loot_list_entry.item_key, item_count: loot_list_entry.count};
+        
+        if(!current_loot.total[key] && loot_list_entry.count) {
+            current_loot.total[key] = {item_id: loot_list_entry.item_id, item_key: loot_list_entry.item_key, item_count: loot_list_entry.count};
+        } else {
+            current_loot.total[key].item_count += loot_list_entry.count;
+        }
+    });
+    
+    log_loot({loot_list: current_loot, is_combat, is_dynamic: game_options.do_dynamic_loot_message});
+}
+
+function clear_loot_information() {
+    //called whenever changing a location or stopping an activity
+    current_loot.recent = {};
+    current_loot.total = {};
+    unsassign_dynamic_loot_message();
 }
 
 /**
@@ -3734,11 +3758,6 @@ function load(save_data) {
 
         option_remember_filters(game_options.remember_message_log_filters);
 
-        game_options.log_every_gathering_period = save_data.options?.log_every_gathering_period;
-        option_log_all_gathering(game_options.log_every_gathering_period);
-
-        game_options.log_total_gathering_gain = save_data.options?.log_total_gathering_gain;
-        option_log_gathering_result(game_options.log_total_gathering_gain);
 
         game_options.do_background_animations = save_data.options?.do_background_animations;
         option_do_background_animations(game_options.do_background_animations);
@@ -5012,6 +5031,9 @@ function load(save_data) {
         game_options.change_background_color = save_data.options?.change_background_color;
         option_change_background_color(game_options.change_background_color);
 
+        game_options.do_dynamic_loot_message = save_data.options?.do_dynamic_loot_message;
+        option_do_dynamic_loot_message(game_options.do_dynamic_loot_message);
+
         //set activity if any saved
         if(save_data.current_activity) {
             //search for it in location from save_data
@@ -5472,10 +5494,9 @@ function update() {
                             }
                         }
 
-                        if (items.length > 0) {
-                            if(game_options.log_every_gathering_period) {
-                                log_loot({loot_list: items});
-                            }
+                        if(items.length > 0) {
+                            process_current_loot({loot_list: items});
+                            
 
                             for(let i = 0; i < items.length; i++) {
                                 current_activity.gathered_materials[items[i].item_key] = (current_activity.gathered_materials[items[i].item_key] + items[i].count || items[i].count);
@@ -5744,8 +5765,6 @@ window.option_uniform_textsize = option_uniform_textsize;
 window.option_bed_return = option_bed_return;
 window.option_combat_autoswitch = option_combat_autoswitch;
 window.option_remember_filters = option_remember_filters;
-window.option_log_all_gathering = option_log_all_gathering;
-window.option_log_gathering_result = option_log_gathering_result;
 window.option_use_uncivilised_temperature_scale = option_use_uncivilised_temperature_scale;
 window.option_do_background_animations = option_do_background_animations;
 window.option_change_background_color = option_change_background_color;
@@ -5756,6 +5775,7 @@ window.option_expo_threshold = option_expo_threshold;
 window.option_hide_max_level_skills = option_hide_max_level_skills;
 window.option_use_text_outlines_for_tooltips = option_use_text_outlines_for_tooltips;
 window.option_use_text_outlines_for_bars = option_use_text_outlines_for_bars;
+window.option_do_dynamic_loot_message = option_do_dynamic_loot_message;
 
 window.change_completed_quest_visibility = change_completed_quest_visibility;
 

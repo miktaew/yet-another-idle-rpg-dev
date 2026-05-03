@@ -64,6 +64,7 @@ const storage_inventory_div = document.getElementById("storage_inventory_div");
 
 //message log
 const message_log = document.getElementById("message_box_div");
+let dynamic_loot_message = null;
 
 //enemy info
 const combat_div = document.getElementById("combat_div");
@@ -173,6 +174,13 @@ const message_count = {
     message_crafting: 0,
 };
 
+const dynamic_loot_message_types = {
+    combat_loot: true,
+    gathered_loot: true,
+    total_gathered_loot: true,
+}
+
+
 const stats_divs = {strength: document.getElementById("strength_slot"), agility: document.getElementById("agility_slot"),
                     dexterity: document.getElementById("dexterity_slot"), intuition: document.getElementById("intuition_slot"),
                     magic: document.getElementById("magic_slot"), 
@@ -264,6 +272,11 @@ function capitalize_first_letter(some_string) {
     return some_string.charAt(0).toUpperCase() + some_string.slice(1);
 }
 
+/**
+ * If item was obtained at least once, returns its name. If it wasn't, returns "???" instead.
+ * @param {String} item_id 
+ * @returns 
+ */
 function obscure_name(item_id) {
     return item_log.is_known(item_id) ? item_templates[item_id].getName() : "???";
 }
@@ -837,20 +850,31 @@ function end_activity_animation(remove) {
         // delete it
         message_log.removeChild(message_log.getElementsByClassName(group_to_add)[0]);
     }
-
+        
     message.classList.add(class_to_add, group_to_add);
     message.innerText = message_to_add;
-
     insert_HTML(message, "<div class='message_border'> </>");
 
-    message_log.appendChild(message);
+    if(dynamic_loot_message_types[message_type] && game_options.do_dynamic_loot_message) {
+        if(dynamic_loot_message) {
+            dynamic_loot_message.remove();
+        }
 
+        dynamic_loot_message = message;
+    }
+
+    message_log.appendChild(message);
 
     const button_id = group_to_add.replace("_","_show_"); //not the best way but likelihood of the ids being changed is quite low
     if(document.getElementById(button_id).classList.contains("active_selection_button")) {
         //scroll the message log but only if added message is in a not hidden category
         message_log.scrollTop = message_log.scrollHeight;
     }
+    
+}
+
+function unsassign_dynamic_loot_message() {
+    dynamic_loot_message = null;
 }
 
 function format_book_bonuses(bonuses) {
@@ -909,20 +933,17 @@ function clear_message_log() {
 }
 
 /**
+ * updates the dynamic loot message
+ */
+function update_displayed_current_loot() {
+    //todo: a dynamically recreated message at the >bottom< of the message log
+    //with separate message group, always at bottom, recreated every time with total loot as overall and new gains written like this: (+1)
+}
+
+/**
  * @param {Array} loot_list [{item, count},...] 
  */
-function log_loot({loot_list, is_combat=false, is_a_summary=false}) {
-    
-    if(loot_list.length == 0) {
-        return;
-    }
-
-    let item;
-    if(loot_list[0].item_id) {
-        item = item_templates[loot_list[0].item_id];
-    } else if(loot_list[0].item_key) {
-        item = getItemFromKey(loot_list[0].item_key);
-    }
+function log_loot({loot_list, is_combat=false, is_a_summary=false, is_dynamic=false}) {
 
     let message;
     let message_type;
@@ -937,19 +958,39 @@ function log_loot({loot_list, is_combat=false, is_a_summary=false}) {
         message = 'Gained "';
     }
 
-    message += item.getName() + `" x` + loot_list[0]["count"];
+    const recent_loot = Object.values(loot_list.recent);
+    const total_loot = Object.values(loot_list.total);
 
-    if(loot_list.length > 1) {
-        for(let i = 1; i < loot_list.length; i++) {
-            if(loot_list[i].item_id) {
-                item = item_templates[loot_list[i].item_id];
-            } else if(loot_list[i].item_key) {
-                item = getItemFromKey(loot_list[i].item_key);
-            }
-            message += (`, "` + item.getName() + `" x` + loot_list[i]["count"]);
-        }
+    if(recent_loot.length == 0) {
+        //if dynamic is enabled, it will already be displayed; if not, there's nothing to display anyway
+        return;
     }
 
+    const loot_to_use = is_dynamic?total_loot:recent_loot;
+    let gains_msg = is_dynamic?`(+${recent_loot[0].item_count})`:"";
+
+    let item;
+    if(loot_to_use[0].item_id) {
+        item = item_templates[loot_to_use[0].item_id];
+    } else if(loot_to_use[0].item_key) {
+        item = getItemFromKey(loot_to_use[0].item_key);
+    }
+
+    message += item.getName() + `" x` + loot_to_use[0].item_count + gains_msg;
+
+    if(loot_to_use.length > 1) {
+        for(let i = 1; i < loot_to_use.length; i++) {
+            gains_msg = is_dynamic&&recent_loot[i]?`(+${recent_loot[i].item_count})`:"";
+
+            if(loot_to_use[i].item_id) {
+                item = item_templates[loot_to_use[i].item_id];
+            } else if(loot_to_use[i].item_key) {
+                item = getItemFromKey(loot_to_use[i].item_key);
+            }
+            message += (`, "` + item.getName() + `" x` + loot_to_use[i].item_count + gains_msg);
+        }
+    }
+    
     log_message(message, message_type);
 }
 
@@ -3403,8 +3444,9 @@ function create_gathering_tooltip(location_activity) {
 
     tooltip_content += `Every ${format_working_time(gathering_time_needed)}, chance to find:`;
     for(let i = 0; i < gained_resources.length; i++) {
+        const count = gained_resources[i].count;
         const name = item_templates[gained_resources[i].name].getName();
-        tooltip_content += `<br>x${gained_resources[i].count[0]===gained_resources[i].count[1]?gained_resources[i].count[0]:`${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${obscure_name(name)}" at ${Math.round(100*gained_resources[i].chance)}%`;
+        tooltip_content += `<br>x${count[0]===count[1]?count[0]:`${count[0]}-${count[1]}`} "${obscure_name(name)}" at ${Math.round(100*gained_resources[i].chance)}%`;
     }
 
     set_HTML(gathering_tooltip, tooltip_content);
@@ -5637,5 +5679,7 @@ export {
     update_fav_display,
     update_displayed_item_log,
     set_HTML,
-    set_light_based_background_color
+    set_light_based_background_color,
+    update_displayed_current_loot,
+    unsassign_dynamic_loot_message
 }

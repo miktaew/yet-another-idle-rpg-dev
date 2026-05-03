@@ -956,7 +956,6 @@
             <!-- message log -->
             <div id = "message_log_div" class = "box_div">
                 <div id = "message_box_div">
-
                 </div>
                 <div id = "message_controls">
 
@@ -1023,12 +1022,8 @@
                     <label for="options_dont_autoswitch_to_combat">Don't autoswitch out from inventory when starting combat</label>
                 </div>
                 <div class="options_choice">
-                    <input type="checkbox" id="options_log_all_gathering" name="options_log_all_gathering" onclick = "option_log_all_gathering()" checked>
-                    <label for="options_log_all_gathering">Log gathered materials for every gathering period</label>
-                </div>
-                <div class="options_choice">
-                    <input type="checkbox" id="options_log_gathering_result" name="options_log_gathering_result" onclick = "option_log_gathering_result()" checked>
-                    <label for="options_log_gathering_result">Log total gathered materials on gathering finish</label>
+                    <input type="checkbox" id="options_dynamic_message" name="options_dynamic_message" onclick = "option_do_dynamic_loot_message()">
+                    <label for="options_dynamic_message">Use a single dynamically updated message for loot</label>
                 </div>
                 <div class="options_choice options_choice_range">
                     <label for="options_expo_threshold">Use scientific notation for values over:</label>
