@@ -1266,7 +1266,10 @@ There's another gate on the wall in front of you, but you have a strange feeling
         leave_text: "Looks dangerous",
         parent_location: locations["Carya Canyon"],
         repeatable_reward: {
-            activities: [{location:"Carya Canyon", activity: "woodcutting"}],
+            activities: [
+                {location:"Carya Canyon", activity: "woodcutting"},
+                {location:"Carya Canyon", activity: "herbalism"},
+            ],
         },
         unlock_text: "You made it across!",
         is_under_roof: false,
@@ -2370,6 +2373,22 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 scales_with_skill: true,
             },
             unlock_text: "Crossing the canyon, you discover that the trees on the other side are extremely tough.",
+        }),
+        "herbalism": new LocationActivity({
+            activity_name: "herbalism",
+            starting_text: "Search for herbs growing around the canyon",
+            skill_xp_per_tick: 5,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [
+                    {name: "Belmart leaf", ammount: [[1,1], [1,2]], chance: [0.2, 1]},
+                    {name: "Golmoon leaf", chance: [0.05, 0.4]},
+                ],
+                time_period: [125, 52],
+                skill_required: [10, 25],
+            },
+            require_tool: true,
+            unlock_text: "You notice clusters of dark-green disinfectant leaves growing around the canyon's edge",
         }),
     };
     locations["Town outskirts"].activities = {
