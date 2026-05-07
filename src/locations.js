@@ -2757,6 +2757,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             failure_texts: {
                 conditional_loss: ["Turns out you're too weak for this, because of course you are, what were you even thinking?"],
             },
+            check_conditions_on_finish: false,
             attempt_duration: 10,
             success_chances: [1],
             conditions: [
