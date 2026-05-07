@@ -2659,7 +2659,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             attempt_duration: 15,
             success_chances: [0.5, 1],
             rewards: {
-                actions: [{location: "Village", action: "carry grain"}, {location: "Village", action: "pull cart"}, {location: "Village", action: "convince horse"}],
+                actions: [{location: "Village", action: "carry grain"}, {location: "Village", action: "pull cart"}, {location: "Village", action: "convince horse"}, {location: "Village", action: "carry cart"}],
                 skill_xp: {
                     Perception: 100,
                 }
@@ -2689,7 +2689,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 skill_xp: {Weightlifting: 300},
                 textlines: [{dialogue: "village millers", lines: ["delivered"]}],
                 locks: {
-                    actions: [{location: "Village", action: "pull cart"}, {location: "Village", action: "convince horse"}],
+                    actions: [{location: "Village", action: "pull cart"}, {location: "Village", action: "convince horse"}, {location: "Village", action: "carry cart"}],
                 },
             },
         }),
@@ -2716,7 +2716,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 skill_xp: {Weightlifting: 300},
                 textlines: [{dialogue: "village millers", lines: ["delivered"]}],
                 locks: {
-                    actions: [{location: "Village", action: "carry grain"}, {location: "Village", action: "convince horse"}],
+                    actions: [{location: "Village", action: "carry grain"}, {location: "Village", action: "convince horse"}, {location: "Village", action: "carry cart"}],
                 },
             },
         }),
@@ -2743,7 +2743,40 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 skill_xp: {"Animal handling": 300},
                 textlines: [{dialogue: "village millers", lines: ["delivered"]}],
                 locks: {
-                    actions: [{location: "Village", action: "pull cart"}, {location: "Village", action: "carry grain"}],
+                    actions: [{location: "Village", action: "pull cart"}, {location: "Village", action: "carry grain"}, {location: "Village", action: "carry cart"}],
+                },
+            },
+        }),
+        "carry cart": new GameAction({
+            //BECAUSE PEOPLE ASKED AND MIK IS A BENEVOLENT CAT
+            action_id: "carry cart",
+            starting_text: "Carry the cart and the horse yourself",
+            description: "What are you even doing...?",
+            action_text: "Being stupidly strong",
+            success_text: "Somehow, using sheer strength, you managed to carry them both right up to the mill",
+            failure_texts: {
+                conditional_loss: ["Turns out you're too weak for this, because of course you are, what were you even thinking?"],
+            },
+            attempt_duration: 10,
+            success_chances: [1],
+            conditions: [
+                {
+                    skills: {
+                        "Weightlifting": 30,
+                    }
+                },
+            ],
+            display_conditions: {
+                skills: {
+                    "Weightlifting": 30,
+                }
+            },
+            rewards: {
+                move_to: {location: "Eastern mill"},
+                skill_xp: {"Weightlifting": 2e6},
+                textlines: [{dialogue: "village millers", lines: ["delivered"]}],
+                locks: {
+                    actions: [{location: "Village", action: "pull cart"}, {location: "Village", action: "carry grain"},{location: "Village", action: "convince horse"}],
                 },
             },
         }),

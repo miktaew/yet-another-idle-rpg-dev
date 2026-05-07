@@ -2196,7 +2196,7 @@ function update_displayed_normal_location(location) {
         
     }
 
-    const available_actions = Object.values(location.actions).filter(action => action.is_unlocked && !action.is_finished);
+    const available_actions = Object.values(location.actions).filter(action => action.is_unlocked && !action.is_finished && action.can_be_displayed(character));
     if(available_actions.length > 0) {
         location_choice_divs["actions"] = create_location_choice_dropdown({name: "Take an action", icon: "circle", class_name: "choice_action"});
 
@@ -2513,7 +2513,7 @@ function create_location_choices({location, category, is_combat = false}) {
         }
     } else if (category === "action") {
         Object.keys(location.actions).forEach(key => {
-            if(location.actions[key].is_finished || !location.actions[key].is_unlocked) {
+            if(location.actions[key].is_finished || !location.actions[key].is_unlocked || !location.actions[key].can_be_displayed(character)) {
                 return;
             }
 

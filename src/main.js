@@ -98,7 +98,6 @@ import { end_activity_animation,
          update_fav_display,
          update_displayed_item_log,
          set_light_based_background_color,
-         update_displayed_current_loot,
          unsassign_dynamic_loot_message,
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags } from "./misc.js";
@@ -5045,7 +5044,8 @@ function load(save_data) {
                     current_activity.earnings = save_data.current_activity.earnings * ((is_from_before_eco_rework == 1)*10 || 1);
                     document.getElementById("action_end_earnings").innerText = `(earnings: ${format_money(current_activity.earnings)})`;
                 } else if(activities[current_location.activities[activity_id].activity_name].type === "GATHERING") {
-                    current_activity.gathered_materials = save_data.current_activity.gathered_materials || {};
+                    //current_activity.gathered_materials = save_data.current_activity.gathered_materials || {};
+                    //pretty sure this was used only for logging purposes, but let's just leave it commented out instead of deleting
                 }
 
                 current_activity.gathering_time = save_data.current_activity.gathering_time;
