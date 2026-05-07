@@ -1495,7 +1495,7 @@ book_stats["Wood for Witches"] = new BookData({
     });
     item_templates["Mountain goat hide"] = new Material({
         name: "Mountain goat hide",
-        description: "Thick hide of a mountain goat hide. Not as strong as boar hide, but this one can actually be turned into clothes after some processing",
+        description: "Thick hide of a mountain goat. Not as strong as boar hide, but this one can actually be turned into clothes after some processing",
         value: 30,
         material_type: "pelt",
     });
