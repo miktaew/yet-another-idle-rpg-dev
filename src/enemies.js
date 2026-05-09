@@ -30,6 +30,9 @@ Object.keys(droprate_modifier_skills_for_tags).forEach(tag => {
     tags_for_droprate_modifier_skills[droprate_modifier_skills_for_tags[tag]] = tag;
 });
 
+//used for updating display of bestiary when item is first obtained; autofilled
+const droplist = {};
+
 class Enemy {
     constructor({
         name, 
@@ -580,7 +583,11 @@ const enemy_abilites = {
 
     Object.keys(enemy_templates).forEach(enemy_key => {
         enemy_templates[enemy_key].id = enemy_key;
+
+        enemy_templates[enemy_key].loot_list.forEach(item => {
+            droplist[item.item_name] = true;
+        });
     });
 
 
-export {Enemy, enemy_templates, enemy_killcount, tags_for_droprate_modifier_skills, enemy_tag_to_skill_mapping};
+export {Enemy, enemy_templates, enemy_killcount, tags_for_droprate_modifier_skills, enemy_tag_to_skill_mapping, droplist};

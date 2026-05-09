@@ -41,6 +41,8 @@ import { round_item_price } from "./misc.js";
 import { group_key_prefix, get_item_value_with_market_saturation, get_total_tier_saturation, get_loot_price_multiple} from "./market_saturation.js";
 import { is_rat } from "./character.js";
 import { crafting_component_manager } from "./crafting_component_filling.js";
+import { droplist, enemy_killcount, enemy_templates } from "./enemies.js";
+import { update_bestiary_entry_tooltip } from "./display.js";
 
 const rarity_multipliers = {
     trash: 1, //low quality alone makes these so bad that no additional nerf should be needed
@@ -80,9 +82,19 @@ const item_log = {
                 quality_highest: 0,
                 quality_lowest: Number.POSITIVE_INFINITY
             }
+
+
+            if(droplist[item_id]) { //if item can possibly drop from an enemy
+                Object.keys(enemy_killcount).forEach(enemy_key => {
+                    if(enemy_templates[enemy_key].loot_list.filter(x => x.item_name === item_id)) {
+                        //if item can drop from specific enemy - update that enemey's bestiary tooltip
+                        update_bestiary_entry_tooltip(enemy_key);
+                    }
+                });
+            }
         }
 
-        this.items[item_id].number += number
+        this.items[item_id].number += number;
         this.items[item_id].quality_highest = Math.max(this.items[item_id].quality_highest, quality);
         this.items[item_id].quality_lowest = Math.min(this.items[item_id].quality_lowest, quality);
     },

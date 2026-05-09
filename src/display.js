@@ -4988,7 +4988,7 @@ function create_bestiary_loot_line(enemy, loot) {
 
     if(enemy) {
         //create based on data passed
-        loot_name.innerText = `${loot.item_name}`;
+        loot_name.innerText = `${obscure_name(loot.item_name)}`;
         loot_chance_base.innerText = `[${loot.chance*100}%]`;
         loot_chance_current.innerText = `${Math.round(10000*loot.chance*enemy.get_droprate_modifier())/100}%`;
         loot_chance.append(loot_chance_current, loot_chance_base);
