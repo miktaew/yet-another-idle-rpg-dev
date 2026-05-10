@@ -3936,26 +3936,42 @@ function update_displayed_reputation() {
     });
 }
 
-//TODO proof of concept, needs display polishing + maybe move to dedicated tab?
+//TODO: some display polishing + maybe move to a dedicated tab?
 function update_displayed_item_log() {
 
-    let html_content = "<table><tr><th width='100%'>Item</th><th>Best</th><th>Total</th></tr>";
+    set_HTML(data_entry_divs.item_log,`<div id='item_log_header'>Item log</div>`)
+
+    let html_content = "<table id='item_log_table'><tr><th width='100%'>Item</th><th>Best</th><th>Total</th></tr>";
 
     Object.values(item_log.items).forEach(item => {
-        let name = item_templates[item.id]?.getName() || item.id;
-            //crafted items don't have this, I guess... Maybe it would have been better to save the whole key, sans quality?
+        if(item_templates[item.id].components) {
+            return;
+            /*
+            skip stuff with components 
+                bundling things with same name but different composition seems like a bad approach,
+                and so does keeping each combination separate since it would potentially create way too many options
+            */
+        }
+
+        const name = item_templates[item.id]?.getName() || item.id;
 
         html_content += `<tr><td>${name}</td ><td>`;
-        if (item.quality_highest > 0) {
-            html_content += `${item.quality_lowest}-${item.quality_highest}%`;    //TODO color
+
+        if(item.quality_highest > 0 && !item_templates[item.id].ignore_quality) {
+            const color = rarity_colors[getItemRarity(item.quality_highest)];
+            const outline_class = select_outline_class(color);
+            //html_content += `${item.quality_lowest}-${item.quality_highest}%`;
+            html_content += `<span class="${outline_class}" style="color: ${color}">${item.quality_highest}%</span>`; 
+            //skip the lowest and show just the highest, seems better for display purposes?
         }
+
         html_content += `</td><td>${item.number}</td></tr>`;
-        //TODO tooltips
+        //html_content += `</td><td>${item.number}</td>${create_item_tooltip(item_templates[item.id]).outerHTML}</tr>`;
     });
 
     html_content += "</table>";
 
-    set_HTML(data_entry_divs.item_log, html_content);
+    insert_HTML(data_entry_divs.item_log, html_content);
 }
 
 
@@ -4560,11 +4576,13 @@ function update_displayed_skill_level(skill) {
         return;
     }
 
-    skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[0].innerText = `${skill.name()} : level ${skill.current_level}/${skill.max_level}`;
+    let html_content = `${skill.name()} : level ${skill.current_level}/${skill.max_level}`;
     const bonus = character.bonus_skill_levels.full[skill.skill_id];
     if(bonus != 0) {
-        set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[0], ` <b>[${bonus>0?"+":""}${bonus}]</b>`);
+        html_content += ` <b>[${bonus>0?"+":""}${bonus}]</b>`;
     }
+
+    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[0], html_content);
 }
 
 function update_displayed_skill_description(skill) {

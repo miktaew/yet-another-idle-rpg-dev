@@ -69,7 +69,7 @@ const item_log = {
                 let item = getItemFromKey(items[i].item_key);
                 this.log_item(item.id, items[i].count, item.quality);
             } else {
-                console.warn("id not included!");
+                console.warn("Tried to log an item, but neither an id nor a key was included!");
             }
         }
     },

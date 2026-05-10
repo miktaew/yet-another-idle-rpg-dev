@@ -2227,6 +2227,17 @@ i {
 						.bestiary_entry_div:hover .bestiary_entry_tooltip, .anthology_entry_div:hover .anthology_entry_tooltip {
 							display: block;
 						}
+    #item_log_header {
+        margin-top: 10px;
+        border-bottom: 1px dotted gray;
+        width: 100%;
+        text-align: center;
+    }
+
+    #item_log_table td {
+        border: 1px solid gray;
+        border-collapse: collapse;
+    }
 
 .data_entry_value {
 	width: 90px;
