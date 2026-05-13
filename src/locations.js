@@ -2223,6 +2223,18 @@ There's another gate on the wall in front of you, but you have a strange feeling
             },
             require_tool: true,
         }),
+        "mining": new LocationActivity({
+            activity_name: "mining",
+            starting_text: "Make stone bricks",
+            skill_xp_per_tick: 0.5,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [{name: "Stone brick", ammount: [[0,1], [1,1]], chance: [0.5, 1]}],
+                time_period: [60, 20],
+                skill_required: [0, 10],
+            },
+            require_tool: true,
+        }),
         "sand": new LocationActivity({
             activity_id: "sand",
             activity_name: "digging",
@@ -2794,6 +2806,47 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 locations: [{location: "Downstream from the village"}],
                 move_to: {location: "Downstream from the village"},
             },
+        }),
+        "dig canal": new GameAction({
+            action_id: "dig canal",
+            starting_text: "Dig the melioration channel",
+            description: "Just gotta swing your shovel a lot",
+            action_text: "Digging",
+            success_text: "Task took quite a while and a few breaks, but it is finally done",
+            failure_texts: {
+                unable_to_begin: ["You should get a shovel first. Perhaps the craftsman has a spare one?"],
+            },
+            check_conditions_on_finish: false,
+            attempt_duration: 600,
+            success_chances: [1],
+            keep_progress: true,
+            required: {
+                tools_by_slot: ["shovel"],
+            },
+            rewards: {
+                skill_xp: {Digging: 500},
+                textlines: [{dialogue: "village elder", lines: ["finished digging"]}],
+            }, 
+        }),
+        "bridge mat delivery": new GameAction({
+            action_id: "bridge mat delivery",
+            starting_text: "Bring the materials to the construction site",
+            description: "Bring the 100 wood logs and 500 stone bricks to the construction site",
+            action_text: "Delivering",
+            success_text: "You deposit the materials near the place where the bridge is to be created",
+            failure_texts: {
+                unable_to_begin: ["You do not have enough materials"],
+            },
+            success_chances: [1],
+            required: {
+                items_by_id: {
+                    "Wood log": {count: 100, remove_on_success: true},
+                    "Stone brick": {count: 500, remove_on_success: true},
+                },
+            },
+            rewards: {
+                //action to build the bridge, needs to be added too
+            }, 
         }),
     };
     locations["Nearby cave"].actions = {

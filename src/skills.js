@@ -1664,6 +1664,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
                                         xp_multipliers: {
                                             "Unarmed": 1.1,
                                             "Herbalism": 1.1,
+                                            "Digging": 1.1,
                                         }
                                     }
                                 }});
@@ -2346,7 +2347,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
 (function(){
     skills["Woodcutting"] = new Skill({
         names: {0: "Woodcutting"}, 
-        description: "Get better with chopping the wood",
+        description: "Get better with chopping the wood and recognizing useful trees",
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,
@@ -2355,7 +2356,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
 
     skills["Mining"] = new Skill({
         names: {0: "Mining"}, 
-        description: "Get better with mining the ores",
+        description: "Get better with mining for ore and stone",
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,

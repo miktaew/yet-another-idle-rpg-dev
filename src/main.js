@@ -4337,6 +4337,26 @@ function load(save_data) {
                     inform_overall: false,
                 });
             }
+
+            if(dialogues["village elder"].textlines["money"].is_finished) {
+                process_rewards({
+                    rewards: {
+                        textlines: [{dialogue: "village elder", lines: ["other work"]}]
+                    },
+                    inform_overall: false,
+                });
+            }
+
+            if(dialogues["village elder"].textlines["cleared cave"].is_finished) {
+                process_rewards({
+                    rewards: {
+                        locks: {
+                            textlines: [{dialogue:"village elder", lines: ["leave for materials"]}]
+                        }
+                    },
+                    inform_overall: false,
+                })
+            }
         }
 
         Object.keys(save_data.traders).forEach(function(trader) { 

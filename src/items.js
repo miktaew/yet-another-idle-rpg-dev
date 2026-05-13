@@ -1670,6 +1670,12 @@ book_stats["Wood for Witches"] = new BookData({
         value: 5,
         material_type: "raw wood",
     });
+
+    item_templates["Stone brick"] = new Material({
+        description: "A very normal stone brick. Useful for any kind of construction, but available easily enough to not be worth much",
+        value: 8,
+        material_type: "stone brick",
+    });
 	
     item_templates["Belmart leaf"] = new Material({
         description: "Small, round, dark-green leaves with very good disinfectant properties",

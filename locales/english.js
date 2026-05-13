@@ -65,7 +65,32 @@ const english = {
                 +"If your current weapon, armor, or method of attack isn't working, it's much better to run away, reassess, and recover your strength instead of unnecessarily risking your life. "
                 +"Please, be cautious. And consider checking with the village market to get some medicine and supplies. There's no telling how long your journey will take, or what challenges you will face on it. "
                 +"No matter how far you go, just remember that you always have a home in this village.",
-	//
+	"elder other work": "I think I had enough farming for a while, is there any other work to be done around here?",
+    "elder other work answ": "Is that so? Oh, I'm sure there's something... Ah, actually, now that I think about it, there are a few projects I wanted done, but it would be best to "
+                            +"to go about them in order. So, first things first... Well, it's not exactly farming, so I hope you will be okay helping dig out a melioration channel.",
+    "elder finished digging": "I finished digging",
+    "elder finished digging answ": "Oh? That's good, good. Here is your pay, and let me know when you are ready for more work.",
+    "elder other work 2": "So what else did you have for me to do? More digging?",
+    "elder other work 2 answ": "No, no, no more digging, I believe. There is however something very important. See, we don't really have any good way of crossing the river and while it "
+                            +"may seem calm and safe to walk across, it becomes very dangerous after strong rain. We already tried making small bridges, but they wouldn't withstand "
+                            +"the current when river is swollen. So... Our dear craftsman came up with a much better and solid project. He estimated we would need... What was it? 100 wooden logs for the deck of the bridge and 800 stone bricks for "
+                            +"bridge pillars. I know it might seem too ambitious for our community, but it's intended to stand long enough so that future generations will still benefit from it. "
+                            +"We already have a group of volunteers for the work and our craftsman will lead it, so all that's needed is for you to get us the materials and then lend some help with construction.",
+    "elder bridge materials": "What exact materials do I need for the bridge and where can I get them from?",
+    "elder bridge materials answ": "Oh, of course, I should have explained it, shouldn't I? Craftsman said that regular average wood would be the best, being neither too weak nor hard to work with. You can "
+                            +"gather this kind of stuff somewhere deeper in the forest, I'm sure. As for stone bricks, there's a spot near the cave entrance, just a bit to the north, where we used to mine "
+                            +"for raw stone for construction, it will be perfect for this",
+    "elder leave for materials materials": "So, if I need to get wood from the forest, then can I leave the village?",
+    "elder leave for materials materials answ": "I can't deny that you have a good point here, but no, I can't allow that until I can trust you are strong enough to resume traveling",
+    "elder bridge finished": "The bridge is finished",
+    "elder bridge finished answ": "Yes, I saw and heard enough to notice. Wonderful work, I'm really thankful for your help. Here, this is for you.",
+    "elder fireflies": "With bridge completed, what's next?",
+    "elder fireflies answ": "Some villagers already reported problems with huge fireflies on the other side of the river, and they even seem to have poison. Could you try dealing with them?",
+    "elder fireflies killed": "I destroyed fireflies in the vicinity, but there are some more nests further away",
+    "elder fireflies killed answ": "That's good enough, I doubt it would be possible to exterminate them, just like the rats won't ever completely leave.",
+    "elder further work": "Are there more projects now that fireflies are gone?",
+    "elder further work answ": "Not yet, but maybe in time [tbc]",
+    //
     "craftsman description": "You see an old man who clearly experienced a lot in life. He's wearing some handmade accessories. Despite his age, his fingers seem exceptionally nimble.",
             "mofu#craftsman description": "You see an old man with a medium length white tail, who clearly experienced a lot in life. His hair is composed of a black and a white part, with the former very dulled by age. He's wearing some handmade accessories. Despite his age and his massive hands, his fingers seem exceptionally nimble.",
     "craftsman hello": "Hello, I heard you wanted to talk to me?",
@@ -154,7 +179,7 @@ const english = {
             +" \n [Mouse] The big rats, like on the fields... \n [Cat] I would prefer mice, at least those are cute. \n [Mouse] Shut up. \n "
             +"[Cat] So if you could help us with them, it would be great!",
     "millers young": "Aren't you two a bit too young to have a job?",
-    "millers young answ": "Nope, we are both adults, even if barely, but we will take that as a compliment~",
+    "millers young answ": "Did elder call us kids again? But no, we are both adults, even if barely~",
     "millers sure": "Sure, I can deal with them.",
     "millers sure answ": "[Red] Ehehe, thank you~ \n [Gray] We will get you some reward for it later. \n [Red] A bit of money, and maybe a kiss or two~",
     "mofu#millers sure answ": "[Cat] Ehehe, thank you~ \n [Mouse] We will get you some reward for it later. \n [Cat] A bit of money, and maybe a kiss or two~",

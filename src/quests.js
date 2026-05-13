@@ -332,6 +332,24 @@ const questManager = {
         }
     });
 
+    quests["Village expansion"] = new Quest({
+        quest_name: "Village expansion",
+        display_priority: 1,
+        getQuestDescription: ()=>{
+            return "Village elder has a few tasks for you";
+        },
+        quest_tasks: [
+            new QuestTask({task_description: "Dig a melioration channel"}), //talk to elder
+            new QuestTask({is_hidden: true}), //talk after finishing digging
+            new QuestTask({task_description: "Gather matherials (Wood log x200, Stone brick x800) and then help constructing a new bridge"}), //ask what's next thing to do
+            new QuestTask({is_hidden: true}), //report to elder
+            new QuestTask({task_description: "Clear out huge fireflies and then report back"}),
+            new QuestTask({task_description: "[To be continued]"}),
+        ],
+        quest_rewards: {
+        }
+    });
+
     quests["Bonemeal delivery"] = new Quest({
         quest_name: "Bonemeal delivery",
         quest_description: "The farm supervisor is in a dire need of 50 packs of bonemeal, and he needs the entire order delivered in one go.",
