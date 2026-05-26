@@ -156,13 +156,14 @@ class TradeItem {
         location_name: "Village",
         trade_text: "Trade on the village market",
         unlock_message: "You can now visit the village market",
+        profit_margin: 4,
     });
     traders["suspicious trader"] = new Trader({
         name: "suspicious trader",
         inventory_template: "Basic plus",
         is_unlocked: true,
         location_name: "Slums",
-        profit_margin: 5,
+        profit_margin: 6,
     });
     traders["suspicious trader 2"] = new Trader({
         name: "suspicious trader 2",
@@ -170,7 +171,7 @@ class TradeItem {
         inventory_template: "Intermediate",
         is_unlocked: false,
         location_name: "Slums",
-        profit_margin: 4, //rise back to 5 once reputation impact is implemented
+        profit_margin: 6,
     });
     traders["swampland trader"] = new Trader({
         name: "swampland trader",
@@ -257,6 +258,12 @@ class TradeItem {
 
             new TradeItem({item_name: "Camping supplies", count: [1,3], chance: 1}),
             new TradeItem({item_name: "Coil of rope", count: [1,3], chance: 1}),
+
+
+            new TradeItem({item_name: "Old pickaxe", count: [1], chance: 1}),
+            new TradeItem({item_name: "Old axe", count: [1], chance: 1}),
+            new TradeItem({item_name: "Old sickle", count: [1], chance: 1}),
+            new TradeItem({item_name: "Old shovel", count: [1], chance: 1}),
     ];
 
     inventory_templates["Basic plus"] = 
@@ -287,8 +294,8 @@ class TradeItem {
 
             new TradeItem({item_name: "Wooden shield", count: [1], quality: [40, 80]}),
             new TradeItem({item_name: "Wooden shield", count: [1], chance: 0.8, quality: [81, 120]}),
-            new TradeItem({item_name: "Crude iron shield", count: [1], quality: [40, 80]}),
-            new TradeItem({item_name: "Crude iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
+            new TradeItem({item_name: "Cheap iron shield", count: [1], quality: [40, 80]}),
+            new TradeItem({item_name: "Cheap iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
             new TradeItem({item_name: "Iron shield", count: [1], chance: 0.6, quality: [40, 80]}),
             new TradeItem({item_name: "Iron shield", count: [1], chance: 0.4, quality: [81, 120]}),
             new TradeItem({item_name: "Steel shield", count: [1], chance: 0.3, quality: [81, 100]}),
@@ -364,8 +371,8 @@ class TradeItem {
 
         new TradeItem({item_name: "Wooden shield", count: [1], quality: [40, 80]}),
         new TradeItem({item_name: "Wooden shield", count: [1], chance: 0.8, quality: [81, 120]}),
-        new TradeItem({item_name: "Crude iron shield", count: [1], quality: [40, 80]}),
-        new TradeItem({item_name: "Crude iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
+        new TradeItem({item_name: "Cheap iron shield", count: [1], quality: [40, 80]}),
+        new TradeItem({item_name: "Cheap iron shield", count: [1], chance: 0.8, quality: [81, 120]}),
         new TradeItem({item_name: "Iron shield", count: [1], chance: 0.6, quality: [40, 80]}),
         new TradeItem({item_name: "Iron shield", count: [1], chance: 0.4, quality: [81, 120]}),
         new TradeItem({item_name: "Steel shield", count: [1], chance: 0.4, quality: [81, 120]}),
@@ -417,6 +424,7 @@ class TradeItem {
         new TradeItem({item_name: "Medicine for dummies", count: [1], chance: 1}),
         new TradeItem({item_name: "Ode to Whimsy, and other poems", count: [1], chance: 0.4}),
         new TradeItem({item_name: "A Glint On The Sand", count: [1], chance: 0.4}),
+		new TradeItem({item_name: "Wood for Witches", count: [1], chance: 0.2}),
 
         new TradeItem({item_name: "Glass phial", count: [10,16], chance: 1}),
         new TradeItem({item_name: "Glass bottle", count: [6,12], chance: 1}),

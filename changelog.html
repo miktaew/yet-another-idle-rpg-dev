@@ -62,6 +62,68 @@
     </head>
 
 <div id="header">Click on blocks to unfold their content</div>
+<button type="button" class="collapsible">v0.5.5 - The Boring Stuff [testing release: 26/05/2026]</button>
+<div class="content"><pre>
+v0.5.5
+    - most of equipment components are now auto-generated based on certain set of properties; this changes the balance of the equipment by a lot in some cases
+    - expanded Village content again
+
+    - most of woodcutting actions now have a small chance to drop tree sap, which can be used to make a potion that will quickly deplete your stamina, for all fans of the 'Persistence' skill    
+    - added milestones on "Shield blocking" skill
+    - added an alternative game action for progressing one quest, stupid and with stupidly high requirements, because people asked (and I don't care that they did so jokingly)
+    - multiplicative effects on items now have a better scaling with item rarity (with some exceptions, like attack speed on armor)
+    - some of resource gathering activities now scale up to 100% chance but had slightly increased lvl needed for full efficiency
+    - greatly reduced material costs of chainmail
+    - changed action texts for ant nest searches to make it easier to understand that they are subsequent actions and not one that's bugged
+    - unique items no longer show value in tooltips
+    - added a new textline to clear out some confusion with one of quests
+    - added simple background color change for day-night cycle, affected by weather, with separate color for roofed locations; disabled by default, just like background animations
+    - moved the 'hide maxxed skills' option from options panel to skill box
+    - added an option to use a dynamically updated message for displaying loot (from combat/gathering) instead of logging everything separately, removed the option of logging summary at the end of gathering
+        * implemented from scratch, but inspired by a similar solution in a mod by Haylen https://gautech.github.io/experimental-idle-rpg/
+    - slightly increase bonemeal quest reward
+    - slightly increased some trader profit margins
+
+    - display conditions for location actions are now properly supported
+    - crafting recipes' results can now be fuzzy (instead of success/failure, it can be a partial success)
+    - active effects' code will now skip stat updates if effect was already present and only had its duration extended
+    - stat recalcs will now update shield tooltips only when needed (i.e. when that stat actually changed)
+    - font used on loading page is now included in files, in case your system does not support it by default
+
+    - updated translationManager to use translations provided in separate files instead of cramming everything in one
+    - changed the way DOM is manipulated by moving away from using innerHTML
+    - refactored tooltip movement code, reducing it to a much more manageable form
+    - rewards objects can now include dialogue locking
+    - any logged message will now replace "%HeroName%" with character name
+
+    - fixed a minor issue that could have caused problems with crafting xp gains if someone were to reach max level in a crafting skill (wasn't possible without cheating)
+    - fixed a minor display bug where if a shield was marked for trade, it would [purely visually] reappear in original owner's inventory if a stat recalc happened in the meantime
+    - fixed a minor display bug with prices not reflecting market saturiation upon initial trade entry
+    - activity unlocks will no longer be logged in messages if other conditions of accessing it are not yet met
+
+    courtesy of OnonokiNonon:
+        * an item log
+            - items not yet obtained are now displayed as "????" in gathering rewards (also in bestiary tooltips, but that was added later by Mik)
+        * some new recipes
+        * refactoring of code related to activities
+        * refactoring of crafting code:
+            - areas can have different crafting categories available
+            - recipes that use material types (e.g. charcoal) can mix ingredients
+            - component recipes appear permanently after discovering their material
+        * added cooking stations to mountain camp and to lake camp
+        * made it possible for materials to have quality (currently used on fish)
+        * item quality is now displayed in inventory instead of being only in tooltips
+        * health/stamina drains are now displayed directly on their bars
+    courtesy of Bram-Nordvegr:
+        * a new location and a new challenge zone
+        * a two new types of wood
+        * some new recipes
+    courtesy of Erlemar:
+        * a new gathering spot
+    courtesy of Nicholas Biles:
+        * text fixes/tweaks
+</pre></div>
+
 
 <button type="button" class="collapsible">v0.5.1  [testing release: 31/01/2026 / main release: 15/02/2026]</button>
 <div class="content"><pre>
@@ -162,9 +224,6 @@ v0.5.1.6
     - fixed minor issue with exponent threshold sometimes being saved incorrectly
     - fixed a minor display issue upon adding item to trade and then cancelling
     - fixed inventory sorting when sorting by name
-
-======= released to main    
-
 v0.5.1.7
     - fixed a bug when removing favourited equippable from inventory
     - "Swimming" skill description now mentions reducing 'aquatic' penalty
@@ -177,6 +236,9 @@ v0.5.1.9
 v0.5.1.10
     - fixed health regeneration tooltip (%-based values were displayed as 100x larger than they should be)
     - additional effect of shield skill (%-based reduction to overall damage) no longer applies to training shield
+
+======= released to main    
+
 </pre></div>
 
 <button type="button" class="collapsible">v0.5.0 - The Whimsy Edition: Quests, Weather, kemonomimi, and a lot of other things  [testing release: 28/11/2025 / main release: 30/12/2025] </button>
@@ -428,9 +490,6 @@ v0.5.0.26
     - replies in dialogues are now aligned to left instead of being centered
 v0.5.0.27
     - fixed a bug with finishing actions
-
-======= released to main
-
 v0.5.0.28
     - fixed a bug with drop chances, where penalty for attack target count used the size of enemy group instead, no matter how many were being attacked at once
     - fixed a bug where xp gains per tick for every book were being defaulted to 1 instead of using whatever values were assigned    
@@ -625,9 +684,6 @@ v0.4.6.36
     - code is now bundled
 v0.4.6.37
     - fixed a bug with additional attack power of heavier weapon handles not being included in calculations (therefore doing nothing)
-
-======= released to main
-
 v0.4.6.38
     - fixed a bug where newly unlocked beds were not automatically added to fast travel and required save+reload to appear there
     - fixed a bug where for older saves 'Shack' was initially not in the fast travel list and required save+reload to appear there

@@ -41,14 +41,28 @@ const task_type_names = {
 }
 
 //skill-tag mapping for when consumables are used
+//also gets used for effects from other sources
 const skill_consumable_tags = {
     "Medicine": "medicine",
-    "Gluttony": "food"
+    "Gluttony": "food",
+    "Poison resistance": "poison",
 }
 
 //additional skill-tag mapping for crafting
 const crafting_tags_to_skills = {
     "medicine": "Medicine",
+}
+
+function clamp(x, min, max) {
+    return Math.max(Math.min(x, max), min);
+}
+
+function random_range(min, max) {
+    return Math.floor(Math.random() * (max-min) + min);
+}
+
+function slerp(arr, t) {
+    return arr[0] * (arr[1] / arr[0]) ** t;
 }
 
 function expo(number, precision = 3)
@@ -201,9 +215,7 @@ function calculate_luminance({r, g, b}) {
 
     let a = [r, g, b].map((v) => {
             v /= 255;
-            return v <= 0.03928
-            ? v / 12.92
-            : Math.pow((v + 0.055) / 1.055, gamma);
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, gamma);
         }
     );
     return a[0] * red + a[1] * green + a[2] * blue;
@@ -230,10 +242,91 @@ function select_outline_class(color_hex) {
     }
 }
 
-export { expo, format_reading_time, format_working_time, 
+/**
+ * for loading older saves
+ */
+const component_name_mapping = {
+    "Simple short wooden hilt" : "Simple wooden short handle",
+    "Short wooden hilt" : "Wooden short handle",
+    "Short ash wood hilt" : "Ash wood short handle",
+    "Short weak bone hilt" : "Weak bone short handle",
+    "Cheap short iron hilt" : "Cheap iron wooden short handle",
+    "Short iron hilt" : "Iron short handle",
+    "Short steel hilt" : "Steel short handle",
+    "Turtleshell hilt": "Turtleshell short handle",
+
+    "Simple medium wooden handle": "Simple wooden medium handle",
+    "Medium wooden handle": "Wooden medium handle",
+    "Medium ash wood handle": "Ash wood medium handle",
+    "Medium weak bone handle": "Weak bone medium handle",
+    "Cheap medium iron handle": "Cheap iron medium handle",
+    "Medium iron handle": "Iron medium handle",
+    "Medium steel handle": "Steel medium handle",
+    "Turtleshell handle": "Turtleshell medium handle",
+
+    "Simple long wooden shaft": "Simple wooden long handle",
+    "Long wooden shaft": "Wooden long handle",
+    "Long ash wood shaft": "Ash wood long handle",
+    "Long weak bone shaft": "Weak bone long handle",
+    "Cheap long iron shaft": "Cheap iron long handle",
+    "Long iron shaft": "Iron long handle",
+    "Long steel shaft": "Steel long handle",
+    "Turtleshell shaft": "Turtleshell long handle",
+
+    "Basic shield handle": "Simple wooden shield handle",
+    "Crude wooden shield base": "Simple wooden shield base",
+    "Crude iron shield base": "Cheap iron shield base",
+
+    "Cheap short iron blade": "Cheap iron short blade",
+    "Short iron blade": "Iron short blade",
+    "Short steel blade": "Steel short blade",
+
+    "Cheap long iron blade": "Cheap iron long blade",
+    "Long iron blade": "Iron long blade",
+    "Long steel blade": "Steel long blade",
+
+    "Turtleshell chestplate": "Turtleshell chestplate armor",
+    "Alligator leather helmet armor": "Alligator helmet armor",
+    "Alligator leather chestplate armor": "Alligator chestplate armor",
+    "Alligator leather greaves": "Alligator greaves",
+    "Alligator leather glove armor": "Alligator glove armor",
+    "Alligator leather shoe armor": "Alligator shoe armor",
+    "Alligator leather armor": "Alligator armor",
+
+    "Steel chainmail shoes": "Steel chainmail shoe armor",
+    "Steel chainmail glove": "Steel chainmail glove armor",
+};
+
+/**
+ * for loading older saves
+ */
+const item_mapping = {
+    "Piece of rough wood": {item_id: "Rough wood log", item_count: 0.2},
+    "Piece of wood": {item_id: "Wood log", item_count: 0.2},
+    "Piece of ash wood": {item_id: "Ash wood log", item_count: 0.2},
+}
+
+
+/**
+ * Translates component names from pre-autofilling to post-autofilling
+ * @param {*} name 
+ * @returns 
+ */
+function get_component_name(name) {
+    return component_name_mapping[name] || name;
+}
+
+function get_item_mapping(item_id) {
+    return item_mapping[item_id] || {item_id, item_count: 1};
+}
+
+export {
+    expo, random_range, clamp, slerp, format_reading_time, format_working_time, 
         get_hit_chance, round_item_price,
         compare_game_version, is_a_older_than_b,
         stat_names, task_type_names, skill_consumable_tags, crafting_tags_to_skills,
         celsius_to_fahrenheit,
-        select_outline_class
+        select_outline_class,
+        component_name_mapping, get_component_name,
+        get_item_mapping
     };
