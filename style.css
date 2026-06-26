@@ -71,6 +71,9 @@
     --race_choice_tooltip_top: 0px;
     --race_choice_tooltip_left: 0px;
 
+    --character_race_tooltip_top: 0px;
+    --character_race_tooltip_left: 0px;
+
 	--actions_div_height_default: 420px;
 	--actions_div_height_combat: 120px;
 	--actions_div_height: var(--actions_div_height_default);
@@ -352,7 +355,7 @@ input[type=checkbox], input[type=radio] {
                 .race_choice_tooltip {
                     top: var(--race_choice_tooltip_top);
                     left: var(--race_choice_tooltip_left);
-                    max-width: 450px;
+                    max-width: 400px;
                     min-width: 150px;
                     width: max-content;
                 }
@@ -814,7 +817,7 @@ input[type=checkbox], input[type=radio] {
 	width: fit-content;
 }
 
-.item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, #export_button_tooltip, .race_choice_tooltip {
+.item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, #export_button_tooltip, .race_choice_tooltip, .character_race_tooltip {
 	display: none;
 	text-align: left;
 	color: white;
@@ -1172,7 +1175,7 @@ input[type=checkbox], input[type=radio] {
 .character_control_button {
 	float:left;
 	padding: 6px;
-	min-width: 119.3px;
+	min-width: 86px;
 	font-size: 14px;
 	text-align: center;
 	margin: 1px;
@@ -1950,6 +1953,31 @@ i {
 	top: 3px;
 	display: none;
 }
+
+#character_bio_div { 
+	margin: auto;
+	width: 350px;
+	position: relative;
+	top: 10px;
+    display: none;
+}
+
+.character_bio_entry { 
+	margin: 10px;
+    border: 2px solid gray;
+    padding: 4px;
+}
+    .character_race_div:hover .character_race_tooltip {
+        display: block;
+    }
+    .character_race_tooltip {
+        display: none;
+        top: var(--character_race_tooltip_top);
+        left: var(--character_race_tooltip_left);
+        max-width: 480px;
+        min-width: 150px;
+        width: max-content;
+    }
 
 #character_tools_div {
 	display: none;

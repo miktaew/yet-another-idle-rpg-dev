@@ -350,19 +350,6 @@ class ItemComponent extends Item {
         }
     }
 
-    calculateRarity(quality) {
-        let rarity;
-        if(quality < 50) rarity =  "trash";
-        else if(quality < 100) rarity = "common";
-        else if(quality < 130) rarity = "uncommon";
-        else if(quality < 160) rarity = "rare";
-        else if(quality < 200) rarity = "epic";
-        else if(quality < 246) rarity = "legendary";
-        else rarity = "mythical";
-
-        return rarity;
-    }
-
     getStats() {
         return this.component_stats;
     }

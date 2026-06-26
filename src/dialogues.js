@@ -759,6 +759,14 @@ class DialogueAction extends GameAction {
                 floating_click_effects: ['(ノ= ⩊ = )ノ', '( ´･･)ﾉ'],
                 description: "",
                 action_text: "",
+                success_texts: ["guard try answ", "guard try answ too short"],
+                getSuccessText: function(context) {
+                    if(context.character.getUniversalHeight() === "very short") {
+                        return this.success_texts[1];
+                    } else {
+                        return this.success_texts[0];
+                    }
+                },
                 success_text: "guard try answ",
                 attempt_duration: 0,
                 success_chances: [1],

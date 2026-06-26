@@ -5,8 +5,8 @@
         
         <script type="module" src="resources/js/HackTimer/HackTimer.min.js"></script>
 
-        <script type='module' src="dist/bundle.js?version=v0.5.5.30"></script>
-        <!--script type="module" src="src/main.js"></script-->
+        <!--script type='module' src="dist/bundle.js?version=v0.5.5.30"></script-->
+        <script type="module" src="src/main.js"></script>
 
         <!--Icons-->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -678,16 +678,16 @@
                             <div id = "storage_sort_by_type" class = "storage_sorting_button" onclick='sortStorageInventory("type")' data-translation="ui sort type"></div>
                         </div>
                         <div id = "storage_category_buttons" class="activable_buttons">
-                            <div id = "storage_category_all" class = "storage_category_button active_selection_button" onclick='showAllStorageItems()'>
+                            <div id = "storage_category_all" class = "storage_category_button active_selection_button" onclick='switchStorageItemVisibility()'>
                                 all
                             </div>
-                            <div id = "storage_category_equipment" class = "storage_category_button" onclick="showOnlyStorageEquipment()">
+                            <div id = "storage_category_equipment" class = "storage_category_button" onclick="switchStorageItemVisibility('equipment')">
                                 equipment
                             </div>
-                            <div id = "storage_category_usable" class = "storage_category_button" onclick="showOnlyStorageConsumables()">
+                            <div id = "storage_category_usable" class = "storage_category_button" onclick="switchStorageItemVisibility('consumables')">
                                 usable
                             </div>
-                            <div id = "storage_category_other" class = "storage_category_button" onclick="showOnlyStorageOther()">
+                            <div id = "storage_category_other" class = "storage_category_button" onclick="switchStorageItemVisibility('other')">
                                 other
                             </div>
                         </div>
@@ -983,7 +983,7 @@
                     </div>
                     <div id = "character_control_div" class="activable_buttons">
                         <div id = "character_show_stats" class = "character_control_button active_selection_button" onclick = "showCharacterStats()" data-translation="ui show stats"></div>
-                        <!--div id = "character_show_stats" class = "character_control_button" onclick = "showCharacterBio()" data-translation="ui show bio"></div-->
+                        <div id = "character_show_stats" class = "character_control_button" onclick = "showCharacterBio()" data-translation="ui show bio"></div>
                         <div id = "character_show_equipment" class = "character_control_button" onclick = "showCharacterEquipment()" data-translation="ui show equipment"></div>
                         <div id = "character_show_tools" class = "character_control_button" onclick = "showCharacterTools()" data-translation="ui show tools"></div>
                     </div>
@@ -1192,27 +1192,21 @@
                 document.documentElement.style.setProperty('--trader_other_display', 'inline-block');
             }
 
-            function showAllStorageItems() {
-                document.documentElement.style.setProperty('--storage_equipment_display', 'inline-block');
-                document.documentElement.style.setProperty('--storage_consumable_display', 'inline-block');
-                document.documentElement.style.setProperty('--storage_other_display', 'inline-block');
-            }
-            function showOnlyStorageEquipment() {
-                document.documentElement.style.setProperty('--storage_equipment_display', 'inline-block');
-                document.documentElement.style.setProperty('--storage_consumable_display', 'none');
-                document.documentElement.style.setProperty('--storage_other_display', 'none');
-            }
-            function showOnlyStorageConsumables() {
-                document.documentElement.style.setProperty('--storage_equipment_display', 'none');
-                document.documentElement.style.setProperty('--storage_consumable_display', 'inline-block');
-                document.documentElement.style.setProperty('--storage_other_display', 'none');
-            }
-            function showOnlyStorageOther() {
-                document.documentElement.style.setProperty('--storage_equipment_display', 'none');
-                document.documentElement.style.setProperty('--storage_consumable_display', 'none');
-                document.documentElement.style.setProperty('--storage_other_display', 'inline-block');
-            }
+            const storage_variables = {
+                equipment: "--storage_equipment_display", 
+                consumables: "--storage_consumable_display",
+                other: "--storage_other_display"
+            };
 
+            function switchStorageItemVisibility(target_group) {
+                Object.keys(storage_variables).forEach(key => {
+                    if(!target_group || key === target_group) {
+                        document.documentElement.style.setProperty(storage_variables[key], 'inline-block');
+                    } else {
+                        document.documentElement.style.setProperty(storage_variables[key], 'none');
+                    }
+                });
+            }
 
             function showCombatMessages() {
                 if(document.documentElement.style.getPropertyValue('--message_combat_display') !== "none") {
@@ -1283,10 +1277,10 @@
             }
 
             function showCharacterStats() {
-                changeTab(document.getElementById("character_stats_div"), "");
+                changeTab(document.getElementById("character_stats_div"));
             }
             function showCharacterBio() {
-                changeTab(document.getElementById("character_bio_div"), "");
+                changeTab(document.getElementById("character_bio_div"));
             }
             function showCharacterEquipment() {
                 changeTab(document.getElementById("character_equipment_div"), "grid");
@@ -1727,6 +1721,9 @@
                 const location_types_div = document.getElementById("location_types_div");
                 const bestiary_box_div = document.getElementById("bestiary_box_div");
                 const books_box_div = document.getElementById("books_box_div");
+                const character_bio_div = document.getElementById("character_bio_div");
+                const hero_race_selection = document.getElementById("hero_creation_panel_race_selection");
+
 
                 const stats_div = document.getElementById("character_stats_div");
                 const bar_divs = document.getElementsByClassName("character_bar_tooltip");
@@ -1775,7 +1772,17 @@
                         left_variable: "--bestiary_entry_tooltip_left",
                         target_classes: ["anthology_entry_div"],
                         left_side: true,
-                    }
+                    },
+                    {
+                        element: character_bio_div,
+                        top_variable: "--character_race_tooltip_top",
+                        left_variable: "--character_race_tooltip_left",
+                    },
+                    {
+                        element: hero_race_selection,
+                        top_variable: "--race_choice_tooltip_top",
+                        left_variable: "--race_choice_tooltip_left",
+                    },
                 ];
 
                 const elements_with_unrestricted_tooltips = [
@@ -1831,11 +1838,13 @@
                 });
                 
                 elements_with_restricted_tooltips.forEach(entry => {
-                    entry.element.addEventListener('mousemove', (event) => move_restricted_tooltip({
-                            event, 
-                            ...entry,
-                        }
-                    ));
+                    if(entry.element) {
+                        entry.element.addEventListener('mousemove', (event) => move_restricted_tooltip({
+                                event, 
+                                ...entry,
+                            }
+                        ));
+                    }
                 });
 
                 elements_with_unrestricted_tooltips.forEach(entry => {

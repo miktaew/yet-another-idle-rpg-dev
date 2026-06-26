@@ -364,9 +364,14 @@ function Verify_Game_Objects() {
                 console.error(`Action "${action_key}" in "${key}" has no translation provided for starting text for your chosen language "${language}"`);
             }
             if(!translations[language][action.success_text]) {
-                //might miss something if there are multiple options provided
                 has_issue = true;
                 console.error(`Textline "${action_key}" in "${key}" has no translation provided for success text for your chosen language "${language}"`);
+            }
+            for(let i = 0; i < action.success_texts.length; i++) {
+                if(!translations[language][action.success_texts[i]]) {
+                    has_issue = true;
+                    console.error(`Textline "${action_key}" in "${key}" has no translation provided for success text #${i} (translation key: '${action.success_texts[i]}' for your chosen language "${language}"`);
+                }
             }
         }
 

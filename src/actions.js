@@ -14,6 +14,8 @@ class GameAction{
         description,
         action_text,
         success_text,
+        success_texts = [],
+        getSuccessText,
         failure_texts = {},
         required = {},
         display_conditions = {},
@@ -49,6 +51,8 @@ class GameAction{
         this.success_text = success_text; //text displayed on success
                                           //if action is supposed to be "impossible" for narrative purposes, just make it finish without unlocks and with text that says it failed
         
+        this.success_texts = success_texts; //array; the idea is to use this for getSuccessText if it's not default, so that possible results can still be checked by verifier
+        this.getSuccessText = getSuccessText || function(){return this.success_text};
         this.required = required; 
         //things needed to be able to make an attempt
         //uses similar format as conditions, but is a single object instead of an array of up to two

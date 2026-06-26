@@ -184,6 +184,7 @@ const dialogues = {
     "guard pats answ": "[She smiles and pats your head a few more times]",
     "guard try": "[Try to pat her head]",
     "guard try answ": '[Nuh uh. She pats your head instead~~~]',
+    "guard try answ too short": "[You're too short to reach, though she seems to find your attempts cute. She pats your head instead~~~]",
     "guard teach more": "Can you teach me something more?",
     "guard teach more answ": "I'm sorry, but no, that will have to be enough. Trust me, I'm generally a terrible teacher, I know that from experience. It will be better for you to not get any bad habits because of me.",
     

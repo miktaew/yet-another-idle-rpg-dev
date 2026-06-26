@@ -1,5 +1,16 @@
 "use strict";
 
+/*
+
+
+
+    RACES ARE CURRENTLY COSMETIC ONLY, BUT BONUSES ARE FUNCTIONAL IF UNCOMMENTED
+    JUST REMEMBER TO REMOVE THE NOTE ON HERO CREATION PANEL ABOUT HOW NOTHING THERE IMPACTS GAMEPLAY
+
+
+
+*/
+
 class Race {
     /**
      * 
@@ -29,14 +40,19 @@ const race_tags = {
     DEFAULT: "default", //only use it for one race
 }
 
+const racial_height_modifiers = {
+    human: 0,
+    nekomimi: -5,
+    nezumimi: -5,
+    inumimi: 0,
+    kitsunemimi: -5,
+    elf: +10,
+    "half-elf": +5,
+    dwarf: -30,
+    "half-dwarf": -15,
+};
 
 
-/*
-
-    RACES ARE CURRENTLY COSMETIC ONLY, BUT BONUSES ARE FUNCTIONAL IF UNCOMMENTED
-    JUST REMEMBER TO REMOVE THE NOTE ON HERO CREATION PANEL ABOUT HOW NOTHING THERE IMPACTS GAMEPLAY
-
-*/
 
 const playable_races = {
     "human": new Race({
@@ -65,6 +81,13 @@ const playable_races = {
             Swimming: 0.7,
             "Shield blocking": 0.5,
         }*/
+    }),
+    "nezumimi": new Race({
+        name: "mouse name",
+        alternative_name: "mouse alt name",
+        description: "mouse desc",
+        //gameplay_description: "mouse gameplay desc",
+        tags: [race_tags.COMMON, race_tags.KEMONOMIMI],
     }),
     "inumimi": new Race({
         name: "dog name",
@@ -200,4 +223,4 @@ Object.keys(playable_races).forEach(race_key => {
 })
 
 
-export { playable_races };
+export { playable_races, racial_height_modifiers };

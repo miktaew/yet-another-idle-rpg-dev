@@ -1,7 +1,7 @@
 "use strict";
 
 import { character } from "./character.js";
-import { capitalize_first_letter, uncapitalize_first_letter } from "./display.js";
+import { capitalize_first_letter, create_race_tooltip, uncapitalize_first_letter } from "./display.js";
 import { global_flags, language, run } from "./main.js";
 import { playable_races } from "./races.js";
 import { translationManager } from "./translation.js";
@@ -46,7 +46,7 @@ class CharacterCreator {
             race_button.innerText += `\n(${uncapitalize_first_letter(translationManager.getText(language, race.alternative_name))})`;
         }
 
-        race_button.appendChild(this.create_race_tooltip(race));
+        race_button.appendChild(create_race_tooltip(race, "race_choice_tooltip"));
 
         if(race.tags.default) {
             race_button.classList.add("race_selection_button_active");
@@ -56,48 +56,6 @@ class CharacterCreator {
         } else {
             document.getElementById("hero_creation_panel_race_furless").appendChild(race_button);
         }
-    }
-
-    create_race_tooltip(race) {
-        const tooltip = document.createElement("div");
-        tooltip.classList.add("race_choice_tooltip");
-
-        let tooltip_content = "";
-
-        tooltip_content += translationManager.getText(language, race.description);
-        if(race.gameplay_description) {
-            tooltip_content += "\n\n" + translationManager.getText(language, race.gameplay_description);
-        }
-
-        if(Object.keys(race.stats).length > 0) {
-            tooltip_content += `\n`;
-        }
-
-        Object.keys(race.stats).forEach(effect_key => {
-            if(race.stats[effect_key].multiplier != null) {
-                tooltip_content +=
-            `\n${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
-            }
-        });
-
-        /*
-        //SKILLS ARE SKIPPED AS TO NOT SPOILER THEM, INSTEAD THE IMPACT IS VAGUELY IMPLIED IN DESCRIPTIONS
-
-        if(Object.keys(race.stats).length !== 0 && Object.keys(race.xp_multipliers).length !== 0) {
-            tooltip_content += "\n";
-        }
-
-        Object.keys(race.xp_multipliers).forEach(effect_key => {
-            if(race.xp_multipliers[effect_key] != null) {
-                tooltip_content +=
-            `\n${capitalize_first_letter(translationManager.getText(language, effect_key))}: x${race.xp_multipliers[effect_key]}`;
-            }
-        });
-        */
-        tooltip.innerText = tooltip_content;
-                
-
-        return tooltip;
     }
 
     confirm_hero_creation() {

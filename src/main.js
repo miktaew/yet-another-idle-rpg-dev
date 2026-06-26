@@ -120,7 +120,7 @@ const dev_save_key = "dev save data";
 const backup_key = "backup save";
 const dev_backup_key = "dev backup save";
 
-const do_hero_creation = false;
+const do_hero_creation = true;
 
 const global_flags = {
     is_gathering_unlocked: false,
@@ -852,7 +852,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         if(action_result > Math.random()) {
             //win
 
-            result_message = action.success_text;
+            result_message = action.getSuccessText({character});
             if(!action.repeatable) {
                 lock_action({dialogue_key, location_key: current_location.id, action_key});
             } else {
@@ -5734,7 +5734,7 @@ function run() {
     }
     
     update_displayed_health();
-    //fill_character_bio();
+    fill_character_bio();
         
     start_date = Date.now();
     update();
