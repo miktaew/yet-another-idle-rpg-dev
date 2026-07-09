@@ -50,7 +50,7 @@ const dialogues = {
                     +"Before that, maybe get some sleep? Some folks prepared that shack over there for you. It's clean, it's dry, and it will give you some privacy. ",
     "elder leave 3": "Can I leave the village?",
     "elder leave 3 answ":  "You still need to get stronger.",
-    "elder room clear": "I dealt with some rats in the cave, but is there anything else to help with?",
+    "elder room clear": "I dealt with some rats in the cave, but is there anything else to help with before I go deeper?",
     "elder room clear answ": "Ahh, good to hear you are making progress. Let me think... Could you check on the eastern mill? I'm a bit worried if the two kids running it can manage everything by themselves.",
     "elder cave clear":  "I cleared the cave. Most of it, at least",
     "elder cave clear answ": `Then I can't call you "too weak" anymore, can I? You are free to leave whenever you want, but still, be careful. You might also want to ask the guard for some tips about the outside. She used to be an adventurer.`,
@@ -141,10 +141,11 @@ const dialogues = {
     "mofu#craftsman about guard answ": "Ahhh, our fierce she-wolf... She once wanted to be an adventurer, but I believe it didn't work out for her. Hard work is not enough when talent is lacking nor can it allow one to conquer fate. Still, she's a good girl and keeps us safe now.",
     
     //VILLAGE GUARD
-    "guard description": "You see a woman in a set of light armor, with a spear in her hand and two daggers on her belt. There's a scar across her face.",
+    "guard description": "You see a woman in a set of light armor, with a spear in her hand and two daggers on her belt. There's a scar across her face. She's got her hair in a wolfcut.",
     "mofu#guard description": "You see a tall woman in light armor, with a spear in her hand and two daggers on her belt. "
-            +"Her sharp fuzzy ears rotate every now and then towards any new sound, while her fluffy tail remains motionless. There's a scar across her face."
-            +" When she spots you, she looks at you as if you were prey, but then her expression softens a lot.",
+            +"Her sharp fuzzy ears rotate every now and then towards any new sound, while her fluffy tail remains motionless, giving her an appearance of a wild wolf. "
+            +"There's a scar across her face. She's got her hair in a wolfcut, which matches her wolfish appearance quite well on more than just lexical level. "
+            +"When she spots you, she looks at you as if you were prey, but then her expression softens a lot.",
     "guard hello": "Hello?",
     "guard hello answ": "Hello. I see you are finally leaving, huh?",
     
@@ -189,8 +190,8 @@ const dialogues = {
     "guard teach more answ": "I'm sorry, but no, that will have to be enough. Trust me, I'm generally a terrible teacher, I know that from experience. It will be better for you to not get any bad habits because of me.",
     
     //VILLAGE MILLERS
-    "millers description": "You see two teenagers with mischievous looks on their faces. It's only with a great deal of effort that you manage to recognize them both as males. One of them has red hair, the other gray.",
-    "mofu#millers description": "You see two teenagers with mischievous looks on their faces. One has cat ears and a fluffy tail, the other mouse ears and a tail with barely any hair on it. It's only with great deal of effort that you manage to recognize them both as males. The cat has red hair, the mouse gray.",
+    "millers description": "You see two teenagers with mischievous looks on their faces. It's only with a great deal of effort that you manage to recognize them both as men. One of them has red hair, the other gray.",
+    "mofu#millers description": "You see two teenagers with mischievous looks on their faces. It's only with great deal of effort that you manage to recognize them both as men. One has cat ears, red hair, and a fluffy tail, the other has mouse ears, gray hair, and a tail with barely any hair on it.",
 
     "millers hello": "Hello there",
     "millers hello answ": "[Red] Hi~! \n [Gray]: Hello",
@@ -202,7 +203,7 @@ const dialogues = {
             +" \n [Mouse] The big rats, like on the fields... \n [Cat] I would prefer mice, at least those are cute. \n [Mouse] Shut up. \n "
             +"[Cat] So if you could help us with them, it would be great!",
     "millers young": "Aren't you two a bit too young to have a job?",
-    "millers young answ": "Did elder call us kids again? But no, we are both adults, even if barely~",
+    "millers young answ": "Did elder call us kids again? He refers to half of the village this way. And no, we are both adults, even if barely~",
     "millers sure": "Sure, I can deal with them.",
     "millers sure answ": "[Red] Ehehe, thank you~ \n [Gray] We will get you some reward for it later. \n [Red] A bit of money, and maybe a kiss or two~",
     "mofu#millers sure answ": "[Cat] Ehehe, thank you~ \n [Mouse] We will get you some reward for it later. \n [Cat] A bit of money, and maybe a kiss or two~",
@@ -237,7 +238,7 @@ const dialogues = {
     "mofu#millers reject mean answ": "[Cat] Whatever you say~",
     "millers kiss more": "Can I get one more kiss?",
     "millers kiss more answ": "[Red] Hmmm... should we? \n[Gray] Maybe some other time. \n[Red] You heard him~",
-    "mofu#millers kiss more answ": "[Cat] Hmmm... should we? \n[Mouse] Maybe some other time. \n[Mouse] You heard him~",
+    "mofu#millers kiss more answ": "[Cat] Hmmm... should we? \n[Mouse] Maybe some other time. \n[Cat] You heard him~",
     "millers how2": "So, how's it going?",
     "millers how2 answ": "[Red] Kinda boring, but at least company is good. \n[Gray] What he said.",
     "mofu#millers how2 answ": "[Cat] Kinda boring, but at least company is good. \n[Mouse] What he said.",
@@ -642,6 +643,10 @@ const dialogues = {
     "swampscout foraging answ": "Alright... Sit down on the bed, and I'll tell you... about what I've seen over the years.",
 };
 
+const misc_texts = {
+    "go back": "Go back",
+}
+
 const racial = {
     "human name": "Human",
     "human desc": "The most basic and common race, unique by it's lack of unique characteristics. Average in almost every aspect, yet powerful as a whole.",
@@ -673,9 +678,15 @@ const racial = {
 
     "fox name": "Kitsunemimi",
     "fox alt name": "Fox person",
-    "fox desc": "Kitsunemimi are a perfect blend of human and fox, equipped with some strenghts of both. They are intelligent, cunning and agile, with some outstanding magical abilities, "
+    "fox desc": "Kitsunemimi are a perfect blend of human and fox, equipped with some strengths of both. They are intelligent, cunning and agile, with some outstanding magical abilities, "
                 +"but are not very strong physically. They are of similar stature to humans, but are more slender. Their dietary preferences are very average, except for"
                 +"some strange fascination with fried tofu. Like nekomimi and elves, they have tendency to be very proud, making use of their beauty and grace.",
+
+    "rabbit name": "Usagimimi",
+    "rabbit alt name": "Rabbit person",
+    "rabbit desc": "Usamimi are a perfect blend of human and rabbit, equipped with some strengths of both. They are perceptive and fast, able to outrun most of the opponents, "
+                +"but somewhat vulnerable physically. They are shorter and more slender than humans. They are heavily herbivorous, but can occasionally eat meat if there's no other choice. "
+                +"They usually hang up in groups and are very cooperative, but are also rather easy to startle and don't have reputation for bravery.",
 
     "lizard name": "Lizardkin",
     "lizard desc": "Lizardkin are a blend of humans and lizards. They have large lizard tails and tend to have patches of scales on their bodies, usually on face and/or near their hands "
@@ -735,6 +746,21 @@ const ui = {
     "ui show stats": "Stats",
     "ui show bio": "Bio",
     "ui show tools": "Tools",
+
+    "option textsize": "Increase textsize for dialogues and activities",
+    "option bar outline": "Text outline on xp/stamina/mana/health bars",
+    "option tooltip outline": "Text outline in item tooltips",
+    "option bed return": "Return to last bed upon defeat",
+    "option remember filters": "Remember message log filters",
+    "option dont autoswitch": "Don't autoswitch out from inventory when starting combat",
+    "option dynamic message": "Use a single dynamically updated message for loot",
+    "option scientific notation": "Use scientific notation for values over:",
+    "option fahrenheit": "Use Fahrenheit instead of Celsius",
+    "option animate background": "Enable rain/snow/stars animations",
+    "option background color": "Enable light-level based background color change",
+    "option combat animation": "Enable on-hit / on-appear animations for enemies",
+    "option skip loading": "Automatically skip the loading screen",
+    "option kemonomimi": "Enable kemonomimi mode",
 };
 
 const bio = {
@@ -824,6 +850,18 @@ const skills = {
     "Haggling": "Haggling",
 };
 
-const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio};
+const locations = {
+    "sleep text generic": "Take a nap",
+    "sleep text bedroll": "Take a nap on the bedroll",
+    "sleep text cot": "Take a nap on the cot",
+    "sleep text open cot": "Lie down on an open cot",
+}
+
+const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...misc_texts, ...locations};
+
+const translations_for_verifier = { dialogues, racial, ui, stats, skills, bio, misc_texts, locations };
+//kept separately so that it's also possible to check for accidental overwrites
 
 export default english;
+
+export { translations_for_verifier };

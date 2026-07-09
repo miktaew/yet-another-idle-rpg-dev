@@ -1,6 +1,7 @@
 "use strict";
 
-import { skills } from "./skills.js";
+import { skills } from "./data/skills.js";
+import { get_context } from "./main.js";
 
 
 const speed_modifiers_from_skills = {};
@@ -54,7 +55,7 @@ class Pathfinder {
 
     update_time_skill_modifiers() { //probably useless
         Object.keys(speed_modifiers_from_skills).forEach(skill_id => {
-            speed_modifiers_from_skills[skill_id] = 1/(max_modifier_from_skill**(skills[skill_id].current_level/skills[skill_id].max_level));
+            speed_modifiers_from_skills[skill_id] = 1/(max_modifier_from_skill**(skills[skill_id].getCurrentLvl()/skills[skill_id].max_level));
         });
     }
 
@@ -63,7 +64,7 @@ class Pathfinder {
      * @param {*} skill_id 
      */
     update_time_skill_modifier(skill_id) {
-        speed_modifiers_from_skills[skill_id] = 1/(max_modifier_from_skill**(skills[skill_id].current_level/skills[skill_id].max_level));
+        speed_modifiers_from_skills[skill_id] = 1/(max_modifier_from_skill**(skills[skill_id].getCurrentLvl()/skills[skill_id].max_level));
     }
 
     /**
@@ -89,8 +90,8 @@ class Pathfinder {
      */
     fill_connections(locations) {
         Object.values(locations).forEach(location => {
-            if(location.is_unlocked && !location.is_finished) { //don't bother if it's unavailable
-                if(location.parent_location) {
+            if(location.canBeStarted(get_context())) { //don't bother if it's unavailable
+                if(location.tags.combat_zone) {
                     
                     const travel_time_to_here = location.parent_location.connected_locations.find(x => x.location === location).travel_time ?? default_travel_time;
 
@@ -101,7 +102,7 @@ class Pathfinder {
                     this.add_connection(location.id, location.parent_location.id, travel_time_to_here*skill_modifier);
                 } else {
                     for(let i = 0; i < location.connected_locations.length; i++) {
-                        if(location.connected_locations[i].location.is_unlocked && !location.connected_locations[i].location.is_finished) { //check if the connected one is available
+                        if(location.connected_locations[i].location.canBeStarted(get_context())) { //check if the connected one is available
 
                             const used_skills = location.connected_locations[i].travel_time_skills || [default_travel_skill];
                             

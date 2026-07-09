@@ -12,7 +12,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <!--favicon-->
-        <link rel="icon" href="https://miktaew.github.io/yet-another-idle-rpg-dev/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="https://miktaew.github.io/yet-another-idle-rpg/favicon.ico" type="image/x-icon">
 
         <meta charset="UTF-8">
         
@@ -22,14 +22,16 @@
         <meta name="author" content="Miktaew">
         <meta property="og:title" content="Yet Another Idle RPG">
         <meta property="og:description" content="A text-based idle RPG game inspired by Proto23, with heavy focus on progression through skill leveling, created by Miktaew. Known as Nya-iRPG, yairpg, or sometimes just yair.">
-        <meta property="og:image" content="https://miktaew.github.io/yet-another-idle-rpg-dev/resources/img/bigger_icon.png">
+        <meta property="og:image" content="https://miktaew.github.io/yet-another-idle-rpg/resources/img/bigger_icon.png">
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
-            "@type": "WebPage",
+            "@type": "WebSite",
             "headline": "Yet Another Idle RPG",
+            "name": "Yet Another Idle RPG",
+            "alternateName": "YAIRPG",
             "description": "A text-based idle RPG game inspired by Proto23, with heavy focus on progression through skill leveling, created by Miktaew. Known as Nya-iRPG, yairpg, or sometimes just yair.",
-            "image": "https://miktaew.github.io/yet-another-idle-rpg-dev/resources/img/bigger_icon.png",
+            "image": "https://miktaew.github.io/yet-another-idle-rpg/resources/img/bigger_icon.png",
             "author": {
                 "@type": "Person",
                 "name": "Miktaew"
@@ -1045,60 +1047,60 @@
             <div id="options_choices">
                 <div class="options_choice">
                     <input type="checkbox" id="options_textsize" name="options_textsize" onclick = "option_uniform_textsize()" >
-                    <label for="options_textsize">Increase size of text in dialogues</label>
+                    <label for="options_textsize" data-translation="option textsize"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_bar_outline" name="options_bar_outline" onclick = "option_use_text_outlines_for_bars()" checked>
-                    <label for="options_bar_outline">Text outline on xp/stamina/mana/health bars</label>
+                    <label for="options_bar_outline" data-translation="option bar outline"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_tooltip_outline" name="options_tooltip_outline" onclick = "option_use_text_outlines_for_tooltips()" checked>
-                    <label for="options_tooltip_outline">Text outline in item tooltips</label>
+                    <label for="options_tooltip_outline" data-translation="option tooltip outline"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_bed_return" name="options_bed_return" onclick = "option_bed_return()" checked>
-                    <label for="options_bed_return">Return to last bed upon defeat</label>
+                    <label for="options_bed_return" data-translation="option bed return"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_save_messagelog_settings" name="options_save_messagelog_settings" onclick = "option_remember_filters()">
-                    <label for="options_save_messagelog_settings">Remember message log filters</label>
+                    <label for="options_save_messagelog_settings" data-translation="option remember filters"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_dont_autoswitch_to_combat" name="options_dont_autoswitch_to_combat" onclick = "option_combat_autoswitch()">
-                    <label for="options_dont_autoswitch_to_combat">Don't autoswitch out from inventory when starting combat</label>
+                    <label for="options_dont_autoswitch_to_combat" data-translation="option dont autoswitch"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_dynamic_message" name="options_dynamic_message" onclick = "option_do_dynamic_loot_message()">
-                    <label for="options_dynamic_message">Use a single dynamically updated message for loot</label>
+                    <label for="options_dynamic_message" data-translation="option dynamic message"></label>
                 </div>
                 <div class="options_choice options_choice_range">
-                    <label for="options_expo_threshold">Use scientific notation for values over:</label>
+                    <label for="options_expo_threshold" data-translation="option scientific notation"></label>
                     <input type="range" id="options_expo_threshold" name="options_expo_threshold" min="3" max="18" onchange="option_expo_threshold()" value="9" oninput="this.nextElementSibling.value = '1e'+this.value">
                     <output>1e9</output>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_use_uncivilised_temperature_scale" name="options_use_uncivilised_temperature_scale" onclick = "option_use_uncivilised_temperature_scale()">
-                    <label for="options_use_uncivilised_temperature_scale">Use Fahrenheit instead of Celsius</label>
+                    <label for="options_use_uncivilised_temperature_scale" data-translation="option fahrenheit"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_do_background_animations" name="options_do_background_animations" onclick = "option_do_background_animations()">
-                    <label for="options_do_background_animations">Enable rain/snow/stars animations</label>
+                    <label for="options_do_background_animations" data-translation="option animate background"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_change_background_color" name="options_change_background_color" onclick = "option_change_background_color()">
-                    <label for="options_change_background_color">Enable light-level based background color change</label>
+                    <label for="options_change_background_color" data-translation="option background color"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_do_enemy_onhit_animations" name="options_do_enemy_onhit_animations" onclick = "option_do_enemy_onhit_animations()" checked>
-                    <label for="options_do_enemy_onhit_animations">Enable on-hit / on-appear animations for enemies</label>
+                    <label for="options_do_enemy_onhit_animations" data-translation="option combat animation"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_skip_play_button" name="options_skip_play_button" onclick = "option_skip_play_button()">
-                    <label for="options_skip_play_button">Automatically skip the loading screen</label>
+                    <label for="options_skip_play_button" data-translation="option skip loading"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_mofu_mofu_mode" name="options_mofu_mofu_mode" onclick = "option_mofu_mofu_mode()" checked>
-                    <label for="options_mofu_mofu_mode">Enable kemonomimi mode</label>
+                    <label for="options_mofu_mofu_mode" data-translation="option kemonomimi"></label>
                 </div>
 
             </div>
@@ -1800,7 +1802,6 @@
                         element: hero_race_selection,
                         top_variable: "--race_choice_tooltip_top",
                         left_variable: "--race_choice_tooltip_left",
-                        
                     },
                 ];
 

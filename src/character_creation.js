@@ -1,8 +1,8 @@
 "use strict";
 
-import { character } from "./character.js";
+import { character } from "./data/character.js";
 import { config } from "./config.js";
-import { capitalize_first_letter, create_height_tooltip, create_race_tooltip, uncapitalize_first_letter } from "./display.js";
+import { create_height_tooltip, create_race_tooltip, uncapitalize_first_letter } from "./display.js";
 import { global_flags, language, run } from "./main.js";
 import { playable_races } from "./races.js";
 import { translationManager } from "./translation.js";
@@ -18,7 +18,7 @@ class CharacterCreator {
             this.create_race_button(race);
         });
 
-        document.getElementById("hero_creation_name_field").value = character.name;
+        document.getElementById("hero_creation_name_field").value = character.name || config.default_character_name;
         document.getElementById("hero_creation_panel_confirmation").addEventListener("click", () => this.confirm_hero_creation());
 
         if(config.use_height_bonuses) {
@@ -70,9 +70,11 @@ class CharacterCreator {
         let height = document.getElementById("height_selection").getElementsByClassName("active_selection_button")[0].dataset.height;
         let name = document.getElementById("hero_creation_name_field").value;
 
-        character.personal.race = race;
-        character.personal.age = age;
-        character.personal.height = height;
+        const bio = character.getBioComponent();
+
+        bio.race = race;
+        bio.age = age;
+        bio.height = height;
         character.name = name;
         document.getElementById("character_name_field").value = name;
         global_flags.is_hero_created = true;

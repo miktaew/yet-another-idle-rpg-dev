@@ -1,9 +1,16 @@
 "use strict";
-import { get_total_skill_level } from "./character.js";
-import { skills } from "./skills.js";
+import AvailabilityComponent from "./components/availability_component.js";
+import { character } from "./data/character.js";
+import { availabilities, availability_havers } from "./data/component_references.js";
+import { skills } from "./data/skills.js";
+
 const stances = {};
+availabilities["stance"] = {};
 
 class Stance {
+
+    #availability;
+
     constructor(
             {
                 name,
@@ -31,9 +38,14 @@ class Stance {
         }  
         this.target_count = target_count;
         this.randomize_target_count = randomize_target_count; //if true, the actual target count is a random number in range [1, target_count]
-        this.is_unlocked = is_unlocked;
+        this.#availability = new AvailabilityComponent({is_unlocked});
+        availabilities["stance"][this.id] = this.#availability;
         this.stat_multipliers = stat_multipliers;
         this.stamina_cost = stamina_cost;
+    }
+
+    getAvailabilityComponent() {
+        return this.#availability;
     }
 
     getDescription = function(){
@@ -52,11 +64,11 @@ class Stance {
             const multipliers = {};
             Object.keys(this.stat_multipliers).forEach(stat => {
                 if(this.stat_multipliers[stat] < 1) {
-                    multipliers[stat] = this.stat_multipliers[stat] + (1 - this.stat_multipliers[stat]) * get_total_skill_level(this.related_skill)/(2*skills[this.related_skill].max_level);
+                    multipliers[stat] = this.stat_multipliers[stat] + (1 - this.stat_multipliers[stat]) * character.getTotalSkillLevel(this.related_skill)/(2*skills[this.related_skill].max_level);
                     //div by 2 because penalties don't get fully nullified, only cut in half (e.g. x0.2->x0.6)
                 }
                 else {
-                    multipliers[stat] =  this.stat_multipliers[stat] + (this.stat_multipliers[stat]-1) * get_total_skill_level(this.related_skill)/skills[this.related_skill].max_level;
+                    multipliers[stat] =  this.stat_multipliers[stat] + (this.stat_multipliers[stat]-1) * character.getTotalSkillLevel(this.related_skill)/skills[this.related_skill].max_level;
                 }
             });
             return multipliers;
@@ -149,4 +161,7 @@ stances["flowing water"] = new Stance({
     target_count: 2,
     stamina_cost: 4,
 });
+
+availability_havers.push(Stance);
+
 export {stances};

@@ -39,10 +39,14 @@
 
 import { round_item_price } from "./misc.js";
 import { group_key_prefix, get_item_value_with_market_saturation, get_total_tier_saturation, get_loot_price_multiple} from "./market_saturation.js";
-import { is_rat } from "./character.js";
+import { character } from "./data/character.js";
 import { crafting_component_manager } from "./crafting_component_filling.js";
 import { droplist, enemy_killcount, enemy_templates } from "./enemies.js";
 import { update_bestiary_entry_tooltip } from "./display.js";
+import AvailabilityComponent from "./components/availability_component.js";
+import { availabilities, availability_havers } from "./data/component_references.js";
+
+availabilities["item"] = {};
 
 const rarity_multipliers = {
     trash: 1, //low quality alone makes these so bad that no additional nerf should be needed
@@ -105,7 +109,7 @@ const item_log = {
     }
 
     //first_run() {
-    //    Object.values(character.inventory).forEach(item => {
+    //    Object.values(character.getItems()).forEach(item => {
     //        this.log_item(item.item.id, item.count, item.item.quality)
     //    });
     //}
@@ -152,6 +156,9 @@ function getEquipmentValue({components, quality = 100}) {
 }
 
 class Item {
+
+    #availability;
+
     constructor({name,
                 description,
                 value = 10,
@@ -161,10 +168,10 @@ class Item {
                 material_type = null,
                 use_quality = false,
                 quality = null,
-                rarity,
                 id = null, //passed only on loading, no need to provide it when creating new item objects as it will be filled automatically in that case
                 components = null,
                 getName = ()=>{return this.name},
+                start_conditions = {},
                 })
     {
         this.name = name;
@@ -192,6 +199,20 @@ class Item {
         if(!this.getName) {
             this.getName = getName;
         }
+
+        if(!this.quality && !this.use_quality && !this.tags.component && !this.components) {
+            this.#availability = new AvailabilityComponent({is_unlocked: true, start_conditions});
+            //only actually used for setting books as finished
+            availabilities["item"][this.id] ||= this.#availability;
+        }
+    }
+
+    getAvailabilityComponent() {
+        return availabilities["item"][this.id]; //to keep it tied with templates rather than with specific instances
+    }
+    
+    _getBasicAvailabilityComponent() {
+        return this.#availability;
     }
 
     getMarketSaturationGroup() {
@@ -1072,7 +1093,6 @@ class BookData{
         this.required_skills = required_skills;
         this.literacy_xp_rate = literacy_xp_rate;
         this.finish_reward = finish_reward;
-        this.is_finished = false;
         this.bonuses = bonuses;
         this.rewards = rewards;
     }
@@ -1118,7 +1138,7 @@ class Book extends Item {
     }
 
     setAsFinished() {
-        book_stats[this.name].is_finished = true;
+        this.getAvailabilityComponent().setStatus({is_finished: true});
         book_stats[this.name].accumulated_time = book_stats[this.name].required_time;
     }
 }
@@ -1694,7 +1714,7 @@ book_stats["Counting Mice"] = new BookData({
         value: 10,
         material_type: "raw wood",
         getName: ()=>{
-            if(is_rat()) return "Rat wood log";
+            if(character.isRat()) return "Rat wood log";
             else return "Rough wood log";
         }
     });
@@ -4157,8 +4177,7 @@ function add_gear() {
                 shield_base: "Turtleshell shield base",
                 handle: "Ash wood shield handle",
             }
-        });
-        
+        });        
     })();
 
     //trinkets:
@@ -4994,9 +5013,14 @@ function add_gear() {
 //setup ids
 function setup_ids() {
     Object.keys(item_templates).forEach(id => {
-        item_templates[id].id = id;
-        if(!item_templates[id].getName()) {
-            item_templates[id].name = id;
+        const item = item_templates[id];
+        item.id = id;
+        if(!item.getName()) {
+            item.name = id;
+        }
+        
+        if(!item.quality && !item.use_quality && !item.components && !item.tags.component) {
+            availabilities["item"][id] = item._getBasicAvailabilityComponent();
         }
     });
 }
@@ -5006,6 +5030,8 @@ add_gear_components();
 crafting_component_manager.fill_components();
 add_gear();
 setup_ids();
+
+availability_havers.push(Item);
 
 export {
     item_templates,

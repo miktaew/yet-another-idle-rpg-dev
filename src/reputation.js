@@ -1,4 +1,4 @@
-import { character } from "./character.js";
+import { character } from "./data/character.js";
 
 const ReputationManager = {
 

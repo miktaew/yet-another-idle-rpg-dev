@@ -1,6 +1,6 @@
 "use strict";
 
-import { get_total_skill_coefficient } from "./character.js";
+import { character } from "./data/character.js";
 import { log_message } from "./display.js";
 import { add_active_effect } from "./main.js";
 
@@ -118,7 +118,7 @@ class Enemy {
 
         Object.keys(this.tags).forEach(tag => {
             if(droprate_modifier_skills_for_tags[tag]) {
-                droprate_modifier *= get_total_skill_coefficient({ skill_id: droprate_modifier_skills_for_tags[tag], scaling_type: "multiplicative" });
+                droprate_modifier *= character.getTotalSkillCoefficient({ skill_id: droprate_modifier_skills_for_tags[tag], scaling_type: "multiplicative" });
             }
         });
 
@@ -367,11 +367,11 @@ const enemy_abilites = {
         },
         on_damaged: (character) => {
             const roll = Math.random();
-            if (character.equipment.weapon == null && roll < 0.1) {
+            if (character.getEquipment().weapon == null && roll < 0.1) {
                 log_message("Touching the frog with your bare hands leaves them covered in toxins!", "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }
-            else if (character.equipment.weapon != null && roll < 0.05) {
+            else if (character.getEquipment().weapon != null && roll < 0.05) {
                 log_message("Striking the frog causes some toxins to splash on you!", "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }

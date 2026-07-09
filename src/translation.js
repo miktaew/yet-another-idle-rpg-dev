@@ -23,9 +23,8 @@ class TranslationManager {
             //todo: try fallback to default if a different language is being used
             //will need to init the default first, if it's not loaded yet
 
-
             //otherwise:
-            return "text not found, id: " + text_id;
+            return "text not found, id: '" + text_id+"'";
         } else {
             if(global_flags.is_mofu_mofu_enabled) {
                 const key = "mofu#" + text_id;

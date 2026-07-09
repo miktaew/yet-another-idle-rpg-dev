@@ -426,7 +426,7 @@ input[type=checkbox], input[type=radio] {
     }
 
 #background_canvas {
-	position: absolute;
+	position: fixed;
 	pointer-events: none;
 	top: 0px;
 	left: 0px;
@@ -436,7 +436,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 #light_based_background_div {
-	position: absolute;
+	position: fixed;
 	pointer-events: none;
 	top: 0px;
 	left: 0px;
@@ -1048,6 +1048,7 @@ input[type=checkbox], input[type=radio] {
 
 #stance_list_div {
 	display: none;
+    overflow-y: scroll;
 }
 
 .skill_stance_control_button {

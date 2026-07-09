@@ -1,17 +1,19 @@
 import { effect_templates } from "./active_effects.js";
 import { activities } from "./activities.js";
-import { character } from "./character.js";
-import { dialogues } from "./dialogues.js";
+import { character } from "./data/character.js";
+import { dialogues } from "./data/dialogues.js";
 import { enemy_templates } from "./enemies.js";
 import { item_templates } from "./items.js";
-import { locations } from "./locations.js";
-import { skills, skill_categories } from "./skills.js";
-import { traders } from "./traders.js";
+import { locations } from "./data/locations.js";
+import { skills, skill_categories } from "./data/skills.js";
+import { traders } from "./data/traders.js";
 import { quests } from "./quests.js";
 import { market_region_mapping } from "./market_saturation.js";
 import { translations } from "./translation.js";
 import { recipes } from "./crafting_recipes.js";
 import { language } from "./main.js";
+import { translations_for_verifier } from "../locales/english.js";
+import NPCRegistry from "./data/npcs.js";
 
 const trc = 1000000; //time rounding precision
 
@@ -49,7 +51,7 @@ function Verify_Game_Objects() {
 
         if(item.stats) {
             Object.keys(item.stats).forEach(stat_key => {
-                if(character.base_stats[stat_key] === undefined) {
+                if(character.getBaseStats()[stat_key] === undefined) {
                     console.error(`Item "${key}" has a non-existent stat "${stat_key}"`);
                     has_issue = true;
                 } else {
@@ -115,7 +117,7 @@ function Verify_Game_Objects() {
                             });
                         } else if(milestone_reward_type_key === "stats"){
                             Object.keys(milestone[milestone_reward_type_key]).forEach(stat_key => {
-                                if(character.base_stats[stat_key] === undefined) {
+                                if(character.getBaseStats()[stat_key] === undefined) {
                                     console.error(`Skill "${key}" has a milestone reward for a non-existent stat "${stat_key}"`);
                                     has_issue = true;
                                 }
@@ -181,30 +183,27 @@ function Verify_Game_Objects() {
             has_issue = true;
         }
         if(location.tags["safe_zone"]) {
-            for(let i = 0; i < location.dialogues.length; i++) {
-                if(!dialogues[location.dialogues[i]]) {
-                    console.error(`Location "${key}" refers to a non-existent dialogue "${dialogues[location.dialogues[i]]}"`);
+            for(let i = 0; i < location.npcs.length; i++) {
+                try {
+                    const npc = NPCRegistry.get(location.npcs[i]); //this can throw an error if npc doesn't exist, therefore try-catch
+
+                    if(npc.tags.trader) {
+                        if(!location.market_region) {
+                            console.error(`Location "${key}" has at least one trader but no trade region assigned!`);
+                            has_issue = true;
+                        } else {
+                            if(!market_region_mapping[location.market_region]) {
+                                console.error(`Location "${key}" has market region "${location.market_region}" assigned, but no such region is present in region mapping!`);
+                                has_issue = true;
+                            }
+                        }
+                    }
+                } catch(e) {
+                    console.error(`Location "${key}" refers to a non-existent npc "${location.npcs[i]}"`);
                     has_issue = true;
                 }
             }
-            if(location.traders?.length > 0) {
-                if(!location.market_region) {
-                    console.error(`Location "${key}" has at least one trader but no trade region assigned!`);
-                    has_issue = true;
-                } else {
-                    if(!market_region_mapping[location.market_region]) {
-                        console.error(`Location "${key}" has market region "${location.market_region}" assigned, but no such region is present in region mapping!`);
-                        has_issue = true;
-                    }
-                }
-                for(let i = 0; i < location.traders.length; i++) {
-                    if(!traders[location.traders[i]]) {
-                        console.error(`Location "${key}" refers to a non-existent trader "${location.traders[i]}"`);
-                        has_issue = true;
-                    }
-                }
-            }
-            
+
             for(let i = 0; i < location.connected_locations.length; i++) {
                 if(!location.connected_locations[i].location) {
                     console.error(`Location "${key}" is connected to a non-existent location.`);
@@ -223,7 +222,7 @@ function Verify_Game_Objects() {
                     }
                 }   
             });
-        } else if(location.tags["combat zone"]) {
+        } else if(location.tags["combat_zone"]) {
 
             if(location.parent_location == undefined) {
                 console.error(`Combat location "${key}" refers to a non-existent parent"`);
@@ -380,6 +379,7 @@ function Verify_Game_Objects() {
         results[0]++;
         results[1]+=has_issue;
     }
+
     end_time = performance.now();
     if(dialogue_results[1] > 0) {
         console.log(`Finished verifying dialogues in: ${Math.round(trc*(end_time-start_time))/trc}s\nFound issue in ${dialogue_results[1]} out of ${dialogue_results[0]}`);
@@ -439,6 +439,27 @@ function Verify_Game_Objects() {
     } else {
         console.log(`Finished verifying ${recipes_results[0]} recipes in: ${Math.round(trc*(end_time-start_time))/trc}s\nNo issues were found.`);
     }
+
+
+    start_time = performance.now();
+    let translation_results = [0,0];
+    Object.values(translations_for_verifier).forEach(translation_category => {
+        const unique_keys = {};
+        Object.keys(translation_category).forEach(key => {
+
+            translation_results[0]++;
+            results[0]++;
+
+            if(unique_keys[key]) {
+
+                console.error(`Translation key "${key}" is used multiple times!`);
+                translation_results[1]++;
+                results[1]++;
+            } else {
+                unique_keys[key] = true;
+            }
+        });
+    });
 
     let overall_end_time = performance.now();
     let result_message;

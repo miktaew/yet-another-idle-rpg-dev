@@ -45,6 +45,7 @@ const racial_height_modifiers = {
     human: 0,
     nekomimi: -5,
     nezumimi: -10,
+    usagimimi: -10,
     inumimi: 0,
     kitsunemimi: -5,
     elf: +10,
@@ -136,6 +137,17 @@ const playable_races = {
             Swimming: 0.7,
             "Shield blocking": 0.7,
         }*/
+    }),
+    "usagimimi": new Race({
+        name: "rabbit name",
+        alternative_name: "rabbit alt name",
+        description: "rabbit desc",
+        tags: [race_tags.COMMON, race_tags.KEMONOMIMI],
+        stats: {
+            agility: {multiplier: 1.2},
+            strength: {multiplier: 1.1},
+            max_health: {multiplier: 0.7},
+        },
     }),
     "lizardkin": new Race({
         name: "lizard name",

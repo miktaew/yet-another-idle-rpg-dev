@@ -1,6 +1,11 @@
 "use strict";
 
+import AvailabilityComponent from "./components/availability_component.js";
+import { availabilities, availability_havers } from "./data/component_references.js";
+
 const activities = {};
+
+availabilities["activity"] ||= {};
 
 /*
     A bit complicated with activities defined both here and in locations, but:
@@ -9,11 +14,14 @@ const activities = {};
 */
 
 class Activity {
+
+    #availability;
+
     constructor({ name,
                   description,
                   action_text,
                   base_skills_names,
-                  is_unlocked = false,
+                  is_unlocked,
                   getBackgroundNoises,
         }) 
     {
@@ -24,9 +32,13 @@ class Activity {
         //skills that affect efficiency of an activity and are raised when performing it
         //originally meant to allow multiple, but with current implementation of stuff, doing that would break a lot of things
         this.tags = [];
-        this.is_unlocked = is_unlocked;
-
+        this.#availability = new AvailabilityComponent({is_unlocked});
+        availabilities["activity"][this.name] = this.#availability;
         this.getBackgroundNoises = getBackgroundNoises || function(){return [];}
+    }
+
+    getAvailabilityComponent() {
+        return this.#availability;
     }
 }
 
@@ -50,7 +62,7 @@ class Gathering extends Training {
         description,
         action_text,
         base_skills_names,
-        is_unlocked = false,
+        is_unlocked,
         required_tool_type,
         getBackgroundNoises = null
     }) {
@@ -197,5 +209,6 @@ class Gathering extends Training {
     });
 })();
 
+availability_havers.push(Activity);
 
 export {activities, Gathering};

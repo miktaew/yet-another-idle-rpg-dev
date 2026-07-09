@@ -333,6 +333,37 @@ const item_mapping = {
     "Piece of ash wood": {item_id: "Ash wood log", item_count: 0.2},
 }
 
+/**
+ * for loading older saves and other possible uses
+ */
+const npc_key_mapping = {
+    "village elder": "villageElder",
+    "village guard": "villageGuard",
+    "old craftsman": "oldCraftsman",
+    "village millers": "villageMillers",
+    "suspicious man": "suspiciousMan",
+    "gate guard": "gateGuard",
+    "old woman of the slums": "oldWomanOfTheSlums",
+    "farm supervisor": "farmSupervisor",
+    "nekomimi proprietress": "nekomimiProprietress",
+    "swampland chief": "swamplandChief",
+    "swampland cook": "swamplandCook",
+    "swampland tailor": "swamplandTailor",
+    "swampland tanner": "swamplandTanner",
+    "swampland scout": "swamplandScout",
+
+    "village trader": "villageTrader",
+    "suspicious trader": "suspiciousTrader",
+    "swampland trader": "swamplandTrader",
+    "nekomimi trader": "nekomimiTrader",
+    "cat cafe trader": "catCafeTrader",
+}
+const trader_key_mapping = {
+
+};
+Object.keys(npc_key_mapping).forEach(key => {
+    trader_key_mapping[npc_key_mapping[key]] = key;
+});
 
 /**
  * Translates component names from pre-autofilling to post-autofilling
@@ -347,6 +378,16 @@ function get_item_mapping(item_id) {
     return item_mapping[item_id] || {item_id, item_count: 1};
 }
 
+/**
+ * @param {Object} entity to write availability parameters (unlocked/locked/finished) to
+ * @param {Object} availability_data to read availability parameters from (anything with is_unlocked, is_locked, is_finished)
+ */
+function write_availability_status(entity, availability_data) {
+    entity.is_unlocked = availability_data.is_unlocked;
+    entity.is_locked = availability_data.is_locked;
+    entity.is_finished = availability_data.is_finished;
+}
+
 export {
     expo, random_range, clamp, slerp, format_reading_time, format_working_time, 
         get_hit_chance, round_item_price,
@@ -355,6 +396,8 @@ export {
         celsius_to_fahrenheit,
         select_outline_class,
         component_name_mapping, get_component_name,
-        get_item_mapping,
-        rtp
+        get_item_mapping, 
+        npc_key_mapping, trader_key_mapping,
+        rtp,
+        write_availability_status
     };

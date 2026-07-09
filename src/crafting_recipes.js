@@ -1,10 +1,15 @@
 "use strict";
 
-import { character, get_total_skill_level } from "./character.js";
+import { character } from "./data/character.js";
 import { Armor, ArmorComponent, Cape, Shield, ShieldComponent, Weapon, WeaponComponent, Amulet, item_templates } from "./items.js";
-import { skills } from "./skills.js";
+import { skills } from "./data/skills.js";
 import { clamp, random_range } from "./misc.js";
 import { game_options } from "./main.js";
+import { availabilities, availability_havers } from "./data/component_references.js";
+import AvailabilityComponent from "./components/availability_component.js";
+import { config } from "./config.js";
+
+availabilities["recipe"] = {};
 
 const crafting_recipes = {items: {}, components: {}, equipment: {}};
 const cooking_recipes = {items: {}};
@@ -25,18 +30,21 @@ const woodworking_recipes = {items: {}, components: {}};
     overal max quality achievable scales with related skills
 */
 
-function get_crafting_quality_caps(skill_name) {
-    return {
-        components: Math.min(Math.round(100+2*get_total_skill_level(skill_name)),200),
-        equipment: Math.min(Math.round(100+2.8*get_total_skill_level(skill_name)),250),
-    }
-}
-
 function round_quality(quality, precision) {
     return Math.round(quality/precision)*precision;
 }
 
+function get_crafting_quality_caps(skill_name) {
+    return {
+        components: round_quality(Math.min(Math.round(100+2*character.getTotalSkillLevel(skill_name)),200), config.item_crafting_quality_precision),
+        equipment: round_quality(Math.min(Math.round(100+2.8*character.getTotalSkillLevel(skill_name)),250), config.equipment_crafting_quality_precision),
+    }
+}
+
 class Recipe {
+
+    #availability;
+
     constructor({
         name,
         id,
@@ -51,18 +59,24 @@ class Recipe {
     }) {
         this.name = name;
         this.id = id;
-        this.is_unlocked = is_unlocked;
+
+        this.#availability = new AvailabilityComponent({is_unlocked});
+        availabilities["recipe"][this.id] = this.#availability;
         this.recipe_type = recipe_type;
         this.result = result;
         this.scale_results = scale_results;
         this.getResult = getResult || function(){return this.result};
         this.recipe_level = recipe_level;
         this.recipe_skill = recipe_skill;
-        this.quality_precision = 4;
+        this.quality_precision = config.item_crafting_quality_precision;
+    }
+
+    getAvailabilityComponent() {
+        return this.#availability;
     }
 
     get_success_chance(station_tier=1) {
-        const level = clamp(get_total_skill_level(this.recipe_skill), 0, this.recipe_level[1]) - this.recipe_level[0] + 1;
+        const level = clamp(character.getTotalSkillLevel(this.recipe_skill), 0, this.recipe_level[1]) - this.recipe_level[0] + 1;
         const skill_modifier = Math.min(1,(0||(level+(station_tier-1))/(this.recipe_level[1]-this.recipe_level[0]+1)));
         return this.success_chance[0]*(this.success_chance[1]/this.success_chance[0])**skill_modifier;
     }
@@ -70,14 +84,14 @@ class Recipe {
     get_quality_range(tier = 0, component_quality) {
         const skill = skills[this.recipe_skill];
         if (component_quality) {
-            const quality = (3 * get_total_skill_level(this.recipe_skill) - skill.max_level) + 50 + component_quality + (10 * tier);
+            const quality = (3 * character.getTotalSkillLevel(this.recipe_skill) - skill.max_level) + 50 + component_quality + (10 * tier);
             return [
                 round_quality(clamp(Math.round(quality - 15), 10, this.get_quality_cap()), this.quality_precision),
                 round_quality(clamp(Math.round(quality + 15), 10, this.get_quality_cap()), this.quality_precision)
             ];
         }
         else {
-            const quality = (3 * get_total_skill_level(this.recipe_skill) - skill.max_level) + 130 + (15 * tier);
+            const quality = (3 * character.getTotalSkillLevel(this.recipe_skill) - skill.max_level) + 130 + (15 * tier);
             return [
                 round_quality(clamp(Math.round(quality - 15), 10, this.get_quality_cap()), this.quality_precision),
                 round_quality(clamp(Math.round(quality + 10), 10, this.get_quality_cap()), this.quality_precision)
@@ -221,7 +235,7 @@ class EquipmentRecipe extends Recipe {
         super({name, id, is_unlocked, recipe_type: "equipment", result, getResult: null, recipe_level: [1,1], recipe_skill, success_rate: [1,1]})
         this.components = components;
         this.item_type = item_type;
-        this.quality_precision = 2;
+        this.quality_precision = config.equipment_crafting_quality_precision;
         this.getResult = function (components, station_tier = 1) {
             const component_stats = get_component_stats(components);
             let quality = this.roll_quality(component_stats.weighted_quality, station_tier - component_stats.max_tier);
@@ -289,10 +303,10 @@ function find_recipe_material({material, ignore_stop, needed_count}) {
         //grab count of material with provided id
         const material_id = material.material_id;
         const key = item_templates[material_id].getInventoryKey();
-        if (character.inventory[key]) {
+        if(character.getItems()[key]) {
             //material without quality exists, no need to search further
-            count = character.inventory[key].count;
-            items = [character.inventory[key]];
+            count = character.getItems()[key].count;
+            items = [character.getItems()[key]];
         }
         
     } else if(material.material_type) {
@@ -301,7 +315,7 @@ function find_recipe_material({material, ignore_stop, needed_count}) {
             //crafting stops when material changes
 
             //grab material of provided type, sorted by price 
-            const materials = Object.values(character.inventory)
+            const materials = Object.values(character.getItems())
                 .filter(item => (material.material_type && item.item.material_type === material.material_type))
                 .sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue());
                 
@@ -329,7 +343,7 @@ function find_recipe_material({material, ignore_stop, needed_count}) {
         
         } else {
             //grab total count of all materials of desired type
-            Object.values(character.inventory)
+            Object.values(character.getItems())
                 .filter(item => (material.material_type && item.item.material_type === material.material_type))
                 .sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue())
                 .forEach(item => {
@@ -372,7 +386,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
     }
     let exp_value = 4;
     const selected_recipe = recipes[category][subcategory][recipe_id];
-    const skill_level = skills[selected_recipe.recipe_skill].current_level; //don't use buffed level as that would only result in reduced xp gain, which is not desired here
+    const skill_level = skills[selected_recipe.recipe_skill].getCurrentLvl(); //don't use buffed level as that would only result in reduced xp gain, which is not desired here
     if(!selected_recipe) {
         throw new Error(`Tried to use a recipe that doesn't exist: ${category} -> ${subcategory} -> ${recipe_id}`);
     }
@@ -1857,5 +1871,7 @@ Object.keys(recipes).forEach(recipe_category => {
         });
     });
 });
+
+availability_havers.push(Recipe);
 
 export { recipes, find_recipe_material, get_recipe_xp_value, get_crafting_quality_caps, get_component_stats, ItemRecipe }

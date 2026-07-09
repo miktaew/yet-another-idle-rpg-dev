@@ -26,18 +26,25 @@
         textlines: [
             {
                 lines: [String] //an array with textline keys
-                dialogue: String //dialogue key
+                dialogue: String //dialogue key (NOT the NPC)
                 skip_message: Boolean //to NOT log an unlock message
             }
         ]
-        
-        dialogues: [String] //an array with dialogue keys
+
+        npcs: [
+            {
+                npc: String,  //npc key
+                skip_message: Boolean //to NOT log an unlock message
+        ]
+
+        dialogues: [String] //dialogue key (NOT the NPC)
 
         traders: [
             {
-                trader: String,  //trader key
-                skip_message: Boolean //to NOT log an unlock message
-        ] 
+                trader: String //trader key (NOT the NPC)
+                skip_message: Boolean //false -> no message logged about unlock
+            }
+        ]
 
         housing: [String] //an array with location keys
 
@@ -53,7 +60,10 @@
         actions: [
             {
                 action: String //action key
+
                 location: String //location key
+                OR
+                npc: String //npc string
             }
         ]
         
@@ -84,11 +94,10 @@
 
         locks: {
             locations: [String] //an array with location keys
-            dialogues: [String] //an array with dialogue keys
             textlines: {
-                "dialogue_key": [String] //an array with textline keys
+                dialogue_key: [String] //an array with textline keys
             },
-            traders: [String] //an array with trader keys
+            npcs: [String] //an array with npc keys
         }
 
         items: [

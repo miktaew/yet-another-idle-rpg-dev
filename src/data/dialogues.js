@@ -1,111 +1,13 @@
 "use strict";
 
-import { GameAction } from "./actions.js";
+import DialogueAction from "../models/dialogue_action.js";
+
+import {DialogueComponent, Textline} from "../components/dialogue_component.js";
 
 const dialogues = {};
 
-class Dialogue {
-    constructor({ 
-        name,
-        getName = () =>{return this.name},
-        id,
-        starting_text = `Talk to the ${name}`,
-        getStartingText = () =>{return this.starting_text},
-        ending_text = `Go back`,
-        is_unlocked = true,
-        is_finished = false,
-        textlines = {},
-        actions = {},
-        description = "",
-        getDescription = ()=>{return this.description;},
-        location_name
-    })  {
-        this.name = name; //displayed name, e.g. "Village elder"; if id is not provided, name must match the key dialogue has in dialogues object
-        this.getName = getName;
-        this.id = id || this.name;
-        this.starting_text = starting_text;
-        this.getStartingText = getStartingText;
-        this.ending_text = ending_text; //text shown on option to finish talking
-        this.is_unlocked = is_unlocked;
-        this.is_finished = is_finished; //separate bool to hide dialogue option if it's considered to be finished
-        this.textlines = textlines; //all the lines in dialogue
-        this.actions = actions;
-        this.description = description;
-        this.getDescription = getDescription;
-
-        this.location_name = location_name; //this is purely informative and wrong value shouldn't cause any actual issues
-    }
-}
-
-class Textline {
-    constructor({name,
-                 text,
-                 getText,
-                 is_unlocked = true,
-                 is_finished = false,
-                 is_branch_only = false,
-                 rewards = {textlines: [],
-                            locations: [],
-                            dialogues: [],
-                            traders: [],
-                            stances: [],
-                            flags: [],
-                            items: [],
-                            locks: {},
-                            //reputation reward from textlines is currently not supported
-                            },
-                branches_into = [],
-                locks_lines = [], //for lines to be locked in >same< dialogue
-                //it's a simplified version of doing rewards: {locks: textlines: {...blah blah blah, values from it are actually autofilled in that form in a script at the end of this file
-                otherUnlocks,
-                required_flags,
-                display_conditions = [],
-            }) 
-    {
-        this.name = name; // displayed option to click, don't make it too long
-        this.text = text; // what's shown after clicking
-        this.getText = getText || function(){return this.text;};
-        this.otherUnlocks = otherUnlocks || function(){return;};
-        this.is_unlocked = is_unlocked;
-        this.is_finished = is_finished;
-        this.is_branch_only = is_branch_only; //if true, textline won't be displayed in overall view and instead will only be available as a branch dialogue
-        this.rewards = rewards || {};
-        this.branches_into = branches_into;
-        
-        this.rewards.textlines = rewards.textlines || [];
-        this.rewards.locations = rewards.locations || [];
-        this.rewards.dialogues = rewards.dialogues || [];
-        this.rewards.traders = rewards.traders || [];
-        this.rewards.stances = rewards.stances || [];
-        this.rewards.flags = rewards.flags || [];
-        this.rewards.items = rewards.items || [];
-        
-        this.display_conditions = [display_conditions];
-        this.required_flags = required_flags; //generally could be handled via display_conditions but offers a bit more freedom allowing a condition of /not/ having a flag too
-
-        this.locks_lines = locks_lines;
-
-        this.rewards.locks = rewards.locks || {};
-        if(!this.rewards.locks.textlines) {
-            this.rewards.locks.textlines = {};
-        }
-        //related text lines that get locked; might be itself, might be some previous line 
-        //e.g. line finishing quest would also lock line like "remind me what I was supposed to do"
-        //should be alright if it's limited only to lines in same Dialogue
-        //just make sure there won't be Dialogues with ALL lines unavailable
-    }
-}
-
-class DialogueAction extends GameAction {
-    constructor(data) {
-        super(data);
-        this.giveup_text = data.giveup_text;
-        this.floating_click_effects = data.floating_click_effects;
-    }
-}
-
 (function(){
-    dialogues["village elder"] = new Dialogue({
+    dialogues["village elder"] = new DialogueComponent({
         //ram
         name: "village elder",
         textlines: {
@@ -395,7 +297,7 @@ class DialogueAction extends GameAction {
                 text: "elder rats answ",
                 is_unlocked: false,
             }),
-            "cleared field": new Textline({ //will be unlocked on clearing infested field combat_zone
+            "cleared field": new Textline({ //will be unlocked on clearing infested field combat zone
                 name: "elder cleared 1",
                 text: "elder cleared 1 answ",
                 is_unlocked: false,
@@ -543,7 +445,7 @@ class DialogueAction extends GameAction {
         description: "elder description",
     });
 
-    dialogues["old craftsman"] = new Dialogue({
+    dialogues["old craftsman"] = new DialogueComponent({
         //badger
         name: "old craftsman",
         is_unlocked: false,
@@ -613,7 +515,7 @@ class DialogueAction extends GameAction {
         description: "craftsman description",
     });
 
-    dialogues["village guard"] = new Dialogue({
+    dialogues["village guard"] = new DialogueComponent({
         name: "village guard",
         is_unlocked: false,
         textlines: {
@@ -669,8 +571,8 @@ class DialogueAction extends GameAction {
                 is_unlocked: false,
                 text: "guard quick answ",
                 otherUnlocks: () => {
-                    if(dialogues["village guard"].textlines["heavy"].is_finished) {
-                        dialogues["village guard"].textlines["wide"].is_unlocked = true;
+                    if(dialogues["village guard"].textlines["heavy"].isFinished()) {
+                        dialogues["village guard"].textlines["wide"].setUnlocked();
                     }
                 },
                 locks_lines: ["quick"],
@@ -686,8 +588,8 @@ class DialogueAction extends GameAction {
                 is_unlocked: false,
                 text: "guard heavy answ",
                 otherUnlocks: () => {
-                    if(dialogues["village guard"].textlines["quick"].is_finished) {
-                        dialogues["village guard"].textlines["wide"].is_unlocked = true;
+                    if(dialogues["village guard"].textlines["quick"].isFinished()) {
+                        dialogues["village guard"].textlines["wide"].setUnlocked();
                     }
                 },
                 locks_lines: ["heavy"],
@@ -775,7 +677,7 @@ class DialogueAction extends GameAction {
         description: "guard description",
     });
 
-    dialogues["village millers"] = new Dialogue({
+    dialogues["village millers"] = new DialogueComponent({
         //cat and mouse
         name: "village millers",
         textlines: {
@@ -906,7 +808,7 @@ class DialogueAction extends GameAction {
         description: "millers description",
     });
 
-    dialogues["gate guard"] = new Dialogue({
+    dialogues["gate guard"] = new DialogueComponent({
         name: "gate guard",
         textlines: {
             "enter": new Textline({
@@ -916,21 +818,21 @@ class DialogueAction extends GameAction {
         },
         description: "g guard description",
     });
-    dialogues["suspicious man"] = new Dialogue({
+    dialogues["suspicious man"] = new DialogueComponent({
         name: "suspicious man",
-        getName: (context)=>{
-            if(dialogues["suspicious man"].actions["headpat"].is_unlocked) {
+        getName: function(context){
+            if(this.actions["headpat"].isUnlocked()) {
                 if(context.is_mofu_mofu_enabled) {
                     return "puppy"; //yeah, whatever
                 } else {
-                    return "no-longer-suspicious guy";
+                    return "no-longer-suspicious guy"; //both options are fantastic, aren't they?
                 }
             } else {
-                return dialogues["suspicious man"].name;
+                return this.name;
             }
         },
-        getStartingText: (context)=>{
-            return `Talk to the ${dialogues["suspicious man"].getName(context)}`;
+        getStartingText: function(context){
+            return `Talk to the ${this.getName(context)}`;
         },
         textlines: {
             "hello": new Textline({ 
@@ -1026,7 +928,7 @@ class DialogueAction extends GameAction {
             }),
         }, 
         getDescription: ()=>{
-            if(dialogues["suspicious man"].textlines["defeated gang"].is_finished) {
+            if(dialogues["suspicious man"].textlines["defeated gang"].isFinished()) {
                 return "sus description 2";
             } else {
                 return "sus description 1";
@@ -1051,7 +953,7 @@ class DialogueAction extends GameAction {
         }
     });
 
-    dialogues["old woman of the slums"] = new Dialogue({
+    dialogues["old woman of the slums"] = new DialogueComponent({
         name: "old woman of the slums",
         is_unlocked: false,
         textlines: {
@@ -1083,7 +985,7 @@ class DialogueAction extends GameAction {
             }),
         },
         getDescription: ()=>{
-            if(dialogues["old woman of the slums"].textlines["hello"].is_finished) {
+            if(dialogues["old woman of the slums"].textlines["hello"].isFinished()) {
                 return "old description 2";
             } else {
                 return "old description 1";
@@ -1091,7 +993,7 @@ class DialogueAction extends GameAction {
         }
     });
 
-    dialogues["farm supervisor"] = new Dialogue({
+    dialogues["farm supervisor"] = new DialogueComponent({
         name: "farm supervisor",
         textlines: {
             "hello": new Textline({ 
@@ -1228,7 +1130,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["sup deliver not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Bonemeal": {count: 50, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -1253,7 +1155,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["sup deliver 2 not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Bonemeal": {count: 50, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -1266,7 +1168,7 @@ class DialogueAction extends GameAction {
         description: "sup description",
     });
 
-    dialogues["nekomimi proprietress"] = new Dialogue({
+    dialogues["nekomimi proprietress"] = new DialogueComponent({
         name: "proprietress",
         is_unlocked: true,
         description: "nekomimi proprietress description",
@@ -1306,7 +1208,7 @@ class DialogueAction extends GameAction {
 
     });
 
-    dialogues["swampland chief"] = new Dialogue({
+    dialogues["swampland chief"] = new DialogueComponent({
         //lizard like everyone in triber, aggressive and proud
         name: "swampland chief",
         textlines: {
@@ -1374,7 +1276,7 @@ class DialogueAction extends GameAction {
                     textlines: [{dialogue: "swampland chief", lines: ["swampchief generic"]}],
                     locations: [{location: "Longhouse"}],
                     items: ["Snake fang ring"],
-                    traders: [{trader: "swampland trader 2"}],
+                    //traders: [{trader: "swampland trader 2"}], //no longer exists, instead items unlocked in trader by finishing the quest
                     crafting: ["Swampland tribe"],
                     locks: {
                         traders: ["swampland trader"],
@@ -1389,15 +1291,15 @@ class DialogueAction extends GameAction {
             }),
         },
         getDescription: ()=>{
-            if(dialogues["swampland chief"].textlines["swampchief confirm"].is_finished) {
+            if(dialogues["swampland chief"].textlines["swampchief confirm"].isFinished()) {
                 return "swampchief description 3";
-            } else if (dialogues["swampland chief"].textlines["swampchief help"].is_finished) {
+            } else if (dialogues["swampland chief"].textlines["swampchief help"].isFinished()) {
                 return "swampchief description 2";
             } else {
                 return "swampchief description 1";
             }}
-        });
-    dialogues["swampland cook"] = new Dialogue({
+    });
+    dialogues["swampland cook"] = new DialogueComponent({
         //lizard, an outlander to the tribe. Slips foreign terms in dialogue. Speaks in odd, short sentences ending with exclamation marks
         name: "swampland cook",
         is_unlocked: false,
@@ -1857,7 +1759,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["swampcook deliver not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Crab meat": {count: 60, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -1875,15 +1777,15 @@ class DialogueAction extends GameAction {
             }),
         },
         getDescription: ()=>{
-            if(dialogues["swampland cook"].actions["swampcook deliver"].is_finished) {
+            if(dialogues["swampland cook"].actions["swampcook deliver"].isFinished()) {
                 return "swampcook description 3";
-            } else if (dialogues["swampland cook"].textlines["swampcook help"].is_finished) {
+            } else if (dialogues["swampland cook"].textlines["swampcook help"].isFinished()) {
                 return "swampcook description 2";
             } else {
                 return "swampcook description 1";
             }}
-        });
-    dialogues["swampland tailor"] = new Dialogue({
+    });
+    dialogues["swampland tailor"] = new DialogueComponent({
         //lizard, speaks in verbose diatribes
         name: "swampland tailor",
         is_unlocked: false,
@@ -2012,7 +1914,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["swamptailor deliver not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Flax": {count: 200, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -2026,15 +1928,15 @@ class DialogueAction extends GameAction {
             }),
         },
         getDescription: ()=>{
-            if(dialogues["swampland tailor"].actions["swamptailor deliver"].is_finished) {
+            if(dialogues["swampland tailor"].actions["swamptailor deliver"].isFinished()) {
                 return "swamptailor description 3";
-            } else if (dialogues["swampland tailor"].textlines["swamptailor interrupt"].is_finished) {
+            } else if (dialogues["swampland tailor"].textlines["swamptailor interrupt"].isFinished()) {
                 return "swamptailor description 2";
             } else {
                 return "swamptailor description 1";
             }}
-        });
-    dialogues["swampland tanner"] = new Dialogue({
+    });
+    dialogues["swampland tanner"] = new DialogueComponent({
         //lizard, speaks in short sentences
         name: "swampland tanner",
         is_unlocked: false,
@@ -2085,7 +1987,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["swamptanner deliver 1 not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Alligator skin": {count: 60, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -2105,7 +2007,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["swamptanner deliver 2 not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Giant snake skin": {count: 60, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -2125,16 +2027,16 @@ class DialogueAction extends GameAction {
             }),
         },
         getDescription: ()=>{ 
-            if(dialogues["swampland tanner"].actions["swamptanner deliver 2"].is_finished) {
+            if(dialogues["swampland tanner"].actions["swamptanner deliver 2"].isFinished()) {
                 return "swamptanner description 3";
-            } else if (dialogues["swampland tanner"].actions["swamptanner deliver 1"].is_finished) {
+            } else if (dialogues["swampland tanner"].actions["swamptanner deliver 1"].isFinished()) {
                 return "swamptanner description 2";
             } else {
                 return "swamptanner description 1";
             }}
-        });
+    });
 
-	dialogues["swampland scout"] = new Dialogue({
+	dialogues["swampland scout"] = new DialogueComponent({
         //lizard, speaks in rambling run-on sentences with long pauses
         name: "swampland scout",
         textlines: {
@@ -2253,7 +2155,7 @@ class DialogueAction extends GameAction {
                 failure_texts: {
                     unable_to_begin: ["swampscout help not"],
                 },
-                required: {
+                start_conditions: {
                     items_by_id: {"Healing potion": {count: 1, remove_on_success: true}},
                 },
                 attempt_duration: 0,
@@ -2261,16 +2163,16 @@ class DialogueAction extends GameAction {
             }),
         },
         getDescription: ()=>{
-            if(dialogues["swampland scout"].actions["swampscout help"].is_finished) {
+            if(dialogues["swampland scout"].actions["swampscout help"].isFinished()) {
                 return "swampscout description 4";
-            } else if (dialogues["swampland scout"].textlines["swampscout foraging"].is_finished) {
+            } else if (dialogues["swampland scout"].textlines["swampscout foraging"].isFinished()) {
                 return "swampscout description 3";
-            } else if (dialogues["swampland scout"].textlines["swampscout meet"].is_finished) {
+            } else if (dialogues["swampland scout"].textlines["swampscout meet"].isFinished()) {
                 return "swampscout description 2";
             } else {
                 return "swampscout description 1";
             }}
-        });
+    });
 
     /*
     dialogues["cute little rat"] = new Dialogue({
@@ -2336,13 +2238,10 @@ class DialogueAction extends GameAction {
 })();
 
 
-//setup ids
+//setup ids in case they might be needed for something
 Object.keys(dialogues).forEach(dialogue_key => {
     const dial = dialogues[dialogue_key];
     dialogues[dialogue_key].id = dialogue_key;
-    if(!dialogues[dialogue_key].getName()) {
-        dialogues[dialogue_key].name = dialogue_key;
-    }
 
     Object.keys(dial.textlines).forEach(textline_key => {
         const textline = dial.textlines[textline_key];

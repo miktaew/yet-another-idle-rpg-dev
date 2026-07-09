@@ -1,15 +1,14 @@
 "use strict";
 
-import { traders } from "./traders.js";
 import { update_displayed_trader, update_displayed_trader_inventory, 
          update_displayed_character_inventory, exit_displayed_trade, update_displayed_money } from "./display.js";
-import { add_to_character_inventory, remove_from_character_inventory } from "./character.js";
-import { skills } from "./skills.js";
+import { character } from "./data/character.js";
+import { skills } from "./data/skills.js";
 import { getItemFromKey } from "./items.js";
 import { add_to_sold, calculate_total_saturation, capped_at, equipment_capped_at, group_key_prefix, remove_from_sold } from "./market_saturation.js";
-import { character } from "./character.js";
-import { add_xp_to_skill, current_location } from "./main.js";
+import { add_xp_to_skill, current_location, get_context } from "./main.js";
 import { round_item_price } from "./misc.js";
+import NPCRegistry from "./data/npcs.js";
 
 let current_trader = null;
 const to_sell = {value: 0, items: [], groups: {}};
@@ -50,7 +49,7 @@ function set_current_trader(trader_key) {
  * @param {String} trader_key 
  */
 function start_trade(trader_key) {
-    traders[trader_key].refresh();
+    NPCRegistry.get(trader_key).refreshTraderInventory(get_context());
     current_trader = trader_key;
     
     update_displayed_trader();
@@ -107,8 +106,8 @@ function accept_trade() {
         }
         
         if(to_remove.length > 0) {
-            add_to_character_inventory(item_list);
-            remove_from_trader_inventory(current_trader,to_remove);
+            character.addToInventory(item_list);
+            remove_from_trader_inventory(current_trader, to_remove);
 
             for(let i = 0; i < item_list.length; i++) {
                 //update (remove) single item from display
@@ -140,7 +139,7 @@ function accept_trade() {
         
         if(to_remove.length > 0) {
             add_to_trader_inventory(current_trader,item_list);
-            remove_from_character_inventory(to_remove);
+            character.removeFromInventory(to_remove);
 
             for(let i = 0; i < item_list.length; i++) {
                 update_displayed_trader_inventory({item_key: item_list[i].item_key});
@@ -185,7 +184,7 @@ function add_to_buying_list(selected_item) {
     const present_item = to_buy.items.find(a => a.item_key === selected_item.item_key);
     
     let actual_number_to_add = selected_item.count;
-    let item_count_in_trader = traders[current_trader].inventory[selected_item.item_key].count;
+    let item_count_in_trader = NPCRegistry.get(current_trader).getTraderInventory()[selected_item.item_key].count;
 
     if(present_item) { //there's already some in to_buy
         if(item_count_in_trader - present_item.count < selected_item.count) {
@@ -276,7 +275,7 @@ function add_to_selling_list(selected_item) {
     const present_item = to_sell.items.find(a => a.item_key === selected_item.item_key);
     //find if item is already present in the sell list
 
-    let item_count_in_player = character.inventory[selected_item.item_key].count;
+    let item_count_in_player = character.getItems()[selected_item.item_key].count;
 
     if(present_item) {
         //item present in to_sell -> increase its count, up to what player has in inventory
@@ -356,7 +355,7 @@ function remove_from_selling_list(selected_item) {
 }
 
 function add_to_trader_inventory(trader_key, items) {
-    traders[trader_key].add_to_inventory(items);
+    NPCRegistry.get(trader_key).addToTraderInventory(items);
 
     if(current_trader === trader_key) {
         update_displayed_trader_inventory();
@@ -364,7 +363,7 @@ function add_to_trader_inventory(trader_key, items) {
 }
 
 function remove_from_trader_inventory(trader_key, items) {
-    traders[trader_key].remove_from_inventory(items);
+    NPCRegistry.get(trader_key).removeFromTraderInventory(items);
     
     if(current_trader === trader_key) {
         update_displayed_trader_inventory();
@@ -390,7 +389,7 @@ function calculate_total_values() {
             }
         }
     */
-
+    const trader = NPCRegistry.get(current_trader).getTraderComponent();
     const traded_groups = {buying_precalculated: {}, selling: {}, buying: {}};
     to_buy.value = 0;
     to_sell.value = 0;
@@ -511,7 +510,7 @@ function calculate_total_values() {
                                         stop_multiplier_at: Math.max(0,sold_saturation-bought_saturation-to_buy.groups[traded_group_key].sorted[i].count),
                                         count: to_buy.groups[traded_group_key].sorted[i].count,
                                         region: current_location.market_region,
-                                        price_multiplier: traders[current_trader].getProfitMargin(current_location.market_region),
+                                        price_multiplier: trader.getProfitMargin(current_location.market_region),
                                         is_selling: false,
                                     });
 
@@ -537,7 +536,7 @@ function calculate_total_values() {
  * @returns total value of items, including character haggling skill and trader profit margin
  */
 function get_item_value(selected_item) {
-    const profit_margin = traders[current_trader].getProfitMargin(current_location.market_region);
+    const profit_margin = NPCRegistry.get(current_trader).getProfitMargin(current_location.market_region);
 
     const item = getItemFromKey(selected_item.item_key);
 
