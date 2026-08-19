@@ -64,6 +64,11 @@ jobs:
         # with a coverage percentage; set LOCALE_STRICT=1 to make them fatal.
         run: npm run check
 
+      - name: Run regression tests
+        # Exercises the real Skill class source with the circular imports stubbed
+        # out - see scripts/test-skills.mjs for why it has to load it that way.
+        run: npm test
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 

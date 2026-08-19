@@ -125,6 +125,16 @@ class Skill {
     }
 
     add_xp({xp_to_add = 0}) {
+        //Non-finite values have to be rejected here, not just at the call site:
+        //this is the last gate before total_xp is mutated, and "xp_to_add == 0"
+        //does not stop them (NaN == 0 is false). NaN would propagate into
+        //total_xp and current_xp and render as "NaN" in every panel that shows
+        //this skill, and Infinity would make the level-up loop below unable to
+        //terminate, hanging the tab.
+        if(!Number.isFinite(xp_to_add)) {
+            console.error(`Tried to add non-finite xp (${xp_to_add}) to skill "${this.skill_id}"`);
+            return {};
+        }
         if(xp_to_add == 0 || !this.is_unlocked) {
             return {};
         }
@@ -143,7 +153,12 @@ class Skill {
                 let unlocks = {skills: [], recipes: [], quests: []};
 
                 //its alright if this goes over max level, it will be overwritten in a if-else below that
-                while(this.total_xp >= this.total_xp_to_next_lvl) {
+                //The max_level bound is what guarantees termination. Without it a
+                //total_xp large enough to push total_xp_to_next_lvl past
+                //Number.MAX_VALUE leaves the condition permanently true, because
+                //Infinity >= Infinity. Stopping at max_level costs nothing: the
+                //if-else below overwrites everything once max level is reached.
+                while(this.total_xp >= this.total_xp_to_next_lvl && level_after_xp < this.max_level) {
 
                     level_after_xp += 1;
                     this.total_xp_to_next_lvl = Math.round(100*this.base_xp_cost * (1 - this.xp_scaling ** (level_after_xp + 1)) / (1 - this.xp_scaling))/100;
@@ -302,12 +317,21 @@ class Skill {
         return this.max_level_bonus * (level || this.current_level) / this.max_level;
     }
     get_parent_xp_multiplier() {
-        if(this.parent_skill) {
-            const parent_skill = skills[this.parent_skill];
-            return (parent_skill.parent_multiplier**Math.max(0,parent_skill.current_level-this.current_level));
-        } else {
+        if(!this.parent_skill) {
             return 1;
         }
+        const parent_skill = skills[this.parent_skill];
+        const level_difference = Math.max(0, parent_skill.current_level - this.current_level);
+
+        //Math.max(0, NaN) is NaN, and anything ** NaN is NaN. This multiplier is
+        //applied directly to xp_to_add in add_xp_to_skill, so a single bad level
+        //value here would poison the skill's stored xp rather than just one gain.
+        if(!Number.isFinite(level_difference)) {
+            console.error(`Could not compute the parent xp multiplier for skill "${this.skill_id}": `
+                + `level of "${this.parent_skill}" is ${parent_skill.current_level}, own level is ${this.current_level}`);
+            return 1;
+        }
+        return parent_skill.parent_multiplier ** level_difference;
     }
 }
 

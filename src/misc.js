@@ -81,6 +81,16 @@ function slerp(arr, t) {
 function expo({number, precision = 3, treshold})
 {
     number = Number.parseFloat(number);
+
+    //Last line of defence: expo is the funnel for player-facing numbers, and a
+    //non-finite input would otherwise fall through to Math.round(NaN) and render
+    //the literal string "NaN". Callers are expected to guard, but this is the one
+    //place that can guarantee "NaN" never reaches the screen.
+    if(!Number.isFinite(number)) {
+        console.error(`expo() was called with a non-finite value: ${number}`);
+        return "?";
+    }
+
     let abs_number = Math.abs(number);
 
     if(abs_number == 0) {

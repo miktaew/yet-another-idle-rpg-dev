@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 1 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 2 -->
 
 # Agent and contributor guide
 
@@ -35,6 +35,7 @@ Standing project direction, including what may and may not change, is in
 | `npm run serve` | Static server on `127.0.0.1:8080`, **dev mode**. Source edits are live on reload. |
 | `npm run build` | Bundles `src/main.js` into `dist/bundle.js`, then assembles the deployable site into `_site/`. |
 | `npm run check` | Validates the assembled site and locale key parity. `LOCALE_STRICT=1` makes missing translations fatal. |
+| `npm test` | Regression tests for the skill xp model. |
 | `npm run serve:site` | Static server on `127.0.0.1:8081` serving `_site/`, to verify the built site in bundle mode. |
 
 Requires Node 22 or newer. `file://` will not work — ES modules need a server.
@@ -130,9 +131,15 @@ The root `index.html` version strings are **not** touched. See section 3.
 
 ## 7. Quality gates
 
-There is no linter, no formatter and no unit test suite.
+There is no linter and no formatter.
 
-- `npm run check` runs in CI on every push.
+- `npm run check` and `npm test` both run in CI on every push.
+- `npm test` covers the skill xp model. It cannot `import` `src/skills.js`
+  directly — the circular imports only resolve in the browser — so it reads the
+  real source, replaces the import statements with stubs for the three functions
+  the `Skill` class uses, and imports that. The code under test is the shipped
+  code. Follow the same approach if you add tests for another module, and let the
+  harness throw if its assumptions about the source stop holding.
 - `Verify_Game_Objects()` is a browser-console tool. It walks most content
   checking property values and cross-references. Call it **after the game has
   booted** — it dereferences the loaded translation table, which only exists once

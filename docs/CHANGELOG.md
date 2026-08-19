@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 2 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 3 -->
 
 # Changelog
 
@@ -17,6 +17,68 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Fixed the NaN readouts in the skill xp panels — P-8
+
+Reported as `Woodcutting (NaN% [NaN / Infinity])` / `Next level in NaN minutes` in
+the gathering panel. Reproduced exactly, root-caused, and fixed at both the
+display and the model level.
+
+**The display cause.** A skill that reaches max level stores `current_xp` as the
+string `"Max"` and `xp_to_next_lvl` as `Infinity` — those are the intended
+sentinels. The activity panel decided whether a skill was maxed with
+`get_total_skill_level(id) == skill.max_level`, but `get_total_skill_level` adds
+`bonus_skill_levels` and is not clamped, so any equipment or effect granting bonus
+levels pushes the total past `max_level` and the equality fails for a skill that
+genuinely is maxed. The panel then took the "not maxed" branch and computed
+`10000 * "Max" / Infinity`, which is `NaN`. Reproduced in isolation: with a
+level-60 skill and a +2 bonus, the old expression prints the screenshot verbatim.
+
+`is_maxed` now tests the sentinel itself and uses `>=` rather than `==`. The three
+`is_maxed ? "Max" : …` ternaries inside the else branch were dead code — `is_maxed`
+is provably false there — and are gone. The xp values are read as numbers and
+validated before use, so a skill whose stored numbers are unusable renders `?` and
+"an unknown amount of time" rather than `NaN`.
+
+**The model cause, which is the more serious half.** `Skill.add_xp` guarded its
+input with `xp_to_add == 0`, and `NaN == 0` is false, so `NaN` went straight into
+`total_xp`. From that point the skill is permanently broken: `NaN + x` is `NaN`, so
+every later legitimate gain is silently discarded, the level-up branch recomputes a
+level of 0 on every tick, and the panels show `NaN`. The caller's guard used
+`isNaN`, which does not stop `Infinity`, and `Infinity` is worse — it makes the
+level-up `while` loop unable to terminate once `total_xp_to_next_lvl` overflows,
+because `Infinity >= Infinity` holds, which hangs the tab.
+
+Both guards now reject anything non-finite and report it. The loop is additionally
+bounded by `max_level`, which costs nothing because the branch below overwrites
+everything once max level is reached.
+
+`get_parent_xp_multiplier` was the most likely way a bad value got in. It computes
+`parent_multiplier ** Math.max(0, parent.current_level - this.current_level)`, and
+`Math.max(0, NaN)` is `NaN` while anything `** NaN` is `NaN`. That multiplier is
+applied directly to `xp_to_add`, so one bad level value poisons the skill's stored
+xp rather than just one gain. It now returns 1 and reports the bad state. This path
+is new: the gathering skills only gained a parent skill in `b74b9eb`.
+
+**A silent data-loss path closed on the way.** `JSON.stringify` writes `NaN` and
+`Infinity` as `null`, and the save/load round trip tested `total_xp > 0`, so a
+corrupted skill was skipped without a word — wiping that skill's entire progress.
+It is now reported.
+
+**One deliberate balance change.** `add_xp_to_skill` gated its per-gain xp cap on
+`typeof skill.xp_to_next_lvl === Number`. `typeof` yields a string and `Number` is
+a constructor, so that condition was never true and the cap has never applied to
+any non-crafting skill. It now uses `Number.isFinite`. Skills will gain xp more
+slowly than before. This is a real gameplay change, not just a bug fix — reverting
+it is a one-line edit if that is not wanted.
+
+**Tests.** `npm test` is new and runs in CI. It covers the guards above with
+fourteen checks. It cannot `import` `src/skills.js` directly, because the circular
+imports only resolve in the browser, so it reads the real source and substitutes
+stubs for the three functions the `Skill` class uses — the code under test is the
+shipped code, not a reimplementation. Verified to be meaningful by running the same
+harness against the pre-fix source, where seven of the checks fail and the output
+reproduces the "calculated level ... was 0" warning from the bug report.
 
 ### Bilingual documentation set — P-4, P-5
 

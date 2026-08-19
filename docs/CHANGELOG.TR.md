@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 2 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 3 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,73 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Skill xp panellerindeki NaN görüntüleri giderildi — P-8
+
+Toplama panelinde `Woodcutting (NaN% [NaN / Infinity])` / `Next level in NaN
+minutes` olarak bildirildi. Birebir yeniden üretildi, kök nedeni bulundu ve hem
+görüntü hem model düzeyinde düzeltildi.
+
+**Görüntü tarafındaki neden.** Max seviyeye ulaşan bir skill, `current_xp` alanını
+`"Max"` string'i, `xp_to_next_lvl` alanını `Infinity` olarak saklar — bunlar
+amaçlanan sentinel değerlerdir. Aktivite paneli bir skill'in max olup olmadığına
+`get_total_skill_level(id) == skill.max_level` ile karar veriyordu; ancak
+`get_total_skill_level` `bonus_skill_levels` ekliyor ve sınırlanmıyor, dolayısıyla
+bonus seviye veren herhangi bir ekipman veya efekt toplamı `max_level` üzerine
+çıkarıyor ve gerçekten max olan bir skill için eşitlik başarısız oluyor. Panel
+bunun üzerine "max değil" dalına giriyor ve `10000 * "Max" / Infinity` hesaplıyor;
+sonuç `NaN`. İzole olarak yeniden üretildi: 60. seviye bir skill ve +2 bonus ile
+eski ifade ekran görüntüsünü birebir basıyor.
+
+`is_maxed` artık sentinel'in kendisini kontrol ediyor ve `==` yerine `>=`
+kullanıyor. `else` dalı içindeki üç `is_maxed ? "Max" : …` üçlü ifadesi ölü koddu —
+orada `is_maxed` kanıtlanabilir biçimde false — ve kaldırıldı. xp değerleri sayı
+olarak okunup kullanılmadan önce doğrulanıyor; böylece saklanan sayıları
+kullanılamaz durumda olan bir skill `NaN` yerine `?` ve "an unknown amount of time"
+gösteriyor.
+
+**Model tarafındaki neden — daha ciddi olan yarısı.** `Skill.add_xp` girdisini
+`xp_to_add == 0` ile koruyordu ve `NaN == 0` false olduğu için `NaN` doğrudan
+`total_xp`'ye giriyordu. O noktadan sonra skill kalıcı olarak bozuk: `NaN + x`
+`NaN` olduğundan sonraki her meşru kazanç sessizce kayboluyor, seviye atlama dalı
+her tick'te 0 seviyesi hesaplıyor ve paneller `NaN` gösteriyor. Çağıranın koruması
+`isNaN` kullanıyordu ve bu `Infinity`'yi durdurmuyor; `Infinity` ise daha kötü —
+`total_xp_to_next_lvl` taştığında `Infinity >= Infinity` doğru kaldığı için seviye
+atlama `while` döngüsü sonlanamıyor ve sekme kilitleniyor.
+
+İki koruma da artık sonlu olmayan her değeri reddediyor ve raporluyor. Döngü ek
+olarak `max_level` ile sınırlandı; bu hiçbir şeye mal olmuyor, çünkü max seviyeye
+ulaşıldığında alttaki dal her şeyi zaten üzerine yazıyor.
+
+`get_parent_xp_multiplier` bozuk değerin girmesi için en olası yoldu.
+`parent_multiplier ** Math.max(0, parent.current_level - this.current_level)`
+hesaplıyor; `Math.max(0, NaN)` `NaN`, ve herhangi bir şey `** NaN` yine `NaN`. Bu
+çarpan doğrudan `xp_to_add`'a uygulandığı için tek bir bozuk seviye değeri, yalnızca
+bir kazancı değil skill'in saklanan xp'sini zehirliyor. Artık 1 döndürüyor ve bozuk
+durumu raporluyor. Bu yol yeni: toplama skill'leri parent skill'i ancak `b74b9eb`
+commit'inde kazandı.
+
+**Yol üzerinde kapatılan sessiz bir veri kaybı.** `JSON.stringify`, `NaN` ve
+`Infinity` değerlerini `null` olarak yazıyor ve kaydet/yükle turu `total_xp > 0`
+kontrolü yaptığı için bozulmuş bir skill tek kelime edilmeden atlanıyordu — o
+skill'in tüm ilerlemesini silerek. Artık raporlanıyor.
+
+**Bilinçli bir denge değişikliği.** `add_xp_to_skill`, kazanç başına xp sınırını
+`typeof skill.xp_to_next_lvl === Number` koşuluna bağlamıştı. `typeof` bir string
+döndürür, `Number` ise bir constructor'dır; yani bu koşul hiç doğru olmadı ve sınır
+crafting dışı hiçbir skill'e hiç uygulanmadı. Artık `Number.isFinite` kullanıyor.
+Skill'ler eskisinden daha yavaş xp kazanacak. Bu yalnızca bir hata düzeltmesi değil,
+gerçek bir oynanış değişikliği — istenmiyorsa geri alınması tek satırlık bir
+düzenleme.
+
+**Testler.** `npm test` yeni ve CI'da çalışıyor. Yukarıdaki korumaları on dört
+kontrolle kapsıyor. `src/skills.js`'i doğrudan `import` edemiyor, çünkü dairesel
+import'lar yalnızca tarayıcıda çözülüyor; bu yüzden gerçek kaynağı okuyup `Skill`
+sınıfının kullandığı üç fonksiyon için stub koyuyor — test edilen kod, yayınlanan
+kodun kendisi, yeniden yazımı değil. Anlamlı olduğu, aynı harness'ın düzeltme
+öncesi kaynağa karşı koşulmasıyla doğrulandı: orada kontrollerin yedisi başarısız
+oluyor ve çıktı, hata bildirimindeki "calculated level ... was 0" uyarısını yeniden
+üretiyor.
 
 ### İki dilli doküman seti — P-4, P-5
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 2 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 3 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -148,7 +148,7 @@ string id'dir.
 Zemin çalışması tamamlandı: `npm run check` locale anahtar eşliğini denetliyor,
 böylece ikinci bir dil sessizce senkronizasyondan çıkamaz (P-2).
 
-### P-8 — Bildirilen NaN uyarılarını gider `open`
+### P-8 — Bildirilen NaN uyarılarını gider `active`
 
 Analizden gelen çerçeve düzeltmesi: çekişmeli doğrulama, *ekrana basılan* `NaN`
 metni için öne sürülen tüm adayları çürüttü. Var olan şey bir konsol
@@ -170,6 +170,15 @@ Ayrıca D-2 açısından daha ilginç bir bulgu: boy/ırk yardımcı fonksiyonu
 alanlarını yanlış nesneden okuyor, dolayısıyla boy ve ırk seçiminin şu anda
 oynanışa **hiçbir etkisi yok** ve bir dialogue varyantı kalıcı olarak
 erişilemez durumda.
+
+**Şimdiye kadar tamamlanan** - canlı oyundan bildirilen skill xp paneli
+görüntüsü ve arkasındaki model hataları. [CHANGELOG.TR.md](CHANGELOG.TR.md)
+içinde yazılı, `npm test` ile kapsanıyor.
+
+**Hâlâ açık** - analiz listesindeki kalan render noktaları: max seviye korumasının
+dışında kalan skill ilerleme çubuğu genişliği ataması, max seviyedeki crafting
+skill xp aritmetiği, boş savaş bölenleri, karakter xp giriş koruması,
+interpolasyon yardımcıları ve yukarıdaki boy/ırk fonksiyonu.
 
 ### P-9 — Hikâyeyi devam ettir `open`
 

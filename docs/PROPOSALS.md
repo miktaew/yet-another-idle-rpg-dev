@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 2 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 3 -->
 
 # Proposals
 
@@ -144,7 +144,7 @@ see [STORY.md](STORY.md#6-turkish-address-register). No change to the lookup in
 Groundwork already shipped: `npm run check` gates locale key parity, so a second
 locale cannot silently drift out of sync (P-2).
 
-### P-8 — Fix the reported NaN warnings `open`
+### P-8 — Fix the reported NaN warnings `active`
 
 Framing correction from the audit: the adversarial pass refuted every candidate
 for *rendered* `NaN` text. What exists is a console **warning** — the phrasing in
@@ -165,6 +165,15 @@ two most consequential:
 Also surfaced, and more interesting for D-2: the height/race helper reads its
 fields from the wrong object, so height and race selection currently have no
 gameplay effect at all, and one dialogue variant is permanently unreachable.
+
+**Shipped so far** - the skill xp panel readout reported from the live game, and
+the model bugs behind it. Written up in [CHANGELOG.md](CHANGELOG.md) and covered by
+`npm test`.
+
+**Still open** - the remaining render sites from the audit list: the skill progress
+bar width assignment sitting outside its max-level guard, the maxed-crafting-skill
+xp arithmetic, the empty-combat divisors, the character xp entry guard, the
+interpolation helpers, and the height/race helper above.
 
 ### P-9 — Continue the story `open`
 

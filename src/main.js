@@ -1955,8 +1955,10 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
     } else if(xp_to_add < 0) {
         console.error(`Tried to add negative xp to skill ${skill.skill_id}`);
         return leveled;
-    } else if(isNaN(xp_to_add)) {
-        console.error(`Tried to add NaN xp to skill ${skill.skill_id}`);
+    } else if(!Number.isFinite(xp_to_add)) {
+        //Covers Infinity as well as NaN: isNaN(Infinity) is false, so the
+        //previous check let it straight through into the skill's stored xp.
+        console.error(`Tried to add non-finite xp (${xp_to_add}) to skill ${skill.skill_id}`);
         return leveled;
     }
 
@@ -1968,7 +1970,11 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
         }
     }
 
-    if(cap_gained_xp && typeof skill.xp_to_next_lvl === Number) {
+    //Number.isFinite, not `typeof ... === "number"`: xp_to_next_lvl is set to
+    //Infinity once a skill maxes out, and capping against Infinity is meaningless.
+    //The previous condition compared typeof (a string) against the Number
+    //constructor, so it was never true and this cap never applied.
+    if(cap_gained_xp && Number.isFinite(skill.xp_to_next_lvl)) {
         //cap on singular gains for non-crafting skills; cap for crafting skills handled in crafting code as it's dependent on how many items are made at once
         xp_to_add = Math.min(xp_to_add, skill.xp_to_next_lvl*skill_xp_gains_cap);
     }
@@ -3898,12 +3904,20 @@ function load(save_data) {
                 return; //done separately, for compatibility with older saves (can be eventually removed)
             }
             if(skills[key] && !skills[key].is_parent){
-                if(save_data.skills[key].total_xp > 0) {
+                const saved_xp = save_data.skills[key].total_xp;
+                if(Number.isFinite(saved_xp) && saved_xp > 0) {
                     add_xp_to_skill({
-                                        skill: skills[key], xp_to_add: save_data.skills[key].total_xp, 
+                                        skill: skills[key], xp_to_add: saved_xp, 
                                         should_info: false, add_to_parent: true, use_bonus: false, cap_gained_xp: false,
                                         is_from_loading: true
                                     });
+                } else if(saved_xp !== 0) {
+                    //JSON.stringify writes NaN and Infinity as null, so a skill whose
+                    //xp was corrupted during an earlier session arrives here as null.
+                    //The old "> 0" test skipped it in silence, which quietly wiped
+                    //that skill's entire progress. Report it instead.
+                    console.error(`Skill "${key}" was saved with an unusable total_xp (${saved_xp}) and could not be restored.`);
+                    any_warnings = true;
                 }
             } else if(save_data.skills[key].total_xp > 0) {
                     console.warn(`Skill "${key}" couldn't be found!`);

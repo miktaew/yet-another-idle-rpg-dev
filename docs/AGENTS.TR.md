@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 1 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 2 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -40,6 +40,7 @@ Tam tablo: [AGENTS.md § 2](AGENTS.md#2-commands).
 | `npm run serve` | `127.0.0.1:8080` üzerinde statik sunucu, **dev modu**. Kaynak düzenlemeleri sayfa yenilenince canlı. |
 | `npm run build` | `src/main.js`'i `dist/bundle.js` içine paketler, ardından deploy edilebilir siteyi `_site/` içinde toplar. |
 | `npm run check` | Toplanan siteyi ve locale anahtar eşliğini doğrular. `LOCALE_STRICT=1` eksik çevirileri ölümcül yapar. |
+| `npm test` | Skill xp modeli için regresyon testleri. |
 | `npm run serve:site` | `127.0.0.1:8081` üzerinde `_site/` sunar; derlenen siteyi bundle modunda doğrulamak için. |
 
 Node 22 veya üzeri gerekir. `file://` çalışmaz — ES modülleri sunucu ister.
@@ -115,9 +116,15 @@ Kök `index.html` sürüm değerlerine **dokunulmaz**. Bkz. bölüm 3.
 
 ## 7. Kalite kapıları
 
-Linter yok, formatter yok, birim test paketi yok.
+Linter yok, formatter yok.
 
-- `npm run check` her push'ta CI'da çalışır.
+- `npm run check` ve `npm test` her push'ta CI'da çalışır.
+- `npm test` skill xp modelini kapsar. `src/skills.js`'i doğrudan `import`
+  edemez — dairesel import'lar yalnızca tarayıcıda çözülür — bu yüzden gerçek
+  kaynağı okur, import ifadelerini `Skill` sınıfının kullandığı üç fonksiyon için
+  stub'larla değiştirir ve onu import eder. Test edilen kod, yayınlanan koddur.
+  Başka bir modül için test eklerken aynı yaklaşımı izleyin ve harness'ın kaynağa
+  dair varsayımları geçersizleşirse hata vermesine izin verin.
 - `Verify_Game_Objects()` bir tarayıcı konsolu aracıdır. İçeriğin büyük kısmını
   gezerek özellik değerlerini ve çapraz referansları denetler. **Oyun açıldıktan
   sonra** çağırın — yüklenmiş çeviri tablosuna erişir ve o tablo yalnızca

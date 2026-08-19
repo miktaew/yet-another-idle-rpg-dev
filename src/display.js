@@ -4241,7 +4241,14 @@ function update_displayed_ongoing_activity(current_activity) {
 
         const skill = skills[skill_names[i]];
         const xp_rate = xp_rates[i];
-        const is_maxed = get_total_skill_level(skill.skill_id) == skill.max_level;
+        //A maxed skill is identified by its own sentinel, not by comparing levels.
+        //get_total_skill_level adds bonus_skill_levels and is not clamped to
+        //max_level, so equipment or an active effect pushes the total past
+        //max_level and an equality test then fails for a skill that really is
+        //maxed - which sent this panel down the branch below and printed
+        //"NaN% [NaN / Infinity]", because current_xp is the string "Max" and
+        //xp_to_next_lvl is Infinity once a skill maxes out.
+        const is_maxed = skill.current_xp === "Max" || get_total_skill_level(skill.skill_id) >= skill.max_level;
 
         if (base_activity.type !== "GATHERING") {
             action_xp_div.innerText += `Getting ${xp_rate} base xp per in-game minute to `;
@@ -4252,13 +4259,36 @@ function update_displayed_ongoing_activity(current_activity) {
         if (is_maxed) {
             action_xp_div.innerText += ` ${skill.name()} (Maxed out!)`;
         } else {
-            const percent_xp = is_maxed ? "Max" : `${Math.floor(10000 * skill.current_xp / skill.xp_to_next_lvl) / 100}%`
-            const curr_xp = is_maxed ? "Max" : `${Math.floor(skill.current_xp)}`;
-            const needed_xp = is_maxed ? "Max" : `${Math.ceil(skill.xp_to_next_lvl)}`;
-            const time_needed = Math.ceil((needed_xp - curr_xp) / (xp_rate * get_skill_xp_gain(skill.skill_id))) * (current_activity.xp_given_per_working_period?current_activity.gathering_time_needed:1);
+            //Read as numbers and check them before use. is_maxed above covers the
+            //normal max-level sentinels; these guards cover a skill whose stored
+            //numbers were corrupted by a bad xp gain, so the panel degrades to "?"
+            //instead of printing NaN at the player.
+            const curr_xp = Math.floor(Number(skill.current_xp));
+            const needed_xp = Math.ceil(Number(skill.xp_to_next_lvl));
+            const has_usable_xp = Number.isFinite(curr_xp) && Number.isFinite(needed_xp) && needed_xp > 0;
 
-            action_xp_div.innerText += ` ${skill.name()} (${percent_xp}  [${expo({number: curr_xp})} / ${expo({number: needed_xp})}])`;
-            insert_HTML(action_xp_div, `<br>Next level in ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}realtime)`);
+            if(!has_usable_xp) {
+                console.error(`Skill "${skill.skill_id}" has unusable xp values for display: `
+                    + `current_xp=${skill.current_xp}, xp_to_next_lvl=${skill.xp_to_next_lvl}`);
+            }
+
+            const percent_xp = has_usable_xp ? `${Math.floor(10000 * curr_xp / needed_xp) / 100}%` : "?";
+            const shown_curr_xp = has_usable_xp ? expo({number: curr_xp}) : "?";
+            const shown_needed_xp = has_usable_xp ? expo({number: needed_xp}) : "?";
+
+            action_xp_div.innerText += ` ${skill.name()} (${percent_xp}  [${shown_curr_xp} / ${shown_needed_xp}])`;
+
+            const xp_per_cycle = xp_rate * get_skill_xp_gain(skill.skill_id);
+            const cycle_length = current_activity.xp_given_per_working_period ? current_activity.gathering_time_needed : 1;
+            const time_needed = has_usable_xp && xp_per_cycle > 0
+                ? Math.ceil((needed_xp - curr_xp) / xp_per_cycle) * cycle_length
+                : NaN;
+
+            if(Number.isFinite(time_needed)) {
+                insert_HTML(action_xp_div, `<br>Next level in ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}realtime)`);
+            } else {
+                insert_HTML(action_xp_div, `<br>Next level in an unknown amount of time`);
+            }
         }
     }
 
