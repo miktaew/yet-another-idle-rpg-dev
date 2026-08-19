@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 10 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 11 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,79 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Köy ve slum'lar Türkçe konuşuyor — P-7
+
+Beş NPC'de 185 diyalog id'si: köy muhafızı, iki değirmenci, şüpheli adam ve
+slum'ların yaşlı kadını, yaşlı zanaatkâr ile kapı muhafızı ve kafe işletmecisi, ve
+çiftlik sorumlusu. Kapsam %35.4'ten **%63.1**'e çıktı.
+
+Her NPC tek bir bağlam birimi olarak çevrildi, ardından tek görevi taslağı makine
+çevirisi sanıp satır satır aksini kanıtlamak olan bir inceleyiciye verildi. O ikinci
+paş hakkını verdi. Yakaladıkları:
+
+- **Eksik karşılaştırma eki.** "tarlada çalışmaktan iyi para getirir" ifadesinde
+  `daha` yok; bu hâliyle "tarlada çalışmaktan uzakta iyi para getirir" gibi
+  ayrışıyor, "daha iyi para öder" gibi değil. Replik bir iş teklifi; karşılaştırmayı
+  kaçırmak onu tersine çeviriyor.
+- **Sahte dost.** "quick footwork" ifadesi "ayaklarını çabuk tutmakla ilgili" olmuş,
+  ama "ayağını çabuk tut" Türkçede *acele et* demek. Muhafızın bir dövüş duruşunu
+  anlattığı replik, kahramanı acele etmeye çağırıyor gibi okunuyordu.
+- **Bağlam-birimi kırılması, en incesi bu.** "I'm way too strong for you" ifadesi
+  "benim gücüm senin boyunu çok aşar" olmuş. Deyim dışı olmasının ötesinde —
+  "boyunu aşmak" bir *işle* eşdizimlidir, kişinin gücüyle değil — boyla ilgili birebir
+  bir okumayı devreye sokuyor; hem de kahramanın başına uzanamamasına dair bir repliği
+  olan tek NPC'de. Şaka yanlış yere düşecekti. Yerine bir Türkçe dövüş deyimi
+  kuruldu: "ben senin için fazla ağır sıkletim~".
+- **"el idman"** — `el` bir iskambil turu, idman turu değil.
+- **"kırılgan düşmanlar"** — Türkçede duygusal kırılganlık okunuyor.
+- **Yavanlık.** "I know that from experience" birebir çevrilmiş; oysa Türkçede aynı
+  işi yapan iki kelimelik bir deyim var: "tecrübeyle sabit".
+
+Kelime kelime çevirmeme kuralının ne kazandırdığını görmek isteyen, şüpheli adama
+bakmalı. Kekemeliği İngilizce metne tirelerle yazılmış — "Y-yes", "b-bad" — ve Türkçe
+onu İngilizce harfleri kopyalamak yerine Türkçe kelimeler üzerine yeniden kuruyor:
+"S-sen! Sen ölmüştün!", "k-kötü", "ç-çete". "boss" hitabı da "reis" oldu; korkmuş
+küçük bir suçlunun gerçekten kullanacağı kelime.
+
+Varsayılmadı, doğrulandı: her anahtar İngilizce tarafla birebir eşleşti, dolayısıyla
+`npm run check` hiç bilinmeyen anahtar bildirmedi; hiçbir değer şüphe duyulacak
+uzunlukta İngilizcesiyle birebir aynı değil; ve hâlihazırda var olan dört kapı
+muhafızı id'si ne çoğaltıldı ne de çelişkiye düşürüldü.
+
+### Çevirinin açığa çıkardığı iki kaynak hatası
+
+**İngilizce metinde konuşmacı etiketi hatası.** `mofu#millers kiss more answ` üçüncü
+repliği `[Mouse]`'a veriyor, ama temel varyant onu `[Red]`'e veriyor — ve replik "You
+heard him~", yani ancak *az önce konuşmayan* kişinin söyleyebileceği bir şey. Bu
+hâliyle fare, kahramana fareyi dinlemesini söylüyor. İngilizce de anlamsız, sadece
+çevirisi değil. Kaynakta düzeltildi.
+
+**Mükerrer anahtar kontrolü, çünkü JavaScript size bunu söylemez.** Bir nesne
+literal'inde tekrarlanan id hata değildir: sessizce son olan kazanır ve modül import
+edildiğinde önceki değer çoktan yok olmuştur. `npm run check` anahtar *kümelerini*
+karşılaştırdığı için bunu asla göremezdi. Artık locale kaynak metnini tekrarlanan
+bildirimler için tarıyor. Kasten bir tane ekleyip doğrulandı.
+
+### Kısmi yerelleştirmenin açığa çıkardıkları
+
+Açıkça söylemeye değer, çünkü artık teorik değil görünür durumdalar ve
+`docs/I18N.md` içinde kayda geçirildiler:
+
+- **Skill ve stance adları `getText`'e hiç uğramıyor.** `src/display.js` doğrudan
+  `stances[stance].name` basıyor, `Skill.name()` skill'in kendi literal'inden
+  dönüyor; `src/` içinde ikisi için de tek bir `getText` çağrısı yok. Yani muhafız
+  artık "hızlı adımlar" diye anlatıyor ama buton hâlâ "Quick Steps" yazıyor. Bundan
+  çıkan sonuç: `skills` locale bölümündeki dokuz girdi yalnızca ırksal bonus
+  tooltip'lerinde tüketiliyor, oraya daha fazla girdi eklemek ekranda hiçbir şey
+  değiştirmiyor.
+- **Bir NPC'nin görünen adı yerelleştirilebilir değil.** Bir dialogue'un `name` alanı
+  konuşmanın üstündeki başlık; dolayısıyla "kasaba çiftliklerinin sorumlusu" diyen
+  çevrilmiş bir replik, `farm supervisor` yazan bir başlığın altında duruyor.
+- **Yalnızca sahne yönergesinden oluşan bir oyuncu repliğinin muhatabı yoktur**, o
+  yüzden orada resmî kip hiç görünemez. Yaşlı kadının üç oyuncu repliğinin hepsi
+  sahne yönergesi; yani `STORY.md`'nin onun için öngördüğü `siz` biçiminin hiçbir
+  dilde gösterilecek yeri yok.
 
 ### Türkçe çalışmasının açığa çıkardığı üç sıralama ve büyük harf hatası — P-7
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 10 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 11 -->
 
 # Changelog
 
@@ -17,6 +17,79 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### The village and the slums speak Turkish — P-7
+
+185 dialogue ids across five NPCs: the village guard, the two millers, the
+suspicious man and the old woman of the slums, the old craftsman with the gate guard
+and the café proprietress, and the farm supervisor. Coverage went from 35.4% to
+**63.1%**.
+
+Each NPC was translated as one context unit and then handed to a reviewer whose only
+job was to assume the draft was machine-translation-flavoured and prove otherwise
+line by line. That second pass earned its keep. What it caught:
+
+- **A missing comparative.** "tarlada çalışmaktan iyi para getirir" has no `daha`,
+  so it parses as "brings good money away from working the fields" rather than "pays
+  better than". The line is an offer of employment; getting the comparison wrong
+  inverts it.
+- **A false friend.** "quick footwork" had become "ayaklarını çabuk tutmakla ilgili",
+  but "ayağını çabuk tut" is Turkish for *hurry up*. The guard's explanation of a
+  combat stance read as her telling the hero to get a move on.
+- **A context-unit break, which is the subtlest one.** "I'm way too strong for you"
+  had become "benim gücüm senin boyunu çok aşar". Beyond being off-idiom — "boyunu
+  aşmak" collocates with a *task*, not with a person's strength — it activates a
+  literal reading about height, in the one NPC who also has a line about the hero
+  being too short to reach her head. The joke would have landed in the wrong place.
+  Rebuilt on a Turkish combat idiom instead: "ben senin için fazla ağır sıkletim~".
+- **"el idman"**, where `el` is a round of cards, not a round of sparring.
+- **"kırılgan düşmanlar"**, which in Turkish reads as emotionally fragile.
+- **Flatness.** "I know that from experience" rendered literally, where Turkish has a
+  two-word idiom that does the same work: "tecrübeyle sabit".
+
+The suspicious man is the one to read if you want to see what the rule about not
+translating word-for-word actually buys. His stammer is written into the English with
+hyphens — "Y-yes", "b-bad" — and the Turkish rebuilds it on Turkish words instead of
+copying the English letters: "S-sen! Sen ölmüştün!", "k-kötü", "ç-çete". His "boss"
+became "reis", which is what a frightened small-time crook would actually say.
+
+Verified rather than assumed: every key matched the English side exactly, so
+`npm run check` reported no unknown keys; no value is byte-identical to its English
+counterpart at any length worth suspecting; and the four gate guard ids that already
+existed were neither duplicated nor contradicted.
+
+### Two source-side defects the translation exposed
+
+**A speaker-tag bug in the English.** `mofu#millers kiss more answ` gives the third
+line to `[Mouse]`, but the base variant gives it to `[Red]` — and the line is "You
+heard him~", which can only be said by the one who did *not* just speak. As written,
+the mouse tells the hero to heed the mouse. The English reads as nonsense too, not
+just a translation of it. Fixed in the source.
+
+**A duplicate-key check, because JavaScript will not give you one.** A repeated id in
+an object literal is not an error: the last one silently wins, and by the time the
+module is imported the earlier value is gone. `npm run check` compares key *sets*, so
+it could never have seen it. It now scans the locale source text for repeated
+declarations. Verified by planting one.
+
+### What partial localisation has exposed
+
+Worth stating plainly, because these are now visible rather than theoretical, and
+they are recorded in `docs/I18N.md`:
+
+- **Skill and stance names never reach `getText` at all.** `src/display.js` prints
+  `stances[stance].name` directly and `Skill.name()` returns from the skill's own
+  literal; there is no `getText` call for either anywhere in `src/`. So the guard now
+  explains "hızlı adımlar" while the button still reads "Quick Steps". A consequence
+  that follows: the nine entries in the `skills` locale section are consumed only by
+  the racial bonus tooltips, so adding more of them changes nothing on screen.
+- **An NPC's shown name is not localisable.** A dialogue's `name` field is the
+  caption above the conversation, so a translated line about "kasaba çiftliklerinin
+  sorumlusu" sits under a caption reading `farm supervisor`.
+- **A player line that is only a stage direction has no addressee**, so a formal
+  register cannot appear there at all. All three of the old woman's player-side ids
+  are stage directions, which means the `siz` form her entry in `STORY.md` calls for
+  has nowhere to be shown in any language.
 
 ### Three sorting and casing bugs the Turkish work exposed — P-7
 

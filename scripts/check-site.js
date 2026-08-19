@@ -101,6 +101,39 @@ function base_key(key) {
     return key.startsWith(variant_prefix) ? key.slice(variant_prefix.length) : key;
 }
 
+/**
+ * Reports ids declared more than once in a locale FILE.
+ *
+ * This cannot be done on the imported object: a duplicate key in a JavaScript
+ * object literal is not an error, the last one silently wins, and by the time the
+ * module is loaded the earlier value is gone. So the source text is scanned
+ * instead. The failure it catches is a translator writing the same id twice with
+ * different text - the game would show one of them and nobody would know which.
+ *
+ * @param {String} name locale name, e.g. "turkish"
+ */
+function check_duplicate_keys(name) {
+    const source_path = path.join(locales_dir, `${name}.js`);
+    const source = fs.readFileSync(source_path, "utf8");
+
+    // Property lines in these files are one per line, indented, quoted key, colon.
+    const declared = [...source.matchAll(/^\s+"((?:[^"\\]|\\.)*)"\s*:/gm)].map(match => match[1]);
+
+    const seen = new Set();
+    const duplicated = new Set();
+    for (const key of declared) {
+        if (seen.has(key)) {
+            duplicated.add(key);
+        }
+        seen.add(key);
+    }
+
+    for (const key of duplicated) {
+        error(`locales/${name}.js declares "${key}" more than once; a later duplicate silently overwrites the earlier one.`);
+    }
+    return { declared: declared.length, unique: seen.size };
+}
+
 async function check_locales() {
     if (!fs.existsSync(locales_dir)) {
         error("locales/ does not exist.");
@@ -118,6 +151,13 @@ async function check_locales() {
 
     const reference = await load_locale(default_language);
     if (!reference) return;
+
+    for (const name of names) {
+        const counts = check_duplicate_keys(name);
+        if (counts.declared !== counts.unique) {
+            console.log(`[check] ${name}: ${counts.declared} lines declared, ${counts.unique} unique`);
+        }
+    }
 
     const reference_keys = Object.keys(reference);
     const reference_set = new Set(reference_keys);

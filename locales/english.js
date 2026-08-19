@@ -237,7 +237,7 @@ const dialogues = {
     "mofu#millers reject mean answ": "[Cat] Whatever you say~",
     "millers kiss more": "Can I get one more kiss?",
     "millers kiss more answ": "[Red] Hmmm... should we? \n[Gray] Maybe some other time. \n[Red] You heard him~",
-    "mofu#millers kiss more answ": "[Cat] Hmmm... should we? \n[Mouse] Maybe some other time. \n[Mouse] You heard him~",
+    "mofu#millers kiss more answ": "[Cat] Hmmm... should we? \n[Mouse] Maybe some other time. \n[Cat] You heard him~",
     "millers how2": "So, how's it going?",
     "millers how2 answ": "[Red] Kinda boring, but at least company is good. \n[Gray] What he said.",
     "mofu#millers how2 answ": "[Cat] Kinda boring, but at least company is good. \n[Mouse] What he said.",
