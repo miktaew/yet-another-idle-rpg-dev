@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 5 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 6 -->
 
 # Changelog
 
@@ -17,6 +17,74 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### The town is open — P-9, quest 2 of "The Merchant's Word"
+
+The gate guard's line has said the same thing since v0.4.6: the town is closed to
+everyone who is not a citizen or a merchant guild member, no exceptions. He now has
+a second thing to say, and behind it the whole town.
+
+**The gate.** A new textline on the gate guard, gated on `{reputation: {Town: 150}}`.
+150 is the entire Town reputation obtainable in the game today — 50 for clearing the
+Gang hideout, 40 for Bonemeal delivery, 60 for Ploughs to swords — so the gate opens
+once the region's own work is finished. This gives Town reputation its first
+consumer; until now it was granted in three places and read nowhere.
+
+The guard does not bend. That mattered when writing it: "No exceptions" is his
+character, and a guard who relents because the player asked twice is a worse guard.
+So the rule is satisfied rather than waived — the farm supervisor, whose fields the
+player saved and whose ploughs became swords, walked down and left a name with the
+gate. A citizen speaking for you is the other half of what he said in the first
+place.
+
+Resolving the line unlocks Town square, completes `Lost memory` task 4, locks the
+now-untrue "the town is closed" line, and opens a short after-entry line so the
+guard is not left with nothing to say.
+
+`Lost memory` task 4 was `"Get into the town (tbc)"` with a `//not yet possible`
+comment. It is now `"Get into the town"`, and completable.
+
+**What that opens.** Four fully authored interiors that no player has ever seen —
+Town square with its fountain and organised pigeons, the Cat café, the Antique store
+with its private museum of things you cannot recognise, and the Adventurer's guild
+with some fifty ambient lines that quietly set up the retired legend the village
+guard is not talking about, and the four young prodigies whose shadows detach from
+walls. None of it needed writing. It needed a gate.
+
+**The Nekomimi café and a gate that was never wired.** The café declared
+`display_conditions: {flags: ["is_mofu_mofu_enabled"]}` — the author's intent that
+it only exist in the beastkin cosmology. The `Location` constructor never accepted
+that option, so it was silently dropped and the gate did nothing. With the town
+opening, that would have put a nekomimi café in a world where catfolk are supposed
+to be a drunk's story that needs defending.
+
+`Location` now accepts `display_conditions`, wrapped the same way `Textline` does it,
+and the two travel filters in `display.js` honour it. It is evaluated at render time
+rather than at load, so the runtime mofu toggle takes effect without a reload.
+
+`Combat_zone` needed the same field for a reason worth recording: it is a separate
+class from `Location`, not a subclass, so its instances have no such property, and
+`process_conditions` reads `.length` on its argument. Filtering connected locations
+without accounting for that would have thrown on the first combat zone in a travel
+list — which is to say, immediately. Both travel filters now go through one helper
+with an explicit fallback, so a future location class cannot reintroduce it.
+
+**The proprietress had nine lines of `lorem ipsum`.** She now has a voice. She is
+the composed one in a café full of chaos, which is funnier than her being equally
+silly, and she gets exactly one pun — funded by a jar on the door that pays for the
+roof. There is no `lorem ipsum` left in the locale file.
+
+**The Mages guild description was the Nekomimi café's, verbatim**, and its
+background noises were an empty array. It is `is_unlocked: false` and stays that
+way — it belongs to a later quest — but shipping the wrong text is one flag flip
+from being visible, so it now has its own description and its own ambience, seeded
+with the worked-silver detail that quest will need.
+
+**Tests.** `npm test` grew a `src/conditions.js` section, because a wrong condition
+shape does not throw — it silently opens or closes content. The reputation gate is
+checked shut at 0 and at 149, open at exactly 150 and above; the undeclared default
+and the bare-array fallback are both checked to mean "no conditions" rather than
+"conditions unmet"; and the flag gate is checked in both directions. 33 checks.
 
 ### Height and race finally do something — P-8
 

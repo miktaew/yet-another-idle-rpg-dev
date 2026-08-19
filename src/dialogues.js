@@ -913,6 +913,36 @@ class DialogueAction extends GameAction {
                 name: "g guard hello",
                 text: "g guard hello answ",
             }), 
+            "known": new Textline({
+                name: "g guard known",
+                text: "g guard known answ",
+                //Town reputation is the citizen path the guard names in "enter".
+                //150 is the entire amount obtainable at the moment: 50 from
+                //clearing the Gang hideout, 40 from Bonemeal delivery and 60 from
+                //Ploughs to swords - so the gate opens once the region's own work
+                //is done. If later content grants Town reputation, revisit this
+                //number rather than leaving it as an accidental part-way gate.
+                //display_conditions is a plain object here: the Textline
+                //constructor wraps it in the array that process_conditions reads.
+                display_conditions: {
+                    reputation: {Town: 150},
+                },
+                rewards: {
+                    locations: [{location: "Town square"}],
+                    quest_progress: [
+                        {quest_id: "Lost memory", task_index: 4},
+                    ],
+                    textlines: [{dialogue: "gate guard", lines: ["passed"]}],
+                },
+                //"enter" is locked too: its answer says the town is closed, which
+                //stops being true the moment this line resolves.
+                locks_lines: ["enter", "known"],
+            }), 
+            "passed": new Textline({
+                name: "g guard passed",
+                text: "g guard passed answ",
+                is_unlocked: false,
+            }), 
         },
         description: "g guard description",
     });

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 1 -->
+<!-- doc-source: docs/STORY.md  doc-version: 2 -->
 
 # Story canon
 
@@ -178,8 +178,16 @@ Reclaiming these takes priority over inventing new content.
 | **`Silver ingot` recipe** | Commented out, waiting for a sink. Its level range already sits correctly between the live iron and steel recipes. |
 | **Two combat stances** | `berserk` and `flowing water`, with their skills, granted by nothing today. |
 
-All five town interiors are behind the same closed gate. Opening it is the single
-highest-leverage narrative action available.
+**Status: the gate is open.** Quest 2 of the arc shipped, so Town square, the Cat
+cafe, the Antique store and the Adventurer's guild are now reachable, and the
+proprietress's nine placeholder strings are written. The Nekomimi cafe is reachable
+only with the beastkin flag set, which is what its author intended and which now
+actually works. The Mages guild stays locked for quest 4, but no longer carries the
+Nekomimi cafe's description.
+
+Still unreclaimed: the commented-out `cute little rat` dialogue, the Forest lake deep
+dive and its silver, the `Silver ingot` recipe, and the two combat stances. Those
+belong to quests 3 through 6.
 
 ## 9. The continuation arc — "The Merchant's Word"
 

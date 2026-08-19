@@ -2030,6 +2030,26 @@ function update_displayed_health_of_enemies() {
     }
 }
 
+/**
+ * Whether a connected location should be offered to the player right now.
+ *
+ * display_conditions is evaluated here rather than when the location is declared,
+ * so a condition on a runtime flag - such as the Nekomimi cafe's
+ * is_mofu_mofu_enabled gate - takes effect without a reload.
+ *
+ * The `|| []` is load-bearing: Combat_zone is a separate class from Location, not
+ * a subclass, and process_conditions reads .length on its argument. Any location
+ * class that does not declare the property would otherwise throw here.
+ *
+ * @param {Object} location a Location, Combat_zone or Challenge_zone
+ * @returns {Boolean}
+ */
+function is_location_offered(location) {
+    return location.is_unlocked
+        && !location.is_finished
+        && Boolean(process_conditions(location.display_conditions || [], character));
+}
+
 function update_displayed_normal_location(location) {
     clear_action_div();
     clear_HTML_content(location_types_div);
@@ -2056,7 +2076,7 @@ function update_displayed_normal_location(location) {
     /////////////////////////////////
     //add butttons to change location
 
-    const available_locations = location.connected_locations.filter(loc => (loc.location.is_unlocked && !loc.location.is_finished && !loc.location.is_challenge));
+    const available_locations = location.connected_locations.filter(loc => (is_location_offered(loc.location) && !loc.location.is_challenge));
     if(available_locations.length > 0) {
         location_choice_divs["locations"] = create_location_choice_dropdown({name: "Move somewhere else", icon: "directions", class_name: "choice_travel"});
 
@@ -2420,7 +2440,7 @@ function create_location_choices({location, category, is_combat = false}) {
         if(!is_combat){
             for(let i = 0; i < location.connected_locations.length; i++) { 
                 
-                if(!location.connected_locations[i].location.is_unlocked || location.connected_locations[i].location.is_finished) { //skip if not unlocked or if finished
+                if(!is_location_offered(location.connected_locations[i].location)) { //skip if not unlocked, finished, or conditions unmet
                     continue;
                 }
                 if(location.connected_locations[i].location.is_challenge) {

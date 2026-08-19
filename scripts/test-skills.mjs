@@ -267,6 +267,56 @@ class InventoryHaver {
         `got=${new Person({}).getNumericalHeight()}`);
 }
 
+// ===========================================================================
+// src/conditions.js — the gate that decides whether a textline or a location
+// is offered. A wrong shape here silently opens or closes content, so the exact
+// argument shapes used by the content are pinned down.
+// ===========================================================================
+
+// Set before loading: the stub captures these object references at module
+// evaluation time, and the tests below mutate their properties.
+globalThis.__test_levels = {};
+globalThis.__test_flags = { is_mofu_mofu_enabled: true };
+
+const { process_conditions } = await load_with_stubs(
+    "src/conditions.js",
+    ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js"],
+    `
+const get_total_skill_level = (id) => __levels[id] || 0;
+const current_game_time = { season: "Summer", hour: 12, day: 1, month: 1, year: 1 };
+const global_flags = __flags;
+const height_values = { "very short": 145, short: 155, average: 170, tall: 180, "very tall": 190 };
+const playable_races = {};
+`.replace("__levels", "globalThis.__test_levels").replace("__flags", "globalThis.__test_flags"));
+
+{
+    const hero = (town) => ({ reputation: { Village: 0, Slums: 0, Town: town }, money: 0, personal: {} });
+
+    // Textline and Location both wrap the declared value in an array, so this is
+    // the shape process_conditions actually receives.
+    const wrap = (declared) => [declared];
+
+    const rep_gate = wrap({ reputation: { Town: 150 } });
+
+    check("a reputation gate is shut at 0", !process_conditions(rep_gate, hero(0)));
+    check("a reputation gate is shut just below the threshold", !process_conditions(rep_gate, hero(149)));
+    check("a reputation gate opens exactly at the threshold", Boolean(process_conditions(rep_gate, hero(150))));
+    check("a reputation gate stays open above it", Boolean(process_conditions(rep_gate, hero(200))));
+
+    // The default for both classes is [], wrapped to [[]]. That must read as "no
+    // conditions", not as "conditions unmet".
+    check("an undeclared condition offers the content", Boolean(process_conditions(wrap([]), hero(0))));
+    // And a bare [] - what is_location_offered falls back to for a class that does
+    // not declare the property at all - must also pass.
+    check("an empty condition array offers the content", Boolean(process_conditions([], hero(0))));
+
+    const mofu_gate = wrap({ flags: ["is_mofu_mofu_enabled"] });
+    check("a flag gate is open while the flag is set", Boolean(process_conditions(mofu_gate, hero(0))));
+    globalThis.__test_flags.is_mofu_mofu_enabled = false;
+    check("a flag gate shuts when the flag is cleared", !process_conditions(mofu_gate, hero(0)));
+    globalThis.__test_flags.is_mofu_mofu_enabled = true;
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

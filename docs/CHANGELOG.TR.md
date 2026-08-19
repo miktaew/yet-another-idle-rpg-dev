@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 5 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 6 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,77 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Kasaba açıldı — P-9, "The Merchant's Word" arkının 2. quest'i
+
+Kapı muhafızının repliği v0.4.6'dan beri aynı şeyi söylüyordu: kasaba, yurttaş ya da
+tüccar loncası üyesi olmayan herkese kapalı, istisnasız. Artık söyleyecek ikinci bir
+şeyi var ve arkasında koca bir kasaba.
+
+**Kapı.** Muhafıza `{reputation: {Town: 150}}` ile kapılanmış yeni bir textline
+eklendi. 150, oyunda bugün elde edilebilen Town itibarının tamamı — Gang hideout'u
+temizlemek için 50, Bonemeal delivery için 40, Ploughs to swords için 60 — yani kapı,
+bölgenin kendi işi bittiğinde açılıyor. Bu, Town itibarına ilk tüketicisini
+kazandırıyor; şimdiye kadar üç yerde veriliyor ve hiçbir yerde okunmuyordu.
+
+Muhafız kuralı esnetmiyor. Yazarken önemli olan buydu: "No exceptions" onun
+karakteri ve oyuncu iki kez sorduğu için yumuşayan bir muhafız, daha kötü bir
+muhafızdır. Bu yüzden kural feragat edilmiyor, karşılanıyor — tarlalarını oyuncunun
+kurtardığı ve sabanlarını kılıca dönüştürdüğü çiftlik sorumlusu aşağı inip kapıya
+bir isim bırakmış. Bir yurttaşın senin için konuşması, muhafızın en başta söylediği
+şeyin diğer yarısı.
+
+Repliğin çözülmesi Town square'i açıyor, `Lost memory` 4. görevini tamamlıyor, artık
+doğru olmayan "kasaba kapalı" repliğini kilitliyor ve girişten sonra kısa bir replik
+açıyor — böylece muhafız söyleyecek hiçbir şeyi olmadan kalmıyor.
+
+`Lost memory` 4. görev `"Get into the town (tbc)"` ve yanında `//not yet possible`
+yorumuyla duruyordu. Artık `"Get into the town"` ve tamamlanabilir.
+
+**Bunun açtığı şey.** Hiçbir oyuncunun görmediği, tamamen yazılmış dört iç mekân —
+çeşmesi ve örgütlü güvercinleriyle Town square, Cat café, tanıyamadığın şeylerin özel
+müzesiyle Antique store, ve elli civarı ortam repliğiyle Adventurer's guild; o
+replikler köy muhafızının hakkında konuşmadığı emekli efsaneyi ve gölgeleri
+duvarlardan kopan dört genç dâhiyi sessizce kuruyor. Hiçbiri yazılmayı beklemiyordu.
+Bir kapı bekliyordu.
+
+**Nekomimi café ve hiç bağlanmamış bir kapı.** Kafe
+`display_conditions: {flags: ["is_mofu_mofu_enabled"]}` bildiriyordu — yazarın,
+kafenin yalnızca beastkin kozmolojisinde var olması yönündeki niyeti. `Location`
+constructor'ı bu seçeneği hiç kabul etmiyordu, dolayısıyla sessizce düşüyor ve kapı
+hiçbir şey yapmıyordu. Kasaba açılınca bu, kedi-halkın savunulması gereken bir ayyaş
+hikâyesi olduğu bir dünyaya bir nekomimi kafesi koyacaktı.
+
+`Location` artık `display_conditions` kabul ediyor — `Textline`'ın yaptığı gibi
+sarılarak — ve `display.js` içindeki iki seyahat filtresi bunu dikkate alıyor.
+Yüklemede değil çizim anında değerlendiriliyor; böylece çalışma zamanındaki mofu
+anahtarı yeniden yükleme olmadan etkili oluyor.
+
+`Combat_zone` da aynı alana ihtiyaç duydu ve gerekçesi kaydedilmeye değer: o,
+`Location`'ın alt sınıfı değil ayrı bir sınıf, dolayısıyla örneklerinde böyle bir
+özellik yok ve `process_conditions` argümanının `.length` değerini okuyor. Bağlı
+lokasyonları bunu hesaba katmadan filtrelemek, seyahat listesindeki ilk combat
+zone'da hata fırlatacaktı — yani anında. İki seyahat filtresi de artık açık bir
+fallback taşıyan tek bir yardımcıdan geçiyor; böylece gelecekteki bir lokasyon
+sınıfı bunu yeniden getiremez.
+
+**İşletmecinin dokuz satırı `lorem ipsum`du.** Artık bir sesi var. Kaosla dolu bir
+kafede sakin olan kişi o — ki bu, onun da aynı ölçüde saçmalamasından daha komik — ve
+tam olarak bir kelime oyunu yapıyor; kapıdaki, çatının parasını ödemiş bir kavanoz
+tarafından finanse edilerek. Locale dosyasında hiç `lorem ipsum` kalmadı.
+
+**Mages guild açıklaması Nekomimi café'nin birebir kopyasıydı** ve ortam sesleri boş
+bir diziydi. `is_unlocked: false` ve öyle kalıyor — daha sonraki bir quest'e ait —
+ama yanlış metni yayınlamak bir flag değişimi uzaklıkta olduğu için artık kendi
+açıklaması ve kendi atmosferi var; o quest'in ihtiyaç duyacağı işlenmiş gümüş
+ayrıntısı da tohum olarak ekildi.
+
+**Testler.** `npm test` bir `src/conditions.js` bölümü kazandı; çünkü yanlış bir
+koşul şekli hata fırlatmıyor — içeriği sessizce açıyor ya da kapıyor. İtibar kapısı
+0'da ve 149'da kapalı, tam 150'de ve üzerinde açık olarak kontrol ediliyor;
+bildirilmemiş varsayılan ve çıplak dizi fallback'i, ikisi de "koşul yok" anlamına
+geldiği (yani "koşul karşılanmadı" değil) doğrulanıyor; flag kapısı iki yönde de
+kontrol ediliyor. 33 kontrol.
 
 ### Boy ve ırk nihayet bir işe yarıyor — P-8
 

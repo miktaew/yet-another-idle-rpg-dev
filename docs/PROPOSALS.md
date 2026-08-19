@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 5 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 6 -->
 
 # Proposals
 
@@ -215,11 +215,12 @@ enters the town as a supplier, not as a hero.
 
 Execution order, highest leverage first:
 
-1. **Q2 first in effort terms, Q1 first in play order.** Opening the gate lights
-   up five fully authored town interiors at once — Town square, Adventurer's
-   guild, Antique store, Cat cafe, Nekomimi cafe — and completes a quest task
-   that has been dead since v0.4.6. This is the single highest-leverage narrative
-   action available.
+1. **Q2 — DONE.** The gate is open, gated on the full 150 Town reputation, which
+   gives that reputation its first consumer. Town square, the Cat cafe, the
+   Antique store and the Adventurer's guild are reachable; the Nekomimi cafe is
+   correctly beastkin-gated now that `Location` honours `display_conditions`; the
+   Lost memory task dead since v0.4.6 is completable. Written up in
+   [CHANGELOG.md](CHANGELOG.md).
 2. Fix the reclamation blockers found alongside the orphans: the cat cafe
    trader points at a mis-named inventory template; the Mages guild description
    is a copy-paste of the Nekomimi cafe's; the Nekomimi proprietress still has

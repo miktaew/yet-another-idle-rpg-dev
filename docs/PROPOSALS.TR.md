@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 5 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 6 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -223,11 +223,12 @@ kasabaya kahraman olarak değil, tedarikçi olarak girer.
 
 Uygulama sırası, en yüksek kaldıraç önce:
 
-1. **Efor açısından Q2 ilk, oynanış sırasında Q1 ilk.** Kapıyı açmak, tamamen
-   yazılmış beş kasaba iç mekânını aynı anda aydınlatıyor — Town square,
-   Adventurer's guild, Antique store, Cat cafe, Nekomimi cafe — ve v0.4.6'dan beri
-   ölü olan bir quest görevini tamamlıyor. Elimizdeki en yüksek kaldıraçlı anlatı
-   hamlesi bu.
+1. **Q2 — TAMAMLANDI.** Kapı açıldı, Town itibarının tamamı olan 150'ye
+   kapılandı ve böylece o itibar ilk tüketicisini kazandı. Town square, Cat cafe,
+   Antique store ve Adventurer's guild erişilebilir; `Location` artık
+   `display_conditions`'ı dikkate aldığı için Nekomimi cafe doğru şekilde
+   beastkin ile kapılı; v0.4.6'dan beri ölü olan Lost memory görevi
+   tamamlanabilir. [CHANGELOG.TR.md](CHANGELOG.TR.md) içinde yazılı.
 2. Orphan'larla birlikte bulunan geri kazanım engellerini düzelt: cat cafe tüccarı
    yanlış adlandırılmış bir envanter şablonuna işaret ediyor; Mages guild
    açıklaması Nekomimi cafe'nin kopyası; Nekomimi işletmecisinin dokuz

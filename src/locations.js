@@ -40,6 +40,7 @@ class Location {
                 temperature_modifier = 0,
                 is_under_roof = false,
                 entrance_rewards, //rewards gained on entering it, to be used for unlocks
+                display_conditions = [], //same shape as on a Textline; checked at render time, so a runtime flag works
             }) {
         // always a safe zone
 
@@ -58,6 +59,11 @@ class Location {
         this.dialogues = dialogues;
         this.traders = traders;
         this.market_region = market_region; //for separate regions for market saturation
+        //Wrapped the same way Textline does it, because process_conditions reads
+        //conditions[0]. This option was already being passed by content (the
+        //Nekomimi cafe) but the constructor did not accept it, so it was silently
+        //dropped and the intended gate never applied.
+        this.display_conditions = [display_conditions];
         if(market_region) {
             market_regions[market_region] = true;
         }
@@ -133,11 +139,13 @@ class Combat_zone {
                  temperature_range_modifier = 1,
                  temperature_modifier = 0,
                  is_under_roof = false,
+                 display_conditions = [], //see the Location constructor; Combat_zone is a separate class, not a subclass
                 }) {
 
         this.name = name;
         this.id = id;
         this.unlock_text = unlock_text;
+        this.display_conditions = [display_conditions];
         this.description = description;
         this.getDescription = getDescription || function(){return description;}
         this.otherUnlocks = otherUnlocks || function() {return;} //try not to use it if possible
@@ -1755,11 +1763,16 @@ There's another gate on the wall in front of you, but you have a strange feeling
     });
     locations["Mages guild"] = new Location({
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
-        description: `A nekomimi café in the center of town. Multiple catboys and catgirls are busy with a mix of work and silliness, sometimes properly serving drinks and snacks and sometimes just acting the way their four legged equivalents tend to do.`,
+        description: `A narrow stone building wedged between two wider ones, with more floors than its frontage suggests and windows that do not line up between them. `
+                    +`The door is propped open by a book nobody seems worried about. Inside, the air is dry and very still, and it smells faintly of hot metal.`,
         name: "Mages guild",
         is_unlocked: false,
         getBackgroundNoises: function() {
             let noises = [
+                "*A page turns somewhere above you*", "*Something small and bright crosses a doorway and does not come back*",
+                "...no, read it again, the second line is the whole problem...", "*The air goes cold for exactly one breath*",
+                "Who moved the chalk?", "*A quill writes on by itself for a moment after being set down*",
+                "...silver, yes, but it has to be worked silver, ore is no use to anyone...",
             ];
             return noises;
         },

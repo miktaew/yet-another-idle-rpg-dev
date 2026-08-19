@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 1 -->
+<!-- doc-source: docs/STORY.md  doc-version: 2 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -184,8 +184,15 @@ Bunları geri kazanmak yeni içerik uydurmaya göre önceliklidir.
 | **`Silver ingot` tarifi** | Yorum içinde, bir kullanım noktası bekliyor. Seviye aralığı zaten canlı demir ve çelik tarifleri arasında doğru yerde. |
 | **İki combat stance** | `berserk` ve `flowing water`, skill'leriyle birlikte; bugün hiçbir şey vermiyor. |
 
-Beş kasaba iç mekânının tamamı aynı kapalı kapının arkasında. O kapıyı açmak,
-elimizdeki en yüksek kaldıraçlı anlatı hamlesidir.
+**Durum: kapı açıldı.** Arkın 2. quest'i tamamlandı; Town square, Cat cafe, Antique
+store ve Adventurer's guild artık erişilebilir ve işletmecinin dokuz yer tutucu metni
+yazıldı. Nekomimi cafe yalnızca beastkin flag'i açıkken erişilebilir — yazarının
+amaçladığı şey buydu ve artık gerçekten çalışıyor. Mages guild 4. quest için kilitli
+kalıyor ama artık Nekomimi cafe'nin açıklamasını taşımıyor.
+
+Hâlâ geri kazanılmayanlar: yorum içindeki `cute little rat` dialogue'u, Forest lake
+derin dalışı ve gümüşü, `Silver ingot` tarifi ve iki combat stance. Bunlar 3-6.
+quest'lere ait.
 
 ## 9. Devam arkı — "The Merchant's Word"
 

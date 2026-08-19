@@ -258,6 +258,13 @@ const dialogues = {
     "mofu#g guard description": "You see a massive, hairy man with round ears and a tiny tail. He's clad in a steel chainmail, with a spear in his hand and an axe on his belt.",
     "g guard hello": "Hello, can I get in?",
     "g guard hello answ": "The town is currently closed to everyone who isn't a citizen or a merchant guild's member. No exceptions.",
+    "g guard known": "I've been working for people around here. Does any of that count?",
+    "g guard known answ": "Not by itself, no. *[He shifts the spear to his other hand and, for the first time, looks at you properly]*\n\n"
+                    +"But the supervisor from the town's farms walked all the way down here and left a name with the gate. Yours. Said if it turned up it wasn't to be turned away, "
+                    +"and that he'd stand for it himself. A citizen speaking for you isn't an exception. It's the other half of the rule.\n\n"
+                    +"*[He steps aside]* Square's straight on, guild quarter past the fountain. Don't feed the pigeons. They're organised.",
+    "g guard passed": "Busy day?",
+    "g guard passed answ": "Same day as every day. *[He doesn't look at you]* You're on the list now. Stay on it.",
     
     //SUSPICIOUS GUY / PUPPY
     "sus description 1": "You see a young man in shabby clothes and with messy hair, who keeps looking around. He appears to have some nervous ticks, or maybe he's just really stressed. He notices you and stares.",
@@ -347,15 +354,18 @@ const dialogues = {
             +" Despite seeming more like a scribe, he's buff and tanned.",
 
     //NEKOMIMI PROPRIETRESS (NEKOMIMI CAFE)
-    "nekomimi proprietress description": "lorem ipsum",
-    "proprietress hi": "lorem ipsum",
-    "proprietress hi answ": "lorem ipsum",
-    "proprietress offer": "lorem ipsum",
-    "proprietress offer answ": "lorem ipsum",
-    "proprietress special": "lorem ipsum",
-    "proprietress special answ": "lorem ipsum",
-    "proprietress puns": "lorem ipsum",
-    "proprietress puns answ": "lorem ipsum",
+    "nekomimi proprietress description": "You see a tall catgirl in a spotless apron, the only person in the room who isn't moving. Her tail is perfectly still, and she watches her own staff the way a cat watches a bird it has already decided not to bother with.",
+    "proprietress hi": "Hello?",
+    "proprietress hi answ": "Welcome. *[She looks you over once, unhurried]* Table or counter. Counter if you want to talk, table if you want to be fussed over. They cost the same.",
+    "proprietress offer": "What do you serve?",
+    "proprietress offer answ": "Coffee, cider, cake, and whatever the kitchen managed not to drop today. *[Behind her, something ceramic survives a near miss and three voices cheer]*\n\n"
+                    +"The staff are what people come for. The food is the excuse they give themselves. Nobody has complained about the arrangement yet.",
+    "proprietress special": "Anything you'd recommend?",
+    "proprietress special answ": "The apple pie. Not because it's the best thing we make, though it is. *[Her ears turn slightly, the only part of her that moves]*\n\n"
+                    +"It takes long enough to eat that you'll still be sitting here when the afternoon shift comes on, and they're the ones worth watching.",
+    "proprietress puns": "Does anyone here ever stop with the cat puns?",
+    "proprietress puns answ": "*[Her tail moves for the first time. Once]* You walked into a café staffed entirely by catfolk and asked whether the puns stop.\n\n"
+                    +"They don't. There's a jar by the door - a copper for every 'nya' a customer makes. It paid for the roof. *[She almost smiles]* Purr-fectly reasonable, I thought.",
     
     //SWAMPCHIEF
     "swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches. You approach the hut, calling out in greeting, but getting no response. As you step closer, you see a large man in thick scaly armor wielding a great trident emerge. He points the trident at you as he takes a firm stance.",
