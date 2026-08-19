@@ -16,6 +16,78 @@
       locale is safe. Run "npm run check" to see the coverage.
 */
 
+const dialogues = {
+    /*
+        VILLAGE ELDER
+
+        Register: the hero addresses the elder with "siz", the elder answers the
+        hero with "sen" - see docs/STORY.md section 6.
+
+        Two polysemy calls worth recording:
+        - "with nothing but pants": the robbers took everything else, so this is
+          trousers, not underwear. "pantolon".
+        - "Are wolf rats a big issue?" / "quite a big one. Not literally" is a joke
+          about size. Turkish keeps it as "büyük bir sorun" answered with "boyut
+          olarak değil", which lands the same way.
+    */
+    "elder description": "Beyaz saçlı, yaşını almış bir adam görüyorsun; ama duruşu hâlâ dinç, gerekirse dövüşmeye hazır gibi. Merakla seni süzüyor.",
+    "mofu#elder description": "Kıvırcık beyaz saçlı, kalın ve körelmiş boynuzları olan, yaşını almış bir adam görüyorsun. Yıllarına rağmen dimdik duruyor; köye gelecek her tehdide kafa atmaya hazır. Merakla seni süzüyor.",
+    "elder hello": "Merhaba?",
+    "elder hello answ": "Merhaba. İyileştiğini görmek güzel",
+    "elder head hurts": "Başım ağrıyor... Ne oldu?",
+    "elder head hurts answ": "Bizimkilerden birkaçı seni ormanda baygın bulmuş; yaralıymışsın, üzerinde pantolondan başka bir şey yokmuş, köye getirdiler. "
+            + "Görünüşe göre yakındaki kasabaya gidiyordun ve biri sana saldırıp kafana çok sert vurdu.",
+    "elder where": "Neredeyim?",
+    "elder where answ": "Bizimkilerden birkaçı seni ormanda baygın bulmuş; yaralıymışsın, üzerinde pantolondan başka bir şey yokmuş, köye getirdiler. "
+            + "Görünüşe göre yakındaki kasabaya gidiyordun ve biri sana saldırıp kafana çok sert vurdu.",
+    "elder remember": "Buraya nasıl geldiğimi hatırlamıyorum, ne oldu?",
+    "elder remember answ": "Bizimkilerden birkaçı seni ormanda baygın bulmuş; yaralıymışsın, üzerinde pantolondan başka bir şey yokmuş, köye getirdiler. "
+            + "Görünüşe göre yakındaki kasabaya gidiyordun ve biri sana saldırıp kafana çok sert vurdu.",
+    "elder who": "Siz kimsiniz?",
+    "elder who answ": "Bu köyün resmî olmayan lideriyim. Aklına bir soru takılırsa bana gel.",
+    "elder leave 1": "Harika... Yardımınız için teşekkürler, ama sanırım oraya gitmem gerek. Belki daha fazlasını hatırlamama yardımı olur.",
+    "elder leave 1 answ": "Çevredeki topraklar tehlikeli ve sen hâlâ yola çıkacak kadar güçlü değilsin. Yine pusuya düşmeye mi niyetlisin?",
+    "elder need to": "Ama gitmek istiyorum",
+    "elder need to answ": "Önce toparlanman lazım; biraz dinlenmen, belki biraz da çalışman - epey cılız görünüyorsun... Aslında, bak ne diyeceğim: birkaç kurt sıçanı öldürmek iyi bir alıştırma olur. "
+                    +"Tarlalardan birkaçını onlardan temizlemekte bize yardım edebilirsin, ne dersin? Yedek bir silah bulabilirim sanıyorum",
+    "elder starting gear": "Şu yedek silah konusunda...",
+    "elder starting gear answ": "Evet? Ne tür olsun? Hançer, kılıç, mızrak? Ya da belki balta veya çekiç? Son ikisi savurmak için biraz fazla yavaş olabilir, ama karar senin.",
+    "elder dagger": "Hançer istiyorum; hızlı olmak en iyi seçim gibi görünüyor",
+    "elder sword": "Kılıç istiyorum; savurma hızı iyi, hasarı da fena değil",
+    "elder spear": "Mızrak istiyorum; ikisi arasında tam denge",
+    "elder axe": "Balta istiyorum; her vuruşta sağlam hasar",
+    "elder hammer": "Çekiç istiyorum; çok yavaş olsa bile yıkıcı saldırılar",
+    "elder none": "Bence silahsız dövüşmeyi tercih ederim",
+    "elder weapon answ": "Al bakalım, iyi şanslar! Ve unutma, ömrünün sonuna kadar buna bağlı kalmak zorunda değilsin",
+    "elder weapon none answ": "Silah yok mu? Kulağa iyi bir fikir gibi gelmiyor, ama dediğim gibi, karar senin...",
+    "elder eq": "Daha iyi bir silahla düzgün kıyafetleri edinmemin bir yolu var mı?",
+    "elder eq answ": "Verecek fazlamız kalmadı, ama pazarımıza bir göz atabilirsin. Şuradan git *[bir yönü işaret ediyor]*, sonra sağa dön. Bir kasabada bulacağının yanına yaklaşmaz, ama insanların satacak biraz teçhizatı, yiyeceği ve işe yarar başka şeyleri hep olur. "
+                    +"Paraya ihtiyacın varsa sıçan artıklarını orada satmayı dene. Diş, kuyruk, post - hepsini alırlar. Bu şeylerle ne yaptıklarına dair hiçbir fikrim yok...",
+    "elder leave 2": "Köyden ayrılabilir miyim?",
+    "elder leave 2 answ":  "Bunu konuşmuştuk, hâlâ fazla zayıfsın",
+    "elder money": "Para kazanmanın başka yolları var mı?",
+    "elder money answ": "Tarla işlerinde bize yardım edebilirsin. Korkarım eli pek yüzü pek bir para değil.",
+    "elder rats": "Kurt sıçanları büyük bir sorun mu?",
+    "elder rats answ": "Ha evet, hayli büyük. Boyut olarak değil - gerçi normal sıçanlardan çok daha irilerdir... "
+                    +"Kurtulması gerçekten zor, aksi bir haşere. Ve sayıları sayesinde cidden ölümcül olabilirler. "
+                    +"Ama yalnızca sürü hâlinde; tek bir kurt sıçanı pek de tehdit sayılmaz",
+    "elder cleared 1":  "Tarlayı temizledim, tam istediğiniz gibi",
+    "elder cleared 1 answ": "Öyle mi? Bu iyi. Daha güçlü bir hedefe ne dersin? Yakındaki mağara bu haşereyle dolu. Önce ön odayı kim tutuyorsa onunla, sonra da daha derin kısımlarla boy ölçüş. "
+                    +"Ondan önce biraz uyusan iyi olur belki? Bazıları şuradaki kulübeyi senin için hazırladı. Temiz, kuru ve sana biraz mahremiyet sağlar. "
+                    +"Ha, unutmadan: yaşlı zanaatkârımız seninle konuşmak istiyordu.",
+    "elder cleared 1 alt":  "Tarlayı temizledim, tam istediğiniz gibi",
+    "elder cleared 1 alt answ": "Öyle mi? Bu iyi. Daha güçlü bir hedefe ne dersin? Yakındaki mağara bu haşereyle dolu. Önce ön odayı kim tutuyorsa onunla, sonra da daha derin kısımlarla boy ölçüş. "
+                    +"Ondan önce biraz uyusan iyi olur belki? Bazıları şuradaki kulübeyi senin için hazırladı. Temiz, kuru ve sana biraz mahremiyet sağlar. ",
+    "elder leave 3": "Köyden ayrılabilir miyim?",
+    "elder leave 3 answ":  "Hâlâ daha güçlenmen gerek.",
+    "elder room clear": "Mağaradaki sıçanların bir kısmını hallettim, yardım edebileceğim başka bir şey var mı?",
+    "elder room clear answ": "Ahh, ilerlediğini duymak güzel. Bir düşüneyim... Doğudaki değirmene bir uğrayabilir misin? Orayı çeviren iki çocuk her şeyin altından kalkabiliyor mu diye biraz endişeleniyorum.",
+    "elder cave clear":  "Mağarayı temizledim. En azından çoğunu",
+    "elder cave clear answ": `O hâlde artık sana "fazla zayıf" diyemem, değil mi? Canın ne zaman isterse gidebilirsin, ama yine de dikkatli ol. Dışarısı hakkında birkaç tavsiye için muhafıza da sorabilirsin. Bir zamanlar maceracıydı.`,
+    "elder leave 4": "Köyden ayrılabilir miyim?",
+    "elder leave 4 answ": "Yeterince güçlüsün, istediğin zaman gidip istediğin zaman gelebilirsin.",
+};
+
 const ui = {
     "ui create": "Kahramanını oluştur",
     "ui cosmetic": "Buradaki her şey yalnızca görünümle ilgili",
@@ -214,6 +286,6 @@ const racial = {
                     + "Cüceler gibi her şeyi yerler, ama hangi yemeğin iğrenç sayılacağı konusunda insanlara daha yakın bir bakışa sahiptirler.",
 };
 
-const turkish = {...racial, ...ui, ...stats, ...skills, ...bio};
+const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio};
 
 export default turkish;

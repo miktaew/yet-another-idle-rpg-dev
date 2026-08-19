@@ -66,6 +66,12 @@ async function bundle() {
         platform: "browser",
         target: "es2022",
         format: "esm",
+        //esbuild defaults to an ascii charset, which escapes every non-ASCII
+        //character in a string literal as a six-byte \u escape where UTF-8 needs
+        //two. That is a real cost once the locales are not all English, and it
+        //makes the built output impossible to grep. index.html declares
+        //<meta charset="UTF-8">, so emitting UTF-8 directly is safe.
+        charset: "utf8",
         logLevel: "info",
     });
     console.log("[build-site] bundle written to dist/bundle.js");

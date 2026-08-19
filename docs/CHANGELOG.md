@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 7 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 8 -->
 
 # Changelog
 
@@ -17,6 +17,39 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### The opening scene is Turkish, and the bundle stopped escaping it — P-7
+
+**The village elder's whole arc is translated**, 46 ids: the amnesia scene, the
+starting-weapon choice, the wolf rat quest, and every gate he keeps until the player
+is allowed to leave. That is the first thing a new player reads. Coverage went from
+21.3% to 28.8%.
+
+Two decisions worth recording, because they are exactly what a machine translation
+gets wrong:
+
+- *"with nothing but pants"* is trousers, not underwear. The robbers took everything
+  else, so the other reading is both wrong and absurd.
+- *"Are wolf rats a big issue?" / "Oh yes, quite a big one. Not literally, no"* is a
+  joke about size, not about severity. Translated literally the reply becomes a
+  non-sequitur; the Turkish keeps "büyük bir sorun" and answers "boyut olarak değil",
+  which lands the same way.
+
+The register follows the map in STORY.md: the hero addresses the elder formally, the
+elder answers informally. Both directions had to be held consistently across all 46
+lines, which is the practical reason translation happens per NPC rather than per
+string.
+
+**esbuild was escaping every Turkish character.** Its default charset is ascii, so
+each non-ASCII character became a six-byte `\uXXXX` escape where UTF-8 needs two. The
+built bundle shrank by 2.3 KB on 175 keys alone, and it is greppable again. `charset:
+"utf8"` is set explicitly; `index.html` already declares UTF-8, so nothing else had to
+change. The saving scales with the remaining 432 keys.
+
+**A test broke, correctly.** The fallback check named `"elder hello"` as its example
+of an untranslated id - and then that id got translated. It now picks the first
+still-missing id at runtime and compares against the English table, so translating
+more text cannot make it stale again. 42 checks.
 
 ### Turkish is playable — P-7
 

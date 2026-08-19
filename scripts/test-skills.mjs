@@ -326,7 +326,7 @@ const playable_races = {};
 // game readable rather than showing "text not found" everywhere. These checks
 // exist because that failure mode is invisible until a player sees it.
 
-const { translationManager } = await load_with_stubs(
+const { translationManager, translations } = await load_with_stubs(
     "src/translation.js",
     ["./main.js"],
     `
@@ -340,11 +340,18 @@ const global_flags = globalThis.__test_flags;
         translationManager.getText("turkish", "ui create") === "Kahramanını oluştur",
         `got=${translationManager.getText("turkish", "ui create")}`);
 
-    // 478 dialogue ids are not translated yet. They must show the English text,
-    // not the "text not found" placeholder.
-    const untranslated = translationManager.getText("turkish", "elder hello");
+    // Ids the Turkish locale has not reached yet must show the English text, not
+    // the "text not found" placeholder. This picks the first still-missing id at
+    // runtime rather than naming one, so translating more text cannot make the
+    // check stale - it broke exactly that way once.
+    const english_keys = Object.keys(translations.english);
+    const first_untranslated = english_keys.find(key => !(key in translations.turkish));
+    check("there is still an untranslated id to test with", Boolean(first_untranslated));
+
+    const untranslated = translationManager.getText("turkish", first_untranslated);
     check("an untranslated id falls back to English",
-        untranslated === "Hello?", `got=${untranslated}`);
+        untranslated === translations.english[first_untranslated],
+        `id=${first_untranslated} got=${String(untranslated).slice(0, 40)}`);
     check("the fallback is not the not-found placeholder",
         !untranslated.startsWith("text not found"));
 
