@@ -273,12 +273,25 @@ function set_HTML(element, html_string) {
     element.insertAdjacentHTML("beforeend", html_string);
 }
 
-function capitalize_first_letter(some_string) {
-    return some_string.charAt(0).toUpperCase() + some_string.slice(1);
+/**
+ * Capitalises the first letter.
+ *
+ * @param {String} some_string
+ * @param {Boolean} is_translated whether the input is text in the ACTIVE language.
+ *        Locale-aware casing is only correct for translated text: Turkish maps "i"
+ *        to "İ" and "ı" to "I", which is what a Turkish word needs - but applying
+ *        it to a raw English stat key would render "intuition" as "İntuition".
+ *        Callers that pass an untranslated identifier must leave this false.
+ */
+function capitalize_first_letter(some_string, is_translated = false) {
+    const tag = is_translated ? language_tags[language] : undefined;
+    return some_string.charAt(0).toLocaleUpperCase(tag) + some_string.slice(1);
 }
 
-function uncapitalize_first_letter(some_string) {
-    return some_string.charAt(0).toLowerCase() + some_string.slice(1);
+/** Mirror of capitalize_first_letter; the same locale caveat applies. */
+function uncapitalize_first_letter(some_string, is_translated = false) {
+    const tag = is_translated ? language_tags[language] : undefined;
+    return some_string.charAt(0).toLocaleLowerCase(tag) + some_string.slice(1);
 }
 
 /**
@@ -1254,11 +1267,18 @@ function sort_displayed_inventory({sort_by, target = "character", change_directi
         }
 
         if(sort_by === "name" || sort_by === "type") {
-            const name_a = a.querySelector(".item_name").innerText.toLowerCase().replaceAll('"',"");
-            const name_b = b.querySelector(".item_name").innerText.toLowerCase().replaceAll('"',"");
-            if(name_a > name_b) {
+            //These are rendered names, so both the case folding and the comparison
+            //have to be locale aware. Plain toLowerCase turns Turkish "İ" into an
+            //"i" followed by a combining dot instead of a plain "i", and a ">"
+            //comparison orders by code unit, which sorts every letter carrying a
+            //diacritic after "z".
+            const tag = language_tags[language];
+            const name_a = a.querySelector(".item_name").innerText.toLocaleLowerCase(tag).replaceAll('"',"");
+            const name_b = b.querySelector(".item_name").innerText.toLocaleLowerCase(tag).replaceAll('"',"");
+            const name_comparison = name_a.localeCompare(name_b, tag);
+            if(name_comparison > 0) {
                 return plus;
-            } else if(name_a < name_b) {
+            } else if(name_comparison < 0) {
                 return minus;
             } else {
                 //if same name, sort based on quality 
@@ -3318,8 +3338,14 @@ function update_displayed_component_choice({category, subcategory, recipe_id, co
             .sort((a, b) => {
                 if (a.item.component_tier != b.item.component_tier) {
                     return b.item.component_tier - a.item.component_tier;
-                } else if (a.item.item_name != b.item.item_name) {
-                    return b.item.item_name - b.item.item_name;
+                } else if (a.item.getName() !== b.item.getName()) {
+                    //Two bugs lived here. Items have no "item_name" property - it is
+                    //"name", read through getName() - so the condition compared
+                    //undefined against undefined and was never true, which made this
+                    //whole tier dead code. And the body returned b minus b, which is
+                    //zero for numbers and NaN for the strings these actually are.
+                    //localeCompare because the names are displayed text.
+                    return a.item.getName().localeCompare(b.item.getName(), language_tags[language]);
                 } else {
                     return b.item.quality - a.item.quality;
                 }
@@ -4037,7 +4063,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
     
     clear_action_div();
     const dialogue_name_div = document.createElement("div");
-    insert_HTML(dialogue_name_div, capitalize_first_letter(dialogues[dialogue_key].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})));
+    insert_HTML(dialogue_name_div, capitalize_first_letter(dialogues[dialogue_key].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled}), true));
     dialogue_name_div.id = "dialogue_name_div";
     action_div.appendChild(dialogue_name_div);
 
@@ -5538,7 +5564,7 @@ function create_race_tooltip(race, css_class) {
         Object.keys(race.stats).forEach(effect_key => {
             if(race.stats[effect_key].multiplier != null) {
                 tooltip_content +=
-            `\n${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
+            `\n${capitalize_first_letter(translationManager.getText(language, effect_key+" long"), true)}: x${race.stats[effect_key].multiplier}`;
             }
         });
     }
@@ -5551,7 +5577,7 @@ function create_race_tooltip(race, css_class) {
     Object.keys(race.xp_multipliers).forEach(effect_key => {
         if(race.xp_multipliers[effect_key] != null) {
             tooltip_content +=
-        `\n${capitalize_first_letter(translationManager.getText(language, effect_key))}: x${race.xp_multipliers[effect_key]}`;
+        `\n${capitalize_first_letter(translationManager.getText(language, effect_key), true)}: x${race.xp_multipliers[effect_key]}`;
         }
     });
     */
@@ -5570,7 +5596,7 @@ function create_height_tooltip(height_key, css_class) {
     Object.keys(stats).forEach(effect_key => {
         if(stats[effect_key].multiplier != null) {
             tooltip_content +=
-        `${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
+        `${capitalize_first_letter(translationManager.getText(language, effect_key+" long"), true)}: x${stats[effect_key].multiplier}\n`;
         }
     });
     

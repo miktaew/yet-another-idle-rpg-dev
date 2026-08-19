@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 9 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 10 -->
 
 # Changelog
 
@@ -17,6 +17,38 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Three sorting and casing bugs the Turkish work exposed — P-7
+
+None of these are translation. They are defects that only became visible once text
+stopped being English, and two of them were already wrong in English.
+
+**A comparator tier that was dead code twice over.** The crafting component sort
+reads `a.item.item_name != b.item.item_name` — but items have no `item_name`
+property, only `name` behind `getName()`. So the condition compared `undefined`
+against `undefined`, was never true, and the entire name tier never ran. Had it run,
+the body was `return b.item.item_name - b.item.item_name`, which is zero for numbers
+and `NaN` for the strings these actually are. Components sorted by tier and then fell
+straight through to quality. It now compares `getName()` with `localeCompare`.
+
+**Inventory sorting was not safe for Turkish, in two separate ways.** It read the
+rendered item name, lowercased it with plain `toLowerCase()`, and compared with `>`.
+Plain case folding turns Turkish `İ` into an `i` followed by a combining dot rather
+than a plain `i`, and a `>` comparison orders by code unit, which puts every letter
+carrying a diacritic after `z`. Both are now locale aware.
+
+**Capitalisation needed a distinction rather than a fix.** `capitalize_first_letter`
+is applied to two different kinds of input: translated text in four places, and raw
+English stat keys such as `attack_power` in about ten. Making it locale aware across
+the board would have been wrong — Turkish maps `i` to `İ`, so a raw key would have
+rendered as `İntuition`. It now takes an explicit `is_translated` flag, and only the
+four translated call sites pass it. With Turkish active, `ırk` capitalises to `Irk`
+and `istila` to `İstila`, while a raw key still yields `Intuition`.
+
+Noted while tracing this: several equipment tooltips display raw stat keys with the
+underscore swapped for a space rather than the translated stat name, so those lines
+stay English regardless of the language. Routing them through the `stats` locale
+section is a real improvement and a separate change.
 
 ### Quest text moved behind ids, and translated — P-7
 

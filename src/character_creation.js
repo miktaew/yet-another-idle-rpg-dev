@@ -49,7 +49,7 @@ class CharacterCreator {
 
         
         if(race.alternative_name) {
-            race_button.innerText += `\n(${uncapitalize_first_letter(translationManager.getText(language, race.alternative_name))})`;
+            race_button.innerText += `\n(${uncapitalize_first_letter(translationManager.getText(language, race.alternative_name), true)})`;
         }
 
         race_button.appendChild(create_race_tooltip(race, "race_choice_tooltip"));

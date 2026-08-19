@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 9 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 10 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,39 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Türkçe çalışmasının açığa çıkardığı üç sıralama ve büyük harf hatası — P-7
+
+Hiçbiri çeviri değil. Metin İngilizce olmaktan çıkınca görünür hâle gelen kusurlar ve
+ikisi İngilizcede de zaten hatalıydı.
+
+**İki kez ölü kod olan bir karşılaştırıcı katmanı.** Crafting bileşen sıralaması
+`a.item.item_name != b.item.item_name` okuyor — ama item'ların `item_name` diye bir
+özelliği yok, yalnızca `getName()` arkasındaki `name` var. Yani koşul `undefined` ile
+`undefined`'ı karşılaştırıyor, hiç doğru olmuyor ve isim katmanı hiç çalışmıyordu.
+Çalışsaydı bile gövdesi `return b.item.item_name - b.item.item_name`'di; sayılar için
+sıfır, bunların gerçekte olduğu string'ler için `NaN`. Bileşenler tier'a göre
+sıralanıp doğrudan kaliteye düşüyordu. Artık `getName()`'i `localeCompare` ile
+karşılaştırıyor.
+
+**Envanter sıralaması Türkçe için iki ayrı şekilde güvensizdi.** Ekrana basılan item
+adını okuyup düz `toLowerCase()` ile küçültüyor ve `>` ile karşılaştırıyordu. Düz
+küçültme Türkçe `İ` harfini düz bir `i` yerine `i` + birleşen nokta hâline getiriyor
+ve `>` karşılaştırması kod birimine göre sıralayarak aksan taşıyan her harfi `z`den
+sonraya atıyor. İkisi de artık locale duyarlı.
+
+**Büyük harf işi düzeltme değil, ayrım gerektirdi.** `capitalize_first_letter` iki
+farklı girdi türüne uygulanıyor: dört yerde çevrilmiş metin, yaklaşık on yerde
+`attack_power` gibi ham İngilizce stat anahtarları. Baştan sona locale duyarlı yapmak
+yanlış olurdu — Türkçe `i` harfini `İ`ye eşliyor, yani ham bir anahtar `İntuition`
+olarak görünecekti. Artık açık bir `is_translated` bayrağı alıyor ve yalnızca dört
+çevrilmiş çağrı noktası onu geçiyor. Türkçe aktifken `ırk` → `Irk`, `istila` →
+`İstila` olurken ham anahtar hâlâ `Intuition` veriyor.
+
+Bunu izlerken not edildi: birkaç ekipman tooltip'i çevrilmiş stat adı yerine alt
+çizgisi boşlukla değiştirilmiş ham stat anahtarını gösteriyor, dolayısıyla o satırlar
+dil ne olursa olsun İngilizce kalıyor. Onları `stats` locale bölümünden geçirmek
+gerçek bir iyileştirme ve ayrı bir değişiklik.
 
 ### Quest metni id'lerin arkasına taşındı ve çevrildi — P-7
 
