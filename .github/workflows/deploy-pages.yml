@@ -1,0 +1,89 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      # This repository's default branch is master, not main.
+      - master
+    # Markdown never reaches the deployed site: scripts/build-site.js copies only
+    # index.html, help.html, changelog.html, the three root assets and the
+    # dist/locales/resources directories, none of which contain a .md file. A
+    # documentation-only push would therefore rebuild a byte-identical _site/.
+    # Every documentation file in this repository uses the lowercase .md
+    # extension (README.md / README.TR.md, docs/AGENTS.md / docs/AGENTS.TR.md),
+    # so one case-sensitive pattern is enough.
+    paths-ignore:
+      - "**.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # The build is an esbuild pass plus two node scripts - seconds, not minutes.
+    # A ceiling well above that still kills a hung step quickly instead of
+    # letting the default six-hour limit burn a runner.
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          # Nothing here pushes back to the repository; the deploy goes out as a
+          # Pages artifact. Leaving the token in .git/config would only widen
+          # what a compromised build step could reach.
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          # Active LTS (Krypton). Deliberately not the newest release line:
+          # Node 26 is current but not yet LTS, and CI should track LTS.
+          # package.json declares engines.node >= 22, which is the floor for
+          # contributors, not the CI target.
+          node-version: 24
+          # Keys off the committed package-lock.json.
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build bundle and assemble site
+        run: npm run build
+
+      - name: Validate site and locale parity
+        # Fails on a broken site layout or on translation keys that do not exist
+        # in the default locale. Missing translations are reported as warnings
+        # with a coverage percentage; set LOCALE_STRICT=1 to make them fatal.
+        run: npm run check
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          # scripts/build-site.js assembles the deployable site here. It is not
+          # dist/: dist/ holds only the committed bundle, and the repository root
+          # is the dev entry point whose index.html deliberately loads
+          # src/main.js so the game runs with no build step.
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

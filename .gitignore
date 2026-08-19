@@ -1,8 +1,33 @@
 todo.txt
 achievements.js
+
+# Dependencies
 /node_modules
-package-lock.json
-package.json
+
+# Build output
+# scripts/build-site.js assembles the deployable site here. Throwaway:
+# dist/bundle.js stays tracked, _site/ never does.
+_site/
+
+# Local-only tooling configs inherited from upstream. If a shared linter or
+# dependency-graph config is ever added to the project, remove the matching
+# line first - otherwise the config silently refuses to be committed.
 .eslintrc.json
 .dependency-cruiser.js
 dependency-graph.svg
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / IDE. Remove the .vscode line if project-wide editor settings should
+# be shared rather than kept local.
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
