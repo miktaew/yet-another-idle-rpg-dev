@@ -135,6 +135,7 @@ Her doküman bir çifttir: İngilizce dosya kanoniktir, `.TR.md` dosyası onun T
 | [docs/AGENTS.TR.md](docs/AGENTS.TR.md) · [EN](docs/AGENTS.md) | Geliştiriciler ve yapay zekâ agent'ları için **kanonik** kurallar ve talimatlar. |
 | [docs/STORY.TR.md](docs/STORY.TR.md) · [EN](docs/STORY.md) | Anlatı kanonu: dünya, protagonist, ton ve hikâyenin şu an nerede durduğu. |
 | [docs/PROPOSALS.TR.md](docs/PROPOSALS.TR.md) · [EN](docs/PROPOSALS.md) | Çalışma listesi, kalıcı direktifler ve bekleyen kararlar. |
+| [docs/I18N.TR.md](docs/I18N.TR.md) · [EN](docs/I18N.md) | Çeviri el kitabı: yerelleştirme nasıl çalışıyor, kurallar ve sözlük. |
 | [docs/CHANGELOG.TR.md](docs/CHANGELOG.TR.md) · [EN](docs/CHANGELOG.md) | Gerekçeleriyle geliştirme geçmişi. |
 
 ## Katkı

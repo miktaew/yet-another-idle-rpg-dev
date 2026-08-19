@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 6 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 7 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,6 +57,22 @@ tekrar etmek yerine ona işaret eder; böylece senkronize tutulacak bir şey kal
 Tüm anlatı ve arayüz metni, bir string id arkasında `locales/<dil>.js` içinde
 durur. Bu, D-3'ün yalnızca dokümanlarda değil oyunun kendisinde de geçerli olması
 için ön koşuldur.
+
+### D-7 — Türkçe, Türkçe gibi okunmalı
+
+Türkçe yerelleştirme **en yüksek önceliktir**; hikâye çalışmasının önünde.
+
+Çeviri, Türkçeye dönüştürülmüş gibi değil Türkçe yazılmış gibi okunmalı. Kabul
+edilemez: makine çevirisi tadı, calque'ler, kelime kelime çevrilmiş deyimler ya da
+çok anlamlı bir kelimenin yanlış anlamı — "spider web" bir ipek ağıdır, bilgisayar
+ağı değil.
+
+**Bağlam birimleri** hâlinde çevrilir, asla string string değil: bir string ekranda
+üstündeki metnin altında okunur; dolayısıyla soru ile cevabı, bir stat'ın kısa ile
+uzun biçimi, bir etiket ile alabileceği değerler birlikte çevrilir ve birbiriyle
+uyumlu olmalıdır.
+
+Kurallar, sözlük ve bilinen boşluklar: [I18N.TR.md](I18N.TR.md).
 
 ### D-6 — Doğrudan varsayılan branch'e push
 
@@ -125,7 +141,7 @@ korunmasını gerektiriyor ve özgün yazar, fork'ların özgün projeye kredi v
 bağlantı vermesini açıkça istemiş. Varlık ve altyapı referansları taşınıyor;
 kredi kalıyor ve dürüst biçimde yeniden etiketleniyor.
 
-### P-7 — Oyuna Türkçe dil desteği `open`
+### P-7 — Oyuna Türkçe dil desteği `active` — EN YÜKSEK ÖNCELİK
 
 Oyunun kendisine Türkçe seçeneği eklenecek. Çeviri katmanı hâlihazırda var ancak
 şu anda yalnızca dialogue'ları ve arayüzün bir kısmını kapsıyor.
@@ -145,8 +161,17 @@ Hitap kipi bir motor özelliği değil, **NPC bazında yazım kuralıdır** — 
 içindeki arama mantığında değişiklik gerekmez, çünkü her satır zaten ayrı bir
 string id'dir.
 
-Zemin çalışması tamamlandı: `npm run check` locale anahtar eşliğini denetliyor,
-böylece ikinci bir dil sessizce senkronizasyondan çıkamaz (P-2).
+**Tamamlanan** — dil uçtan uca çalışıyor. `getText` artık çevrilmemiş her id için
+varsayılan dile düşüyor; kısmi bir locale'i güvenli kılan şey bu. `turkish` kayıtlı;
+`locales/turkish.js` arayüz, stat, skill, ırk ve künye bölümlerini taşıyor; ayarlar
+paneline `languages` registry'sinden inşa edilen ve canlı geçiş yapan bir seçici
+eklendi. `npm run check` kapsamı raporluyor, `npm test` arama ve fallback davranışını
+kapsıyor. Çevirmen el kitabı ve sözlük [I18N.TR.md](I18N.TR.md) içinde.
+
+**Kalan** — 478 dialogue id'si, ardından item, skill ve lokasyon adlarının ihtiyaç
+duyduğu görünen-ad dolaylama katmanı. Quest metni, `help.html` ve `changelog.html`'in
+henüz hiç çeviri bağlantı noktası yok; bkz. [I18N.TR.md](I18N.TR.md) bilinen
+boşluklar.
 
 ### P-8 — Bildirilen NaN uyarılarını gider `active`
 

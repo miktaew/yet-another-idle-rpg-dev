@@ -1102,6 +1102,11 @@
                     <input type="checkbox" id="options_mofu_mofu_mode" name="options_mofu_mofu_mode" onclick = "option_mofu_mofu_mode()" checked>
                     <label for="options_mofu_mofu_mode">Enable kemonomimi mode</label>
                 </div>
+                <div class="options_choice options_choice_range">
+                    <label for="options_language" data-translation="ui language">Language:</label>
+                    <!--Options are filled from the `languages` registry on load-->
+                    <select id="options_language" name="options_language" onchange="option_language()"></select>
+                </div>
 
             </div>
             <div id="close_options" onclick="closeOptions()"> X </div>

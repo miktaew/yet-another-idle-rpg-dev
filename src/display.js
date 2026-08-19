@@ -5354,7 +5354,10 @@ function create_displayed_quest_content(quest_id) {
     quest_name_div.innerText = quest.getQuestName();
     quest_name_div.classList.add("quest_name_div");
 
-    quest_description_div.innerText = quest.getQuestDescription();
+    //Same guard as the sibling call above: a getQuestDescription that falls off
+    //the end of its if-chain returns undefined, and innerText = undefined renders
+    //the literal string "undefined".
+    quest_description_div.innerText = quest.getQuestDescription() ?? "";
     quest_description_div.classList.add("quest_description_div");
 
     quest_div.appendChild(quest_name_div);

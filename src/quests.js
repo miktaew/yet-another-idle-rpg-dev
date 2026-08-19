@@ -281,10 +281,18 @@ const questManager = {
         display_priority: 0,
         getQuestDescription: ()=>{
             const completed_tasks =  quests["Lost memory"].getCompletedTaskCount();
+            //Ranges, not equality: the second task is hidden and completes together
+            //with the first, so the count jumps 0 -> 2 and an "== 1" branch is never
+            //taken. The chain previously answered for 0 and 1 only, so from the very
+            //first elder conversation onward it returned undefined.
             if(completed_tasks == 0) {
                 return "You woke up in some village and you have no idea how you got here or who you are. Just what could have happened?";
-            } else if(completed_tasks == 1) {
+            } else if(completed_tasks <= 3) {
                 return "You lost your memories after being attacked by unknown assailants and were rescued by local villagers. You need to find out who, why, and if possible, how to recover them.";
+            } else if(completed_tasks == 4) {
+                return "One of the men who robbed you is alive, and he talked. It was his group, they left you for dead, and the one who gave them the order is somewhere in the town - behind a gate that opens only for citizens and merchants.";
+            } else {
+                return "You are inside the town, and so is the man that gang used to answer to. Finding him is the closest you have come to an answer about that night on the road.";
             }
         },
         questline: "Lost memory",

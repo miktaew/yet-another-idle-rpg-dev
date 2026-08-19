@@ -129,6 +129,7 @@ Turkish translation.
 | [docs/AGENTS.md](docs/AGENTS.md) · [TR](docs/AGENTS.TR.md) | **Canonical** conventions and instructions for developers and AI agents. |
 | [docs/STORY.md](docs/STORY.md) · [TR](docs/STORY.TR.md) | Narrative canon: world, protagonist, tone, and where the story currently stops. |
 | [docs/PROPOSALS.md](docs/PROPOSALS.md) · [TR](docs/PROPOSALS.TR.md) | Working backlog, standing directives and open decisions. |
+| [docs/I18N.md](docs/I18N.md) · [TR](docs/I18N.TR.md) | Translation handbook: how localisation works, the rules, and the glossary. |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) · [TR](docs/CHANGELOG.TR.md) | Development history with reasoning. |
 
 ## Contributing

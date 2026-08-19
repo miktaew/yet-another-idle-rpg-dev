@@ -139,6 +139,13 @@ const play_button = document.getElementById("loading_screen_play_button");
 
 const languages = {
     english: "english",
+    turkish: "turkish",
+};
+//Shown in the language selector. Each language names itself in its own language,
+//which is the convention players expect from a language menu.
+const language_names = {
+    english: "English",
+    turkish: "Türkçe",
 };
 let language = languages.english;
 
@@ -403,6 +410,42 @@ function option_combat_autoswitch(option) {
     if(option !== undefined) {
         checkbox.checked = option;
     }
+}
+
+/**
+ * Switches the active language.
+ *
+ * Follows the same shape as the other option handlers: called with no argument it
+ * reads the control, called with a value it sets the control first, which is how
+ * the load path restores a saved setting.
+ *
+ * The switch is live rather than a reload. translateUI covers everything carrying
+ * a data-translation attribute; everything else - dialogue lines, tooltips, quest
+ * text - goes through getText when its panel is drawn, so it changes over as the
+ * player moves around. Text already on screen keeps the old language until its
+ * panel is redrawn.
+ */
+async function option_language(option) {
+    const selector = document.getElementById("options_language");
+
+    if(option !== undefined) {
+        selector.value = option;
+    }
+
+    const chosen = selector.value;
+    if(!languages[chosen]) {
+        console.error(`Language "${chosen}" is not registered in languages.`);
+        selector.value = language;
+        return;
+    }
+
+    language = chosen;
+    await translationManager.init(language);
+    translationManager.translateUI(language);
+
+    //Nothing else redraws the bio panel, so it would otherwise keep the previous
+    //language until the player reopened the character screen.
+    fill_character_bio();
 }
 
 function option_expo_threshold(option) {
@@ -5866,6 +5909,7 @@ window.option_skip_play_button = option_skip_play_button;
 window.option_mofu_mofu_mode = option_mofu_mofu_mode;
 window.option_do_enemy_onhit_animations = option_do_enemy_onhit_animations;
 window.option_expo_threshold = option_expo_threshold;
+window.option_language = option_language;
 window.option_hide_max_level_skills = option_hide_max_level_skills;
 window.option_use_text_outlines_for_tooltips = option_use_text_outlines_for_tooltips;
 window.option_use_text_outlines_for_bars = option_use_text_outlines_for_bars;
@@ -5917,6 +5961,19 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
     questManager.startQuest({quest_id: "Lost memory"});
 
     last_rewarded_export = Date.now() - 1000*60*60*16; //reduces timer by 16 hours, making first reward export appear in 4 hours from starting
+}
+
+//Populated from `languages` so adding a language needs no HTML edit.
+const language_selector = document.getElementById("options_language");
+if(language_selector) {
+    language_selector.innerHTML = "";
+    Object.keys(languages).forEach(key => {
+        const option = document.createElement("option");
+        option.value = key;
+        option.innerText = language_names[key] || key;
+        language_selector.append(option);
+    });
+    language_selector.value = language;
 }
 
 if(!is_loading_error) {

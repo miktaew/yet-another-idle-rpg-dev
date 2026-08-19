@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 6 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 7 -->
 
 # Proposals
 
@@ -55,6 +55,20 @@ than restating its rules, so there is nothing to keep in sync.
 
 All narrative and UI text belongs in `locales/<language>.js` behind a string id.
 This is a prerequisite for D-3 reaching the game itself, not just the docs.
+
+### D-7 — Turkish must read as Turkish
+
+Turkish localisation is the **top priority**, ahead of further story work.
+
+The translation must read as though written in Turkish, not converted into it. Not
+acceptable: machine-translation register, calques, literal idiom rendering, or the
+wrong sense of a polysemous word — "spider web" is a web of silk, not a network.
+
+Translate in **context units**, never string by string: a string is read underneath
+whatever is above it on screen, so a question and its reply, a stat's short and long
+form, and a label and its possible values are translated together and must agree.
+
+Rules, glossary and known gaps: [I18N.md](I18N.md).
 
 ### D-6 — Push straight to the default branch
 
@@ -122,7 +136,7 @@ the original copyright notice, and the original author asked that forks credit
 and link the original. Asset and infrastructure references move; credit stays
 and is relabelled honestly.
 
-### P-7 — Turkish language support in the game `open`
+### P-7 — Turkish language support in the game `active` — TOP PRIORITY
 
 Add a Turkish option to the game itself. The translation layer already exists
 but currently covers dialogue and part of the UI only.
@@ -141,8 +155,18 @@ Address register is a **per-NPC authoring convention**, not an engine feature �
 see [STORY.md](STORY.md#6-turkish-address-register). No change to the lookup in
 `src/translation.js` is needed, because each line is already a separate string id.
 
-Groundwork already shipped: `npm run check` gates locale key parity, so a second
-locale cannot silently drift out of sync (P-2).
+**Shipped** — the language works end to end. `getText` now falls back to the
+default language for any untranslated id, which is what makes a partial locale safe;
+`turkish` is registered; `locales/turkish.js` carries the interface, stats, skills,
+races and bio sections; and the options panel has a selector built from the
+`languages` registry, switching live. `npm run check` reports coverage and `npm test`
+covers the lookup and the fallback. The translator handbook and glossary are in
+[I18N.md](I18N.md).
+
+**Remaining** — the 478 dialogue ids, and then the display-name indirection layer
+that item, skill and location names need. Quest text, `help.html` and
+`changelog.html` have no translation hook at all yet; see the known gaps in
+[I18N.md](I18N.md).
 
 ### P-8 — Fix the reported NaN warnings `active`
 

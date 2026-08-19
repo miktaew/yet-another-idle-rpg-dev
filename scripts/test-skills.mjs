@@ -57,10 +57,12 @@ async function load_with_stubs(relative_path, strip, stub_source) {
     source = source.replace('"use strict";', '"use strict";\n' + stub_source);
 
     const temp_dir = fs.mkdtempSync(path.join(os.tmpdir(), "yairp-test-"));
-    // Keep the original basename so relative imports left in place still resolve
-    // against a copy of src/.
+    // Keep the original basename and the original directory layout so relative
+    // imports left in place still resolve - src/translation.js reaches sideways
+    // for ../locales at runtime, not just for its own siblings.
     const src_copy = path.join(temp_dir, "src");
     fs.cpSync(path.join(repo_root, "src"), src_copy, { recursive: true });
+    fs.cpSync(path.join(repo_root, "locales"), path.join(temp_dir, "locales"), { recursive: true });
     const temp_path = path.join(src_copy, path.basename(relative_path));
     fs.writeFileSync(temp_path, source);
     return import(pathToFileURL(temp_path).href);
@@ -314,6 +316,61 @@ const playable_races = {};
     check("a flag gate is open while the flag is set", Boolean(process_conditions(mofu_gate, hero(0))));
     globalThis.__test_flags.is_mofu_mofu_enabled = false;
     check("a flag gate shuts when the flag is cleared", !process_conditions(mofu_gate, hero(0)));
+    globalThis.__test_flags.is_mofu_mofu_enabled = true;
+}
+
+// ===========================================================================
+// src/translation.js — the lookup and the fallback
+// ===========================================================================
+// The Turkish locale is deliberately partial, so the fallback is what keeps the
+// game readable rather than showing "text not found" everywhere. These checks
+// exist because that failure mode is invisible until a player sees it.
+
+const { translationManager } = await load_with_stubs(
+    "src/translation.js",
+    ["./main.js"],
+    `
+const global_flags = globalThis.__test_flags;
+`);
+
+{
+    await translationManager.init("turkish");
+
+    check("a translated id answers in Turkish",
+        translationManager.getText("turkish", "ui create") === "Kahramanını oluştur",
+        `got=${translationManager.getText("turkish", "ui create")}`);
+
+    // 478 dialogue ids are not translated yet. They must show the English text,
+    // not the "text not found" placeholder.
+    const untranslated = translationManager.getText("turkish", "elder hello");
+    check("an untranslated id falls back to English",
+        untranslated === "Hello?", `got=${untranslated}`);
+    check("the fallback is not the not-found placeholder",
+        !untranslated.startsWith("text not found"));
+
+    check("an id that exists nowhere still reports itself",
+        translationManager.getText("turkish", "no such id at all").startsWith("text not found"));
+
+    // Loading a non-default language must pull the default in as well, or there is
+    // nothing to fall back to.
+    check("initialising Turkish also loaded English",
+        translationManager.getText("english", "ui create") === "Create your hero");
+
+    // A language that has the base text but no racial variant must stay in its own
+    // language rather than borrowing the English variant.
+    globalThis.__test_flags.is_mofu_mofu_enabled = true;
+    check("a language without a variant keeps its own base text",
+        translationManager.getText("turkish", "ui create") === "Kahramanını oluştur");
+
+    // English has both, so the variant wins there.
+    const english_variant = translationManager.getText("english", "elder description");
+    check("the racial variant wins where it exists",
+        english_variant.includes("horns"), `got=${english_variant.slice(0, 60)}`);
+
+    globalThis.__test_flags.is_mofu_mofu_enabled = false;
+    const english_base = translationManager.getText("english", "elder description");
+    check("the base text is used with the variant disabled",
+        !english_base.includes("horns"), `got=${english_base.slice(0, 60)}`);
     globalThis.__test_flags.is_mofu_mofu_enabled = true;
 }
 

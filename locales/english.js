@@ -745,6 +745,7 @@ const ui = {
     "ui show stats": "Stats",
     "ui show bio": "Bio",
     "ui show tools": "Tools",
+    "ui language": "Language:",
 };
 
 const bio = {

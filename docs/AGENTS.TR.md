@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 2 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 3 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -152,7 +152,10 @@ Kuralların tamamı: [AGENTS.md § 8](AGENTS.md#8-text-and-translations). Özetl
 - Güncel referans anahtar sayısı için `npm run check` çalıştırın. Sayıyı
   dokümanlara sabitlemeyin; değişir.
 
-Türkçe locale geldiğinde dikkat edilecek Türkçeye özgü tuzaklar: parça parça
+**Sözlük ve makine-çevirisi karşıtı kurallar dahil tam çeviri el kitabı:
+[I18N.TR.md](I18N.TR.md).** Bir locale dosyasına dokunmadan önce okuyun.
+
+Türkçeye özgü tuzaklar: parça parça
 birleştirilerek kurulan cümleler doğru çevrilemez ve parametreli şablona
 dönüştürülmeleri gerekir; ayrıca görüntü metni üzerindeki `toUpperCase()` /
 `toLowerCase()` çağrıları locale duyarlı olmalıdır, çünkü Türkçedeki noktalı ve

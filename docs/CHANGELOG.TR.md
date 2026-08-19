@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 6 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 7 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,90 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Türkçe oynanabilir durumda — P-7
+
+Yerelleştirme sıranın başına geçti ve dil artık uçtan uca çalışıyor.
+
+**Kapıyı açan şey bir fallback oldu.** `getText`, aktif dilde bulunmayan her id için
+`"text not found, id: X"` döndürüyordu ve yazarın kendi `//todo` notu tam yanında
+duruyordu. Bu, kısmi bir locale'i kullanılamaz kılıyor: çeviri ya tamamdır ya da oyun
+yer tutucularla kaplanır. `init` artık aktif dil varsayılan değilse varsayılanı da
+yüklüyor ve `getText` ona düşüyor, id başına bir kez uyararak. Böylece çevrilmemiş bir
+satır sadece İngilizce okunuyor ve çeviri parça parça gelebiliyor.
+
+Arama da dil bazında ayrıldı; bu ırksal metin varyantları için önemli: temel metni
+olup `mofu#` varyantı olmayan bir dil artık diğer dilin varyantını ödünç almak yerine
+**kendi** temel metniyle yanıt veriyor. Aktif dilde kalmak, varyantı elde etmekten
+önemli.
+
+**Dil seçilebilir.** `turkish` `languages` içine kaydedildi; `language_names` haritası
+sayesinde her dil kendi adını kendi dilinde söylüyor. Ayarlar panelinde bir seçici
+var ve HTML'e gömülmek yerine registry'den inşa ediliyor, dolayısıyla yeni dil
+eklemek markup değişikliği gerektirmiyor. Seçim kaydın geri kalanıyla birlikte zaten
+saklanıp geri yükleniyordu — o kısım vardı, yalnızca hiç erişilebilir değildi.
+
+Geçiş canlı. `translateUI` sabit arayüzü anında güncelliyor; geri kalan her şey paneli
+çizilirken `getText` üzerinden geçtiği için oyuncu dolaştıkça değişiyor.
+
+**607 id'nin 129'u çevrildi**: tüm arayüz, altmış stat etiketinin tamamı, ırk
+bonuslarının atıfta bulunduğu skill'ler, künye paneli ve bütün ırk adları ile
+açıklamaları. `npm run check` Türkçeyi %21.3 kapsamla uyarı olarak raporluyor; kalan
+478 dialogue id'si yazılırken CI yeşil kalıyor.
+
+**Nasıl çevrildiğine dair.** Kalıcı kural: Türkçe, İngilizceden dönüştürülmüş gibi
+değil Türkçe okunmalı — makine çevirisi tadı yok, calque yok, çok anlamlı bir
+kelimenin anlamı sözlüğün en üstünden değil oyun içi bağlamdan çözülüyor.
+
+İkinci kural, çevirinin **bağlam birimleri** hâlinde yapılması; asla string string
+değil, çünkü bir string ekranda üstündeki metnin altında okunuyor. En net örnek stats
+bölümü: her stat'ın satırlar için kısa, tooltip için uzun bir biçimi var ve tooltip,
+satırın kısalttığı şeyi adlandırmak zorunda — yoksa ekran kendi kendisiyle çelişiyor.
+Aynısı etiket ve ardından gelen değer için de geçerli: `"Boy"` ile `"Kısa"` ayrı
+id'ler ama tek satır gibi okunmalı.
+
+Her string için yeniden tartışılmasın diye kaydedilen bazı somut kararlar: health
+`can`, `sağlık` değil — `sağlık` tıbbi çağrışım yapıyor; stamina `dayanıklılık`,
+alıntı kelime değil; dexterity `el becerisi`, arkaik `maharet` değil; Bio paneli
+`Künye`, çünkü biyografi değil kimlik kartı; Tools `Aletler`, çünkü `Araçlar` taşıt
+çağrıştırıyor. İngilizcenin iki biçimde de açmadığı kısaltmalarda — kaçınma puanı için
+`"EP"` — Türkçe uzun biçim açık yazılıyor; bu daha anlaşılır ve yine sadık.
+
+`docs/I18N.md` ve Türkçe eşi yeni: sistem nasıl çalışıyor, katı kurallar, Türkçeye
+özgü tuzaklar, sözlük ve metnin çeviri sistemine hiç ulaşamadığı yerlerin dürüst bir
+listesi — quest adları ve açıklamaları `src/quests.js` içinde satır içi yazılmış,
+`help.html` ile `changelog.html`'in hiç bağlantı noktası yok, item ve lokasyon adları
+ise registry anahtarlarının kendisi.
+
+**Testler.** `npm test` bir `src/translation.js` bölümü kazandı: çevrilmiş bir id
+Türkçe yanıt veriyor, çevrilmemiş olan yer tutucu yerine İngilizceye düşüyor, hiçbir
+yerde olmayan bir id yine kendini bildiriyor, varsayılan olmayan bir dili başlatmak
+varsayılanı da getiriyor, varyantı olmayan bir dil kendi temel metnini koruyor ve
+varyant, flag'in iki yönünde de var olduğu yerde kazanıyor. Harness artık `locales/`'i
+`src/` ile birlikte kopyalıyor, çünkü `translation.js` çalışma zamanında yana doğru
+ona uzanıyor. 41 kontrol.
+
+### Kasaba işinden kalan üç açık uç
+
+Yanı sıra kapatıldı; hepsi kod okunarak doğrulandı.
+
+**İki kafe tüccarı da var olmayan bir envanter şablonu adlandırıyordu.**
+`"Cafe trader"` tanımlı altı şablondan biri değil; gerçek olanı `"Cat cafe"`.
+`get_inventory_from_template` arama sonucunun `.length` değerini korumasız okuyor;
+yani bu, o tüccarlardan birini bir lokasyona ilk bağlayacak kişiyi bekleyen bir
+TypeError. Bugün uykuda — hiçbir yerden atıf yok — ama iki yerde de düzeltildi, çünkü
+birini düzeltmek aynı tuzağı diğerinde bırakırdı.
+
+**Bir quest açıklaması ekrana "undefined" yazabiliyordu.** İki çağrı
+`getQuestDescription()` okuyor; biri sonucu `?? ""` ile koruyor, kardeşi korumuyordu.
+`innerText = undefined` metin olarak basılır.
+
+**Arkasındaki neden.** `Lost memory`'nin açıklaması 0 ve 1 tamamlanmış görev sayısı
+için yanıt veriyor, üstündeki her şey için if-zincirinin sonundan düşüyordu. İkinci
+görev gizli ve birinciyle birlikte tamamlanıyor, dolayısıyla sayı 0'dan doğrudan 2'ye
+atlıyor — yani `== 1` dalına hiç girilmiyordu ve açıklama, oyuncunun yaşlıyla ilk
+konuşmasından beri undefined'dı. Artık aralık kullanıyor ve tüm aşamaları kapsıyor;
+soyguncuyu dövmüş olmak ve kasabanın içinde olmak için iki yeni aşama dahil.
 
 ### Kasaba açıldı — P-9, "The Merchant's Word" arkının 2. quest'i
 

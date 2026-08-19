@@ -731,6 +731,12 @@ input[type=checkbox], input[type=radio] {
 	width: 160px;
  }
  
+ #options_language {
+	font-family: inherit;
+	font-size: inherit;
+	margin-left: 5px;
+ }
+ 
  .options_choice {
 	margin: 5px;
 	width: fit-content;

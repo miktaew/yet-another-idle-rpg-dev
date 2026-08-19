@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 2 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 3 -->
 
 # Agent and contributor guide
 
@@ -171,7 +171,10 @@ Rules:
   `[check] english: N keys (reference)`. Do not hardcode the number in docs; it
   moves.
 
-Turkish-specific hazards to watch for when the Turkish locale lands: sentences
+**The full translation handbook, including the glossary and the anti-machine-
+translation rules, is [I18N.md](I18N.md).** Read it before touching a locale file.
+
+Turkish-specific hazards to watch for: sentences
 assembled by concatenating fragments cannot be translated correctly and need
 parameterised templates; and `toUpperCase()` / `toLowerCase()` on display text
 must be locale-aware, because Turkish dotted and dotless `i` do not map the way

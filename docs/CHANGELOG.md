@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 6 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 7 -->
 
 # Changelog
 
@@ -17,6 +17,95 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Turkish is playable — P-7
+
+Localisation moved to the front of the queue, and the language now works end to end.
+
+**The enabler was a fallback.** `getText` returned `"text not found, id: X"` for any
+id the active language lacked, with the author's own `//todo` sitting next to it. That
+makes a partial locale unusable: a translation is either complete or the game is
+covered in placeholders. `init` now also loads the default language whenever the
+active one is not the default, and `getText` falls back to it, warning once per id.
+So an untranslated line simply reads in English, and a translation can land
+incrementally.
+
+Lookup was also split out per language, which matters for the racial text variants: a
+language that has the base text but no `mofu#` variant now answers with **its own**
+base text instead of borrowing the other language's variant. Staying in the active
+language matters more than getting the variant.
+
+**The language is selectable.** `turkish` is registered in `languages`, with a
+`language_names` map so each language names itself in its own language. The options
+panel has a selector, built from the registry rather than hardcoded in HTML, so
+adding a language needs no markup edit. The choice was already saved and restored
+with the rest of the save data — that part existed and was simply never reachable.
+
+The switch is live. `translateUI` updates the static chrome immediately; everything
+else goes through `getText` when its panel is drawn, so it changes over as the player
+moves around.
+
+**129 of 607 ids are translated**: the whole interface, all sixty stat labels, the
+skills referenced by racial bonuses, the bio panel, and every race name and
+description. `npm run check` now reports Turkish at 21.3% coverage as a warning, so
+CI stays green while the remaining 478 dialogue ids are written.
+
+**On how it is translated.** The standing rule is that Turkish must read as Turkish,
+not as English converted into it — no machine-translation register, no calques, and
+the sense of a polysemous word resolved against its in-game context rather than taken
+from the top of the dictionary.
+
+The second rule is that translation happens in **context units**, never string by
+string, because a string is read on screen underneath whatever is above it. The stats
+section is the clearest case: every stat has a short form for the stat rows and a
+long form for the tooltip, and the tooltip has to name the same thing the row
+abbreviates or the screen contradicts itself. Same for a label and the values that
+follow it — `"Boy"` and `"Kısa"` are separate ids that must read as one line.
+
+Some concrete decisions, recorded so they are not re-litigated per string: health is
+`can`, not `sağlık`, which reads as medical; stamina is `dayanıklılık`, not the
+loanword; dexterity is `el becerisi`, not the archaic `maharet`; the Bio panel is
+`Künye`, because it is an identity card rather than a biography; Tools is `Aletler`,
+since `Araçlar` suggests vehicles. Where English left an abbreviation unexpanded in
+both forms — `"EP"` for evasion points — the Turkish long form spells it out, which
+is clearer and still faithful.
+
+`docs/I18N.md` and its Turkish pair are new: how the system works, the hard rules,
+the Turkish-specific hazards, the glossary, and an honest list of the places text
+cannot be reached by the translation system at all — quest names and descriptions are
+written inline in `src/quests.js`, `help.html` and `changelog.html` have no hook, and
+item and location names are their own registry keys.
+
+**Tests.** `npm test` grew a `src/translation.js` section: a translated id answers in
+Turkish, an untranslated one falls back to English rather than the placeholder, an id
+that exists nowhere still reports itself, initialising a non-default language pulls
+the default in too, a language without a variant keeps its own base text, and the
+variant wins where it exists in both directions of the flag. The harness now copies
+`locales/` alongside `src/`, because `translation.js` reaches sideways for it at
+runtime. 41 checks.
+
+### Three loose ends from the town work
+
+Closed out alongside, all confirmed by reading the code.
+
+**Both cafe traders named an inventory template that does not exist.** `"Cafe trader"`
+is not among the six defined templates; the real one is `"Cat cafe"`.
+`get_inventory_from_template` reads `.length` on the lookup result with no guard, so
+this is a TypeError waiting for whoever first wires one of those traders to a
+location. Latent today — neither trader is referenced anywhere — but fixed in both
+places, because fixing one leaves the identical trap in the other.
+
+**A quest description could render the literal string "undefined".** Two calls read
+`getQuestDescription()`; one guarded the result with `?? ""` and its sibling did not.
+`innerText = undefined` renders as text.
+
+**The cause behind it.** `Lost memory`'s description answered for completed-task
+counts of 0 and 1 and fell off the end of its if-chain for everything above. The
+second task is hidden and completes together with the first, so the count jumps
+straight from 0 to 2 — meaning the `== 1` branch was never taken and the description
+had been undefined since the player's first conversation with the elder. It now uses
+ranges and covers every stage, including two new ones for having beaten the robber
+and for being inside the town.
 
 ### The town is open — P-9, quest 2 of "The Merchant's Word"
 

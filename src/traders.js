@@ -182,13 +182,13 @@ class TradeItem {
     });
     traders["nekomimi trader"] = new Trader({
         name: "nekomimi cafe trader",
-        inventory_template: "Cafe trader",
+        inventory_template: "Cat cafe",
         is_unlocked: false,
         profit_margin: 20, //it's the kind of place where you pay for the company as much as for the food
     });
     traders["cat cafe trader"] = new Trader({
         name: "cat cafe trader",
-        inventory_template: "Cafe trader",
+        inventory_template: "Cat cafe",
         is_unlocked: false,
         profit_margin: 18, //it's the kind of place where you pay for the company as much as for the food, but slightly less
     });
