@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 7 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 8 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,35 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Açılış sahnesi Türkçe ve bundle artık onu kaçırmıyor — P-7
+
+**Köy yaşlısının tüm yayı çevrildi**, 46 id: hafıza kaybı sahnesi, başlangıç silahı
+seçimi, kurt sıçanı görevi ve oyuncunun gitmesine izin verilene kadar tuttuğu her
+kapı. Yeni bir oyuncunun ilk okuduğu şey bu. Kapsam %21.3'ten %28.8'e çıktı.
+
+Kaydedilmeye değer iki karar, çünkü makine çevirisinin tam da yanlış yaptığı şeyler:
+
+- *"with nothing but pants"* burada pantolon, iç çamaşırı değil. Soyguncular geri
+  kalan her şeyi almış; diğer okuma hem yanlış hem saçma olurdu.
+- *"Are wolf rats a big issue?" / "Oh yes, quite a big one. Not literally, no"* ciddiyet
+  değil **boyut** şakası. Birebir çevrildiğinde cevap anlamsızlaşıyor; Türkçe kurulumu
+  koruyup "boyut olarak değil" diye yanıtlıyor, aynı yere düşüyor.
+
+Register STORY.TR.md'deki haritayı izliyor: kahraman yaşlıya sizli hitap ediyor, yaşlı
+kahramana senli yanıt veriyor. Bu iki yönün 46 satır boyunca tutarlı kalması gerekti;
+çevirinin string bazında değil NPC bazında yürümesinin pratik nedeni de bu.
+
+**esbuild her Türkçe karakteri kaçırıyordu.** Varsayılan charset'i ascii; her ASCII
+dışı karakter, UTF-8'in iki bayt kullandığı yerde altı baytlık bir `\uXXXX` kaçışına
+dönüşüyordu. Derlenen bundle yalnızca 175 anahtarla 2,3 KB küçüldü ve çıktı yeniden
+grep'lenebilir hâle geldi. `charset: "utf8"` açıkça ayarlandı; `index.html` zaten
+UTF-8 bildiriyor. Kazanç kalan 432 anahtarla ölçeklenecek.
+
+**Bir test kırıldı, hem de doğru sebeple.** Fallback kontrolü çevrilmemiş id örneği
+olarak `"elder hello"`yu adlandırıyordu - ve o id çevrildi. Artık hâlâ eksik olan ilk
+id'yi çalışma zamanında seçiyor ve İngilizce tabloyla karşılaştırıyor; böylece daha
+fazla çeviri onu bayatlatamıyor. 42 kontrol.
 
 ### Türkçe oynanabilir durumda — P-7
 
