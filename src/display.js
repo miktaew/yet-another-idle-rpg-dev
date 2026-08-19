@@ -15,6 +15,7 @@ import { current_enemies, game_options,
     favourite_consumables,
     travel_times, 
     language,
+    language_tags,
     favourite_items,
     get_effective_skill_xp_gain} from "./main.js";
 import { dialogues } from "./dialogues.js";
@@ -5322,11 +5323,10 @@ function sort_displayed_quests() {
                 if(quest_a.display_priority !== quest_b.display_priority) {
                     return quest_a.display_priority - quest_b.display_priority;
                 } else {
-                    if(quest_a.getQuestName() > quest_b.getQuestName()) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    //localeCompare, not ">": quest names are translated now, and
+                    //a plain comparison sorts by code unit, which puts every
+                    //Turkish letter carrying a diacritic after "z".
+                    return quest_a.getQuestName().localeCompare(quest_b.getQuestName(), language_tags[language]);
                 }
             }
     
@@ -5418,7 +5418,11 @@ function create_displayed_quest_task(quest_id, task_index) {
 
     const task_desc_div = document.createElement("div");
     task_desc_div.classList.add("task_description_div");
-    task_desc_div.innerText = task.task_description;
+    //task_description holds a text id now, not a sentence. A task with no
+    //description - a hidden one - has an empty id and renders as nothing.
+    task_desc_div.innerText = task.task_description
+        ? translationManager.getText(language, task.task_description)
+        : "";
 
     const task_conditions_div = document.createElement("div");
 

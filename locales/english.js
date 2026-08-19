@@ -835,6 +835,106 @@ const skills = {
     "Haggling": "Haggling",
 };
 
-const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio};
+const quests = {
+    /*
+        Quest text moved out of src/quests.js.
+
+        Id shape: "quest <quest_id> [name | desc N | task N]".
+          - <quest_id> is the registry key and is save data, so it is never
+            translated and never renamed - it only identifies the row here.
+          - "desc N" is numbered in progress order, because several quests pick
+            their description from how many tasks are finished.
+          - "task N" is the task's index in quest_tasks, so an id cannot drift away
+            from the task it belongs to. Hidden tasks have no description and
+            therefore no id.
+    */
+
+    //LOST MEMORY
+    "quest Lost memory": "Lost memory",
+    "quest Lost memory desc 1": "You woke up in some village and you have no idea how you got here or who you are. Just what could have happened?",
+    "quest Lost memory desc 2": "You lost your memories after being attacked by unknown assailants and were rescued by local villagers. You need to find out who, why, and if possible, how to recover them.",
+    "quest Lost memory desc 3": "One of the men who robbed you is alive, and he talked. It was his group, they left you for dead, and the one who gave them the order is somewhere in the town - behind a gate that opens only for citizens and merchants.",
+    "quest Lost memory desc 4": "You are inside the town, and so is the man that gang used to answer to. Finding him is the closest you have come to an answer about that night on the road.",
+    "quest Lost memory task 0": "Find out what happened",
+    "quest Lost memory task 2": "Help with the wolf rat infestation",
+    "quest Lost memory task 3": "Continue your search",
+    "quest Lost memory task 4": "Get into the town",
+
+    //THE INFINITE RAT SAGA
+    "quest The Infinite Rat Saga": "The Infinite Rat Saga",
+    "quest The Infinite Rat Saga desc 1": "You found more rats in the caves. You might as well try getting to the bottom of that issue.",
+    "quest The Infinite Rat Saga task 0": "Go deeper",
+    "quest The Infinite Rat Saga task 1": "Open the mysterious gate",
+    "quest The Infinite Rat Saga task 2": "Get through the corrupted tunnel",
+    "quest The Infinite Rat Saga task 3": "Go even deeper (tbc)",
+
+    //IT WON'T MILL ITSELF
+    "quest It won't mill itself": "It won't mill itself",
+    "quest It won't mill itself desc 1": `Village elder asked you to check how the "kids" running the eastern mill are doing`,
+    "quest It won't mill itself desc 2": "Boys running the eastern mill could use your help",
+    "quest It won't mill itself task 0": "Check on the eastern mill",
+    "quest It won't mill itself task 1": "Clear the infested storehouse",
+    "quest It won't mill itself task 2": "Find the missing grain delivery and bring it to the mill",
+
+    //VILLAGE EXPANSION
+    "quest Village expansion": "Village expansion",
+    "quest Village expansion desc 1": "Village elder has a few tasks for you",
+    "quest Village expansion task 0": "Dig the melioration channel",
+    "quest Village expansion task 3": "Gather materials (Wood log x100, Stone brick x500) and then help constructing the new bridge",
+    "quest Village expansion task 6": "Clear out huge dragonflies and then report back",
+    "quest Village expansion task 7": "[To be continued]",
+
+    //BONEMEAL DELIVERY
+    "quest Bonemeal delivery": "Bonemeal delivery",
+    "quest Bonemeal delivery desc 1": "The farm supervisor is in a dire need of 50 packs of bonemeal, and he needs the entire order delivered in one go.",
+    "quest Bonemeal delivery task 0": "Bring 50 packs of bonemeal",
+
+    //LIGHT IN THE DARKNESS
+    "quest Light in the darkness": "Light in the darkness",
+    "quest Light in the darkness desc 1": "People of the slums live in suffering and fear. Maybe you could improve their situation at least a bit?",
+    "quest Light in the darkness task 1": "Deal with the gang",
+    "quest Light in the darkness task 2": "[To be continued]",
+
+    //PLOUGHS TO SWORDS
+    "quest Ploughs to swords": "Ploughs to swords",
+    "quest Ploughs to swords desc 1": "Supervisor of the town's farms seems to have some interesting tasks, but first requires you to be strong enough for it.",
+    "quest Ploughs to swords desc 2": "Supervisor of the town's farms has a need for a capable fighter",
+    "quest Ploughs to swords task 0": "Prove your strength",
+    "quest Ploughs to swords task 1": "Deal with the boars and then report back",
+    "quest Ploughs to swords task 3": "Exterminate the multiple red ants under the farm and then report back",
+
+    //GIANT ENEMY CRAB
+    "quest Giant Enemy Crab": "Giant Enemy Crab",
+    "quest Giant Enemy Crab desc 1": "The elder gave you his blessing to investigate the rumors of enormous crab nests somewhere downriver. Or was it an enormous crab's nest? Or was it some enormous crabs' nest? Either way, he reminded you to prepare for the journey ahead",
+    "quest Giant Enemy Crab desc 2": "You managed to chase the giant crab away, but if you don't finish it off soon, it'll just nest somewhere else and be a problem for somebody else later. And even if someone did find it, would they be strong enough to defeat it? Better just to take care of it yourself now",
+    "quest Giant Enemy Crab desc 3": "You slew the giant crab nesting at the lake beach. With your task completed, you might as well explore the region further.",
+    "quest Giant Enemy Crab task 0": "Investigate down the river",
+    "quest Giant Enemy Crab task 1": "Track down the giant crab",
+
+    //IN TIMES OF NEED
+    "quest In Times of Need": "In Times of Need",
+    "quest In Times of Need desc 1": "You should introduce yourself to whomever is in charge",
+    "quest In Times of Need desc 2": `You accepted the chief's "request" to ask around and see how you could assist the tribe`,
+    "quest In Times of Need desc 3": "You helped the snakefang tribe in their time of need",
+    "quest In Times of Need task 1": "Ask around and see how you can help",
+    "quest In Times of Need task 2": "Bring the cook 60 pieces of fresh crab meat",
+    "quest In Times of Need task 4": "Speak to the tailor and see how you can help",
+    "quest In Times of Need task 5": "Bring the tailor 200 bundles of fresh flax",
+    "quest In Times of Need task 6": "Speak to the tanner and see how you can help",
+    "quest In Times of Need task 7": "Bring the tanner 60 pieces of alligator skin",
+    "quest In Times of Need task 9": "Bring the tanner 60 pieces of giant snake skin",
+    "quest In Times of Need task 10": "Report to the chief",
+};
+
+const reward_messages = {
+    //Text logged by a rewards.messages entry. Same rule as everything else: the
+    //content declares an id, not a sentence.
+    "reward msg go up": "As you descend deeper and deeper, a sudden thought strikes you - what if you instead tried going up?",
+    "reward msg rushing water": "In a moment of quiet between fights, you can make out a faint sound of rushing water in the distance",
+    "reward msg through the water": "You reach a wall of water and push through",
+    "reward msg swimming tempting": "With all the training you have done so far, the idea of submerging yourself in nearby waters is really tempting",
+};
+
+const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages};
 
 export default english;

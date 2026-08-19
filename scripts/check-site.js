@@ -174,8 +174,58 @@ async function check_locales() {
     }
 }
 
+/**
+ * Content files declare TEXT IDS rather than sentences. A typo in one of those ids
+ * does not throw - it renders as "text not found" in front of a player - so the
+ * declared ids are checked against the default locale here.
+ *
+ * Only the fields that were deliberately migrated are scanned. Commented-out code
+ * is stripped first, because the template at the bottom of src/quests.js documents
+ * the convention with ids that intentionally have no text.
+ */
+async function check_content_text_ids() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const scanned = [
+        { file: "src/quests.js", patterns: [
+            /quest_name:\s*"([^"]+)"/g,
+            /quest_description:\s*"([^"]+)"/g,
+            /task_description:\s*"([^"]+)"/g,
+        ]},
+        { file: "src/locations.js", patterns: [
+            /messages:\s*\[\s*"([^"]+)"\s*\]/g,
+        ]},
+    ];
+
+    let checked = 0;
+    const errors_before = errors.length;
+    for (const entry of scanned) {
+        const full_path = path.join(repo_root, entry.file);
+        if (!fs.existsSync(full_path)) {
+            error(`${entry.file} is missing - this check is out of date.`);
+            continue;
+        }
+        // Strip block comments so the documented template is not scanned.
+        const source = fs.readFileSync(full_path, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+
+        for (const pattern of entry.patterns) {
+            for (const match of source.matchAll(pattern)) {
+                const text_id = match[1];
+                checked++;
+                if (!(text_id in reference)) {
+                    error(`${entry.file} declares text id "${text_id}", which does not exist in locales/${default_language}.js.`);
+                }
+            }
+        }
+    }
+    const unresolved = errors.length - errors_before;
+    console.log(`[check] content text ids: ${checked} declared, ${checked - unresolved} resolved`);
+}
+
 check_site();
 await check_locales();
+await check_content_text_ids();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

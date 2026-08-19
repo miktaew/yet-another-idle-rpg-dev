@@ -1,10 +1,28 @@
 "use strict";
 
 import { add_quest_to_display, log_message, update_displayed_quest, update_displayed_quest_task } from "./display.js";
-import { process_rewards } from "./main.js";
+import { language, process_rewards } from "./main.js";
+import { translationManager } from "./translation.js";
 
 const quests = {};
 const active_quests = {};
+
+/**
+ * Resolves a quest text id into displayable text.
+ *
+ * An empty or missing id yields an empty string, so a hidden quest - which has no
+ * name and no description - renders as nothing rather than as a "text not found"
+ * placeholder. Same for a task that deliberately has no description.
+ *
+ * @param {String} text_id
+ * @returns {String}
+ */
+function resolve_quest_text(text_id) {
+    if(!text_id) {
+        return "";
+    }
+    return translationManager.getText(language, text_id);
+}
 
 class QuestTask {
     constructor({
@@ -36,9 +54,9 @@ class QuestTask {
     
 class Quest {
     constructor({
-                quest_name, //for display, can be skipped if getQuestName covers all possibilites
+                quest_name, //TEXT ID of the displayed name; can be skipped if getQuestName covers all possibilities
                 quest_id, //can be skipped, will be set by a short script at the end of the file
-                quest_description, // -||-
+                quest_description, //TEXT ID of the description; the text lives in locales/
                 questline, //questline for grouping or something, skippable
                 quest_tasks = [], //an array of tasks that need to be completed one by one
                 quest_condition, //conditions for task to be completed; can be skipped if it's meant to be achieved via some rewards object; works the same as in QuestTask
@@ -61,8 +79,14 @@ class Quest {
         this.is_finished = is_finished;
         this.is_repeatable = is_repeatable;
         this.quest_condition = quest_condition;
-        this.getQuestName = getQuestName;
-        this.getQuestDescription = getQuestDescription;
+        //The content-facing accessors return a TEXT ID, not a sentence. These
+        //wrappers resolve it, so every existing caller keeps receiving displayable
+        //text without knowing about the translation layer. quest_id stays the
+        //untranslated registry key, and that is what the save file holds.
+        this.getQuestNameId = getQuestName;
+        this.getQuestDescriptionId = getQuestDescription;
+        this.getQuestName = () => resolve_quest_text(this.getQuestNameId());
+        this.getQuestDescription = () => resolve_quest_text(this.getQuestDescriptionId());
     }
 
     getCompletedTaskCount(){
@@ -277,7 +301,7 @@ const questManager = {
 //Main story quests
 (()=>{
     quests["Lost memory"] = new Quest({
-        quest_name: "Lost memory",
+        quest_name: "quest Lost memory",
         display_priority: 0,
         getQuestDescription: ()=>{
             const completed_tasks =  quests["Lost memory"].getCompletedTaskCount();
@@ -286,37 +310,37 @@ const questManager = {
             //taken. The chain previously answered for 0 and 1 only, so from the very
             //first elder conversation onward it returned undefined.
             if(completed_tasks == 0) {
-                return "You woke up in some village and you have no idea how you got here or who you are. Just what could have happened?";
+                return "quest Lost memory desc 1";
             } else if(completed_tasks <= 3) {
-                return "You lost your memories after being attacked by unknown assailants and were rescued by local villagers. You need to find out who, why, and if possible, how to recover them.";
+                return "quest Lost memory desc 2";
             } else if(completed_tasks == 4) {
-                return "One of the men who robbed you is alive, and he talked. It was his group, they left you for dead, and the one who gave them the order is somewhere in the town - behind a gate that opens only for citizens and merchants.";
+                return "quest Lost memory desc 3";
             } else {
-                return "You are inside the town, and so is the man that gang used to answer to. Finding him is the closest you have come to an answer about that night on the road.";
+                return "quest Lost memory desc 4";
             }
         },
         questline: "Lost memory",
         quest_tasks: [
-            new QuestTask({task_description: "Find out what happened"}), //talk to elder
+            new QuestTask({task_description: "quest Lost memory task 0"}), //talk to elder
             new QuestTask({is_hidden: true}), //so that the 1st task is completed but the next is not yet displayed
-            new QuestTask({task_description: "Help with the wolf rat infestation"}), //talk to elder after dealing with them
-            new QuestTask({task_description: "Continue your search"}), //talk to suspicious guy
-            new QuestTask({task_description: "Get into the town"}), //completed by the gate guard's "known" line
+            new QuestTask({task_description: "quest Lost memory task 2"}), //talk to elder after dealing with them
+            new QuestTask({task_description: "quest Lost memory task 3"}), //talk to suspicious guy
+            new QuestTask({task_description: "quest Lost memory task 4"}), //completed by the gate guard's "known" line
         ]
     });
 
     quests["The Infinite Rat Saga"] = new Quest({
-        quest_name: "The Infinite Rat Saga",
+        quest_name: "quest The Infinite Rat Saga",
         display_priority: 0,
         getQuestDescription: ()=>{
-            return "You found more rats in the caves. You might as well try getting to the bottom of that issue.";
+            return "quest The Infinite Rat Saga desc 1";
         },
         questline: "The Infinite Rat Saga",
         quest_tasks: [
-            new QuestTask({task_description: "Go deeper"}), //beat the 'Mysterious gate'
-            new QuestTask({task_description: "Open the mysterious gate"}),
-            new QuestTask({task_description: "Get through the corrupted tunnel"}), 
-            new QuestTask({task_description: "Go even deeper (tbc)"}), //not yet possible to open 2nd gate
+            new QuestTask({task_description: "quest The Infinite Rat Saga task 0"}), //beat the 'Mysterious gate'
+            new QuestTask({task_description: "quest The Infinite Rat Saga task 1"}),
+            new QuestTask({task_description: "quest The Infinite Rat Saga task 2"}), 
+            new QuestTask({task_description: "quest The Infinite Rat Saga task 3"}), //not yet possible to open 2nd gate
         ]
     });
 })();
@@ -324,19 +348,19 @@ const questManager = {
 //General side quests
 (()=>{
     quests["It won't mill itself"] = new Quest({
-        quest_name: "It won't mill itself",
+        quest_name: "quest It won't mill itself",
         display_priority: 1,
         getQuestDescription: ()=>{
             if(!quests["It won't mill itself"].quest_tasks[0].is_finished) {
-                return `Village elder asked you to check how the "kids" running the eastern mill are doing`;
+                return "quest It won't mill itself desc 1";
             } else {
-                return "Boys running the eastern mill could use your help";
+                return "quest It won't mill itself desc 2";
             }
         },
         quest_tasks: [
-            new QuestTask({task_description: "Check on the eastern mill"}), //gained on talking to elder after clearing 'Cave room'
-            new QuestTask({task_description: "Clear the infested storehouse"}),
-            new QuestTask({task_description: "Find the missing grain delivery and bring it to the mill"}),
+            new QuestTask({task_description: "quest It won't mill itself task 0"}), //gained on talking to elder after clearing 'Cave room'
+            new QuestTask({task_description: "quest It won't mill itself task 1"}),
+            new QuestTask({task_description: "quest It won't mill itself task 2"}),
         ],
         quest_rewards: {
             money: 500,
@@ -348,30 +372,30 @@ const questManager = {
     });
 
     quests["Village expansion"] = new Quest({
-        quest_name: "Village expansion",
+        quest_name: "quest Village expansion",
         display_priority: 1,
         getQuestDescription: ()=>{
-            return "Village elder has a few tasks for you";
+            return "quest Village expansion desc 1";
         },
         quest_tasks: [
-            new QuestTask({task_description: "Dig the melioration channel"}), //finished by completing the dig
+            new QuestTask({task_description: "quest Village expansion task 0"}), //finished by completing the dig
             new QuestTask({is_hidden: true, task_rewards: {reputation: {Village: 20}}, skip_message: true}), //finished by talking after finishing digging
             new QuestTask({is_hidden: true, skip_message: true}), //finished by asking for next work after digging
-            new QuestTask({task_description: "Gather materials (Wood log x100, Stone brick x500) and then help constructing the new bridge"}), //finished by constructing the bridge
+            new QuestTask({task_description: "quest Village expansion task 3"}), //finished by constructing the bridge
             new QuestTask({is_hidden: true, task_rewards: {reputation: {Village: 120}}, skip_message: true}), //finished by reporting afterwards
             new QuestTask({is_hidden: true, skip_message: true}), //finished by asking for further work
-            new QuestTask({task_description: "Clear out huge dragonflies and then report back", task_rewards: {reputation: {Village: 20}}}), //finished by reporting afterwards
-            new QuestTask({task_description: "[To be continued]"}), //tbc, duh
+            new QuestTask({task_description: "quest Village expansion task 6", task_rewards: {reputation: {Village: 20}}}), //finished by reporting afterwards
+            new QuestTask({task_description: "quest Village expansion task 7"}), //tbc, duh
         ],
         quest_rewards: {
         }
     });
 
     quests["Bonemeal delivery"] = new Quest({
-        quest_name: "Bonemeal delivery",
-        quest_description: "The farm supervisor is in a dire need of 50 packs of bonemeal, and he needs the entire order delivered in one go.",
+        quest_name: "quest Bonemeal delivery",
+        quest_description: "quest Bonemeal delivery desc 1",
         quest_tasks: [
-            new QuestTask({task_description: "Bring 50 packs of bonemeal"}),
+            new QuestTask({task_description: "quest Bonemeal delivery task 0"}),
             
         ],
         quest_rewards: {
@@ -383,32 +407,32 @@ const questManager = {
         }
     });
     quests["Light in the darkness"] = new Quest({
-        quest_name: "Light in the darkness",
+        quest_name: "quest Light in the darkness",
         display_priority: 1,
         getQuestDescription: ()=>{
-            return "People of the slums live in suffering and fear. Maybe you could improve their situation at least a bit?";
+            return "quest Light in the darkness desc 1";
         },
         quest_tasks: [
             new QuestTask({is_hidden: true}), //gained on entry
-            new QuestTask({task_description: "Deal with the gang"}), //gained on talking with sus guy
-            new QuestTask({task_description: "[To be continued]"}), //next update maybe
+            new QuestTask({task_description: "quest Light in the darkness task 1"}), //gained on talking with sus guy
+            new QuestTask({task_description: "quest Light in the darkness task 2"}), //next update maybe
         ]
     });
     quests["Ploughs to swords"] = new Quest({
-        quest_name: "Ploughs to swords",
+        quest_name: "quest Ploughs to swords",
         display_priority: 1,
         getQuestDescription: ()=>{
             if(!quests["Ploughs to swords"].quest_tasks[1].is_finished) {
-                return "Supervisor of the town's farms seems to have some interesting tasks, but first requires you to be strong enough for it.";
+                return "quest Ploughs to swords desc 1";
             } else {
-                return "Supervisor of the town's farms has a need for a capable fighter";
+                return "quest Ploughs to swords desc 2";
             }
         },
         quest_tasks: [
-            new QuestTask({task_description: "Prove your strength"}), //gained on asking about work without having is_strength_proved flag, gained AND finished on asking with having the flag
-            new QuestTask({task_description: "Deal with the boars and then report back"}),
+            new QuestTask({task_description: "quest Ploughs to swords task 0"}), //gained on asking about work without having is_strength_proved flag, gained AND finished on asking with having the flag
+            new QuestTask({task_description: "quest Ploughs to swords task 1"}),
             new QuestTask({is_hidden: true}), //completed by asking for more work when it's not winter
-            new QuestTask({task_description: "Exterminate the multiple red ants under the farm and then report back"}),
+            new QuestTask({task_description: "quest Ploughs to swords task 3"}),
         ],
         quest_rewards: {
             money: 5000,
@@ -446,7 +470,7 @@ const questManager = {
         is_hidden: true,
         quest_rewards: {
             global_activities: ["swimming"],
-            messages: ["With all the training you have done so far, the idea of submerging yourself in nearby waters is really tempting"],
+            messages: ["reward msg swimming tempting"],
         },
         quest_tasks: [
             new QuestTask({
@@ -483,48 +507,48 @@ const questManager = {
 //Swampland expansion quests
 (()=>{
     quests["Giant Enemy Crab"] = new Quest({            //reference to the old "Sony E3 2006 / Giant Enemy Crab" meme
-        quest_name: "Giant Enemy Crab",
+        quest_name: "quest Giant Enemy Crab",
         display_priority: 9,
         getQuestDescription: ()=>{
             if(quests["Giant Enemy Crab"].quest_tasks[1].is_finished) {
-                return "You slew the giant crab nesting at the lake beach. With your task completed, you might as well explore the region further.";
+                return "quest Giant Enemy Crab desc 3";
             } else if(quests["Giant Enemy Crab"].quest_tasks[0].is_finished) {
-                return "You managed to chase the giant crab away, but if you don't finish it off soon, it'll just nest somewhere else and be a problem for somebody else later. And even if someone did find it, would they be strong enough to defeat it? Better just to take care of it yourself now";
+                return "quest Giant Enemy Crab desc 2";
             } else {
-                return "The elder gave you his blessing to investigate the rumors of enormous crab nests somewhere downriver. Or was it an enormous crab's nest? Or was it some enormous crabs' nest? Either way, he reminded you to prepare for the journey ahead";
+                return "quest Giant Enemy Crab desc 1";
             }
         },
         questline: "Giant Enemy Crab",
         quest_tasks: [
-            new QuestTask({task_description: "Investigate down the river"}), //beat the crab once
-            new QuestTask({task_description: "Track down the giant crab"}), //beat the crab twice
+            new QuestTask({task_description: "quest Giant Enemy Crab task 0"}), //beat the crab once
+            new QuestTask({task_description: "quest Giant Enemy Crab task 1"}), //beat the crab twice
         ]
     });
     quests["In Times of Need"] = new Quest({
-        quest_name: "In Times of Need",
+        quest_name: "quest In Times of Need",
         display_priority: 9,
         getQuestDescription: ()=>{
             if(quests["In Times of Need"].quest_tasks[quests["In Times of Need"].quest_tasks.length-1].is_finished) {    //update upon completion of final task
-                return "You helped the snakefang tribe in their time of need";
+                return "quest In Times of Need desc 3";
             } else if(quests["In Times of Need"].quest_tasks[0].is_finished) {
-                return `You accepted the chief's "request" to ask around and see how you could assist the tribe`;
+                return "quest In Times of Need desc 2";
             } else {
-                return "You should introduce yourself to whomever is in charge";
+                return "quest In Times of Need desc 1";
             }
         },
         questline: "In Times of Need",
         quest_tasks: [
             new QuestTask({is_hidden: true}), //Gained on entry
-            new QuestTask({task_description: "Ask around and see how you can help"}), //From talking to chief
-            new QuestTask({task_description: "Bring the cook 60 pieces of fresh crab meat"}), //From talking to cook
+            new QuestTask({task_description: "quest In Times of Need task 1"}), //From talking to chief
+            new QuestTask({task_description: "quest In Times of Need task 2"}), //From talking to cook
             new QuestTask({is_hidden: true}), //filler after bringing meat, before being told to talk to tailor
-            new QuestTask({task_description: "Speak to the tailor and see how you can help"}), //flax delivery part 1
-            new QuestTask({task_description: "Bring the tailor 200 bundles of fresh flax"}), //flax delivery part 2
-            new QuestTask({task_description: "Speak to the tanner and see how you can help"}), //tanner delivery part 1
-            new QuestTask({task_description: "Bring the tanner 60 pieces of alligator skin"}), //tanner delivery part 2
+            new QuestTask({task_description: "quest In Times of Need task 4"}), //flax delivery part 1
+            new QuestTask({task_description: "quest In Times of Need task 5"}), //flax delivery part 2
+            new QuestTask({task_description: "quest In Times of Need task 6"}), //tanner delivery part 1
+            new QuestTask({task_description: "quest In Times of Need task 7"}), //tanner delivery part 2
             new QuestTask({is_hidden: true}), //filler after bringing alligator skin, before being told to bring snake skin
-            new QuestTask({task_description: "Bring the tanner 60 pieces of giant snake skin"}), //tanner delivery part 3
-            new QuestTask({task_description: "Report to the chief"}), //properly finishes the quest, rewards come in dialogue
+            new QuestTask({task_description: "quest In Times of Need task 9"}), //tanner delivery part 3
+            new QuestTask({task_description: "quest In Times of Need task 10"}), //properly finishes the quest, rewards come in dialogue
         ]
     });
 })();
@@ -532,12 +556,12 @@ const questManager = {
 
 /*
 quests["Test quest"] = new Quest({
-    quest_name: "Test quest",
-    id: "Test quest",
-    quest_description: "Raaaaaaaaaaat ratratratratrat rat rat rat",
+    quest_name: "quest Test quest",              //a text id; the text lives in locales/
+    id: "Test quest",                            //the registry key, never translated
+    quest_description: "quest Test quest desc 1", //also a text id
     quest_tasks: [
         new QuestTask({
-            task_description: "task 1 blah blah",
+            task_description: "quest Test quest task 0",
             task_condition: {
                 any: {
                     kill: {
@@ -547,11 +571,11 @@ quests["Test quest"] = new Quest({
             }
         }),
         new QuestTask({
-            task_description: "task 2 blah blah",
+            task_description: "quest Test quest task 1",
             is_hidden: true,
         }),
         new QuestTask({
-            task_description: "task 3 blah blah",
+            task_description: "quest Test quest task 2",
             task_condition: {
                 any: {
                     kill: {

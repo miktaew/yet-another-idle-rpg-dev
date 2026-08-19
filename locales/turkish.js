@@ -286,6 +286,106 @@ const racial = {
                     + "Cüceler gibi her şeyi yerler, ama hangi yemeğin iğrenç sayılacağı konusunda insanlara daha yakın bir bakışa sahiptirler.",
 };
 
-const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio};
+const quests = {
+    /*
+        Quest text. Ids and their shape are documented in locales/english.js.
+
+        Translation notes worth keeping:
+        - "It won't mill itself" is the "it won't do itself" idiom. Turkish has the
+          same construction, so the joke survives directly.
+        - "Ploughs to swords" inverts the swords-into-ploughshares allusion. Turkish
+          carries the same allusion, so the inversion reads the same way.
+        - "Giant Enemy Crab" is a 2006 meme and is deliberately literal.
+        - The apostrophe joke in that quest's first description - crab nests / a
+          crab's nest / some crabs' nest - is a joke about English possessives and
+          cannot be carried word for word. Turkish possessive suffixes produce the
+          same three readings, so the joke is rebuilt on those instead.
+    */
+
+    //LOST MEMORY
+    "quest Lost memory": "Kayıp hafıza",
+    "quest Lost memory desc 1": "Bir köyde gözlerini açtın ve buraya nasıl geldiğine, kim olduğuna dair hiçbir fikrin yok. Ne olmuş olabilir ki?",
+    "quest Lost memory desc 2": "Kimliği bilinmeyen saldırganların saldırısından sonra hafızanı yitirdin ve köylüler seni kurtardı. Kimin, neden yaptığını, mümkünse hafızanı nasıl geri kazanacağını bulman gerek.",
+    "quest Lost memory desc 3": "Seni soyan adamlardan biri hayatta ve konuştu. Onun çetesiydi, seni ölüme terk ettiler ve emri verenin kasabada bir yerde olduğunu söyledi - yalnızca yurttaşlara ve tüccarlara açılan bir kapının ardında.",
+    "quest Lost memory desc 4": "Kasabanın içindesin; o çetenin hesap verdiği adam da. Onu bulmak, yoldaki o gecenin cevabına şimdiye kadar en çok yaklaştığın nokta.",
+    "quest Lost memory task 0": "Ne olduğunu öğren",
+    "quest Lost memory task 2": "Kurt sıçanı istilasına karşı yardım et",
+    "quest Lost memory task 3": "Aramayı sürdür",
+    "quest Lost memory task 4": "Kasabaya gir",
+
+    //THE INFINITE RAT SAGA
+    "quest The Infinite Rat Saga": "Bitmeyen Sıçan Destanı",
+    "quest The Infinite Rat Saga desc 1": "Mağaralarda daha çok sıçan buldun. Madem öyle, bu işin dibine kadar gitmeyi denesen iyi olur.",
+    "quest The Infinite Rat Saga task 0": "Daha derine in",
+    "quest The Infinite Rat Saga task 1": "Gizemli kapıyı aç",
+    "quest The Infinite Rat Saga task 2": "Bozulmuş tünelden geç",
+    "quest The Infinite Rat Saga task 3": "Daha da derine in (devam edecek)",
+
+    //IT WON'T MILL ITSELF
+    "quest It won't mill itself": "Kendi kendine öğütmez",
+    "quest It won't mill itself desc 1": `Köy yaşlısı, doğudaki değirmeni çeviren "çocukların" nasıl olduğuna bir bakmanı istedi`,
+    "quest It won't mill itself desc 2": "Doğudaki değirmeni çeviren oğlanların yardımına ihtiyacı var",
+    "quest It won't mill itself task 0": "Doğudaki değirmene uğra",
+    "quest It won't mill itself task 1": "İstila edilmiş ambarı temizle",
+    "quest It won't mill itself task 2": "Kaybolan tahıl sevkiyatını bul ve değirmene götür",
+
+    //VILLAGE EXPANSION
+    "quest Village expansion": "Köyün genişlemesi",
+    "quest Village expansion desc 1": "Köy yaşlısının sana verecek birkaç işi var",
+    "quest Village expansion task 0": "Islah kanalını kaz",
+    "quest Village expansion task 3": "Malzeme topla (Wood log x100, Stone brick x500) ve sonra yeni köprünün yapımına yardım et",
+    "quest Village expansion task 6": "Dev yusufçukları temizle ve sonra haber ver",
+    "quest Village expansion task 7": "[Devam edecek]",
+
+    //BONEMEAL DELIVERY
+    "quest Bonemeal delivery": "Kemik unu teslimatı",
+    "quest Bonemeal delivery desc 1": "Çiftlik sorumlusunun acilen 50 paket kemik ununa ihtiyacı var ve siparişin tamamının tek seferde teslim edilmesini istiyor.",
+    "quest Bonemeal delivery task 0": "50 paket kemik unu getir",
+
+    //LIGHT IN THE DARKNESS
+    "quest Light in the darkness": "Karanlıkta bir ışık",
+    "quest Light in the darkness desc 1": "Slum'ların insanları acı ve korku içinde yaşıyor. Belki durumlarını bir nebze iyileştirebilirsin?",
+    "quest Light in the darkness task 1": "Çeteyi hallet",
+    "quest Light in the darkness task 2": "[Devam edecek]",
+
+    //PLOUGHS TO SWORDS
+    "quest Ploughs to swords": "Sabanlardan kılıç",
+    "quest Ploughs to swords desc 1": "Kasaba çiftliklerinin sorumlusunda ilginç işler var gibi görünüyor, ama önce bunun için yeterince güçlü olmanı istiyor.",
+    "quest Ploughs to swords desc 2": "Kasaba çiftliklerinin sorumlusunun yetenekli bir dövüşçüye ihtiyacı var",
+    "quest Ploughs to swords task 0": "Gücünü kanıtla",
+    "quest Ploughs to swords task 1": "Yaban domuzlarını hallet ve sonra haber ver",
+    "quest Ploughs to swords task 3": "Çiftliğin altındaki kızıl karıncaları temizle ve sonra haber ver",
+
+    //GIANT ENEMY CRAB
+    "quest Giant Enemy Crab": "Dev Düşman Yengeç",
+    "quest Giant Enemy Crab desc 1": "Yaşlı, nehrin aşağısında bir yerdeki dev yengeç yuvalarına dair söylentileri araştırman için sana izin verdi. Yoksa dev yengecin yuvası mıydı? Belki dev yengeçlerin yuvası? Her hâlükârda, yola çıkmadan önce hazırlanmanı hatırlattı",
+    "quest Giant Enemy Crab desc 2": "Dev yengeci kaçırmayı başardın, ama işini yakında bitirmezsen gidip başka bir yere yuva kurar ve sonra bir başkasının sorunu olur. Hem biri onu bulsa bile, yenecek kadar güçlü olur mu? En iyisi şimdi kendin halletmek",
+    "quest Giant Enemy Crab desc 3": "Göl kıyısında yuva kuran dev yengeci öldürdün. Görev tamamlandığına göre, madem buradasın, bölgeyi biraz daha keşfetsen iyi olur.",
+    "quest Giant Enemy Crab task 0": "Nehrin aşağısını araştır",
+    "quest Giant Enemy Crab task 1": "Dev yengecin izini sür",
+
+    //IN TIMES OF NEED
+    "quest In Times of Need": "Zor Zamanlarda",
+    "quest In Times of Need desc 1": "Burada kim yetkiliyse kendini ona tanıtman gerek",
+    "quest In Times of Need desc 2": `Şefin, kabileye nasıl yardım edebileceğini görmek için etrafa sorman yönündeki "ricasını" kabul ettin`,
+    "quest In Times of Need desc 3": "Snake Fang kabilesine zor zamanlarında yardım ettin",
+    "quest In Times of Need task 1": "Etrafa sor ve nasıl yardım edebileceğini gör",
+    "quest In Times of Need task 2": "Aşçıya 60 parça taze yengeç eti getir",
+    "quest In Times of Need task 4": "Terziyle konuş ve nasıl yardım edebileceğini gör",
+    "quest In Times of Need task 5": "Terziye 200 demet taze keten getir",
+    "quest In Times of Need task 6": "Tabakhaneciyle konuş ve nasıl yardım edebileceğini gör",
+    "quest In Times of Need task 7": "Tabakhaneciye 60 parça timsah derisi getir",
+    "quest In Times of Need task 9": "Tabakhaneciye 60 parça dev yılan derisi getir",
+    "quest In Times of Need task 10": "Şefe haber ver",
+};
+
+const reward_messages = {
+    "reward msg go up": "Gitgide daha derine indikçe aklına ani bir düşünce takılıyor: ya bunun yerine yukarı çıkmayı denesen?",
+    "reward msg rushing water": "Dövüşler arasındaki bir sessizlik anında, uzaklardan gelen hafif bir su sesi duyabiliyorsun",
+    "reward msg through the water": "Bir su duvarına varıyor ve içinden geçip ilerliyorsun",
+    "reward msg swimming tempting": "Şimdiye kadar yaptığın bütün çalışmadan sonra, yakındaki sulara dalma fikri cidden cazip geliyor",
+};
+
+const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages};
 
 export default turkish;

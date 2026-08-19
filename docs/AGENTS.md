@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 3 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 4 -->
 
 # Agent and contributor guide
 
@@ -164,6 +164,10 @@ Rules:
 - The `mofu#` prefix selects a racial text variant. A `mofu#` key with no base key
   can never be reached, because lookup falls back from variant to base and never
   the other way around. `npm run check` treats it as an error.
+- Content files declare **text ids**, not sentences. That includes `quest_name`,
+  `quest_description`, `task_description` and every `rewards.messages` entry.
+  `npm run check` verifies that each declared id exists in the default locale, so a
+  typo fails the build instead of rendering as a placeholder in front of a player.
 - **Never translate a registry key.** Keys are persisted in saves (section 5).
   Translating display names requires a separate id-to-name layer first; this is
   tracked as an open decision in [PROPOSALS.md](PROPOSALS.md).

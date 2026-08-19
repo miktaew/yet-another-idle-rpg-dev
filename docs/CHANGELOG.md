@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 8 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 9 -->
 
 # Changelog
 
@@ -17,6 +17,71 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Quest text moved behind ids, and translated — P-7
+
+Quest names, descriptions and task descriptions were written inline in
+`src/quests.js`, which put them outside the translation system entirely. They are
+now text ids, and the Turkish side is written. 62 new ids; coverage went from 26.2%
+to 35.4%.
+
+**The id shape is `quest <quest_id> [name | desc N | task N]`.** Three deliberate
+choices in that:
+
+- `<quest_id>` is the registry key, which is what the save file holds. It is never
+  translated and never renamed — it only identifies the row in the locale.
+- `desc N` is numbered in progress order, because eight of the eleven quests choose
+  their description from how many tasks are finished. A single id per quest could
+  not express that.
+- `task N` is the task's index in `quest_tasks`, so an id cannot drift away from the
+  task it belongs to. Hidden tasks have no description and therefore no id.
+
+**The accessors already existed, which kept the change small.** `getQuestName` and
+`getQuestDescription` were overridable options on the Quest class. Content now
+returns an **id** from them, and thin wrappers resolve it, so all nine existing
+callers — the quest panel, the sorting comparator, four log messages and the reward
+processor's `source_name` — keep receiving displayable text without knowing the
+translation layer exists.
+
+`source_name` was worth checking before translating it: it is documented as being
+for logging and there is a separate `source_id` for identity, so a translated value
+is safe there.
+
+**Quest sorting is locale aware now.** The comparator used `>` on the names, which
+orders by code unit and puts every Turkish letter carrying a diacritic after "z". It
+uses `localeCompare` with a tag from a new `language_tags` map, kept beside the
+language registry so adding a language means editing one place.
+
+**`rewards.messages` takes ids too.** Four content strings — three in
+`src/locations.js`, one in `src/quests.js` — were the last player-facing text being
+logged straight from a content file. The reward processor translates them now.
+
+**A new CI check verifies the ids exist.** A typo in a declared id does not throw:
+it renders as "text not found" in front of a player. `npm run check` scans
+`quest_name`, `quest_description`, `task_description` and `rewards.messages` in the
+content files and fails if any id is missing from the default locale. It strips block
+comments first, so the documented template at the bottom of `src/quests.js` — which
+now demonstrates the id convention rather than inline text — is not scanned. 44 ids
+declared, all resolving; verified to fail on a deliberately introduced typo.
+
+Finding that check's own bug took longer than writing it. It reported zero ids
+scanned while the same regex found forty in isolation. The cause was in the file
+rather than the logic: the word-boundary escapes had been written as literal
+backspace bytes, so the patterns were looking for a control character before
+`quest_name`. A hex dump of the line was what showed it.
+
+**On the translation itself.** The quest names carry three things a literal pass
+would lose. *It won't mill itself* is the "it won't do itself" idiom, which Turkish
+has in the same construction, so it survives directly. *Ploughs to swords* inverts
+the swords-into-ploughshares allusion, and Turkish carries the same allusion, so the
+inversion reads the same way. *Giant Enemy Crab* is a 2006 meme and is deliberately
+literal.
+
+The hardest line is that quest's first description, which jokes about apostrophe
+placement: crab nests, a crab's nest, some crabs' nest. That is a joke about English
+possessives and cannot be carried word for word. Turkish possessive suffixes produce
+exactly the same three readings, so the joke was rebuilt on those instead — dev
+yengeç yuvaları, dev yengecin yuvası, dev yengeçlerin yuvası.
 
 ### The opening scene is Turkish, and the bundle stopped escaping it — P-7
 

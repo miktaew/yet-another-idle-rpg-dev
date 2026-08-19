@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 8 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 9 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,71 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Quest metni id'lerin arkasına taşındı ve çevrildi — P-7
+
+Quest adları, açıklamaları ve görev metinleri `src/quests.js` içinde satır içi
+yazılmıştı; bu da onları çeviri sisteminin tamamen dışında bırakıyordu. Artık metin
+id'si oldular ve Türkçe tarafı yazıldı. 62 yeni id; kapsam %26.2'den %35.4'e çıktı.
+
+**Id biçimi `quest <quest_id> [name | desc N | task N]`.** Bunda üç bilinçli tercih
+var:
+
+- `<quest_id>` registry anahtarıdır ve save dosyasının tuttuğu şeydir. Asla
+  çevrilmez, asla yeniden adlandırılmaz — locale'deki satırı yalnızca tanımlar.
+- `desc N` ilerleme sırasına göre numaralı, çünkü on bir quest'in sekizi açıklamasını
+  kaç görevin bittiğine göre seçiyor. Quest başına tek id bunu ifade edemezdi.
+- `task N` görevin `quest_tasks` içindeki indeksi; böylece bir id ait olduğu görevden
+  kopamaz. Gizli görevlerin açıklaması yok, dolayısıyla id'si de yok.
+
+**Erişimciler zaten vardı, bu da değişikliği küçük tuttu.** `getQuestName` ve
+`getQuestDescription`, Quest sınıfında override edilebilir seçeneklerdi. İçerik artık
+onlardan bir **id** döndürüyor, ince sarmalayıcılar da onu çözüyor; böylece mevcut
+dokuz çağıran — quest paneli, sıralama karşılaştırıcısı, dört log mesajı ve ödül
+işleyicisinin `source_name`'i — çeviri katmanının varlığından habersiz şekilde
+görüntülenebilir metin almaya devam ediyor.
+
+`source_name`'i çevirmeden önce kontrol etmeye değerdi: loglama için olduğu
+belgelenmiş ve kimlik için ayrı bir `source_id` var, dolayısıyla orada çevrilmiş bir
+değer güvenli.
+
+**Quest sıralaması artık locale duyarlı.** Karşılaştırıcı adlar üzerinde `>`
+kullanıyordu; bu kod birimine göre sıralar ve aksan taşıyan her Türkçe harfi "z"den
+sonraya atar. Artık yeni bir `language_tags` haritasından gelen etiketle
+`localeCompare` kullanıyor; harita dil registry'sinin yanında duruyor, böylece dil
+eklemek tek bir yeri düzenlemek anlamına geliyor.
+
+**`rewards.messages` de id alıyor.** Dört içerik metni — üçü `src/locations.js`,
+biri `src/quests.js` içinde — bir içerik dosyasından doğrudan loglanan son
+oyuncuya görünen metindi. Ödül işleyicisi artık onları çeviriyor.
+
+**Yeni bir CI kontrolü id'lerin varlığını doğruluyor.** Bildirilen bir id'deki yazım
+hatası hata fırlatmaz: oyuncunun karşısında "text not found" olarak görünür.
+`npm run check` içerik dosyalarındaki `quest_name`, `quest_description`,
+`task_description` ve `rewards.messages` alanlarını tarıyor ve herhangi bir id
+varsayılan locale'de yoksa başarısız oluyor. Önce blok yorumlarını çıkarıyor;
+böylece `src/quests.js` sonundaki belgeli şablon — ki artık satır içi metin yerine id
+kuralını gösteriyor — taranmıyor. 44 id bildirildi, hepsi çözülüyor; kasten
+eklenen bir yazım hatasında başarısız olduğu doğrulandı.
+
+O kontrolün kendi hatasını bulmak, onu yazmaktan uzun sürdü. Sıfır id taradığını
+bildiriyordu, oysa aynı regex izole olarak kırk eşleşme buluyordu. Neden mantıkta
+değil dosyadaydı: word-boundary kaçışları gerçek backspace baytı olarak yazılmıştı,
+yani desenler `quest_name` öncesinde bir kontrol karakteri arıyordu. Bunu gösteren
+şey satırın hex dökümü oldu.
+
+**Çevirinin kendisine dair.** Quest adları, birebir bir geçişin kaybedeceği üç şey
+taşıyor. *It won't mill itself* "kendi kendine olmaz" deyimi; Türkçede aynı yapı
+bulunduğu için doğrudan aktarılıyor. *Ploughs to swords* "kılıçlardan saban"
+göndermesini tersine çeviriyor ve Türkçe aynı göndermeyi taşıdığı için tersine çevirme
+aynı şekilde okunuyor. *Giant Enemy Crab* 2006 tarihli bir mem ve bilinçli olarak
+birebir.
+
+En zor satır o quest'in ilk açıklaması: kesme işareti yerleşimi üzerine bir şaka
+yapıyor — crab nests, a crab's nest, some crabs' nest. Bu, İngilizce iyelik yapısı
+üzerine bir şaka ve kelime kelime aktarılamaz. Türkçe iyelik ekleri tam olarak aynı üç
+okumayı ürettiği için şaka onların üzerine yeniden kuruldu: dev yengeç yuvaları, dev
+yengecin yuvası, dev yengeçlerin yuvası.
 
 ### Açılış sahnesi Türkçe ve bundle artık onu kaçırmıyor — P-7
 

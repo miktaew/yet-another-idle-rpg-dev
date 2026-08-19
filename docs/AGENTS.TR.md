@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 3 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 4 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -146,6 +146,11 @@ Kuralların tamamı: [AGENTS.md § 8](AGENTS.md#8-text-and-translations). Özetl
 - Bir çeviride olup `english.js` içinde olmayan anahtar her zaman hatadır.
 - `mofu#` ön eki ırksal metin varyantı seçer. Temel anahtarı olmayan bir `mofu#`
   anahtarına asla ulaşılamaz, çünkü arama varyanttan temele düşer, tersi olmaz.
+- İçerik dosyaları cümle değil **metin id'si** bildirir. Buna `quest_name`,
+  `quest_description`, `task_description` ve her `rewards.messages` girdisi dahil.
+  `npm run check` bildirilen her id'nin varsayılan locale'de var olduğunu doğrular;
+  böylece yazım hatası, oyuncunun karşısında yer tutucu olarak görünmek yerine
+  derlemeyi başarısız kılar.
 - **Bir registry anahtarını asla çevirmeyin.** Anahtarlar save'lerde saklanır
   (bölüm 5). Görünen adları çevirmek önce ayrı bir id-ad katmanı gerektirir; bu,
   [PROPOSALS.TR.md](PROPOSALS.TR.md) içinde bekleyen bir karar olarak izleniyor.

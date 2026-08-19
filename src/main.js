@@ -147,6 +147,13 @@ const language_names = {
     english: "English",
     turkish: "Türkçe",
 };
+//BCP 47 tags for localeCompare. Sorting translated names with a plain ">" orders
+//by code unit, which puts every accented letter after "z" - wrong in any language
+//that has them.
+const language_tags = {
+    english: "en",
+    turkish: "tr",
+};
 let language = languages.english;
 
 let is_loading_error = false;
@@ -2302,7 +2309,8 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.messages && !is_from_loading) {
         for(let i = 0; i < rewards.messages.length; i++) {
-            log_message(rewards.messages[i]);
+            //These are text ids, like every other piece of player-facing text.
+            log_message(translationManager.getText(language, rewards.messages[i]));
         }
     }
 
@@ -6096,7 +6104,8 @@ if(is_on_dev()) {
         `<img id = "hits_counter" src="https://hitscounter.dev/api/hit?${counter_query}&color=%23084298&message=&style=flat&tz=UTC" alt="Visitor counter">`
     );
 }
-export { current_enemies,
+export { language_tags,
+        current_enemies,
         current_location,
         can_work, active_effects,
         enough_time_for_earnings, add_xp_to_skill, get_effective_skill_xp_gain,
