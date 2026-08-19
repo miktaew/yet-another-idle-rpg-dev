@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 12 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 13 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,57 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Bütün skill adları Türkçe — P-7
+
+30 stance ve NPC adının üstüne 74 skill rütbe adı. Kapsam %64.7'den **%68.0**'e;
+İngilizce referans 773 anahtara çıktı, çünkü her ad orada da listeleniyor — böylece
+çevrilmiş bir anahtardaki yazım hatası sessizce yedeğe düşmek yerine derlemeyi
+başarısız kılıyor.
+
+**Buradaki asıl iş rütbe merdiveni.** Skill'ler farklı seviyelerde farklı ad
+gösteriyor — `names: {0: "Beginner gatherer", 10: "Apprentice gatherer", 25: "Adept
+gatherer", 35: "Expert gatherer", 50: "Master gatherer"}` — ve aynı sıfatlar başka
+skill'lerde de tekrarlıyor, dolayısıyla hepsinin tek bir Türkçe merdivene, sapma
+olmadan eşlenmesi gerekiyordu. Seçilen merdiven **Acemi → Çırak → Kalfa → Uzman →
+Usta**; yani çevrilmiş sıfatlar dizisi değil, Türkçenin gerçek zanaat hiyerarşisi.
+Oyuncu onu bir lonca rütbesi olarak okuyor — ki öyle.
+
+Tekrarlayan diğer terimler de aynı şekilde sabitlendi: üç silah/zanaat/duruş çiftinde
+`proficiency` → yetkinliği ve `mastery` → ustalığı; hem Haşere hem Dev ailesinde ayrı
+tutulan `killer` → avcısı ile `slayer` → kıyıcısı; hâlihazırda yayınlanmış stat
+etiketleriyle uyumlu `resistance` → direnci; `X combat` → X dövüşü, `-manship` →
+kullanımı, `casting` → büyücülüğü.
+
+**Kaynağa karşı kendim doğruladığım iki karar** — çünkü ikisi de birebir çevirinin tam
+olarak yanlış yaptığı türden:
+
+- **Brawling → "Sokak kavgası"**, "Sokak dövüşü" değil. `skills["Unarmed"]` meğer
+  `names: {0: "Unarmed", 10: "Brawling", 20: "Martial arts"}` taşıyor; yani Brawling,
+  tepesi Martial arts olan bir merdivenin orta basamağı. Türkçede `dövüş` disiplinli
+  kelime — Combat'ın Dövüş, Martial arts'ın Dövüş sanatları olmasının nedeni de bu —
+  oysa `kavga` gerçek bir arbedenin adı. `kavga` kullanmak orta basamağı doğru biçimde
+  disiplinin *altına* yerleştiriyor ve `dövüş`ün yedinci bir adda görünmesini
+  engelliyor.
+- **Wooden skin → "Tahta deri"**, "Ahşap deri" değil. Skill aslında
+  `skills["Iron skin"]`; `names: {0: "Tough skin", 10: "Wooden skin", 20: "Stone skin",
+  30: "Iron skin"}` ve açıklaması kahramanın kendi derisinin tekrarlanan hasarla
+  sertleşmesinden bahsediyor. Yani bu bir malzeme değil, sertlik kıyaslaması: `tahta`
+  gündelik olan (*tahta gibi sertleşmek*), `ahşap` ise işlenmiş kereste demek — o yüzden
+  Woodworking'de doğru, burada yanlış. Ahşap ailesi zorunlu olarak üçe ayrılıyor:
+  kesilmiş kütük için `odun`, işlenmiş kereste için `ahşap`, sertlik için `tahta`. Bu
+  tutarsızlık değil, doğrusu bu.
+
+İkisi de sağlam çıktı. Merdiven **Sert → Tahta → Taş → Demir deri** olarak okunuyor.
+
+Bir stance'ı gölgeleyen altı skill adı aynı paştan geldi ve mükerrer olarak
+düşürülmeden önce dosyada zaten bulunan biçimlerle birebir karşılaştırıldı; böylece
+stance butonu ile skill satırı çelişemiyor.
+
+Bir ad istediğimden uzun oldu: Scrambling → "Engebeli arazi hareketi". Açıklamasına
+sadık — engebeli veya kaygan zeminde hızlı ve sağlam basarak hareket etmek — ama liste
+etiketi için kelimeli. Doğruluk kazandığı için olduğu gibi bırakıldı, oynanışta
+rahatsız ederse diye not düşüldü.
 
 ### Görünen adlar artık çevrilebiliyor — P-7
 

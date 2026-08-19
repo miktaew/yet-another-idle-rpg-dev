@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 12 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 13 -->
 
 # Changelog
 
@@ -17,6 +17,55 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Every skill name is Turkish — P-7
+
+74 skill rank names, on top of the 30 stance and NPC names. Coverage 64.7% to
+**68.0%**; the English reference grew to 773 keys because each name is listed there
+too, so a typo in a translated key fails the build instead of silently falling back.
+
+**The rank ladder is the real work here.** Skills show a different name at different
+levels — `names: {0: "Beginner gatherer", 10: "Apprentice gatherer", 25: "Adept
+gatherer", 35: "Expert gatherer", 50: "Master gatherer"}` — and the same adjectives
+recur across skills, so they had to map to one Turkish ladder applied without
+variation. The ladder chosen is **Acemi → Çırak → Kalfa → Uzman → Usta**, which is the
+actual historical Turkish craft hierarchy rather than a set of translated adjectives. A
+player reads it as a guild rank, which is what it is.
+
+The other repeated terms were fixed the same way: `proficiency` → yetkinliği and
+`mastery` → ustalığı across all three weapon/crafting/stance pairs; `killer` → avcısı
+against `slayer` → kıyıcısı, kept distinct in both the Pest and Giant families;
+`resistance` → direnci, matching the stat labels already shipped; `X combat` → X
+dövüşü, `-manship` → kullanımı, `casting` → büyücülüğü.
+
+**Two decisions I checked against the source myself rather than taking on trust**,
+because both are exactly the kind of call a literal pass gets wrong:
+
+- **Brawling → "Sokak kavgası"**, not "Sokak dövüşü". `skills["Unarmed"]` turns out to
+  carry `names: {0: "Unarmed", 10: "Brawling", 20: "Martial arts"}`, so Brawling is the
+  middle rung of a ladder whose top is Martial arts. In Turkish `dövüş` is the
+  disciplined word — it is why Combat is Dövüş and Martial arts is Dövüş sanatları —
+  while `kavga` is what an actual brawl is. Using `kavga` places the middle rung
+  correctly *below* discipline, and stops `dövüş` appearing in a seventh name.
+- **Wooden skin → "Tahta deri"**, not "Ahşap deri". The skill is `skills["Iron skin"]`
+  with `names: {0: "Tough skin", 10: "Wooden skin", 20: "Stone skin", 30: "Iron skin"}`
+  and a description about the hero's own skin toughening from repeated damage. So it is
+  a hardness comparison, not a material: `tahta` is the everyday one (*tahta gibi
+  sertleşmek*), while `ahşap` means worked timber and is therefore right for
+  Woodworking and wrong here. The wood family ends up three-way by necessity — `odun`
+  for felled logs, `ahşap` for worked timber, `tahta` for the hardness — which is
+  correct rather than inconsistent.
+
+Both hold up. The ladder reads **Sert → Tahta → Taş → Demir deri**.
+
+The six skill names that shadow a stance were delivered by the same pass and verified
+byte for byte against the forms already in the file before being dropped as
+duplicates, so the stance button and the skill row cannot disagree.
+
+One name is longer than I would like: Scrambling became "Engebeli arazi hareketi",
+which is accurate to its description — acting quickly and with secure footing on rough
+or unstable ground — but wordy for a list label. Left as is, since accuracy won, and
+noted in case it grates in play.
 
 ### Display names can be translated now — P-7
 
