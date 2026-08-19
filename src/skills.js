@@ -6,6 +6,8 @@ const skill_categories = {};
 import { get_total_level_bonus, get_total_skill_coefficient, get_total_skill_level } from "./character.js";
 import { get_crafting_quality_caps } from "./crafting_recipes.js";
 import {stat_names} from "./misc.js";
+import { translationManager } from "./translation.js";
+import { language } from "./main.js";
 
 const weapon_type_to_skill = {
     "axe": "Axes",
@@ -101,7 +103,19 @@ class Skill {
         this.parent_multiplier = parent_multiplier; //used only in parent skills, ignored otherwise; multiplier to xp per level of difference with parent
     }
 
+    /**
+     * The skill's displayed name at its current level, translated if the active
+     * language has an entry for it.
+     *
+     * Only the shown text changes. skill_id stays the registry key and is what
+     * the save file holds, so nothing here can affect a save.
+     */
     name() {
+        return translationManager.getDisplayName(language, this.english_name());
+    }
+
+    /** The canonical English name for the current level. Also the translation key. */
+    english_name() {
         if(this.visibility_treshold > this.total_xp || !this.is_unlocked) {
             return unknown_skill_name;
         }

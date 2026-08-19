@@ -587,6 +587,68 @@ const reward_messages = {
     "reward msg swimming tempting": "Şimdiye kadar yaptığın bütün çalışmadan sonra, yakındaki sulara dalma fikri cidden cazip geliyor",
 };
 
-const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages};
+const names = {
+    /*
+        Görünen adlar. Anahtar biçimi ve neden İngilizce tarafın da bu satırları
+        taşıdığı locales/english.js içinde açıklanıyor.
+
+        Altı stance adı, aynı adı taşıyan skill'den yalnızca büyük/küçük harfte
+        ayrılıyor ve bu isim alanı harf duyarlı; o yüzden ikisi de aynı Türkçe
+        değeri almak zorunda, yoksa stance butonu ile skill satırı farklı metin
+        gösterir.
+
+        Kip notu: NPC adları küçük harfle yazılır. Başlık, ekranda
+        capitalize_first_letter üzerinden geçtiği için ilk harfi kendisi büyütür -
+        ve o fonksiyon Türkçe için locale duyarlı olduğundan "ırk" gibi bir kelime
+        "Irk" olur, "İrk" olmaz.
+    */
+
+    //DÖVÜŞ DURUŞLARI
+    //Muhafızın diyalogundaki adlandırmalarla birebir aynı olmak zorunda:
+    //"hızlı adımlar", "ezici kuvvet", "geniş yay" onun repliklerinde geçiyor.
+    "name Normal Stance": "Normal duruş",
+    "name Quick Steps": "Hızlı adımlar",
+    "name Crushing Force": "Ezici kuvvet",
+    "name Defensive Measures": "Savunma önlemleri",
+    "name Broad Arc": "Geniş yay",
+    //"Berserker" oyun jargonunda alıntı olarak da geçer, ama "cinnet" hem Türkçe
+    //hem de duruşun yaptığı şeyi - kendini koruma pahasına saldırmayı - anlatıyor.
+    "name Berserker's Stride": "Cinnet yürüyüşü",
+    "name Flowing Water": "Akan su",
+
+    //Aynı adı taşıyan skill'ler; yalnızca harf farkı var, değer aynı olmalı.
+    "name Quick steps": "Hızlı adımlar",
+    "name Crushing force": "Ezici kuvvet",
+    "name Defensive measures": "Savunma önlemleri",
+    "name Broad arc": "Geniş yay",
+    "name Berserker's stride": "Cinnet yürüyüşü",
+    "name Flowing water": "Akan su",
+
+    //NPC'LER - konuşmanın üstündeki başlık. Rol unvanı, asla özel ad değil.
+    "name village elder": "köy yaşlısı",
+    "name old craftsman": "yaşlı zanaatkâr",
+    "name village guard": "köy muhafızı",
+    "name village millers": "köy değirmencileri",
+    "name gate guard": "kapı muhafızı",
+    "name suspicious man": "şüpheli adam",
+    "name old woman of the slums": "slum'ların yaşlı kadını",
+    "name farm supervisor": "çiftlik sorumlusu",
+    "name nekomimi proprietress": "nekomimi işletmecisi",
+    "name swampland chief": "bataklık şefi",
+    "name swampland cook": "bataklık aşçısı",
+    "name swampland tailor": "bataklık terzisi",
+    "name swampland tanner": "bataklık tabakhanecisi",
+    "name swampland scout": "bataklık izcisi",
+    "name cute little rat": "sevimli küçük sıçan",
+
+    //Şüpheli adamın adı, dövülüp başı okşandıktan sonra değişiyor. İngilizcesi
+    //bilerek hantal ve komik; hantallığı korumak doğru olan.
+    "name no-longer-suspicious guy": "artık şüpheli olmayan adam",
+    //Mofu modunda köpek olduğu için. "Enik" gerçek Türkçe, sevecen ve küçültme
+    //tonu İngilizcedeki "puppy" ile aynı yere düşüyor.
+    "name puppy": "enik",
+};
+
+const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names};
 
 export default turkish;

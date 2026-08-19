@@ -1359,7 +1359,7 @@ function unlock_combat_stance(stance_id) {
     }
 
     if(!stances[stance_id].is_unlocked) {
-        log_message(`You have learned a new stance: "${stances[stance_id].name}"`, "location_unlocked");
+        log_message(`You have learned a new stance: "${stances[stance_id].getName()}"`, "location_unlocked");
     }
     stances[stance_id].is_unlocked = true;
     update_displayed_stance_list(stances, current_stance, faved_stances);

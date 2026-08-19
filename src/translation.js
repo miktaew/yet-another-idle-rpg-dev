@@ -55,6 +55,35 @@ class TranslationManager {
         return texts[text_id];
     };
 
+    /**
+     * Resolves a text id in the ACTIVE language only, with no fallback and no
+     * placeholder.
+     *
+     * This is what display names use. A registry entry - a skill, a stance, an
+     * NPC, an item - already carries its English name in code, and that name is
+     * also part of its identity, so it can never be replaced. The translation is
+     * therefore optional decoration on top: if the active language has an entry,
+     * show it; if not, the caller shows the English it already holds. Returning
+     * undefined rather than "text not found" is the whole point.
+     *
+     * @returns {String|undefined}
+     */
+    getOptionalText = (language, text_id) => {
+        return this.lookup(language, text_id);
+    };
+
+    /**
+     * The locale id for a display name. One flat namespace for every kind of
+     * name - skills, stances, NPCs, items - keyed by the English string, so
+     * there is one convention rather than one per registry.
+     */
+    getDisplayName = (language, english_name) => {
+        if(!english_name) {
+            return english_name;
+        }
+        return this.lookup(language, `name ${english_name}`) ?? english_name;
+    };
+
     getText = (language, text_id) => {
         const text = this.lookup(language, text_id);
         if(text !== undefined) {

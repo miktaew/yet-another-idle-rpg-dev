@@ -4063,7 +4063,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
     
     clear_action_div();
     const dialogue_name_div = document.createElement("div");
-    insert_HTML(dialogue_name_div, capitalize_first_letter(dialogues[dialogue_key].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled}), true));
+    insert_HTML(dialogue_name_div, capitalize_first_letter(translationManager.getDisplayName(language, dialogues[dialogue_key].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})), true));
     dialogue_name_div.id = "dialogue_name_div";
     action_div.appendChild(dialogue_name_div);
 
@@ -4767,6 +4767,14 @@ function sort_displayed_skills({sort_by="name", change_direction=false}) {
                 elem_a = skills[a.getAttribute("data-skill")].name();
                 elem_b = skills[b.getAttribute("data-skill")].name();
                 skill_sorting = "name";
+
+                //Names are displayed text and need locale-aware collation. A plain
+                //">" orders by code unit, which puts every letter carrying a
+                //diacritic after "z". Returned here rather than falling through,
+                //because the other branches compare numbers where localeCompare
+                //would be wrong.
+                const name_comparison = elem_a.localeCompare(elem_b, language_tags[language]);
+                return name_comparison > 0 ? plus : name_comparison < 0 ? minus : 0;
             }
     
             if(elem_a > elem_b) {
@@ -4834,7 +4842,7 @@ function update_displayed_stance_list(stances, current_stance, fav_stances) {
             const fav_selection = `<td class="stances_button stances_button_checkbox"><input type="checkbox" id="stances_fav_${stance}" name="stance_fav_selection" onclick="fav_stance('${stance}')"></td>`;
             const stance_selection = `<td class="stances_button stances_button_radio"><input type="radio" id="stances_select_${stance}" name="stance_list_selection" onclick="select_stance('${stance}')"></td>`;
             const stance_info = 
-                `<td class="stances_name"><label for="stances_select_${stance}">${stances[stance].name}</td>`
+                `<td class="stances_name"><label for="stances_select_${stance}">${stances[stance].getName()}</td>`
 
             set_HTML(stance_bar_divs[stance], fav_selection + stance_selection + stance_info);
             
@@ -4881,7 +4889,7 @@ function create_stance_tooltip(stance) {
     const tooltip_div = document.createElement("div");
     tooltip_div.classList.add("stance_tooltip");
     let html_content = 
-        `<div>${stance.name}</div><br>
+        `<div>${stance.getName()}</div><br>
         <div>${stance.getDescription()}</div><br>
         <div>Stamina cost: ${stance.stamina_cost}</div>
         <div class='stance_tooltip_stats'>${create_stance_tooltip_stats(stance)}</div`;
@@ -4928,7 +4936,7 @@ function update_stance_tooltip(stance) {
  */
 function update_displayed_stance(stance) {
     stance_bar_divs[stance.id].children[1].children[0].checked = true;
-    document.getElementById("character_stance_name").children[0].innerText = stance.name;
+    document.getElementById("character_stance_name").children[0].innerText = stance.getName();
 
     const selection = document.getElementById("character_stance_selection");
 
@@ -4950,7 +4958,7 @@ function update_displayed_faved_stances(stances) {
         stance_bar_divs[stance].children[0].children[0].checked = true;
 
         html_content += `<div data-stance="${stance}"><input type="radio" id="stances_quick_select_${stance}" name="stance_quick_selection" onclick="select_stance('${stance}')">
-            <label for="stances_quick_select_${stance}">${stances[stance].name}</div>`;
+            <label for="stances_quick_select_${stance}">${stances[stance].getName()}</div>`;
     });
 
     insert_HTML(list, html_content);

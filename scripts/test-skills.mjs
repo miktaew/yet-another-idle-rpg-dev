@@ -100,13 +100,18 @@ function capture_errors(run) {
 
 const { skills } = await load_with_stubs(
     "src/skills.js",
-    ["./character.js", "./crafting_recipes.js", "./misc.js"],
+    ["./character.js", "./crafting_recipes.js", "./misc.js", "./translation.js", "./main.js"],
     `
 const get_total_level_bonus = () => 0;
 const get_total_skill_coefficient = () => 1;
 const get_total_skill_level = (id) => (skills[id] ? skills[id].current_level : 0);
 const get_crafting_quality_caps = () => ({});
 const stat_names = {};
+const language = "english";
+// Skill.name() asks the translation layer for a display name and falls back to the
+// English it already holds. The stub reproduces the fallback, which is the branch
+// that matters here: these tests are about xp, not about localisation.
+const translationManager = { getDisplayName: (lang, english_name) => english_name };
 `);
 
 console.log(`skills loaded: ${Object.keys(skills).length}`);
@@ -326,6 +331,7 @@ const playable_races = {};
 // game readable rather than showing "text not found" everywhere. These checks
 // exist because that failure mode is invisible until a player sees it.
 
+let first_untranslated;
 const { translationManager, translations } = await load_with_stubs(
     "src/translation.js",
     ["./main.js"],
@@ -345,7 +351,7 @@ const global_flags = globalThis.__test_flags;
     // runtime rather than naming one, so translating more text cannot make the
     // check stale - it broke exactly that way once.
     const english_keys = Object.keys(translations.english);
-    const first_untranslated = english_keys.find(key => !(key in translations.turkish));
+    first_untranslated = english_keys.find(key => !(key in translations.turkish));
     check("there is still an untranslated id to test with", Boolean(first_untranslated));
 
     const untranslated = translationManager.getText("turkish", first_untranslated);
@@ -379,6 +385,37 @@ const global_flags = globalThis.__test_flags;
     check("the base text is used with the variant disabled",
         !english_base.includes("horns"), `got=${english_base.slice(0, 60)}`);
     globalThis.__test_flags.is_mofu_mofu_enabled = true;
+}
+
+// --- display names --------------------------------------------------------
+// Registry entries carry their English name in code and that name is part of
+// their identity, so a translation is optional decoration on top. The contract
+// is: translate if there is an entry, otherwise hand back the English unchanged -
+// never a placeholder, because the caller has nothing better to show.
+{
+    check("a translated display name comes back in Turkish",
+        translationManager.getDisplayName("turkish", "Quick Steps") === "Hızlı adımlar",
+        `got=${translationManager.getDisplayName("turkish", "Quick Steps")}`);
+
+    check("a stance and its same-named skill agree despite the casing difference",
+        translationManager.getDisplayName("turkish", "Quick Steps")
+            === translationManager.getDisplayName("turkish", "Quick steps"));
+
+    check("an untranslated display name is handed back unchanged",
+        translationManager.getDisplayName("turkish", "Some Item Nobody Translated") === "Some Item Nobody Translated");
+
+    check("English asks for a display name and gets its own text",
+        translationManager.getDisplayName("english", "Quick Steps") === "Quick Steps");
+
+    check("a falsy name is passed straight through rather than becoming a key",
+        translationManager.getDisplayName("turkish", "") === "");
+
+    // getOptionalText is the general form and must NOT fall back or placeholder.
+    check("getOptionalText returns undefined for an id the language lacks",
+        translationManager.getOptionalText("turkish", "no such id at all") === undefined);
+    check("getOptionalText does not fall back to the default language",
+        translationManager.getOptionalText("turkish", first_untranslated) === undefined,
+        `id=${first_untranslated}`);
 }
 
 console.log("");

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 11 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 12 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,57 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Görünen adlar artık çevrilebiliyor — P-7
+
+Köy muhafızının diyalogunu çevirmek bir uyumsuzluk yaratmıştı: kadın "hızlı adımlar"
+diye anlatıyor ama bahsettiği buton hâlâ "Quick Steps" yazıyordu. Bu onu kapatıyor ve
+diğer bütün ad türlerine aynı mekanizmayı veriyor.
+
+**Adlar neden yerinde çevrilemezdi.** Bir registry girdisi İngilizce adını kodda
+taşıyor ve item'lar için o ad kimlikle de iç içe — `this.id = this.getName()` birkaç
+constructor'da çalışıyor ve id, save dosyasının tuttuğu şey. Bu yüzden tasarım
+İngilizceyi kanonik bırakıp çeviriyi üstüne koyuyor: `getDisplayName(dil, ingilizce)`
+`"name <İngilizce>"` anahtarını arıyor ve girdi yoksa İngilizceyi olduğu gibi geri
+veriyor. Hiçbir şey kaybolamıyor ve özelliğin çalışması için hiçbir locale'in bütün
+adları listelemesi gerekmiyor.
+
+`getOptionalText` bunun genel biçimi: yalnızca aktif dil, varsayılana düşme yok,
+`"text not found"` yer tutucusu yok. Ayrım tam da bu — `getText` her zaman
+gösterilebilir bir şey üretmek zorunda, oysa bir görünen adın elinde çoktan gayet iyi
+bir İngilizce yedeği var.
+
+**Her ad türü için tek düz isim alanı.** Skill'ler, stance'lar, NPC'ler ve ileride
+item'lar hep `"name <birebir İngilizce metin>"` kullanıyor. Üç registry için üç id
+şeması, hatırlanacak üç şey olurdu.
+
+Bağlananlar: `Skill.name()` (kanonik biçimi artık `english_name()`, hâlâ rütbe adını
+seviyeye göre seçiyor), yeni bir `Stance.getName()` ve onun beş çağrı noktası, ve
+konuşmanın üstündeki NPC başlığı.
+
+**Kaydedilmeye değer bir tuzak.** Altı stance adı, aynı adı taşıyan skill'den yalnızca
+büyük/küçük harfte ayrılıyor — stance olarak `"Quick Steps"`, skill olarak
+`"Quick steps"`. İsim alanı harf duyarlı, yani ikisinin de girdisi olmalı, yoksa buton
+ile skill satırı farklı şey gösterir. İkisi de mevcut ve bir test aynı Türkçeye
+çözüldüklerini doğruluyor. `src/` içindeki harf kullanımını uyumlulaştırmak bu
+tekrarı kaldırır ve güvenlidir — skill adları id değil — ama o ayrı bir değişiklik.
+
+**İngilizce locale de adları listeliyor, bu bilinçli.** Yedek mekanizma o satırları
+ekrana basmak için gereksiz kılıyor. Var olma sebepleri, başka bir locale'deki anahtar
+yazım hatasının derleme hatasına dönüşmesi: onlar olmasa `"name Quick Stesp"` sessizce
+İngilizceye düşer ve kimse fark etmezdi.
+
+**Skill sıralaması locale duyarlı.** Adları `>` ile karşılaştırıyordu; bu kod birimine
+göre sıralayıp aksan taşıyan her harfi `z`den sonraya atıyor. Karşılaştırma artık isim
+dalının içinden dönüyor, aşağıya düşmüyor — çünkü diğer dallar sayı karşılaştırıyor ve
+orada `localeCompare` yanlış olurdu.
+
+Şimdiye kadar 30 ad çevrildi: yedi stance, onları gölgeleyen altı skill adı, on beş
+NPC ve şüpheli adamın duruma bağlı iki takma adı. Stance adları, muhafızın diyalogunda
+zaten söylediğiyle eşleşecek şekilde seçildi. 49 kontrol.
+
+Bunu bağlarken kayda geçirildi: bir NPC'nin başlangıç metni `"Talk to the "` artı ad
+olarak birleştiriliyor, yani parametreli şablona dönüşmeden yerelleştirilemez.
 
 ### Köy ve slum'lar Türkçe konuşuyor — P-7
 

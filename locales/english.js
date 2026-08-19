@@ -935,6 +935,65 @@ const reward_messages = {
     "reward msg swimming tempting": "With all the training you have done so far, the idea of submerging yourself in nearby waters is really tempting",
 };
 
-const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages};
+const names = {
+    /*
+        Display names, one flat namespace shared by every kind of name: skills,
+        stances, NPCs and later items. The key is "name <exact English string>",
+        because the English string is what the code already holds and what it falls
+        back to when a language has no entry.
+
+        Why the English side lists them at all, given the fallback makes it
+        unnecessary: it turns a typo in a translation's key into a build error.
+        Without these rows, "name Quick Stesp" in another locale would silently
+        fall back to English and nobody would notice.
+
+        NOTE for anyone adding a stance: six stance names differ from their
+        same-named skill only in capitalisation ("Quick Steps" vs "Quick steps"),
+        and this namespace is case sensitive, so BOTH spellings need an entry or
+        the stance button and the skill row will disagree. Harmonising the casing
+        in src/ would remove the duplication - skill names are not ids, so it is
+        safe to do, just out of scope here.
+    */
+
+    //COMBAT STANCES
+    "name Normal Stance": "Normal Stance",
+    "name Quick Steps": "Quick Steps",
+    "name Crushing Force": "Crushing Force",
+    "name Defensive Measures": "Defensive Measures",
+    "name Broad Arc": "Broad Arc",
+    "name Berserker's Stride": "Berserker's Stride",
+    "name Flowing Water": "Flowing Water",
+
+    //The stance-matching skill names, differing only in case.
+    "name Quick steps": "Quick steps",
+    "name Crushing force": "Crushing force",
+    "name Defensive measures": "Defensive measures",
+    "name Broad arc": "Broad arc",
+    "name Berserker's stride": "Berserker's stride",
+    "name Flowing water": "Flowing water",
+
+    //NPCS - the caption above a conversation. Role titles, never personal names.
+    "name village elder": "village elder",
+    "name old craftsman": "old craftsman",
+    "name village guard": "village guard",
+    "name village millers": "village millers",
+    "name gate guard": "gate guard",
+    "name suspicious man": "suspicious man",
+    "name old woman of the slums": "old woman of the slums",
+    "name farm supervisor": "farm supervisor",
+    "name nekomimi proprietress": "nekomimi proprietress",
+    "name swampland chief": "swampland chief",
+    "name swampland cook": "swampland cook",
+    "name swampland tailor": "swampland tailor",
+    "name swampland tanner": "swampland tanner",
+    "name swampland scout": "swampland scout",
+    "name cute little rat": "cute little rat",
+
+    //The suspicious man's name changes once he has been beaten and headpatted.
+    "name no-longer-suspicious guy": "no-longer-suspicious guy",
+    "name puppy": "puppy",
+};
+
+const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names};
 
 export default english;

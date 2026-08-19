@@ -1,6 +1,8 @@
 "use strict";
 import { get_total_skill_level } from "./character.js";
 import { skills } from "./skills.js";
+import { translationManager } from "./translation.js";
+import { language } from "./main.js";
 const stances = {};
 
 class Stance {
@@ -35,6 +37,15 @@ class Stance {
         this.stat_multipliers = stat_multipliers;
         this.stamina_cost = stamina_cost;
     }
+
+    /**
+     * The stance's displayed name, translated if the active language has an entry.
+     * this.name stays the canonical English and is the translation key; the stance
+     * is identified by its id, which never changes.
+     */
+    getName = function() {
+        return translationManager.getDisplayName(language, this.name);
+    };
 
     getDescription = function(){
         if(this.description) {

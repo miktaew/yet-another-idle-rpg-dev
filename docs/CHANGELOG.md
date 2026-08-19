@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 11 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 12 -->
 
 # Changelog
 
@@ -17,6 +17,57 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Display names can be translated now — P-7
+
+Translating the village guard's dialogue created a mismatch: she explains "hızlı
+adımlar" while the button she is talking about still reads "Quick Steps". This closes
+that, and gives every other kind of name the same mechanism.
+
+**Why the names could not simply be translated in place.** A registry entry carries
+its English name in code, and for items that name is also bound up with identity —
+`this.id = this.getName()` runs in several constructors and the id is what a save file
+holds. So the design keeps the English as canonical and puts the translation on top:
+`getDisplayName(language, english)` looks up `"name <English>"` and hands back the
+English unchanged when there is no entry. Nothing can be lost, and no locale needs to
+list every name before the feature works.
+
+`getOptionalText` is the general form of that: the active language only, no fallback
+to the default and no `"text not found"` placeholder. That distinction is the whole
+point — `getText` must always produce something displayable, while a display name
+already has a perfectly good English fallback in hand.
+
+**One flat namespace for every kind of name.** Skills, stances, NPCs and later items
+all use `"name <exact English string>"`. Three id schemes for three registries would
+have been three things to remember.
+
+Wired up: `Skill.name()` (its canonical form is now `english_name()`, which still
+picks the rank name by level), a new `Stance.getName()` and its five call sites, and
+the NPC caption above a conversation.
+
+**A trap worth recording.** Six stance names differ from their same-named skill only
+in capitalisation — `"Quick Steps"` the stance against `"Quick steps"` the skill. The
+namespace is case sensitive, so both spellings need an entry or the button and the
+skill row disagree. Both are present and a test asserts they resolve to the same
+Turkish. Harmonising the casing in `src/` would remove the duplication and is safe —
+skill names are not ids — but that is a separate change.
+
+**The English locale lists the names too, and that is deliberate.** The fallback makes
+those rows unnecessary for rendering. They exist so that a typo in another locale's key
+becomes a build error: without them, `"name Quick Stesp"` would silently fall back to
+English and nobody would ever notice.
+
+**Skill sorting is locale aware.** It compared names with `>`, which orders by code
+unit and puts every letter carrying a diacritic after `z`. The comparison now returns
+from inside the name branch rather than falling through, because the other branches
+compare numbers where `localeCompare` would be wrong.
+
+30 names translated so far: the seven stances, the six skill names that shadow them,
+fifteen NPCs and the suspicious man's two state-dependent nicknames. The stance names
+were chosen to match what the guard already says in her dialogue. 49 checks.
+
+Recorded while wiring this: an NPC's starting text is assembled as `"Talk to the "`
+plus the name, so it cannot be localised until it becomes a parameterised template.
 
 ### The village and the slums speak Turkish — P-7
 
