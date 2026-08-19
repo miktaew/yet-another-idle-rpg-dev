@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 4 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 5 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,42 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Boy ve ırk nihayet bir işe yarıyor — P-8
+
+`getNumericalHeight()` `this.height` ve `this.race` alanlarını okuyordu; ama `Person`
+kimliği `this.personal` altında saklıyor, karakter yaratma da öyle. Bu özellikler
+örnek üzerinde hiç var olmadığı için iki arama da boşa düşüyor, iki fallback de
+tetikleniyor ve fonksiyon her karakter için kalıcı olarak sabit **170** döndürüyordu
+— ki bu tam olarak `height_values["average"]` değeri.
+
+Sonuçları, hepsi doğrulandı: `getUniversalHeight()` herkes için `"average"`
+diyordu; karakter yaratmadaki kısa/uzun seçimi ve ırk değiştiricileri (dwarf -30 ile
+elf +10 arası) hiçbir şeyi etkilemiyordu; ve köy muhafızının kafa okşama sahnesindeki
+`"very short"` dalına asla girilemiyordu — dolayısıyla `locales/english.js` içinde
+var olan `"guard try answ too short"` satırı erişilemezdi. Bu son madde tam olarak
+D-2 kategorisi: yazılmış ve hiç görülmemiş içerik.
+
+Alan okuması düzeltilince 30 ırk-boy kombinasyonundan 7'si artık `"very short"`
+ölçüyor — `short/nekomimi` dahil, yani varsayılan beastkin ırkı — böylece ölü satır
+normal oyunda erişilebilir hâle geliyor.
+
+`src/conditions.js` içindeki boy koşul bloğu aynı commit'te düzeltildi; çünkü
+yalnızca yardımcı fonksiyonu düzeltmek, yazılacak ilk boy koşulunu hatalı bırakırdı.
+O blok ölü koddu — hiçbir içerik boy koşulu tanımlamıyor — ve içindeki altı
+karşılaştırmanın hepsi yanlıştı: her sınır testi ters çevrilmişti, yani bir
+`at_least` karakter minimumdan *daha uzun* olduğunda başarısız oluyordu; göreli
+`exactly` dalı `.at_least` ile karşılaştırma yapıyordu; ve evrensel blok
+`conditions[0].relative_height.exactly` okuyordu, ki bu `universal_height` tanımlayıp
+`relative_height` tanımlamayan her koşulda hata fırlatır. Artık karakterin kendi boyu
+her karşılaştırmanın solunda duruyor; yönü apaçık kılan da bu.
+
+`npm test` bir `src/person.js` bölümü kazandı ve bu, harness'ın genelleştirilmesini
+gerektirdi: artık yalnızca dairesel grafiğe uzanan import'ları söküyor, gerisini
+bırakıyor; böylece hiç import etmeyen `src/races.js` gerçek ırk değiştiricilerini
+sağlıyor, stub'lanmış olanları değil. Isırdığı, boy kontrollerinin düzeltme öncesi
+kaynağa karşı koşulmasıyla doğrulandı: orada üç boyun hepsi 170 ölçüyor ve her
+karakter `"average"` diyor. Toplam 25 kontrol.
 
 ### NaN düzeltmesinin devamı: kendi regresyonu ve iki ilgili nokta — P-8
 

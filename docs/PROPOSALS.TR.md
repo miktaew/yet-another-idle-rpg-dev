@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 4 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 5 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -171,17 +171,43 @@ alanlarını yanlış nesneden okuyor, dolayısıyla boy ve ırk seçiminin şu 
 oynanışa **hiçbir etkisi yok** ve bir dialogue varyantı kalıcı olarak
 erişilemez durumda.
 
-**Şimdiye kadar tamamlanan** - canlı oyundan bildirilen skill xp paneli
-görüntüsü ve arkasındaki model hataları. [CHANGELOG.TR.md](CHANGELOG.TR.md)
-içinde yazılı, `npm test` ile kapsanıyor.
+**Tamamlanan** - canlı oyundan bildirilen skill xp paneli görüntüsü ve arkasındaki
+model hataları; ilk düzeltmenin getirdiği bir regresyon; skill ilerleme çubuğu
+genişliği; yeni etkinleşen xp sınırının iyimser hâle getirdiği seviye atlama
+tahmini; ve boy/ırk fonksiyonu ile birlikte boy koşul bloğu. Hepsi
+[CHANGELOG.TR.md](CHANGELOG.TR.md) içinde yazılı ve `npm test` ile kapsanıyor.
 
-**Hâlâ açık** - max seviyedeki crafting skill xp aritmetiği, boş savaş
-bölenleri, karakter xp giriş koruması, interpolasyon yardımcıları, yukarıdaki
-boy/ırk fonksiyonu ve `src/conditions.js` içindeki uykuda ama hatalı boy/ırk
-koşul bloğu (dört ters çevrilmiş sınır karşılaştırması, yanlış nesneden okunan bir
-alan, bir kopyala-yapıştır hatası). Uykuda olanların hiçbiri bugün erişilebilir
-değil, çünkü hiçbir içerik boy veya ırk koşulu tanımlamıyor - bir tanesi
-tanımlamadan önce düzeltin.
+**İncelenip elenen** - yeniden gündeme gelmemesi için buraya kaydedildi. Her biri
+çekişmeli olarak "düzeltmeye değmez" diye doğrulandı:
+
+- *Max seviyedeki crafting skill xp aritmetiği* (`main.js`, dört nokta). `NaN`
+  üretiyor, ama değer yalnızca `accumulated_xp >= needed_xp` karşılaştırmasında
+  kullanılıyor ve `x >= NaN` ile `x >= Infinity` ikisi de false. Önerilen
+  `|| Infinity` koruması hiçbir şeyi değiştirmiyor. Korumayı taşıyan kardeş nokta
+  ona ihtiyaç duyuyor çünkü o dal değer üzerinde aritmetik yapıyor — kullanımda bir
+  asimetri, gözden kaçırma değil.
+- *Boş savaş bölenleri* (`main.js`, stance xp ve hayatta kalan sayısı üsleri).
+  `is_alive = false` tek bir yerde yazılıyor ve o yer ilgili düşmanın zamanlayıcısını
+  hemen temizliyor; öldürme-yeniden doldurma yolu ise ara vermeyen tek bir senkron
+  callback — yani hiçbir şey tamamı ölü bir düşman listesini gözlemleyemiyor.
+  Gözlemleyebilse bile giriş koruması değeri hatayla reddediyor ve değer hiç
+  saklanmıyor.
+- *Düşman panelindeki isabet ve kaçınma oranları* sıfır hayatta kalanla. Sıfır
+  durumu erişilebilir, ancak `get_hit_chance` sonunda `else { result = 0 }` ile
+  `NaN`'ı dönüştürüyor ve düzeltici yeniden çizim aynı senkron görev içinde
+  gerçekleşiyor; arada hiçbir kare çizilmiyor. O son dal işlevsel ve belgesiz —
+  savunulabilir tek aksiyon bir yorum eklemek.
+- *Karakter xp giriş koruması* (`character.js`). Dört çağrı noktasının hepsi
+  kanıtlanabilir biçimde sonlu, `total_xp` 0'dan başlıyor ve yalnızca artırılıyor,
+  yükleme yolunun girdisi ise diğer üçünün yazdığı bir kayıttan geliyor. En iyi
+  hâlde derinlemesine savunma.
+
+**Hâlâ açık** - interpolasyon yardımcıları (`slerp` ve tarif eşdeğeri) ile
+market doygunluğu böleni. Bunlar canlı hata değil, uykuda duran yazım tuzakları: bir
+içerik dizisi 0'dan başladığında bozuluyorlar ve şu anda hiçbiri başlamıyor. Birisi
+tetikleyecek diziyi yazmadan önce düzeltmeye değer; ayrıca verifier'a sayısal
+çiftlerin pozitif olduğunu doğrulamayı öğretmeye değer — şu anda yalnızca kaynak
+adlarının çözülüp çözülmediğini kontrol ediyor.
 
 ### P-9 — Hikâyeyi devam ettir `open`
 

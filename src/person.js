@@ -42,7 +42,15 @@ class Person extends InventoryHaver {
     }
 
     getNumericalHeight() {
-        return (height_values[this.height] || height_values["average"]) + (racial_height_modifiers[this.race] || 0);
+        //this.personal, not this - the constructor stores race/height/age there,
+        //and so does character creation. Reading them off the instance made both
+        //lookups miss, both fallbacks fire, and this function return a constant
+        //170 for every character, which is exactly height_values["average"]. The
+        //visible effect was that getUniversalHeight() answered "average" for
+        //everyone, so the short/tall choice and the racial modifiers did nothing
+        //and the "very short" dialogue branch could never be taken.
+        return (height_values[this.personal.height] || height_values["average"])
+            + (racial_height_modifiers[this.personal.race] || 0);
     }
 
     getUniversalHeight()  {

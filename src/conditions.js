@@ -196,19 +196,30 @@ const process_conditions = (conditions, character) => {
         }
     }
 
+    //Both height blocks below were unreachable dead code - no content defines a
+    //height condition - and all six comparisons in them were wrong. Every bound
+    //test was inverted (an "at_least" failed when the character was TALLER than
+    //the minimum), the relative "exactly" branch compared against .at_least, and
+    //the universal block read conditions[0].relative_height.exactly, which throws
+    //for a condition that sets universal_height without relative_height. Fixed
+    //before any content starts relying on it.
+    //
+    //Semantics: put the character's own height on the left of every comparison,
+    //so "at_least" fails when the character falls short and "at_most" fails when
+    //the character exceeds it.
     if(conditions[0].relative_height) {
         if(conditions[0].relative_height.at_least) {
-            if(height_values[conditions[0].relative_height.at_least] < height_values[character.personal.height]) {
+            if(height_values[character.personal.height] < height_values[conditions[0].relative_height.at_least]) {
                 met = 0;
             }
         }
         if(conditions[0].relative_height.exactly) {
-            if(conditions[0].relative_height.at_least !== character.personal.height) {
+            if(conditions[0].relative_height.exactly !== character.personal.height) {
                 met = 0;
             }
         }
         if(conditions[0].relative_height.at_most) {
-            if(height_values[conditions[0].relative_height.at_most] > height_values[character.personal.height]) {
+            if(height_values[character.personal.height] > height_values[conditions[0].relative_height.at_most]) {
                 met = 0;
             }
         }
@@ -216,17 +227,17 @@ const process_conditions = (conditions, character) => {
 
     if(conditions[0].universal_height) {
         if(conditions[0].universal_height.at_least) {
-            if(height_values[conditions[0].universal_height.at_least] < character.getNumericalHeight()) {
+            if(character.getNumericalHeight() < height_values[conditions[0].universal_height.at_least]) {
                 met = 0;
             }
         }
-        if(conditions[0].relative_height.exactly) {
-            if(height_values[conditions[0].universal_height.exactly] !== character.getNumericalHeight()) {
+        if(conditions[0].universal_height.exactly) {
+            if(character.getNumericalHeight() !== height_values[conditions[0].universal_height.exactly]) {
                 met = 0;
             }
         }
         if(conditions[0].universal_height.at_most) {
-            if(height_values[conditions[0].universal_height.at_most] > character.getNumericalHeight()) {
+            if(character.getNumericalHeight() > height_values[conditions[0].universal_height.at_most]) {
                 met = 0;
             }
         }

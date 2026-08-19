@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 4 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 5 -->
 
 # Changelog
 
@@ -17,6 +17,43 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Height and race finally do something — P-8
+
+`getNumericalHeight()` read `this.height` and `this.race`, but `Person` stores
+identity under `this.personal`, and so does character creation. Neither property
+existed on the instance, so both lookups missed, both fallbacks fired, and the
+function returned a constant **170** for every character forever - which is exactly
+`height_values["average"]`.
+
+Consequences, all confirmed: `getUniversalHeight()` answered `"average"` for
+everyone; the short/tall choice at character creation and the racial modifiers
+(dwarf -30 through elf +10) affected nothing; and the `"very short"` branch in the
+village guard's headpat scene could never be taken, so the authored line
+`"guard try answ too short"` - which exists in `locales/english.js` - was
+unreachable. That last one is the D-2 category exactly: content written and never
+seen.
+
+With the field read fixed, 7 of the 30 race-and-height combinations now measure
+`"very short"`, including `short/nekomimi` - the default beastkin race - so the dead
+line is reachable in ordinary play.
+
+The height condition block in `src/conditions.js` was fixed in the same commit,
+because fixing only the helper would have left the first authored height condition
+misbehaving. That block was dead code - no content defines a height condition - and
+all six comparisons in it were wrong: every bound test was inverted, so an
+`at_least` failed when the character was *taller* than the minimum; the relative
+`exactly` branch compared against `.at_least`; and the universal block read
+`conditions[0].relative_height.exactly`, which throws for any condition that sets
+`universal_height` without `relative_height`. The character's own height is now on
+the left of every comparison, which is what makes the direction obvious.
+
+`npm test` grew a `src/person.js` section, which meant generalising the harness:
+it now strips only the imports that reach into the circular graph and leaves the
+rest, so `src/races.js` - which has no imports at all - supplies the real racial
+modifiers rather than stubbed ones. Verified to bite by running the height checks
+against the pre-fix source, where all three heights measure 170 and every character
+reports `"average"`. 25 checks in total.
 
 ### Follow-up to the NaN fix: a regression of its own, plus two related sites — P-8
 

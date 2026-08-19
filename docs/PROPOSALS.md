@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 4 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 5 -->
 
 # Proposals
 
@@ -166,17 +166,40 @@ Also surfaced, and more interesting for D-2: the height/race helper reads its
 fields from the wrong object, so height and race selection currently have no
 gameplay effect at all, and one dialogue variant is permanently unreachable.
 
-**Shipped so far** - the skill xp panel readout reported from the live game, and
-the model bugs behind it. Written up in [CHANGELOG.md](CHANGELOG.md) and covered by
-`npm test`.
+**Shipped** - the skill xp panel readout reported from the live game and the model
+bugs behind it; a regression the first fix introduced; the skill progress bar
+width; the level-up estimate, which the newly-live xp cap had made optimistic; and
+the height/race helper together with the height condition block. All written up in
+[CHANGELOG.md](CHANGELOG.md) and covered by `npm test`.
 
-**Still open** - the maxed-crafting-skill xp arithmetic, the empty-combat
-divisors, the character xp entry guard, the interpolation helpers, and the
-height/race helper above, plus the dormant but wrong height/race condition block
-in `src/conditions.js` (four inverted bound comparisons, one field read from the
-wrong object, one copy-paste slip). None of the dormant ones are reachable today,
-because no content defines a height or race condition - fix them before anything
-does.
+**Investigated and dismissed** - recorded here so they are not re-raised. Each was
+adversarially verified as not worth fixing:
+
+- *Maxed crafting skill xp arithmetic* (`main.js`, four sites). Produces `NaN`, but
+  the value is only ever consumed by `accumulated_xp >= needed_xp`, and both
+  `x >= NaN` and `x >= Infinity` are false. The proposed `|| Infinity` guard changes
+  nothing. The sibling site that does carry the guard needs it because that branch
+  does arithmetic on the value - an asymmetry in usage, not an oversight.
+- *Empty-combat divisors* (`main.js`, stance xp and the survivor-count exponents).
+  `is_alive = false` is written in exactly one place, which clears that enemy's
+  timer immediately, and the kill-to-repopulate path is a single synchronous
+  callback with no yield - so nothing can observe an all-dead enemy list. Even if
+  it could, the entry guard rejects the value with an error and it is never stored.
+- *Enemy panel hit and dodge chances* at zero survivors. The zero state is
+  reachable, but `get_hit_chance` has a terminal `else { result = 0 }` that converts
+  the `NaN`, and the corrective repaint happens inside the same synchronous task, so
+  no frame is painted in between. That fallthrough is load-bearing and undocumented;
+  a comment is the only justifiable action.
+- *Character xp entry guard* (`character.js`). All four call sites are provably
+  finite, `total_xp` starts at 0 and is only incremented, and the load path's input
+  comes from a save the other three wrote. Defence in depth at best.
+
+**Still open** - the interpolation helpers (`slerp`, the recipe equivalent) and the
+market-saturation divisor. These are latent authoring traps rather than live bugs:
+they break when a content array starts at 0, and none currently does. Worth fixing
+before someone authors the array that triggers one, and worth teaching the verifier
+to assert the numeric pairs are positive - it currently only checks that resource
+names resolve.
 
 ### P-9 — Continue the story `open`
 
