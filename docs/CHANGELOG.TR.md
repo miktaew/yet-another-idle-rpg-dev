@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 1 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 2 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,43 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### İki dilli doküman seti — P-4, P-5
+
+`docs/` artık dört doküman çifti ve yeniden yazılmış README'yi barındırıyor;
+toplam on dosya. Hepsi `doc-version` damgası taşıyan bir `NAME.md` + `NAME.TR.md`
+çifti ve Türkçe yarısı, İngilizce dosyayı kanonik ilan eden bir banner ile
+açılıyor.
+
+`docs/AGENTS.md` tek kanonik katkıcı ve agent rehberidir; kökteki `AGENTS.md`
+kısa bir işaretçi stub'ıdır ve yalnızca araçların kök dosyayı otomatik keşfetmesi
+nedeniyle vardır. Türkçe çeviriler büyük referans tablolarını bilinçli olarak
+kopyalamıyor — bunun yerine İngilizce anchor'lara link veriyorlar, çünkü hiç
+kopyalanmamış bir olgu bayatlayamaz.
+
+`docs/STORY.md` anlatı kanonudur: dünya, protagonist, merkezî gizem, ton,
+isimlendirme kuralları ve hikâyenin tam olarak nerede durduğu. Ayrıca repoda var
+olup hiçbir oyuncunun erişemediği içeriğin envanterini taşıyor — çekişmeli olarak
+doğrulanmış, hiçbiri çürütülmemiş dokuz yüksek değerli orphan. Beş kasaba iç
+mekânının tamamının aynı kapalı kapının arkasında olduğu ortaya çıktı; bu da o
+kapıyı açmayı elimizdeki en yüksek kaldıraçlı anlatı hamlesi yapıyor. Planlanan
+devam arkı orada özetlenip `PROPOSALS.md` içinde ayrıntılandırılıyor.
+
+`docs/PROPOSALS.md` her kalıcı direktifi, numaralı iş listesini ve bekleyen
+kararları kayda geçiriyor. Bu kararlardan üçü artık alındı: fork içerik olarak
+ayrışıyor, Türkçe görünen adlar dahil tüm içerik katmanını kapsıyor ve Türkçe
+hitap kipi NPC bazında karma.
+
+Son madde, kendi önceki çerçevelememe bir düzeltme getirdi. Karma kip, metin
+aramasının yeniden yazılmasını gerektiriyor gibi görünüyordu; çünkü `mofu#` varyant
+mekanizması tek bir flag ve tek bir ön eke sabittir. Gerektirmiyor: kip yalnızca
+çalışma zamanında seçilebilir olacaksa ikinci bir eksene ihtiyaç duyar. NPC bazında
+sabit bir kip, o satırın Türkçe metnine yazılır ve her satır zaten ayrı bir string
+id'dir — yani bu tamamen bir yazım kuralıdır ve `src/translation.js` dokunulmadan
+kalır.
+
+`docs/CHANGELOG.md` bu dosyadır. Oyun içi, oyuncuya yönelik sürüm geçmişi olarak
+kalan `changelog.html`'den ayrıdır.
 
 ### Upstream deployment referansları kaldırıldı — P-6
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 1 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 2 -->
 
 # Changelog
 
@@ -17,6 +17,41 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Bilingual documentation set — P-4, P-5
+
+`docs/` now holds four document pairs plus the rewritten README, ten files in
+total. Every one is a `NAME.md` + `NAME.TR.md` pair carrying a `doc-version`
+stamp, and the Turkish half opens with a banner naming the English file canonical.
+
+`docs/AGENTS.md` is the single canonical contributor and agent guide; the root
+`AGENTS.md` is a short pointer stub, which exists only because agent harnesses
+auto-discover the root file. The Turkish translations deliberately do not copy the
+large reference tables — they link to the English anchors instead, because a fact
+that was never copied cannot go stale.
+
+`docs/STORY.md` is the narrative canon: the world, the protagonist, the central
+mystery, the tone, the naming rules, and precisely where the story currently
+stops. It also carries the inventory of content that exists in the repository and
+no player can reach — nine high-value orphans, verified adversarially with none
+refuted. All five town interiors turn out to sit behind the same closed gate, which
+makes opening that gate the highest-leverage narrative action available. The
+planned continuation arc is summarised there and detailed in `PROPOSALS.md`.
+
+`docs/PROPOSALS.md` records every standing directive, the numbered backlog, and
+the open decisions. Three of those decisions have now been taken: the fork
+diverges in content, Turkish covers the full content layer including display
+names, and the Turkish address register is mixed per NPC.
+
+That last one came with a correction to my own earlier framing. Mixed register
+looked like it needed the text-lookup rewritten, because the `mofu#` variant
+mechanism is hardwired to one flag and one prefix. It does not: register only needs
+a second axis if it is selectable at runtime. A fixed per-NPC register is written
+into each line's Turkish text, and every line is already a separate string id — so
+this is purely an authoring convention, and `src/translation.js` is untouched.
+
+`docs/CHANGELOG.md` is this file. It is distinct from `changelog.html`, which
+remains the in-game, player-facing version history.
 
 ### Removed references to the upstream deployment — P-6
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 1 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 2 -->
 
 # Proposals
 
@@ -88,14 +88,14 @@ see `CHANGELOG.md` for the itemised list.
 Raise `engines.node` to `>=22` and bring lagging dependencies and actions to
 current versions.
 
-### P-4 — Rewrite `README.md` `active`
+### P-4 — Rewrite `README.md` `done`
 
 The current README describes the upstream project, not this fork, and several of
 its claims are now false (`npm run build` with no `package.json`, a
 `live-server` recommendation for a dependency that no longer exists, upstream
 branch layout). Rewrite it for this repository, with a Turkish pair.
 
-### P-5 — Documentation structure `active`
+### P-5 — Documentation structure `done`
 
 Create `docs/`, with these pairs:
 
@@ -112,7 +112,7 @@ Naming: uppercase base name, uppercase `.TR` marker, lowercase `.md` extension
 `**.md` pattern, so a stray `.MD` would defeat it and trigger a pointless
 rebuild on documentation-only pushes.
 
-### P-6 — Remove references to the upstream deployment `active`
+### P-6 — Remove references to the upstream deployment `done`
 
 Assets, repository links and the visitor counter must resolve against this
 repository and this deployment, not the upstream one.
@@ -122,14 +122,24 @@ the original copyright notice, and the original author asked that forks credit
 and link the original. Asset and infrastructure references move; credit stays
 and is relabelled honestly.
 
-### P-7 — Turkish language support in the game `blocked`
+### P-7 — Turkish language support in the game `open`
 
 Add a Turkish option to the game itself. The translation layer already exists
 but currently covers dialogue and part of the UI only.
 
-Blocked on decisions Q-1, Q-2 and Q-4 — in particular Q-4, because the Turkish
-address register changes verb agreement in every NPC line and cannot be
-retrofitted with find-and-replace.
+Unblocked: Q-1, Q-2 and Q-4 are decided. Scope is the **full content layer**,
+including item, skill and location display names.
+
+That scope has one hard prerequisite: **registry keys currently are the display
+names, and they are persisted verbatim in save files.** So a display-name
+indirection layer has to land first — every registry entry keeps its English key
+forever and gains a text id for its shown name. Renaming keys is never an option.
+This is the largest single piece of work in the backlog and is tracked as its own
+refactor prerequisite.
+
+Address register is a **per-NPC authoring convention**, not an engine feature —
+see [STORY.md](STORY.md#6-turkish-address-register). No change to the lookup in
+`src/translation.js` is needed, because each line is already a separate string id.
 
 Groundwork already shipped: `npm run check` gates locale key parity, so a second
 locale cannot silently drift out of sync (P-2).
@@ -158,9 +168,37 @@ gameplay effect at all, and one dialogue variant is permanently unreachable.
 
 ### P-9 — Continue the story `open`
 
-Depends on P-1's narrative pass and on `docs/STORY.md` existing. Scope: pay off
-open hooks, wire up orphaned content, and extend the quest chain from the current
-frontier.
+Canon, the frontier, the orphan inventory and the planned arc are now written up
+in [STORY.md](STORY.md). Q-1 is decided in favour of full divergence, so new
+content is in scope.
+
+The arc is **"The Merchant's Word"**, six quests starting exactly at the frontier.
+Its premise is derived entirely from canon: the town gate names citizenship or
+merchant-guild membership as its only two keys, and after the swamp the hero is
+the only person alive who can supply the guild from past the falls. The hero
+enters the town as a supplier, not as a hero.
+
+Execution order, highest leverage first:
+
+1. **Q2 first in effort terms, Q1 first in play order.** Opening the gate lights
+   up five fully authored town interiors at once — Town square, Adventurer's
+   guild, Antique store, Cat cafe, Nekomimi cafe — and completes a quest task
+   that has been dead since v0.4.6. This is the single highest-leverage narrative
+   action available.
+2. Fix the reclamation blockers found alongside the orphans: the cat cafe
+   trader points at a mis-named inventory template; the Mages guild description
+   is a copy-paste of the Nekomimi cafe's; the Nekomimi proprietress still has
+   nine `lorem ipsum` strings; `Location` silently drops `display_conditions`, so
+   mofu gating has to happen at the push site.
+3. Q3 and Q4 advance the central mystery by exactly one turn — the robbery was
+   contracted — and hand the player a physical link between the two dead ends.
+4. Q5 closes the rat questline, opens the second cave gate with mind rather than
+   strength as the room itself insists, and finally gives the parked silver chain
+   a sink.
+5. Q6 pays off the village guard's decade of deflection.
+
+What must stay open: who paid for the robbery, how the hero came to have the
+object, the four unbuilt regions, the banished tribe, and the Rat God.
 
 ---
 
@@ -169,21 +207,19 @@ frontier.
 Each of these changes what gets built. They are recorded here rather than guessed
 at.
 
-### Q-1 — Does this fork diverge in content?
+### Q-1 — Does this fork diverge in content? **DECIDED: full divergence**
 
-"Hosting, Turkish and configuration only" keeps the fork fast-forwardable
-against upstream. "New areas, items and dialogue" means full divergence and no
-more syncing. There is no middle option, because the codebase has no mod
-boundary. This answer sets the ceiling for Q-2 and for P-9.
+New areas, items and dialogue are in scope. Upstream syncing is not a goal any
+more. Refactors no longer need to stay merge-friendly with upstream, and Q-5
+(untracking `dist/`) loses its main argument for staying as it is.
 
-### Q-2 — How far does Turkish go?
+### Q-2 — How far does Turkish go? **DECIDED: everything**
 
-Interface plus story dialogue is roughly a tenth of the work of translating the
-whole content layer, and it covers what a player reads most. Translating item,
-skill and location names additionally requires separating registry keys from
-display names, because the keys are currently the display names and are also
-persisted verbatim in save files. Stopping after the interface and dialogue is a
-defensible product decision, not a half-finished job.
+Interface, dialogue, and item / skill / location display names.
+
+The consequence is the display-name indirection layer described in P-7. Registry
+keys stay English forever, because they are save data; what gets translated is a
+separate shown-name text id per entry. Nothing about this permits renaming a key.
 
 ### Q-3 — Are `help.html` and `changelog.html` in scope for Turkish?
 
@@ -192,11 +228,17 @@ any i18n hook, or even a container to attach one to. Recommendation: a
 hand-written Turkish help page, and an English-only changelog with a Turkish
 note.
 
-### Q-4 — Turkish address register: informal or formal?
+### Q-4 — Turkish address register **DECIDED: mixed, per NPC**
 
-Must be settled before any dialogue is authored. The existing text-variant
-mechanism cannot express register as a second axis without rewriting the lookup,
-because it is hardwired to one flag and one key prefix.
+Elders, officials and the swampland chief are addressed formally; peers,
+children and the informal cast are addressed informally. NPCs address the hero
+informally, except officials on duty. The per-NPC map is in
+[STORY.md](STORY.md#6-turkish-address-register).
+
+Correction to the earlier framing: this needs **no** engine change. Register
+being a second selectable axis would have required rewriting the lookup, but a
+fixed per-NPC register is simply written into each line's Turkish text, and each
+line is already a separate string id.
 
 ### Q-5 — Should `dist/` stay tracked?
 

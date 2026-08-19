@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 1 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 2 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -90,14 +90,14 @@ düzeltilecekti. Sekiz varsayımından altısı hatalıydı; kalem kalem listesi
 `engines.node` değeri `>=22`'ye yükseltilecek, geride kalan bağımlılıklar ve
 action'lar güncel sürümlere çekilecek.
 
-### P-4 — `README.md`'yi yeniden yaz `active`
+### P-4 — `README.md`'yi yeniden yaz `done`
 
 Mevcut README bu fork'u değil upstream projeyi anlatıyor ve birkaç iddiası artık
 yanlış (`package.json` yokken `npm run build`, artık var olmayan bir bağımlılık
 için `live-server` önerisi, upstream branch düzeni). Bu repo için yeniden
 yazılacak, Türkçe eşiyle birlikte.
 
-### P-5 — Doküman yapısı `active`
+### P-5 — Doküman yapısı `done`
 
 `docs/` klasörü şu çiftlerle oluşturulacak:
 
@@ -115,7 +115,7 @@ büyük/küçük harfe duyarlı `**.md` kalıbı kullanıyor; başıboş bir `.M
 etkisiz bırakır ve yalnızca doküman değişen push'larda gereksiz bir rebuild
 tetikler.
 
-### P-6 — Upstream deployment referanslarını kaldır `active`
+### P-6 — Upstream deployment referanslarını kaldır `done`
 
 Varlıklar, repo bağlantıları ve ziyaretçi sayacı upstream yerine bu repo ve bu
 deployment üzerinden çözülmeli.
@@ -125,14 +125,25 @@ korunmasını gerektiriyor ve özgün yazar, fork'ların özgün projeye kredi v
 bağlantı vermesini açıkça istemiş. Varlık ve altyapı referansları taşınıyor;
 kredi kalıyor ve dürüst biçimde yeniden etiketleniyor.
 
-### P-7 — Oyuna Türkçe dil desteği `blocked`
+### P-7 — Oyuna Türkçe dil desteği `open`
 
 Oyunun kendisine Türkçe seçeneği eklenecek. Çeviri katmanı hâlihazırda var ancak
 şu anda yalnızca dialogue'ları ve arayüzün bir kısmını kapsıyor.
 
-Q-1, Q-2 ve özellikle Q-4 kararlarına bağlı olarak bekliyor; çünkü Türkçe hitap
-kipi her NPC satırındaki fiil çekimini değiştirir ve sonradan bul-değiştir ile
-uygulanamaz.
+Engel kalktı: Q-1, Q-2 ve Q-4 karara bağlandı. Kapsam **tüm içerik katmanı** —
+item, skill ve lokasyon görünen adları dahil.
+
+Bu kapsamın tek katı ön koşulu var: **registry anahtarları şu anda görünen adların
+kendisidir ve save dosyalarında birebir saklanır.** Dolayısıyla önce bir görünen-ad
+dolaylama katmanı gelmeli — her registry girdisi İngilizce anahtarını kalıcı olarak
+korur ve gösterilen adı için bir metin id'si kazanır. Anahtar yeniden adlandırmak
+hiçbir zaman seçenek değildir. Bu, listedeki en büyük tek iş parçasıdır ve kendi
+refactor ön koşulu olarak izlenir.
+
+Hitap kipi bir motor özelliği değil, **NPC bazında yazım kuralıdır** — bkz.
+[STORY.TR.md](STORY.TR.md#6-t%C3%BCrk%C3%A7e-hitap-kipi). `src/translation.js`
+içindeki arama mantığında değişiklik gerekmez, çünkü her satır zaten ayrı bir
+string id'dir.
 
 Zemin çalışması tamamlandı: `npm run check` locale anahtar eşliğini denetliyor,
 böylece ikinci bir dil sessizce senkronizasyondan çıkamaz (P-2).
@@ -162,9 +173,37 @@ erişilemez durumda.
 
 ### P-9 — Hikâyeyi devam ettir `open`
 
-P-1'in anlatı analizine ve `docs/STORY.md`'nin var olmasına bağlı. Kapsam: açık
-bağları karşılığa bağlamak, erişilemeyen içeriği devreye almak ve quest zincirini
-mevcut frontier'dan itibaren uzatmak.
+Kanon, frontier, orphan envanteri ve planlanan ark artık
+[STORY.TR.md](STORY.TR.md) içinde yazılı. Q-1 tam ayrışma yönünde karara
+bağlandığı için yeni içerik kapsam dahilinde.
+
+Ark **"The Merchant's Word"**; frontier'dan tam olarak başlayan altı quest.
+Premisi tamamen kanondan türetildi: kasaba kapısı tek iki anahtar olarak
+yurttaşlığı veya tüccar loncası üyeliğini sayıyor ve bataklıktan sonra loncaya
+şelalelerin ötesinden tedarik yapabilecek tek yaşayan kişi kahramandır. Kahraman
+kasabaya kahraman olarak değil, tedarikçi olarak girer.
+
+Uygulama sırası, en yüksek kaldıraç önce:
+
+1. **Efor açısından Q2 ilk, oynanış sırasında Q1 ilk.** Kapıyı açmak, tamamen
+   yazılmış beş kasaba iç mekânını aynı anda aydınlatıyor — Town square,
+   Adventurer's guild, Antique store, Cat cafe, Nekomimi cafe — ve v0.4.6'dan beri
+   ölü olan bir quest görevini tamamlıyor. Elimizdeki en yüksek kaldıraçlı anlatı
+   hamlesi bu.
+2. Orphan'larla birlikte bulunan geri kazanım engellerini düzelt: cat cafe tüccarı
+   yanlış adlandırılmış bir envanter şablonuna işaret ediyor; Mages guild
+   açıklaması Nekomimi cafe'nin kopyası; Nekomimi işletmecisinin dokuz
+   `lorem ipsum` metni duruyor; `Location` constructor'ı `display_conditions`'ı
+   sessizce düşürüyor, dolayısıyla mofu kapılaması push noktasında yapılmalı.
+3. Q3 ve Q4 merkezî gizemi tam bir tur ilerletiyor — soygun sipariş edilmişti — ve
+   oyuncuya iki çıkmaz arasında fiziksel bir bağ veriyor.
+4. Q5 fare questline'ını kapatıyor, ikinci mağara kapısını odanın kendisinin ısrar
+   ettiği gibi kuvvetle değil zihinle açıyor ve park edilmiş gümüş zincirine
+   nihayet bir kullanım noktası veriyor.
+5. Q6 köy muhafızının on yıllık savuşturmasını karşılığa bağlıyor.
+
+Açık kalması gerekenler: soygunun parasını kimin ödediği, kahramanın o nesneye
+nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.
 
 ---
 
@@ -173,21 +212,21 @@ mevcut frontier'dan itibaren uzatmak.
 Bunların her biri neyin inşa edileceğini değiştirir. Tahmin edilmek yerine burada
 kayda geçiriliyorlar.
 
-### Q-1 — Bu fork içerik olarak ayrışacak mı?
+### Q-1 — Bu fork içerik olarak ayrışacak mı? **KARAR: tam ayrışma**
 
-"Yalnızca hosting, Türkçe ve konfigürasyon" fork'u upstream'e karşı
-fast-forward edilebilir tutar. "Yeni bölgeler, item'lar ve dialogue" ise tam
-ayrışma ve senkronizasyonun sonu anlamına gelir. Arada bir seçenek yok, çünkü kod
-tabanında bir mod sınırı bulunmuyor. Bu cevap Q-2 ve P-9 için üst sınırı belirler.
+Yeni bölgeler, item'lar ve dialogue kapsam dahilinde. Upstream senkronizasyonu
+artık bir hedef değil. Refactor'ların upstream ile merge-dostu kalması gerekmiyor
+ve Q-5 (`dist/` takipten çıkarma) mevcut hâlini koruması için ana gerekçesini
+yitiriyor.
 
-### Q-2 — Türkçe nereye kadar?
+### Q-2 — Türkçe nereye kadar? **KARAR: her şey**
 
-Arayüz artı hikâye dialogue'ları, tüm içerik katmanını çevirmenin yaklaşık onda
-biri kadar iş ve oyuncunun en çok okuduğu kısmı kapsıyor. Item, skill ve lokasyon
-adlarını çevirmek ek olarak registry anahtarlarının görünen adlardan ayrılmasını
-gerektirir; çünkü anahtarlar şu anda görünen adların kendisi ve aynı zamanda save
-dosyalarında birebir saklanıyor. Arayüz ve dialogue'dan sonra durmak yarım
-kalmış bir iş değil, savunulabilir bir ürün kararıdır.
+Arayüz, dialogue ve item / skill / lokasyon görünen adları.
+
+Sonucu, P-7'de anlatılan görünen-ad dolaylama katmanıdır. Registry anahtarları
+kalıcı olarak İngilizce kalır, çünkü onlar save verisidir; çevrilen şey, girdi
+başına ayrı bir gösterilen-ad metin id'sidir. Bunun hiçbir kısmı anahtar yeniden
+adlandırmaya izin vermez.
 
 ### Q-3 — `help.html` ve `changelog.html` Türkçe kapsamında mı?
 
@@ -195,12 +234,17 @@ kalmış bir iş değil, savunulabilir bir ürün kararıdır.
 noktası, hatta bağlanacak bir kapsayıcı bile yok. Öneri: elle yazılmış bir Türkçe
 yardım sayfası ve Türkçe bir not düşülmüş, İngilizce kalan bir changelog.
 
-### Q-4 — Türkçe hitap kipi: senli mi, sizli mi?
+### Q-4 — Türkçe hitap kipi **KARAR: karma, NPC bazında**
 
-Herhangi bir dialogue yazılmadan **önce** karara bağlanmalı. Mevcut metin varyantı
-mekanizması, tek bir flag ve tek bir anahtar ön ekine sabitlendiği için hitap
-kipini ikinci bir eksen olarak ifade edemez; bunun için arama mantığının
-yeniden yazılması gerekir.
+Yaşlılar, resmî görevliler ve bataklık şefine sizli hitap edilir; akranlara,
+çocuklara ve samimi kadroya senli. NPC'ler kahramana senli hitap eder, görev
+başındaki görevliler hariç. NPC bazlı harita
+[STORY.TR.md](STORY.TR.md#6-t%C3%BCrk%C3%A7e-hitap-kipi) içinde.
+
+Önceki çerçeveye düzeltme: bunun için **hiçbir** motor değişikliği gerekmiyor.
+Kipin ikinci bir seçilebilir eksen olması arama mantığının yeniden yazılmasını
+gerektirirdi; ancak NPC bazında sabit bir kip yalnızca o satırın Türkçe metnine
+yazılır ve her satır zaten ayrı bir string id'dir.
 
 ### Q-5 — `dist/` takipte kalsın mı?
 
