@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 3 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 4 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,54 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### NaN düzeltmesinin devamı: kendi regresyonu ve iki ilgili nokta — P-8
+
+Önceki commit'e yapılan çekişmeli inceleme, o commit'in kendi `is_maxed`
+değişikliğinin bir regresyon getirdiğini ve kazanç başına xp sınırının
+etkinleştirilmesinin, seviye atlama süresini tahmin eden paneli motorun artık
+veremeyeceği bir sayıyı söyler durumda bıraktığını buldu.
+
+**Regresyon.** Düzeltme, `get_total_skill_level(id) == skill.max_level` yerine
+`>= skill.max_level` koydu. `get_total_skill_level` `bonus_skill_levels` ekliyor ve
+sınırlanmıyor; dolayısıyla `>=`, bir seviyelik yanlış tetiklemeyi N seviyelik hâle
+getirdi — N, kuşanılan bonus. `woodcutting` tanımı gereği balta gerektiriyor ve Iron
+chopping axe +3 Woodcutting veriyor; yani 57, 58 veya 59. seviyedeki bir skill
+`Woodcutting (Maxed out!)` diyordu — yüzdeyi, xp çiftini ve tüm tahmin satırını
+düşürerek — hâlbuki yanındaki skill listesi hâlâ `58/60 [+3]` yazıyordu. Giderilen
+hatanın tam tersi ve normal oyunda erişilebilir.
+
+Max olma durumu artık skill'in kendisinden okunuyor: `current_xp === "Max" ||
+current_level >= max_level`. `get_total_skill_level` her iki karşılaştırma yönünde
+de yanlış girdi ve burada artık kullanılmıyor. Üç vakanın hepsine karşı kontrol
+edildi: bonuslu gerçek max, ve bonus penceresinin iki ucundaki max olmayan
+durumlar. Eski `==` üçün ikisinde, aradaki `>=` de ikisinde yanlıştı; yeni test
+üçünde de doğru.
+
+Bunun dayandığı değişmez — `current_xp === "Max"` ile
+`current_level >= max_level` her zaman birlikte atanır — artık `npm test` içinde
+her skill için doğrulanıyor; böylece görüntü katmanı modelden sessizce
+ayrışamıyor.
+
+**Tahmin 10 kata kadar iyimserdi.** Kazanç başına sınırın etkinleştirilmesi
+skill'in gerçekten aldığı miktarı sınırladı, ancak "Next level in …" satırı kazancı
+elle yeniden hesaplıyor ve üç şeyi atlıyordu: global xp çarpanı, parent skill
+çarpanı ve sınırın kendisi. Sınır, seviye başına en az on kazancı garanti ediyor;
+yani panel dürüst biçimde ondan az döngü gösteremezdi, ama gösteriyordu.
+
+Formülü doğru biçimde çoğaltmak yerine, artık tek bir export edilmiş fonksiyon var:
+`get_effective_skill_xp_gain`, hem `add_xp_to_skill` hem panel tarafından
+kullanılıyor. Bu soruna aynı aritmetiğin iki kopyası yol açtı; artık bir kopya var.
+
+**Skill ilerleme çubuğu.** Genişlik ataması `current_xp !== "Max"` if-else'inin
+içinde değil sonrasında duruyordu; dolayısıyla max seviyedeki bir skill
+`100 * "Max" / Infinity` hesaplayıp `style.width = "NaN%"` yazıyordu. CSSOM
+ayrıştırılamayan bir bildirimi sessizce atar, yani çubuk bir seviye önce gösterdiği
+orana çakılı kalıyordu — üstünde "Max!" etiketiyle. Artık iki dalın ikisinde de
+atanıyor, max olan dalda açıkça `100%` olarak; çünkü `.skill_bar_current` için
+stil dosyasında genişlik kuralı yok ve bayat bir satır içi değer aksi hâlde
+kalıcı olurdu. Farming ve Literacy'nin ikisi de 10. seviyede tavan yapıyor, yani
+bu teorik bir vaka değildi.
 
 ### Skill xp panellerindeki NaN görüntüleri giderildi — P-8
 

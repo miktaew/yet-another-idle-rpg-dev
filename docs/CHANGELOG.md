@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 3 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 4 -->
 
 # Changelog
 
@@ -17,6 +17,52 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Follow-up to the NaN fix: a regression of its own, plus two related sites — P-8
+
+An adversarial review of the previous commit found that its own `is_maxed` change
+introduced a regression, and that activating the per-gain xp cap left the panel
+that predicts level-up times stating a number the engine would no longer deliver.
+
+**The regression.** The fix replaced `get_total_skill_level(id) == skill.max_level`
+with `>= skill.max_level`. `get_total_skill_level` adds `bonus_skill_levels` and is
+not clamped, so `>=` turned a one-level misfire into an N-level one, where N is the
+equipped bonus. `woodcutting` requires an axe by definition, and the Iron chopping
+axe grants +3 Woodcutting, so a skill at level 57, 58 or 59 reported
+`Woodcutting (Maxed out!)` — dropping the percentage, the xp pair and the whole
+estimate line — while the skill list next to it still read `58/60 [+3]`. The
+inverse of the bug being fixed, and reachable in ordinary play.
+
+Maxed-ness is now read from the skill itself: `current_xp === "Max" ||
+current_level >= max_level`. `get_total_skill_level` is the wrong input in either
+comparison direction and is no longer consulted here. Checked against all three
+cases: genuinely maxed with a bonus, and unmaxed at both ends of the bonus window.
+The old `==` was wrong in two of the three, the interim `>=` also in two; the new
+test is right in all three.
+
+The invariant this relies on — that `current_xp === "Max"` and
+`current_level >= max_level` are always set together — is now asserted for every
+skill in `npm test`, so the display cannot be quietly desynchronised from the model
+again.
+
+**The estimate was optimistic by up to 10x.** Activating the per-gain cap capped
+what a skill actually receives, but the "Next level in …" line recomputed the gain
+by hand and omitted three things: the global xp multiplier, the parent-skill
+multiplier, and the cap itself. The cap guarantees at least ten gains per level, so
+the panel could not honestly show fewer than ten cycles, yet it did.
+
+Rather than duplicate the formula correctly, it is now a single exported function,
+`get_effective_skill_xp_gain`, used by both `add_xp_to_skill` and the panel. Two
+copies of the same arithmetic is what caused this; there is now one.
+
+**Skill progress bar.** The width assignment sat after the `current_xp !== "Max"`
+if-else instead of inside it, so a maxed skill computed `100 * "Max" / Infinity`
+and wrote `style.width = "NaN%"`. The CSSOM discards an unparseable declaration
+silently, so the bar simply froze at whatever fraction it showed one level earlier,
+under a "Max!" label. It is now set in both branches, explicitly to `100%` in the
+maxed one, because `.skill_bar_current` has no width rule in the stylesheet and a
+stale inline value would otherwise persist. Farming and Literacy both cap at level
+10, so this was not a theoretical case.
 
 ### Fixed the NaN readouts in the skill xp panels — P-8
 

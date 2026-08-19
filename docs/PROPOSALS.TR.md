@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 3 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 4 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -175,10 +175,13 @@ erişilemez durumda.
 görüntüsü ve arkasındaki model hataları. [CHANGELOG.TR.md](CHANGELOG.TR.md)
 içinde yazılı, `npm test` ile kapsanıyor.
 
-**Hâlâ açık** - analiz listesindeki kalan render noktaları: max seviye korumasının
-dışında kalan skill ilerleme çubuğu genişliği ataması, max seviyedeki crafting
-skill xp aritmetiği, boş savaş bölenleri, karakter xp giriş koruması,
-interpolasyon yardımcıları ve yukarıdaki boy/ırk fonksiyonu.
+**Hâlâ açık** - max seviyedeki crafting skill xp aritmetiği, boş savaş
+bölenleri, karakter xp giriş koruması, interpolasyon yardımcıları, yukarıdaki
+boy/ırk fonksiyonu ve `src/conditions.js` içindeki uykuda ama hatalı boy/ırk
+koşul bloğu (dört ters çevrilmiş sınır karşılaştırması, yanlış nesneden okunan bir
+alan, bir kopyala-yapıştır hatası). Uykuda olanların hiçbiri bugün erişilebilir
+değil, çünkü hiçbir içerik boy veya ırk koşulu tanımlamıyor - bir tanesi
+tanımlamadan önce düzeltin.
 
 ### P-9 — Hikâyeyi devam ettir `open`
 

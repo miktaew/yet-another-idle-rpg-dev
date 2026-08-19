@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 3 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 4 -->
 
 # Proposals
 
@@ -170,10 +170,13 @@ gameplay effect at all, and one dialogue variant is permanently unreachable.
 the model bugs behind it. Written up in [CHANGELOG.md](CHANGELOG.md) and covered by
 `npm test`.
 
-**Still open** - the remaining render sites from the audit list: the skill progress
-bar width assignment sitting outside its max-level guard, the maxed-crafting-skill
-xp arithmetic, the empty-combat divisors, the character xp entry guard, the
-interpolation helpers, and the height/race helper above.
+**Still open** - the maxed-crafting-skill xp arithmetic, the empty-combat
+divisors, the character xp entry guard, the interpolation helpers, and the
+height/race helper above, plus the dormant but wrong height/race condition block
+in `src/conditions.js` (four inverted bound comparisons, one field read from the
+wrong object, one copy-paste slip). None of the dormant ones are reachable today,
+because no content defines a height or race condition - fix them before anything
+does.
 
 ### P-9 — Continue the story `open`
 

@@ -15,7 +15,8 @@ import { current_enemies, game_options,
     favourite_consumables,
     travel_times, 
     language,
-    favourite_items} from "./main.js";
+    favourite_items,
+    get_effective_skill_xp_gain} from "./main.js";
 import { dialogues } from "./dialogues.js";
 import { activities } from "./activities.js";
 import { format_time, current_game_time, seasons } from "./game_time.js";
@@ -4241,14 +4242,16 @@ function update_displayed_ongoing_activity(current_activity) {
 
         const skill = skills[skill_names[i]];
         const xp_rate = xp_rates[i];
-        //A maxed skill is identified by its own sentinel, not by comparing levels.
-        //get_total_skill_level adds bonus_skill_levels and is not clamped to
-        //max_level, so equipment or an active effect pushes the total past
-        //max_level and an equality test then fails for a skill that really is
-        //maxed - which sent this panel down the branch below and printed
-        //"NaN% [NaN / Infinity]", because current_xp is the string "Max" and
-        //xp_to_next_lvl is Infinity once a skill maxes out.
-        const is_maxed = skill.current_xp === "Max" || get_total_skill_level(skill.skill_id) >= skill.max_level;
+        //Maxed-ness comes from the skill's own sentinel and its own level, never
+        //from get_total_skill_level: that adds bonus_skill_levels and is not
+        //clamped to max_level (character.js), so with an axe granting +3
+        //Woodcutting the total reads 60 while the skill is really at 57. Both
+        //comparison directions are wrong against it - an equality test failed for
+        //a genuinely maxed skill and printed "NaN% [NaN / Infinity]" here, and a
+        //>= test reports "Maxed out!" for every level inside the bonus window.
+        //current_xp and current_level are set together when a skill maxes out, so
+        //testing the skill itself is both correct and cheap.
+        const is_maxed = skill.current_xp === "Max" || skill.current_level >= skill.max_level;
 
         if (base_activity.type !== "GATHERING") {
             action_xp_div.innerText += `Getting ${xp_rate} base xp per in-game minute to `;
@@ -4278,7 +4281,11 @@ function update_displayed_ongoing_activity(current_activity) {
 
             action_xp_div.innerText += ` ${skill.name()} (${percent_xp}  [${shown_curr_xp} / ${shown_needed_xp}])`;
 
-            const xp_per_cycle = xp_rate * get_skill_xp_gain(skill.skill_id);
+            //Must match what add_xp_to_skill will really grant, including the
+            //global and parent-skill multipliers and the per-gain cap. Computing
+            //it here by hand is how this line came to promise a level-up sooner
+            //than the engine could deliver it.
+            const xp_per_cycle = get_effective_skill_xp_gain({skill, xp_to_add: xp_rate});
             const cycle_length = current_activity.xp_given_per_working_period ? current_activity.gathering_time_needed : 1;
             const time_needed = has_usable_xp && xp_per_cycle > 0
                 ? Math.ceil((needed_xp - curr_xp) / xp_per_cycle) * cycle_length
@@ -4599,16 +4606,22 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
         skill_bar_divs[skill.category][skill.skill_id].children[0].classList.remove("skill_bar_capped");
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[1].innerText = `${100*Math.floor(skill.current_xp/skill.xp_to_next_lvl*1000)/1000}%`;
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[0].innerText = `${expo({number: skill.current_xp})} / ${expo({number: skill.xp_to_next_lvl})}`;
+        skill_bar_divs[skill.category][skill.skill_id].children[0].children[1].style.width = `${100*skill.current_xp/skill.xp_to_next_lvl}%`;
 
     } else {
         skill_bar_divs[skill.category][skill.skill_id].children[0].classList.add("skill_bar_capped");
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[1].innerText = `Max!`;
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[0].innerText = `Maxed out!`;
+        //Set explicitly: .skill_bar_current has no width rule in style.css, so a
+        //stale inline width from just before the final level-up would survive.
+        skill_bar_divs[skill.category][skill.skill_id].children[0].children[1].style.width = "100%";
     }
-    //skill_bar_xp && tooltip_xp
-
-    skill_bar_divs[skill.category][skill.skill_id].children[0].children[1].style.width = `${100*skill.current_xp/skill.xp_to_next_lvl}%`;
-    //skill_bar_current
+    //skill_bar_xp && tooltip_xp && skill_bar_current
+    //The width assignment lives in both branches on purpose. It used to sit after
+    //this if-else, where a maxed skill computed 100*"Max"/Infinity and wrote
+    //"NaN%" - which the CSSOM silently drops, leaving the bar stuck at whatever
+    //fraction it showed one level earlier. Farming and Literacy cap at level 10,
+    //so this was reachable in ordinary play.
 
     if(get_unlocked_skill_rewards(skill.skill_id)) {
         set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[4], `<br>${get_unlocked_skill_rewards(skill.skill_id)}`);

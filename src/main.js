@@ -1947,6 +1947,45 @@ function use_stamina({stamina_to_use = 1, skip_persistence_xp_for_stance_change 
  * @param {Boolean} should_info 
  * @returns {Boolean}
  */
+/**
+ * How much xp a single gain actually adds to a skill, after the multiplier chain
+ * and the per-gain cap.
+ *
+ * Exported so the activity panel can estimate a level-up time the engine will
+ * really deliver. The panel used to recompute this itself and got it wrong in
+ * three ways - no global multiplier, no parent-skill multiplier, and no cap -
+ * which only became visible once the cap started working. One function, one
+ * answer, no drift.
+ *
+ * @param {Object} skill a Skill instance
+ * @param {Number} xp_to_add the raw amount before any modifier
+ * @param {Boolean} use_bonus apply the multiplier chain
+ * @param {Boolean} cap_gained_xp apply the per-gain cap
+ * @returns {Number}
+ */
+function get_effective_skill_xp_gain({skill, xp_to_add, use_bonus = true, cap_gained_xp = true}) {
+    let gain = xp_to_add;
+
+    if(use_bonus) {
+        gain = gain * config.global_xp_multiplier * get_skill_xp_gain(skill.skill_id);
+
+        if(skill.parent_skill) {
+            gain *= skill.get_parent_xp_multiplier();
+        }
+    }
+
+    //Number.isFinite, not `typeof ... === "number"`: xp_to_next_lvl is Infinity
+    //once a skill maxes out, and capping against Infinity is meaningless. The
+    //original condition compared typeof (a string) against the Number
+    //constructor, so it was never true and this cap never applied at all.
+    if(cap_gained_xp && Number.isFinite(skill.xp_to_next_lvl)) {
+        //cap on singular gains for non-crafting skills; cap for crafting skills handled in crafting code as it's dependent on how many items are made at once
+        gain = Math.min(gain, skill.xp_to_next_lvl*skill_xp_gains_cap);
+    }
+
+    return gain;
+}
+
 function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = true, add_to_parent = true, cap_gained_xp = true, is_from_loading = false, do_quest_events = true})
 {
     let leveled = false;
@@ -1962,22 +2001,7 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
         return leveled;
     }
 
-    if(use_bonus) {
-        xp_to_add = xp_to_add * config.global_xp_multiplier * get_skill_xp_gain(skill.skill_id);
-
-        if(skill.parent_skill) {
-            xp_to_add *= skill.get_parent_xp_multiplier();
-        }
-    }
-
-    //Number.isFinite, not `typeof ... === "number"`: xp_to_next_lvl is set to
-    //Infinity once a skill maxes out, and capping against Infinity is meaningless.
-    //The previous condition compared typeof (a string) against the Number
-    //constructor, so it was never true and this cap never applied.
-    if(cap_gained_xp && Number.isFinite(skill.xp_to_next_lvl)) {
-        //cap on singular gains for non-crafting skills; cap for crafting skills handled in crafting code as it's dependent on how many items are made at once
-        xp_to_add = Math.min(xp_to_add, skill.xp_to_next_lvl*skill_xp_gains_cap);
-    }
+    xp_to_add = get_effective_skill_xp_gain({skill, xp_to_add, use_bonus, cap_gained_xp});
     
     const prev_name = skill.name();
     const was_hidden = skill.visibility_treshold > skill.total_xp;
@@ -6018,7 +6042,7 @@ if(is_on_dev()) {
 export { current_enemies,
         current_location,
         can_work, active_effects,
-        enough_time_for_earnings, add_xp_to_skill,
+        enough_time_for_earnings, add_xp_to_skill, get_effective_skill_xp_gain,
         get_current_book,
         last_location_with_bed,
         last_combat_location,

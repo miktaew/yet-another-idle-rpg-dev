@@ -139,6 +139,31 @@ console.log(`skills loaded: ${Object.keys(skills).length}`);
         `current_xp=${skill.current_xp} xp_to_next_lvl=${skill.xp_to_next_lvl}`);
 }
 
+// --- the invariant the display code relies on ------------------------------
+// The activity panel and the skill bars decide maxed-ness from current_xp ===
+// "Max" plus current_level >= max_level. That is only sound if add_xp sets the
+// two together, so pin it down: nothing may leave a skill claiming "Max" at a
+// level below its cap, or sitting at its cap without the sentinel.
+{
+    const maxed = skills["Mining"];       // driven to max above
+    const not_maxed = skills["Herbalism"]; // a few levels in, above
+
+    check("a maxed skill reports both sentinel and level",
+        maxed.current_xp === "Max" && maxed.current_level === maxed.max_level,
+        `current_xp=${maxed.current_xp} level=${maxed.current_level}/${maxed.max_level}`);
+
+    check("an unmaxed skill claims neither",
+        not_maxed.current_xp !== "Max" && not_maxed.current_level < not_maxed.max_level,
+        `current_xp=${not_maxed.current_xp} level=${not_maxed.current_level}/${not_maxed.max_level}`);
+
+    // Every skill touched so far must agree with itself.
+    const inconsistent = Object.values(skills).filter(s =>
+        (s.current_xp === "Max") !== (s.current_level >= s.max_level));
+    check("no skill disagrees with its own max sentinel",
+        inconsistent.length === 0,
+        inconsistent.map(s => `${s.skill_id}(xp=${s.current_xp}, ${s.current_level}/${s.max_level})`).join(", "));
+}
+
 // --- the parent multiplier must never be non-finite ------------------------
 {
     const skill = skills["Fishing"];
