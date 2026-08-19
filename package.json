@@ -12,8 +12,7 @@
     "build": "node scripts/build-site.js",
     "check": "node scripts/check-site.js",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8080",
-    "serve:site": "esbuild --servedir=_site --serve=127.0.0.1:8081",
-    "build:legacy": "node build.js"
+    "serve:site": "esbuild --servedir=_site --serve=127.0.0.1:8081"
   },
   "devDependencies": {
     "esbuild": "^0.28.2"

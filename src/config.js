@@ -19,6 +19,20 @@ const config = {
 
     do_hero_creation: true,
 
+    //Deployment identity, matched against location.host + location.pathname.
+    //Kept here rather than hardcoded in main.js so a fork or a mirror only has
+    //to edit this block.
+    //
+    //WARNING: is_on_dev() decides which localStorage key holds the save
+    //("save data" vs "dev save data", see main.js). Do NOT point `dev` at a
+    //live deployment - existing players would silently be handed an empty
+    //save slot. Trailing slashes are ignored; protocol and query are not part
+    //of the comparison.
+    release_ids: {
+        main: "kuroiteiken.github.io/yairp",
+        dev: "kuroiteiken.github.io/yairp-dev",
+    },
+
     //when changing either, make sure to remove text in hero creation panel that says they are purely cosmetic
     use_racial_bonuses: false, //check detailed bonuses in race.js; current values were not tested and might be terribly unbalanced
     use_height_bonuses: false, //based on relative height (short/average/tall), not on universal height

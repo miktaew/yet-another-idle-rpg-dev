@@ -3368,11 +3368,22 @@ function get_date() {
     return `${year}-${month}-${day} ${hour}_${minute}_${second}`;
 }
 
+/**
+ * Normalized identity of the current deployment: host plus path, without the
+ * protocol, query, hash or a trailing slash. Comparing on this instead of the
+ * full href means "/yairp", "/yairp/" and "/yairp/?debug" all resolve to the
+ * same release, which the previous exact-href comparison did not.
+ * @returns {string}
+ */
+function get_release_id() {
+    return (window.location.host + window.location.pathname).replace(/\/+$/, "");
+}
+
 function is_on_dev() {
-    return window.location.href === "https://miktaew.github.io/yet-another-idle-rpg-dev/";
+    return get_release_id() === config.release_ids.dev;
 }
 function is_on_main() {
-    return window.location.href === "https://miktaew.github.io/yet-another-idle-rpg/";
+    return get_release_id() === config.release_ids.main;
 }
 
 function is_JSON(str) {
@@ -5972,20 +5983,22 @@ if(is_on_dev()) {
     }
 }
 
-if(is_on_dev()) {
+//Visitor counter. The tracked url is derived from the release id rather than
+//hardcoded, so a fork only needs to edit config.release_ids. Deployments that
+//are neither main nor dev (a local server, a preview build) get an untracked
+//placeholder so they do not inflate the real counts.
+{
+    const counter_release = is_on_dev() ? config.release_ids.dev
+                          : is_on_main() ? config.release_ids.main
+                          : null;
+
+    const counter_query = counter_release
+        ? `url=${encodeURIComponent(`https://${counter_release}/`)}&label=Visitors`
+        : `label=local+build`;
+
     insert_HTML(
-        document.getElementById("bottom_panel_div"), 
-        `<img id = "hits_counter" src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fmiktaew.github.io%2Fyet-another-idle-rpg-dev%2F&label=Visitors&color=%23084298&message=&style=flat&tz=UTC">`
-    );
-} else if(is_on_main()) {
-    insert_HTML(
-        document.getElementById("bottom_panel_div"), 
-        `<img id = "hits_counter" src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fmiktaew.github.io%2Fyet-another-idle-rpg%2F&label=Visitors&color=%23084298&message=&style=flat&tz=UTC">`
-    );
-} else {
-    insert_HTML(
-        document.getElementById("bottom_panel_div"), 
-        `<img id = "hits_counter" src="https://hitscounter.dev/api/hit?label=dummy+hit+counter&color=%23084298&message=&style=flat&tz=UTC">`
+        document.getElementById("bottom_panel_div"),
+        `<img id = "hits_counter" src="https://hitscounter.dev/api/hit?${counter_query}&color=%23084298&message=&style=flat&tz=UTC" alt="Visitor counter">`
     );
 }
 export { current_enemies,

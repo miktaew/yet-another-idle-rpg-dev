@@ -10,8 +10,8 @@ on:
     # dist/locales/resources directories, none of which contain a .md file. A
     # documentation-only push would therefore rebuild a byte-identical _site/.
     # Every documentation file in this repository uses the lowercase .md
-    # extension (README.md / README.TR.md, docs/AGENTS.md / docs/AGENTS.TR.md),
-    # so one case-sensitive pattern is enough.
+    # extension - see docs/AGENTS.md for the naming rule - so one
+    # case-sensitive pattern covers all of them, present and future.
     paths-ignore:
       - "**.md"
   workflow_dispatch:
