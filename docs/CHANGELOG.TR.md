@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 15 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 16 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -17,6 +17,104 @@ geldiğinde buraya girer.
 
 ---
 
+## 2026-08-21
+
+### Bataklık kadrosu tamamlandı, Türkçe locale bitti — P-7
+
+**907 anahtarın 907'si.** Kalan son boşluk üç diyalog ağacıydı — aşçı 111, terzi 32,
+izci 32 anahtar — ve onlarla birlikte `npm run check` %100,0 kapsam bildiriyor:
+eksik yok, tanınmayan anahtar yok.
+
+**"Bozuk konuşma"nın Türkçede neye dönüşmesi gerekiyor.** Kampta bozuk İngilizce
+konuşan tek kişi aşçı ve bozukluğu belirli: eksik artikeller, düşürülmüş koşaç
+("It good place to go"), telgraf üslubu ünlemler. Türkçede artikel yok ve koşaç
+zaten olağan biçimde düşüyor; yani bu işaretleri birebir çevirmek tamamen sıradan
+bir Türkçe üretiyor — karakter öylece kaybolur. Karşılığı olan işaretler başkaları:
+fiillerde şahıs uyumunun düşürülmesi (cümle `yardım ederim` isterken `yardım eder`)
+ve durum eki zorunluyken çıplak isim kullanılması. Satır başına bir iki tane
+uygulandı; bir yabancıyı duymaya yeter, okumayı yük hâline getirmeye yetmez.
+
+Bunu tek bir yerde bırakıyor, İngilizcesi de öyle. `whycrabpress answ` içinde
+kahkaha kesiliyor ve dilbilgisi birden temizleniyor. Sahnenin bütün derdi bu:
+gülmek bir kısıt değil, bir seçim. Türkçesi de orada temiz.
+
+**Kayda geçmeye değer bir çakışma.** Kabilenin motifi "yılanın dişlerini bilemek"
+ve doğru fiil `bilemek` — ancak `bile-` artı `-iyor` `biliyor`a çöküyor; yani
+*bilmek* fiiline. Konusu, yardım edebilmek için önce kabileyi bilmek olan bir
+ağaçta bu masum bir belirsizlik değil. Diğer bütün biçimler güvenli olduğu için
+şimdiki zamana ihtiyaç duyan tek satır `bileyip duruyorsun` diyor. Yeniden
+keşfedilmek zorunda kalmasın diye [I18N.TR.md](I18N.TR.md) içine yazıldı.
+
+**Terzinin parçaları.** Söylenme döngüsü, her biri iki ucundan da cümlenin ortasında
+kesilen sekiz satır — `-boil the linen, he says, as if that'll-`. Türkçe söz dizimi
+kesim noktalarına başka malzeme koyuyor; İngilizce parçayı çevirmek ya yanlış yerden
+kırılan bir parça ya da beteri, tam bir cümle veriyor. İngilizce yorumlar her
+parçanın alındığı tam cümleyi kaydediyor; Türkçesi o cümlenin Türkçesinden kesildi.
+Her parça hâlâ düşüncenin ortasında başlayıp ortasında bitiyor; asıl etki buydu.
+
+**İzcinin üç noktaları noktalama değil, nefes.** İngilizcede kasıtlı olarak
+tuhaf yerlere düşüyorlar — `the brother... to our last chieftan's bondmate`. Türkçede
+söz dizimi kaydığı için onları aynı kelimelerde tutmak mümkün değildi; doğal cümle
+duraklarına taşımak mümkündü ve bu, onu sessizce iyileştirmek olurdu. Türkçede
+aynı derecede tuhaf düşen noktalara yerleştirildiler.
+
+**Üç ağaç, tek hikâye.** Tabakhaneci birine zırh yapıyor, terzinin bandaj için
+ketene ihtiyacı var, izci ise karyolada bir bacağı eksik yatan ve çürüme kokusu
+ağırlaşan kişi. Bu ağaçlar günler arayla çevrildi, dolayısıyla terminolojinin
+aralarında uzlaştırılması gerekti: `den kin`, şef zaten kendi ağacında öyle dediği
+için `in halkı`; şef, İngilizcesi "chief" ile "chieftan" arasında gezinse de baştan
+sona `şef`; tabakhanecinin `beş düzine`si ile aşçının `üç kere yirmi`si, karşıtlığın
+kendisi karakterizasyon olduğu için ikisi de korundu. Bu, "yukarıdakiyle çelişen bir
+şey aşağıda çıkmayacak" kuralının tek ekran değil, bütün bir kamp ölçeğindeki hâli.
+
+**Hitap kipi.** Kahraman terziye `siz`, izciye `sen` diyor. Terzi ne yaşlı ne şef,
+ama kahramanın az önce ödünü kopardığı bir yabancı ve Türkçe orada `siz` kullanır;
+onun kendi `sen`ine karşı bu asimetri aynı zamanda başta ne kadar kaba olduğunu ve
+sonradan özür dilemenin ona neye mal olduğunu taşıyor. İzci ise kahramanın yaşıtı ve
+onu müstakbel in halkı olarak anıyor; orada `sen` iki yönlü.
+
+**Yalnızca iş bitmemişken geçen bir test.** Geri düşme kontrolü, çalışma anında
+henüz çevrilmemiş ilk id'yi seçiyordu ve üstündeki yorum bunun, daha fazla metin
+çevrilmesinin kontrolü bayatlatmaması için olduğunu söylüyordu. Tam tersiymiş: tam
+kapsamda çevrilmemiş id kalmıyor, kontrol hiçbir şey bulamadı ve üç doğrulama
+düştü. Boşluk artık bulunmuyor, kuruluyor — yalnızca İngilizcede var olan bir
+fikstür id'si; böylece kontrol biriken işin boyutunu değil, geri düşmenin kendisini
+sınıyor. 48 kontrol geçiyor.
+
+Kapsam %80,7'den **%100,0**'a.
+
+### Düşmanlar, duruşlar ve lokasyon menüsü Türkçe konuşuyor — P-7
+
+31 düşman açıklaması, 32 düşman adı, 2 duruş açıklaması ve 9 lokasyon seçimi
+menü etiketi id'lerin arkasına taşındı. Bunları `Enemy.getName()` ve
+`Enemy.getDescription()` çözüyor; böylece kayıt verisi olan `enemy_templates`
+anahtarları İngilizce kalıyor.
+
+**İki kayıt önce kendi yol açtığım, burada yakaladığım bir regresyon.**
+`Stance.getDescription()`, kendi metni olmayan bir duruş için
+`skills[this.related_skill].description`a geri düşüyordu. Ham alanı okuyordu ve
+skill açıklamaları id'lerin arkasına taşınana kadar bu sorun değildi — taşındıktan
+sonra 7 duruşun 5'i ekrana harfi harfine `desc skill Heavy strike` basacaktı. Artık
+skill'in kendi `getDescription()`'ını çağırıyor. Nasıl saklandığı da kayda değer:
+kendi açıklaması olan iki duruş, gözün ilk düştüğü iki duruş.
+
+Dört düşman kaynakta boş açıklama taşıyor — iki idman muhafızı, şüpheli duvar ve
+şüpheli adam. Boş kalıyorlar. Hiçbir şeye çözülen id vermek, ekranda hiçbir karşılığı
+olmadan her locale'in kapsam oranına dört kalıcı delik eklemek olurdu.
+
+**Çevirilerine dair.** `Direwolf` → `Ulukurt`: birebir `korkunç kurt` yerine
+türetilmiş bir bileşik, çünkü `Kurt`, `Genç kurt` ve `Aç kurt` ile aynı listede
+duracak ve bir bakışta onların bir üst basamağı gibi okunacak. `Warthog` →
+`Bakla domuzu`, türün gerçek Türkçe adı; ayrıca neredeyse birebir aynı olan
+İngilizce açıklamaların kurduğu `Boar` → `Yaban domuzu` eşleşmesindeki `domuz`
+bağını koruyor. `Snapping turtle` → `Yılanbaşlı kaplumbağa`, "snapping" üzerinden
+bir öyküntü yerine türün gerçek Türkçe adı. MGS3 göndermesi
+`Graa~! Yengeç savaşı!` olarak yaşıyor, dev yengecin en büyük-en küçük şakası ise
+kelimelerini değil biçimini koruyor.
+
+Kapsam %72,8'den %80,7'ye; referans 907 anahtara çıktı.
+
+---
 ## 2026-08-19
 
 ### Sabit kodlanmış metin envanteri çıkarıldı, skill açıklamaları taşındı — P-7

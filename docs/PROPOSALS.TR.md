@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 7 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 8 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -168,10 +168,12 @@ paneline `languages` registry'sinden inşa edilen ve canlı geçiş yapan bir se
 eklendi. `npm run check` kapsamı raporluyor, `npm test` arama ve fallback davranışını
 kapsıyor. Çevirmen el kitabı ve sözlük [I18N.TR.md](I18N.TR.md) içinde.
 
-**Kalan** — 478 dialogue id'si, ardından item, skill ve lokasyon adlarının ihtiyaç
-duyduğu görünen-ad dolaylama katmanı. Quest metni, `help.html` ve `changelog.html`'in
-henüz hiç çeviri bağlantı noktası yok; bkz. [I18N.TR.md](I18N.TR.md) bilinen
-boşluklar.
+**Kalan** — bütün diyalog id'leri, quest'ler, skill'ler, stance'lar ve düşmanlar
+tamam; Türkçe locale referansın bildirdiği 907 anahtarın %100'ünde. Geriye görünen-ad
+katmanının henüz yönlendirilmediği registry'ler kaldı: item, lokasyon, tarif,
+activity ve trader adları; ayrıca item, lokasyon, efekt ve activity açıklamaları ile
+lokasyon eylem metninin ~244 string'i. `help.html` ve `changelog.html`'in hâlâ hiç
+çeviri bağlantı noktası yok; bkz. [I18N.TR.md](I18N.TR.md) bilinen boşluklar.
 
 ### P-8 — Bildirilen NaN uyarılarını gider `active`
 

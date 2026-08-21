@@ -421,6 +421,269 @@ const dialogues = {
     "swamptanner deliver 2 not": "Evladım... Sorun değil, ne yalan söylemene ne de hayatını riske atmana gerek var. Yeterince şey yaptın. İdare ederiz. Hep ettik.",
     "swamptanner liked": "Sadece uğradım. Size yardım etmek için yapabileceğim başka bir şey var mı?",
     "swamptanner liked answ": "Ahh, iyi bir evlatsın sen, hem de güçlü bir savaşçı. Senin gibi savaşçıların yaşlı bir kadının derdiyle uğraşmasına gerek yok.",
+
+    /*
+        SWAMPLAND COOK
+
+        Register: he speaks BROKEN Turkish, and he is the only one in the camp who
+        does - the chief is ceremonious, the tanner archaic, the tailor fretful.
+        The English brokenness is missing articles, a dropped copula ("It good
+        place to go"), and telegraphic exclamations. Turkish has no articles, so
+        the equivalent markers are: dropped person agreement on verbs ("yardım
+        eder" for "yardım ederim"), bare nouns where a case suffix is required,
+        and clipped one-clause sentences. Applied lightly - one or two markers a
+        line - so it reads as a foreigner's Turkish, not as gibberish.
+
+        He drops it entirely in "whycrabpress answ". That is the point of the
+        scene: the laughter is a choice, and when he stops laughing his Turkish
+        is suddenly clean. The English does the same thing.
+
+        The tribal words - obaru, kazoku, sosso, zalgo, menaka, tumana - are
+        in-world vocabulary and stay untranslated. He glosses them himself in the
+        "sosso"/"zalgo"/"tumana" branches, so the Turkish must not pre-empt him.
+
+        "Sharpen the snake's fangs" is the tribe's motif and stays "bilemek"
+        throughout, EXCEPT in the present continuous: "bile-" + "-iyor" collapses
+        to "biliyor", which is the verb "to know". The one line that needs it
+        ("liked answ") uses "bileyip duruyorsun" instead.
+
+        Counting: the tanner counts in dozens ("beş düzine"), the cook in scores
+        ("üç kere yirmi") - both archaic, both distinct, both against the hero's
+        plain "60". That contrast is in the English and is kept.
+
+        Terms fixed here and used by the whole swamp cast: workhut = atölye,
+        clothier = kumaşçı (vs the hero's terzi), leatherworker = deri işçisi
+        (vs the hero's tabakhaneci), bartermaster = takas ustası, chief = şef,
+        hutfield = kulübe meydanı, rock meat = kaya eti, walking rocks = yürüyen
+        kayalar, falling water = düşen su.
+
+        "He mends, too!" is deliberately ambiguous in English - cloth or people.
+        Turkish "sarmak" carries both (to wrap cloth, to dress a wound), so
+        "Yaraları da sarar!" keeps the double reading instead of resolving it.
+
+        "That's rough, buddy" is an Avatar line and "I'm a tailor, not a doctor"
+        is McCoy's; both are rendered as the quotes a Turkish audience knows
+        rather than translated fresh.
+    */
+    "swampcook description 1": "Aşçının atölyesine yaklaştıkça, içeriden avazı çıktığı kadar söylenen kendine has bir ezgi ve keskin bir koku karşılıyor seni. Burnunu tutup yaklaşınca, asılı etlerin arasında neredeyse görünmez olmuş kısa boylu birini buluyorsun; kendinden büyük bir kurutma sehpasıyla -- ızgara çıtaların arasına asılmış ince dilimlerle dolu -- tezgaha gömülü koca bir kazanın arasında gidip geliyor; tezgahın üstü ise işlenmenin çeşitli aşamalarındaki kaba deri levhalarıyla kaplı. Şarkının kaynağının o olduğunu görmek şaşırtıyor seni. Yaklaştığını fark edince şarkısını kesiyor ve yüzünde bir gülümsemeyle sana dönüyor.",
+    "swampcook description 2": "Aşçının atölyesine yaklaşıyorsun; kendisini dışarıda, küçük bir tütsüleme kulübesinin yanında kütük yararken buluyorsun. Yine, hem işlediği derinin kokusunu alıyor hem de söylediği şarkıyı, onu görmeden çok önce duyuyorsun.",
+    "swampcook description 3": "Atölyeye yaklaşırken, farkında olmadan aşçının şarkısına eşlik ediyorsun. Söylediğini duyunca sana dönüp dişlerini gösteren bir sırıtışla kocaman bir baş sallıyor, sonra işine geri dönüyor.",
+    "mofu#swampcook description 1": "Aşçının atölyesine yaklaştıkça, içeriden avazı çıktığı kadar söylenen kendine has bir ezgi ve keskin bir koku karşılıyor seni. Burnunu tutup yaklaşınca, asılı etlerin arasında neredeyse görünmez olmuş kısa boylu birini buluyorsun; kendinden büyük bir kurutma sehpasıyla -- ızgara çıtaların arasına asılmış ince dilimlerle dolu -- tezgaha gömülü koca bir kazanın arasında gidip geliyor; tezgahın üstü ise işlenmenin çeşitli aşamalarındaki kaba deri levhalarıyla kaplı. Şarkının kaynağının o olduğunu görmek şaşırtıyor seni. Yaklaştığını fark edince şarkısını kesiyor ve yüzünde bir gülümsemeyle sana dönüyor; pullu kuyruğuyla bir şekilde hiçbir yere çarpmadan.",
+    "mofu#swampcook description 3": "Atölyeye yaklaşırken, farkında olmadan aşçının şarkısına eşlik ediyorsun. Söylediğini duyunca sana dönüp dişlerini gösteren bir sırıtışla kocaman bir baş sallıyor, sonra işine geri dönüyor; koca kuyruğu yine bir şekilde hiçbir yere çarpmıyor.",
+    "swampcook greeting1": "Merhaba. Şey... haraç ödemenin bir yolunu arıyorum?",
+    "swampcook greeting1 answ": "A-ha~! Haraç! Ha-ha~! Çok komik, obaru! Yılanın dişlerine haraç ödemeye gerek yok!",
+    "swampcook greeting2": "Haraç değil o zaman. Sadece buralarda yardımcı olabileceğim bir şey arıyorum.",
+    "swampcook greeting2 answ": "Ahh, yardım mı? A-ha~! Yılan dişleri geç bilenir! Ama obaru yardım etmek istiyorsa, ben de yargılamaktan mutlu olur! Şimdi senden ne isteyeyim...! Oo, a-ha~! Evet! Kaya eti!",
+    "swampcook help": "Kaya eti...? Ete ihtiyacın olduğundan emin misin? Zaten bol bol var gibi görünüyor.",
+    "swampcook help answ": "Sosso! Obaru'nun gözü var ama kulağı yok! Bana başka et gerek! Düşen suyun yakınındaki o koca yürüyen kayaları gördün, değil mi? Kır o kayaları, içindeki eti bana getir! A-ha~! Yanılmıyorsam, üç kere yirmi kaya etinden aşağısı olmaz! Getir onları bana! Ben de yılanın dişlerini bilemene yardım eder!",
+    "swampcook deliver": "İstediğin şu, ee, 'kaya eti'nden 60 tane getirdim.",
+    "swampcook deliver answ": "A-ha~! Aferin! Kazoku bunu yapabildiyse, belki kazoku yılanın dişlerini de bileyebilir! Ama önce, yılanı bilmen gerek! Ancak o zaman dişlerini bileyebilir!",
+    "swampcook deliver not": "A-ha~! Sosso obaru! Bence bir daha saymak istersin!",
+    "swampcook know": "Yılanı bilmek mi? Dişlerini bilemek mi? Yardım edeceksem, kime yardım ettiğimi daha iyi bilmem gerektiğini mi söylüyorsun?",
+    "swampcook know answ": "Ha-ha~! Bilenmeye ihtiyacı olan iki kişi var! Ama kazoku bir parçayı bilmeden önce, bütünü konuşmamız gerek! Gel, bir parça et al! Konuşurken çalışırız! Belki bir şey de öğrenirsin!",
+    "swampcook yeslore": `Bana şu, ee, "yılanın bütünü" hakkında ne anlatabilirsin?`,
+    "swampcook yeslore answ": "Ah~! Kalbi! Ruhu! Başı! Bedeni! Neyi bilmek istersin?!",
+    "swampcook history": "Bana... yılanın kalbinden bahset?",
+    "swampcook history answ": "Haa~! Yılanın kalbi ilk başında yatar! Güçlü bir adam! Yırtıcı bir adam! Yumruğunda yılan başları taşıdığı söylenir! Bu yüzden yılanın dişleriyiz biz!",
+    "swampcook history1": "Tamam... peki ne olmuş?",
+    "swampcook history1 answ": "Ahh~! O kalp! Sonraki başı da o güttü! Ve sonrakini! Daha güçlü! Daha yırtıcı! Yılan daha büyük olmalı! Daha kuvvetli olmalı!",
+    "swampcook history2": "Peki ne oldu?",
+    "swampcook history2 answ": "Yılan büyüdü, dişleri de! Ama! Avı büyümedi! Av küçüldü, sonunda yılandan başkası kalmadı! Ve şimdi!? Zalgo ruhumuzu dişliyor.",
+    "swampcook history3": "Ne demeye çalıştığını hâlâ anlamıyorum.",
+    "swampcook history3 answ": "Ah~?! Kabile fazla büyüdü! Bataklık artık fazla tehlikeli! Şimdi kabile küçülüyor! Tehlike ise daha da güçlü!",
+    "swampcook historyend": "Snake Fang kabilesinin tarihi hakkında öğrenebileceğimi düşündüğüm her şeyi öğrendim.",
+    "swampcook historyend answ": "A-ha~! Alınacak ders var! Başka ne bilmek istersin?!",
+    "swampcook surround": "Bana... yılanın ruhundan bahset?",
+    "swampcook surround answ": "Ahh~! Topraklar! Ruh onlar! Ama eskiden daha genişti! Dağ! Ovalar! Ormanlar! Koy! Hepsi eskiden yılanın ruhundaydı!",
+    "swampcook surround1": "Ha, ben aslında dağlardan geldim.",
+    "swampcook surround1 answ": "Ha-ha~! O zaman biliyorsun bile! Kuzeybatı, yürüyen kayaların ve düşen suyun olduğu yer!",
+    "swampcook surround2": "Buralarda ova mı var?",
+    "swampcook surround2 answ": "Ahh~! Evet! Güneydoğu! Yılan orada avlanırdı! Ama yılan bölündü! Ve şimdi ovalara hiçbir yılan gitmiyor!",
+    "swampcook surround3": "Hangi ormanlardan bahsettiğin konusunda ~çok~ daha net olman gerekecek.",
+    "swampcook surround3 answ": "Ha~! Haklısın! Düşen suyun güneyi! Islak ormanlar! Orada toplardık biz! Ama şimdi?! Sadece yürüyen kayaların evi!",
+    "swampcook surround4": `"Koy" derken neyi kastediyorsun?`,
+    "swampcook surround4 answ": "A-ha~! Ta kuzeyde! Bir sürü baharat, et, metal, deri oradan gelir! Çok uzaklardan! İyi yer, gitmek için! Ayrılmak için!",
+    "swampcook surroundend": "Bataklığın çevresindeki topraklar hakkında yeterince öğrendim.",
+    "swampcook surroundend answ": "A-ha~! Belki bir gün o toprakları görürsün!",
+    "swampcook chief": "Yılanın başı hakkında ne anlatabilirsin?",
+    "swampcook chief answ": "A-ha~! Çok güçlü! Çok saldırgan! Isırmakta hızlı!",
+    "swampcook chief1": "Bana ~sadece~ yılanlardan mı bahsediyorsun?",
+    "swampcook chief1 answ": "Ha~! Saçma kazoku! Hayır! Yılanın başı eskiden daha sakindi! Ama şimdi yeni bir baş!",
+    "swampcook chief2": `Yeni... bir baş mı? Peki "eski" başa ne oldu?`,
+    "swampcook chief2 answ": "Ha-ha~! Her başa olan şey! Ama yılan yumurta bırakmadı! Akraba baş olur!",
+    "swampcook chief3": "Yani eski, daha az saldırgan olan şef öldü? Ve çocuğu olmadığı için bir kardeşi yeni şef mi oldu?",
+    "swampcook chief3 answ": "Haa~! Kazoku'nun kulağı var! Evet! Ve eski dertler yeniden yeni! Ama yılanın başı sadece karşılık ısırır!",
+    "swampcook chiefend": "Tamam. Kabilenin şefi hakkında anlayabileceğimi düşündüğüm her şeyi öğrendim",
+    "swampcook chiefend answ": "Ha~! Dramatik bir trajedi! Ama hayat bu!",
+    "swampcook people": "Yılanın bedeni hakkında ne anlatabilirsin...?",
+    "swampcook people answ": "A-ha~! O benim! Sen! Hepimiz! Belki takas ustamızı çoktan gördün?! Ya da bilenmemiş dişleri mi öğrenmek istersin?!",
+    "swampcook cook": "Bana kendinden bahset.",
+    "swampcook cook answ": "A-ha~! Ben açık bir kitap! Ama bana zaten yardım ettin! Başkasını öğrenmek daha iyi olur!",
+    "swampcook cook2": "Bari eti nereden bulduğunu söyler misin?",
+    "swampcook cook2 answ": "Zalgo öldürürüz! Elimizden geldiğinde kaplumbağa! Mecbur kaldığımızda timsah! Yılan aramayız! Gelen zalgo'yu öldürürüz! Her zaman gelirler...!\n\n*[Aşçı birden susuyor, sonra boğazını temizleyip sana soru sorar gibi mırıldanıyor]*",
+    "swampcook trader": "Bana şu... takas ustası hakkında ne anlatabilirsin?",
+    "swampcook trader answ": "Ahh, kampın ön tarafındaki tezgahı o işletir! Takas etmesi için ona çok et veririm! Karşılığında bana yabandan topladıklarını verir, kullanmam için!",
+    "swampcook trader1": "Çoğu insan buna sadece tüccar ya da satıcı der, hele bir de sadece kendilerine verileni satıyorlarsa.",
+    "swampcook trader1 answ": "Ah~, hayır! Yabandan toplayan oğlu! Oğlunun bu işe gözü yoktu! Ama herkes öğrenebilir! Bir kısmını bana verir! Kalanını satarlar!",
+    "swampcook trader2": "Ama neden? Bana kötü bir anlaşma yapıyormuşsun gibi geliyor. Ona bedavaya bunca et vermenin karşılığında ne alıyorsun?",
+    "swampcook trader2 answ": "Ha~! Çünkü biz kazoku'yuz! Ve ah-! Özel bir şey bulduğunda! Önce benim gözüme, der!",
+    "swampcook trader3": "Ne? Tüccar ne sıklıkta özel bir şey buluyor?",
+    "swampcook trader3 answ": "Ara sıra! Ha~!",
+    "swampcook traderend": "Sağ ol... Sanırım tüccar hakkında yeterince öğrendim.",
+    "swampcook traderend answ": "A-ha~! Sana başka neyi anlatabilir?!",
+    "swampcook fangs": "Sürekli bahsettiğin şu bilenmemiş dişler kim?",
+    "swampcook fangs answ": "Ahh, biri yan kulübedeki deri işçisi olur! Ama önce! Kulübe meydanının karşısında kumaşçımız var! İlk bilemen gereken o! Yaşlı kadının bilenmekten çok kırılma ihtimali var, a-ha~!",
+    "swampcook tailor": "Kumaşçı hakkında ne bilmem gerekiyor?",
+    "swampcook tailor answ": "Ha~! Çok gergin adam! Kumaşı o yapar!",
+    "swampcook tailor1": "Tamam, yani sadece terzi demek istiyorsun.",
+    "swampcook tailor1 answ": "Ahh, kumaş yapmak çok zor! Ve o bundan fazlası! Yaraları da sarar!",
+    "swampcook tailor2": "Anlıyorum... Bir şekilde bilmem gerektiğini düşündüğün başka bir şey var mı?",
+    "swampcook tailor2 answ": "Çok şey oldu o! Çok hünerli adam! Yıllarca izcilik yaptı! Sonra öğrendiklerini kumaş yapmakta kullandı! Ama şimdi?! Yapılacak çok iş! Yeterince el yok artık! Ailesine gitmeyi öğrettiğinden beri yok!",
+    "swampcook tailorend": "Bu yardımcı oldu mu? Belki? Her hâlükârda terzi hakkında yeterince biliyorum sanırım.",
+    "swampcook tailorend answ": "Ahh?! Belki ben doğru anlatmıyorum?!",
+    "swampcook tanner": "Deri işçisi hakkında bilmem gereken şeyler olduğunu söylemiştin?",
+    "swampcook tanner answ": "Ah~! Yaşlı kadın hamı deriye çevirir!",
+    "swampcook tanner1": "Ben ona sadece tabakhaneci derdim, ama tamam. Ne olmuş ona?",
+    "swampcook tanner1 answ": "Yaralı o! Yorgun! Kırılıyor! İçi de dışı da! Kalbi de elleri de! Yaş ona zalim davrandı! Çok yönden!",
+    "swampcook tanner2": "Zor iş, dostum. Onun için deri işlemene yardım etmenin sebebi bu mu?",
+    "swampcook tanner2 answ": "Ha~! Evet! Her kötü deri parçası onu üzer! Yardım edebilir! Ama ancak bu kadar!",
+    "swampcook tannerend": "Pekâlâ. Tabakhaneciye nasıl yardım edebileceğim konusunda bir fikrim var sanırım.",
+    "swampcook tannerend answ": "A-ha~! İyi kazoku! Ama unutma! Önce kumaşçıya yardım et!",
+    "swampcook peopleend": "Snake Fang kabilesinin insanları hakkında bilmem gereken her şeyi öğrendim sanırım.",
+    "mofu#swampcook peopleend": "Snake Fang kabilesinin kertenkele soyluları hakkında bilmem gereken her şeyi öğrendim sanırım.",
+    "swampcook peopleend answ": "Ha~! Eminsen! O zaman başka bir şey anlatmam! Kulübe meydanının karşısına git! Kumaşçıyla konuş! Ona \"tumana\" de! O zaman dinler seni! Ben deri işçisiyle konuşur! Senin için!",
+    "swampcook whycrab": "Yalnız anlamadığım tek bir şey var. Yengeç-ee, kaya eti sana nasıl yardımcı oluyor? Etrafta zaten bir sürü kuru et var.",
+    "swampcook whycrab answ": "A-ha~! İnsanın birkaç sırrı olmalı! A-ha-ha~!",
+    "swampcook whycrabpress": "Kes şu yapmacık kahkahayı artık! Bir kere olsun bana dürüst ol! Neler olduğunu anlat!",
+    "swampcook whycrabpress answ": "*[Aşçı gülümsemeyi bırakıyor ve sesini kısıyor]*\n\nYalan söylemem. Ne kahkahayla, ne yardımla. Burada olmayı ben seçiyorum. Şimdi. Yaşayarak. Yardım ederek. Kaçarsam, yaşamıyorum. Gülmüyorsam, yaşamıyorum. Yardım etmiyorsam, yaşamıyorum. Ve burada ölürsem? Yardım ederek ölürsem? Gülerek ölürsem? O zaman yaşayarak ölürüm. Şimdi sıra sende, dürüst ol? Bana değil. Kendine. Ne için yaşıyorsun? Ne için gülüyorsun? Ne için öleceksin? Merak ediyorum. Kaçacak mısın? Yoksa gülümseyecek misin?",
+    "swampcook whycrabdrop": "Peki. Zaten ne dediğini anlayacağımı sanmıyorum.",
+    "swampcook whycrabdrop answ": "A-ha~?!",
+    "swampcook nolore": "Neden bahsettiğini gerçekten bilmek istemiyorum. Sadece bundan sonra kime yardım edebileceğimi söyleyebilir misin lütfen?",
+    "swampcook nolore answ": "Sosso! Üzgün kazoku! Ama tamam! İlki kulübe meydanının karşısındaki kumaşçı! Ona \"tumana\" de! Ona yardım ettikten sonra, yan kulübedeki deri işçisine git!",
+    "swampcook liked": "İşler nasıl gidiyor?",
+    "swampcook liked answ": "Menaka kazoku! İyiyim ben! Çünkü sen yılanın dişlerini bileyip duruyorsun! Bana bu yeter!",
+    "swampcook noloreteach": "Atölyenin etrafında asılı gördüğüm kuru etleri nasıl yaptığını bana öğretebilir misin?",
+    "swampcook noloreteach answ": "A-ha~! Sevinerek, kazoku! Bir parça al! Ve benim yaptığımı yap!\n\n*[Aşçının tuhaf sözleri, gür sesi, garip konuşma ritmi ve hiç kesilmeyen şarkısı ne dediğini anlamayı zorlaştırıyor, ama hareketlerini takip ederek bataklık yaratıklarının etinden nasıl kuru et yapıldığını kapıyorsun.]*",
+    "swampcook obaru": "Şey... obaru? Obaru ne demek?",
+    "swampcook obaru answ": "Ha~! Sen obaru'sun! Saçma obaru!",
+    "swampcook kazoku": "Tamam, kazoku ne demek?",
+    "swampcook kazoku answ": "A-ha~! Biz kazoku'yuz! Saçma kazoku!",
+    "swampcook sosso": "Bana anlamadığım kelimeler söylemeye devam mı edeceksin? Sosso ne demek?",
+    "swampcook sosso answ": "Ha~! Tamam! Sizin dilinizde sosso...! Ahmak?! Evet! Ahmak! Sen ahmaklık ediyorsun!",
+    "swampcook zalgo": `"Zalgo" genelde bir tehdit mi?`,
+    "swampcook zalgo answ": "Ahh~, evet! Zalgo bu demek! Bir tehdit! Her zaman hazır olmalıyız! Ama artık daha zor! Zaten hiç kolay değildi ki! Ha-ha~!",
+    "swampcook menaka": "Menaka ne demek diye sormaya kalkışmaya değer mi acaba?",
+    "swampcook menaka answ": "A-ha-ha~! İyi bir şey!",
+    "swampcook tumana": "Peki söyler misin, tumana da ne?",
+    "swampcook tumana answ": "Tumana! Evet! Kumaşçıya söyle!",
+
+    /*
+        SWAMPLAND TAILOR
+
+        Register: anxious, overworked, sharp-tongued, then genuinely apologetic.
+        The hero addresses him FORMALLY (siz) and he answers with "sen". He is
+        neither elderly nor a chief, but he is a stranger the hero has just
+        startled, and Turkish would use "siz" there; the asymmetry also carries
+        how rude he is at first and how much it costs him to apologise later.
+
+        The winge loop fragments are clipped mid-clause at both ends in the
+        English. Turkish word order is different, so the cut points move - but
+        every fragment still starts and ends mid-thought, which is the effect.
+        The comments in locales/english.js give the full sentence each fragment
+        is taken from; the Turkish is cut from the Turkish of that sentence, not
+        from the English fragment.
+
+        "-I'm a tailor, not a doctor, for-" is McCoy's catchphrase; "Ben terziyim,
+        doktor değil" is the shape a Turkish audience knows it in.
+
+        "time is bleeding out" is kept as a bleeding image ("zaman kanayıp
+        gidiyor") rather than flattened to "vakit daralıyor" - a wounded scout is
+        bleeding out in the next hut, and he means it literally.
+    */
+    "swamptailor description 1": "Terzinin atölyesine yaklaşırken içeriye göz atıyorsun; kıpır kıpır bir adamın birden fazla iş arasında hızla gidip geldiğini görüyorsun. Birileriyle kısık sesle konuşuyor gibi, ama yaklaştıkça etrafta başka kimse olmadığını fark ediyorsun.",
+    "swamptailor description 2": "Terzinin atölyesine yaklaşırken, uğraştığı işi çoktan bırakıp seninle buluşmak için dışarı çıktığını görüyorsun.",
+    "swamptailor description 3": "Terzinin atölyesine yaklaşıyorsun; ortalıkta hiç durmadan telaşlanmasının üstünden sesini duyurabilmek için kapıyı yüksek sesle çalıyorsun.",
+    "swamptailor interrupt": "*[atölyenin kapısına vuruş]*",
+    "swamptailor interrupt answ": "-hem ben nasıl-\n\n*[Orada olduğunu fark edince terzi elindekini bırakıp yakındaki bir masanın arkasına atlıyor, üstündekileri yere döküyor. Silah olacak bir şeye boş yere uzanırken ağır ağır doğruluyor]*\n\nNe? Sen kimsin! Burada ne arıyorsun! Buraya nasıl geldin!",
+    "swamptailor listen1": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen1 answ": "-keteni kaynat, diyor, sanki bu-\n\n*[Terzi dikiş aletlerini bırakıp ocağın yanında fokurdayan bir tencereyle oynamaya gidiyor]*",
+    "swamptailor listen2": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen2 answ": "-o kadar kolaysa neden kendisi-",
+    "swamptailor listen3": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen3 answ": "-ben terziyim, doktor değil, hay-\n\n*[Terzi tencereden uzaklaşıp bir masaya geçiyor ve orada eski bezleri sökmeye başlıyor]*",
+    "swamptailor listen4": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen4 answ": "-pusuya düşmeleri benim suçum-",
+    "swamptailor listen5": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen5 answ": "-daha iyi zırhları olsaydı-\n\n*[Terzi kesmenin ortasında duruyor, bir demet bitkiyi elleyip karıştırıyor, sonra ocağın yanındaki tencereye geri dönüyor]*",
+    "swamptailor listen6": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen6 answ": "-öyle kolayca iyileştirebileceğimi-",
+    "swamptailor listen7": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen7 answ": "-diğerleri en azından onun kaçmasını-\n\n*[Terzi tencereden dönüyor, gevşek duran incecik bez şeritlerini bir iğne iplikle kapıp onları birbirine dikmeye çalışmaya başlıyor]*",
+    "swamptailor listen8": "*[Terzinin seni fark etmesini bekle]*",
+    "swamptailor listen8 answ": "-taze beze ihtiyacımız var, yoksa-",
+    "swamptailor cookword": `Özür dilerim! Beni aşçı gönderdi! Size "tumana" demem gerektiğini söyledi!`,
+    "swamptailor cookword answ": "Bir de ödümü koparmanı mı söyledi!?\n\n*[Terzi çırpınmayı bırakıp devrilmiş masanın arkasından temkinle çıkıyor]*\n\nTuhaf bir ken, tuhaf giyinmiş, tuhaf kokuyor. Sen de kimsin!? Aşçının ken'i misin?",
+    "swamptailor help": "Onun... ken'i mi? Hiç değil. Doğrusunu söylemek gerekirse, çoğu zaman bana ne anlattığını anlamak bile zordu, ama bunu söylersem beni dinleyeceğinizi söyledi.",
+    "swamptailor help answ": "*[Terzi derin bir iç çekiyor]*\n\nTabii ki böyle yapması gerekiyordu... Sana güvenmem için hiçbir sebep yok, ama \"tumana\" onun dilinde bereketli topraklar demek ve bunu bilsen bile, gelip bana söylemenin hiçbir sebebi olmaz. Yani tahmin etmem gerekirse, kendi usulünce bana şunu söylemeye çalıştığını düşünürüm: seni hem elemiş ve en azından idare eder derecede yetkin bulmuş, hem de benim için keten toplayacak kişi sensin. İki yüz demet, ihtiyacım olanın en azını yapmaya başlamaya yeter. Hadi yürü şimdi, git, hışt, zaman kanayıp gidiyor.",
+    "swamptailor flax": "Bir saniye! Keten ne, ve neden onu sizin için topluyorum?",
+    "swamptailor flax answ": "*[Terzi bir kez daha derin bir iç çekiyor]*\n\nDikkatimi dağıtıyorsun, beni paniğe sokuyorsun, çalışma yerimi darmadağın ediyorsun, şimdi de büyük ırmak havzasının yukarı yakasında kendiliğinden yetişen en değerli bitkilerden birini bile bilmediğini mi söylüyorsun? Tabii ya. ~Yetkin~ bir yardım beklemem de neden ki. Hele senin gibi bir yabancıdan. Bak-\n\n*[Terzi eğilip mavi çiçekli, uzun ve ince bir bitki alıyor]*\n\n-BU keten. Dağlara çık, daha fazlasını bul ve bana getir. İki yüz demet. Teşekkürler, hoşça kal.",
+    "swamptailor deliver": "İstediğiniz 200 demet keten bitkisinin hepsini toplamayı başardım.",
+    "swamptailor deliver answ": "Başardın mı? Ben... Özür dilerim, daha önce seninle konuşma şeklim kabaydı. Lütfen anla, bu bitkiler taze bandaj yapmakta kullanılacak ve onlar olmadan... Lime lime olmuş paçavraları yeniden kullanmaya çalışarak pek bir şey yapabileceğimi sanmıyorum. Umarım yeterince hızlı olmuşsundur. En zor kısmı çoktan yaptıktan sonra bunu senden istemeyi düşünmenin bile yakışıksız olduğunu biliyorum, ama biraz daha zaman ayırıp bunları kullanılabilir keten beze işlemeye başlamama yardım eder misin? Ne yapacağını bilmesen bile -- ki bilmediğinden gayet eminim -- fazladan bir çift el dünyayı değiştirir, üstelik sonrasında sen de kendi keten bezini yapabilir hâle gelebilirsin.\n\n*[Terzi sana keteni keten beze nasıl işleyeceğini öğretiyor]*",
+    "swamptailor deliver not": "Başardın mı? Nerede peki? Lütfen, o bitkilere ~ihtiyacım~ var. Her saat önemli.",
+    "swamptailor liked": "Bugün size yardımcı olabileceğim bir şey var mı?",
+    "swamptailor liked answ": "Yok, dostum, gerçi sabrın ve ilgin için sana minnettarım. Ellerim ne kadar dolu olsa da, ki her zaman dolu, senin zamanının ve becerilerinin başka yerlerde daha iyi harcanacağını biliyorum.",
+
+    /*
+        SWAMPLAND SCOUT
+
+        Register: a dying young woman, and the two of them are peers - "sen" both
+        ways. She is the one the tanner is making armor for and the one the
+        tailor needs bandages for, so her lines have to stay consistent with
+        those two trees: it is her leg (and, as a lizardfolk, her tail) that is
+        gone, and the rot smell is what "every hour counts" refers to.
+
+        The ellipses inside her sentences are her breath giving out, not
+        punctuation. They fall at awkward places in the English on purpose. Word
+        order differs in Turkish, so they are placed at points that are equally
+        awkward in Turkish rather than at the same word - moving them to natural
+        clause breaks would have quietly healed her.
+
+        "den kin" is "in halkı", as the chief already says it in his own tree.
+        The chief is "şef" throughout, including where the English varies between
+        "chief" and "chieftan".
+    */
+    "swampscout description 1": "Kapının yanındaki bir karyolada yatan genç bir kadın görüyorsun. Göğsü eski kanla lekelenmiş yıpranmış bandajlarla kaplı, kolları kesik ve sıyrıklarla dolu, alt tarafı ise bir battaniyenin altında gizli. Ona yaklaştıkça çürüme kokusu ağırlaşıyor.",
+    "swampscout description 2": "İzcinin kapının yanındaki karyolada yattığını görüyorsun. Göğsü taze kanla lekelenmiş yıpranmış bandajlarla kaplı, kolları kesik ve sıyrıklarla dolu, alt tarafı ise bir battaniyenin altında gizli. Ona yaklaştıkça çürüme kokusu ağırlaşıyor.",
+    "swampscout description 3": "İzcinin kapının yanındaki karyolada yattığını görüyorsun. Göğsü taze kanla lekelenmiş yeni bandajlarla kaplı, kolları çürük ve yara izleriyle dolu, alt tarafı ise bir battaniyenin altında kısmen gizli; sağ bacağının eskiden bulunduğu yerde boşluk görünüyor.",
+    "swampscout description 4": "İzcinin kapının yanındaki karyolada hafif bir uykuya daldığını görüyorsun. Bırak da dinlensin.",
+    "mofu#swampscout description 1": "Kapının yanındaki bir karyolada yatan genç bir kadın görüyorsun. Göğsü eski kanla lekelenmiş yıpranmış bandajlarla kaplı, kolları kesik ve sıyrıklarla dolu, alt tarafı ise bir battaniyenin altında gizli. Ona yaklaştıkça çürüme kokusu ağırlaşıyor.",
+    "mofu#swampscout description 2": "İzcinin kapının yanındaki karyolada yattığını görüyorsun. Göğsü taze kanla lekelenmiş yıpranmış bandajlarla kaplı, kolları kesik ve sıyrıklarla dolu, alt tarafı ise bir battaniyenin altında gizli. Ona yaklaştıkça çürüme kokusu ağırlaşıyor.",
+    "mofu#swampscout description 3": "İzcinin kapının yanındaki karyolada yattığını görüyorsun. Göğsü taze kanla lekelenmiş yeni bandajlarla kaplı, kolları çürük ve yara izleriyle dolu, alt tarafı ise bir battaniyenin altında kısmen gizli; kuyruğunun ve sağ bacağının eskiden bulunduğu yerlerde boşluklar görünüyor.",
+    "swampscout meet": "Merhaba? Rahatsız ettiysem kusura bakma, sadece kendimi tanıtmak istedim.",
+    "swampscout meet answ": "*[Genç kadın cansız bir hareketle başını çevirip sana usulca gülümsüyor]*\n\nSenden zaten haberim var. Liderimiz saflarımıza yeni bir in halkının katılabileceğini söyledi. Bunun olduğunu son gördüğümden beri... çok zaman geçti. O zaman çocuktum. Ve şimdi şuna bak... hâlâ herkese yardım etmeye çalışıyor...",
+    "swampscout lore1": "İyi misin?",
+    "swampscout lore1 answ": "Konuşmam anlaşılmaz ya da saçma gelirse bağışla. Ne kadar zaman önce olduğunu bile bilmediğim... bir andan beri arafta gibiyim. Dün gibi geliyor. Ama aynı zamanda... yıllar önceymiş gibi. Sanki hep bu karyolada yaşamışım gibi...",
+    "swampscout lore2": "Ne oldu?",
+    "swampscout lore2 answ": "Ha. Duymuş olman gerektiğini... düşünmüştüm.\n\n*[Genç kadın cansız bir hareketle başını öte yana çevirip uzaklara dalıyor]*\n\nZor birkaç yıl geçirmiştik: bataklıklarda avlanabilir... doyurucu etin miktarı azalıyordu. Doğal otlar ve sebzeler her yıl... daha da kıtlaşıyordu. Ve yılanlar... kampa daha sık sızıyordu. Nöbetçi dikmiştik, ama öyle hızlı ve sessizdiler ki, çoğu zaman... güneş doğana kadar gittiklerini fark etmiyorduk.",
+    "swampscout lore3": "*[Devam etmesine izin ver]*",
+    "swampscout lore3 answ": "Şimdiki şefimiz, son şefimizin bağ eşinin... kardeşi ve o zamanın... av ustası, en iyi seçeneğin bataklığa av bölükleri... göndermek olduğuna karar verdi; yılanın inini bulup gece yarısı... saldırılarını durdurabilelim diye. Yılan saldırıları onun av ustalığı zamanında... yoğunlaşmıştı ve onları bataklıktan sürmenin... kaderi olduğunu düşünüyordu.",
+    "swampscout lore4": "*[Devam etmesine izin ver]*",
+    "swampscout lore4 answ": "Haftalar geçti, erzağımız da onlarla birlikte... tükendi. Toplayıcılık ya da yeni av yerleri... arayacak gruplar var olmayan yılan inlerini arıyordu; sınırlarının ötesine zorlanan acemi izciler yüzünden ölümler... neredeyse günlük hâle geldi. O büyüklükte yılanlar zaten bu kadar küçük bir batakta yuvalarını... saklayamazdı. Ona anlatmaya çalıştık, ama hayır, hükmünü sorgulayarak şefin şerefine... meydan okumaya cüret edemezdik. Çok geçmeden bazıları buradan güneydoğudaki büyük ovalara... gitmekten söz etmeye başladı.",
+    "swampscout lore5": "*[Devam etmesine izin ver]*",
+    "swampscout lore5 answ": "Şef öfkelendi. Hepsini... sürdü; kabileyi zayıflatmaktansa batağa yem... olmalarının daha hayırlı olacağını söyledi. Ve böylece bölündük. O gece pek çok zanaatkâr, izci ve... savaşçı gitti. Kardeşim de onlarla gitti, doktorumuz, demircimiz ve... terzinin kız kardeşi de. Ben sadece... bir izci olsam da savaşçı olmak istemiştim. O zamanlar şefimizin görüşüne... tamamen bağlıydım. Kudretin haklı kıldığını, gücün güvenlik getirdiğini düşünüyordum. Merak ediyorum... sağ kaldılar mı, orada yeni bir şey kurdular mı... Nasıl bir hayat yaşayabilirdim acaba...",
+    "swampscout lore6": "*[Devam etmesine izin ver]*",
+    "swampscout lore6 answ": "Halkımızın bu kadarı... gidince, kapıyı gözleyecek daha az göz, mızrağı tutacak daha az... el, yere kulak verecek daha az kulak kaldı. Her şeyi... küçültmek, duvarları içe çekmek ve kabuğa çekilmek zorunlu hâle geldi. Herkes iki, üç kişinin işini yapıyordu. Yine de yılan... avı sürdü. Bizi kollayacak hayaletlerden başka kimse yokken batağın bir ucundan öbürüne bir av... ...yılanlar üzerimize çökerken...",
+    "swampscout lore7": "Bütün bunlar için üzgünüm.",
+    "swampscout lore7 answ": "Kendimi güçlü sanıyordum. Yaşamanın... güçlü olmak demek olduğunu sanıyordum. Ölümün karşısında... dikilmek. Ama şimdi... Yaşayan her şeyin sonu gelmeye yazgılı. Acı içinde, yaşamla ölümün... bitmeyen bir sarmalında yaşamaya...",
+    "swampscout lore8": "Vay...",
+    "swampscout lore8 answ": "*[İzci cansız bir hareketle başını sana çeviriyor]*\n\nÖzür dilerim. Seninle daha tanıştım ve kalkıp... her şeyin arasından bunu anlatıyorum. Başka bir şeyden... konuşabiliriz. Bataklıklarda çok... zaman geçirdim, orada ilginç şeyler... yetişiyor.",
+    "swampscout generic": "Senin için yapabileceğim bir şey var mı?",
+    "swampscout generic answ": "Yok... Yok, bu noktada bana tek yardım edecek şey... zaman. Ama oturup benimle konuşman... iyi geliyor. Sağ ol.",
+    "swampscout help": "Al, acını dindirmeye yardımcı olsun diye sana bir iyileştirme iksiri getirdim.",
+    "swampscout help answ": "Ah... Sağ ol. Umarım bu... biraz uyumama yardım eder.",
+    "swampscout help not": "Kusura bakma, bana ne verdiğini... gösterebilir misin?",
+    "swampscout foraging": "Bataklıkta neler yetiştiğini duymak beni gerçekten çok ilgilendirir.",
+    "swampscout foraging answ": "Tamam... Yatağa otur, sana yıllar içinde... gördüklerimi anlatayım.",
 };
 
 const ui = {

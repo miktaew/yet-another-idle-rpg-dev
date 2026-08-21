@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 7 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 8 -->
 
 # Proposals
 
@@ -163,9 +163,12 @@ races and bio sections; and the options panel has a selector built from the
 covers the lookup and the fallback. The translator handbook and glossary are in
 [I18N.md](I18N.md).
 
-**Remaining** — the 478 dialogue ids, and then the display-name indirection layer
-that item, skill and location names need. Quest text, `help.html` and
-`changelog.html` have no translation hook at all yet; see the known gaps in
+**Remaining** — every dialogue id, quest, skill, stance and enemy is done, and
+the Turkish locale is at 100% of the 907 keys the reference declares. What is left
+is the registries the display-name layer has not been pointed at yet: item,
+location, recipe, activity and trader names, plus item, location, effect and
+activity descriptions and the ~244 strings of location action text. `help.html`
+and `changelog.html` still have no translation hook at all; see the known gaps in
 [I18N.md](I18N.md).
 
 ### P-8 — Fix the reported NaN warnings `active`

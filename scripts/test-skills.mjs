@@ -331,7 +331,9 @@ const playable_races = {};
 // game readable rather than showing "text not found" everywhere. These checks
 // exist because that failure mode is invisible until a player sees it.
 
-let first_untranslated;
+// An id present in English and deliberately absent from every other locale, to
+// exercise the fallback. See the block below for why it is planted rather than found.
+const english_only_id = "test fixture english only id";
 const { translationManager, translations } = await load_with_stubs(
     "src/translation.js",
     ["./main.js"],
@@ -346,25 +348,18 @@ const global_flags = globalThis.__test_flags;
         translationManager.getText("turkish", "ui create") === "Kahramanını oluştur",
         `got=${translationManager.getText("turkish", "ui create")}`);
 
-    // Ids the Turkish locale has not reached yet must show the English text, not
-    // the "text not found" placeholder. This picks the first still-missing id at
-    // runtime rather than naming one, so translating more text cannot make the
-    // check stale - it broke exactly that way once.
-    // Pick an id that has NO mofu# counterpart, so this checks the fallback and
-    // nothing else. With the variant flag on, getText prefers the variant, so an id
-    // that has one would legitimately fall back to the variant's text rather than
-    // the base - which is correct behaviour and is covered by its own checks below.
-    const english_keys = Object.keys(translations.english);
-    first_untranslated = english_keys.find(key =>
-        !key.startsWith("mofu#")
-        && !(key in translations.turkish)
-        && !(`mofu#${key}` in translations.english));
-    check("there is still an untranslated id without a variant to test with", Boolean(first_untranslated));
-
-    const untranslated = translationManager.getText("turkish", first_untranslated);
-    check("an untranslated id falls back to English",
-        untranslated === translations.english[first_untranslated],
-        `id=${first_untranslated} got=${String(untranslated).slice(0, 40)}`);
+    // Ids a locale has not reached yet must show the English text, not the "text
+    // not found" placeholder. The gap is PLANTED here rather than discovered: an
+    // earlier version of this check picked the first still-missing id at runtime,
+    // which passed only while the Turkish locale was partial and started failing
+    // the moment it reached full coverage. Planting it also keeps the check
+    // honest in the other direction - it tests the fallback, not the backlog.
+    // The id has no mofu# counterpart, so nothing but the fallback is in play.
+    translations.english[english_only_id] = "English only text";
+    const untranslated = translationManager.getText("turkish", english_only_id);
+    check("an id missing from the active language falls back to English",
+        untranslated === "English only text",
+        `got=${String(untranslated).slice(0, 40)}`);
     check("the fallback is not the not-found placeholder",
         !untranslated.startsWith("text not found"));
 
@@ -421,8 +416,8 @@ const global_flags = globalThis.__test_flags;
     check("getOptionalText returns undefined for an id the language lacks",
         translationManager.getOptionalText("turkish", "no such id at all") === undefined);
     check("getOptionalText does not fall back to the default language",
-        translationManager.getOptionalText("turkish", first_untranslated) === undefined,
-        `id=${first_untranslated}`);
+        translationManager.getOptionalText("turkish", english_only_id) === undefined,
+        `id=${english_only_id}`);
 }
 
 console.log("");

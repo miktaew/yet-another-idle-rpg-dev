@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 15 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 16 -->
 
 # Changelog
 
@@ -16,6 +16,110 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 
 ---
 
+## 2026-08-21
+
+### The swamp cast is finished, and the Turkish locale is complete — P-7
+
+**907 of 907 keys.** The last gap was three dialogue trees — the cook at 111 keys,
+the tailor at 32, the scout at 32 — and with them in, `npm run check` reports
+100.0% coverage with nothing missing and no unknown keys.
+
+**What "broken speech" has to become in Turkish.** The cook is the only one in the
+camp who speaks broken English, and the brokenness is specific: missing articles,
+a dropped copula ("It good place to go"), telegraphic exclamations. Turkish has no
+articles and drops the copula as a matter of course, so translating those markers
+literally produces perfectly ordinary Turkish — the character would simply
+disappear. The equivalent markers are different ones: dropped person agreement on
+verbs (`yardım eder` where the sentence needs `yardım ederim`), and bare nouns
+where a case suffix is obligatory. Applied at one or two per line, which is enough
+to hear a foreigner and not enough to become a chore to read.
+
+He drops it in exactly one place, and the English does too. In `whycrabpress answ`
+the laughter stops, and his grammar is suddenly clean. That is the scene: the
+laughing is a choice, not a limitation. The Turkish is clean there too.
+
+**A collision worth recording.** The tribe's motif is "sharpen the snake's fangs",
+and `bilemek` is the right verb for it — except that `bile-` plus `-iyor` collapses
+to `biliyor`, which is the verb *to know*. In a tree whose whole subject is knowing
+the tribe before you can help it, that is not a harmless ambiguity. Every other
+form is safe, so the one line that needed the present continuous reads
+`bileyip duruyorsun` instead. Recorded in [I18N.md](I18N.md) so it does not have to
+be rediscovered.
+
+**The tailor's fragments.** His winge loop is eight lines that are each cut off
+mid-clause at both ends — `-boil the linen, he says, as if that'll-`. Turkish word
+order puts different material at the cut points, so translating the English
+fragment gives a fragment that breaks in the wrong place, or worse, a complete
+sentence. The English comments record the full sentence each fragment came from;
+the Turkish is cut from the Turkish of that sentence instead. Every fragment still
+starts and ends mid-thought, which was the whole effect.
+
+**The scout's ellipses are breath, not punctuation.** They fall in awkward places
+in the English on purpose — `the brother... to our last chieftan's bondmate`. Word
+order moves in Turkish, so keeping them at the same words was not possible; moving
+them to natural clause breaks was, and would have quietly healed her. They are
+placed at points that are equally awkward in Turkish.
+
+**Three trees, one story.** The tanner is making armour for someone, the tailor
+needs flax for bandages, and the scout is the one in the cot with a leg missing and
+the smell of rot getting stronger. Those trees were translated days apart, so the
+terminology had to be reconciled across them: `den kin` is `in halkı` because the
+chief already says it that way in his own tree; the chief is `şef` throughout, even
+where the English wanders between "chief" and "chieftan"; the tanner's `beş düzine`
+and the cook's `üç kere yirmi` are both kept because the contrast is the
+characterisation. This is the "nothing below may contradict what is above it"
+rule at the scale of a whole camp rather than a single screen.
+
+**Address register.** The hero uses `siz` to the tailor and `sen` to the scout. The
+tailor is neither elderly nor a chief, but he is a stranger the hero has just
+startled out of his skin, and Turkish uses `siz` there; the asymmetry against his
+own `sen` also carries how rude he is at first and what it costs him to apologise
+later. The scout is a peer of the hero's age who calls them potential den kin, so
+`sen` runs both ways.
+
+**A test that only passed while the work was unfinished.** The fallback check
+picked the first still-untranslated id at runtime, and the comment above it said
+this was so that translating more text could not make the check stale. That was
+exactly backwards: at full coverage there is no untranslated id, the check found
+nothing, and three assertions failed. The gap is now planted rather than
+discovered — an English-only fixture id, so the check tests the fallback instead of
+the size of the backlog. 48 checks pass.
+
+Coverage 80.7% to **100.0%**.
+
+### Enemies, stances and the location menu speak Turkish — P-7
+
+31 enemy descriptions, 32 enemy names, 2 stance descriptions and the 9
+location-choice dropdown labels moved behind ids. `Enemy.getName()` and
+`Enemy.getDescription()` resolve them, so `enemy_templates` keys — which are save
+data — stay English.
+
+**A regression I caused two entries ago and caught here.**
+`Stance.getDescription()` fell back to `skills[this.related_skill].description` for
+a stance without its own text. That read the raw field, which was fine until the
+skill descriptions moved behind ids — after which 5 of the 7 stances would have
+rendered the literal string `desc skill Heavy strike` on screen. It now calls the
+skill's own `getDescription()`. Worth noting how it hid: the two stances with their
+own descriptions are the two the eye lands on first.
+
+Four enemies carry an empty description in the source — the two sparring guards,
+the suspicious wall and the suspicious man. They keep it empty. Giving them ids
+that resolve to nothing would have added four permanent holes to every locale's
+coverage figure in exchange for nothing on screen.
+
+**On the translations.** `Direwolf` is `Ulukurt`: a coined compound rather than the
+literal `korkunç kurt`, because it has to sit in a list next to `Kurt`, `Genç kurt`
+and `Aç kurt` and read as a tier above them at a glance. `Warthog` is
+`Bakla domuzu`, the actual Turkish species name, which also keeps the `domuz`
+pairing with `Boar` → `Yaban domuzu` that the near-identical English descriptions
+set up. `Snapping turtle` is `Yılanbaşlı kaplumbağa`, the genuine Turkish name, in
+preference to a calque on "snapping". The MGS3 gag survives as
+`Graa~! Yengeç savaşı!`, and the giant crab's biggest-and-smallest joke keeps its
+shape rather than its wording.
+
+Coverage 72.8% to 80.7%, against a reference that grew to 907 keys.
+
+---
 ## 2026-08-19
 
 ### Inventoried the hardcoded text, and moved the skill descriptions — P-7
