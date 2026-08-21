@@ -403,6 +403,9 @@ async function check_content_text_ids() {
         ]},
         { file: "src/skills.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
+            //The effect readouts are parameterised, so they are getText calls rather
+            //than a field.
+            /translationManager\.getText\(language,\s*"((?:skill effect) [^"]+)"/g,
         ]},
         { file: "src/locations.js", patterns: [
             /(?<![A-Za-z0-9_])messages:\s*\[\s*"([^"]+)"\s*\]/g,

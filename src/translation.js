@@ -103,7 +103,7 @@ class TranslationManager {
         if(!params || typeof text !== "string") {
             return text;
         }
-        return text.replace(/\{([a-z_]+)\}/g, (whole, slot) => params[slot] ?? whole);
+        return text.replace(/\{([a-z_][a-z0-9_]*)\}/g, (whole, slot) => params[slot] ?? whole);
     };
 
     /**

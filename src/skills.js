@@ -488,7 +488,7 @@ function format_skill_rewards(milestone){
                                 max_level_coefficient: 2,
                                 base_xp_cost: 60,
                                 get_effect_description: ()=> {
-                                    return `Multiplies AP by ${Math.round(get_total_skill_coefficient({skill_id:"Combat",scaling_type:"multiplicative"})*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Combat", {v1: Math.round(get_total_skill_coefficient({skill_id:"Combat",scaling_type:"multiplicative"})*1000)/1000});
                                 }});
     
     skills["Pest killer"] = new Skill({
@@ -498,7 +498,7 @@ function format_skill_rewards(milestone){
                                 category: "Combat",
                                 base_xp_cost: 100,
                                 get_effect_description: ()=> {
-                                    return `Multiplies AP against small-type enemies by ${Math.round(get_total_skill_coefficient({skill_id:"Pest killer",scaling_type:"multiplicative"})*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Pest killer", {v1: Math.round(get_total_skill_coefficient({skill_id:"Pest killer",scaling_type:"multiplicative"})*1000)/1000});
                                 },
                                 milestones: {
                                     1: {
@@ -565,7 +565,7 @@ function format_skill_rewards(milestone){
                                 max_level_coefficient: 2,
                                 category: "Combat",
                                 get_effect_description: ()=> {
-                                    return `Multiplies EP against large-type enemies by ${Math.round(get_total_skill_coefficient({skill_id:"Giant slayer",scaling_type:"multiplicative"})*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Giant slayer", {v1: Math.round(get_total_skill_coefficient({skill_id:"Giant slayer",scaling_type:"multiplicative"})*1000)/1000});
                                 },
                                 get_stat_modifiers: () => {
                                     return {
@@ -582,7 +582,7 @@ function format_skill_rewards(milestone){
                                 base_xp_cost: 20,
                                 category: "Combat",
                                 get_effect_description: ()=> {
-                                    return `Multiplies EP by ${Math.round(get_total_skill_coefficient({skill_id:"Evasion",scaling_type:"multiplicative"})*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Evasion", {v1: Math.round(get_total_skill_coefficient({skill_id:"Evasion",scaling_type:"multiplicative"})*1000)/1000});
                                 },
                                 milestones: {
                                     1: {
@@ -651,7 +651,7 @@ function format_skill_rewards(milestone){
                                     max_level_bonus: 0.2,
                                     category: "Combat",
                                     get_effect_description: ()=> {
-                                        return `Increases block chance by flat ${Math.round(get_total_level_bonus("Shield blocking")*1000)/10}%. Increases blocked damage by ${Math.round(get_total_level_bonus("Shield blocking")*5000)/10}%, and blocks ${get_total_skill_level("Shield blocking")}% of attack damage before other calculations.`;
+                                        return translationManager.getText(language, "skill effect Shield blocking", {v1: Math.round(get_total_level_bonus("Shield blocking")*1000)/10, v2: Math.round(get_total_level_bonus("Shield blocking")*5000)/10, v3: get_total_skill_level("Shield blocking")});
                                     },
                                     milestones: {
                                         1: {
@@ -728,9 +728,7 @@ function format_skill_rewards(milestone){
                                     description: "desc skill Unarmed",
                                     category: "Combat",
                                     get_effect_description: ()=> {
-                                        return `Multiplies damage dealt in unarmed combat by ${Math.round(get_total_skill_coefficient({skill_id:"Unarmed",scaling_type:"multiplicative"})*1000)/1000}. 
-Multiplies attack speed, EP and AP in unarmed combat by ${Math.round((get_total_skill_coefficient({skill_id:"Unarmed",scaling_type:"multiplicative"})**0.3333)*1000)/1000}.
-Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
+                                        return translationManager.getText(language, "skill effect Unarmed", {v1: Math.round(get_total_skill_coefficient({skill_id:"Unarmed",scaling_type:"multiplicative"})*1000)/1000, v2: Math.round((get_total_skill_coefficient({skill_id:"Unarmed",scaling_type:"multiplicative"})**0.3333)*1000)/1000, v3: skills["Unarmed"].current_level/10});
                                     },
                                     max_level_coefficient: 64, //even with 8x more it's still gonna be worse than just using a weapon lol
                                     milestones: {
@@ -809,7 +807,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                     category: "Stance",
                                     max_level: 30,
                                     get_effect_description: function() {
-                                        return `Increases xp gains of all combat stance skills of level lower than this, x${this.parent_multiplier} per level of difference`;
+                                        return translationManager.getText(language, "skill effect Stance mastery", {v1: this.parent_multiplier});
                                     },
                                 });
     skills["Quick steps"] = new Skill({
@@ -821,7 +819,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Stance",
                                 max_level: 30,
                                 get_effect_description: ()=> {
-                                    return `Improves efficiency of the 'Quick Steps' stance`;
+                                    return translationManager.getText(language, "skill effect Quick steps");
                                 }});
     skills["Heavy strike"] = new Skill({
                                 names: {0: "Crushing force"}, 
@@ -832,7 +830,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Stance",
                                 max_level: 30,
                                 get_effect_description: ()=> {
-                                    return `Improves efficiency of the "Crushing force" stance`;
+                                    return translationManager.getText(language, "skill effect Heavy strike");
                                 }});
     skills["Wide swing"] = new Skill({ 
                                 names: {0: "Broad arc"}, 
@@ -843,7 +841,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Stance",
                                 max_level: 30,
                                 get_effect_description: ()=> {
-                                    return `Improves efficiency of the "Broad arc" stance`;
+                                    return translationManager.getText(language, "skill effect Wide swing");
                                 }});
     skills["Defensive measures"] = new Skill({
                                 names: {0: "Defensive measures"}, 
@@ -854,7 +852,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Stance",
                                 max_level: 30,
                                 get_effect_description: ()=> {
-                                    return `Improves efficiency of the "Defensive Measures" stance`;
+                                    return translationManager.getText(language, "skill effect Defensive measures");
                                 }});
     skills["Berserker's stride"] = new Skill({ 
                                 names: {0: "Berserker's stride"}, 
@@ -865,7 +863,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Stance",
                                 max_level: 30,
                                 get_effect_description: ()=> {
-                                    return `Improves efficiency of the "Berserker's Stride" stance`;
+                                    return translationManager.getText(language, "skill effect Berserker's stride");
                                 }});                  
     skills["Flowing water"] = new Skill({
                                 names: {0: "Flowing water"}, 
@@ -876,7 +874,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Stance",
                                 max_level: 30,
                                 get_effect_description: ()=> {
-                                    return `Improves efficiency of the "Flowing Water" stance`;
+                                    return translationManager.getText(language, "skill effect Flowing water");
                                 }});         
                                
 })();
@@ -887,7 +885,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                             names: {0: "Spatial awareness"}, 
                                             description: "desc skill Spatial awareness",
                                             get_effect_description: ()=> {
-                                                return `Reduces environmental penalty in open areas`;
+                                                return translationManager.getText(language, "skill effect Spatial awareness");
                                             },
                                             category: "Environmental",
                                             milestones: {
@@ -946,7 +944,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                         description: "desc skill Tight maneuvers",
                                         category: "Environmental",
                                         get_effect_description: ()=> {
-                                            return `Reduces environmental penalty in narrow areas`;
+                                            return translationManager.getText(language, "skill effect Tight maneuvers");
                                         },
                                         milestones: {
                                             3: {
@@ -998,7 +996,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                     max_level: 10,
                                     category: "Environmental",
                                     get_effect_description: () => {
-                                        return `Reduces environmental penalty in dark areas (except for 'pure darkness')`;
+                                        return translationManager.getText(language, "skill effect Night vision");
                                     },
                                     milestones: {
                                         2: {
@@ -1057,7 +1055,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                 max_level: 20,
                 category: "Environmental",
                 get_effect_description: () => {
-                    return `Reduces environmental penalty in extremely dark areas`;
+                    return translationManager.getText(language, "skill effect Presence sensing");
                 },
                 milestones: {
                     1: {
@@ -1154,7 +1152,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
         max_level: 40,
         xp_scaling: 1.7,
         get_effect_description: ()=> {
-            return `Reduces eldritch effects`;
+            return translationManager.getText(language, "skill effect Strength of mind");
         },
         milestones: {
             1: {
@@ -1241,7 +1239,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
         max_level: 60,
         xp_scaling: 1.7,
         get_effect_description: ()=> {
-            return `Reduces environmental penalty in rough terrain`;
+            return translationManager.getText(language, "skill effect Scrambling");
         },
         milestones: {
             1: {
@@ -1356,7 +1354,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
         max_level: 40,
         category: "Environmental",
         get_effect_description: ()=>{
-            return `Increases cold tolerance by ${skills["Cold resistance"].current_level*0.5}`;
+            return translationManager.getText(language, "skill effect Cold resistance", {v1: skills["Cold resistance"].current_level*0.5});
         },
     });
 
@@ -1367,7 +1365,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
         max_level: 30,
         category: "Environmental",
         get_effect_description: ()=> {
-            return `Reduces hit and evasion penalty in super bright areas`;
+            return translationManager.getText(language, "skill effect Dazzle resistance");
         },
         max_level_bonus: 0.5
     });
@@ -1380,7 +1378,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                     description: "desc skill Weapon mastery",
                                     category: "Weapon",
                                     get_effect_description: function() {
-                                        return `Increases xp gains of all weapon skills of level lower than this, x${this.parent_multiplier} per level of difference`;
+                                        return translationManager.getText(language, "skill effect Weapon mastery", {v1: this.parent_multiplier});
                                     },
                                 });
     skills["Swords"] = new Skill({
@@ -1389,8 +1387,7 @@ Adds ${skills["Unarmed"].current_level/10} base damage to unarmed attacks`;
                                 category: "Weapon",
                                 description: "desc skill Swords",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with swords by ${Math.round(get_total_skill_coefficient({skill_id:"Swords",scaling_type:"multiplicative"})*1000)/1000}.
-Multiplies AP with swords by ${Math.round((get_total_skill_coefficient({skill_id:"Swords",scaling_type:"multiplicative"})**0.3333)*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Swords", {v1: Math.round(get_total_skill_coefficient({skill_id:"Swords",scaling_type:"multiplicative"})*1000)/1000, v2: Math.round((get_total_skill_coefficient({skill_id:"Swords",scaling_type:"multiplicative"})**0.3333)*1000)/1000});
                                 },
                                 milestones: {
                                     1: {
@@ -1435,8 +1432,7 @@ Multiplies AP with swords by ${Math.round((get_total_skill_coefficient({skill_id
                                 category: "Weapon",
                                 description: "desc skill Axes",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with axes by ${Math.round(get_total_skill_coefficient({skill_id:"Axes",scaling_type:"multiplicative"})*1000)/1000}.
-Multiplies AP with axes by ${Math.round((get_total_skill_coefficient({skill_id:"Axes",scaling_type:"multiplicative"})**0.3333)*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Axes", {v1: Math.round(get_total_skill_coefficient({skill_id:"Axes",scaling_type:"multiplicative"})*1000)/1000, v2: Math.round((get_total_skill_coefficient({skill_id:"Axes",scaling_type:"multiplicative"})**0.3333)*1000)/1000});
                                 },
                                 milestones: {
                                     1: {
@@ -1480,8 +1476,7 @@ Multiplies AP with axes by ${Math.round((get_total_skill_coefficient({skill_id:"
                                 category: "Weapon",
                                 description: "desc skill Spears",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with spears by ${Math.round(get_total_skill_coefficient({skill_id:"Spears",scaling_type:"multiplicative"})*1000)/1000}.
-Multiplies AP with spears by ${Math.round((get_total_skill_coefficient({skill_id:"Spears",scaling_type:"multiplicative"})**0.3333)*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Spears", {v1: Math.round(get_total_skill_coefficient({skill_id:"Spears",scaling_type:"multiplicative"})*1000)/1000, v2: Math.round((get_total_skill_coefficient({skill_id:"Spears",scaling_type:"multiplicative"})**0.3333)*1000)/1000});
                                 },
                                 milestones: {
                                     1: {
@@ -1526,8 +1521,7 @@ Multiplies AP with spears by ${Math.round((get_total_skill_coefficient({skill_id
                                         category: "Weapon",
                                         description: "desc skill Hammers",
                                         get_effect_description: ()=> {
-                                            return `Multiplies damage dealt with battle hammers by ${Math.round(get_total_skill_coefficient({skill_id:"Hammers",scaling_type:"multiplicative"})*1000)/1000}.
-Multiplies AP with hammers by ${Math.round((get_total_skill_coefficient({skill_id:"Hammers",scaling_type:"multiplicative"})**0.3333)*1000)/1000}`;
+                                            return translationManager.getText(language, "skill effect Hammers", {v1: Math.round(get_total_skill_coefficient({skill_id:"Hammers",scaling_type:"multiplicative"})*1000)/1000, v2: Math.round((get_total_skill_coefficient({skill_id:"Hammers",scaling_type:"multiplicative"})**0.3333)*1000)/1000});
                                         },
                                         milestones: {
                                             1: {
@@ -1572,8 +1566,7 @@ Multiplies AP with hammers by ${Math.round((get_total_skill_coefficient({skill_i
                                 category: "Weapon",
                                 description: "desc skill Daggers",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with daggers by ${Math.round(get_total_skill_coefficient({skill_id:"Daggers",scaling_type:"multiplicative"})*1000)/1000}.
-Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_id:"Daggers",scaling_type:"multiplicative"})**0.3333)*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Daggers", {v1: Math.round(get_total_skill_coefficient({skill_id:"Daggers",scaling_type:"multiplicative"})*1000)/1000, v2: Math.round((get_total_skill_coefficient({skill_id:"Daggers",scaling_type:"multiplicative"})**0.3333)*1000)/1000});
                                 },
                                 milestones: {
                                     1: {
@@ -1618,7 +1611,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
                                 category: "Weapon",
                                 description: "desc skill Wands",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with wands by ${Math.round(get_total_skill_coefficient({skill_id:"Wands",scaling_type:"multiplicative"})*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Wands", {v1: Math.round(get_total_skill_coefficient({skill_id:"Wands",scaling_type:"multiplicative"})*1000)/1000});
                                 },
                                 max_level_coefficient: 8});
 
@@ -1628,7 +1621,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
                                 category: "Weapon",
                                 description: "desc skill Staffs",
                                 get_effect_description: ()=> {
-                                    return `Multiplies damage dealt with staffs by ${Math.round(get_total_skill_coefficient({skill_id:"Staffs",scaling_type:"multiplicative"})*1000)/1000}`;
+                                    return translationManager.getText(language, "skill effect Staffs", {v1: Math.round(get_total_skill_coefficient({skill_id:"Staffs",scaling_type:"multiplicative"})*1000)/1000});
                                 },
                                 max_level_coefficient: 8});
 })();
@@ -1725,7 +1718,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
                                     names: {0: "Sleeping"}, 
                                     description: "desc skill Sleeping",
                                     get_effect_description: ()=>{
-                                        return `Multiplies health restored when sleeping by ${Math.round(100*(1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level))/100}`;
+                                        return translationManager.getText(language, "skill effect Sleeping", {v1: Math.round(100*(1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level))/100});
                                     },
                                     base_xp_cost: 1000,
                                     flavour_text: "One rat, two rats, three rats...",
@@ -1913,7 +1906,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         },
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Meditation",scaling_type:"multiplicative"})
-            return `Multiplies intuition by ${Math.round(value*100)/100}`;
+            return translationManager.getText(language, "skill effect Meditation", {v1: Math.round(value*100)/100});
         },
     });                  
     skills["Running"] = new Skill({
@@ -2024,7 +2017,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         },
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Running",scaling_type:"multiplicative"})
-            return `Multiplies stamina efficiency by ${Math.round(value*100)/100}`;
+            return translationManager.getText(language, "skill effect Running", {v1: Math.round(value*100)/100});
         },
     });
     skills["Weightlifting"] = new Skill({
@@ -2124,14 +2117,14 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         },
         get_effect_description: ()=> {
         let value = get_total_skill_coefficient({skill_id:"Weightlifting",scaling_type:"multiplicative"})
-        return `Multiplies strength by ${Math.round(value*100)/100}`;
+        return translationManager.getText(language, "skill effect Weightlifting", {v1: Math.round(value*100)/100});
         },
     });
     skills["Swimming"] = new Skill({
         description: "desc skill Swimming",
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Swimming",scaling_type:"multiplicative"})
-            return `Multiplies agility and stamina by ${Math.round(value*100)/100}. Reduces environmental penalty in aquatic areas.`;
+            return translationManager.getText(language, "skill effect Swimming", {v1: Math.round(value*100)/100});
         },
         names: {0: "Swimming"},
         max_level: 50,
@@ -2297,7 +2290,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         },
         get_effect_description: ()=> {
         let value = get_total_skill_coefficient({skill_id:"Equilibrium",scaling_type:"multiplicative"});
-        return `Multiplies agility by ${Math.round(value*100)/100}`;
+        return translationManager.getText(language, "skill effect Equilibrium", {v1: Math.round(value*100)/100});
         },
     });
 
@@ -2387,7 +2380,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         get_effect_description: ()=> {
           let value = get_total_skill_coefficient({skill_id:"Climbing",scaling_type:"multiplicative"});
 
-          return `Multiplies strength, dexterity and agility by ${Math.round(value*100)/100}`;
+          return translationManager.getText(language, "skill effect Climbing", {v1: Math.round(value*100)/100});
         },
     });
 })();
@@ -2403,7 +2396,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         parent_multiplier: 1.05,
         category: "Gathering",
         get_effect_description: function() {
-            return `Increases xp gains of all gathering skills of level lower than this, x${this.parent_multiplier} per level of difference`;
+            return translationManager.getText(language, "skill effect Gathering mastery", {v1: this.parent_multiplier});
         },
     });
     skills["Woodcutting"] = new Skill({
@@ -2615,7 +2608,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         xp_scaling: 1.5,
         max_level: 60,
         get_effect_description: () => {
-            return `Quality cap: ${get_crafting_quality_caps("Crafting").components}% for comps, ${get_crafting_quality_caps("Crafting").equipment}% for eq`;
+            return translationManager.getText(language, "skill effect Crafting", {v1: get_crafting_quality_caps("Crafting").components, v2: get_crafting_quality_caps("Crafting").equipment});
         },
     });
     skills["Smelting"] = new Skill({
@@ -2634,7 +2627,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         xp_scaling: 1.5,
         max_level: 60,
         get_effect_description: () => {
-            return `Quality cap: ${get_crafting_quality_caps("Forging").components}% for components`;
+            return translationManager.getText(language, "skill effect Forging", {v1: get_crafting_quality_caps("Forging").components});
         },
         milestones: {
             10: {
@@ -2676,7 +2669,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         visibility_treshold: 0,
         get_effect_description: () => {
             let value = get_total_skill_coefficient({skill_id:"Butchering",scaling_type:"multiplicative"});
-            return `Multiplies drop chances from Beasts by ${Math.round(value*100)/100}`;},
+            return translationManager.getText(language, "skill effect Butchering", {v1: Math.round(value*100)/100});},
     });
     skills["Woodworking"] = new Skill({
         skill_id: "Woodworking", 
@@ -2701,7 +2694,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         max_level: 30,
         max_level_bonus: 30,
         get_effect_description: ()=> {
-            return `Increases base defense by ${Math.round(get_total_level_bonus("Iron skin"))}`;
+            return translationManager.getText(language, "skill effect Iron skin", {v1: Math.round(get_total_level_bonus("Iron skin"))});
         },
         milestones: {
             3: {
@@ -2763,7 +2756,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         max_level: 60,
         max_level_coefficient: 4,
         get_effect_description: ()=> {
-            return `Multiplies max health by ${Math.round(100*get_total_skill_coefficient({scaling_type: "multiplicative", skill_id: "Fortitude"}))/100}`;
+            return translationManager.getText(language, "skill effect Fortitude", {v1: Math.round(100*get_total_skill_coefficient({scaling_type: "multiplicative", skill_id: "Fortitude"}))/100});
         },
         milestones: {
             3: {
@@ -2825,7 +2818,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         category: "Character",
         max_level: 30,
         get_effect_description: ()=> {
-            return `Increases low stamina stat multiplier to x${(50+Math.round(get_total_level_bonus("Persistence")*100000)/1000)/100} (originally x0.5)`;
+            return translationManager.getText(language, "skill effect Persistence", {v1: (50+Math.round(get_total_level_bonus("Persistence")*100000)/1000)/100});
         },
         milestones: {
             2: {
@@ -2914,7 +2907,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         max_level: 40,
         category: "Character",
         get_effect_description: ()=> {
-            return `Increases critical hit chance by ${Math.min(skills["Perception"].max_level, get_total_skill_level("Perception"))} points`;
+            return translationManager.getText(language, "skill effect Perception", {v1: Math.min(skills["Perception"].max_level, get_total_skill_level("Perception"))});
         },
         milestones: {
             1: {
@@ -3015,7 +3008,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         max_level_coefficient: 2,
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Medicine",scaling_type:"multiplicative"});
-            return `Multiplies additive effects of medicines by ${Math.round((value**2)*100)/100} and multiplicative effects by ${Math.round(value*100)/100}`;
+            return translationManager.getText(language, "skill effect Medicine", {v1: Math.round((value**2)*100)/100, v2: Math.round(value*100)/100});
         },
     });
     skills["Poison resistance"] = new Skill({
@@ -3027,7 +3020,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         max_level_coefficient: 10,
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Poison resistance",scaling_type:"multiplicative"});
-            return `Divides effects of poisons by ${Math.round(value*100)/100}`;
+            return translationManager.getText(language, "skill effect Poison resistance", {v1: Math.round(value*100)/100});
         },
         milestones: {
             3: {
@@ -3105,7 +3098,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         max_level_coefficient: 2,
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Gluttony",scaling_type:"multiplicative"});
-            return `Multiplies additive effects of foods by ${Math.round((value**2)*100)/100} and multiplicative effects by ${Math.round(value*100)/100}`;
+            return translationManager.getText(language, "skill effect Gluttony", {v1: Math.round((value**2)*100)/100, v2: Math.round(value*100)/100});
         },
         milestones: {
             3: {
@@ -3277,14 +3270,14 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         },
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Breathing",scaling_type:"multiplicative"});
-            return `Multiplies strength, agility and stamina by ${Math.round(value*100)/100}. Reduces thin air effects`;
+            return translationManager.getText(language, "skill effect Breathing", {v1: Math.round(value*100)/100});
           },
     });  
     skills["Regeneration"] = new Skill({
                                 names: {0: "Regeneration"}, 
                                 description: "desc skill Regeneration",
                                 get_effect_description: ()=>{
-                                    return `Multiplies health restored when resting or sleeping by ${Math.round(100*(1 + 3*get_total_skill_level("Regeneration")/skills["Regeneration"].max_level))/100}`;
+                                    return translationManager.getText(language, "skill effect Regeneration", {v1: Math.round(100*(1 + 3*get_total_skill_level("Regeneration")/skills["Regeneration"].max_level))/100});
                                 },
                                 base_xp_cost: 1000,
                                 visibility_treshold: 500,
@@ -3372,7 +3365,7 @@ Multiplies AP with daggers by ${Math.round((get_total_skill_coefficient({skill_i
         base_xp_cost: 100,
         max_level: 25,
         get_effect_description: ()=> {
-            return `Lowers trader cost multiplier to ${Math.round((1 - get_total_level_bonus("Haggling"))*100)}% of original value`;
+            return translationManager.getText(language, "skill effect Haggling", {v1: Math.round((1 - get_total_level_bonus("Haggling"))*100)});
         },
         max_level_bonus: 0.5,
         milestones: {
