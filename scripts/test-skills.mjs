@@ -341,6 +341,29 @@ const { translationManager, translations } = await load_with_stubs(
 const global_flags = globalThis.__test_flags;
 `);
 
+// Checked BEFORE any init() call in this file, deliberately: the game renders
+// player-facing text throughout its startup sequence and only awaits
+// translationManager.init at the end of it, so a lookup has to work at module
+// evaluation time. When the locales were fetched instead of imported, every one of
+// those renders came out as "text not found, id: ...". These use the exact ids
+// from that bug report.
+{
+    check("the locales are registered without init being called",
+        translations.english !== undefined && translations.turkish !== undefined,
+        `registered=${Object.keys(translations).join(",")}`);
+
+    check("a loading-screen id resolves before init",
+        translationManager.getText("english", "ui save game version") === "Save game version",
+        `got=${translationManager.getText("english", "ui save game version")}`);
+
+    check("it resolves in the chosen language, not through the English fallback",
+        translationManager.getText("turkish", "ui version none") === "yok",
+        `got=${translationManager.getText("turkish", "ui version none")}`);
+
+    check("nothing pre-init falls through to the not-found placeholder",
+        !translationManager.getText("turkish", "ui current game version").startsWith("text not found"));
+}
+
 {
     await translationManager.init("turkish");
 

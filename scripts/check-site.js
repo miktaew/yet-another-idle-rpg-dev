@@ -137,6 +137,54 @@ function check_duplicate_keys(name) {
     return { declared: declared.length, unique: seen.size };
 }
 
+/**
+ * Every locale must be imported STATICALLY by src/translation.js and listed in its
+ * bundled_locales map, and every language offered by main.js must be one of them.
+ *
+ * The startup sequence in main.js renders player-facing text long before it awaits
+ * translationManager.init, so a locale that only arrives through the dynamic
+ * import is a locale that does not exist for the first render - which is exactly
+ * what produced the "text not found, id: ui save game version" loading screen.
+ *
+ * @param {String[]} names locale names found in locales/
+ */
+function check_locales_are_bundled(names) {
+    const source = fs.readFileSync(path.join(repo_root, "src/translation.js"), "utf8");
+
+    const block = source.match(/const bundled_locales = \{([^}]*)\}/);
+    if (!block) {
+        error("src/translation.js has no `const bundled_locales = { ... }` map - this check is out of date.");
+        return;
+    }
+    const bundled = block[1].split(",").map(entry => entry.trim()).filter(Boolean);
+
+    for (const name of names) {
+        if (!source.includes(`from "../locales/${name}.js"`)) {
+            error(`src/translation.js does not statically import locales/${name}.js,`
+                + " so that language is missing for everything main.js renders before init.");
+        }
+        if (!bundled.includes(name)) {
+            error(`src/translation.js does not list "${name}" in bundled_locales,`
+                + " so that language is missing for everything main.js renders before init.");
+        }
+    }
+
+    // A language offered in the selector with no bundled locale behind it is the
+    // same bug from the other end.
+    const main_source = fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8");
+    const languages_block = main_source.match(/const languages = \{([^}]*)\}/);
+    if (!languages_block) {
+        error("src/main.js has no `const languages = { ... }` map - this check is out of date.");
+        return;
+    }
+    const offered = [...languages_block[1].matchAll(/^\s*([A-Za-z0-9_]+)\s*:/gm)].map(match => match[1]);
+    for (const name of offered) {
+        if (!bundled.includes(name)) {
+            error(`src/main.js offers language "${name}", which src/translation.js does not bundle.`);
+        }
+    }
+}
+
 async function check_locales() {
     if (!fs.existsSync(locales_dir)) {
         error("locales/ does not exist.");
@@ -151,6 +199,8 @@ async function check_locales() {
         error(`the default locale locales/${default_language}.js is missing.`);
         return;
     }
+
+    check_locales_are_bundled(names);
 
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -434,8 +484,11 @@ async function check_content_text_ids() {
             /(?<![A-Za-z0-9_])(?:description|action_text):\s*"([^"]+)"/g,
         ]},
         { file: "src/main.js", patterns: [
-            //The log messages are parameterised, so they are getText calls.
-            /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
+            //The log messages are parameterised, so they are getText calls. The
+            //loading-screen messages live here rather than in display.js, so "ui"
+            //is matched too - otherwise a typo in one of them is only visible to
+            //whoever happens to boot the game.
+            /translationManager\.getText\(language,\s*"((?:log|ui) [^"]+)"/g,
         ]},
         { file: "src/display.js", patterns: [
             //Interface labels, resolved where they are rendered.

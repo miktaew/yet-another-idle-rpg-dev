@@ -1,10 +1,34 @@
 "use strict";
 
 import { global_flags } from "./main.js";
+import english from "../locales/english.js";
+import turkish from "../locales/turkish.js";
 
-//For now, translations are only used for dialogues
+//The locales are STATIC imports, not fetches.
+//
+//main.js renders player-facing text all the way through its startup sequence -
+//the loading-screen version block, load(), the new-game setup - and only reaches
+//`await translationManager.init(language)` at the very end of it. Nothing awaited
+//can answer a lookup made before that point, so with fetched locales every one of
+//those renders resolved to "text not found, id: ...". Importing the locales as
+//data puts them in memory before main.js's first line runs, which is the only
+//thing that fixes it without moving several hundred render calls.
+//
+//BOTH locales, not just the default: with english only, a Turkish save would
+//render its loading screen, location panel, inventory and quest log in English,
+//and nothing repaints them afterwards - translateUI only rewrites elements
+//carrying [data-translation].
+//
+//Every locale in locales/ has to be listed here, and every language offered in
+//main.js's `languages` too; scripts/check-site.js enforces both, because a locale
+//that only arrives through load()'s dynamic import is a locale that does not
+//exist for the first render.
+const bundled_locales = {
+    english,
+    turkish,
+};
 
-const translations = {};
+const translations = {...bundled_locales};
 const default_language = "english";
 const variant_prefix = "mofu#";
 
@@ -32,6 +56,10 @@ class TranslationManager {
         }
     };
 
+    //Kept for a locale that is NOT in bundled_locales, and for the language
+    //selector, which calls it on every change. For a bundled locale both load()
+    //calls below short-circuit on the `if(!translations[language])` guard, so this
+    //costs one microtask and does nothing - startup no longer depends on it.
     init = async(language) => {
         await this.load(language);
 
@@ -151,7 +179,13 @@ class TranslationManager {
         if(language !== default_language) {
             const fallback = this.lookup(default_language, text_id);
             if(fallback !== undefined) {
-                if(!reported_missing.has(text_id)) {
+                //Only a LOADED language can be missing a translation. If the
+                //locale is not in memory yet - a language outside
+                //bundled_locales, before init - this is an ordering problem, not
+                //a translation gap, and saying otherwise both misleads and,
+                //because reported_missing is never cleared, permanently silences
+                //the real warning for this id once the locale does arrive.
+                if(translations[language] && !reported_missing.has(text_id)) {
                     reported_missing.add(text_id);
                     console.warn(`Text "${text_id}" is not translated into '${language}' yet; showing the ${default_language} text.`);
                 }

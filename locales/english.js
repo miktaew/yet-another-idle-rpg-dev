@@ -2882,6 +2882,7 @@ const descriptions = {
     "ui loading catnip": "Mixing catnip with more catnip",
     "ui loading finishing pats": "Doing some finishing pats",
     "ui loading something went wrong": "Something went wrong 😭",
+    "ui loading waiting for play": "Waiting for you to click 'PLAY'",
     "ui play anyway": "Play...?",
 
     //INTERFACE, the last of it: readouts that wrap a value, plus the equipment

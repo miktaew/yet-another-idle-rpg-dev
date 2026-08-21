@@ -2924,6 +2924,7 @@ const descriptions = {
     "ui loading catnip": "Kedi nanesi biraz daha kedi nanesiyle karıştırılıyor",
     "ui loading finishing pats": "Son sevgi patileri atılıyor",
     "ui loading something went wrong": "Bir şeyler ters gitti 😭",
+    "ui loading waiting for play": "'PLAY' düğmesine basmanı bekliyorum",
     "ui play anyway": "Oyna...?",
 
     //INTERFACE, the last of it.

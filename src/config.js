@@ -19,6 +19,11 @@ const config = {
 
     do_hero_creation: true,
 
+    //Whether the hitscounter.dev badge is added to the bottom panel. Off means
+    //the request is never made, which is the point - hiding the image with CSS
+    //would still hand the tracker a page view.
+    show_visitor_counter: false,
+
     //Deployment identity, matched against location.host + location.pathname.
     //Kept here rather than hardcoded in main.js so a fork or a mirror only has
     //to edit this block.

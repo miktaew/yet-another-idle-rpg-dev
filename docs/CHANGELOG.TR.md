@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 18 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 19 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,80 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-21
+
+### Başlangıçtaki "text not found" metni giderildi, visitors sayacı kapatıldı
+
+**Hata.** `src/main.js` başlangıç dizisi boyunca oyuncuya görünen metin basıyor -
+yükleme ekranı sürüm bloğu, `load()`'un tamamı, yeni oyun kurulumu - ve
+`await translationManager.init(language)`'a ancak en sonunda varıyordu. Locale'ler
+dinamik `import()` ile getirildiği için bu aramaların hepsinde `translations` boştu ve
+`getText` kendi `"text not found, id: X"` yer tutucusunu döndürüyordu. Bildirilen
+ekran görüntüsündeki şey buydu.
+
+Ekran görüntüsündeki üç id'den çok daha geniş bir sorundu. Yükleme yolunda init'ten
+önce yaklaşık 240 arama tetikleniyordu; yeni bir oyunda kese, Köy açıklaması, Konuş
+menüsü, görev paneli ve mesaj günlüğünün ilk satırı hep yer tutucuydu. Yalnızca
+Türkçeye özgü de değildi: `language` english olarak başlıyor ve harita english için de
+boş. Üstelik kendiliğinden düzelmiyorlardı; çünkü `translateUI` yalnızca
+`data-translation` taşıyan öğeleri yeniden yazıyor, `load()` ise yukarıdakilerin
+hepsini emirsel olarak basıyor - her panel bir şekilde yeniden çizilene kadar bozuk
+kalıyorlardı.
+
+**Düzeltme bir sıralama değişikliği değil, tek bir mekanizma.** `src/translation.js`
+artık iki locale'i statik olarak import ediyor ve `translations`'ı modül
+değerlendirmesinde dolduruyor. `translation.js`, `main.js`'in gövdesinden önce
+değerlendirildiği için init öncesi her arama çözülüyor ve yer tutucu dalı, bir
+locale'in içerdiği her id için yapısal olarak erişilemez hâle geliyor. `init()` tam
+olduğu yerde kalıyor - paketlenmiş bir locale için artık işlevsiz ve yorumu bunu
+söylüyor; çünkü paketlenmemiş gelecek bir locale için hâlâ tek yol ve dil seçici onu
+hâlâ çağırıyor.
+
+Başlangıcı yeniden sıralamak değerlendirilip reddedildi. İki locale bellekteyken
+düzeltilecek sıralama kalmıyor, ayrıca iki kategori sıralamayla hiç düzelmiyor:
+`process_rewards` günlük satırları, çünkü `log_message` yeniden çizecek bir dizi
+tutmuyor; ve `load()`'un geçici ilerleme mesajları, çünkü ertelenmiş bir geçiş
+çalışamadan üzerlerine yazılıyor.
+
+**Bu arada sağlamlaştırılan üç şey.**
+
+Kaydın `language` okuması `load()`'un ilk ifadesine taşındı. Bugün ondan önce metin
+çözen bir şey yoktu, ama yalnızca 3856'ya karşı 3940 payı sayesinde - araya eklenecek
+tek bir çizim çağrısı yanlış dilli bir ekranı sessizce geri getirirdi. Ayrıca gizli bir
+hatayı da kaldırıyor: okumadan önce hata veren bir `load()`, `language`'ı english'te
+bırakıyordu ve kayıt yazıcısı bu düşüşü kalıcı hâle getiriyordu.
+
+Eksik çeviri uyarısı artık dilin gerçekten yüklü olmasına bağlı. `reported_missing`
+hiç temizlenmiyor ve uyarı ile hata yolları onu paylaşıyor; yani bir locale yokken
+yapılan tek bir arama, o id için gerçek "henüz Türkçeye çevrilmedi" tanısını kalıcı
+olarak susturuyordu.
+
+`npm run check` iki doğrulama kazandı: her locale statik olarak import edilmiş ve
+`bundled_locales` içinde listelenmiş olmalı; `main.js`'in sunduğu her dil de bunlardan
+biri olmalı - aksi hâlde yukarıdaki uyarı kapısı, biri paketlemeden bir dil eklediği
+anda sessizce "hep İngilizce" mekanizmasına dönüşürdü. İkisi de iki yönde de sınandı.
+`src/main.js` id taraması da `log ` yerine `log |ui ` olacak şekilde genişletildi; bu
+da daha önce hiç taranmayan 11 id'yi kontrol altına aldı.
+
+`npm test`, yayındaki kodda düşüp düzeltmeden sonra geçen dört kontrol kazandı -
+hiçbir şeye dokunmadan önce hatayı yeniden üretmekte kullanıldılar ve ekran
+görüntüsündeki iki id'yi birebir yazdırıyorlar.
+
+**Visitors sayacı kapalı.** Yeni bir `config.show_visitor_counter` arkasına alındı,
+öntanımlı false; görsel gizlenmiyor, blok tümüyle atlanıyor. CSS yanlış araçtı:
+`<img>`in src'i sayacın kendisi, yani `display: none` her sayfa görüntülemesinin
+herkese açık bir sayacı artırmasını ve üçüncü tarafa istek gitmesini sürdürürken
+hiçbir şey göstermezdi - gizlemenin tam tersi.
+
+**Kayda geçmesi gereken bir düzeltme.** Bir denetim ajanı, yeni oyun başlangıç
+envanterinin hata attığını, çünkü `item_templates["Cheap leather pants"]`in yorumlanmış
+bir blokta olduğunu bildirdi; ben de düzgün doğrulamadan bunu tekrarladım. İki kez
+yanlış: `dist/bundle.js` minified, dolayısıyla onu `item_templates[...]` için taramak
+garantili bir yanlış negatif; ve şablon çalışma anında **üretiliyor** - `cheap leather`
+artı `leg armor interior` türü, ki `type_to_name` onu `pants` olarak veriyor. Elle
+yazılmış kopya tam da generator onu değiştirdiği için yorumda. Yorumdan çıkarmak,
+kayıt verisi olan bir anahtar altında kopya şablon yaratırdı.
+
+Dil başına 2537 anahtar; check 1254 içerik id'sinde; test 63 kontrolde.
 
 ### İngilizcenin son kalıntısı da gitti — P-7
 

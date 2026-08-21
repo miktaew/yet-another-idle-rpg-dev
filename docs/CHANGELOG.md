@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 18 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 19 -->
 
 # Changelog
 
@@ -17,6 +17,79 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-21
+
+### Fixed the "text not found" startup text, and gated the visitor counter
+
+**The bug.** `src/main.js` renders player-facing text all the way through its startup
+sequence - the loading-screen version block, the whole of `load()`, the new-game
+setup - and only reached `await translationManager.init(language)` at the very end of
+it. The locales were fetched by dynamic `import()`, so `translations` was empty for
+every one of those lookups and `getText` returned its own `"text not found, id: X"`
+placeholder. That is what the reported screenshot showed.
+
+It was much wider than the three ids in the screenshot. On the load path roughly 240
+lookups fired before init; on a fresh game the purse, the Village description, the
+Talk dropdown, the quest panel and the message log's first line were all
+placeholders. Not Turkish-only either: `language` starts as english and the map is
+empty for english too. And these do not heal, because `translateUI` only rewrites
+elements carrying `data-translation` while `load()` paints all of the above
+imperatively - they stayed broken until each panel happened to redraw.
+
+**The fix is one mechanism, not an ordering change.** `src/translation.js` now
+imports both locales statically and seeds `translations` at module evaluation.
+Because `translation.js` is evaluated before `main.js`'s body, every pre-init lookup
+resolves, and the placeholder branch is structurally unreachable for any id a locale
+contains. `init()` stays exactly where it is - it is now a no-op for a bundled locale
+and its comment says so, since it is still the only path for a future locale that is
+not bundled, and the language selector still calls it.
+
+Reordering the startup was considered and rejected. With both locales resident there
+is no ordering left to fix, and two categories cannot be fixed by reordering at all:
+the `process_rewards` log lines, because `log_message` keeps no backing array to
+repaint from, and `load()`'s transient progress messages, which are overwritten
+before any deferred pass could run.
+
+**Three things hardened while here.**
+
+The save's `language` read moved to `load()`'s first statement. Today nothing resolved
+text before it, but only by a 3856-vs-3940 margin - one render call inserted between
+them would have silently reintroduced a wrong-language screen. It also removes a
+latent bug: a `load()` that threw before the read left `language` at english, and the
+save writer then persisted that downgrade.
+
+The missing-translation warning is now guarded on the language actually being loaded.
+`reported_missing` is never cleared and is shared by the warn and error paths, so one
+lookup made while a locale was absent permanently silenced the genuine "not
+translated into 'turkish' yet" diagnostic for that id.
+
+`npm run check` grew two assertions: every locale must be statically imported and
+listed in `bundled_locales`, and every language `main.js` offers must be one of them -
+otherwise the warn guard above would quietly become a silent-English mechanism the
+first time someone added a language without bundling it. Both negative-tested in
+both directions. The `src/main.js` id scan also widened from `log ` to `log |ui `,
+which brought 11 previously unscanned ids under the check.
+
+`npm test` gained four checks that fail on the shipped code and pass after the fix -
+they were used to reproduce the bug before touching anything, and they print the two
+ids from the screenshot verbatim.
+
+**The visitor counter is off.** Gated behind a new `config.show_visitor_counter`,
+default false, with the whole block skipped rather than the image hidden. CSS was the
+wrong tool: the `<img>` src *is* the counter, so `display: none` would have left every
+page view still incrementing a public counter and pinging a third party while showing
+nothing - the opposite of hiding it.
+
+**A correction worth recording.** An audit agent reported that the new-game starting
+inventory throws because `item_templates["Cheap leather pants"]` sits inside a
+commented-out block, and I repeated that before checking it properly. It is wrong
+twice over: `dist/bundle.js` is minified, so grepping it for `item_templates[...]` is
+a guaranteed false negative, and the template is *generated* at runtime -
+`cheap leather` plus the `leg armor interior` type, which `type_to_name` renders as
+`pants`. The hand-written copy is commented out precisely because the generator
+replaced it. Un-commenting it would have created a duplicate template under a key
+that is save data.
+
+2537 keys per language; check at 1254 content ids; test at 63 checks.
 
 ### The last of the English is gone — P-7
 

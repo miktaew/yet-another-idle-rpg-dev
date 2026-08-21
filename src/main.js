@@ -3838,6 +3838,25 @@ function load(save_data) {
         
         //current enemies are not saved
 
+        //Read FIRST, before anything below can render. The locales are in memory
+        //from the start (see the static imports in translation.js), so the only
+        //thing that can still put the wrong language on screen is reading the
+        //save's language late - and load() renders a lot: the version block, the
+        //progress messages, change_location, the inventory, the quest log.
+        //Reading it here also means a load that throws further down keeps the
+        //player's language for the error message and for the next save, instead
+        //of silently downgrading it to the default.
+        if(save_data.language) {
+            if(languages[save_data.language]) {
+                language = save_data.language;
+            } else {
+                if(save_data.language !== "mofu_english") {
+                    console.warn(`Language ${save_data.language} could not be found.`);
+                }
+            }
+            
+        }
+
         let any_warnings = false;
 
         current_game_time.loadTime(save_data["current time"]);
@@ -3852,17 +3871,6 @@ function load(save_data) {
                 global_flags[flag] = save_data.global_flags[flag];
             }
         });
-
-        if(save_data.language) {
-            if(languages[save_data.language]) {
-                language = save_data.language;
-            } else {
-                if(save_data.language !== "mofu_english") {
-                    console.warn(`Language ${save_data.language} could not be found.`);
-                }
-            }
-            
-        }
 
         last_rewarded_export = save_data.last_rewarded_export || last_rewarded_export;
 
@@ -5974,8 +5982,12 @@ window.run = run;
 //Verify_Game_Objects();
 window.Verify_Game_Objects = Verify_Game_Objects;
 
-//Stays English: this is the first frame, before translationManager.init has run,
-//so there is no locale loaded to read a translation from.
+//Stays English, and this comment used to say it was because no locale was loaded
+//yet. That is no longer the reason - translation.js imports the locales
+//statically, so a lookup here would work. The reason now is that the save has not
+//been read yet, so `language` still holds the default at this line: a translated
+//string would come out English for a Turkish player anyway. Keeping it a literal
+//says so on purpose rather than by accident.
 set_loading_screen_progress("Waking up from a nyap...");
 
 //check if there's an existing save file, otherwise just do some initial setup
@@ -6019,11 +6031,16 @@ if(language_selector) {
 }
 
 if(!is_loading_error) {
-    //Stays English for the same reason, and fittingly so: this is the message
-    //shown while the translations themselves are being loaded.
+    //Deliberately untranslated flavour, and no longer for a technical reason: the
+    //locales are already in memory here and the save's language has been read, so
+    //this line COULD be a text id. It is not, because it is a joke - and because
+    //the init below has nothing to fetch for a locale listed in translation.js's
+    //bundled_locales, so this message is only ever on screen long enough to read
+    //if a language is added without being bundled. If it is ever wanted
+    //translated it needs an id in every locale, not a literal.
     set_loading_screen_progress("Translating the meows");
     await translationManager.init(language);
-    set_loading_screen_progress("Waiting for you to click 'PLAY'");
+    set_loading_screen_progress(translationManager.getText(language, "ui loading waiting for play"));
     translationManager.translateUI(language);
     update_translated_page_links();
     hide_loading_text();
@@ -6124,11 +6141,14 @@ if(is_on_dev()) {
     }
 }
 
-//Visitor counter. The tracked url is derived from the release id rather than
-//hardcoded, so a fork only needs to edit config.release_ids. Deployments that
-//are neither main nor dev (a local server, a preview build) get an untracked
-//placeholder so they do not inflate the real counts.
-{
+//Visitor counter, off by default (config.show_visitor_counter). The whole block is
+//skipped rather than hidden, so no request reaches the tracker.
+//
+//The tracked url is derived from the release id rather than hardcoded, so a fork
+//only needs to edit config.release_ids. Deployments that are neither main nor dev
+//(a local server, a preview build) get an untracked placeholder so they do not
+//inflate the real counts.
+if(config.show_visitor_counter) {
     const counter_release = is_on_dev() ? config.release_ids.dev
                           : is_on_main() ? config.release_ids.main
                           : null;
