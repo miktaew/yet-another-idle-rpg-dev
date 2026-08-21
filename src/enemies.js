@@ -236,7 +236,8 @@ const enemy_abilites = {
     });
 
     enemy_templates["Starving wolf"] = new Enemy({
-        name: "Starving wolf", description: "A big, wild and hungry canine", 
+        name: "Starving wolf",
+        description: "desc enemy Starving wolf", 
         xp_value: 5,
         rank: 2,
         tags: ["living", "beast"],

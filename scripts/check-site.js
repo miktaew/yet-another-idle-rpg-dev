@@ -223,6 +223,46 @@ async function check_locales() {
  * is stripped first, because the template at the bottom of src/quests.js documents
  * the convention with ids that intentionally have no text.
  */
+/**
+ * Blanks out comments, keeping every other byte at its original offset so line
+ * numbers in an error still point at the right place.
+ *
+ * A plain /*...*\/ regex is not enough here: a source file with several
+ * commented-out blocks, or with a "*\/" inside a string, makes it pair the wrong
+ * delimiters and swallow live code, which silently shrinks this check.
+ */
+function strip_comments(src) {
+    let out = "";
+    let i = 0;
+    const n = src.length;
+    while (i < n) {
+        const c = src[i], next = src[i + 1];
+        if (c === "/" && next === "*") {
+            let end = src.indexOf("*/", i + 2);
+            end = end === -1 ? n : end + 2;
+            out += src.slice(i, end).replace(/[^\n]/g, " ");
+            i = end;
+        } else if (c === "/" && next === "/") {
+            let end = src.indexOf("\n", i);
+            if (end === -1) { end = n; }
+            out += " ".repeat(end - i);
+            i = end;
+        } else if (c === '"' || c === "'" || c === "`") {
+            const start = i;
+            i++;
+            while (i < n && src[i] !== c) {
+                if (src[i] === "\\") { i++; }
+                i++;
+            }
+            i++;
+            out += src.slice(start, Math.min(i, n));
+        } else {
+            out += c;
+            i++;
+        }
+    }
+    return out;
+}
 async function check_content_text_ids() {
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -239,6 +279,15 @@ async function check_content_text_ids() {
         { file: "src/locations.js", patterns: [
             /(?<![A-Za-z0-9_])messages:\s*\[\s*"([^"]+)"\s*\]/g,
         ]},
+        { file: "src/items.js", patterns: [
+            /(?<![A-Za-z0-9_])description:\s*"(desc [^"]+)"/g,
+        ]},
+        { file: "src/enemies.js", patterns: [
+            /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
+        ]},
+        { file: "src/combat_stances.js", patterns: [
+            /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
+        ]},
     ];
 
     let checked = 0;
@@ -249,8 +298,9 @@ async function check_content_text_ids() {
             error(`${entry.file} is missing - this check is out of date.`);
             continue;
         }
-        // Strip block comments so the documented template is not scanned.
-        const source = fs.readFileSync(full_path, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+        // Blank out comments so documented templates and commented-out blocks are
+        // not scanned, without the regex swallowing live code between them.
+        const source = strip_comments(fs.readFileSync(full_path, "utf8"));
 
         for (const pattern of entry.patterns) {
             for (const match of source.matchAll(pattern)) {

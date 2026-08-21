@@ -43,6 +43,8 @@ import { is_rat } from "./character.js";
 import { crafting_component_manager } from "./crafting_component_filling.js";
 import { droplist, enemy_killcount, enemy_templates } from "./enemies.js";
 import { update_bestiary_entry_tooltip } from "./display.js";
+import { language } from "./main.js";
+import { translationManager } from "./translation.js";
 
 const rarity_multipliers = {
     trash: 1, //low quality alone makes these so bad that no additional nerf should be needed
@@ -276,8 +278,18 @@ class Item {
         }
     }
 
+    /** this.description holds a TEXT ID; the text lives in locales/. */
     getDescription() {
-        return this.description;
+        return this.description ? translationManager.getText(language, this.description) : this.description;
+    }
+
+    /**
+     * The name to show. Deliberately separate from getName(), which stays the
+     * canonical English because the equippable constructors use it as this.id
+     * and that id is written into save files.
+     */
+    getDisplayName() {
+        return translationManager.getDisplayName(language, this.getName());
     }
 }
 
@@ -1371,52 +1383,52 @@ book_stats["Counting Mice"] = new BookData({
 (()=>{
     item_templates["ABC for kids"] = new Book({
         name: "ABC for kids",
-        description: "The simplest book on the market",
+        description: "desc item ABC for kids",
         value: 100,
     });
     item_templates["Old combat manual"] = new Book({
         name: "Old combat manual",
-        description: "Old book about combat, worn and outdated, but might still contain something useful",
+        description: "desc item Old combat manual",
         value: 200,
     });
     item_templates["Twist liek a snek"] = new Book({
         name: "Twist liek a snek",
-        description: "This book has a terrible grammar, seemingly written by some uneducated bandit, but despite that it quite well details how to properly evade attacks",
+        description: "desc item Twist liek a snek",
         value: 200,
     });
     item_templates["Medicine for dummies"] = new Book({
         name: "Medicine for dummies",
-        description: "A simple book about healing, describing how to create some basic medicines",
+        description: "desc item Medicine for dummies",
         value: 320,
     });
     item_templates["Butchering and you"] = new Book({
         name: "Butchering and you",
-        description: "An introductory book to animal butchering, that goes into further detail on how to make a use of animal parts, especially hides and bones",
+        description: "desc item Butchering and you",
         value: 240,
     });
     item_templates["Ode to Whimsy, and other poems"] = new Book({
         name: "Ode to Whimsy, and other poems",
-        description: "A short and wonderful book of poetry that fills one with appreciation for life",
+        description: "desc item Ode to Whimsy, and other poems",
         value: 200,
     });
     item_templates["A Glint On The Sand"] = new Book({
         name: "A Glint On The Sand",
-        description: "This books recounts a tale of shipwrecked crew accidentally discovering glassmaking while cooking on a beach. More importantly, it details the processees and materials necessary to manufacture glass",
+        description: "desc item A Glint On The Sand",
         value: 300
     });
     item_templates["Shellfish desires"] = new Book({
         name: "Shellfish desires",
-        description: "A cookbook detailing various methods of cleaning and preparing crab, clam, snail, turtle, and other aquatic animals",
+        description: "desc item Shellfish desires",
         value: 1620
     });
     item_templates["Wood for Witches"] = new Book({
         name: "Wood for Witches",
-        description: "A dusty old tome explaining how to treat wood with alchemy to produce stronger wood",
+        description: "desc item Wood for Witches",
         value: 2000
     });
     item_templates["Counting Mice"] = new Book({
         name: "Counting Mice",
-        description: "A simple book on how to count using mice and other animals for refence on how to do simple addition",
+        description: "desc item Counting Mice",
         value: 120
     });
 	
@@ -1426,56 +1438,56 @@ book_stats["Counting Mice"] = new BookData({
 (function(){
     item_templates["Rat fang"] = new OtherItem({
         name: "Rat fang",
-        description: "Fang of a huge rat, not very sharp, but can still pierce a human skin if enough force is applied",
+        description: "desc item Rat fang",
         value: 8,
         material_type: "animal tooth",
     });
     item_templates["Wolf fang"] = new OtherItem({
         name: "Wolf fang",
-        description: "Fang of a wild wolf. Somewhat sharp, still not very useful. Maybe if it had a bit better quality...",
+        description: "desc item Wolf fang",
         value: 12,
         material_type: "animal tooth",
     });
     item_templates["Boar tusk"] = new Material({
         name: "Boar tusk",
-        description: "Tusk of a wild boar. Visibly worn and not very sharp",
+        description: "desc item Boar tusk",
         value: 20,
     });
     item_templates["Rat meat chunks"] = new OtherItem({
         name: "Rat meat chunks",
-        description: "Eww",
+        description: "desc item Rat meat chunks",
         value: 8,
     });
 
     item_templates["Fish fillet"] = new OtherItem({
         name: "Fish fillet", 
-        description: "Cuts of meat from a fish that was too big to eat whole", 
+        description: "desc item Fish fillet",
         value: 30,
     });
 
     item_templates["Glass phial"] = new OtherItem({
         name: "Glass phial",
-        description: "Small glass phial, a perfect container for a potion",
+        description: "desc item Glass phial",
         value: 10,
     });
     item_templates["Glass bottle"] = new OtherItem({
         name: "Glass bottle",
-        description: "A glass bottle, perfect for carrying a drink around",
+        description: "desc item Glass bottle",
         value: 20,
     });
     item_templates["Camping supplies"] = new OtherItem({
         name: "Camping supplies",
-        description: "Bedroll, tent, small chest, and generally just anything that could be needed to establish a camp",
+        description: "desc item Camping supplies",
         value: 2000,
     });
     item_templates["Coil of rope"] = new OtherItem({
         name: "Coil of rope",
-        description: "A nice, long coil of rope, for whatever use you might find (although you have a feeling it will only be very situational)",
+        description: "desc item Coil of rope",
         value: 400,
     });
     item_templates["Mountain goat horn"] = new OtherItem({
         name: "Mountain goat horn",
-        description: "A curved and sturdy horn of a mountain goat. While not very useful in itself, it makes for a nice decoration",
+        description: "desc item Mountain goat horn",
         value: 30,
     });
 	
@@ -1485,139 +1497,139 @@ book_stats["Counting Mice"] = new BookData({
 (function(){
     item_templates["Rat tail"] = new Material({
         name: "Rat tail",
-        description: "Tail of a huge rat. Doesn't seem very useful, but maybe some meat could be recovered from it",
+        description: "desc item Rat tail",
         value: 4,
     });
     item_templates["Rat pelt"] = new Material({
         name: "Rat pelt",
-        description: "Pelt of a huge rat. Fur has terrible quality, but maybe leather could be used for something if you gather more?",
+        description: "desc item Rat pelt",
         value: 10,
         material_type: "pelt",
     });
 	
     item_templates["High quality wolf fang"] = new Material({
         name: "High quality wolf fang",
-        description: "Fang of a wild wolf. Very sharp, undamaged and surprisingly clean",
+        description: "desc item High quality wolf fang",
         value: 15,
         material_type: "miscellaneous",
     });
     item_templates["Wolf pelt"] = new Material({
         name: "Wolf pelt",
-        description: "Pelt of a wild wolf. It's a bit damaged so it won't fetch a great price, but the leather itself could be useful",
+        description: "desc item Wolf pelt",
         value: 20,
         material_type: "pelt",
     });
 	
     item_templates["Boar hide"] = new Material({
         name: "Boar hide",
-        description: "Thick hide of a wild boar. Too stiff for clothing, but might be useful for an armor",
+        description: "desc item Boar hide",
         value: 30,
         material_type: "pelt",
     });
     item_templates["Boar meat"] = new Material({
         name: "Boar meat",
-        description: "Fatty meat of a wild boar, all it needs is to be cooked",
+        description: "desc item Boar meat",
         value: 20,
         material_type: "raw meat",
     });
     item_templates["High quality boar tusk"] = new Material({
         name: "High quality boar tusk",
-        description: "Tusk of a wild boar. Sharp and long enough to easily kill an adult human",
+        description: "desc item High quality boar tusk",
         value: 25,
         material_type: "miscellaneous",
     });
 	
     item_templates["Bear hide"] = new Material({
-        description: "A strong hide of a wild bear, so strong that even steel struggles against it",
+        description: "desc item Bear hide",
         value: 50,
         material_type: "pelt",
     });
     item_templates["Bear claw"] = new Material({
-        description: "Large and dangerous claw of a wild bear, but it has seen better days",
+        description: "desc item Bear claw",
         value: 50,
     });
     item_templates["Sharp bear claw"] = new Material({
-        description: "Large and dangerous claw of a wild bear, sharp enough to easily cut through meat",
+        description: "desc item Sharp bear claw",
         value: 80,
         material_type: "miscellaneous",
     });
     item_templates["Weak monster bone"] = new Material({
         name: "Weak monster bone",
-        description: "Mutated and dark bone of a monster. While on the weaker side, it's still very strong and should be useful for crafting after some processing",
+        description: "desc item Weak monster bone",
         value: 30,
         material_type: "bone",
     });
 	
     item_templates["Goat meat"] = new Material({
         name: "Mountain goat meat",
-        description: "Lean meat of a goat, it's pretty tough and needs to be cooked for a long time",
+        description: "desc item Goat meat",
         value: 25,
         material_type: "raw meat",
     });
     item_templates["Mountain goat hide"] = new Material({
         name: "Mountain goat hide",
-        description: "Thick hide of a mountain goat. Not as strong as boar hide, but this one can actually be turned into clothes after some processing",
+        description: "desc item Mountain goat hide",
         value: 30,
         material_type: "pelt",
     });
     item_templates["Pristine mountain goat horn"] = new Material({
         name: "Pristine mountain goat horn",
-        description: "Curved and sturdy horn of a mountain goat. It's noticeably bigger than average and seems to be even sturdier",
+        description: "desc item Pristine mountain goat horn",
         value: 70,
         material_type: "miscellaneous",
     });
 	
     item_templates["Crab meat"] = new Material({
         name: "Crab meat",
-        description: "A sandy shell filled with crab meat. It needs to be cleaned before it can be cooked",
+        description: "desc item Crab meat",
         value: 20,
     });
     item_templates["Crab claw"] = new Material({
         name: "Crab claw",
-        description: "A large claw of a crab, covered in abrasions and barnicles, but it makes a nice souvenier",
+        description: "desc item Crab claw",
         value: 40,
     });
     item_templates["Giant crab claw"] = new Material({
-        description: "A large claw of a crab in pristine condition, still sharp and strong enough to take a finger off",
+        description: "desc item Giant crab claw",
         value: 100,
         material_type: "miscellaneous",
     });
 	
     item_templates["Alligator meat"] = new Material({
         name: "Alligator meat",
-        description: "A lean chunk of alligator meat. It's tough, with a strange but not unappealing smell",
+        description: "desc item Alligator meat",
         value: 40,
         material_type: "raw meat",
     });
     item_templates["Alligator skin"] = new Material({
         name: "Alligator skin",
-        description: "Rough, scaly hide of an alligator. Deceptively strong and flexible, but uncomfortable to touch and terrible at keeping the cold at bay",
+        description: "desc item Alligator skin",
         value: 50,
         material_type: "pelt",
     });
 	
     item_templates["Turtle meat"] = new Material({
         name: "Turtle meat",
-        description: "A lean cut of turtle meat. It's tender and versatile, but difficult to prepare",
+        description: "desc item Turtle meat",
         value: 40,
         material_type: "raw meat",
     });
     item_templates["Turtle shell"] = new Material({
         name: "Turtle shell",
-        description: "A dense, thick turtle shell. It's stronger than steel, but too bulky to work with",
+        description: "desc item Turtle shell",
         value: 30,
         material_type: "pelt",
     });
 	
     item_templates["Giant snake meat"] = new Material({
         name: "Giant snake meat",
-        description: "A lean cut of snake meat. It's rubbery, and looks difficult to cook",
+        description: "desc item Giant snake meat",
         value: 40,
         material_type: "raw meat",
     });
     item_templates["Giant snake skin"] = new Material({
         name: "Giant snake skin",
-        description: "Smooth, scaly hide of a giant snake. Very durable, but very thin and a poor insulator",
+        description: "desc item Giant snake skin",
         value: 50,
         material_type: "pelt",
     });
@@ -1625,13 +1637,13 @@ book_stats["Counting Mice"] = new BookData({
 
     item_templates["Frog meat"] = new Material({
         name: "Frog meat",
-        description: "Surprisingly tender meat from a frog",
+        description: "desc item Frog meat",
         value: 50,
         material_type: "raw meat",
     });
     item_templates["Frog hide"] = new Material({
         name: "Frog hide", 
-        description: "Slippery hide of a giant frog. If you could remove the toxins from it, the leather could be put into good use",
+        description: "desc item Frog hide",
         value: 50,
         material_type: "pelt",
     });
@@ -1642,55 +1654,55 @@ book_stats["Counting Mice"] = new BookData({
 (function(){
     item_templates["Low quality iron ore"] = new Material({
         name: "Low quality iron ore",
-        description: "Iron content is rather low and there are a lot of problematic components that can't be fully removed, which will affect created materials",
+        description: "desc item Low quality iron ore",
         value: 3,
         material_type: "raw metal",
     });
     item_templates["Iron ore"] = new Material({
         name: "Iron ore",
-        description: "It has a decent iron content and can be smelt into market-quality iron",
+        description: "desc item Iron ore",
         value: 5,
         material_type: "raw metal",
     });
     item_templates["Atratan ore"] = new Material({
         name: "Atratan ore",
-        description: "A dark-colored ore said to have minuscule magical effects, but used almost exclusively for refining all types of iron",
+        description: "desc item Atratan ore",
         value: 6,
         material_type: "raw metal",
     });
     item_templates["White iron ore"] = new Material({
         name: "White iron ore",
-        description: "A dense and heavy cousin of iron, with a surprising white gleam. Extremely strong after being smelt, at the cost of very high mass.",
+        description: "desc item White iron ore",
         value: 10,
         material_type: "raw metal",
     });
     item_templates["Black iron ore"] = new Material({
         name: "Black iron ore",
-        description: "A light and strong cousing of iron, with a seemingly impossible black gleam. After being smelt, very strong and very light.",
+        description: "desc item Black iron ore",
         value: 10,
         material_type: "raw metal",
     });
     item_templates["Silver ore"] = new Material({
         name: "Silver ore", 
-        description: "Peculiar for its ability to direct or disrupt magic",
+        description: "desc item Silver ore",
         value: 10,
         material_type: "raw metal",
     });
     item_templates["Coal"] = new Material({
         name: "Coal",
-        description: "A flammable material with extremely high carbon content",
+        description: "desc item Coal",
         value: 7,
         material_type: "coal",
     });
     item_templates["Charcoal"] = new Material({
         name: "Charcoal",
-        description: "A flammable material with extremely high carbon content, created by strongly heating wood",
+        description: "desc item Charcoal",
         value: 5,
         material_type: "coal",
     });
 	
     item_templates["Rough wood log"] = new Material({
-        description: "A big log of cheap and weak wood. At least it should be very easy to work with",
+        description: "desc item Rough wood log",
         value: 10,
         material_type: "raw wood",
         getName: ()=>{
@@ -1699,106 +1711,106 @@ book_stats["Counting Mice"] = new BookData({
         }
     });
     item_templates["Wood log"] = new Material({
-        description: "Average quality wood. It might have some reasonable uses",
+        description: "desc item Wood log",
         value: 20,
         material_type: "raw wood",
     });
     item_templates["Ash wood log"] = new Material({
-        description: "A strong wood log, it should work great for most of your purposes",
+        description: "desc item Ash wood log",
         value: 35,
         material_type: "raw wood",
     });
     item_templates["Hickory wood log"] = new Material({
-        description: "A very strong wood log, it should work great for almost anything",
+        description: "desc item Hickory wood log",
         value: 50,
         material_type: "raw wood",
     });
     item_templates["Piece of willow wood"] = new Material({
-        description: "Not suitable for weapons, but may have other uses",
+        description: "desc item Piece of willow wood",
         value: 5,
         //material_type: "raw wood", //too easy to obtain compared to wood logs
     });
 
     item_templates["Stone brick"] = new Material({
-        description: "A very normal stone brick. Useful for any kind of construction, but available easily enough to not be worth much",
+        description: "desc item Stone brick",
         value: 8,
         material_type: "stone brick",
     });
 	
     item_templates["Belmart leaf"] = new Material({
-        description: "Small, round, dark-green leaves with very good disinfectant properties",
+        description: "desc item Belmart leaf",
         value: 8,
         material_type: "disinfectant herb",
     });
     item_templates["Golmoon leaf"] = new Material({
-        description: "Big green-brown leaves that can be applied to wounds to speed up their healing",
+        description: "desc item Golmoon leaf",
         value: 8,
         material_type: "healing herb",
     });
     item_templates["Oneberry"] = new Material({
-        description: "Small blue berries capable of stimulating body's natural healing",
+        description: "desc item Oneberry",
         value: 8,
         material_type: "healing herb",
     });
     item_templates["Silver thistle"] = new Material({
-        description: "Rare herb that usually grows high up in mountains, a potent healing ingredient",
+        description: "desc item Silver thistle",
         value: 20,
         material_type: "healing herb",
     });
 
     item_templates["Tree sap"] = new Material({
-        description: "A sticky substance from within a tree",
+        description: "desc item Tree sap",
         value: 5,
     });
 	
     item_templates["Cooking herbs"] = new Material({
         name: "Parsley, sage, rosemary and thyme",
-        description: "A collection of various herbs commonly used to enhance the flavour and nutrition of dishes",
+        description: "desc item Cooking herbs",
         value: 10,
         material_type: "culinary herb",
     });
     item_templates["Wool"] = new Material({
-        description: "A handful of wool, raw and unprocessed",
+        description: "desc item Wool",
         value: 8,
         material_type: "raw fabric",
     });
     item_templates["Silica Sand"] = new Material({
         name: "Silica sand",
-        description: "Sand made potent by the remains of countless generations of creatures that lived and died in the body of water it was taken from",
+        description: "desc item Silica Sand",
         value: 1
     });
 
     item_templates["Flax"] = new Material({
         name: "Flax",
-        description: "A bundle of flax, raw and unprocessed",
+        description: "desc item Flax",
         value: 14,
         material_type: "raw fabric",
     });
     item_templates["Clam"] = new Material({
         name: "Clam",
-        description: "Common shellfish found in the sand and mud around the lake shore. Can't be eaten raw",
+        description: "desc item Clam",
         value: 6,
     });
     item_templates["Wild onion"] = new Material({
         name: "Wild onion",
-        description: "A wild root vegetable sometimes used to add flavor to dishes. Can't be eaten raw",
+        description: "desc item Wild onion",
         value: 20,
     });
     item_templates["Wild garlic"] = new Material({
         name: "Wild garlic",
-        description: "A wild root vegetable known to possess anti-fungal properties, sometimes used to add flavor to dishes. Can't be eaten raw",
+        description: "desc item Wild garlic",
         value: 20,
         material_type: "culinary herb",
     });
     item_templates["Wild potato"] = new Material({
         name: "Wild potato",
-        description: "A wild nutrient-rich stem tuber that can be used in a variety of dishes. Can't be eaten raw",
+        description: "desc item Wild potato",
         value: 20,
     });
 	
     item_templates["Ratfish"] = new Material({
         name: "Ratfish",
-        description: "A small sweetwater fish, named after its unremarkable coloration and propensity to travel in large groups",
+        description: "desc item Ratfish",
         use_quality: true,
         base_size: 5,
         value: 5,
@@ -1806,7 +1818,7 @@ book_stats["Counting Mice"] = new BookData({
     });
     item_templates["Minnow"] = new Material({
         name: "Minnow",
-        description: "One of the variety of small fish that inhabit rivers and streams",
+        description: "desc item Minnow",
         use_quality: true,
         base_size: 10,
         value: 10,
@@ -1815,7 +1827,7 @@ book_stats["Counting Mice"] = new BookData({
 
     item_templates["Mackerel shark"] = new Material({
         name: "Mackerel shark",
-        description: "A shark small enough to fit in a stream. Makes up for its size with its feistiness and big mouth",
+        description: "desc item Mackerel shark",
         use_quality: true,
         base_size: 35,
         value: 85,
@@ -1823,7 +1835,7 @@ book_stats["Counting Mice"] = new BookData({
     });
     item_templates["Trout"] = new Material({
         name: "Trout",
-        description: "A fish large enough for a full meal and common in most rivers, making it a convenient source of food. So far, this has not effected their population",
+        description: "desc item Trout",
         use_quality: true,
         base_size: 60,
         value: 110,
@@ -1832,7 +1844,7 @@ book_stats["Counting Mice"] = new BookData({
 
     item_templates["Carp"] = new Material({
         name: "Carp",
-        description: "It hasn't grown into any of its more powerful forms yet, so its meat is still fatty and plump",
+        description: "desc item Carp",
         use_quality: true,
         base_size: 50,
         value: 150,
@@ -1840,7 +1852,7 @@ book_stats["Counting Mice"] = new BookData({
     });
     item_templates["Catfish"] = new Material({
         name: "Catfish",
-        description: "A large fish with whiskers. Usually found near the bottom of lakes, where it feeds on ratfish and pretty much everything else it can hunt",
+        description: "desc item Catfish",
         use_quality: true,
         base_size: 100,
         value: 200,
@@ -2976,7 +2988,7 @@ function add_gear_components() {
 
         item_templates["Wooden training shield base"] = new ShieldComponent({
             name: "Wooden training shield base",
-            description: "A primitive but cheap form of a shield",
+            description: "desc item Wooden training shield base",
             value: 16,
             tags: {"ignore_skill": true},
             shield_strength: 0.5,
@@ -2992,7 +3004,7 @@ function add_gear_components() {
         
         item_templates["Cheap wooden shield base"] = new ShieldComponent({
             name: "Cheap wooden shield base",
-            description: "Cheap shield component made of wood, basically just a few planks barely holding together",
+            description: "desc item Cheap wooden shield base",
             value: 16,
             shield_strength: 1,
             shield_name: "Cheap wooden shield",
@@ -3060,7 +3072,8 @@ function add_gear_components() {
                     multiplier: 0.90,
                 }
             }
-        });item_templates["Alchemical wood shield base"] = new ShieldComponent({
+        });
+        item_templates["Alchemical wood shield base"] = new ShieldComponent({
             name: "Alchemical wood shield base",
             description: "Shield base made of alchemical wood, stronger than steel",
             value: 200,
@@ -3262,7 +3275,7 @@ function add_gear_components() {
 
         item_templates["Batrachian vest"] = new Armor({
             name: "Batrachian vest", 
-            description: "Comfortable leather vest, slippery enough to make enemy blows slide off",
+            description: "desc item Batrachian vest",
             value: 700,
             component_type: "chestplate interior",
             base_defense: 4,
@@ -3344,7 +3357,7 @@ function add_gear_components() {
 
         item_templates["Batrachian pants"] = new Armor({
             name: "Batrachian pants", 
-            description: "Slippery leather pants",
+            description: "desc item Batrachian pants",
             value: 700,
             component_type: "leg armor interior",
             base_defense: 3,
@@ -3427,7 +3440,7 @@ function add_gear_components() {
 
         item_templates["Batrachian hat"] = new Armor({
             name: "Batrachian hat", 
-            description: "A slippery leather hat to protect your head",
+            description: "desc item Batrachian hat",
             value: 700,
             component_type: "helmet interior",
             base_defense: 3,
@@ -3447,7 +3460,7 @@ function add_gear_components() {
 
         item_templates["Sun hat"] = new Armor({
             name: "Sun hat", 
-            description: "A wicker hat with a wide brim",
+            description: "desc item Sun hat",
             value: 100,
             component_type: "helmet interior",
             base_defense: 0,
@@ -3509,7 +3522,7 @@ function add_gear_components() {
 
         item_templates["Batrachian gloves"] = new Armor({
             name: "Batrachian gloves", 
-            description: "Strong leather gloves, with membranes to help you swim",
+            description: "desc item Batrachian gloves",
             value: 700,
             component_type: "glove interior",
             base_defense: 2,
@@ -3545,7 +3558,7 @@ function add_gear_components() {
         });*/
         item_templates["Work shoes"] = new Armor({
             name: "Work shoes",
-            description: "Work shoes made of a mix of leather and wool. While they provide no protection, they are very comfortable for moving around",
+            description: "desc item Work shoes",
             value: 300,
             component_type: "shoes interior",
             base_defense: 0,
@@ -3623,7 +3636,7 @@ function add_gear_components() {
 
         item_templates["Batrachian shoes"] = new Armor({
             name: "Batrachian shoes", 
-            description: "Strong shoes made of frog leather, that let you slide along the ground",
+            description: "desc item Batrachian shoes",
             value: 700,
             component_type: "shoes interior",
             base_defense: 2,
@@ -3791,7 +3804,7 @@ function add_gear_components() {
         item_templates["Rat pelt cape"] = new Cape({
             name: "Rat pelt cape",
             item_tier: 1,
-            description: "It's a cape... made of wolf rat pelts. Only for poor or insane",
+            description: "desc item Rat pelt cape",
             value: 100,
             base_stats: {
                 cold_tolerance: {
@@ -3801,7 +3814,7 @@ function add_gear_components() {
         });
         item_templates["Wolf pelt cape"] = new Cape({
             name: "Wolf pelt cape",
-            description: "An elegant cape made from wolf pelts. Doesn't provide much protection, but is light enough to not hinder your movements",
+            description: "desc item Wolf pelt cape",
             value: 400,
             item_tier: 2,
             base_defense: 2,
@@ -3813,7 +3826,7 @@ function add_gear_components() {
         });
         item_templates["Boar hide cape"] = new Cape({
             name: "Boar hide cape",
-            description: "A rough cape made from boar hides. Offers a nice protection, but is heavy and stiff",
+            description: "desc item Boar hide cape",
             value: 700,
             item_tier: 3,
             base_defense: 5,
@@ -3831,7 +3844,7 @@ function add_gear_components() {
         });
         item_templates["Goat hide cape"] = new Cape({
             name: "Goat hide cape",
-            description: "A rough cape made from goat hides",
+            description: "desc item Goat hide cape",
             value: 700,
             item_tier: 3,
             base_defense: 3,
@@ -3849,7 +3862,7 @@ function add_gear_components() {
         });
         item_templates["Bear hide cape"] = new Cape({
             name: "Bear hide cape",
-            description: "A thick, heavy, and warm furry cape, made from a bear hide",
+            description: "desc item Bear hide cape",
             value: 1000,
             item_tier: 4,
             base_defense: 7,
@@ -3867,7 +3880,7 @@ function add_gear_components() {
         });
         item_templates["Batrachian cape"] = new Cape({
             name: "Batrachian cape", 
-            description: "A slippery cape made from frogskin. Technically waterproof, but doesn't cover your entire body",
+            description: "desc item Batrachian cape",
             value: 1000,
             item_tier: 4,
             base_defense: 4,
@@ -4231,7 +4244,7 @@ function add_gear() {
 
         item_templates["Simple dream catcher"] = new Artifact({
             name: "Simple dream catcher",
-            description: "Sinew netting stretched over a willow hoop. You don't know how it works or what it does, but it makes you feel safer. It's design came to you in a dream",
+            description: "desc item Simple dream catcher",
             value: 10,
             stats: {},
             base_bonus_skill_levels: {
@@ -4269,7 +4282,7 @@ function add_gear() {
         item_templates["Old ram's horn"] = new Amulet({
             value: 1000,
             tags: {unique: true, unsellable: true},
-            description: "An unwieldy amulet made of an old ram's horn. You can almost feel its original owner's desire to protect his group.",
+            description: "desc item Old ram's horn",
             stats: {
                 attack_power: {
                     multiplier: 1.1,
@@ -4304,35 +4317,35 @@ function add_gear() {
     (function(){
         item_templates["Old pickaxe"] = new Tool({
             name: "Old pickaxe",
-            description: "An old pickaxe that has seen better times, but is still usable",
+            description: "desc item Old pickaxe",
             value: 10,
             equip_slot: "pickaxe",
         });
 
         item_templates["Old axe"] = new Tool({
             name: "Old axe",
-            description: "An old axe that has seen better times, but is still usable",
+            description: "desc item Old axe",
             value: 10,
             equip_slot: "axe",
         });
 
         item_templates["Old sickle"] = new Tool({
             name: "Old sickle",
-            description: "And old herb sickle that has seen better times, but is still usable",
+            description: "desc item Old sickle",
             value: 10,
             equip_slot: "sickle",
         });
 
         item_templates["Old shovel"] = new Tool({
             name: "Old shovel",
-            description: "And old shovel that has seen better times, but can still be used to dig something up",
+            description: "desc item Old shovel",
             value: 10,
             equip_slot: "shovel",
         });
 
         item_templates["Iron pickaxe"] = new Tool({
             name: "Iron pickaxe",
-            description: "A decent pickaxe made of iron, strong enough for most ores",
+            description: "desc item Iron pickaxe",
             value: 1000,
             equip_slot: "pickaxe",
             base_bonus_skill_levels: {
@@ -4342,7 +4355,7 @@ function add_gear() {
 
         item_templates["Iron chopping axe"] = new Tool({
             name: "Iron chopping axe",
-            description: "A decent axe made of iron, hard and sharp enough for most of trees, even if they will still require an effort",
+            description: "desc item Iron chopping axe",
             value: 1000,
             equip_slot: "axe",
             base_bonus_skill_levels: {
@@ -4352,7 +4365,7 @@ function add_gear() {
 
         item_templates["Iron sickle"] = new Tool({
             name: "Iron sickle",
-            description: "A decent sickle made of iron, sharp enough for most of plants",
+            description: "desc item Iron sickle",
             value: 1000,
             equip_slot: "sickle",
             base_bonus_skill_levels: {
@@ -4362,7 +4375,7 @@ function add_gear() {
 
         item_templates["Iron shovel"] = new Tool({
             name: "Iron shovel",
-            description: "A decent shovel made of iron, solid enough for most of your digging needs",
+            description: "desc item Iron shovel",
             value: 1000,
             equip_slot: "shovel",
             base_bonus_skill_levels: {
@@ -4372,14 +4385,14 @@ function add_gear() {
 
         item_templates["Makeshift fishing pole"] = new Tool({
             name: "Makeshift fishing pole",
-            description: "Little more than a piece of string tied to a stick, but sufficient to get a catch",
+            description: "desc item Makeshift fishing pole",
             value: 10,
             equip_slot: "fishing_pole",
         });
 
         item_templates["Wooden fishing pole"] = new Tool({
             name: "Wooden fishing pole",
-            description: "A simple, but proper fishing pole",
+            description: "desc item Wooden fishing pole",
             value: 200,
             equip_slot: "fishing_pole",
             base_bonus_skill_levels: {
@@ -4389,7 +4402,7 @@ function add_gear() {
 
         item_templates["Ash wood fishing pole"] = new Tool({
             name: "Ash wood fishing pole",
-            description: "A decent fishing pole",
+            description: "desc item Ash wood fishing pole",
             value: 500,
             equip_slot: "fishing_pole",
             base_bonus_skill_levels: {
@@ -4398,7 +4411,7 @@ function add_gear() {
         });
         item_templates["Hickory wood fishing pole"] = new Tool({
             name: "Hickory wood fishing pole",
-            description: "A good fishing pole made out of quality materials",
+            description: "desc item Hickory wood fishing pole",
             value: 900,
             equip_slot: "fishing_pole",
             base_bonus_skill_levels: {
@@ -4407,7 +4420,7 @@ function add_gear() {
         });
         item_templates["Alchemical wood fishing pole"] = new Tool({
             name: "Alchemical wood fishing pole",
-            description: "An excellent fishing pole made out of state-of-the-art materials",
+            description: "desc item Alchemical wood fishing pole",
             value: 1400,
             equip_slot: "fishing_pole",
             base_bonus_skill_levels: {
@@ -4421,255 +4434,255 @@ function add_gear() {
 //processed materials
 (function(){
     item_templates["Bonemeal"] = new Material({
-        description: "Powdered bones and teeth, that can be used as an organic fertilizer",
+        description: "desc item Bonemeal",
         value: 100,
     }),
 	
     item_templates["Low quality iron ingot"] = new Material({
-        description: "It has a lot of impurities, resulting in it being noticeably below the market standard",
+        description: "desc item Low quality iron ingot",
         value: 10,
         material_type: "metal",
     });
     item_templates["Iron ingot"] = new Material({
-        description: "It doesn't suffer from any excessive impurities and can be used without worries",
+        description: "desc item Iron ingot",
         value: 20,
         material_type: "metal",
     });
 
     item_templates["Steel ingot"] = new Material({
-        description: "Basic alloy of iron, harder and more resistant",
+        description: "desc item Steel ingot",
         value: 40,
         material_type: "metal",
     });
 
     item_templates["White iron ingot"] = new Material({
-        description: "A cousin of iron, much heavier but also very much stronger",
+        description: "desc item White iron ingot",
         value: 70,
         material_type: "metal",
     });
 
     item_templates["Black iron ingot"] = new Material({
-        description: "A cousin of iron, lighter and much stronger",
+        description: "desc item Black iron ingot",
         value: 70,
         material_type: "metal",
     });
 
     item_templates["White steel ingot"] = new Material({
-        description: "A very strong and very heavy alloy",
+        description: "desc item White steel ingot",
         value: 120,
         material_type: "metal",
     });
 
     item_templates["Black steel ingot"] = new Material({
-        description: "A strong and light alloy",
+        description: "desc item Black steel ingot",
         value: 120,
         material_type: "metal",
     });
 
     item_templates["Turtle shellplate"] = new Material({        //treated as a metal material/chainmail instead of leather
-        description: "Small, dense plates capable of reflecting mighty blows. Useless in their current form, but can be turned into something useful with enough effort and focus",
+        description: "desc item Turtle shellplate",
         value: 60,
         material_type: "metal",
     });
 	
     item_templates["Silver ingot"] = new Material({
-        description: "Too soft to use as weapon material, but has potential for use in magic tools",
+        description: "desc item Silver ingot",
         value: 30,
         material_type: "metal",
     });
     item_templates["Piece of wolf rat leather"] = new Material({
-        description: "It's slightly damaged and seems useless for anything that requires precise work",
+        description: "desc item Piece of wolf rat leather",
         value: 20,
         material_type: "piece of leather",
     });
     item_templates["Processed rat pelt"] = new Material({
-        description: "Processed pelt of a huge rat. It's of a barely acceptable quality, but it's still a miracle with how terrible the basic material was",
+        description: "desc item Processed rat pelt",
         value: 20,
         material_type: "processed pelt",
     });
 	
     item_templates["Piece of wolf leather"] = new Material({
-        description: "Somewhat strong, should offer some protection when turned into armor",
+        description: "desc item Piece of wolf leather",
         value: 30,
         material_type: "piece of leather",
     });
     item_templates["Processed wolf pelt"] = new Material({
-        description: "Processed pelt of a wild wolf. It's a nice, stylish material, with fur that's feels good to touch",
+        description: "desc item Processed wolf pelt",
         value: 30,
         material_type: "processed pelt",
     });
 	
     item_templates["Piece of boar leather"] = new Material({
-        description: "Thick and resistant leather, too stiff for clothes but perfect for armor",
+        description: "desc item Piece of boar leather",
         value: 45,
         material_type: "piece of leather",
     });
     item_templates["Processed boar hide"] = new Material({
-        description: "Processed hide of a wild boar. It's a thick, heavy material, with short rough fur, but it's quite strong",
+        description: "desc item Processed boar hide",
         value: 45,
         material_type: "processed pelt",
     });
 	
     item_templates["Piece of goat leather"] = new Material({
-        description: "Thick and resistant, just barely elastic enough to be used for clothing",
+        description: "desc item Piece of goat leather",
         value: 60,
         material_type: "piece of leather"
     }),
     item_templates["Processed goat hide"] = new Material({
-        description: "Processed hide of a wild goat. It's a resistant material, with short and rough fur",
+        description: "desc item Processed goat hide",
         value: 60,
         material_type: "processed pelt",
     });
 	
     item_templates["Piece of bear leather"] = new Material({
-        description: "Strong and resistant, but too thick for clothing",
+        description: "desc item Piece of bear leather",
         value: 90,
         material_type: "piece of leather"
     });
     item_templates["Processed bear hide"] = new Material({
-        description: "Strong, resistant, and warm, with fluffy fur",
+        description: "desc item Processed bear hide",
         value: 90,
         material_type: "piece of leather"
     }),
 
     item_templates["Piece of frog leather"] = new Material({
-        description: "The toxins have been removed and the slime coagulated into a waxy coating",
+        description: "desc item Piece of frog leather",
         value: 60,
         material_type: "piece of leather"
     });	
 	item_templates["Piece of alligator leather"] = new Material({
-        description: "Strong and flexible, but too uncomfortable to use as clothing",
+        description: "desc item Piece of alligator leather",
         value: 150,
         material_type: "piece of leather"
     }),
     item_templates["Piece of snakeskin leather"] = new Material({
-        description: "Durable and thin, but a poor insulator",
+        description: "desc item Piece of snakeskin leather",
         value: 150,
         material_type: "piece of leather"
     }),
 
     item_templates["Animal fat"] = new Material({
-        description: "White, thick, oily substance, rendered from animal tissue",
+        description: "desc item Animal fat",
         value: 40,
         material_type: "fat",
     });
     item_templates["Sinew"] = new Material({
-        description: "Strong, elastic fiber, rendered from animal tissue",
+        description: "desc item Sinew",
         value: 5,
     });
     item_templates["Sinew string"] = new Material({
-        description: "Tough, durable fiber, processed from animal tissue",
+        description: "desc item Sinew string",
         value: 20,
     });
     item_templates["Flax string"] = new Material({
-        description: "Strong and durable linen fiber",
+        description: "desc item Flax string",
         value: 35,
     });
     item_templates["Wool cloth"] = new Material({
-        description: "Thick and warm, might possibly absorb some punches",
+        description: "desc item Wool cloth",
         value: 8,
         material_type: "fabric",
     });
 	item_templates["Linen cloth"] = new Material({
-        description: "Bolt of durable and thin cloth that won't restrict mobility",
+        description: "desc item Linen cloth",
         value: 14,
         material_type: "fabric",
     });
 
     item_templates["Iron chainmail"] = new Material({
-        description: "Dozens of tiny iron rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        description: "desc item Iron chainmail",
         value: 30,
         material_type: "chainmail",
     });
     item_templates["Steel chainmail"] = new Material({
-        description: "Dozens of tiny steel rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        description: "desc item Steel chainmail",
         value: 60,
         material_type: "chainmail",
     });
 
     item_templates["White iron chainmail"] = new Material({
-        description: "Dozens of tiny white iron rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        description: "desc item White iron chainmail",
         value: 105,
         material_type: "chainmail",
     });
     item_templates["Black iron chainmail"] = new Material({
-        description: "Dozens of tiny black iron rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        description: "desc item Black iron chainmail",
         value: 105,
         material_type: "chainmail",
     });
 
     item_templates["White steel chainmail"] = new Material({
-        description: "Dozens of tiny white steel rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        description: "desc item White steel chainmail",
         value: 180,
         material_type: "chainmail",
     });
     item_templates["Black steel chainmail"] = new Material({
-        description: "Dozens of tiny black steel rings linked together. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+        description: "desc item Black steel chainmail",
         value: 180,
         material_type: "chainmail",
     });
 	
     item_templates["Scraps of wolf rat meat"] = new Material({
-        description: "Ignoring where they come from and all the attached diseases, they actually look edible. Just remember to cook it first",
+        description: "desc item Scraps of wolf rat meat",
         value: 8,
         material_type: "meat",
     });
     item_templates["Processed rough wood"] = new Material({
-        description: "Cheapest form of wood, ready to be used. Despite being rather weak, it still has a lot of uses",
+        description: "desc item Processed rough wood",
         value: 6,
         material_type: "wood",
     });
     item_templates["Processed wood"] = new Material({
-        description: "Average quality wood, ready to be used",
+        description: "desc item Processed wood",
         value: 11,
         material_type: "wood",
     });
     item_templates["Processed ash wood"] = new Material({
-        description: "High quality wood, just waiting to be turned into a piece of equipment",
+        description: "desc item Processed ash wood",
         value: 20,
         material_type: "wood",
     });
     item_templates["Processed hickory wood"] = new Material({
-        description: "Top quality wood, suitable for all kinds of projects",
+        description: "desc item Processed hickory wood",
         value: 35,
         material_type: "wood",
     });
 	item_templates["Alchemical Wood"] = new Material({
-        description: "Extremely resilient wood, produced with alchemy",
+        description: "desc item Alchemical Wood",
         value: 50,
         material_type: "wood",
     });
     item_templates["Processed weak monster bone"] = new Material({
-        description: "Polished and cleaned bones of a weak monster, just waiting to be turned into a piece of equipment",
+        description: "desc item Processed weak monster bone",
         value: 40,
         material_type: "bone",
     });
 
     item_templates["Wicker"] = new Material({
-        description: "Light but sturdy plant fibers, ready to be woven into useable items",
+        description: "desc item Wicker",
         value: 10,
     });
     item_templates["Willow bark"] = new Material({
-        description: "Wood bark with medicinal properties, carefully scraped from the wood",
+        description: "desc item Willow bark",
         value: 25,
     });
 	
     item_templates["Potash"] = new Material({
-        description: "An alchemical substance derived from plant ash, sought after for production of bleach, soap and glass",
+        description: "desc item Potash",
         value: 25
     });
 	item_templates["Sulfur"] = new Material({
-        description: "A yellow substance used in alchemy",
+        description: "desc item Sulfur",
         value: 30
     });
     item_templates["Raw Glass"] = new Material({
         name: "Raw glass",
-        description: "Molten piece of glass, yet to be shaped into something useful",
+        description: "desc item Raw Glass",
         value: 100
     });
     item_templates["Metal fishing hook"] = new Material({
         name: "Metal fishing hook",
-        description: "A small hook made of metal",
+        description: "desc item Metal fishing hook",
         value: 10
     });
 })();
@@ -4679,7 +4692,7 @@ function add_gear() {
     //currently not in use and not obtainable
     item_templates["Basic spare parts"] = new OtherItem({
         name: "Basic spare parts",
-        description: "Some cheap and simple spare parts, like bindings and screws, necessary for crafting equipment",
+        description: "desc item Basic spare parts",
         value: 30,
         component_tier: 1,
     });
@@ -4689,7 +4702,8 @@ function add_gear() {
 //usables:
 (function(){
     item_templates["Stale bread"] = new UsableItem({
-        name: "Stale bread", description: "Big piece of an old bread, still edible",
+        name: "Stale bread",
+        description: "desc item Stale bread",
         value: 20,
         effects: [{effect: "Basic meal", duration: 60}],
         tags: {"food": true},
@@ -4698,7 +4712,7 @@ function add_gear() {
 
     item_templates["Fresh bread"] = new UsableItem({
         name: "Fresh bread",
-        description: "Freshly baked bread, delicious",
+        description: "desc item Fresh bread",
         value: 40,
         effects: [{effect: "Basic meal", duration: 150}],
         tags: {"food": true},
@@ -4707,7 +4721,7 @@ function add_gear() {
 
     item_templates["Bread kwas"] = new UsableItem({
         name: "Bread kwas",
-        description: "Tastes like bread",
+        description: "desc item Bread kwas",
         value: 40,
         effects: [{effect: "Well hydrated", duration: 60}],
         recovery_chances: {"Glass bottle": 0.6},
@@ -4715,28 +4729,32 @@ function add_gear() {
     });
 
     item_templates["Carrot"] = new UsableItem({
-        name: "Carrot", description: "A delicious root that can be eaten raw",
+        name: "Carrot",
+        description: "desc item Carrot",
         value: 20,
         effects: [{effect: "Basic meal", duration: 10}],
         tags: {"food": true},
     });
 
     item_templates["Cooked carrot"] = new UsableItem({
-        name: "Cooked carrot", description: "A delicious root, cooked",
+        name: "Cooked carrot",
+        description: "desc item Cooked carrot",
         value: 30,
         effects: [{effect: "Basic meal", duration: 150}],
         tags: {"food": true},
     });
 
     item_templates["Potato"] = new UsableItem({
-        name: "Potato", description: "A common tuber with versatile culinary usage. Just remember to cook it first!",
+        name: "Potato",
+        description: "desc item Potato",
         value: 15,
         effects: [{effect: "Slight food poisoning", duration: 20}],
         tags: {"food": true},
     });
 
     item_templates["Cooked potato"] = new UsableItem({
-        name: "Potato", description: "A common tuber with versatile culinary usage, though this one was simply cooked",
+        name: "Potato",
+        description: "desc item Cooked potato",
         value: 40,
         effects: [{effect: "Basic meal", duration: 150}],
         tags: {"food": true},
@@ -4745,7 +4763,7 @@ function add_gear() {
     //supposed to be obtained by making clam broth, but multiple results from a recipe are not yet supported
     item_templates["Cooked clam"] = new UsableItem({
         name: "Boiled clam",
-        description: "Common shellfish found around the lake shore that has been boiled, not steamed",
+        description: "desc item Cooked clam",
         value: 6,
         effects: [{effect: "Basic meal", duration: 90}],
         tags: {"food": true},
@@ -4753,21 +4771,21 @@ function add_gear() {
 
     item_templates["Weak healing powder"] = new UsableItem({
         name: "Weak healing powder",
-        description: "Not very potent, but can still make body heal noticeably faster for quite a while",
+        description: "desc item Weak healing powder",
         value: 40,
         effects: [{effect: "Weak healing powder", duration: 240}],
         tags: {"medicine": true},
     });
     item_templates["Healing powder"] = new UsableItem({
         name: "Healing powder",
-        description: "Not exactly powerful in its effects, but still makes the body heal noticeably faster and for a long time",
+        description: "desc item Healing powder",
         value: 100,
         effects: [{effect: "Healing powder", duration: 300}],
         tags: {"medicine": true},
     });
     item_templates["Potent healing powder"] = new UsableItem({
         name: "Potent healing powder",
-        description: "Makes the body heal significantly faster and for a long time",
+        description: "desc item Potent healing powder",
         value: 220,
         effects: [{effect: "Potent healing powder", duration: 300}],
         tags: {"medicine": true},
@@ -4775,7 +4793,7 @@ function add_gear() {
 
     item_templates["Oneberry juice"] = new UsableItem({
         name: "Oneberry juice",
-        description: "Tastes kinda nice and provides a quick burst of healing",
+        description: "desc item Oneberry juice",
         value: 80,
         effects: [{effect: "Weak healing potion", duration: 10}],
         recovery_chances: {"Glass phial": 0.75},
@@ -4783,7 +4801,7 @@ function add_gear() {
     });
     item_templates["Healing potion"] = new UsableItem({
         name: "Healing potion",
-        description: "Tastes nice at first but has a bitter aftertaste. Provides a quick burst of healing",
+        description: "desc item Healing potion",
         value: 200,
         effects: [{effect: "Healing potion", duration: 10}],
         recovery_chances: {"Glass phial": 0.75},
@@ -4791,21 +4809,21 @@ function add_gear() {
     });
     item_templates["Potion of sapping"] = new UsableItem({
         name: "Potion of sapping",
-        description: "A dark colored, bitter tasting potion, with no positive effects. Why would you even drink it?!",
+        description: "desc item Potion of sapping",
         value: 50,
         effects: [{effect: "Potion of sapping", duration: 360}],
         recovery_chances: {"Glass phial": 0.75},
     });
     item_templates["Healing balm"] = new UsableItem({
         name: "Healing balm",
-        description: "Simply apply it to your wound and watch it heal",
+        description: "desc item Healing balm",
         value: 120,
         effects: [{effect: "Weak healing balm", duration: 90}],
         tags: {"medicine": true},
     });
     item_templates["Thick healing balm"] = new UsableItem({
         name: "Thick healing balm",
-        description: "Simply apply it to your wound and watch it quickly heal",
+        description: "desc item Thick healing balm",
         value: 300,
         effects: [{effect: "Healing balm", duration: 90}],
         tags: {"medicine": true},
@@ -4813,7 +4831,7 @@ function add_gear() {
 
     item_templates["Roasted rat meat"] = new UsableItem({
         name: "Roasted rat meat",
-        description: "Smell might be fine now, but it still seems like a bad idea to eat it",
+        description: "desc item Roasted rat meat",
         value: 10,
         effects: [{effect: "Cheap meat meal", duration: 45}, {effect: "Slight food poisoning", duration: 45}],
         tags: {"food": true, poison: true},
@@ -4821,7 +4839,7 @@ function add_gear() {
 
     item_templates["Roasted purified rat meat"] = new UsableItem({
         name: "Roasted purified rat meat",
-        description: "Smells alright and should be safe to eat, yet you still have some doubts",
+        description: "desc item Roasted purified rat meat",
         value: 20,
         effects: [{effect: "Cheap meat meal", duration: 45}],
         tags: {"food": true},
@@ -4829,7 +4847,7 @@ function add_gear() {
 
     item_templates["Fried pork"] = new UsableItem({
         name: "Fried pork",
-        description: "It's dripping with fat and smells fantastic, all it lacks is some spices and a good side dish",
+        description: "desc item Fried pork",
         value: 40,
         effects: [{effect: "Simple meat meal", duration: 90}],
         tags: {"food": true},
@@ -4837,7 +4855,7 @@ function add_gear() {
 
     item_templates["Fried goat meat"] = new UsableItem({
         name: "Fried goat meat",
-        description: "It has a nice aroma, but is a bit too tough. Perhaps a stew would have been a better choice?",
+        description: "desc item Fried goat meat",
         value: 40,
         effects: [{effect: "Simple meat meal", duration: 90}],
         tags: {"food": true},
@@ -4845,7 +4863,7 @@ function add_gear() {
 
     item_templates["Pork roast"] = new UsableItem({
         name: "Pork roast",
-        description: "A generous amount of herbs has been rubbed into the meat, resulting in a hearty meal with a mouthwatering aroma",
+        description: "desc item Pork roast",
         value: 100,
         effects: [{effect: "Decent meat meal", duration: 120}],
         tags: {"food": true},
@@ -4853,7 +4871,7 @@ function add_gear() {
 
     item_templates["Goat stew"] = new UsableItem({
         name: "Goat stew",
-        description: "Goat meat boiled to tenderness in a herbal broth. Perfect to warm yourself up for the road",
+        description: "desc item Goat stew",
         value: 100,
         effects: [{ effect: "Decent meat meal", duration: 120 },
                   { effect: "Hot meal", duration: 60 }],
@@ -4862,7 +4880,7 @@ function add_gear() {
 
     item_templates["Crab bisque"] = new UsableItem({
         name: "Crab bisque",
-        description: "A smooth, creamy crab soup, lightly seasoned with fragrant herbs and vegetables",
+        description: "desc item Crab bisque",
         value: 100,
         effects: [{ effect: "Simple seafood soup", duration: 120 },
                   { effect: "Hot meal", duration: 30 }],
@@ -4871,7 +4889,7 @@ function add_gear() {
     });
     item_templates["Clam broth"] = new UsableItem({
         name: "Clam broth",
-        description: "Briny, flavorful, and tastes of the ocean. In a good way",
+        description: "desc item Clam broth",
         value: 100,
         effects: [{ effect: "Simple seafood soup", duration: 90 },
                   { effect: "Hot meal", duration: 30 }],
@@ -4879,28 +4897,28 @@ function add_gear() {
     });
     item_templates["Alligator jerky"] = new UsableItem({
         name: "Alligator jerky",
-        description: "It's tough meat, but it'll keep you from going hungry for a long time",
+        description: "desc item Alligator jerky",
         value: 100,
         effects: [{ effect: "Tough meat meal", duration: 300 }],
         tags: {"food": true},
     });
     item_templates["Snake jerky"] = new UsableItem({
         name: "Snake jerky",
-        description: "It's rubbery meat, but it'll keep you from going hungry for a long time",
+        description: "desc item Snake jerky",
         value: 100,
         effects: [{ effect: "Tough meat meal", duration: 300 }],
         tags: {"food": true},
     });
     item_templates["Turtle jerky"] = new UsableItem({
         name: "Turtle jerky",
-        description: "It's stringy meat, but it'll still keep you from going hungry for a long time",
+        description: "desc item Turtle jerky",
         value: 100,
         effects: [{ effect: "Tough meat meal", duration: 300 }],
         tags: {"food": true},
     });
     item_templates["Turtle soup"] = new UsableItem({
         name: "Turtle soup",
-        description: "Tonight you dine on turtle soup",     //reference to a line said by Shredder in the old Teenaged Mutant Ninja Turtles cartoon
+        description: "desc item Turtle soup",     //reference to a line said by Shredder in the old Teenaged Mutant Ninja Turtles cartoon
         value: 100,
         effects: [{ effect: "Simple seafood soup", duration: 120 },
                   { effect: "Hot meal", duration: 45 }],
@@ -4908,7 +4926,7 @@ function add_gear() {
     });
     item_templates["Swampland skewer"] = new UsableItem({
         name: "Swampland skewer",
-        description: "There's no better way to feed on the creatures of the swampland",
+        description: "desc item Swampland skewer",
         value: 100,
         effects: [{ effect: "Varied meat meal", duration: 150 },
                   { effect: "Hot meal", duration: 60 }],
@@ -4916,7 +4934,7 @@ function add_gear() {
     });
     item_templates["Basin gumbo"] = new UsableItem({
         name: "Basin gumbo",
-        description: "An incredibly complex meal that's difficult to make, but it's got an indescribable taste",
+        description: "desc item Basin gumbo",
         value: 100,
         effects: [{ effect: "Varied seafood meal", duration: 90 }],
         tags: {"food": true},
@@ -4924,14 +4942,14 @@ function add_gear() {
 	
     item_templates["Fried frog meat"] = new UsableItem({
         name: "Fried frog meat",
-        description: "Tastes a bit like bird, and a bit like fish",
+        description: "desc item Fried frog meat",
         value: 100,
         effects: [{effect: "Decent meat meal", duration: 120}],
         tags: {"food": true},
     });
     item_templates["Kingsized frog legs"] = new UsableItem({
         name: "Kingsized frog legs",
-        description: "The legs are agreed to be the best part, and when cooked with proper seasoning, considered a delicacy by some",
+        description: "desc item Kingsized frog legs",
         value: 200,
         effects: [{effect: "Tasty meat meal", duration: 120}],
         tags: {"food": true},
@@ -4939,7 +4957,7 @@ function add_gear() {
 
     item_templates["Fish skewer"] = new UsableItem({
         name: "Fish skewer", 
-        description: "Several small fish cooked together on a stick. While none of them have much meat on them individually, together they make for a servicable meal",
+        description: "desc item Fish skewer",
         value: 20,
         effects: [{effect: "Cheap meat meal", duration: 45}],
         tags: {"food": true},
@@ -4947,7 +4965,7 @@ function add_gear() {
 
     item_templates["Fried fish"] = new UsableItem({
         name: "Fried fish",
-        description: "A fish fried whole. A simple but fulfilling meal",
+        description: "desc item Fried fish",
         value: 40,
         effects: [{effect: "Simple meat meal", duration: 60}],
         tags: {"food": true},
@@ -4955,7 +4973,7 @@ function add_gear() {
 
     item_templates["Fish steak"] = new UsableItem({
         name: "Fish steak",
-        description: "Properly filleted and cooked. A much better experience than eating them whole",
+        description: "desc item Fish steak",
         value: 60,
         effects: [{effect: "Decent meat meal", duration: 60}],
         tags: {"food": true},
@@ -4963,28 +4981,28 @@ function add_gear() {
 
     item_templates["Apple pie"] = new UsableItem({
         name: "Apple pie",
-        description: "A nice pie with a delightful crust and filled to the brim with delicious apple pieces",
+        description: "desc item Apple pie",
         value: 100,
         effects: [{effect: "Sweet dessert", duration: 180}],
         tags: {"food": true},
     });
     item_templates["Carrot cake"] = new UsableItem({
         name: "Carrot cake",
-        description: "A moist carrot cake, with raisins and nuts, topped with cream cheese frosting",
+        description: "desc item Carrot cake",
         value: 100,
         effects: [{effect: "Sweet dessert", duration: 180}],
         tags: {"food": true},
     });
     item_templates["Cider"] = new UsableItem({
         name: "Cider",
-        description: "Fermented apple juice with a slightly sweet, tart, and refreshing aroma",
+        description: "desc item Cider",
         value: 100,
         effects: [{effect: "Well hydrated", duration: 120}, {effect: "Tipsy", duration: 30}],
         tags: {"food": true},
     });
     item_templates["Black coffee"] = new UsableItem({
         name: "Black coffee",
-        description: "Steaming mug of hot, bitter coffee",
+        description: "desc item Black coffee",
         value: 100,
         effects: [{effect: "Coffee", duration: 150}],
         tags: {"food": true},

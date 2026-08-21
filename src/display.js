@@ -300,7 +300,7 @@ function uncapitalize_first_letter(some_string, is_translated = false) {
  * @returns 
  */
 function obscure_name(item_id) {
-    return item_log.is_known(item_id) ? item_templates[item_id].getName() : "???";
+    return item_log.is_known(item_id) ? item_templates[item_id].getDisplayName() : "???";
 }
 
 function create_floating_effect(text, pos) {
@@ -388,9 +388,9 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     //different function used depending if its in trade (oh the horror...)
     const value_function = is_trade?"getValue":"getBaseValue";
     
-    item_tooltip = `<b>${item.getName()}</b>`;
+    item_tooltip = `<b>${item.getDisplayName()}</b>`;
     if(item.description) {
-        item_tooltip += `<br>${item.description}`;
+        item_tooltip += `<br>${item.getDescription()}`;
     }
 
     let show_quality = item.quality && !options.skip_quality && item.use_quality;
@@ -982,7 +982,7 @@ function log_loot({loot_list, is_combat=false, is_a_summary=false, is_dynamic=fa
         item = getItemFromKey(loot_to_use[0].item_key);
     }
 
-    message += item.getName() + `" x` + loot_to_use[0].item_count + gains_msg;
+    message += item.getDisplayName() + `" x` + loot_to_use[0].item_count + gains_msg;
 
     if(loot_to_use.length > 1) {
         for(let i = 1; i < loot_to_use.length; i++) {
@@ -993,7 +993,7 @@ function log_loot({loot_list, is_combat=false, is_a_summary=false, is_dynamic=fa
             } else if(loot_to_use[i].item_key) {
                 item = getItemFromKey(loot_to_use[i].item_key);
             }
-            message += (`, "` + item.getName() + `" x` + loot_to_use[i].item_count + gains_msg);
+            message += (`, "` + item.getDisplayName() + `" x` + loot_to_use[i].item_count + gains_msg);
         }
     }
     
@@ -1768,9 +1768,9 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
     let item_name_div_content = "";
     if(target_item.tags?.equippable) {
         if(target_item.tags.tool) {
-            item_name_div_content = `<span class = "item_slot" >[tool]</span> <span class="item_name">${target_item.getName()}</span>`;
+            item_name_div_content = `<span class = "item_slot" >[tool]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         } else {
-            item_name_div_content = `<span class = "item_slot" >[${target_item.equip_slot}]</span> <span class="item_name">${target_item.getName()}</span>`;
+            item_name_div_content = `<span class = "item_slot" >[${target_item.equip_slot}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         }
         item_name_div.classList.add(`${item_class}_name`);
         item_div.appendChild(item_name_div);
@@ -1787,7 +1787,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         //
     } else if(target_item.tags.component) {
         //
-        item_name_div_content = `<span class = "item_category">[Comp]</span> <span class="item_name">${target_item.getName()}</span>`;
+        item_name_div_content = `<span class = "item_category">[Comp]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         item_name_div.classList.add(`${item_class}_name`);
         item_div.appendChild(item_name_div);
 
@@ -1809,7 +1809,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         //
     } else {
         //
-        item_name_div_content = `<span class = "item_category"></span> <span class = "item_name">${target_item.getName()}</span>`;
+        item_name_div_content = `<span class = "item_category"></span> <span class = "item_name">${target_item.getDisplayName()}</span>`;
     }
 
     if (target_item.use_quality && target_item.quality) {
@@ -1929,7 +1929,7 @@ function update_displayed_equipment() {
             equipment_slots_divs[key].classList.add("equipment_slot_empty");
             set_HTML(eq_tooltip, `Your ${key.replace("_"," ")} slot`);
         } else {
-            set_HTML(equipment_slots_divs[key], character.equipment[key].getName());
+            set_HTML(equipment_slots_divs[key], character.equipment[key].getDisplayName());
             equipment_slots_divs[key].classList.remove("equipment_slot_empty");
             
             eq_tooltip = create_item_tooltip(character.equipment[key]);
@@ -3225,7 +3225,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
             if (recipe.materials[i].material_type || (material.items.length > 0 && material.items[0].quality)) {
                 let mat_list = "";
                 for (let j = 0; j < material.items.length; j++) {
-                    let sub_name = material.items[j].item.getName();
+                    let sub_name = material.items[j].item.getDisplayName();
                     mat_list += `<span style="color:${material.items[j].count >= recipe.materials[i].count?"lime":"red"}"><b>${sub_name} x${material.items[j].count || 0}/${recipe.materials[i].count}</b></span><br>`;
                 }
 
@@ -3338,14 +3338,16 @@ function update_displayed_component_choice({category, subcategory, recipe_id, co
             .sort((a, b) => {
                 if (a.item.component_tier != b.item.component_tier) {
                     return b.item.component_tier - a.item.component_tier;
-                } else if (a.item.getName() !== b.item.getName()) {
-                    //Two bugs lived here. Items have no "item_name" property - it is
-                    //"name", read through getName() - so the condition compared
+                } else if (a.item.getDisplayName() !== b.item.getDisplayName()) {
+                    //Two bugs lived here. Items have no "item_name" property - the
+                    //name is reached through an accessor - so the condition compared
                     //undefined against undefined and was never true, which made this
                     //whole tier dead code. And the body returned b minus b, which is
                     //zero for numbers and NaN for the strings these actually are.
-                    //localeCompare because the names are displayed text.
-                    return a.item.getName().localeCompare(b.item.getName(), language_tags[language]);
+                    //Sorting follows getDisplayName(), not getName(): the list has to
+                    //be ordered by what is on screen, and localeCompare because the
+                    //names are displayed text.
+                    return a.item.getDisplayName().localeCompare(b.item.getDisplayName(), language_tags[language]);
                 } else {
                     return b.item.quality - a.item.quality;
                 }
@@ -3353,7 +3355,7 @@ function update_displayed_component_choice({category, subcategory, recipe_id, co
 
         for(let j = 0; j < components.length; j++) {
             const item_div = document.createElement("div");
-            insert_HTML(item_div, `<i class="material-icons icon selected_component_icon"> check </i>${components[j].item.name}, ${components[j].item.quality}%, x${components[j].count}`);
+            insert_HTML(item_div, `<i class="material-icons icon selected_component_icon"> check </i>${components[j].item.getDisplayName()}, ${components[j].item.quality}%, x${components[j].count}`);
             item_div.classList.add("selectable_component");
             item_div.dataset.item_key = components[j].item.getInventoryKey();
             item_div.dataset.item_quality = components[j].item.quality;
@@ -3416,7 +3418,7 @@ function update_displayed_material_choice({category, subcategory, recipe_id, ref
 
         const item_div = document.createElement("div");
         const name_span = document.createElement("span");
-        insert_HTML(name_span, `<i class="material-icons icon selected_material_icon"> check </i>${item_templates[material_recipe.result_id].getName()}`);
+        insert_HTML(name_span, `<i class="material-icons icon selected_material_icon"> check </i>${item_templates[material_recipe.result_id].getDisplayName()}`);
         name_span.classList.add("recipe_comp_name");
         item_div.append(name_span);
         item_div.classList.add("selectable_material");
@@ -4030,7 +4032,7 @@ function update_displayed_item_log() {
             */
         }
 
-        const name = item_templates[item.id]?.getName() || item.id;
+        const name = item_templates[item.id]?.getDisplayName() || item.id;
 
         html_content += `<tr><td>${name}</td ><td>`;
 
