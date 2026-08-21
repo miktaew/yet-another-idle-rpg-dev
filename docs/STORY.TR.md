@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 2 -->
+<!-- doc-source: docs/STORY.md  doc-version: 3 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -131,8 +131,13 @@ edemez.
 
 | Kip | NPC'ler |
 | --- | --- |
-| *siz* (resmî) | `village elder`, `old craftsman`, `old woman of the slums`, `gate guard`, `farm supervisor`, bataklık `chief` ve her lonca görevlisi |
-| *sen* (samimi) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, bataklık `cook` / `tailor` / `tanner` / `scout` |
+| *siz* (resmî) | `village elder`, `old craftsman`, `old woman of the slums`, `gate guard`, `farm supervisor`, bataklık `chief`, bataklık `tanner` ve her lonca görevlisi |
+| *sen* (samimi) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, bataklık `cook` / `tailor` / `scout` |
+
+Bataklık `tanner`'ı çevrilirken samimi gruptan resmî gruba taşındı. Bataklık kadrosunun
+tamamını samimi saymak fazla kabaydı: kadın yaşlı ve oyuncunun ona ilk repliği
+"Excuse me, are you the leatherworker?" — açıkça saygılı. Bu tablo ile kaynak metin
+çeliştiğinde kaynak metin kazanır, tablo düzeltilir.
 
 **NPC'ler kahramana nasıl hitap eder:** neredeyse tamamı *sen* — kadro sıcak ve
 samimidir; kafa okşamaları, "cutie" ve "boy" hitapları buna dayanır. İstisna resmî

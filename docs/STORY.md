@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 2 -->
+<!-- doc-source: docs/STORY.md  doc-version: 3 -->
 
 # Story canon
 
@@ -124,8 +124,14 @@ axis.
 
 | Register | NPCs |
 | --- | --- |
-| *siz* (formal) | `village elder`, `old craftsman`, `old woman of the slums`, `gate guard`, `farm supervisor`, swampland `chief`, and any guild official |
-| *sen* (informal) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, swampland `cook` / `tailor` / `tanner` / `scout` |
+| *siz* (formal) | `village elder`, `old craftsman`, `old woman of the slums`, `gate guard`, `farm supervisor`, swampland `chief`, swampland `tanner`, and any guild official |
+| *sen* (informal) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, swampland `cook` / `tailor` / `scout` |
+
+The swampland `tanner` moved from the informal group to the formal one while she was
+being translated. Grouping the whole swampland cast as informal was too coarse: she is
+elderly and the player's own opening line to her is "Excuse me, are you the
+leatherworker?", which is deferential. Where this table and the source text disagree,
+the source text wins and this table gets corrected.
 
 **How NPCs address the hero:** *sen*, almost universally — the cast is warm and
 familiar, and the headpats, the "cutie" and the "boy" all depend on it. The

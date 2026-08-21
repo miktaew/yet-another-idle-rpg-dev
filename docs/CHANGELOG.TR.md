@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 13 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 14 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,48 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Yaşlı tamamlandı ve bataklığın iki ayrı sesi var — P-7
+
+72 id daha: köy yaşlısının kalan 34'ü, bataklık şefinin 20'si, tabakhanecinin 18'i.
+Kapsam %68.0'den **%77.4**'e.
+
+**Yaşlı bilinçli olarak önce bitirildi.** Yarı çevrilmiş bir NPC, bir konuşmayı
+bırakılabilecek en kötü durumdur; çünkü register ve ses tam ortasında kırılır. Kalan
+kısım ağır olanıydı: köy genişleme arkı, yengeç söylentileri, muhafızın geçmişi ve
+verdiği muska — `STORY.md`'nin kanon olarak alıntıladığı *"Many leave looking for
+better lives and we never hear from them again"* satırı ve kahramanın bu köyde her
+zaman bir evi olduğuyla kapanan hayır duası dahil. O ikisi ağırlık taşıyor; yavan bir
+aktarım yanlış bir kelimeden pahalıya gelirdi.
+
+**Bataklık kadrosu hakkında yanılıyordum.** Bataklık NPC'lerinin kırık İngilizce
+konuştuğunu ve çevirinin bu bozukluğu yeniden üretmesi gerektiğini söylüyordum. Bu
+aşçı için doğru. Şef için ise tam tersi: yüksek, tören havalı, savaşçı bir registerde
+konuşuyor — *"How bold of you to walk so brashly through our grounds"*, *"no quarter
+to give"*, *"pay fealty to our strength"*, *"honored friend"*, *"den kin"*. Onu kırık
+konuşmayla çevirmek karakteri yok ederdi. Türkçe, İngilizcenin devrik olduğu yerlerde
+devrik, hafifçe arkaik bir register kullanıyor; pastişe kaymadan.
+
+Tabakhaneci ise üçüncü bir ses: yaşlı, yorgun, koruyucu; `shan't`, `need not`,
+`I know not how` gibi biçimlerle. Orada iki karar:
+
+- **Hitap olarak `child`, `çocuk` değil `evladım`.** Türkçede bir büyüğün genç birine
+  `çocuk` demesi küçümseyicidir; `evladım` ise İngilizcenin taşıdığı
+  sevgi-artı-otoriteyi taşıyor.
+- **Kadın düzine ile sayıyor, kahraman altmış ile.** O "five dozen alligators" diyor;
+  kahraman "the 60 alligator skins" diye yanıtlıyor. Bu özensizlik değil bir register
+  işareti, o yüzden Türkçe onda `beş düzine`, kahramanda `60` olarak korunuyor.
+
+### Kendi kip haritama bir düzeltme
+
+`STORY.md` bataklık kadrosunun tamamını samimi hitap grubuna koymuştu. Bu fazla kabaydı
+ve tabakhaneciyi çevirmek bunu açığa çıkardı: kadın yaşlı ve oyuncunun ona ilk repliği
+*"Excuse me, are you the leatherworker?"* — apaçık saygılı. Resmî gruba taşındı, tablo
+da artık öyle diyor.
+
+Bundan çıkan kural yazıya geçirilmeye değer: kip haritası ile kaynak metin
+çeliştiğinde kaynak metin kazanır ve harita düzeltilir. Harita, yazının bir özetidir;
+onu kısıtlayan bir kural değil.
 
 ### Bütün skill adları Türkçe — P-7
 

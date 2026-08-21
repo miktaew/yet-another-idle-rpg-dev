@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 13 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 14 -->
 
 # Changelog
 
@@ -17,6 +17,51 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### The elder is finished, and the swamp has two voices — P-7
+
+72 more ids: the village elder's remaining 34, the swampland chief's 20, the
+tanner's 18. Coverage 68.0% to **77.4%**.
+
+**The elder was finished first on purpose.** A half-translated NPC is the worst
+state to leave a conversation in, because the register and the voice break in the
+middle of it. What remained was the substantial half: the village expansion arc, the
+crab rumours, the guard's backstory, and the amulet he gives away — including the
+line `STORY.md` quotes as canon, *"Many leave looking for better lives and we never
+hear from them again"*, and his blessing speech, which ends on the hero always having
+a home in the village. Those two carry weight and a flat rendering would have cost
+more than a wrong word.
+
+**I had the swamp cast wrong.** I had been saying the swampland NPCs speak broken
+English and that the translation would need to reproduce the breakage. That is true
+of the cook. It is the opposite of true for the chief, who speaks in an elevated,
+ceremonious, martial register: *"How bold of you to walk so brashly through our
+grounds"*, *"no quarter to give"*, *"pay fealty to our strength"*, *"honored friend"*,
+*"den kin"*. Translating him as broken speech would have destroyed the character. The
+Turkish uses a slightly archaic register with inverted word order where the English
+inverts, without tipping into pastiche.
+
+The tanner is a third voice again: elderly, weary, protective, with `shan't`,
+`need not` and `I know not how`. Two decisions there:
+
+- **`child` as a form of address is `evladım`, not `çocuk`.** An elder calling a young
+  person `çocuk` in Turkish is dismissive; `evladım` carries the affection-plus-
+  authority the English has.
+- **She counts in dozens where the hero counts in sixties.** She says "five dozen
+  alligators"; the hero replies "the 60 alligator skins". That is a register marker
+  rather than sloppiness, so the Turkish keeps `beş düzine` from her and `60` from the
+  hero.
+
+### A correction to my own register map
+
+`STORY.md` grouped the entire swampland cast as informally addressed. That was too
+coarse, and translating the tanner exposed it: she is elderly, and the player's own
+opening line to her is *"Excuse me, are you the leatherworker?"* — plainly
+deferential. She has moved to the formal group and the table now says so.
+
+The rule that follows is worth having written down: where the register map and the
+source text disagree, the source text wins and the map gets corrected. The map is a
+summary of the writing, not a constraint on it.
 
 ### Every skill name is Turkish — P-7
 

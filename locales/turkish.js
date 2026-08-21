@@ -87,6 +87,63 @@ const dialogues = {
     "elder leave 4": "Köyden ayrılabilir miyim?",
     "elder leave 4 answ": "Yeterince güçlüsün, istediğin zaman gidip istediğin zaman gelebilirsin.",
 
+    //Yaşlının kalan yayı: muhafızın geçmişi, tünel, idman önerileri, yengeç
+    //söylentileri, köy genişlemesi ve muska. Kip yukarıdakiyle aynı: kahraman
+    //sizli, yaşlı senli.
+    "elder about guard": "Şu köy muhafızı kızın hikâyesi nedir?",
+    "elder about guard answ": "Hmm... Köyden daha çocukken ayrıldı, ünlü bir maceracı olmak istiyordu. On yıldan fazla sonra döndü; yara izleriyle kaplı ve yaşadıklarından söz etmeye hiç istekli değil. "
+                    +"Hayalindeki şöhrete hiç ulaşamaması yazık oldu, ama en azından evini koruyacak kadar güçlendi. O bir yana, döndüğü için memnunum. "
+                    +"Çoğu daha iyi bir hayat aramaya gidiyor ve bir daha haber alamıyoruz.",
+    "elder tunnel": "Mağarada daha da derine giden bir tünel buldum",
+    "elder tunnel answ": "Ne buldun? İçime hiç iyi gelmiyor bu... Daha iyi bir teçhizat ve sağlam bir kalkan edinene kadar oradan uzak dursan iyi olur; bahse girerim çok daha tehlikelidir.",
+    "elder training": "Bence temel idmanda yeterince ilerledim, başka bir öneriniz var mı?",
+    "elder training answ 1": "Öyle mi? Peki, bir düşüneyim... Henüz denemediysen yakındaki nehirde yüzmeyi deneyebilirsin, ama havanın soğuk olduğu zaman girmemeyi unutma. Ya da duvara tırmanmayı deneyebilirsin; yalnız güvenlik için alçak yerlerden başla.",
+    "elder training answ 2": "Öyle mi? Peki, bir düşüneyim... Yakındaki nehirde yüzmek iyi bir alıştırma olurdu, ama kış geldiği için nehrin çoğu şu an donmuş durumda. Yine de duvara tırmanmayı deneyebilirsin; yalnız güvenlik için alçak yerlerden başla.",
+    "elder crab rumors": "Köylülerin kocaman bir yengeç yuvasından bahsettiğine kulak misafiri oldum.",
+    "elder crab rumors answ": "Haftanın söylentisi o oldu galiba. Birkaç hafta önce biri, ormanda baygın bir balıkçı bulmuş. Adam hâlâ toparlanıyor. Yaraları çok ağır değildi, ama iltihaplanmış olsa gerek; bulduğumuzdan beri ateşi düşmüyor. "
+                    +"Sayıklarken kocaman yengeç yuvalarından bir şeyler mırıldanıyordu. Yakınlarda böyle bir şey görmedik, ama... Nehir boyunca yengeç istilası ilk kez duyduğum bir şey değil. "
+                    +"Her birkaç on yılda bir sayıları büyük bir patlama yaşıyor, ertesi yıl da geri çekiliyor.",
+    "elder crab where": "Balıkçı ormanda mı bulunmuş?",
+    "elder crab where answ": "Köyümüzün içinden geçtiğini gördüğün nehir ormanın hayli geniş bir kısmını kat ediyor ve balıkçıların bir kısmı, ormanın daha sessiz yerlerinde avın daha bereketli olduğuna yemin ediyor. "
+                    +"Anladığım kadarıyla balıkçıyı, atlardan birini ormanda gezdirmeye çıkan bir çiftlik işçisi bulmuş. İşçi yakınlarda nehir gördüğünden söz etmemiş, o yüzden orada mı yaralandığını bilmiyoruz.",
+    "elder crab hunt": "Bu kocaman yengeç yuvasını aramak istiyorum, köy için tehlike olabilirler.",
+    "elder crab hunt answ": "Köye yaklaşan yengeçlerin hakkından muhafızlar gelir. Hem de sen... \n*[Köy yaşlısı sözünü yarıda bırakıp seni baştan aşağı süzüyor; konuşmadan önce bir an sessizce bakıyor]*\n "
+                    +"Bakımım altında iyileşmeye getirildiğin günden çok daha güçlü olduğun belli. Seni caydırmaya çalışmayacağım, gözlerindeki kararlılığı görüyorum. Onayım seninle. "
+                    +"Ama şunu bil: vahşi doğada hiçbir idmanın hazırlayamayacağı tehlikeler var. Silahın, zırhın ya da saldırı biçimin işe yaramıyorsa, hayatını gereksiz yere riske atmak yerine kaçmak, "
+                    +"durumu yeniden değerlendirmek ve gücünü toplamak çok daha iyidir. Lütfen, tedbirli ol. Bir de köy pazarına uğrayıp biraz ilaç ve erzak almayı düşün. "
+                    +"Yolculuğunun ne kadar süreceği ya da ne gibi zorluklarla karşılaşacağın belli değil. Ne kadar uzağa gidersen git, bu köyde her zaman bir evin olduğunu unutma.",
+    "elder other work": "Bence bir süredir yeterince tarla işi yaptım, buralarda yapılacak başka bir iş var mı?",
+    "elder other work answ": "Öyle mi? Eminim bir şey vardır... Ha, aslında, şimdi düşününce, yapılmasını istediğim birkaç iş var, ama onları sırayla ele almak en iyisi olur. "
+                    +"Yani, önce ilk iş... Tam olarak tarla işi sayılmaz, umarım bir ıslah kanalı kazmaya yardım etmen sorun olmaz.",
+    "elder finished digging": "Kazıyı bitirdim",
+    "elder finished digging answ": "Öyle mi? İyi, çok iyi. Al bakalım, ücretin; yeni bir iş için hazır olduğunda haber ver.",
+    "elder other work 2": "Peki bana yaptıracağınız başka ne vardı? Yine kazı mı?",
+    "elder other work 2 answ": "Hayır, hayır, kazı yok artık, sanıyorum. Ama çok önemli bir şey var. Bak, nehri geçmek için düzgün bir yolumuz yok; sakin ve yürünecek kadar güvenli görünse de, "
+                    +"şiddetli yağmurdan sonra çok tehlikeli oluyor. Küçük köprüler yapmayı denedik, ama nehir kabardığında akıntıya dayanmıyorlardı. Neyse... "
+                    +"Sevgili zanaatkârımız çok daha iyi ve sağlam bir tasarımla geldi. Hesabına göre... Neydi? Köprünün döşemesi için 100 odun kütüğü, ayakları için de 500 taş tuğla gerekiyor. "
+                    +"Bizim gibi bir topluluk için fazla iddialı görünebilir, biliyorum, ama gelecek kuşakların da yararlanacağı kadar uzun ömürlü olsun diye tasarlandı. "
+                    +"İş için gönüllü bir grubumuz da var ve başında zanaatkârımız olacak; senden tek istenen malzemeleri getirmen ve sonra yapımda biraz el atman. "
+                    +"Onunla henüz konuşmadıysan yakında konuş lütfen; her türlü malzemeyi nasıl toplayıp kullanacağını sana anlatır.",
+    "elder bridge materials": "Köprü için tam olarak hangi malzemeler gerekiyor ve onları nereden bulabilirim?",
+    "elder bridge materials answ": "Ha, elbette, bunu açıklamalıydım, değil mi? Zanaatkâr, sıradan ortalama ahşabın en iyisi olacağını söyledi; ne fazla zayıf ne de işlenmesi zor. "
+                    +"Bu tür şeyleri ormanın daha derinlerinde bir yerde toplayabilirsin, eminim. Taş tuğlaya gelince, mağara girişinin yakınında, biraz kuzeyde, "
+                    +"inşaat için ham taş çıkardığımız bir yer var; tam iş görür",
+    "elder leave for materials materials": "Ormandan ahşap getirmem gerekiyorsa, köyden ayrılabilir miyim?",
+    "elder leave for materials materials answ": "Haklı olduğunu inkâr edemem, ama hayır; yeniden yola çıkacak kadar güçlü olduğuna güvenene kadar buna izin veremem",
+    "elder bridge finished": "Köprü tamamlandı",
+    "elder bridge finished answ": "Evet, fark etmeme yetecek kadarını gördüm ve duydum. Harika iş, yardımın için gerçekten müteşekkirim. Al, bu senin için.",
+    "elder dragonflies": "Köprü tamamlandı, sırada ne var?",
+    "elder dragonflies answ": "Bazı köylüler nehrin karşı yakasındaki eski yapılar üzerinde çalışmaya başlamıştı, ama dev yusufçuklarla ilgili sıkıntı bildirdiler; hem de bir tür zehirleri varmış gibi görünüyor. Onların hakkından gelmeyi deneyebilir misin?",
+    "elder dragonflies killed": "Çevredeki yusufçukları temizledim, ama daha uzakta başka yuvalar olabilir",
+    "elder dragonflies killed answ": "Bu kadarı yeter, hepsini kökünden kazımak mümkün olmaz sanıyorum; sıçanların da hiçbir zaman tamamen gitmeyeceği gibi.",
+    "elder further work": "Yusufçuklar hallolduğuna göre, yeni işler var mı?",
+    "elder further work answ": "Henüz yok, ama umarım yakında olur.",
+    "elder amulet": "Neden bana öyle bakıyorsunuz?",
+    "elder amulet answ": "Ah, korkuttuysam kusura bakma. Köydeki tüm yardımların için müteşekkirim sadece; benim gibi yaşlı bir adam için çok şey ifade ediyor, o yüzden bunu senin almanı istedim. "
+                    +"Bakımıma verilen ilk koyun sürüsündeki koçlardan birinin boynuzundan yapılmış bir muska. Lütfen, sende kalsın ve güçlü ol.",
+    "mofu#elder amulet answ": "Ah, korkuttuysam kusura bakma. Köydeki tüm yardımların için müteşekkirim sadece; benim gibi yaşlı bir adam için çok şey ifade ediyor, o yüzden bunu senin almanı istedim. "
+                    +"Yıllar önce, en dinç zamanımda döktüğüm bir boynuzdan yapılmış bir muska. Lütfen, sende kalsın ve güçlü ol.",
+
 //===== village guard =====
     "guard description": "Hafif zırh kuşanmış bir kadın görüyorsun; elinde bir mızrak, kemerinde iki hançer. Yüzünü boydan boya bir yara izi kesiyor.",
     "mofu#guard description": "Hafif zırh kuşanmış, uzun boylu bir kadın görüyorsun; elinde bir mızrak, kemerinde iki hançer. Sivri, tüylü kulakları arada bir duyduğu her yeni sese doğru dönüyor, kabarık kuyruğu ise hiç kıpırdamıyor. Yüzünü boydan boya bir yara izi kesiyor. Seni fark ettiğinde bir an avıymışsın gibi süzüyor, ama sonra ifadesi epeyce yumuşuyor.",
@@ -287,6 +344,83 @@ const dialogues = {
     "sup description": "Kemerinde bir defter, başında bir şapka olan, iyi giyimli bir adam görüyorsun. Kâtibe benzese de kaslı ve güneşten yanmış.",
     "mofu#sup description": "Kemerinde bir defter, başında da boynuzlarının arasına tuhaf bir şekilde oturtulmuş bir şapka olan, iyi giyimli bir adam görüyorsun."
             + " Kâtibe benzese de kaslı ve güneşten yanmış.",
+
+    /*
+        SWAMPLAND CHIEF
+
+        Register: he does NOT speak broken Turkish - that is the cook. The chief is
+        the opposite: elevated, ceremonious, martial. "no quarter to give", "pay
+        fealty", "honored friend", "den kin". Turkish carries this with a slightly
+        archaic register and inverted word order in places, without tipping into
+        Ottoman pastiche.
+
+        The hero addresses him formally (siz), per docs/STORY.md section 6. He
+        addresses the hero informally - he is a chief, and the directness is the
+        point, hostile at first and warm later.
+
+        "Snake Fang Tribe" is a proper noun and is not translated; the common noun
+        around it is, so it reads "Snake Fang kabilesi" as it does in the quest text.
+    */
+    "swampchief description 1": "Kampı gözden geçirirken, sancaklarla çevrili ve yanan meşalelerle aydınlatılmış büyük bir kulübe görüyorsun. Kulübeye yaklaşıp selam veriyorsun, ama karşılık gelmiyor. Biraz daha yaklaşınca, kalın pullu bir zırh kuşanmış, koca bir üç çatallı mızrak taşıyan iri bir adamın dışarı çıktığını görüyorsun. Sağlam bir duruş alıp mızrağını sana doğrultuyor.",
+    "mofu#swampchief description 1": "Kampı gözden geçirirken, sancaklarla çevrili ve yanan meşalelerle aydınlatılmış büyük bir kulübe görüyorsun. Kulübeye yaklaşıp selam veriyorsun, ama karşılık gelmiyor. Biraz daha yaklaşınca, kalın pullu bir zırh kuşanmış, koca bir üç çatallı mızrak taşıyan iri bir adamın dışarı çıktığını görüyorsun; kalın pullu kuyruğu arkasında duruyor. Sağlam bir duruş alıp mızrağını sana doğrultuyor.",
+    "swampchief description 2": "Şef kulübesinin önünde duruyor; kampta dolaşırken seni okunması güç bir bakışla izliyor.",
+    "swampchief description 3": "Şef kulübesinin önünde duruyor. Gözleriniz karşılaşınca sana başıyla selam veriyor.",
+    "swampchief meet": "Merha-",
+    "swampchief meet answ": "Davetsiz! Topraklarımızda böyle küstahça yürümek ne cesaret! Cesur ve akılsız! Snake Fang kabilesinin şefinin şerefine böylesine apaçık hakaret etmek! Çek kılıcını! Silahsız bir düşmanı öldürmekte şeref yoktur!",
+    "swampchief explain": "Durun! Düşmanınız değilim! Bataklıktan geçiyordum ve tahkimatları gördüm!",
+    "swampchief explain answ": "*[Şef bir an duruyor, sonra duruşunu gevşetip mızrağını kaldırıyor]*\n\nDerme çatma kılıklı bir ahmak. Mızrağımı kanatmaya bile değmezsin. Çekil gözümün önünden. Sana verecek bir şeyimiz yok, sunacak sığınağımız yok, takas edecek erzağımız da yok. Bırak bizi ve bir daha dönme.",
+    "swampchief help": "Belki sunacak bir şeyiniz yok, ama ben halkınıza yardım etmeyi teklif edebilirim?",
+    "swampchief help answ": "Bataklığın ötesinden gelmiş bir yabancının yardımına neden ihtiyacımız olsun? Pöh! Gücümüze biat etmek istiyorsan haracını alırız. Şimdi çekil gözümün önünden.",
+    "swampchief mid help": "Etrafa sorup nasıl yardım edebileceğimi bir gör-",
+    "swampchief mid help answ": "Sormadım sana, yabancı. Fikrimi değiştirmeden çekil gözümün önünden.",
+    "swampchief report": "Kabilenin işlerine yardım ediyordum.",
+    "swampchief report answ": "Evet. Oradan oraya koşturduğunu izliyordum. Çabaların hakkında övgüden başka bir şey duymadım; en huysuz adamlarımdan bile.",
+    "swampchief confirm": "Zamanlar çetin, bu topraklar da tehlikeli. Ben yalnızca verebileceğim yardımı vermeye çalıştım.",
+    "swampchief confirm answ": "Ahmaksın sen, her zaman da öyleydin.\n\n*[Şef sana gülümsüyor]*\n\nAma ahmaklar bugünlerde bol görünüyor ve içlerinde senin kadar becerikli olanına pek denk gelmedim. Bilmez miyim. Her seferinde hatırlatılıyor bana...\n\n*[Şef bakışlarını kaçırıyor, sonra parmağından bir yüzük çıkarıp sana uzatıyor]*\n\nSnake Fang kabilesine, hem de her türlü aklın ötesinde bir cömertlikle haraç verdin. Buna saygısızlık etsem ahmakların en büyüğü olurdum. Lütfen, bunu gönülden şükranımın bir nişanesi olarak kabul et; onunla birlikte dostluğumu da.",
+    "swampchief accept": "Bu armağanla beni şereflendiriyorsunuz.",
+    "swampchief accept answ": "Senin gibi müttefiklerimiz olsaydı belki... In halkımızdan biri olursan onur duyarım -- yani kendini benim adamlarımdan say. Zanaatkârlarımıza, dilersen atölyelerini seninle paylaşmalarını buyururum. Uzun evimizde dinlenmen de hoş karşılanır. Yalnızca içeride dinlenen genç kadına dikkat etmeni rica ederim.",
+    "swampchief generic": "Kabilede işler nasıl gidiyor?",
+    "swampchief generic answ": "Çetin, muhterem dostum, bu sert ve tehlikeli zamanlarda. Ama hep birlikte omuz verirsek belki üstesinden gelebiliriz.",
+
+    /*
+        SWAMPLAND TANNER
+
+        Register: elderly, archaic, weary, protective. The English gives her
+        "shan't", "need not", "I know not how", and inverted constructions - so the
+        Turkish uses an elder's elevated register with the same inversions rather
+        than flattening them.
+
+        "child" as a form of address is "evladım", not "çocuk": an elder calling a
+        young person "çocuk" is dismissive in Turkish, while "evladım" carries
+        exactly the affection-plus-authority the English has.
+
+        The hero addresses her FORMALLY (siz). docs/STORY.md originally grouped the
+        whole swampland cast as informal, which was too coarse - she is elderly and
+        the player's own opening line to her is "Excuse me, are you the
+        leatherworker?", which is deferential. The map has been corrected.
+
+        She counts in dozens ("five dozen") where the player says "60". That is a
+        register marker, not sloppiness, and it is kept: "beş düzine" from her,
+        "60" from the hero.
+    */
+    "swamptanner description 1": "Tabakhanecinin atölyesine yaklaşınca, yüzünde bir asıklıkla, kuruyan deriyi geren bir sehpanın yanında duran yaşlı kadını görüyorsun. İşini yaparken elleri gözle görülür biçimde titriyor; yıllanmanın ve yaşlılığın belli bir işareti.",
+    "mofu#swamptanner description 1": "Tabakhanecinin atölyesine yaklaşınca, yüzünde bir asıklıkla, kuruyan deriyi geren bir sehpanın yanında duran yaşlı kadını görüyorsun. İşini yaparken elleri gözle görülür biçimde titriyor, kuyruğunun rengi solmuş ve incelmiş; yıllanmanın ve yaşlılığın belli bir işareti.",
+    "swamptanner description 2": "Tabakhanecinin atölyesine yaklaşıyorsun; daha önce getirdiğin timsah derilerini büyük bir titizlikle etinden ayırıyor. Açık ve kasıtlı çabasına rağmen, sallanan elleri deride, deri temizlemeyi ilk kez öğrenen bir acemininki gibi derin oyuklar açıyor.",
+    "swamptanner description 3": "Tabakhanecinin atölyesine yaklaşıyorsun. Yaşlı kadın oturmuş, yüzünü buruşturarak parmak eklemlerini ovuyor. Kulübenin içine yarı işlenmiş deri yığınları saçılmış, sıcakta işlenmeden çürüyorlar. Sana bakmak için başını kaldırdığında ifadesi yumuşuyor; sanki acısını gizlemeye çalışıyor.",
+    "swamptanner unknown": "Affedersiniz, deri işleriyle uğraşan siz misiniz? Size gelmem gerektiği söylendi.",
+    "swamptanner unknown answ": "Evet. Benim olsam gerek. Seni de biliyorum -- ama seni tanımıyorum ve yardımını da istemiyorum. Vicdanımda gencin kanı olsun istemem.",
+    "swamptanner help": "Benden isteyeceğiniz her işin üstesinden gelebileceğimden eminim.",
+    "swamptanner help answ": "Gençler her zaman ölmeye bu kadar hevesli miydi? Peki. Tedbirli olmayacaksan, ahmak ol öyleyse. Beş düzine timsahın derisini yüz, ya da denerken bataklığa yem ol.",
+    "swamptanner deliver 1": "İstediğiniz 60 timsah derisini getirdim.",
+    "swamptanner deliver 1 answ": "Getirdin mi!? Ah...  \n\n*[Yaşlı kadın ayağa kalkıyor ve titrek ama güçlü elleriyle timsah derilerini senden alıyor, alırken de gözünü senden ayırmıyor]*\n\nGözlerim eskisi gibi değil. Ama şimdi seni görünce... İçinde bir kuvvet var. Parlak yanan cesur bir ruh; güçlü çarpan bir savaşçı kalbi. Onda da var.",
+    "swamptanner deliver 1 not": "Gözlerim eskisi gibi olmayabilir, ama saymayı hâlâ bilirim. Bu beş düzine değil, evladım.",
+    "swamptanner known": "\"O\" kim?",
+    "swamptanner known answ": "Bu derilere ihtiyacım olan kişi. Bir dahakine orada sağ kalacaksa yeni bir zırha ihtiyacı var. Sana doğrusunu söyleyeyim evladım: ona yeni bir zırh yapacaksam daha fazlası gerek; bu deriler koruyabilir, ama tek başına yetmez. Beş düzine de yılan derisi gerekecek. Ama senden gidip onlar için yeniden hayatını riske atmanı isteyemem. Zaten fazlasıyla çok evlat gördüm...",
+    "swamptanner deliver 2": "Artık endişelenmenize gerek yok. İhtiyacınız olan 60 yılan derisi bende.",
+    "swamptanner deliver 2 answ": "Evladım... Gerçekten kudretli bir ruhun var.\n\n*[Yaşlı kadın ayağa kalkıyor ve her zamanki titrek elleriyle dev yılan derilerini senden alıyor, alırken de gözünü senden ayırmıyor]*\n\nGözlerim eskisi gibi değil. Ama şimdi zırhını görünce... Böyle vahşi saldırılardan nasıl sağ çıktığını bilemiyorum. Gel. Getirdiğin derileri nasıl işleyeceğini sana öğreteceğim. Üzerindeki her neyse, bunlar ondan sağlam olacak elbette. Alıştırma yapman için birkaç eski kaplumbağa kabuğum bile olabilir. Kabukları çok sert, ama işlemesi zor...\n\n*[Yaşlı kadın timsah ve dev yılan derileriyle kaplumbağa kabuklarını işlemek için bilmen gereken her şeyi sana öğretiyor]*",
+    "swamptanner deliver 2 not": "Evladım... Sorun değil, ne yalan söylemene ne de hayatını riske atmana gerek var. Yeterince şey yaptın. İdare ederiz. Hep ettik.",
+    "swamptanner liked": "Sadece uğradım. Size yardım etmek için yapabileceğim başka bir şey var mı?",
+    "swamptanner liked answ": "Ahh, iyi bir evlatsın sen, hem de güçlü bir savaşçı. Senin gibi savaşçıların yaşlı bir kadının derdiyle uğraşmasına gerek yok.",
 };
 
 const ui = {
