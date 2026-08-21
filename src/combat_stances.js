@@ -49,9 +49,12 @@ class Stance {
 
     getDescription = function(){
         if(this.description) {
-            return this.description;
+            return translationManager.getText(language, this.description);
         } else if(this.related_skill) {
-            return skills[this.related_skill].description;
+            //The skill's accessor, not its raw field: description holds a TEXT ID
+            //now, so reading the field would render "desc skill Heavy strike" at
+            //the player. Five of the seven stances take this branch.
+            return skills[this.related_skill].getDescription();
         }
     }
 
@@ -79,7 +82,7 @@ stances["normal"] = new Stance({
     name: "Normal Stance",
     id: "normal",
     is_unlocked: true,
-    description: "A normal and basic stance. It doesn't excell in anything, but also doesn't suffer any major flaws and is energy efficient.",
+    description: "desc stance normal",
     stat_multipliers: {}
 })
 
@@ -87,7 +90,7 @@ stances["quick"] = new Stance({
     name: "Quick Steps",
     id: "quick",
     related_skill: "Quick steps",
-    description: "A swift and precise technique that abandons strength in favor of greater speed",
+    description: "desc stance quick",
     stat_multipliers: {
         attack_power: 0.8,
         attack_speed: 1.2

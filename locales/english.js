@@ -746,6 +746,17 @@ const ui = {
     "ui show bio": "Bio",
     "ui show tools": "Tools",
     "ui language": "Language:",
+
+    //Location choice dropdowns.
+    "ui choice travel": "Move somewhere else",
+    "ui choice fast travel": "Fast travel",
+    "ui choice dialogue": "Talk to someone",
+    "ui choice trade": "Visit a merchant",
+    "ui choice work": "Find work",
+    "ui choice train": "Train",
+    "ui choice gather": "Gather resources",
+    "ui choice action": "Take an action",
+    "ui choice challenge": "Take on a challenge",
 };
 
 const bio = {
@@ -1070,6 +1081,40 @@ const names = {
     "name Woodcutting": "Woodcutting",
     "name Wooden skin": "Wooden skin",
     "name Woodworking": "Woodworking",
+
+    //ENEMIES
+    "name Alligator": "Alligator",
+    "name Angry mountain goat": "Angry mountain goat",
+    "name Angry-looking mountain goat": "Angry-looking mountain goat",
+    "name Boar": "Boar",
+    "name Direwolf": "Direwolf",
+    "name Direwolf hunter": "Direwolf hunter",
+    "name Dragonfly queen": "Dragonfly queen",
+    "name Elite wolf rat": "Elite wolf rat",
+    "name Elite wolf rat guardian": "Elite wolf rat guardian",
+    "name Enraged giant crab": "Enraged giant crab",
+    "name Forest bear": "Forest bear",
+    "name Frog": "Frog",
+    "name Giant crab": "Giant crab",
+    "name Giant snake": "Giant snake",
+    "name Huge dragonfly": "Huge dragonfly",
+    "name Red ant queen": "Red ant queen",
+    "name Red ant swarm": "Red ant swarm",
+    "name River crab": "River crab",
+    "name Slums thug": "Slums thug",
+    "name Snapping turtle": "Snapping turtle",
+    "name Starving wolf": "Starving wolf",
+    "name Starving wolf rat": "Starving wolf rat",
+    "name Stone crab": "Stone crab",
+    "name Suspicious man": "Suspicious man",
+    "name Suspicious wall": "Suspicious wall",
+    "name Village guard (heavy)": "Village guard (heavy)",
+    "name Village guard (quick)": "Village guard (quick)",
+    "name Wall rat": "Wall rat",
+    "name Warthog": "Warthog",
+    "name Wolf": "Wolf",
+    "name Wolf rat": "Wolf rat",
+    "name Young wolf": "Young wolf",
 };
 
 const descriptions = {
@@ -1147,6 +1192,38 @@ const descriptions = {
     "desc skill Breathing": "Oxygen is the most important resource for improving the performance of your body. Learn how to take it in more efficiently",
     "desc skill Regeneration": "As your body regenerates more and more, it slowly becomes more proficient in this task",
     "desc skill Haggling": "The art of the deal",
+
+    //ENEMIES
+    "desc enemy Starving wolf rat": "Rat with size of a dog, starved and weakened",
+    "desc enemy Wolf rat": "Rat with size of a dog",
+    "desc enemy Elite wolf rat": "Rat with size of a dog, much more ferocious than its relatives",
+    "desc enemy Elite wolf rat guardian": "It's no longer dog-sized, but rather around the size of an average wolf, with thicker skin, longer claws and pure insanity in the eyes",
+    "desc enemy Wall rat": "They don't live in the walls, they ARE the walls. Insane writhing masses of teeth, fangs, and tails, that make no logical sense. An abomination that cannot exist, and yet it does",
+    "desc enemy Young wolf": "A small, wild canine",
+    "desc enemy Wolf": "A large, wild canine",
+    "desc enemy Direwolf": "A powerful wild wolf variant of unmatched ferocity",
+    "desc enemy Direwolf hunter": "A powerful wild wolf variant of unmatched ferocity, the strongest and heaviest out of all direwolves",
+    "desc enemy Boar": "A big wild creature, with thick skin and large tusks",
+    "desc enemy Angry mountain goat": "It's a mountain goat and it's angry",
+    "desc enemy Forest bear": "A mighty and dangerous predator with thick skin, sharp teeth, and dangerous claws",
+    "desc enemy Frog": "A huge beast with muscular legs and a mouth large enough to swallow a direwolf whole",
+    "desc enemy Red ant swarm": "A swarm of angry red ants, each the size of a regular rat",
+    "desc enemy Red ant queen": "A red ant queen, despite her decent size she's not much of a fighter",
+    "desc enemy Huge dragonfly": "A huge, hostile dragonfly, with a nasty poisoned stinger",
+    "desc enemy Dragonfly queen": "An exceptionally huge, hostile dragonfly, with a nasty poisoned stinger",
+    "desc enemy Slums thug": "A nasty thug with shabby equipment",
+    "desc enemy River crab": "A crab the size of a small boulder",
+    "desc enemy Stone crab": "A crab the size of a large boulder, and about as hard to crack open",
+    "desc enemy Alligator": "An alligator in it's natural habitat is one of the deadliest predators in nature",
+    "desc enemy Snapping turtle": "A large turtle with an incredibly dense shell",
+    "desc enemy Giant snake": "This large snake is fast enough to catch even the most cautious warriors by surprise",
+    "desc enemy Angry-looking mountain goat": "It's a mountain goat and it's angry",
+    "desc enemy Giant crab": "This was the biggest crab you had ever seen. It's also the smallest crab you had ever seen",
+    "desc enemy Enraged giant crab": "Graa~! Crab battle!",
+    "desc enemy Warthog": "A large, aggressive porcine creature with a tough hide and large tusks",
+    //STANCES
+    "desc stance normal": "A normal and basic stance. It doesn't excell in anything, but also doesn't suffer any major flaws and is energy efficient.",
+    "desc stance quick": "A swift and precise technique that abandons strength in favor of greater speed",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

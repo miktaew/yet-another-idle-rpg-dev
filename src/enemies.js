@@ -2,7 +2,8 @@
 
 import { get_total_skill_coefficient } from "./character.js";
 import { log_message } from "./display.js";
-import { add_active_effect } from "./main.js";
+import { add_active_effect, language } from "./main.js";
+import { translationManager } from "./translation.js";
 
 let enemy_templates = {};
 let enemy_killcount = {};
@@ -86,6 +87,20 @@ class Enemy {
         this.on_death = on_death;
         //try to limit the usage of those 3
     }
+    /**
+     * The enemy's shown name. this.name stays the canonical English and is the
+     * translation key; the enemy is identified by its registry key, which never
+     * changes.
+     */
+    getName() {
+        return translationManager.getDisplayName(language, this.name);
+    }
+
+    /** this.description holds a TEXT ID; the text lives in locales/. */
+    getDescription() {
+        return this.description ? translationManager.getText(language, this.description) : "";
+    }
+
     get_loot({drop_chance_modifier = 1} = {}) {
         // goes through items and calculates drops
         // result is in form [{item: Item, count: item_count}, {...}, {...}]
@@ -150,7 +165,7 @@ const enemy_abilites = {
     */
     enemy_templates["Starving wolf rat"] = new Enemy({
         name: "Starving wolf rat",
-        description: "Rat with size of a dog, starved and weakened",
+        description: "desc enemy Starving wolf rat",
         xp_value: 1,
         rank: 1,
         size: "small",
@@ -165,7 +180,7 @@ const enemy_abilites = {
 
     enemy_templates["Wolf rat"] = new Enemy({
         name: "Wolf rat",
-        description: "Rat with size of a dog",
+        description: "desc enemy Wolf rat",
         xp_value: 1,
         rank: 1,
         size: "small",
@@ -179,7 +194,7 @@ const enemy_abilites = {
     });
     enemy_templates["Elite wolf rat"] = new Enemy({
         name: "Elite wolf rat",
-        description: "Rat with size of a dog, much more ferocious than its relatives",
+        description: "desc enemy Elite wolf rat",
         xp_value: 4,
         rank: 2,
         size: enemy_sizes.SMALL,
@@ -193,7 +208,7 @@ const enemy_abilites = {
     });
     enemy_templates["Elite wolf rat guardian"] = new Enemy({
         name: "Elite wolf rat guardian",
-        description: "It's no longer dog-sized, but rather around the size of an average wolf, with thicker skin, longer claws and pure insanity in the eyes",
+        description: "desc enemy Elite wolf rat guardian",
         xp_value: 15,
         rank: 4,
         size: enemy_sizes.MEDIUM,
@@ -208,7 +223,7 @@ const enemy_abilites = {
     });
     enemy_templates["Wall rat"] = new Enemy({
         name: "Wall rat",
-        description: "They don't live in the walls, they ARE the walls. Insane writhing masses of teeth, fangs, and tails, that make no logical sense. An abomination that cannot exist, and yet it does",
+        description: "desc enemy Wall rat",
         xp_value: 50,
         rank: 8,
         size: enemy_sizes.LARGE,
@@ -235,7 +250,7 @@ const enemy_abilites = {
 
     enemy_templates["Young wolf"] = new Enemy({
         name: "Young wolf",
-        description: "A small, wild canine",
+        description: "desc enemy Young wolf",
         xp_value: 5,
         rank: 2,
         tags: ["living", "beast"],
@@ -249,7 +264,7 @@ const enemy_abilites = {
 
     enemy_templates["Wolf"] = new Enemy({
         name: "Wolf",
-        description: "A large, wild canine",
+        description: "desc enemy Wolf",
         xp_value: 8,
         rank: 3,
         tags: ["living", "beast"],
@@ -264,7 +279,7 @@ const enemy_abilites = {
 
     enemy_templates["Direwolf"] = new Enemy({
         name: "Direwolf",
-        description: "A powerful wild wolf variant of unmatched ferocity",
+        description: "desc enemy Direwolf",
         xp_value: 20,
         rank: 7,
         tags: ["living", "beast"],
@@ -280,7 +295,7 @@ const enemy_abilites = {
 
     enemy_templates["Direwolf hunter"] = new Enemy({
         name: "Direwolf hunter",
-        description: "A powerful wild wolf variant of unmatched ferocity, the strongest and heaviest out of all direwolves",
+        description: "desc enemy Direwolf hunter",
         xp_value: 30,
         rank: 7,
         tags: ["living", "beast"],
@@ -296,7 +311,7 @@ const enemy_abilites = {
 
     enemy_templates["Boar"] = new Enemy({
         name: "Boar",
-        description: "A big wild creature, with thick skin and large tusks",
+        description: "desc enemy Boar",
         xp_value: 10,
         rank: 5,
         tags: ["living", "beast"],
@@ -312,7 +327,7 @@ const enemy_abilites = {
 
     enemy_templates["Angry mountain goat"] = new Enemy({
         name: "Angry mountain goat",
-        description: "It's a mountain goat and it's angry",
+        description: "desc enemy Angry mountain goat",
         xp_value: 15,
         rank: 6,
         tags: ["living", "beast"],
@@ -328,7 +343,7 @@ const enemy_abilites = {
 
     enemy_templates["Forest bear"] = new Enemy({
         name: "Forest bear",
-        description: "A mighty and dangerous predator with thick skin, sharp teeth, and dangerous claws",
+        description: "desc enemy Forest bear",
         xp_value: 60,
         rank: 8,
         tags: ["living", "beast"],
@@ -343,7 +358,7 @@ const enemy_abilites = {
 
     enemy_templates["Frog"] = new Enemy({
         name: "Frog",
-        description: "A huge beast with muscular legs and a mouth large enough to swallow a direwolf whole",
+        description: "desc enemy Frog",
         xp_value: 80,
         rank: 8,
         tags: ["living", "beast"],
@@ -380,7 +395,7 @@ const enemy_abilites = {
 
     enemy_templates["Red ant swarm"] = new Enemy({
         name: "Red ant swarm",
-        description: "A swarm of angry red ants, each the size of a regular rat",
+        description: "desc enemy Red ant swarm",
         xp_value: 20,
         rank: 7,
         tags: ["living", "insect"],
@@ -396,7 +411,7 @@ const enemy_abilites = {
 
     enemy_templates["Red ant queen"] = new Enemy({
         name: "Red ant queen",
-        description: "A red ant queen, despite her decent size she's not much of a fighter",
+        description: "desc enemy Red ant queen",
         xp_value: 10,
         rank: 5,
         tags: ["living", "insect"],
@@ -406,7 +421,7 @@ const enemy_abilites = {
 
     enemy_templates["Huge dragonfly"] = new Enemy({
         name: "Huge dragonfly",
-        description: "A huge, hostile dragonfly, with a nasty poisoned stinger",
+        description: "desc enemy Huge dragonfly",
         xp_value: 15,
         rank: 6,
         tags: ["living", "insect"],
@@ -423,7 +438,7 @@ const enemy_abilites = {
 
     enemy_templates["Dragonfly queen"] = new Enemy({
         name: "Dragonfly queen",
-        description: "An exceptionally huge, hostile dragonfly, with a nasty poisoned stinger",
+        description: "desc enemy Dragonfly queen",
         xp_value: 30,
         rank: 6,
         tags: ["living", "insect"],
@@ -440,7 +455,7 @@ const enemy_abilites = {
 
     enemy_templates["Slums thug"] = new Enemy({
         name: "Slums thug",
-        description: "A nasty thug with shabby equipment",
+        description: "desc enemy Slums thug",
         xp_value: 10,
         rank: 5,
         tags: ["living", "human"],
@@ -450,7 +465,7 @@ const enemy_abilites = {
 	
 	enemy_templates["River crab"] = new Enemy({
         name: "River crab",
-        description: "A crab the size of a small boulder",
+        description: "desc enemy River crab",
         xp_value: 30,
         rank: 7,
         size: enemy_sizes.SMALL,
@@ -463,7 +478,7 @@ const enemy_abilites = {
 
 	enemy_templates["Stone crab"] = new Enemy({
         name: "Stone crab",
-        description: "A crab the size of a large boulder, and about as hard to crack open",
+        description: "desc enemy Stone crab",
         xp_value: 50,
         rank: 8,
         size: enemy_sizes.MEDIUM,
@@ -478,7 +493,7 @@ const enemy_abilites = {
 
 	enemy_templates["Alligator"] = new Enemy({
         name: "Alligator",
-        description: "An alligator in it's natural habitat is one of the deadliest predators in nature",
+        description: "desc enemy Alligator",
         xp_value: 150,
         rank: 9,
         size: enemy_sizes.LARGE,
@@ -492,7 +507,7 @@ const enemy_abilites = {
 
 	enemy_templates["Snapping turtle"] = new Enemy({
         name: "Snapping turtle",
-        description: "A large turtle with an incredibly dense shell",
+        description: "desc enemy Snapping turtle",
         xp_value: 250,      //in between alligator and snake because it'll probably take the longest to kill during post-completion grinding
         rank: 10,
         size: enemy_sizes.MEDIUM,
@@ -506,7 +521,7 @@ const enemy_abilites = {
 
 	enemy_templates["Giant snake"] = new Enemy({
         name: "Giant snake",
-        description: "This large snake is fast enough to catch even the most cautious warriors by surprise",
+        description: "desc enemy Giant snake",
         xp_value: 300,  //more than alligator and turtle because initially the most dangerous
         rank: 10,
         size: enemy_sizes.LARGE,
@@ -524,7 +539,7 @@ const enemy_abilites = {
 (function(){
     enemy_templates["Village guard (heavy)"] = new Enemy({
         name: "Village guard (heavy)", 
-        description: "", 
+        description: "",
         add_to_bestiary: false,
         xp_value: 1,
         rank: 4,
@@ -534,7 +549,7 @@ const enemy_abilites = {
     });
     enemy_templates["Village guard (quick)"] = new Enemy({
         name: "Village guard (quick)", 
-        description: "", 
+        description: "",
         add_to_bestiary: false,
         xp_value: 1,
         rank: 4,
@@ -544,7 +559,7 @@ const enemy_abilites = {
     });
     enemy_templates["Suspicious wall"] = new Enemy({
         name: "Suspicious wall", 
-        description: "", 
+        description: "",
         add_to_bestiary: false,
         xp_value: 1,
         rank: 1,
@@ -555,7 +570,7 @@ const enemy_abilites = {
 
     enemy_templates["Suspicious man"] = new Enemy({
         name: "Suspicious man", 
-        description: "", 
+        description: "",
         add_to_bestiary: false,
         xp_value: 1,
         rank: 5,
@@ -566,7 +581,7 @@ const enemy_abilites = {
 
     enemy_templates["Angry-looking mountain goat"] = new Enemy({
         name: "Angry-looking mountain goat", 
-        description: "It's a mountain goat and it's angry", 
+        description: "desc enemy Angry-looking mountain goat",
         add_to_bestiary: false,
         xp_value: 1,
         rank: 6,
@@ -576,7 +591,7 @@ const enemy_abilites = {
     });
 	enemy_templates["Giant crab"] = new Enemy({
         name: "Giant crab",
-        description: "This was the biggest crab you had ever seen. It's also the smallest crab you had ever seen",  //descriptions of challenge fights aren't visible, but this is a joke based on the fact that the player hasn't seen any other crab enemies yet
+        description: "desc enemy Giant crab",  //descriptions of challenge fights aren't visible, but this is a joke based on the fact that the player hasn't seen any other crab enemies yet
         add_to_bestiary: false,
         xp_value: 1,
         rank: 11,
@@ -587,7 +602,7 @@ const enemy_abilites = {
 
 	enemy_templates["Enraged giant crab"] = new Enemy({     //not working at present, not sure where the problem is
         name: "Enraged giant crab",
-        description: "Graa~! Crab battle!",     //reference to the Metal Gear Solid 3 flash animation "Crab Battle"
+        description: "desc enemy Enraged giant crab",     //reference to the Metal Gear Solid 3 flash animation "Crab Battle"
         add_to_bestiary: false,
         xp_value: 1,
         rank: 11,
@@ -598,7 +613,7 @@ const enemy_abilites = {
     });
     enemy_templates["Warthog"] = new Enemy({
         name: "Warthog",
-        description: "A large, aggressive porcine creature with a tough hide and large tusks",
+        description: "desc enemy Warthog",
         xp_value: 30,
         add_to_bestiary: false,
         rank: 8,

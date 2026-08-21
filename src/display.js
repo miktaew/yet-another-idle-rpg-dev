@@ -1979,7 +1979,7 @@ function update_displayed_enemies() {
     for(let i = 0; i < 8; i++) { //go to max enemy count
         if(i < current_enemies.length) {
             enemies_div.children[i].children[0].style.display = null;
-            set_HTML(enemies_div.children[i].children[0].children[0], current_enemies[i].name)
+            set_HTML(enemies_div.children[i].children[0].children[0], current_enemies[i].getName())
 
             let disp_speed;
 
@@ -2099,7 +2099,7 @@ function update_displayed_normal_location(location) {
 
     const available_locations = location.connected_locations.filter(loc => (is_location_offered(loc.location) && !loc.location.is_challenge));
     if(available_locations.length > 0) {
-        location_choice_divs["locations"] = create_location_choice_dropdown({name: "Move somewhere else", icon: "directions", class_name: "choice_travel"});
+        location_choice_divs["locations"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice travel"), icon: "directions", class_name: "choice_travel"});
 
         location_choice_divs["locations"].append(...create_location_choices({location: location, category: "travel"}));
     }
@@ -2114,7 +2114,7 @@ function update_displayed_normal_location(location) {
     ];
 
     if((available_fast_travel.length + (last_combat_location?1:0)) > 0) {
-        location_choice_divs["fast_travel"] = create_location_choice_dropdown({name: "Fast travel", icon: "directions", class_name: "choice_travel"});
+        location_choice_divs["fast_travel"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice fast travel"), icon: "directions", class_name: "choice_travel"});
 
         location_choice_divs["fast_travel"].append(...create_location_choices({location: location, category: "fast_travel"}));
     }
@@ -2182,7 +2182,7 @@ function update_displayed_normal_location(location) {
     });
 
     if(available_dialogues.length > 0) {
-        location_choice_divs["dialogues"] = create_location_choice_dropdown({name: "Talk to someone", icon: "question_answer", class_name: "choice_dialogue"});
+        location_choice_divs["dialogues"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice dialogue"), icon: "question_answer", class_name: "choice_dialogue"});
 
         location_choice_divs["dialogues"].append(...create_location_choices({location: location, category: "talk"}));
     }
@@ -2193,7 +2193,7 @@ function update_displayed_normal_location(location) {
     const available_traders = location.traders.filter(trader => traders[trader].is_unlocked && !traders[trader].is_finished);
 
     if(available_traders.length > 0) {
-        location_choice_divs["traders"] = create_location_choice_dropdown({name: "Visit a merchant", icon: "storefront", class_name: "choice_trade"});
+        location_choice_divs["traders"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice trade"), icon: "storefront", class_name: "choice_trade"});
 
         location_choice_divs["traders"].append(...create_location_choices({location: location, category: "trade"}));
     }
@@ -2208,7 +2208,7 @@ function update_displayed_normal_location(location) {
                                                                     && activities[activity.activity_name].base_skills_names.filter(skill => !skills[skill].is_unlocked).length == 0);
     
     if(available_jobs.length > 0) {
-        location_choice_divs["jobs"] = create_location_choice_dropdown({name: "Find work", icon: "work_outline", class_name: "choice_work"});
+        location_choice_divs["jobs"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice work"), icon: "work_outline", class_name: "choice_work"});
 
         location_choice_divs["jobs"].append(...create_location_choices({location: location, category: "work"}));
     }
@@ -2223,7 +2223,7 @@ function update_displayed_normal_location(location) {
                                                                     && activities[activity.activity_name].base_skills_names.filter(skill => !skills[skill].is_unlocked).length == 0);
     
     if(available_trainings.length > 0) {
-        location_choice_divs["trainings"] = create_location_choice_dropdown({name: "Train", icon: "fitness_center", class_name: "choice_train"});
+        location_choice_divs["trainings"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice train"), icon: "fitness_center", class_name: "choice_train"});
 
         location_choice_divs["trainings"].append(...create_location_choices({location: location, category: "train"}));
     }
@@ -2239,7 +2239,7 @@ function update_displayed_normal_location(location) {
         
         
         if(available_gatherings.length > 0) {
-            location_choice_divs["gatherings"] = create_location_choice_dropdown({name: "Gather resources", icon: "search", class_name: "choice_gather"});
+            location_choice_divs["gatherings"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice gather"), icon: "search", class_name: "choice_gather"});
     
             location_choice_divs["gatherings"].append(...create_location_choices({location: location, category: "gather"}));
         }
@@ -2248,7 +2248,7 @@ function update_displayed_normal_location(location) {
 
     const available_actions = Object.values(location.actions).filter(action => action.is_unlocked && !action.is_finished && action.can_be_displayed(character));
     if(available_actions.length > 0) {
-        location_choice_divs["actions"] = create_location_choice_dropdown({name: "Take an action", icon: "circle", class_name: "choice_action"});
+        location_choice_divs["actions"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice action"), icon: "circle", class_name: "choice_action"});
 
         location_choice_divs["actions"].append(...create_location_choices({location: location, category: "action"}));
     }
@@ -2258,7 +2258,7 @@ function update_displayed_normal_location(location) {
 
     const available_challenges = location.connected_locations.filter(loc => (loc.location.is_challenge && loc.location.is_unlocked && !loc.location.is_finished));
     if(available_challenges.length > 0) {
-        location_choice_divs["challenges"] = create_location_choice_dropdown({name: "Take on a challenge", icon: "warning_amber", class_name: "choice_travel"});
+        location_choice_divs["challenges"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice challenge"), icon: "warning_amber", class_name: "choice_travel"});
 
         location_choice_divs["challenges"].append(...create_location_choices({location: location, category: "challenge"}));
     }
@@ -5049,7 +5049,7 @@ function create_bestiary_entry_tooltip(enemy_name) {
     const tooltip_xp = document.createElement("div"); //base xp enemy gives
     insert_HTML(tooltip_xp, `<br>Base xp value: ${enemy.xp_value} <br><br>`);
     const tooltip_desc = document.createElement("div"); //enemy description
-    tooltip_desc.innerText = enemy.description;
+    tooltip_desc.innerText = enemy.getDescription();
 
     const tooltip_tags = document.createElement("div"); //enemy description
 
