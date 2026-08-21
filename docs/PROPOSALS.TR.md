@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 8 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 9 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -141,7 +141,7 @@ korunmasını gerektiriyor ve özgün yazar, fork'ların özgün projeye kredi v
 bağlantı vermesini açıkça istemiş. Varlık ve altyapı referansları taşınıyor;
 kredi kalıyor ve dürüst biçimde yeniden etiketleniyor.
 
-### P-7 — Oyuna Türkçe dil desteği `active` — EN YÜKSEK ÖNCELİK
+### P-7 — Oyuna Türkçe dil desteği `done`
 
 Oyunun kendisine Türkçe seçeneği eklenecek. Çeviri katmanı hâlihazırda var ancak
 şu anda yalnızca dialogue'ları ve arayüzün bir kısmını kapsıyor.
@@ -168,12 +168,15 @@ paneline `languages` registry'sinden inşa edilen ve canlı geçiş yapan bir se
 eklendi. `npm run check` kapsamı raporluyor, `npm test` arama ve fallback davranışını
 kapsıyor. Çevirmen el kitabı ve sözlük [I18N.TR.md](I18N.TR.md) içinde.
 
-**Kalan** — bütün diyalog id'leri, quest'ler, skill'ler, stance'lar ve düşmanlar
-tamam; Türkçe locale referansın bildirdiği 907 anahtarın %100'ünde. Geriye görünen-ad
-katmanının henüz yönlendirilmediği registry'ler kaldı: item, lokasyon, tarif,
-activity ve trader adları; ayrıca item, lokasyon, efekt ve activity açıklamaları ile
-lokasyon eylem metninin ~244 string'i. `help.html` ve `changelog.html`'in hâlâ hiç
-çeviri bağlantı noktası yok; bkz. [I18N.TR.md](I18N.TR.md) bilinen boşluklar.
+**Tamamlandı.** Oyunda oyuncuya görünen İngilizce metin kalmadı. Dil başına 2536
+anahtar; diyalogları, quest'leri, item'ları, lokasyonları, düşmanları, becerileri,
+duruşları, efektleri, etkinlikleri, tarifleri, tüccarları, günlük mesajlarını ve
+arayüzü kapsıyor. Oyunun bildirmek yerine ürettiği 203 item, parametreli ad
+kalıplarıyla kapsanıyor; `help.html` ve `changelog.html`'in ise düğmelerin geçtiği
+Türkçe karşılıkları var. Geriye kalanlar [I18N.TR.md](I18N.TR.md) bilinen boşluklar
+bölümünde yapısal notlar olarak yazılı: init öncesi iki yükleme mesajı, bağımsız
+sayfaların ayrışma riski ve İngilizcenin kendisinin bir sayıyı tekrarladığı birkaç
+yer.
 
 ### P-8 — Bildirilen NaN uyarılarını gider `active`
 

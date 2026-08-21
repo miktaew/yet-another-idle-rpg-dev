@@ -509,9 +509,9 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         }
         Object.keys(equip_bonus_skill_levels).forEach(skill_key => {
             if(skill_key.includes("category_")) {
-                item_tooltip +=  `<br>${skill_key} skills level: +${equip_bonus_skill_levels[skill_key]}`;
+                item_tooltip +=  `<br>${translationManager.getText(language, "ui bonus skill category level", {v1: translationManager.getDisplayName(language, skill_key), v2: equip_bonus_skill_levels[skill_key]})}`;
             } else {
-                item_tooltip += `<br>${skills[skill_key].name()} level: +${equip_bonus_skill_levels[skill_key]}`;
+                item_tooltip += `<br>${translationManager.getText(language, "ui bonus skill level", {v1: skills[skill_key].name(), v2: equip_bonus_skill_levels[skill_key]})}`;
             }
         });
     }
@@ -547,7 +547,7 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     }
 
     if(item?.base_size) {
-        item_tooltip += `<br><br>Size: ${item.getSize()}cm`;
+        item_tooltip += `<br><br>${translationManager.getText(language, "ui item size", {v1: item.getSize()})}`;
     }
 
     if (item.effects?.length > 0) {
@@ -591,14 +591,14 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     if(!item.tags.unique && item.getBaseValue()) {
         if(!options.skip_quality && options?.quality?.length == 2) { 
             //ignore quality, instead use quality passed as param
-            item_tooltip += `<br><br>Value: ${format_money(
+            item_tooltip += `<br><br>${translationManager.getText(language, "ui label value")}: ${format_money(
             round_item_price(
                 item[value_function]({quality:options.quality[0], region:current_location?.market_region})))} - ${format_money(round_item_price(item.getBaseValue({quality:options.quality[1]})
             ))}`;
         } else {
-            item_tooltip += `<br><br>Value: ${format_money(round_item_price(item[value_function]({quality, region:current_location?.market_region, multiplier: ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1)})))}`;
+            item_tooltip += `<br><br>${translationManager.getText(language, "ui label value")}: ${format_money(round_item_price(item[value_function]({quality, region:current_location?.market_region, multiplier: ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1)})))}`;
             if(item.saturates_market) {
-                item_tooltip += ` [originally ${format_money(round_item_price(item.getBaseValue({quality, region:current_location?.market_region}) * ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1) || 1))}]`
+                item_tooltip += ` [${translationManager.getText(language, "ui originally")} ${format_money(round_item_price(item.getBaseValue({quality, region:current_location?.market_region}) * ((options && options.trader) ? traders[current_trader].getProfitMargin(current_location.market_region) : 1) || 1))}]`
             }
         }
     }
@@ -676,9 +676,9 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
         }
         name = capitalize_first_letter(name);
         if(tooltip_html_content) {
-            tooltip_html_content += `<br>${name} xp gain: x${effects.xp_multipliers[xp_multipliers[0]]}`;
+            tooltip_html_content += `<br>${translationManager.getText(language, "ui xp gain for", {v1: name, v2: effects.xp_multipliers[xp_multipliers[0]]})}`;
         } else {
-            tooltip_html_content = `${name} xp gain: x${effects.xp_multipliers[xp_multipliers[0]]}`;
+            tooltip_html_content = `${translationManager.getText(language, "ui xp gain for", {v1: name, v2: effects.xp_multipliers[xp_multipliers[0]]})}`;
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
             let name;
@@ -687,7 +687,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
             } else {
                 name = xp_multipliers[i].replace("_"," ");
             }
-            tooltip_html_content += `<br>${name} xp gain: x${effects.xp_multipliers[xp_multipliers[i]]}`;
+            tooltip_html_content += `<br>${translationManager.getText(language, "ui xp gain for", {v1: name, v2: effects.xp_multipliers[xp_multipliers[i]]})}`;
         }
     }
 
@@ -924,9 +924,9 @@ function format_book_bonuses(bonuses) {
         }
 
         if(formatted) {
-            formatted += `, x${bonuses.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
+            formatted += `, ${translationManager.getText(language, "ui xp gain multiplier", {v1: bonuses.xp_multipliers[xp_multipliers[0]], v2: name})}`;
         } else {
-            formatted = `x${bonuses.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
+            formatted = `${translationManager.getText(language, "ui xp gain multiplier", {v1: bonuses.xp_multipliers[xp_multipliers[0]], v2: name})}`;
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
             let name;
@@ -935,7 +935,7 @@ function format_book_bonuses(bonuses) {
             } else {
                 name = xp_multipliers[i].replace("_"," ");
             }
-            formatted += `, x${bonuses.xp_multipliers[xp_multipliers[i]]} ${name} xp gain`;
+            formatted += `, ${translationManager.getText(language, "ui xp gain multiplier", {v1: bonuses.xp_multipliers[xp_multipliers[i]], v2: name})}`;
         }
     }
 
@@ -1019,7 +1019,7 @@ function start_activity_animation(settings) {
 
         if(settings?.book_title) {
             const html_content = action_status_div.innerText;
-            set_HTML(action_status_div, html_content.split(",")[0] + `, ${format_reading_time(item_templates[settings.book_title].getRemainingTime())} left` + end);
+            set_HTML(action_status_div, html_content.split(",")[0] + `, ${translationManager.getText(language, "ui time left", {v1: format_reading_time(item_templates[settings.book_title].getRemainingTime())})}` + end);
         }
 
         if(end.length < 3){
@@ -1927,7 +1927,7 @@ function update_displayed_equipment() {
             eq_tooltip.classList.add("item_tooltip");
             set_HTML(equipment_slots_divs[key], `${key.replace("_"," ")} slot`);
             equipment_slots_divs[key].classList.add("equipment_slot_empty");
-            set_HTML(eq_tooltip, `Your ${key.replace("_"," ")} slot`);
+            set_HTML(eq_tooltip, `${translationManager.getText(language, "ui your slot", {v1: translationManager.getText(language, `ui slot ${key}`)})}`);
         } else {
             set_HTML(equipment_slots_divs[key], character.equipment[key].getDisplayName());
             equipment_slots_divs[key].classList.remove("equipment_slot_empty");
@@ -2390,8 +2390,7 @@ function create_location_choices({location, category, is_combat = false}) {
                 }
             }
             const {gathering_time_needed} =  location.activities[key].getActivityEfficiency();
-            job_tooltip_content += `Pays ${format_money(location.activities[key].get_payment())} per every ` +  
-                    `${format_working_time(gathering_time_needed)} worked`;
+            job_tooltip_content += `${translationManager.getText(language, "ui pays per worked", {v1: format_money(location.activities[key].get_payment()), v2: format_working_time(gathering_time_needed)})}`;
             insert_HTML(job_tooltip, job_tooltip_content);
             activity_div.appendChild(job_tooltip);
     
@@ -2766,7 +2765,7 @@ function create_location_types_display(current_location){
                     const actual = get_location_type_penalty(type, stage, stat, "multiplier");
                     type_tooltip_html_content += `<br>${stat_names[stat]} x${Math.round(1000*actual)/1000}`;
                     if(base != actual) {
-                        type_tooltip_html_content += ` [base: x${effects[stat].multiplier}]`;
+                        type_tooltip_html_content += ` [${translationManager.getText(language, "ui base value", {v1: "x" + effects[stat].multiplier})}]`;
                     }
                 }
                 if(effects[stat].flat) {
@@ -2774,7 +2773,7 @@ function create_location_types_display(current_location){
                     const actual = get_location_type_penalty(type, stage, stat, "flat");
                     type_tooltip_html_content += `<br>${stat_names[stat]}: ${Math.round(1000*actual)/1000}`;
                     if(base != actual) {
-                        type_tooltip_html_content += ` [base: ${effects[stat].flat}]`;
+                        type_tooltip_html_content += ` [${translationManager.getText(language, "ui base value", {v1: effects[stat].flat})}]`;
                     }
                 }
                 
@@ -3013,7 +3012,7 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
         for (var i = 0; i < recipe.components.length; i++) {
             const component_selection = document.createElement("div");
 
-            set_HTML(component_selection, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>Select a [${recipe.components[i]}]</span>`);
+            set_HTML(component_selection, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>${translationManager.getText(language, "ui select a component", {v1: translationManager.getDisplayName(language, recipe.components[i])})}</span>`);
         
             const component_list = document.createElement("div");
             component_selection.appendChild(component_list);

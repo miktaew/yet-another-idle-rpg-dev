@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 17 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 18 -->
 
 # Changelog
 
@@ -17,6 +17,36 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-21
+
+### The last of the English is gone — P-7
+
+**Nothing player-facing is written in code any more.** The final sweep covered the
+interface labels in `display.js` that the earlier passes had left: the readouts
+that wrap a value rather than standing alone, the equipment slot names, the
+location-type base values and the crafting component picker. Plus the last four in
+`main.js`: the two flag unlock messages, the default location unlock message, and
+the one that reads "If you see this, Miktaew screwed something up" - which a
+Turkish player would previously have seen in English at the exact moment something
+had gone wrong.
+
+Two things caught while finishing:
+
+- Two migrated sites were plain double-quoted strings rather than template
+  literals, so the inserted `${...}` was inert and broke the parse. An
+  interpolation is only an interpolation inside backticks.
+- `"Unlocked location \"{v1}\""` needs its inner quotes escaped in the locale file,
+  and the splice script's own assertion caught it before it shipped - the same
+  check that has been guarding every batch.
+
+**Where the count landed.** 2536 keys per language, from 837 when this began. The
+checks grew with it: `npm run check` verifies 1242 content ids resolve, that the
+203 generated items still assemble to their own registry keys, that no locale has
+an unknown key, and that the site layout is deployable; `npm test` is at 59 checks
+including the two locale invariants - `%HeroName%` survives translation, and every
+locale carries the same `{slots}` as the reference.
+
+The known-gaps section of [I18N.md](I18N.md) has been rewritten: it no longer
+lists work to do, only the four places that are structurally awkward and why.
 
 ### 203 generated items can be named now — P-7
 

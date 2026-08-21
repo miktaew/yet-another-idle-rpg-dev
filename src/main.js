@@ -130,9 +130,10 @@ const global_flags = {
     is_guard_met: false,
     is_hero_created: false, //changed after going through hero creation panel
 };
+//TEXT IDS, resolved where the message is logged.
 const flag_unlock_texts = {
-    is_gathering_unlocked: "You have gained the ability to gather new materials! Remember to equip your tools first <br>[Note: equipped tools do not appear in inventory as you will be swapping them very rarely]",
-    is_crafting_unlocked: "You have gained the ability to craft items and equipment!",
+    is_gathering_unlocked: "ui unlocked gathering",
+    is_crafting_unlocked: "ui unlocked crafting",
 }
 
 const play_button = document.getElementById("loading_screen_play_button");
@@ -903,7 +904,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         }
     }
     
-    let result_message = 'If you see this, Miktaew screwed something up. Whoops!';
+    let result_message = translationManager.getText(language, "ui action fell through");
 
     if(conditions_status == -1) {
         //not meeting requirements to begin
@@ -2392,7 +2393,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             const flag = global_flags[rewards.flags[i]];
             global_flags[rewards.flags[i]] = true;
             if(!flag && flag_unlock_texts[rewards.flags[i]] && inform_overall) {
-                log_message(`${flag_unlock_texts[rewards.flags[i]]}`, "activity_unlocked");
+                log_message(translationManager.getText(language, flag_unlock_texts[rewards.flags[i]]), "activity_unlocked");
             }
         }
     }
@@ -2700,7 +2701,7 @@ function unlock_location({location, skip_message}) {
         was_unlocked = true;
         if(!skip_message) {
             const message = (location.unlock_text ? translationManager.getText(language, location.unlock_text) : null)
-                || `Unlocked location "${location.getName()}"`;
+                || translationManager.getText(language, "log unlocked location", {v1: location.getName()});
             log_message(message, "location_unlocked");
         }
 

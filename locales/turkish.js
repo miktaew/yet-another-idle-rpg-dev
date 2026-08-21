@@ -2925,6 +2925,44 @@ const descriptions = {
     "ui loading finishing pats": "Son sevgi patileri atılıyor",
     "ui loading something went wrong": "Bir şeyler ters gitti 😭",
     "ui play anyway": "Oyna...?",
+
+    //INTERFACE, the last of it.
+    "ui bonus skill category level": "{v1} becerileri seviyesi: +{v2}",
+    "ui bonus skill level": "{v1} seviyesi: +{v2}",
+    "ui item size": "Boy: {v1} cm",
+    "ui label value": "Değer",
+    "ui originally": "aslen",
+    "ui xp gain for": "{v1} tecrübe kazancı: x{v2}",
+    "ui xp gain multiplier": "x{v1} {v2} tecrübe kazancı",
+    "ui time left": "{v1} kaldı",
+    "ui your slot": "{v1} yuvan",
+    "ui pays per worked": "Çalışılan her {v2} için {v1} ödüyor",
+    "ui slot head": "baş",
+    "ui slot torso": "gövde",
+    "ui slot arms": "kol",
+    "ui slot ring": "yüzük",
+    "ui slot weapon": "silah",
+    "ui slot off-hand": "yardımcı el",
+    "ui slot legs": "bacak",
+    "ui slot feet": "ayak",
+    "ui slot amulet": "tılsım",
+    "ui slot artifact": "eser",
+    "ui slot cape": "pelerin",
+    "ui slot pickaxe": "kazma",
+    "ui slot axe": "balta",
+    "ui slot sickle": "orak",
+    "ui slot shovel": "kürek",
+    "ui slot fishing_pole": "olta kamışı",
+
+    //INTERFACE, truly the last two.
+    "ui base value": "temel: {v1}",
+    "ui select a component": "Bir [{v1}] seç",
+
+    //The last four.
+    "ui unlocked gathering": "Yeni malzemeler toplama yeteneği kazandın! Önce aletlerini kuşanmayı unutma <br>[Not: kuşanılmış aletler envanterde görünmez, çünkü onları çok seyrek değiştireceksin]",
+    "ui unlocked crafting": "Eşya ve teçhizat üretme yeteneği kazandın!",
+    "ui action fell through": "Bunu görüyorsan Miktaew bir şeyi eline yüzüne bulaştırmış. Hoppala!",
+    "log unlocked location": "\"{v1}\" lokasyonu açıldı",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

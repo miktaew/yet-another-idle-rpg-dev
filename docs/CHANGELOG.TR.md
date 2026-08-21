@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 17 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 18 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,36 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-21
+
+### İngilizcenin son kalıntısı da gitti — P-7
+
+**Artık oyuncuya görünen hiçbir metin kodda yazılı değil.** Son tarama,
+`display.js` içinde önceki paşlıkların bıraktığı arayüz etiketlerini kapsadı: tek
+başına durmak yerine bir değeri saran okumalar, teçhizat yuvası adları,
+lokasyon türü temel değerleri ve üretim parçası seçici. Ayrıca `main.js` içindeki
+son dördü: iki bayrak açılış mesajı, öntanımlı lokasyon açılış mesajı ve
+"Bunu görüyorsan Miktaew bir şeyi eline yüzüne bulaştırmış" diyen mesaj - ki bir
+Türk oyuncu onu, tam bir şeyin ters gittiği anda İngilizce görüyordu.
+
+Bitirirken yakalanan iki şey:
+
+- Taşınan iki yer şablon dizgesi değil, düz çift tırnaklı stringdi; yani eklenen
+  `${...}` işlevsizdi ve ayrıştırmayı bozdu. Bir interpolasyon ancak backtick
+  içinde interpolasyondur.
+- `"Unlocked location \"{v1}\""` satırının iç tırnaklarının locale dosyasında
+  kaçırılması gerekiyor ve splice script'inin kendi doğrulaması bunu yayına
+  çıkmadan yakaladı - her paşlığı koruyan aynı kontrol.
+
+**Sayı nerede durdu.** Dil başına 2536 anahtar; bu iş başladığında 837'ydi.
+Kontroller de onunla büyüdü: `npm run check` 1242 içerik id'sinin çözüldüğünü, 203
+üretilmiş item'ın hâlâ kendi registry anahtarlarına birleştiğini, hiçbir locale'de
+tanınmayan anahtar olmadığını ve site düzeninin dağıtılabilir olduğunu doğruluyor;
+`npm test` iki locale değişmeziyle birlikte 59 kontrolde - `%HeroName%` çeviriden
+sağ çıkıyor ve her locale referansla aynı `{slot}`ları taşıyor.
+
+[I18N.TR.md](I18N.TR.md) içindeki bilinen boşluklar bölümü yeniden yazıldı: artık
+yapılacak iş listelemiyor, yalnızca yapısal olarak sıkıntılı dört yeri ve
+sebeplerini anlatıyor.
 
 ### 203 üretilmiş item artık adlandırılabiliyor — P-7
 

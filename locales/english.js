@@ -2883,6 +2883,46 @@ const descriptions = {
     "ui loading finishing pats": "Doing some finishing pats",
     "ui loading something went wrong": "Something went wrong 😭",
     "ui play anyway": "Play...?",
+
+    //INTERFACE, the last of it: readouts that wrap a value, plus the equipment
+    //slot names the slot tooltip fills its slot from.
+    "ui bonus skill category level": "{v1} skills level: +{v2}",
+    "ui bonus skill level": "{v1} level: +{v2}",
+    "ui item size": "Size: {v1}cm",
+    "ui label value": "Value",
+    "ui originally": "originally",
+    "ui xp gain for": "{v1} xp gain: x{v2}",
+    "ui xp gain multiplier": "x{v1} {v2} xp gain",
+    "ui time left": "{v1} left",
+    "ui your slot": "Your {v1} slot",
+    "ui pays per worked": "Pays {v1} per every {v2} worked",
+    "ui slot head": "head",
+    "ui slot torso": "torso",
+    "ui slot arms": "arms",
+    "ui slot ring": "ring",
+    "ui slot weapon": "weapon",
+    "ui slot off-hand": "off-hand",
+    "ui slot legs": "legs",
+    "ui slot feet": "feet",
+    "ui slot amulet": "amulet",
+    "ui slot artifact": "artifact",
+    "ui slot cape": "cape",
+    "ui slot pickaxe": "pickaxe",
+    "ui slot axe": "axe",
+    "ui slot sickle": "sickle",
+    "ui slot shovel": "shovel",
+    "ui slot fishing_pole": "fishing pole",
+
+    //INTERFACE, truly the last two.
+    "ui base value": "base: {v1}",
+    "ui select a component": "Select a [{v1}]",
+
+    //The last four: two flag unlock messages, the should-never-happen action
+    //message, and the default location unlock message.
+    "ui unlocked gathering": "You have gained the ability to gather new materials! Remember to equip your tools first <br>[Note: equipped tools do not appear in inventory as you will be swapping them very rarely]",
+    "ui unlocked crafting": "You have gained the ability to craft items and equipment!",
+    "ui action fell through": "If you see this, Miktaew screwed something up. Whoops!",
+    "log unlocked location": "Unlocked location \"{v1}\"",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 8 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 9 -->
 
 # Proposals
 
@@ -136,7 +136,7 @@ the original copyright notice, and the original author asked that forks credit
 and link the original. Asset and infrastructure references move; credit stays
 and is relabelled honestly.
 
-### P-7 — Turkish language support in the game `active` — TOP PRIORITY
+### P-7 — Turkish language support in the game `done`
 
 Add a Turkish option to the game itself. The translation layer already exists
 but currently covers dialogue and part of the UI only.
@@ -163,13 +163,14 @@ races and bio sections; and the options panel has a selector built from the
 covers the lookup and the fallback. The translator handbook and glossary are in
 [I18N.md](I18N.md).
 
-**Remaining** — every dialogue id, quest, skill, stance and enemy is done, and
-the Turkish locale is at 100% of the 907 keys the reference declares. What is left
-is the registries the display-name layer has not been pointed at yet: item,
-location, recipe, activity and trader names, plus item, location, effect and
-activity descriptions and the ~244 strings of location action text. `help.html`
-and `changelog.html` still have no translation hook at all; see the known gaps in
-[I18N.md](I18N.md).
+**Done.** There is no player-facing English left in the game. 2536 keys per
+language cover dialogue, quests, items, locations, enemies, skills, stances,
+effects, activities, recipes, traders, the log messages and the interface. The 203
+items the game generates rather than declares are covered by parameterised name
+patterns, and `help.html` and `changelog.html` have Turkish counterparts the buttons
+switch to. What remains is written up as structural notes in the known gaps of
+[I18N.md](I18N.md) - two pre-init loading messages, the standalone pages' drift
+risk, and a couple of places where the English itself duplicates a number.
 
 ### P-8 — Fix the reported NaN warnings `active`
 
