@@ -404,16 +404,16 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
             const outline_class_1 = rarity_outlines[item.getRarity(options.quality[0])];
             const outline_class_2 = rarity_outlines[item.getRarity(options.quality[1])];
                 
-            item_tooltip += `<br><br><b>Quality: <span class="${outline_class_1}" style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${options.quality[0]}% </span> - <span class="${outline_class_2}" style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${options.quality[1]}% </span>`;
+            item_tooltip += `<br><br><b>${translationManager.getText(language, "ui label quality")}: <span class="${outline_class_1}" style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${options.quality[0]}% </span> - <span class="${outline_class_2}" style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${options.quality[1]}% </span>`;
             item_tooltip += `<br>[<span class="${outline_class_1}" style="color: ${rarity_colors[item.getRarity(options.quality[0])]}">${item.getRarity(options.quality[0])}</span>-<span class="${outline_class_2}" style="color: ${rarity_colors[item.getRarity(options.quality[1])]}">${item.getRarity(options.quality[1])}</span>] </b>`;
         } else {
             const outline_class = rarity_outlines[item.getRarity(quality)];
                 
-            item_tooltip += `<br><br><b class="${outline_class}" style="color: ${rarity_colors[item.getRarity(quality)]}">Quality: ${quality}% [${item.getRarity(quality)}]</b>`;
+            item_tooltip += `<br><br><b class="${outline_class}" style="color: ${rarity_colors[item.getRarity(quality)]}">${translationManager.getText(language, "ui label quality")}: ${quality}% [${item.getRarity(quality)}]</b>`;
         }
     }
     if(item.tags.unique) {
-        item_tooltip += `<br><b class="item_unique outline_white">Unique</b>`;
+        item_tooltip += `<br><b class="item_unique outline_white">${translationManager.getText(language, "ui label unique")}</b>`;
     }
 
     //add stats if can be equipped
@@ -444,14 +444,14 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         if(show_quality && options?.quality?.length == 2) {
             if(item.getAttack) {
                 item_tooltip += 
-                    `<br><br>Attack: ${round(item.getAttack(options.quality[0]))} - ${round(item.getAttack(options.quality[1]))}`;
+                    `<br><br>${translationManager.getText(language, "ui label attack")}: ${round(item.getAttack(options.quality[0]))} - ${round(item.getAttack(options.quality[1]))}`;
             } else if(item.getDefense) { 
                 item_tooltip += 
-                    `<br><br>Defense: ${round(item.getDefense(options.quality[0]))} - ${round(item.getDefense(options.quality[1]))}`;
+                    `<br><br>${translationManager.getText(language, "ui label defense")}: ${round(item.getDefense(options.quality[0]))} - ${round(item.getDefense(options.quality[1]))}`;
             } else if (item.offhand_type === "shield") {
                 const block_multiplier = item.tags.ignore_skill ? character.stats.total_multiplier.block_strength : 1;
                 item_tooltip += 
-                    `<br><br>Can block up to: ${round(item.getShieldStrength(options.quality[0])*block_multiplier)} - ${round(item.getShieldStrength(options.quality[1])*block_multiplier)} damage [base: ${item.getShieldStrength(options.quality[0])}-${item.getShieldStrength(options.quality[1])}]`;
+                    `<br><br>${translationManager.getText(language, "ui block range", {v1: round(item.getShieldStrength(options.quality[0])*block_multiplier), v2: round(item.getShieldStrength(options.quality[1])*block_multiplier), v3: item.getShieldStrength(options.quality[0]), v4: item.getShieldStrength(options.quality[1])})}`;
             }
 
             const equip_stats_0 = item.getStats(options.quality[0]);
@@ -479,10 +479,10 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
             } else if(item.offhand_type === "shield") {
                 if(item.tags.ignore_skill) {
                     item_tooltip += 
-                `<br><br>Can block up to: ${Math.round(10*item.getShieldStrength())/10} damage [unaffected by skill]`;
+                `<br><br>${translationManager.getText(language, "ui block unaffected", {v1: Math.round(10*item.getShieldStrength())/10})}`;
                 } else {
                     item_tooltip += 
-                `<br><br>Can block up to: ${Math.round(10*item.getShieldStrength()*(character.stats.total_multiplier.block_strength))/10} damage [base: ${item.getShieldStrength()}]`;
+                `<br><br>${translationManager.getText(language, "ui block with base", {v1: Math.round(10*item.getShieldStrength()*(character.stats.total_multiplier.block_strength))/10, v2: item.getShieldStrength()})}`;
                 }
             }
 
@@ -518,19 +518,19 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
 
     if (item.component_stats) {
         if(item.component_tier) {
-            item_tooltip += `<br><br>Component tier: ${item.component_tier}`;
+            item_tooltip += `<br><br>${translationManager.getText(language, "ui label component tier")}: ${item.component_tier}`;
         }
         if(Object.keys(item.component_stats).length > 0 || item?.attack_value !== 0 || item?.attack_multiplier !== 1 || item?.defense_value !== 0) {
-            item_tooltip += `<br><br>Basic stats: `;
+            item_tooltip += `<br><br>${translationManager.getText(language, "ui label basic stats")}: `;
         }
         if(item?.attack_value) {
-            item_tooltip += `<br>Attack power: +${item.attack_value}`;
+            item_tooltip += `<br>${translationManager.getText(language, "ui label attack power")}: +${item.attack_value}`;
         }
         if(item?.attack_multiplier && item.attack_multiplier !== 1) {
-            item_tooltip += `<br>Size-specific attack power: x${item.attack_multiplier}`;
+            item_tooltip += `<br>${translationManager.getText(language, "ui label size attack power")}: x${item.attack_multiplier}`;
         }
         if(item?.defense_value) {
-            item_tooltip += `<br>Defense: +${item.defense_value}`;
+            item_tooltip += `<br>${translationManager.getText(language, "ui label defense")}: +${item.defense_value}`;
         }
 
         Object.keys(item.component_stats).forEach(function(effect_key) {
@@ -560,32 +560,32 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
 
     if (item.item_type === "BOOK") {
         if(!book_stats[item.name].is_finished) {
-            item_tooltip += `<br><br>Time to read: ${item.getRemainingTime()} minutes`;
+            item_tooltip += `<br><br>${translationManager.getText(language, "ui time to read", {v1: item.getRemainingTime()})}`;
         }
         else {
-            item_tooltip += `<br><br>Reading it provided ${character.name} with:`;
+            item_tooltip += `<br><br>${translationManager.getText(language, "ui reading provided", {v1: character.name})}`;
             if(Object.keys(book_stats[item.name].bonuses).length > 0) {
                 item_tooltip += `<br>- ${format_book_bonuses(book_stats[item.name].bonuses)}`;
             }
             if(book_stats[item.name].rewards?.skills) {
                 if(book_stats[item.name].rewards.skills.length == 1) {
-                    item_tooltip += `<br>- a new skill`;
+                    item_tooltip += `<br>- ${translationManager.getText(language, "ui a new skill")}`;
                 } else {
-                    item_tooltip += `<br>- new skills`;
+                    item_tooltip += `<br>- ${translationManager.getText(language, "ui new skills")}`;
                 }
             }
             if(book_stats[item.name].rewards?.recipes) {
                 if(book_stats[item.name].rewards.recipes.length == 1) {
-                    item_tooltip += `<br>- a new recipe`;
+                    item_tooltip += `<br>- ${translationManager.getText(language, "ui a new recipe")}`;
                 } else {
-                    item_tooltip += `<br>- new recipes`;
+                    item_tooltip += `<br>- ${translationManager.getText(language, "ui new recipes")}`;
                 }
             }
         }
     }
 
     if(item.material_type) {
-        item_tooltip += `<br><br>Material type: ${item.material_type}`;
+        item_tooltip += `<br><br>${translationManager.getText(language, "ui label material type")}: ${item.material_type}`;
     }
 
     if(!item.tags.unique && item.getBaseValue()) {
@@ -955,13 +955,13 @@ function log_loot({loot_list, is_combat=false, is_a_summary=false, is_dynamic=fa
     let message_type;
     if(is_combat) {
         message_type = "combat_loot";
-        message = 'Looted "';
+        message = translationManager.getText(language, "ui looted") + ' "';
     } else if(is_a_summary) {
         message_type = "total_gathered_loot";
-        message = 'Gained in total: "';
+        message = translationManager.getText(language, "ui gained in total") + ': "';
     } else {
         message_type = "gathered_loot";
-        message = 'Gained "';
+        message = translationManager.getText(language, "ui gained") + ' "';
     }
 
     const recent_loot = Object.values(loot_list.recent);
@@ -1046,7 +1046,7 @@ function update_displayed_storage() {
 }
 
 function update_displayed_money() {
-    set_HTML(document.getElementById("money_div"), `Your purse contains: ${format_money(character.money)}`);
+    set_HTML(document.getElementById("money_div"), `${translationManager.getText(language, "ui purse contains", {v1: format_money(character.money)})}`);
 }
 
 function update_displayed_total_price(total_price) {
@@ -1768,7 +1768,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
     let item_name_div_content = "";
     if(target_item.tags?.equippable) {
         if(target_item.tags.tool) {
-            item_name_div_content = `<span class = "item_slot" >[tool]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
+            item_name_div_content = `<span class = "item_slot" >[${translationManager.getText(language, "ui slot tool")}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         } else {
             item_name_div_content = `<span class = "item_slot" >[${target_item.equip_slot}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         }
@@ -1787,7 +1787,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         //
     } else if(target_item.tags.component) {
         //
-        item_name_div_content = `<span class = "item_category">[Comp]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
+        item_name_div_content = `<span class = "item_category">[${translationManager.getText(language, "ui slot component")}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         item_name_div.classList.add(`${item_class}_name`);
         item_div.appendChild(item_name_div);
 
@@ -1798,7 +1798,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         //
     } else if(target_item.tags.book) {
         //
-        item_name_div_content = `<span class = "item_category">[Book]</span> <span class = "book_name item_name">"${target_item.name}"</span>`;
+        item_name_div_content = `<span class = "item_category">[${translationManager.getText(language, "ui slot book")}]</span> <span class = "book_name item_name">"${target_item.name}"</span>`;
         item_name_div.classList.add(`${item_class}`);
 
         if(book_stats[target_item.name].is_finished) {
@@ -1887,7 +1887,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
                 item_additional.appendChild(item_equip_span);
             } else {
                 let item_unequip_div = document.createElement("div");
-                insert_HTML(item_unequip_div, "[take off]")
+                insert_HTML(item_unequip_div, `[${translationManager.getText(language, "ui take off")}]`)
                 item_unequip_div.classList.add("unequip_item_button", "item_controls");
                 item_additional.appendChild(item_unequip_div);
             }
@@ -2013,16 +2013,16 @@ function update_displayed_enemies() {
                 hit_chance = 1;
             }
 
-            let html_string = `Atk: ${current_enemies[i].stats.attack}dmg`;
+            let html_string = `${translationManager.getText(language, "ui abbr attack")}: ${current_enemies[i].stats.attack}${translationManager.getText(language, "ui abbr damage")}`;
             
             if(current_enemies[i].stats.attack_count > 1) {
                 html_string +=` x${current_enemies[i].stats.attack_count}`;
             }
             enemies_div.children[i].children[0].children[1].children[0].innerText = html_string;
-            enemies_div.children[i].children[0].children[1].children[1].innerText = `Spd: ${disp_speed}`;
-            enemies_div.children[i].children[0].children[1].children[2].innerText = `Hit: ${Math.min(100,Math.max(0,Math.round(100*hit_chance)))}%`; //100% if shield!
-            enemies_div.children[i].children[0].children[1].children[3].innerText = `Ddg: ${Math.min(100,Math.max(0,Math.round(100*evasion_chance)))}%`;
-            enemies_div.children[i].children[0].children[1].children[4].innerText = `Def: ${current_enemies[i].stats.defense}`;
+            enemies_div.children[i].children[0].children[1].children[1].innerText = `${translationManager.getText(language, "ui abbr speed")}: ${disp_speed}`;
+            enemies_div.children[i].children[0].children[1].children[2].innerText = `${translationManager.getText(language, "ui abbr hit")}: ${Math.min(100,Math.max(0,Math.round(100*hit_chance)))}%`; //100% if shield!
+            enemies_div.children[i].children[0].children[1].children[3].innerText = `${translationManager.getText(language, "ui abbr dodge")}: ${Math.min(100,Math.max(0,Math.round(100*evasion_chance)))}%`;
+            enemies_div.children[i].children[0].children[1].children[4].innerText = `${translationManager.getText(language, "ui abbr defense")}: ${current_enemies[i].stats.defense}`;
 
         } else {
             enemies_div.children[i].children[0].style.display = "none"; //just hide it
@@ -2046,7 +2046,7 @@ function update_displayed_health_of_enemies() {
         enemies_div.children[i].children[0].children[2].children[0].children[0].style.width = 
             Math.max(0, 100*current_enemies[i].stats.health/current_enemies[i].stats.max_health) + "%";
 
-            enemies_div.children[i].children[0].children[2].children[1].innerText = `${Math.ceil(current_enemies[i].stats.health)}/${Math.ceil(current_enemies[i].stats.max_health)} hp`;
+            enemies_div.children[i].children[0].children[2].children[1].innerText = `${Math.ceil(current_enemies[i].stats.health)}/${Math.ceil(current_enemies[i].stats.max_health)} ${translationManager.getText(language, "ui abbr health")}`;
 
     }
 }
@@ -2144,7 +2144,7 @@ function update_displayed_normal_location(location) {
 
         const open_storage_div = document.createElement("div");
         
-        insert_HTML(open_storage_div, '<i class="material-icons">inventory_2</i>  Open your personal chest');
+        insert_HTML(open_storage_div, `<i class="material-icons">inventory_2</i>  ${translationManager.getText(language, "ui open chest")}`);
         open_storage_div.id = "open_storage_div";
         open_storage_div.setAttribute('onclick', 'openStorage()');
 
@@ -2378,14 +2378,14 @@ function create_location_choices({location, category, is_combat = false}) {
             job_tooltip.classList.add("job_tooltip");
             if(!location.activities[key].infinite){
                 if(location.activities[key].availability_time) {
-                    job_tooltip_content = `Available from ${location.activities[key].availability_time.start} to ${location.activities[key].availability_time.end} <br>`;
+                    job_tooltip_content = `${translationManager.getText(language, "ui available from to", {v1: location.activities[key].availability_time.start, v2: location.activities[key].availability_time.end})} <br>`;
                 }
                 if(location.activities[key].availability_seasons) {
                     if(location.activities[key].availability_seasons.length === 3) {
                         const unavailable_seasons = seasons.filter(x => !location.activities[key].availability_seasons.includes(x));
-                        job_tooltip_content += `Not available during ${unavailable_seasons.toString().replaceAll(",",", ")} <br>`;
+                        job_tooltip_content += `${translationManager.getText(language, "ui not available during", {v1: unavailable_seasons.toString().replaceAll(",",", ")})} <br>`;
                     } else {
-                        job_tooltip_content += `Available during ${location.activities[key].availability_seasons.toString().replaceAll(",",", ")} <br>`;
+                        job_tooltip_content += `${translationManager.getText(language, "ui available during", {v1: location.activities[key].availability_seasons.toString().replaceAll(",",", ")})} <br>`;
                     }
                 }
             }
@@ -2419,9 +2419,9 @@ function create_location_choices({location, category, is_combat = false}) {
                 activity_tooltip.classList.add("job_tooltip");
                 if(location.activities[key].availability_seasons.length === 3) {
                     const unavailable_seasons = seasons.filter(x => !location.activities[key].availability_seasons.includes(x));
-                    insert_HTML(activity_tooltip, `Not available during ${unavailable_seasons.toString().replaceAll(",",", ")} <br>`);
+                    insert_HTML(activity_tooltip, `${translationManager.getText(language, "ui not available during", {v1: unavailable_seasons.toString().replaceAll(",",", ")})} <br>`);
                 } else {
-                    insert_HTML(activity_tooltip, `Available during ${location.activities[key].availability_seasons.toString().replaceAll(",",", ")} <br>`);
+                    insert_HTML(activity_tooltip, `${translationManager.getText(language, "ui available during", {v1: location.activities[key].availability_seasons.toString().replaceAll(",",", ")})} <br>`);
                 }
                 activity_div.appendChild(activity_tooltip);
             }
@@ -2479,14 +2479,14 @@ function create_location_choices({location, category, is_combat = false}) {
                     if("custom_text" in location.connected_locations[i]) {
                         action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + translationManager.getText(language, location.connected_locations[i].custom_text) + " [" + travel_time + "]";
                     } else {
-                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + "Go to [" + location.connected_locations[i].location.getName()+"]"+" [" + travel_time + "]";
+                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + translationManager.getText(language, "ui travel go to") + " [" + location.connected_locations[i].location.getName()+"]"+" [" + travel_time + "]";
                     }
                 } else {
                     action.classList.add("travel_combat");
                     if("custom_text" in location.connected_locations[i]) {
                         action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div> ` + translationManager.getText(language, location.connected_locations[i].custom_text) + " [" + travel_time + "]";
                     } else {
-                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div>  ` + "Enter the [" + location.connected_locations[i].location.getName()+"] [" + travel_time + "]";
+                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div>  ` + translationManager.getText(language, "ui travel enter the") + " [" + location.connected_locations[i].location.getName()+"] [" + travel_time + "]";
                     }
                 }
 
@@ -2511,7 +2511,7 @@ function create_location_choices({location, category, is_combat = false}) {
             if(location.leave_text) {
                 action_html_content = translationManager.getText(language, location.leave_text) + travel_time_text;
             } else {
-                action_html_content = "Go back to [" + location.parent_location.getName() + "]" + travel_time_text;
+                action_html_content = translationManager.getText(language, "ui travel go back to") + " [" + location.parent_location.getName() + "]" + travel_time_text;
             }
 
             insert_HTML(action, action_html_content);
@@ -2534,9 +2534,9 @@ function create_location_choices({location, category, is_combat = false}) {
                 action_html_content += `<i class="material-icons location_choice_icon">check_box_outline_blank</i> `
             }
             if(travel_time) {
-                action_html_content += `Quick return to [${last_bed.getName()}]` +" [" + travel_time + "]";
+                action_html_content += `${translationManager.getText(language, "ui travel quick return", {v1: last_bed.getName()})}` +" [" + travel_time + "]";
             } else {
-                action_html_content += `Quick return to [${last_bed.getName()}]`;
+                action_html_content += `${translationManager.getText(language, "ui travel quick return", {v1: last_bed.getName()})}`;
             }
 
             insert_HTML(action, action_html_content);
@@ -2557,7 +2557,7 @@ function create_location_choices({location, category, is_combat = false}) {
             if("custom_text" in available_challenges[i]) {
                 action_html_content = `<i class="material-icons">warning_amber</i>  ` + translationManager.getText(language, available_challenges[i].custom_text);
             } else {
-                action_html_content = `<i class="material-icons">warning_amber</i>  ` + "Enter the " + available_challenges[i].location.getName();
+                action_html_content = `<i class="material-icons">warning_amber</i>  ` + translationManager.getText(language, "ui travel enter the") + " " + available_challenges[i].location.getName();
             }
             
             insert_HTML(action, action_html_content);
@@ -2637,9 +2637,9 @@ function create_fast_travel_choices() {
             action.classList.add("travel_normal");
 
             if(locations[available_fast_travel[i]].housing?.is_unlocked) {
-                action_html_content = `<i class="material-icons">bed</i> <span class="fast_travel_name">` + "Travel to [" + locations[available_fast_travel[i]].getName()+"] [" + travel_time + "]</span>";
+                action_html_content = `<i class="material-icons">bed</i> <span class="fast_travel_name">` + translationManager.getText(language, "ui travel travel to") + " [" + locations[available_fast_travel[i]].getName()+"] [" + travel_time + "]</span>";
             } else {
-                action_html_content = `<i class="material-icons location_choice_icon">check_box_outline_blank</i> <span class="fast_travel_name">` + "Travel to [" + locations[available_fast_travel[i]].getName()+"] [" + travel_time + "]</span>";
+                action_html_content = `<i class="material-icons location_choice_icon">check_box_outline_blank</i> <span class="fast_travel_name">` + translationManager.getText(language, "ui travel travel to") + " [" + locations[available_fast_travel[i]].getName()+"] [" + travel_time + "]</span>";
             }
             
             action.classList.add("action_travel", "location_choice");
@@ -2648,7 +2648,7 @@ function create_fast_travel_choices() {
         } else {            
             action.classList.add("travel_combat");
             
-            action_html_content = `<i class="material-icons">warning_amber</i> <span class="fast_travel_name">Travel to [${locations[available_fast_travel[i]].getName()}] [${travel_time}] </span>`;
+            action_html_content = `<i class="material-icons">warning_amber</i> <span class="fast_travel_name">${translationManager.getText(language, "ui travel travel to")} [${locations[available_fast_travel[i]].getName()}] [${travel_time}] </span>`;
             
             action.classList.add("action_travel", "location_choice");
             action.setAttribute("data-travel", locations[available_fast_travel[i]].id);
@@ -2716,7 +2716,7 @@ function update_displayed_combat_location(location) {
 
 
     enemy_count_div.children[0].children[1].innerText = location.enemy_count - location.enemy_groups_killed % location.enemy_count + " / " + location.enemy_count;
-    clear_count_div.children[0].children[0].innerText = "Clears: [" + Math.floor(location.enemy_groups_killed / location.enemy_count) +"]";
+    clear_count_div.children[0].children[0].innerText = translationManager.getText(language, "ui clears") + ": [" + Math.floor(location.enemy_groups_killed / location.enemy_count) +"]";
 
     action = create_location_choices({location: location, category: "travel", is_combat: true});
 
@@ -2738,7 +2738,7 @@ function update_displayed_combat_location(location) {
 
 function update_location_kill_count(location) {
     enemy_count_div.children[0].children[1].innerText = location.enemy_count - location.enemy_groups_killed % location.enemy_count + " / " + location.enemy_count;
-    clear_count_div.children[0].children[0].innerText = "Clears: [" + Math.floor(location.enemy_groups_killed / location.enemy_count) +"]";
+    clear_count_div.children[0].children[0].innerText = translationManager.getText(language, "ui clears") + ": [" + Math.floor(location.enemy_groups_killed / location.enemy_count) +"]";
 }
 
 function create_location_types_display(current_location){
@@ -3217,7 +3217,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
 
     if(subcategory === "items") {   //TODO base on result present? class?
         const success_chance = Math.round(100*recipe.get_success_chance(station_tier));
-        tooltip += `Success rate: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
+        tooltip += `${translationManager.getText(language, "ui success rate")}: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
         for (let i = 0; i < recipe.materials.length; i++) {
             const material = find_recipe_material({material: recipe.materials[i], ignore_stop: true});
 
@@ -3239,14 +3239,14 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
             }
         }
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id});
-        tooltip += `<br>XP value: ${xp_val_1}`;
+        tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1}`;
         tooltip += `<br>Result: <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
     } else if(!components) {
         //some component
         let name = obscure_name(material.material_id);
 
         //TODO maybe allow material type?
-        tooltip += `Material required:<br>`;
+        tooltip += `${translationManager.getText(language, "ui material required")}:<br>`;
         if(character.inventory[item_templates[material.material_id].getInventoryKey()]?.count >= material.count) {
             tooltip += `<span style="color:lime"><b>${name} x${character.inventory[item_templates[material.material_id].getInventoryKey()]?.count || 0}/${material.count}</b></span><br>`;
         } else {
@@ -3259,11 +3259,11 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id, material_count: material.count, result_tier: result_tier, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[0])]});
         const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, material_count: material.count, result_tier: result_tier, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
 
-        tooltip += `<br>XP value: ${xp_val_1} - ${xp_val_2}<br>`;
+        tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1} - ${xp_val_2}<br>`;
         tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[material.result_id], options: {quality: quality_range}})}</div>`;
     } else {
         if (components.length < recipe.components.length) {
-            tooltip += `Result:<br><div class="recipe_result">Select one component from each category</div>`;
+            tooltip += `Result:<br><div class="recipe_result">${translationManager.getText(language, "ui select one component")}</div>`;
         } else if(components.length == recipe.components.length) {
             let item = "";
             
@@ -3303,7 +3303,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
 
             const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: components, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[0])]});
             const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: components, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
-            tooltip += `<br>XP value: ${xp_val_1} - ${xp_val_2}<br>`;
+            tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1} - ${xp_val_2}<br>`;
             tooltip += `Result:<br><div class="recipe_result">${create_item_tooltip_content({item, options: {quality: quality_range}})}</div>`;
         } else {
             throw new Error(`Somehow recipe "${category}" -> "${subcategory}" -> "${recipe_id}" received more components than there should be (${components.length} instead of ${recipe.components.length})`)
@@ -3482,7 +3482,7 @@ function create_location_action_tooltip(location_action) {
     action_tooltip.classList.add("job_tooltip","location_action_tooltip");
     action_tooltip.innerText = location_action.getDescription();
     if(location_action.keep_progress) {
-        action_tooltip.innerText += "\n\nPausing this task will not waste your progress";
+        action_tooltip.innerText += "\n\n" + translationManager.getText(language, "ui pausing keeps progress");
     }
 
     return action_tooltip;
@@ -3506,9 +3506,9 @@ function create_gathering_tooltip(location_activity) {
     if(location_activity.availability_seasons) {
         if(location_activity.availability_seasons.length === 3) {
             const unavailable_seasons = seasons.filter(x => !location_activity.availability_seasons.includes(x));
-            tooltip_content += `Not available during ${unavailable_seasons.join(", ")} <br>`;
+            tooltip_content += `${translationManager.getText(language, "ui not available during", {v1: unavailable_seasons.join(", ")})} <br>`;
         } else {
-            tooltip_content += `Available during ${location_activity.availability_seasons.join(", ")} <br>`;
+            tooltip_content += `${translationManager.getText(language, "ui available during", {v1: location_activity.availability_seasons.join(", ")})} <br>`;
         }
     }
 
@@ -3517,10 +3517,10 @@ function create_gathering_tooltip(location_activity) {
     }
 
     if(location_activity.gained_resources.skill_required) {
-        tooltip_content += `<span class="activity_efficiency_info">Efficiency scaling:<br>"${skill_names}" skill lvl ${location_activity.gained_resources.skill_required[0]} to ${location_activity.gained_resources.skill_required[1]}</span><br><br>`;
+        tooltip_content += `<span class="activity_efficiency_info">${translationManager.getText(language, "ui efficiency scaling")}:<br>"${skill_names}" skill lvl ${location_activity.gained_resources.skill_required[0]} to ${location_activity.gained_resources.skill_required[1]}</span><br><br>`;
     }
 
-    tooltip_content += `Every ${format_working_time(gathering_time_needed)}, chance to find:`;
+    tooltip_content += `${translationManager.getText(language, "ui every chance to find", {v1: format_working_time(gathering_time_needed)})}`;
     for(let i = 0; i < gained_resources.length; i++) {
         const count = gained_resources[i].count;
         tooltip_content += `<br>x${count[0]===count[1]?count[0]:`${count[0]}-${count[1]}`} "${obscure_name(gained_resources[i].name)}" at ${Math.round(100*gained_resources[i].chance)}%`;
@@ -3557,9 +3557,9 @@ function update_gathering_tooltip(activity) {
     }
 
     if(activity.gained_resources.skill_required) {
-        tooltip_content = `<span class="activity_efficiency_info">Efficiency scaling:<br>"${skill_names}" skill lvl ${activity.gained_resources.skill_required[0]} to ${activity.gained_resources.skill_required[1]}</span><br><br>`;
+        tooltip_content = `<span class="activity_efficiency_info">${translationManager.getText(language, "ui efficiency scaling")}:<br>"${skill_names}" skill lvl ${activity.gained_resources.skill_required[0]} to ${activity.gained_resources.skill_required[1]}</span><br><br>`;
     }
-    tooltip_content += `Every ${format_working_time(gathering_time_needed)}, chance to find:`;
+    tooltip_content += `${translationManager.getText(language, "ui every chance to find", {v1: format_working_time(gathering_time_needed)})}`;
     for (let i = 0; i < gained_resources.length; i++) {
         tooltip_content += `<br>x${gained_resources[i].count[0] === gained_resources[i].count[1] ? gained_resources[i].count[0] : `${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${obscure_name(gained_resources[i].name)} " at ${Math.round(100*gained_resources[i].chance)}%`;
     }
@@ -3610,20 +3610,20 @@ function update_displayed_stats() {
 
     if(character.equipment["off-hand"] != null && character.equipment["off-hand"].offhand_type === "shield") { //HAS SHIELD
         const dp = (character.stats.full.block_chance*100).toFixed(1)
-        other_combat_divs.defensive_action.innerText = "Block :";
+        other_combat_divs.defensive_action.innerText = translationManager.getText(language, "ui label block") + " :";
         other_combat_divs.defensive_points.innerText = `${dp}%`;
-        other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = "Chance to block an attack";
+        other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = translationManager.getText(language, "ui tooltip block chance");
 
-        attack_stats.children[3].innerText = `Block : ${Math.round(dp)}%`;
+        attack_stats.children[3].innerText = `${translationManager.getText(language, "ui label block")} : ${Math.round(dp)}%`;
     }
     else { //NO SHIELD
         const ep = Math.round(character.stats.full.evasion_points);
-        other_combat_divs.defensive_action.innerText = "EP : ";
+        other_combat_divs.defensive_action.innerText = translationManager.getText(language, "ui abbr evasion points") + " : ";
         other_combat_divs.defensive_points.innerText = `${ep}`;
         other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = 
-        "Evasion points, a total value of everything that contributes to the evasion chance, except for some situational skills and modifiers";
+        translationManager.getText(language, "ui tooltip evasion points");
 
-        attack_stats.children[3].innerText = `EP: ${Math.round(ep)} `;
+        attack_stats.children[3].innerText = `${translationManager.getText(language, "ui abbr evasion points")}: ${Math.round(ep)} `;
     }
 
     update_stat_description("defensive_points");
@@ -3668,32 +3668,32 @@ function update_bar_tooltips(){
  * health bar tooltip, max health only
  */
 function update_health_bar_tooltip() {
-    let html_content = "<b>Max health:</b> " + Math.ceil(character.stats.full.max_health) + "<br>";
+    let html_content = "<b>" + translationManager.getText(language, "ui stat max health") + ":</b> " + Math.ceil(character.stats.full.max_health) + "<br>";
     html_content += create_stat_breakdown("max_health");
 
     if(character.stats.full.health_regeneration_flat) {
-        html_content += "<br>------------------------<br><b>Health regen (flat):</b> " + Math.round(10*character.stats.full.health_regeneration_flat)/10 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat health regen flat") + ":</b> " + Math.round(10*character.stats.full.health_regeneration_flat)/10 + "<br>";
         html_content += create_stat_breakdown("health_regeneration_flat");
     }
 
     if(character.stats.full.health_regeneration_percent) {
-        html_content += "<br>------------------------<br><b>Health regen (%):</b> " + Math.round(10*character.stats.full.health_regeneration_percent)/10 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat health regen percent") + ":</b> " + Math.round(10*character.stats.full.health_regeneration_percent)/10 + "<br>";
         html_content += create_stat_breakdown("health_regeneration_percent");
     }
 
     if(character.stats.full.health_loss_flat) {
-        html_content += "<br>------------------------<br><b>Health loss (flat):</b> " + Math.round(10*character.stats.full.health_loss_flat)/10 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat health loss flat") + ":</b> " + Math.round(10*character.stats.full.health_loss_flat)/10 + "<br>";
         html_content += create_stat_breakdown("health_loss_flat");
     }
 
     if(character.stats.full.health_loss_percent) {
-        html_content += "<br>------------------------<br><b>Health loss (%):</b> " + Math.round(10*character.stats.full.health_loss_percent)/10 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat health loss percent") + ":</b> " + Math.round(10*character.stats.full.health_loss_percent)/10 + "<br>";
         html_content += create_stat_breakdown("health_loss_percent");
     }
 
     const health_recovery_balance = character.stats.full.health_regeneration_flat + character.stats.full.health_loss_flat + character.stats.full.max_health * (character.stats.full.health_regeneration_percent + character.stats.full.health_loss_percent)/100;
 
-    html_content += "<br>------------------------<br><b>Total health balance:</b> " + (health_recovery_balance>0?"+":"") + Math.round(10*health_recovery_balance)/10 + "<br>";
+    html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat total health balance") + ":</b> " + (health_recovery_balance>0?"+":"") + Math.round(10*health_recovery_balance)/10 + "<br>";
 
     set_HTML(health_tooltip_div, html_content);
 }
@@ -3703,21 +3703,21 @@ function update_health_bar_tooltip() {
  */
 function update_stamina_bar_tooltip() {
     let html_content;
-    html_content = "<b>Max stamina:</b> " + Math.round(character.stats.full.max_stamina) + "<br>";
+    html_content = "<b>" + translationManager.getText(language, "ui stat max stamina") + ":</b> " + Math.round(character.stats.full.max_stamina) + "<br>";
     html_content += create_stat_breakdown("max_stamina");
 
     if(character.stats.full.stamina_efficiency != 1) {
-        html_content += "<br>------------------------<br><b>Stamina efficiency:</b> " + Math.round(100*character.stats.full.stamina_efficiency)/100 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat stamina efficiency") + ":</b> " + Math.round(100*character.stats.full.stamina_efficiency)/100 + "<br>";
         html_content += create_stat_breakdown("stamina_efficiency");
     }
 
     if(character.stats.full.stamina_regeneration_flat) {
-        html_content += "<br>------------------------<br><b>Stamina regen (flat):</b> " + Math.round(10*character.stats.full.stamina_regeneration_flat)/10 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat stamina regen flat") + ":</b> " + Math.round(10*character.stats.full.stamina_regeneration_flat)/10 + "<br>";
         html_content += create_stat_breakdown("stamina_regeneration_flat");
     }
 
     if(character.stats.full.stamina_regeneration_percent) {
-        html_content += "<br>------------------------<br><b>Stamina regen (%):</b> " + Math.round(10*character.stats.full.stamina_regeneration_percent)/10 + "<br>";
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat stamina regen percent") + ":</b> " + Math.round(10*character.stats.full.stamina_regeneration_percent)/10 + "<br>";
         html_content += create_stat_breakdown("stamina_regeneration_percent");
     }
 
@@ -3729,20 +3729,20 @@ function update_xp_bar_tooltip() {
 
     let html_content = "";
     if(character.xp_bonuses.total_multiplier.all != 1) {
-        html_content += "<b>Global xp multiplier:</b> " + Math.round(100*character.xp_bonuses.total_multiplier.all)/100 + "<br>";
+        html_content += "<b>" + translationManager.getText(language, "ui stat global xp multiplier") + ":</b> " + Math.round(100*character.xp_bonuses.total_multiplier.all)/100 + "<br>";
         html_content += create_xp_bonus_breakdown("all", false);
     } else {
-        html_content += "<b>No global xp multipliers</b><br>";
+        html_content += "<b>" + translationManager.getText(language, "ui stat no global xp multipliers") + "</b><br>";
     }
 
     if(character.xp_bonuses.total_multiplier.hero != 1) {
-        html_content += "<br>------------------------<br><b>Hero xp multiplier:</b> " + Math.round(100*character.xp_bonuses.total_multiplier.hero)/100 
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat hero xp multiplier") + ":</b> " + Math.round(100*character.xp_bonuses.total_multiplier.hero)/100 
                                         + " (with global: " + Math.round(get_hero_xp_gain()*100)/100 +")<br>";
         html_content += create_xp_bonus_breakdown("hero", false);
     }
 
     if(character.xp_bonuses.total_multiplier.all_skill != 1) {
-        html_content += "<br>------------------------<br><b>Skill xp multiplier:</b> " + Math.round(100*character.xp_bonuses.total_multiplier.all_skill)/100
+        html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat skill xp multiplier") + ":</b> " + Math.round(100*character.xp_bonuses.total_multiplier.all_skill)/100
                                         + " (with global: " + Math.round(get_skills_overall_xp_gain()*100)/100 +")<br>";
         html_content += create_xp_bonus_breakdown("all_skill", false);
     }
@@ -3847,7 +3847,7 @@ function update_displayed_effects() {
         });
     } else {
         //no effects
-        set_HTML(active_effects_tooltip, 'No active effects');
+        set_HTML(active_effects_tooltip, translationManager.getText(language, "ui no active effects"));
         effect_divs = {};
     }
     update_displayed_effect_durations();
@@ -3922,14 +3922,14 @@ function create_temperature_tooltip() {
     clear_HTML_content(tooltip);
     let html_content = "";
     if(!game_options.use_uncivilised_temperature_scale) {
-        html_content = `Lowest tolerable temperature: <strong>${Math.round(10*(lowest_tolerable_temperature - get_character_cold_tolerance()))/10}</strong>`;
+        html_content = `${translationManager.getText(language, "ui lowest tolerable temperature")}: <strong>${Math.round(10*(lowest_tolerable_temperature - get_character_cold_tolerance()))/10}</strong>`;
         html_content += `<br>(<strong>${lowest_tolerable_temperature}</strong> base minus <strong>${Math.round(10*get_character_cold_tolerance())/10}</strong> cold protection)<br>`;
         html_content += create_stat_breakdown("cold_tolerance");
     } else {
-        html_content = `Lowest tolerable temperature: <strong>${Math.round(10*(celsius_to_fahrenheit(lowest_tolerable_temperature - get_character_cold_tolerance())))/10}</strong>`;
+        html_content = `${translationManager.getText(language, "ui lowest tolerable temperature")}: <strong>${Math.round(10*(celsius_to_fahrenheit(lowest_tolerable_temperature - get_character_cold_tolerance())))/10}</strong>`;
         html_content += `<br>(<strong>${Math.round(10*celsius_to_fahrenheit(lowest_tolerable_temperature))/10}</strong> base minus <strong>${Math.round(10*celsius_to_fahrenheit(get_character_cold_tolerance())-320)/10}</strong> cold protection)<br>`;
         html_content += create_stat_breakdown("cold_tolerance");
-        html_content += `<br>Scale conversion: x1.8`;
+        html_content += `<br>${translationManager.getText(language, "ui scale conversion")}`;
     }
 
     insert_HTML(tooltip, html_content);
@@ -4024,9 +4024,9 @@ function update_displayed_reputation() {
 //TODO: some display polishing + maybe move to a dedicated tab?
 function update_displayed_item_log() {
 
-    set_HTML(data_entry_divs.item_log,`<div id='item_log_header'>Item log</div>`)
+    set_HTML(data_entry_divs.item_log,`<div id='item_log_header'>${translationManager.getText(language, "ui item log")}</div>`)
 
-    let html_content = "<table id='item_log_table'><tr><th width='100%'>Item</th><th>Best</th><th>Total</th></tr>";
+    let html_content = "<table id='item_log_table'><tr><th width='100%'>" + translationManager.getText(language, "ui column item") + "</th><th>" + translationManager.getText(language, "ui column best") + "</th><th>" + translationManager.getText(language, "ui column total") + "</th></tr>";
 
     Object.values(item_log.items).forEach(item => {
         if(!item_templates[item.id] || item_templates[item.id].components) {
@@ -4272,9 +4272,9 @@ function update_displayed_ongoing_activity(current_activity) {
         const time_info_div = document.getElementById("time_for_earnings_div");
         
         if(!enough_time_for_earnings(current_activity)) {
-            time_info_div.innerText = `There's not enough time left to earn more, but ${character.name} might still learn something...`;
+            time_info_div.innerText = `${translationManager.getText(language, "ui not enough time left", {v1: character.name})}`;
         } else {
-            time_info_div.innerText = `Next earnings in: ${format_working_time(current_activity.gathering_time_needed - current_activity.gathering_time%current_activity.gathering_time_needed)}`;
+            time_info_div.innerText = `${translationManager.getText(language, "ui next earnings in")}: ${format_working_time(current_activity.gathering_time_needed - current_activity.gathering_time%current_activity.gathering_time_needed)}`;
         }
     }
 
@@ -4315,7 +4315,7 @@ function update_displayed_ongoing_activity(current_activity) {
         }
 
         if (is_maxed) {
-            action_xp_div.innerText += ` ${skill.name()} (Maxed out!)`;
+            action_xp_div.innerText += ` ${skill.name()} (${translationManager.getText(language, "ui maxed out")})`;
         } else {
             //Read as numbers and check them before use. is_maxed above covers the
             //normal max-level sentinels; these guards cover a skill whose stored
@@ -4347,9 +4347,9 @@ function update_displayed_ongoing_activity(current_activity) {
                 : NaN;
 
             if(Number.isFinite(time_needed)) {
-                insert_HTML(action_xp_div, `<br>Next level in ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}realtime)`);
+                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}realtime)`);
             } else {
-                insert_HTML(action_xp_div, `<br>Next level in an unknown amount of time`);
+                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level unknown")}`);
             }
         }
     }
@@ -4388,7 +4388,7 @@ function start_game_action_display(dialogue_key, action_key) {
 
 
     const action_end_text = document.createElement("div");
-    action_end_text.innerText = `Give up for now`;
+    action_end_text.innerText = translationManager.getText(language, "ui give up for now");
     action_end_text.id = "action_end_text";
 
 
@@ -4469,7 +4469,7 @@ function start_sleeping_display(){
 
 
     const action_end_text = document.createElement("div");
-    action_end_text.innerText = `Wake up`;
+    action_end_text.innerText = translationManager.getText(language, "ui wake up");
     action_end_text.id = "action_end_text";
 
     
@@ -4484,7 +4484,7 @@ function start_reading_display(title) {
     clear_action_div();
 
     const action_status_div = document.createElement("div");
-    action_status_div.innerText = `Reading the book, ${format_reading_time(item_templates[title].getRemainingTime())} left`;
+    action_status_div.innerText = `${translationManager.getText(language, "ui reading the book", {v1: format_reading_time(item_templates[title].getRemainingTime())})}`;
     action_status_div.id = "action_status_div";
 
     const action_end_div = document.createElement("div");
@@ -4493,7 +4493,7 @@ function start_reading_display(title) {
 
 
     const action_end_text = document.createElement("div");
-    action_end_text.innerText = `Stop reading for now`;
+    action_end_text.innerText = translationManager.getText(language, "ui stop reading");
     action_end_text.id = "action_end_text";
 
     action_end_div.appendChild(action_end_text);
@@ -4608,7 +4608,7 @@ function create_new_skill_bar(skill) {
     }
 
     if(skill.parent_skill) {
-        html_content += `<br>Parent skill: ${skill.parent_skill}<br><br>`; 
+        html_content += `<br>${translationManager.getText(language, "ui parent skill")}: ${translationManager.getDisplayName(language, skill.parent_skill)}<br><br>`; 
     }
     
     insert_HTML(tooltip_desc, html_content);
@@ -4666,7 +4666,7 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
     } else {
         skill_bar_divs[skill.category][skill.skill_id].children[0].classList.add("skill_bar_capped");
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[1].innerText = `Max!`;
-        skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[0].innerText = `Maxed out!`;
+        skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[0].innerText = `${translationManager.getText(language, "ui maxed out")}`;
         //Set explicitly: .skill_bar_current has no width rule in style.css, so a
         //stale inline width from just before the final level-up would survive.
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[1].style.width = "100%";
@@ -4724,7 +4724,7 @@ function update_displayed_skill_xp_gain(skill) {
         return;
     }
     const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*get_skill_xp_gain(skill.skill_id))/100 || 1;
-    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], `XP gain: x${xp_gain}<br><span>XP cost scaling: x${skill.xp_scaling}</span>`);
+    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], `${translationManager.getText(language, "ui xp gain")}: x${xp_gain}<br><span>${translationManager.getText(language, "ui xp cost scaling")}: x${skill.xp_scaling}</span>`);
 }
 
 function update_all_displayed_skills_xp_gain(){
@@ -4909,7 +4909,7 @@ function create_stance_tooltip(stance) {
 
     if(target_count > 1) {
         html_content += `
-            <br><div class='stance_tooltip_hitcount'>${stance.randomize_target_count?"Randomly hits up to":"Hits up to"} ${target_count} enemies</div>`;
+            <br><div class='stance_tooltip_hitcount'>${stance.randomize_target_count?translationManager.getText(language, "ui randomly hits up to"):translationManager.getText(language, "ui hits up to")} ${target_count} enemies</div>`;
     }
 
     insert_HTML(tooltip_div, html_content);
@@ -4934,7 +4934,7 @@ function update_stance_tooltip(stance) {
         if(stance.related_skill) {
             target_count = target_count + Math.round(target_count * get_total_skill_level(stance.related_skill)/skills[stance.related_skill].max_level);
         }
-        set_HTML(stance_bar_divs[stance.id].querySelector(".stance_tooltip_hitcount"), `${stance.randomize_target_count?"Randomly hits up to":"Hits up to"} ${target_count} enemies</div>`);
+        set_HTML(stance_bar_divs[stance.id].querySelector(".stance_tooltip_hitcount"), `${stance.randomize_target_count?translationManager.getText(language, "ui randomly hits up to"):translationManager.getText(language, "ui hits up to")} ${target_count} enemies</div>`);
     } 
 }
 
@@ -5055,7 +5055,7 @@ function create_bestiary_entry_tooltip(enemy_name) {
     bestiary_tooltip.classList.add("bestiary_entry_tooltip");
 
     const tooltip_xp = document.createElement("div"); //base xp enemy gives
-    insert_HTML(tooltip_xp, `<br>Base xp value: ${enemy.xp_value} <br><br>`);
+    insert_HTML(tooltip_xp, `<br>${translationManager.getText(language, "ui base xp value")}: ${enemy.xp_value} <br><br>`);
     const tooltip_desc = document.createElement("div"); //enemy description
     tooltip_desc.innerText = enemy.getDescription();
 
@@ -5148,9 +5148,9 @@ function create_bestiary_loot_line(enemy, loot) {
         loot_line.append(loot_name, loot_chance);
     } else {
         //create a header line
-        loot_name.innerText = `Item name`;
-        loot_chance_base.innerText = `base %`;
-        loot_chance_current.innerText = `current %`;
+        loot_name.innerText = translationManager.getText(language, "ui column item name");
+        loot_chance_base.innerText = translationManager.getText(language, "ui column base percent");
+        loot_chance_current.innerText = translationManager.getText(language, "ui column current percent");
         loot_chance.append(loot_chance_current, loot_chance_base);
         loot_line.append(loot_name, loot_chance);
     }
@@ -5710,7 +5710,7 @@ function set_light_based_background_color(is_sky_visible) {
 function update_export_button_tooltip(time_passed, time_until_reward) {
     if(time_passed > time_until_reward) {
         //just say reward is available
-        export_button_tooltip.innerText = "Reward available!";
+        export_button_tooltip.innerText = translationManager.getText(language, "ui reward available");
     } else {
         //calculate irl time needed until reward
         let time_needed = time_until_reward - time_passed;
@@ -5721,13 +5721,13 @@ function update_export_button_tooltip(time_passed, time_until_reward) {
         time_needed = Math.floor(time_needed/60);
         const hours = time_needed;
 
-        export_button_tooltip.innerText = `Reward available in: ${hours}:${minutes}:${seconds} real time`;
+        export_button_tooltip.innerText = `${translationManager.getText(language, "ui reward available in", {v1: hours, v2: minutes, v3: seconds})}`;
     }
 }
 
 function update_backup_load_button(date_string){
     if(date_string) {
-        backup_load_button.innerText = `Load the backup autosave [${date_string.replaceAll("_",":")}]`;
+        backup_load_button.innerText = `${translationManager.getText(language, "ui load backup autosave", {v1: date_string.replaceAll("_",":")})}`;
         backup_load_button.style["background-image"] = `var(--options_gradient);`;
         backup_load_button.style["background-color"] = "transparent";
         backup_load_button.style.color = "white";
@@ -5742,9 +5742,9 @@ function update_backup_load_button(date_string){
 
 function update_other_save_load_button(date_string, is_dev) {
     if(is_dev) {
-        other_save_load_button.innerText = `Import save from main version`;
+        other_save_load_button.innerText = translationManager.getText(language, "ui import save main");
     } else {
-        other_save_load_button.innerText = `Import save from dev version`;
+        other_save_load_button.innerText = translationManager.getText(language, "ui import save dev");
     }
     if(date_string !== undefined) {
         other_save_load_button.style["background-image"] = `var(--options_gradient);`;
@@ -5754,7 +5754,7 @@ function update_other_save_load_button(date_string, is_dev) {
         if(date_string) {
             other_save_load_button.innerText += ` [${date_string.replaceAll("_",":")}]`;
         } else {
-            other_save_load_button.innerText += ` [unknown date]`;
+            other_save_load_button.innerText += ` [${translationManager.getText(language, "ui unknown date")}]`;
         }
     } else {
         other_save_load_button.style["background-image"] = "none";
@@ -5772,14 +5772,14 @@ function hide_loading_screen() {
 function set_loading_screen_versions(save_version) {
     const loading_screen = document.getElementById("loading_screen_version_info");
     const current_version = get_game_version();
-    let html_content = `Save game version: ${save_version || "none"}<br> Current game version: ${current_version}<br>`;
+    let html_content = `${translationManager.getText(language, "ui save game version")}: ${save_version || translationManager.getText(language, "ui version none")}<br> ${translationManager.getText(language, "ui current game version")}: ${current_version}<br>`;
     if(save_version) {
       if(save_version === current_version) {
-        html_content += "<div class='top_border'>No changes since the last time you played~</div>"
+        html_content += "<div class='top_border'>" + translationManager.getText(language, "ui no changes since") + "</div>"
         } else if(is_a_older_than_b(save_version, current_version)) {
-            html_content += "<div class='top_border'>Game has been updated since the last time you played, check the changelog for more details</div>";
+            html_content += "<div class='top_border'>" + translationManager.getText(language, "ui game updated") + "</div>";
         } else {
-            html_content += "<div class='top_border'>Your save is from a newer version of the game. Continuing is likely to lead to multiple issues!</div>";
+            html_content += "<div class='top_border'>" + translationManager.getText(language, "ui save from newer version") + "</div>";
         }
     }
 
@@ -5799,13 +5799,13 @@ function set_loading_screen_errors_warning() {
     loading_screen_errors_field.classList.remove('loading_screen_status_warnings');
     loading_screen_errors_field.classList.add('loading_screen_status_errors');
 
-    loading_screen_errors_field.innerText = 'An error has occured on loading! Please open the browser console to check for details and then let the developer know!';
+    loading_screen_errors_field.innerText = translationManager.getText(language, "ui loading error");
 }
 
 function set_loading_screen_warnings_warning() {
     const loading_screen_errors_field = document.getElementById("loading_screen_status");
     loading_screen_errors_field.classList.add('loading_screen_status_warnings');
-    loading_screen_errors_field.innerText = "A potential issue has occured on loading. Please open the browser console to check for details.";
+    loading_screen_errors_field.innerText = translationManager.getText(language, "ui loading potential issue");
 }
 
 function show_play_button() {

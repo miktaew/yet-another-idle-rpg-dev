@@ -435,6 +435,10 @@ async function check_content_text_ids() {
             //The log messages are parameterised, so they are getText calls.
             /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
         ]},
+        { file: "src/display.js", patterns: [
+            //Interface labels, resolved where they are rendered.
+            /translationManager\.getText\(language,\s*"((?:ui) [^"]+)"/g,
+        ]},
     ];
 
     let checked = 0;
