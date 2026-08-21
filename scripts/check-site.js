@@ -422,6 +422,12 @@ async function check_content_text_ids() {
         { file: "src/combat_stances.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
         ]},
+        { file: "src/active_effects.js", patterns: [
+            /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
+        ]},
+        { file: "src/activities.js", patterns: [
+            /(?<![A-Za-z0-9_])(?:description|action_text):\s*"([^"]+)"/g,
+        ]},
     ];
 
     let checked = 0;

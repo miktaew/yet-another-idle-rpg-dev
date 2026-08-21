@@ -619,7 +619,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
 
     const name_span = document.createElement("span");
     name_span.classList.add("active_effect_name");
-    insert_HTML(name_span, `'${effect.name}' : `);
+    insert_HTML(name_span, `'${effect.getName()}' : `);
     const duration_span = document.createElement("span");
     duration_span.classList.add("active_effect_duration");
     duration_span.innerText = ""+ format_time({time: {minutes: duration}});
@@ -632,7 +632,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     if(effect.description) {
         const description_p = document.createElement("div");
         description_p.classList.add("active_effect_description");
-        description_p.innerText = effect.description;
+        description_p.innerText = effect.getDescription();
         tooltip.appendChild(description_p);
     }
 
@@ -2929,7 +2929,10 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
     const recipe_div = document.createElement("div");
 
     const recipe_name_span = document.createElement("span");
-    recipe_name_span.innerText = recipe.name;
+    //Most recipe names are the name of the item they produce, so they resolve
+    //through the same flat display-name namespace; the crafting category names
+    //("Short blade", "Chestplate") have rows of their own.
+    recipe_name_span.innerText = translationManager.getDisplayName(language, recipe.name);
 
     recipe_div.append(recipe_name_span);
     recipe_div.classList.add("recipe_div");
@@ -4205,7 +4208,7 @@ function start_activity_display(current_activity) {
 
     clear_action_div();
     const action_status_div = document.createElement("div");
-    action_status_div.innerText = base_activity.action_text;
+    action_status_div.innerText = base_activity.getActionText();
     action_status_div.id = "action_status_div";
 
     const action_xp_div = document.createElement("div");

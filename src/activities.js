@@ -1,4 +1,6 @@
 "use strict";
+import { language } from "./main.js";
+import { translationManager } from "./translation.js";
 
 const activities = {};
 
@@ -27,6 +29,21 @@ class Activity {
         this.is_unlocked = is_unlocked;
 
         this.getBackgroundNoises = getBackgroundNoises || function(){return [];}
+
+        /**
+         * The shown name. this.name stays the canonical English because the
+         * activities registry is keyed by it, and a LocationActivity points at it
+         * through activity_name.
+         */
+        this.getName = () => translationManager.getDisplayName(language, this.name);
+
+        /** this.description and this.action_text hold TEXT IDS. */
+        this.getDescription = () => this.description
+            ? translationManager.getText(language, this.description)
+            : this.description;
+        this.getActionText = () => this.action_text
+            ? translationManager.getText(language, this.action_text)
+            : this.action_text;
     }
 }
 
@@ -71,15 +88,15 @@ class Gathering extends Training {
 (function(){
     activities["fieldwork"] = new Job({
         name: "fieldwork",
-        action_text: "Working on the fields",
-        description: "It's tiring and doesn't pay much, but it's better than doing nothing",
+        action_text: "activity text fieldwork",
+        description: "desc activity fieldwork",
         base_skills_names: ["Farming"],
         is_unlocked: true,
     });
     activities["patrolling"] = new Job({
         name: "patrolling",
-        action_text: "Patrolling",
-        description: "Nothing ever happens",
+        action_text: "activity text patrolling",
+        description: "desc activity patrolling",
         base_skills_names: ["Spatial awareness"],
         is_unlocked: true,
     })
@@ -89,50 +106,50 @@ class Gathering extends Training {
 (function(){
     activities["running"] = new Training({
         name: "running",
-        action_text: "Just running around",
-        description: "One of the most basic exercises",
+        action_text: "activity text running",
+        description: "desc activity running",
         base_skills_names: ["Running"],
         is_unlocked: true,
     });
     activities["weightlifting"] = new Training({
         name: "weightlifting",
-        action_text: "Carrying heavy things",
-        description: "One of the most basic exercises",
+        action_text: "activity text weightlifting",
+        description: "desc activity weightlifting",
         base_skills_names: ["Weightlifting"],
         is_unlocked: true,
     });
     activities["balancing"] = new Training({
         name: "balancing",
-        action_text: "Trying to keep your balance",
-        description: "One of the most basic exercises",
+        action_text: "activity text balancing",
+        description: "desc activity balancing",
         base_skills_names: ["Equilibrium"],
         is_unlocked: true,
     });
     activities["swimming"] = new Training({
         name: "swimming",
-        action_text: "Splish, splash, splosh",
-        description: "A rather basic, although somewhat risky exercise",
+        action_text: "activity text swimming",
+        description: "desc activity swimming",
         base_skills_names: ["Swimming"],
         is_unlocked: false,
     });
     activities["meditating"] = new Training({
         name: "meditating",
-        action_text: "Focusing your mind",
-        description: "A somewhat basic exercise",
+        action_text: "activity text meditating",
+        description: "desc activity meditating",
         base_skills_names: ["Meditation"],
         is_unlocked: true,
     });
     activities["climbing"] = new Training({
         name: "climbing",
-        action_text: "Looking for next grip to hold to",
-        description: "An advanced exercise that uses majority of muscles in the body",
+        action_text: "activity text climbing",
+        description: "desc activity climbing",
         base_skills_names: ["Climbing"],
         is_unlocked: false,
     });
     activities["enduring"] = new Training({
         name: "enduring",
-        action_text: "Withstanding the elements",
-        description: "An advanced technique that hardens your resolve more than your body",
+        action_text: "activity text enduring",
+        description: "desc activity enduring",
         base_skills_names: ["Persistence"],
         is_unlocked: true,
     });
@@ -142,8 +159,8 @@ class Gathering extends Training {
 (function(){
     activities["mining"] = new Gathering({
         name: "mining",
-        action_text: "Swinging the pickaxe",
-        description: "Swing you pickaxe against the hard rock",
+        action_text: "activity text mining",
+        description: "desc activity mining",
         base_skills_names: ["Mining"],
         is_unlocked: true,
         required_tool_type: "pickaxe",
@@ -151,8 +168,8 @@ class Gathering extends Training {
     });
     activities["digging"] = new Gathering({
         name: "digging",
-        action_text: "Swinging the shovel",
-        description: "Dig up useful materials with a shovel",
+        action_text: "activity text digging",
+        description: "desc activity digging",
         base_skills_names: ["Digging"],
         is_unlocked: true,
         required_tool_type: "shovel",
@@ -160,8 +177,8 @@ class Gathering extends Training {
     });
     activities["woodcutting"] = new Gathering({
         name: "woodcutting",
-        action_text: "Gathering wood",
-        description: "Chop chop",
+        action_text: "activity text woodcutting",
+        description: "desc activity woodcutting",
         base_skills_names: ["Woodcutting"],
         is_unlocked: true,
         required_tool_type: "axe",
@@ -170,8 +187,8 @@ class Gathering extends Training {
 
     activities["herbalism"] = new Gathering({
         name: "herbalism",
-        action_text: "Searching for herbs",
-        description: "Look for any useful plants and mushrooms",
+        action_text: "activity text herbalism",
+        description: "desc activity herbalism",
         base_skills_names: ["Herbalism"],
         is_unlocked: true,
         required_tool_type: "sickle",
@@ -180,16 +197,16 @@ class Gathering extends Training {
 
     activities["animal care"] = new Gathering({
         name: "animal care",
-        action_text: "Tending to animals",
-        description: "Take care of animals",
+        action_text: "activity text animal care",
+        description: "desc activity animal care",
         base_skills_names: ["Animal handling"],
         is_unlocked: true,
     });
 
     activities["fishing"] = new Gathering({
         name: "fishing",
-        action_text: "Waiting for a bite",
-        description: "Try to catch some fish",
+        action_text: "activity text fishing",
+        description: "desc activity fishing",
         base_skills_names: ["Fishing"],
         is_unlocked: true,
         required_tool_type: "fishing_pole",

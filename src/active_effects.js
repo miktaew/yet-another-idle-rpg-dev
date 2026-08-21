@@ -1,4 +1,7 @@
 
+import { language } from "./main.js";
+import { translationManager } from "./translation.js";
+
 const effect_templates = {}; 
 //templates, since some effects will appear across multiple items but with different durations
 
@@ -29,6 +32,17 @@ class ActiveEffect {
         this.group_tags = group_tags || {}; //used for grouping and prioritizing highest in group; instead of simple 'true', values are Numbers with higher = more important
         this.tags["effect"] = true;
         this.potency = potency || 0;
+
+        /**
+         * The shown name. this.name stays the canonical English because
+         * effect_templates is keyed by it and an active effect is saved by that key.
+         */
+        this.getName = () => translationManager.getDisplayName(language, this.name);
+
+        /** this.description holds a TEXT ID, or null for an effect with none. */
+        this.getDescription = () => this.description
+            ? translationManager.getText(language, this.description)
+            : this.description;
         //todo: implement buff/debuff removal; use potency to check if effect A should remove effect B (the stronger survives)
         //or make it work with group_tags instead?
     }
@@ -351,7 +365,7 @@ class ActiveEffect {
 (()=>{
     effect_templates["Irritation"] = new ActiveEffect({
         name: "Irritation",
-        description: "Sensations caused by a foreign substance are making it difficult to concentrate",
+        description: "desc effect Irritation",
         effects: {
             stats: {
                 intuition: {multiplier: 0.75},
@@ -362,7 +376,7 @@ class ActiveEffect {
     });
     effect_templates["Confusion"] = new ActiveEffect({
         name: "Confusion",
-        description: "An intoxicating substance is making you unable to think clearly",
+        description: "desc effect Confusion",
         effects: {
             stats: {
                 intuition: {multiplier: 0.5},
@@ -373,7 +387,7 @@ class ActiveEffect {
     });
     effect_templates["Hallucinations"] = new ActiveEffect({
         name: "Hallucinations",
-        description: "A psychedelic substance is making it hard to tell what's real",
+        description: "desc effect Hallucinations",
         effects: {
             stats: {
                 intuition: {multiplier: 0.25},
@@ -385,7 +399,7 @@ class ActiveEffect {
 
     effect_templates["Sticky"] = new ActiveEffect({
         name: "Sticky",
-        description: "Covered in a sticky substance that restricts your movements",
+        description: "desc effect Sticky",
         effects: {
             stats: {
                 dexterity: { multiplier: 0.75 },
@@ -435,7 +449,7 @@ class ActiveEffect {
     });
     effect_templates["Convulsive poison"] = new ActiveEffect({
         name: "Convulsive poison",
-        description: "Hands are trembling, making it hard to strike with precision",
+        description: "desc effect Convulsive poison",
         effects: {
             stats: {
                 dexterity: { multiplier: 0.5 },
