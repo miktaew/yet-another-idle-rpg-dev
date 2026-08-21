@@ -877,17 +877,17 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
 
     if(conditions_status == -1) {
         //not meeting requirements to begin
-        result_message = action.failure_texts.unable_to_begin[Math.floor(action.failure_texts.unable_to_begin.length * Math.random())];
+        result_message = action.resolveText(action.failure_texts.unable_to_begin[Math.floor(action.failure_texts.unable_to_begin.length * Math.random())]);
     } else if(conditions_status == 0) {
         //lost by failing to meet conditions, nothing to check, deal with it
-        result_message = action.failure_texts.conditional_loss[Math.floor(action.failure_texts.conditional_loss.length * Math.random())];
+        result_message = action.resolveText(action.failure_texts.conditional_loss[Math.floor(action.failure_texts.conditional_loss.length * Math.random())]);
     } else {
         const action_result = get_game_action_result({action_key, conditions_status, dialogue_key});
         let is_won = false;
         if(action_result > Math.random()) {
             //win
 
-            result_message = action.getSuccessText({character});
+            result_message = action.getResolvedSuccessText({character});
             if(!action.repeatable) {
                 lock_action({dialogue_key, location_key: current_location.id, action_key});
             } else {
@@ -898,7 +898,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         } else {
             //random loss
 
-            result_message = action.failure_texts.random_loss[Math.floor(action.failure_texts.random_loss.length * Math.random())];
+            result_message = action.resolveText(action.failure_texts.random_loss[Math.floor(action.failure_texts.random_loss.length * Math.random())]);
         }
 
         Object.keys(action.conditions[0]?.items_by_id || {}).forEach(item_id => {
@@ -988,7 +988,7 @@ function unlock_activity(activity_data) {
         if(!activity_data.skip_message) {
             let message = "";
             if(locations[activity_data.location].activities[activity_data.activity.activity_id].unlock_text) {
-                message = locations[activity_data.location].activities[activity_data.activity.activity_id].unlock_text+":\n";
+                message = locations[activity_data.location].activities[activity_data.activity.activity_id].getUnlockText()+":\n";
             }
 
             if(
@@ -1013,13 +1013,13 @@ function unlock_action(action_data) {
             let message = "";
             if(action_data.location) {
                 if(locations[action_data.location].actions[action_data.action.action_id].unlock_text) {
-                    message = locations[action_data.location].actions[action_data.action.action_id].unlock_text+":\n";
-                    log_message(message + `Unlocked action "${action_data.action.action_name}" in location "${action_data.location}"`, "activity_unlocked");
+                    message = locations[action_data.location].actions[action_data.action.action_id].getUnlockText()+":\n";
+                    log_message(message + `Unlocked action "${action_data.action.getActionName()}" in location "${action_data.location}"`, "activity_unlocked");
                 }
             } else if(action_data.dialogue) {
                 if(dialogues[action_data.dialogue].actions[action_data.action.action_id].unlock_text) {
-                    message = dialogues[action_data.dialogue].actions[action_data.action.action_id].unlock_text+":\n";
-                    log_message(message + `Unlocked action "${action_data.action.action_name}" wit "${action_data.dialogue}"`, "activity_unlocked");
+                    message = dialogues[action_data.dialogue].actions[action_data.action.action_id].getUnlockText()+":\n";
+                    log_message(message + `Unlocked action "${action_data.action.getActionName()}" wit "${action_data.dialogue}"`, "activity_unlocked");
                 }
             }
         }
@@ -2669,7 +2669,8 @@ function unlock_location({location, skip_message}) {
         location.is_unlocked = true;
         was_unlocked = true;
         if(!skip_message) {
-            const message = location.unlock_text || `Unlocked location "${location.name}"`;
+            const message = (location.unlock_text ? translationManager.getText(language, location.unlock_text) : null)
+                || `Unlocked location "${location.getName()}"`;
             log_message(message, "location_unlocked");
         }
 

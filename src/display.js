@@ -2089,7 +2089,7 @@ function update_displayed_normal_location(location) {
     combat_switch.style.cursor = "default";
     combat_switch.style.color = "gray";
 
-    location_name_span.innerText = current_location.name;
+    location_name_span.innerText = current_location.getName();
     document.getElementById("location_description_div").innerText = current_location.getDescription();
 
     update_location_icon(location);
@@ -2395,7 +2395,7 @@ function create_location_choices({location, category, is_combat = false}) {
             insert_HTML(job_tooltip, job_tooltip_content);
             activity_div.appendChild(job_tooltip);
     
-            insert_HTML(activity_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.activities[key].starting_text);
+            insert_HTML(activity_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.activities[key].getStartingText());
             choice_list.push(activity_div);
         });
     } else if (category === "train") {
@@ -2426,7 +2426,7 @@ function create_location_choices({location, category, is_combat = false}) {
                 activity_div.appendChild(activity_tooltip);
             }
 
-            insert_HTML(activity_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.activities[key].starting_text);
+            insert_HTML(activity_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.activities[key].getStartingText());
             choice_list.push(activity_div);
         });
     } else if (category === "gather") {
@@ -2454,7 +2454,7 @@ function create_location_choices({location, category, is_combat = false}) {
 
             activity_div.appendChild(create_gathering_tooltip(location.activities[key]));
 
-            insert_HTML(activity_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.activities[key].starting_text);
+            insert_HTML(activity_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.activities[key].getStartingText());
             choice_list.push(activity_div);
         });
     } else if (category === "travel") {
@@ -2477,16 +2477,16 @@ function create_location_choices({location, category, is_combat = false}) {
                 if("connected_locations" in location.connected_locations[i].location) {// check again if connected location is normal or combat
                     action.classList.add("travel_normal");
                     if("custom_text" in location.connected_locations[i]) {
-                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + location.connected_locations[i].custom_text + " [" + travel_time + "]";
+                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + translationManager.getText(language, location.connected_locations[i].custom_text) + " [" + travel_time + "]";
                     } else {
-                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + "Go to [" + location.connected_locations[i].location.name+"]"+" [" + travel_time + "]";
+                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons location_choice_icon">check_box_outline_blank</i></div> ` + "Go to [" + location.connected_locations[i].location.getName()+"]"+" [" + travel_time + "]";
                     }
                 } else {
                     action.classList.add("travel_combat");
                     if("custom_text" in location.connected_locations[i]) {
-                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div> ` + location.connected_locations[i].custom_text + " [" + travel_time + "]";
+                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div> ` + translationManager.getText(language, location.connected_locations[i].custom_text) + " [" + travel_time + "]";
                     } else {
-                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div>  ` + "Enter the [" + location.connected_locations[i].location.name+"] [" + travel_time + "]";
+                        action_html_content = `<div class='location_choice_icon_box'><i class="material-icons">warning_amber</i></div>  ` + "Enter the [" + location.connected_locations[i].location.getName()+"] [" + travel_time + "]";
                     }
                 }
 
@@ -2509,9 +2509,9 @@ function create_location_choices({location, category, is_combat = false}) {
                 travel_time_text = " [" + travel_time + "]";
             }
             if(location.leave_text) {
-                action_html_content = location.leave_text + travel_time_text;
+                action_html_content = translationManager.getText(language, location.leave_text) + travel_time_text;
             } else {
-                action_html_content = "Go back to [" + location.parent_location.name + "]" + travel_time_text;
+                action_html_content = "Go back to [" + location.parent_location.getName() + "]" + travel_time_text;
             }
 
             insert_HTML(action, action_html_content);
@@ -2534,9 +2534,9 @@ function create_location_choices({location, category, is_combat = false}) {
                 action_html_content += `<i class="material-icons location_choice_icon">check_box_outline_blank</i> `
             }
             if(travel_time) {
-                action_html_content += `Quick return to [${last_bed.name}]` +" [" + travel_time + "]";
+                action_html_content += `Quick return to [${last_bed.getName()}]` +" [" + travel_time + "]";
             } else {
-                action_html_content += `Quick return to [${last_bed.name}]`;
+                action_html_content += `Quick return to [${last_bed.getName()}]`;
             }
 
             insert_HTML(action, action_html_content);
@@ -2555,9 +2555,9 @@ function create_location_choices({location, category, is_combat = false}) {
             let action_html_content = "";
             action.classList.add("travel_combat", "location_choice");
             if("custom_text" in available_challenges[i]) {
-                action_html_content = `<i class="material-icons">warning_amber</i>  ` + available_challenges[i].custom_text;
+                action_html_content = `<i class="material-icons">warning_amber</i>  ` + translationManager.getText(language, available_challenges[i].custom_text);
             } else {
-                action_html_content = `<i class="material-icons">warning_amber</i>  ` + "Enter the " + available_challenges[i].location.name;
+                action_html_content = `<i class="material-icons">warning_amber</i>  ` + "Enter the " + available_challenges[i].location.getName();
             }
             
             insert_HTML(action, action_html_content);
@@ -2581,7 +2581,7 @@ function create_location_choices({location, category, is_combat = false}) {
 
             location_action_div.appendChild(create_location_action_tooltip(location.actions[key]));
     
-            insert_HTML(location_action_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.actions[key].starting_text);
+            insert_HTML(location_action_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.actions[key].getStartingText());
             choice_list.push(location_action_div);
         });
     } else if (category === "fast_travel") {
@@ -2637,9 +2637,9 @@ function create_fast_travel_choices() {
             action.classList.add("travel_normal");
 
             if(locations[available_fast_travel[i]].housing?.is_unlocked) {
-                action_html_content = `<i class="material-icons">bed</i> <span class="fast_travel_name">` + "Travel to [" + locations[available_fast_travel[i]].name+"] [" + travel_time + "]</span>";
+                action_html_content = `<i class="material-icons">bed</i> <span class="fast_travel_name">` + "Travel to [" + locations[available_fast_travel[i]].getName()+"] [" + travel_time + "]</span>";
             } else {
-                action_html_content = `<i class="material-icons location_choice_icon">check_box_outline_blank</i> <span class="fast_travel_name">` + "Travel to [" + locations[available_fast_travel[i]].name+"] [" + travel_time + "]</span>";
+                action_html_content = `<i class="material-icons location_choice_icon">check_box_outline_blank</i> <span class="fast_travel_name">` + "Travel to [" + locations[available_fast_travel[i]].getName()+"] [" + travel_time + "]</span>";
             }
             
             action.classList.add("action_travel", "location_choice");
@@ -2648,7 +2648,7 @@ function create_fast_travel_choices() {
         } else {            
             action.classList.add("travel_combat");
             
-            action_html_content = `<i class="material-icons">warning_amber</i> <span class="fast_travel_name">Travel to [${locations[available_fast_travel[i]].name}] [${travel_time}] </span>`;
+            action_html_content = `<i class="material-icons">warning_amber</i> <span class="fast_travel_name">Travel to [${locations[available_fast_travel[i]].getName()}] [${travel_time}] </span>`;
             
             action.classList.add("action_travel", "location_choice");
             action.setAttribute("data-travel", locations[available_fast_travel[i]].id);
@@ -2722,7 +2722,7 @@ function update_displayed_combat_location(location) {
 
     action_div.append(...action);
 
-    location_name_span.innerText = current_location.name;
+    location_name_span.innerText = current_location.getName();
     if(current_location.types.length == 0) {
         document.documentElement.style.setProperty('--location_name_div_width', '390px');
     } else {
@@ -2749,7 +2749,10 @@ function create_location_types_display(current_location){
         type_div.classList.add("location_type_div");
 
         const type_tooltip = document.createElement("div");
-        let type_tooltip_html_content = location_types[current_location.types[i].type].stages[current_location.types[i].stage].description;
+        //The stage description is a text id, and the type's own name is a display
+        //name, so both go through the translation layer.
+        let type_tooltip_html_content = translationManager.getText(language,
+            location_types[current_location.types[i].type].stages[current_location.types[i].stage].description);
         type_tooltip.classList.add("location_type_tooltip");
 
         const {type, stage} = current_location.types[i];
@@ -3474,7 +3477,7 @@ function update_item_recipe_visibility() {
 function create_location_action_tooltip(location_action) {
     const action_tooltip = document.createElement("div");
     action_tooltip.classList.add("job_tooltip","location_action_tooltip");
-    action_tooltip.innerText = location_action.description;
+    action_tooltip.innerText = location_action.getDescription();
     if(location_action.keep_progress) {
         action_tooltip.innerText += "\n\nPausing this task will not waste your progress";
     }
@@ -4364,7 +4367,7 @@ function start_game_action_display(dialogue_key, action_key) {
         
     }
     const action_status_div = document.createElement("div");
-    action_status_div.innerText = action.action_text;
+    action_status_div.innerText = action.getActionText();
     action_status_div.id = "action_status_div";
     action_div.appendChild(action_status_div);
 

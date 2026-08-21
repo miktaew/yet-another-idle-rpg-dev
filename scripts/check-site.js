@@ -406,6 +406,12 @@ async function check_content_text_ids() {
         ]},
         { file: "src/locations.js", patterns: [
             /(?<![A-Za-z0-9_])messages:\s*\[\s*"([^"]+)"\s*\]/g,
+            //Every text field in a location, an activity or a game action now holds
+            //an id. The dynamic getDescription and getBackgroundNoises bodies call
+            //getText directly, so those are matched by the call rather than a field.
+            /(?<![A-Za-z0-9_])(?:description|starting_text|success_text|action_text|action_name|unlock_text|leave_text|custom_text|use_text):\s*"((?:desc|action|activity|loc|travel|noise|ui) [^"]+)"/g,
+            /(?<![A-Za-z0-9_])(?:conditional_loss|random_loss|unable_to_begin):\s*\[\s*"((?:action) [^"]+)"\s*\]/g,
+            /translationManager\.getText\(language,\s*"((?:desc|action|activity|loc|travel|noise|ui) [^"]+)"/g,
         ]},
         { file: "src/items.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"(desc [^"]+)"/g,

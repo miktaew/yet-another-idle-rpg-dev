@@ -1,5 +1,7 @@
 "use strict";
 import { process_conditions } from "./conditions.js";
+import { language } from "./main.js";
+import { translationManager } from "./translation.js";
 
 class GameAction{
     /**
@@ -53,6 +55,32 @@ class GameAction{
         
         this.success_texts = success_texts; //array; the idea is to use this for getSuccessText if it's not default, so that possible results can still be checked by verifier
         this.getSuccessText = getSuccessText || function(){return this.success_text};
+
+        /*
+            The text fields above all hold TEXT IDS. The accessors below resolve
+            them; the raw fields stay ids so the verifier can still match an
+            action by them, and so a save never sees a translated string.
+        */
+
+        this.getStartingText = () => translationManager.getText(language, this.starting_text);
+        this.getActionName = () => translationManager.getText(language, this.action_name);
+        this.getDescription = () => translationManager.getText(language, this.description);
+        this.getActionText = () => translationManager.getText(language, this.action_text);
+
+        /** The unlock message, or undefined when the action has none. */
+        this.getUnlockText = () => this.unlock_text
+            ? translationManager.getText(language, this.unlock_text)
+            : this.unlock_text;
+
+        /**
+         * Resolves whichever success text getSuccessText picked. A custom
+         * getSuccessText returns an id like the default one does, so both go
+         * through here.
+         */
+        this.getResolvedSuccessText = (...args) => translationManager.getText(language, this.getSuccessText(...args));
+
+        /** One failure line, resolved. The stored value is an id. */
+        this.resolveText = (id) => translationManager.getText(language, id);
         this.required = required; 
         //things needed to be able to make an attempt
         //uses similar format as conditions, but is a single object instead of an array of up to two
