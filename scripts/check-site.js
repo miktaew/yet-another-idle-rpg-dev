@@ -55,6 +55,7 @@ function check_site() {
         "help.html",
         "help.tr.html",
         "changelog.html",
+        "changelog.tr.html",
         "style.css",
         "favicon.ico",
         "robots.txt",

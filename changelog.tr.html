@@ -1,0 +1,1269 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<body>
+    <head>
+        <script type="module" src = "src/game_version.js"> </script>
+
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .collapsible {
+                background-color: #eee;
+                color: #444;
+                cursor: pointer;
+                padding: 18px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                outline: none;
+                font-weight: bold;
+                font-size: 16px;
+                border-top: 1px solid gray;
+            }
+            .collapsible:hover, .collapsible.active {
+                background-color: #ccc;
+            }
+            .content {
+                padding: 0 18px;
+                display: none;
+                overflow: hidden;
+                background-color: #f1f1f1;
+            }
+
+            #header {
+                background-color: #eee;
+                color: #444;
+                font-size: 20px;
+                padding: 18px;
+                width: fit-content;
+                border: none;
+                text-align: left;
+                outline: none;
+                font-weight: bold;
+                margin-bottom: 20px;
+                font-family: sans-serif;
+            }
+
+            .spoiler {
+                color: rgb(17, 17, 17);
+                background-color: rgb(17, 17, 17);
+                width: fit-content;
+                height: fit-content;
+                margin: 0px;
+                padding: 0px;
+                height: fit-content;
+            }
+            .spoiler:hover {
+                color: white;
+            }
+        </style>
+    </head>
+
+<div id="header">Click on blocks to unfold their content</div>
+
+<button type="button" class="collapsible">v0.6</button>
+<div class="content"><pre>
+    - kahraman oluşturma sayfası eklendi; yaş, boy ve ırk içeriyor;
+        bunlar çoğunlukla kozmetik ama koşullarda kullanılabilir (esasen bazı özgün diyaloglarla renk katmaya izin vermek için),
+        yine de boy ve ırktan gelen ek etkiler destekleniyor ve config.js içinden açılabilir; gerçi pek dengeli olmayabilirler
+
+    - kaynak toplama becerileri için bir üst beceri eklendi; bonusu duruş/silah üst becerilerinden düşük
+    - 'Infested woods' lokasyonu artık 'dar' olarak işaretli
+
+    - oyun eylemleri artık keyfî bir mantığa göre seçilecek birden çok başarı metnine sahip olabilir
+    - üst beceriler artık sabit *1.1 yerine, seviye farkı başına alt beceri tecrübe kazancına özel çarpanlar uygulayabilir
+    
+    - Hits Counter eklendi https://hitscounter.dev
+</pre></div>
+<button type="button" class="collapsible">v0.5.5 - Sıkıcı Kısım [test sürümü: 26/05/2026 / ana sürüm: 21.06.2026]</button>
+<div class="content"><pre>
+v0.5.5
+    - teçhizat parçalarının çoğu artık belirli bir özellik kümesine göre otomatik üretiliyor; bu, bazı durumlarda teçhizat dengesini büyük ölçüde değiştiriyor
+    - Köy içeriği yine genişletildi
+
+    - odun kesme eylemlerinin çoğunda artık küçük bir ağaç özsuyu düşme şansı var; bu da 'Azim' becerisinin tüm hayranları için dayanıklılığını hızla tüketen bir iksir yapmakta kullanılabiliyor
+    - "Kalkan savunması" becerisine kilometre taşları eklendi
+    - bir görevi ilerletmek için alternatif bir oyun eylemi eklendi; aptalca ve aptalca yüksek gereksinimlerle, çünkü insanlar istedi (şaka yollu istemiş olmaları umurumda değil)
+    - eşyalardaki çarpımlı etkiler artık eşya nadirliğiyle daha iyi ölçekleniyor (zırhtaki saldırı hızı gibi bazı istisnalarla)
+    - bazı kaynak toplama etkinlikleri artık %100 şansa kadar ölçekleniyor, ama tam verim için gereken seviye biraz yükseltildi
+    - zincir zırhın malzeme maliyeti büyük ölçüde düşürüldü
+    - karınca yuvası aramalarının eylem metinleri, bunların birbirini izleyen eylemler olduğunun ve hatalı tek bir eylem olmadığının anlaşılması için değiştirildi
+    - eşsiz eşyalar artık ipuçlarında değer göstermiyor
+    - görevlerden birindeki karışıklığı gidermek için yeni bir replik eklendi
+    - gece-gündüz döngüsü için hava durumundan etkilenen, çatılı lokasyonlara ayrı renkli basit bir arka plan rengi değişimi eklendi; arka plan animasyonları gibi öntanımlı olarak kapalı
+    - 'azami seviyedeki becerileri gizle' seçeneği seçenekler panelinden beceri kutusuna taşındı
+    - ganimeti (dövüşten/toplamadan) her şeyi ayrı ayrı günlüğe yazmak yerine dinamik olarak güncellenen tek bir mesajla gösterme seçeneği eklendi; toplama sonunda özet yazma seçeneği kaldırıldı
+        * sıfırdan yazıldı, ama Haylen'in bir modundaki benzer bir çözümden esinlendi https://gautech.github.io/experimental-idle-rpg/
+    - kemik unu görev ödülü biraz artırıldı
+    - bazı tüccar kâr marjları biraz artırıldı
+
+    - lokasyon eylemleri için gösterim koşulları artık düzgün destekleniyor
+    - üretim tariflerinin sonuçları artık bulanık olabiliyor (başarı/başarısızlık yerine kısmi başarı da mümkün)
+    - etkin efekt kodu, efekt zaten mevcutsa ve yalnızca süresi uzatıldıysa stat güncellemelerini artık atlıyor
+    - stat yeniden hesaplamaları kalkan ipuçlarını artık yalnızca gerektiğinde güncelliyor (yani o stat gerçekten değiştiğinde)
+    - yükleme sayfasında kullanılan yazı tipi artık dosyalara dahil; sisteminiz onu öntanımlı olarak desteklemiyorsa diye
+
+    - translationManager, her şeyi tek dosyaya tıkıştırmak yerine ayrı dosyalardaki çevirileri kullanacak şekilde güncellendi
+    - DOM'un işlenme biçimi, innerHTML kullanımından uzaklaşacak şekilde değiştirildi
+    - ipucu hareket kodu yeniden düzenlendi ve çok daha yönetilebilir bir hâle indirildi
+    - ödül nesneleri artık diyalog kilitlemeyi de içerebiliyor
+    - günlüğe yazılan her mesajda "%HeroName%" artık karakter adıyla değiştiriliyor
+
+    - biri bir üretim becerisinde azami seviyeye ulaşsa üretim tecrübe kazançlarında sorun çıkarabilecek küçük bir aksaklık giderildi (hile yapmadan mümkün değildi)
+    - bir kalkan takas için işaretlendiğinde, arada bir stat yeniden hesaplaması olursa [yalnızca görsel olarak] eski sahibinin envanterinde yeniden görünmesine yol açan küçük bir görüntü hatası giderildi
+    - takasa ilk girişte fiyatların pazar doygunluğunu yansıtmamasıyla ilgili küçük bir görüntü hatası giderildi
+    - etkinlik açılışları, erişimin diğer koşulları henüz sağlanmadıysa artık mesajlarda günlüğe yazılmıyor
+
+    - bir sürü toplama etkinliği hızlandırıldı; v0.5.5.15'ten itibaren geçerli
+    - ilk 'Yenilenme' kilometre taşına can yenilenmesi eklendi, sonraki kilometre taşlarından biri aynı miktarda azaltıldı; v0.5.5.15'ten itibaren geçerli
+    - bir dizi küçük stat değişikliğiyle oyunun başı biraz hızlandırıldı; v0.5.5.15'ten itibaren geçerli
+    - eşya ödüllerine artık kalite belirtilebiliyor; v0.5.5.15'ten itibaren geçerli
+    - köy yaşlısıyla diyaloğa başlangıç silahı seçimi eklendi; v0.5.5.15'ten itibaren geçerli
+
+    OnonokiNonon sayesinde:
+        * bir eşya kaydı
+        - henüz elde edilmemiş eşyalar artık toplama ödüllerinde "????" olarak gösteriliyor (hayvanlar kitabı ipuçlarında da, ama onu sonradan Mik ekledi)
+        * birkaç yeni tarif
+        * etkinliklerle ilgili kodun yeniden düzenlenmesi
+        * üretim kodunun yeniden düzenlenmesi:
+            - bölgelerin farklı üretim kategorileri olabiliyor
+            - malzeme türü kullanan tarifler bileşenleri karıştırabiliyor
+            - parça tarifleri, malzemesi keşfedildikten sonra kalıcı olarak görünüyor
+        * dağ kampına ve göl kampına yemek pişirme istasyonları eklendi
+        * malzemelerin kaliteye sahip olması mümkün kılındı (şu an balıkta kullanılıyor)
+        * eşya kalitesi artık yalnızca ipuçlarında değil, envanterde de gösteriliyor
+        * can/dayanıklılık kayıpları artık doğrudan kendi çubuklarında gösteriliyor
+    Bram-Nordvegr sayesinde:
+        * yeni bir lokasyon ve yeni bir meydan okuma bölgesi
+        * iki yeni ahşap türü
+        * birkaç yeni tarif
+    Erlemar sayesinde:
+        * yeni bir toplama noktası
+    Nicholas Biles sayesinde:
+        * metin düzeltmeleri
+    SardineMilk sayesinde, v0.5.5.4'ten itibaren geçerli:
+        * metin düzeltmeleri
+    Trilbyspaceclone sayesinde, v0.5.5.10'dan itibaren geçerli:
+        * yeni bir kitap
+
+v0.5.5.1
+    - zehir dayanıklılığı beceri açıklamasının ifadesi düzeltildi
+    - bir şey kazanıldıktan sonra toplama eyleminden çıkmayı imkânsız kılan bir hata giderildi
+
+v0.5.5.2
+    - lokasyonlarda yolculuk / hızlı yolculuk düğmelerinin tutarsız konumlandırılması düzeltildi
+    - silah parçalarında bazı ek statların eksik olmasıyla ilgili bir hata giderildi
+    - taş madenciliğinin çalışmamasıyla ilgili bir hata giderildi
+
+v0.5.5.3
+    - üretilen teçhizattan gelen kritik şansının, yanlış stat adı yüzünden çalışmamasıyla ilgili bir hata giderildi
+
+v0.5.5.4
+    - Mofu Mofu modu kapalıysa tüm diyalogların 'undefined' görünmesine yol açan ciddi bir görüntü sorunu giderildi
+    - herhangi bir negatif değiştirici varken can çubuğunda yanlış can yenilenmesi değeri gösteren bir görüntü hatası giderildi
+    - dinamik mesaj açıkken, toplama bittiğinde günlüğe yazılan kaynak kazançlarının ikiye katlanmasıyla (gerçek sayı etkilenmiyordu) ilgili bir görüntü hatası giderildi
+    - etkinlik tecrübesinin bazen yanlış verilmesiyle ilgili sorun giderildi
+    - kalkan gücü biraz ayarlandı, bazı aşırı değerler düşürüldü
+    - etkinleştirilebilir düğmeler artık etkin ve üzerine gelinmiş durumlarda farklı görünüyor
+    - kayıt dosyasında belirli eşyalar varsa yüklemede çıkan bir hata giderildi (otomatik üretim değişiklikleriyle uyumsuzluk yüzünden)
+    - SardineMilk'ten metin düzeltmeleri
+
+v0.5.5.5
+    - çok aptal bir oyun eylemindeki beceri gereksinimleri, gerçekten ulaşılabilir olacak şekilde düşürüldü
+    - bataklık toplayıcılığındaki kalite zarı, orada olması amaçlanmadığı için kaldırıldı
+
+v0.5.5.6
+    - belirli eşyalarla ilgili başka bir yükleme hatası giderildi
+
+v0.5.5.7
+    - birden fazla üretilirken parçalardan biri tükendiğinde parça tabanlı üretimde çıkan bir hata giderildi
+    - birkaç parça statı daha ayarlandı
+    - parça statlarından birindeki yuvarlama sorunu giderildi
+    - SardineMilk'ten daha fazla metin düzeltmesi
+
+v0.5.5.8
+    - üretilen parçaların statlarıyla ilgili başka bir sorun giderildi
+    - dayanıklılık tükenirken dayanıklılık çubuğundaki işaretin "+-" görünmesiyle ilgili küçük sorun giderildi
+    - yardım sayfası biraz güncellendi, katkıcı listesi güncellendi
+
+v0.5.5.9
+    - eşya kaydının yalnızca yeni toplanan eşyaları tanıyıp envanterde zaten olanları yok saymasıyla ilgili sorun giderildi
+    - eşya kaydının ad gizleme işlevinin, yanlış argüman alması yüzünden bazı eşyaları tanıyamamasıyla ilgili sorun giderildi
+    - 'Basit düş kapanı' eşyasının değeriyle ilgili bazı sorunlar giderildi
+    - kaplumbağa kabuğu parçalarındaki soğuğa dayanıklılık sorunu giderildi
+
+v0.5.5.10
+    - toplama etkinliklerinde verim ölçeklemesinin gösterilmemesiyle ilgili küçük bir görüntü hatası giderildi
+    - zamanla kısıtlı, iş olmayan etkinlikler müsait olmadığında artık düzgün biçimde kilitli olmalı
+    - Trilbyspaceclone'dan yeni bir kitap
+
+v0.5.5.11
+    - bir diyaloğun gösterilip gösterilmeyeceğine karar verirken diyalog eylemlerinin hesaba katılmamasına yol açan bir hata giderildi;
+        bu, yalnızca bir eylemi olup hiç repliği olmayan diyalogların erişilemez olmasına neden oluyordu
+
+v0.5.5.12
+    - üretilen parçalarda stat yuvarlamayla ilgili küçük bir sorun giderildi
+    - bakla domuzu, bir meydan okuma düşmanı olduğu için yenildiğinde artık hayvanlar kitabına eklenmeyecek
+    - eşya kaydı, aksi hâlde sığmayacak kadar büyük sayılar için artık bilimsel gösterim kullanacak
+
+v0.5.5.13
+    - stat yuvarlamayla ilgili, önceki düzeltmenin yol açtığı çok daha büyük bir sorun giderildi
+
+v0.5.5.14
+    - odun kömürü üretmek için gereken odun kütüğü maliyeti 5'ten 1'e düşürüldü, söğüt odunu parçaları artık bunun için kullanılamıyor
+
+v0.5.5.15
+    - toplama etkinliklerinin çoğunda asgari toplama süreleri düşürüldü, bazılarında azami süreler düşürüldü; ikisi de azami verim için gereken seviyenin biraz yükseltilmesi karşılığında
+    - ilk 'Yenilenme' kilometre taşına can yenilenmesi eklendi, sonraki kilometre taşlarından birindeki can yenilenmesi aynı miktarda azaltıldı
+    - temel can 50'den 60'a, temel kuvvet 10'dan 12'ye çıkarıldı; temel dayanıklılık 50'den 40'a, temel çeviklik 10'dan 8'e düşürüldü
+    - 'Aç kurt sıçanı' ve 'Kurt sıçanı' savunmaları birer puan düşürüldü
+    - eşya ödüllerine artık kalite belirtilebiliyor
+    - oyuncu kılıçla başlamak yerine, köy yaşlısıyla erken diyalogdan istediği türden bedava bir başlangıç silahı alabiliyor; kılıcın %40'ı yerine %50 kalitede
+
+v0.5.5.16
+    - tür tabanlı çoklu üretim, mevcut malzeme tek başına yetmeyecek noktaya kadar tükendiğinde yine duracak, ama tekrar tıklamak onu sıradaki malzemeyle karıştıracak
+        örneğin odun kömürü hâlâ 5 odun gerektiriyorsa ve elinde 13 'Kaba odun kütüğü' ile 12 'Odun kütüğü' varsa, ilk tıklama 2 üretir (10 'Kaba odun kütüğü' kullanarak)
+        ikinci tıklama ise 3 üretir (kalan 3 'Kaba odun kütüğü' ile 12 'Odun kütüğü' kullanarak)
+    - saldırısı 10'un altında olan silahlarda bu değer artık tam sayıya değil, bir ondalık basamağa yuvarlanıyor
+    - erken bir köy yaşlısı diyaloğundaki, oyuncunun eski bir kılıcı olduğuna dair söz kaldırıldı
+
+v0.5.5.17
+    - önceki yamadaki bir yazım hatasının yol açtığı üretim hatası giderildi
+
+v0.5.5.18
+    - kaynak toplamada, teorik üst sayı 1'den büyükse gerçekte kazanılabilen azami sayının gösterilenden 1 eksik olmasıyla ilgili hata giderildi
+
+v0.5.5.19
+    - Orman gölündeki balıklar artık kalite için düzgün zar atacak
+
+v0.5.5.20
+    - dinamik ganimet mesajının, lokasyon tecrübe mesajlarının üzerine yazıyormuş gibi görünmesine yol açan hata giderildi
+
+v0.5.5.21
+    - önceki sürümde giderilmiş olması gereken o hata gerçekten giderildi
+
+v0.5.5.22
+    - Algı ölçeklemesi ve tecrübe ödülleri, olması gerekirken olmayan bazı eylemlere eklendi
+    - Atratan madenciliği tecrübesi artırıldı
+
+v0.5.5.23
+    - depodaki eşya parçalarının kalitesinin düzgün yüklenmeyip %100'e dönmesiyle ilgili hata giderildi
+
+v0.5.5.24
+    - etkinlik ipucundaki kaynakların, ilk kez kazanıldıktan sonra da gizli kalıp ancak bir sonraki döngüde açığa çıkmasıyla ilgili bir görüntü hatası giderildi
+    - Carya Canyon açılışındaki gereksinim ölçeklemesi daha makul bir hâle getirildi
+    - henüz açılmamış barınağı olan bir lokasyon favorilere eklendiğinde, barınak orada açıldıktan sonra hızlı yolculukta iki kez görünmesine yol açan küçük bir hata giderildi
+
+v0.5.5.25
+    - önceki bir yamanın yol açtığı yükleme hatası giderildi
+
+v0.5.5.26
+    - üretim kalitesinin bazen üretim ipucunda gösterilen aralığın dışına düşmesiyle ilgili sorun umarım giderildi
+    - kremalı yengeç çorbası tüketildiğinde artık cam şişe geri verme şansı var
+
+v0.5.5.27
+    - 'kavrulmuş sıçan eti' artık beceri tecrübesi bakımından zehir olarak etiketli
+
+v0.5.5.28
+    - beceri kategorilerine bonus veren beceriler hakkındaki günlük mesajlarında küçük bir metin sorunu giderildi
+
+v0.5.5.29
+    - üretim ekranındaki teçhizat parçalarının yanlış sıralanması giderildi
+
+======= ana sürüme çıkıldı
+
+v0.5.5.30
+    - envanter sıralamasıyla ilgili sorunlar giderildi
+    - kısa bıçaklar KP bonusuna yeniden sahip
+
+</pre></div>
+
+
+<button type="button" class="collapsible">v0.5.1  [test sürümü: 31/01/2026 / ana sürüm: 15/02/2026]</button>
+<div class="content"><pre>
+v0.5.1
+    - köyde yeni bir erken oyun görevi eklendi; <span class="spoiler"> ilk mağara bölgesi (Mağara odası) temizlendikten sonra </span> alınıyor
+            ilgili bir diyalog, bunun isteğe bağlı olduğunu ve <b> ana </b> ilerleyişin parçası olmadığını (yine de teşvik edildiğini) netleştirmek için ayarlandı
+    - oyunu elle kaydetmek için artık Ctrl+S kullanılabiliyor (tercihen 'Kaydet' düğmesine tıklayarak da yapabilirsin)
+    - kritik şansını artıran yeni bir beceri, "Algı", eklendi; kritik vuruş yapınca 1 tecrübe kazanıyor, ama tecrübe maliyeti ölçeklemesi daha düşük ve göreli olarak çok tecrübe bonusu var;
+        bir şey arama eylemleri artık onunla ölçekleniyor (yeterli seviyede %100 başarı şansına kadar) ve başarıda biraz "Algı" tecrübesi veriyor
+    - envanterdeki her eşyanın soluna, gösterim amaçlı favorilere eklemeye izin veren küçük bir yıldız simgesi eklendi (envanter süzme)
+    - OnonokiNonon sayesinde:
+        * yeni düşmanlar, yeni üretim malzemeleri ve yeni idman noktalarıyla yeni bir oyun sonu bölgesi (orman gölü) eklendi
+        * balıkçılık eklendi
+        * oyun seçenekleri artık değerlerin ham sayıdan bilimsel gösterime geçme eşiğini ayarlamayı içeriyor
+    - BD Jim sayesinde:
+        * yeni düşmanlar, yeni üretim malzemeleri ve yeni idman noktalarıyla birkaç yeni oyun sonu bölgesi (bataklık bölgesi) eklendi
+
+    - 'Kalkan savunması' artık ek olarak, beceri seviyesiyle ölçeklenen ve diğer tüm hesaplamalardan önce uygulanan %'ye dayalı bir hasar azaltması sağlıyor
+    - becerilerin çoğunun kilometre taşları genişletildi
+    - lokasyonlar artık temizleme sayılarını gösteriyor
+    - lokasyon düşman sayıları artık "kalan düşman / toplam düşman" biçiminde gösteriliyor
+    - lokasyon temizleme tecrübe ödüllerinin çoğu değiştirildi; hepsi ilk temizlemede düşmanların toplam tecrübe değerinin yaklaşık %40'ı, sonraki temizlemelerde %20'si olacak şekilde ayarlandı (grup boyutu değiştiricisi hariç);
+        şimdiye dek tutarlılık olmadığı için bazıları büyük ölçüde arttı, bazıları büyük ölçüde azaldı
+    - esrarengiz kapıyı açmak için gereken kuvvet biraz artırıldı
+    - deri ile işlenmiş post/ham deri arasındaki farkı netleştirmek için bazı eşya ipuçları güncellendi
+    - 'Dağ kampı' artık çatılı lokasyon sayılıyor (yağmur yok)
+    - 'Aptallar için Tıp' artık kitap okunduktan sonra becerinin görünür olması için bir parça 'Tıp' tecrübesi veriyor
+    - itibar artık tüccar kâr marjlarını 'Pazarlık' ile aynı biçimde etkiliyor, 1000'de üst sınıra ulaşıyor
+    - "Köy muhafızı"na birkaç replik daha eklendi; ondan duruş öğrenmek artık biraz "Dövüş" tecrübesi de veriyor
+    - kitapların sağladığı tecrübe çarpanları büyük ölçüde güçlendirildi
+    - arka plana karşı biraz daha yüksek karşıtlık için, vurulma/yenilme mesaj renkleri biraz değiştirildi
+    - eşya ipuçlarının bazı kısımlarına ve can/mana/dayanıklılık çubuklarındaki değerlere karşıt renkte dış çizgiler eklendi
+    - "Kenar mahalle"deki "şüpheli adam"ın adı artık diyaloğunda yeterince ilerleyince değişiyor
+    - 'uzun zayıf kemik sap'ın saldırı gücü düşürüldü
+    - kurtların tecrübe değerleri biraz artırıldı
+    - hayvanlar kitabı, düşmanlar aynı rütbedeyse artık alfabetik sıralanıyor
+    - tamamlanan görevler artık gizlenebiliyor (görevlerin altındaki kutu)
+    - azami seviyeye ulaşan beceriler artık gizlenebiliyor (seçenekler paneli)
+    - seçenekler paneli sol alt köşeye taşındı
+    - dışa aktarma ödülü yeni oyunda artık anında değil, 4 saat sonra veriliyor
+
+    - sıcaklıklar ve hava, meydan okuma bölgelerinde artık düzgün çalışmalı
+    - eylem ipuçları artık gerçekten gösteriliyor
+    - ilgili beceri ilk görünür olduğunda kitap açıklamalarının bazen düzgün güncellenmemesiyle ilgili küçük bir görüntü sorunu giderildi
+    - envanter sıralamasının her zaman seçili seçeneği kullanmamasıyla ilgili bir hata giderildi
+
+    - doğrulayıcı, tariflerin çoğunu kapsayacak şekilde genişletildi
+    - lokasyon türleri artık etkin efekt uygulayabiliyor
+    - parçalar (ve dolayısıyla parça tabanlı teçhizat) artık bonus beceri seviyesi mekaniğini destekliyor (hiçbir yerde kullanılmıyor)
+    - eşyalar "unsellable" etiketi eklenerek satılamaz hâle getirilebiliyor (yalnızca oyuncu tarafında işleniyor; takastan elde edilmeyecekleri varsayımıyla) (hiçbir yerde kullanılmıyor)
+    - koşullar artık kahraman seviyesini içerebiliyor
+    - oyun eylemleri artık durdurulduğunda ve kaydet/yükle sırasında ilerlemesini koruyabiliyor (yalnızca anlamlı olanlara uygulandı)
+    - yinelenebilir eylemlerin tamamlanma sayısı artık takip ediliyor (ama gösterilmiyor)
+    - lokasyonların, düşmanların, etkin efektlerin ve tariflerin id'leri artık anahtarlardan otomatik dolduruluyor; id verilmediğinde artık adlara dönmüyor
+    - toplama etkinliklerinde kazanılan kaynak miktarları, her zaman 1 olması amaçlanıyorsa artık atlanabiliyor
+    - belirli düşman türleri için becerilerden gelen dövüş değiştiricileri artık kodda sabit değil; beceriler kendi değiştiricilerini döndüren bir metotla geliyor ( .get_stat_modifiers ),
+        etiket-beceri eşlemesi ise enemies.js içinde tanımlanıyor
+    - eşya ödülleri artık rewards.js içinde verilen biçimde gerçekten çalışıyor
+
+v0.5.1.1
+    - 1. 'Algı' kilometre taşından gelen tecrübe çarpanı x1.1'den x1.05'e düşürüldü
+    - 'sucul' alanlardaki cezaları tamamen kaldırmak için gereken beceri seviyesi artırıldı
+    - bir oyun sonu boss'unun statlarının çoğu güçlendirildi; yeni kilometre taşları eklenmeden önce dengelenmişti
+    - aynı sebeple kurbağaların çevikliği/el becerisi güçlendirildi; zayıflatma uygulama şansları biraz düşürüldü
+    - 'Savaşçı kolyesi' ve 'Yılan dişi yüzüğü' artık satılamıyor
+    - karıncalar küçük bir orman otu ve 2. kademe odun düşürme şansı kazandı
+    - artık yalnızca ne teçhizat ne parça olan eşyalar, envanterden çıkarıldıktan sonra favori olarak kalıyor
+    
+    - belirli bir yer tutucu eylemin metni, gerçekten yer tutucu olduğunu netleştirecek şekilde güncellendi
+    - dış çizgiler artık seçenekler panelinden kapatılabiliyor
+    - seçenekler panelinin boyutu küçültüldü
+    
+    - favori eşya gösteriminin çalışmamasıyla ilgili bir hata giderildi
+    - henüz envanterde olmayan bir eşyayı (tüccardan almak için işaretlenmiş) favorilemeye çalışmayı mümkün kılan bir hata giderildi
+    - deponun doğru sıralanmamasıyla ilgili bir hata giderildi
+
+v0.5.1.2
+    - oyun sonu görevinin gereksinimi 35. seviyeden 25. seviyeye düşürüldü
+    - eşyalar kuşanıldığında artık favori durumunu kaybetmiyor
+
+    - koşulların olması gerekenden yüksek seviye istemesiyle ilgili küçük bir hata giderildi
+    - dövüşte düşman isabet/kaçınma şanslarının güncellenmemesiyle ilgili eski bir gözden kaçma giderildi (örneğin daha fazla/az SP/KP veren teçhizata ya da duruşa geçildiğinde)
+v0.5.1.3
+    - bir oyun sonu boss'unun ilk aşamasındaki isabet/kaçınma güçlendirildi
+    - kaynak toplama ipuçlarıyla ilgili bir hata giderildi
+v0.5.1.4
+    - 'Göl kampı' 'Göl kıyısı'na birleştirildi; eylemler, idmanlar ve ileri yolculuk için önce orada bir kamp kurmak gerekiyor
+    - değirmenle ilgili eylemlerden birinde başarısız olunduğunda hata oluşmasıyla ilgili sorun giderildi
+    - yeni malzemelerden yapılan teçhizatın statları ve koruması ayarlandı
+    - önceki testlerden kalan bazı gereksiz console.log satırları kaldırıldı
+    - gümüş henüz elde edilemediği için gümüş külçe tarifi kaldırıldı; konsol uyarısına takılmayın
+    - bazı statların anında güncellenmemesiyle ilgili küçük bir sorunu gidermek için kahraman statlarının hesaplanma sırası değiştirildi
+v0.5.1.5
+    - önceki yamada lokasyonların birleştirilmesinin yol açtığı bazı sorunlar giderildi
+v0.5.1.6
+    - bazı durumlarda dışa aktarma düğmesi ipucunun konumu düzeltildi
+    - kalkan ipuçlarındaki savuşturma gücü, onu etkileyecek bir şey değiştiğinde artık doğru güncellenmeli
+    - üs eşiğinin bazen yanlış kaydedilmesiyle ilgili küçük sorun giderildi
+    - bir eşya takasa eklenip sonra iptal edildiğinde çıkan küçük bir görüntü sorunu giderildi
+    - ada göre sıralamada envanter sıralaması düzeltildi
+v0.5.1.7
+    - favorilenmiş kuşanılabilir bir eşya envanterden çıkarılırken oluşan bir hata giderildi
+    - "Yüzme" beceri açıklaması artık 'sucul' cezasını azalttığından söz ediyor
+v0.5.1.8
+    - düşmanların etiketleri şablonlarından düzgün devralmamasıyla, dolayısıyla 'Kasaplık'tan gelen düşme oranı bonusu gibi etkileri boşa çıkarmasıyla ilgili bir hata giderildi
+    - bataklık otacılığının beceriyle ölçeklenmemesi düzeltildi
+    - eşyalardaki küçük yazım hataları düzeltildi
+v0.5.1.9
+    - bazı üst kademe eşya ve malzemelerde seviye ölçeklemesi düşürüldü
+v0.5.1.10
+    - can yenilenmesi ipucu düzeltildi (%'ye dayalı değerler olması gerekenden 100 kat büyük gösteriliyordu)
+    - kalkan becerisinin ek etkisi (genel hasara %'ye dayalı azaltma) artık idman kalkanına uygulanmıyor
+
+======= ana sürüme çıkıldı
+
+</pre></div>
+
+<button type="button" class="collapsible">v0.5.0 - Kapris Sürümü: Görevler, Hava, kemonomimi ve bir sürü başka şey  [test sürümü: 28/11/2025 / ana sürüm: 30/12/2025]</button>
+<div class="content"><pre>
+v0.5.0
+    - Görev sistemi eklendi
+    - basit bir hava sistemi (sıcaklık ve yağmur) eklendi; etkileri çoğunlukla fazla soğursan çeşitli derecelerde cezalar; giysiler artık soğuk koruması sağlıyor
+    - oyun artık biraz daha tüylü; kemonomimi'den hoşlanmıyorsan seçeneklerden kapatabilirsin
+    - oyunu dışa aktarmak için küçük bir ödül (tecrübe artırıcı etkin efekt) eklendi; hazır olduğunda dışa aktarma düğmesi kalın yazı ve değişen renklerle görsel olarak işaretleniyor
+    - yolculuk artık oyun içi zamanı ileri alıyor; bu da dışa aktarma ödülü hariç tüm etkin efektlerin sürelerini etkiliyor; yolculuk süreleri becerilerle ölçekleniyor (esasen 'koşu')
+    - yağmur ve kar için ön plan animasyonları, açık gökyüzü geceleri için yıldızlı bir arka plan animasyonu eklendi; <b>öntanımlı olarak kapalılar ve seçenekler panelinden açılabilirler</b>
+    - pazar doygunluğu sistemi artık tüketilebilirler hariç her şeyi kapsıyor; teçhizat ve parçalarda daha sert bir ölçeklemesi var
+    - pazar doygunluğu bölgelere ayrıldı (şu an: Köy ve Kenar mahalle); doygunluk, dengeye gelene kadar tüm bölgeler arasında yavaşça sızıyor; mevcut kayıtlarda doygunluklar bölgeler arasında eşit bölündü
+    - diyalog düzeyinden başlatılan birkaç (tam olarak bir) eylem eklendi
+    - yeni bir teçhizat kategorisi, pelerinler, eklendi; malzeme maliyeti bakımından bayağı pahalılar, ama tüm eşya türleri arasında en çok soğuk korumasını veriyor ve kendini şık hissetmeni sağlıyorlar
+    - <span class="spoiler">'Orman yolu'</span>ndan erişilebilen iki yeni dövüş bölgesi eklendi; yeni düşmanlar ve yeni bir zırh üretim malzemesi sunuyorlar
+    - <span class="spoiler">'Kasaba çiftlikleri'nde, yaban domuzlarını hallettikten sonra bazı eylemler ve ilgili dövüş bölgeleri eklendi; burayı tamamlamak 'Orman yolu'ndan başka bir dövüş bölgesi açıyor; buradaki düşmanların henüz hiç düşen eşyası yok</span>
+    - başka bir duruş eklendi; <span class="spoiler">'Kenar mahalle'de yardım ettikten sonra 'Şüpheli adam'dan erişilebiliyor (teknik olarak önceden de vardı, ama açmak imkânsızdı);
+        yeni açılışlarda her zaman olduğu gibi, onu açması gereken repliği zaten kullandıysan yinelenebilir olandan alabilirsin</span>
+    - yeni bir beceri eklendi: <span class="spoiler">edilgen iyileşmenin (uyuma/dinlenme) etkinliğini artıran 'Yenilenme'</span>
+    - yeni bir beceri eklendi: <span class="spoiler">yiyeceklerin etkilerini artırarak 'tıp'ı tamamlayan 'Oburluk' (tıbbın aksine bu, üretimden tecrübe kazanmıyor)</span>
+    - yeni bir beceri ve idman eklendi: <span class="spoiler">'Yüzme'</span>; <span class="spoiler">'Köy'de, bazı özel koşullar sağlandıktan sonra erişilebiliyor (ipucu: idman yap)</span>
+    - yeni bir beceri eklendi: <span class="spoiler">azami canı artıran ve 'Sert Deri' gibi hasar aldığında tecrübe kazanan, ama düşman tecrübe değeriyle değil alınan hasarla ölçeklenen 'Metanet'</span>
+    - yeni bir beceri ve ilgili eşyalar eklendi: <span class="spoiler">"Kazma" ve kum toplamakta kullanılan 2 kürek (bkz: cam üfleme, bu sürümün değişiklik günlüğünün altında)</span>
+    - yeni bir beceri eklendi: <span class="spoiler">soğuğa dayanıklılığı seviye başına 0,5 artıran ve karakter soğuk ortamdayken düşük hızda edilgen tecrübe kazanan 'Soğuğa dayanıklılık'</span>
+    - 'Zanaat' adı 'Tamircilik' olarak değiştirildi, yeni bir üst beceri eklendi: <span class="spoiler">'Tamircilik', 'Kasaplık' ve 'Ahşap işçiliği'ni kapsayan "Zanaat ustalığı" (son ikisi için bkz: bu sürümün değişiklik günlüğünün altı)</span>
+    - <span class="spoiler">'Dağ yolu' ve 'Dağ kampı'</span>nda 'Denge' idmanı için yeni bir nokta eklendi
+    - <span class="spoiler">'Dağ kampı'</span>nda 'Tırmanma' idmanı için yeni bir nokta eklendi
+    - başka bir kitap eklendi: <span class="spoiler">'Neşeye Kaside ve diğer şiirler'; her tüccarda bulunuyor ama çıkma şansı düşük</span>
+    - yeni bir tüketilebilir eklendi: <span class="spoiler">herhangi bir ekmekten 2 parça ve bir cam şişeden (3 cam parçasından yapılıyor) üretilen 'Ekmek kvası'; ek dayanıklılık yenilenmesi veriyor; ekmekten yüksek olmasa da farklı bir etki olduğu için üst üste binebiliyor</span>
+    - 'Veri' sekmesindeki göstergeye itibar eklendi (hâlâ bir işe yaramıyor)
+    - o boş teçhizat yuvasını sonunda doldurabilmen için bir tılsım eklendi; <span class="spoiler">yeni dövüş bölgelerinden birinin ilk temizlemesinde düşen eşya olarak</span> elde ediliyor
+    - öldürülmek artık 5 oyun dakikası boyunca tecrübe kazancını 1/5'e düşüren bir zayıflatma veriyor; muhtemelen gereksiz bir istismar önlemi
+
+    - 'Azim' becerisinin tecrübe kazancı canın %20'sinin altında artık iki katı (yine de dayanıklılığın bitmiş olması gerekiyor); herhangi bir soğuk etkisi altında da artıyor, etki güçlendikçe daha çok, 'Hipotermi'de x2'ye kadar (gerçi sonraki soğuk etkilerinden gelen büyük bir tecrübe azalması da var, o yüzden değmekten uzak)
+    - 'Silahsız' becerisi artık silahsız saldırılara ek +0,1 temel hasar veriyor (özgün temel 1'di; yani 10. seviyede hasar iki katına çıkacak)
+    - 'Sert deri' becerisi yine yalnızca zırh giymediğinde tecrübe alıyor
+    - 'Sert deri' becerisinin ad değiştirme noktalarında birkaç değişiklik yapıldı (tabii ki)
+    - 'Uyuma' becerisi biraz daha az can veriyor
+    - 'Meditasyon' becerisi artık biraz 'Zihin gücü' tecrübe çarpanı veriyor
+    - 'Meditasyon' becerisi artık küçük bir sezgi çarpanı veriyor
+    - 'Zihin gücü' becerisi ilk seviye için artık 120 değil 400 tecrübe istiyor, ama maliyet ölçeklemesi x1.9'dan x1.7'ye düşürüldü
+    - 'Nefes' becerisi ilk seviye için artık 300 değil 400 tecrübe istiyor
+    - "Kurt ganimeti" artık saldırı hızı yerine düz zırh delme veriyor
+    - kahraman seviyesi tecrübe maliyeti ölçeklemesi x1.7'den x1.6'ya düşürüldü
+    - üretim tecrübesindeki üs ^1.2'den ^1.1'e düşürüldü
+    - 'Kasaba çiftlikleri'ndeki ilk dövüş görevinin açılma koşulu, belirli bir lokasyonu temizlemekten üçünden birini temizlemeye değiştirildi (her biri farklı bir bölgede)
+    - kaliteden etkilenmeyen kuşanılabilirler artık kalite göstermeyecek (süs eşyaları, aletler, eserler vb.)
+    - bir sürü düşmanın savunması artırıldı
+    - süs eşyalarının değeri artırıldı
+    - daha fazlası mevcut olduğu için yiyeceklerden gelen etkin efektler biraz zayıflatıldı
+    - bazı lokasyon türü cezaları artık beceri azami seviyesine kadar değil, belirli bir seviyeye kadar ölçekleniyor; ölçekleme bilgisi beceri açıklamalarından kaldırıldı
+    - Köy / Kasaba Çiftlikleri'ndeki tarla işi artık kışın müsait değil
+    - yün eşyalardaki savunma kaldırıldı
+    - çok hedefli saldırılarda tecrübe kazancı artık hedef sayısına bölünüyor; böylece tek hedefli saldırılara benzer tecrübe kazancı sağlanıyor
+    - gruba karşı dövüşte, düşman saldırdığında tecrübe kazanan beceriler için kazanç artık hedef sayısının (2/3) kuvvetine bölünüyor (8 düşmanla dövüşmek birinin yalnızca 2 katı tecrübe verecek)
+    - çok hedefli saldırılarda ganimet düşme şansları artık hedef sayısının (2/3) kuvvetine bölünüyor (1 saldırıyla 8 düşman öldürmek 8 kat değil yalnızca 2 kat ganimet vermeli)
+    - düşman ganimeti gerektiren tarifleri yapmak artık biraz daha ucuz
+    - beceri tecrübe kazançları artık seviye atlamak için gerekene göre üst sınırlanıyor; genel becerilerde 1/10, üretim becerisinde 1/4 oranında; bu genelde oynanışı pek etkilemeyecek ve yalnızca çok düşük beceri seviyesiyle bağlantılı aşırı kazançların nadir durumlarını etkileyecek
+    - can çubuğu, dayanıklılık çubuğu ve tecrübe çubuğu artık dökümlü basit ipuçlarına sahip (azami can, azami dayanıklılık ve dayanıklılık verimi, genel/kahraman/tüm_beceri tecrübe çarpanı)
+    - 'Uyuma' becerisinin ipucu, uyurken can geri kazanımındaki artıştan söz edecek şekilde güncellendi (mekanik zaten vardı, ama ipucunda eksikti)
+    - mesaj günlüğü artık yalnızca gösterilen kategorilere ait mesajlar için aşağı kayacak; gizli olan şeyler kaymaya yol açmayacak
+    - iş ödemeleri artırıldı
+    - tüccar kâr marjları artırıldı
+    - takas fiyatlarının günlük toparlanması artırıldı (hâlâ çok düşük ve buna güvenmemek gerek)
+    - iki tür 'İyileştirme Tozu'nun da süresi artırıldı
+    - 3. kademe odun/metal toplama tecrübe kazançları biraz güçlendirildi
+    - diyaloglarda konuşulan kişinin adı artık cevapların üstünde gösteriliyor
+    - bazı düğmelere çok basit tıklama efektleri eklendi
+    - düşmanlara vurulduğunda basit animasyonlar eklendi
+    - bazı öğelere üzerine gelince renk değişimi eklendi
+    - diyalog açıklamaları ve replik cevapları artık basit bir belirme animasyonuna sahip
+    - toplama etkinliği açılma bildirimleri artık yalnızca toplama genel olarak açıksa görünüyor
+    - 'Duvar Sıçanı'nın çevikliği 20'den 2'ye düşürüldü (nereye gidecekler ki? yerlerine sıkışmışlar)
+    - 'Duvar Sıçanı'nın canı 1000'den 2000'e, el becerisi 90'dan 120'ye çıkarıldı
+    - 'Elit kurt sıçanı muhafızı'nın canı 250'den 400'e, saldırısı 50'den 60'a, çevikliği 40'tan 50'ye, el becerisi 40'tan 50'ye, tecrübe değeri 10'dan 15'e çıkarıldı
+    - 'Genç kurt'un canı 120'den 150'ye çıkarıldı
+    - 'Aç kurt'un canı 150'den 200'e çıkarıldı
+    - 'Kurt'un canı 200'den 250'ye, saldırısı 32'den 40'a, çevikliği 42'den 50'ye, el becerisi 42'den 50'ye, sezgisi 32'den 40'a, tecrübe değeri 4'ten 6'ya çıkarıldı
+    - 'Yaban domuzu'nun canı 300'den 600'e, tecrübe değeri 8'den 10'a çıkarıldı
+
+    - diyalog dallanması eklendi (bir repliğe tıklamak, konunun devamı olan başka replikleri gösterebiliyor), henüz kullanılmıyor
+    - şu an nenin gösterildiğini ve neyden geldiğini tutan bir içerik yığını eklendi;
+        gerçekçi olmak gerekirse yalnızca yukarıda anılan diyalog düzeyinden eylem başlatma ve dallanma için işe yarıyor,
+        ama lokasyon gösterimi olmayan her şeyi ele alıyor (yığın boşken öntanımlı durum lokasyon gösterimidir)
+    - düşman dizilimi oluşturma kodu, önceden tanımlanmış grupları sırasıyla kullanmaya izin verecek şekilde güncellendi (rastgele birini seçmek yerine),
+    ayrıca her N temizlemede önceden tanımlanmış bir grubu kullanmaya, kalan dövüşlerde rastgele düşman kullanmaya izin veriyor
+    - işler artık yalnızca seçili mevsimlerde müsait kılınabiliyor; genel zaman tabanlı kısıtlama idman eylemlerini de kapsayacak şekilde genişletildi
+    - eylemler artık gösterilme koşullarına sahip olabiliyor
+    - replikler artık eylemlerle aynı şablonu kullanan gösterilme koşullarına sahip olabiliyor
+    - koşullar artık genel bayrakları ve kuşanılmış aletleri içerebiliyor
+    - lokasyonlar artık yalnızca oraya girmekle verilen ödülleri içerebiliyor (belli ki yalnızca açılışlar için)
+    - eşya adları eşya oluşturmada atlanabiliyor; bu durumda eşyanın id'siyle aynı oluyorlar
+    - etkinliklerin etkin efekt uygulaması mümkün kılındı
+    - etkin efektlerin tecrübe kazançlarını etkilemesi mümkün kılındı
+    - onay kutularının rengi, tarayıcının öntanımlı renkleri yerine maviye çevrildi
+    - üretim kategorisi düğmelerinin gösterim biçimi, umarım biraz daha az karışık olsun diye hafifçe değiştirildi
+    - sıcaklıklarla ilgili kullanılmayan bazı lokasyon türleri kaldırıldı, çünkü onlar hava sisteminin parçası olarak eklendi
+    
+    - parça/teçhizat üretim tecrübe formülleri düzeltildi; artık yardım sayfasında anlatıldığı gibi, ölçekleme 8*kademe'de başlayıp nadirlik çarpanının kareköküyle geciktirilerek çalışıyor (daha önce her noktada ölçekleniyordu)
+    - düşman grup boyutunun amaçlanandan 1 eksikte üst sınıra ulaşmasına yol açan, düşman dizilimi oluşturma kodundaki bir hata giderildi
+    - yeniden yükledikten sonra bazı oyun ayarlarının yanlış gösterilmesiyle ilgili sorun giderildi
+    - kitap bonuslarının düzgün uygulanması için kaydet+yeniden yükle gerektiren küçük bir hata giderildi
+    - favorilerdeki bir meydan okuma bölgesi geçildiğinde oluşan bir hata giderildi
+    - sonuç tam sayı olmadığında, kesirli kısmın 1 ek eşyaya dönüşme şansının yanlış hesaplanmasıyla ilgili küçük bir çoklu üretim hatası giderildi
+    - takas edilen eşyaların, ilgili kapsayıcıda zaten varsa tüm yığını aşağı taşıyacak biçimde her zaman en alta düşmesiyle ilgili küçük bir görüntü hatası giderildi
+
+    OnonokiNonon sayesinde:
+        - cam üfleme modülü; 1 yeni kitap, 1 yeni etkinlik, 3 yeni eşya ve 3 yeni tarif içeriyor
+        - 2 yeni üretim becerisi eklendi: <span class="spoiler"> 'Kasaplık' ve 'Ahşap işçiliği'; ilki bazı düşme oranlarını da etkiliyor; ilgili tarifler 'Zanaat'tan taşındı; 'Kasaplık ve Sen' artık tarifler yerine beceriyi açıyor </span>
+        - beceri kategorileri artık yeniden sıralanabiliyor
+        - 2 yiyecek eşyasını tarifleriyle birlikte ve malzemelerinden biri için bir toplama etkinliğini açan yeni bir diyalog
+        - gelecekteki kategorilerin eklenmesini kolaylaştırmak için tarif listeleme kodunda düzeltmeler (biraz devam eden iş)
+        - tarif penceresi artık son açık sekmeyi hatırlıyor
+        - Firefox'ta envanter ve hızlı yolculukla ilgili görüntü sorunları giderildi
+        - azami seviyeye ulaşan beceriler artık daha koyu bir yeşil tonuyla gösteriliyor
+        - beceri kategorileri artık açık/kapalı durumunu koruyor
+        - beceriler artık ilerlemeye göre sıralanabiliyor (sonraki seviyeye ne kadar yakın olduklarına göre; azami seviyedekiler her zaman en sonda)
+        - envanter artık türe göre sıralanabiliyor: aynı türden parçalar/malzemeler bir arada gruplanıyor, teçhizat yuvaya göre sıralanıyor vb.
+        - hasat eylemleri artık kendi ortam (arka plan) mesajlarına sahip olabiliyor
+        - tecrübe veren eylemler artık seviye atlamaya kalan süreyi gerçek zaman saati olarak gösteriyor
+        - daha büyük tecrübe sayıları artık ayırıcılarla gösteriliyor ve çok daha yüksek bir eşikte bilimsel gösterime geçiyor
+        - günlüğe yeni bir kategori eklendi; Kahramanın okuduğu tüm kitapları ve etkilerini listeliyor
+
+v0.5.0.1
+    - çevre becerisi yeterince yüksek seviyedeyken cezayı olumlu bir etkiye çeviren bir hata giderildi
+    - can kaybı statının amaçlananın tersine çalışmasıyla ilgili bir hata giderildi
+    - 'Sıçan postu pelerin'in malzeme maliyeti yarı oranında artırıldı (kurt sıçanları biraz küçük)
+    - 'Silahsız' beceri açıklamasındaki yuvarlama düzeltildi
+v0.5.0.2
+    - kazma etkinliğini imkânsız kılan bir hata giderildi
+    - görev öncesi kayıtlar yüklenirken otomatik verilen ilerleme için görev ilerleme bildirimleri kaldırıldı
+v0.5.0.3
+    - yeni eklenen belirli-temizleme-sayısı-gerektiren ödüllerle lokasyonlardan birini temizlemiş olmak için geriye dönük uyumluluk
+v0.5.0.4
+    - önceki düzeltme artık gerçekten çalışıyor
+    - yüklemede tekrarlanan bazı mesajlar kaldırıldı
+    - bir yazım hatası düzeltildi
+v0.5.0.5
+    - "Ayı ini"nin üst lokasyonuna bağlı olmamasıyla ilgili bir hata giderildi
+v0.5.0.6
+    - efektlerdeki eksik etiketler yüzünden 'Oburluk' beceri etkisinin çalışmamasıyla ilgili bir hata giderildi
+    - savunmanın yok sayılmasıyla ve zırh delmenin bazen olması gerekenden çok bonus vermesiyle ilgili bir hata giderildi
+    - beceri tecrübe kazancı formülündeki hatalar giderildi (genel bonus iki kez uygulanıyordu, beceriye özel bonus hiç uygulanmıyordu)
+    - kitapların ve tüketilebilir olmayanların tüccar kâr marjlarından etkilenmemesiyle ilgili bir hata giderildi
+    - çalışırken toplam kazancın (ve ona ulaşma süresinin) gösterilmemesiyle ilgili bir hata giderildi
+    - fazla sayıda görev açıkken oluşan bir görüntü sorunu giderildi
+    - 'Meditasyon' sezgi bonusunun çarpan yerine düz artış olmasıyla ilgili bir hata giderildi
+    - çatılı lokasyonlarda santigrat ve fahrenhayt sıcaklıklarının aynı değerle (santigrat) gösterilmesiyle ilgili bir görüntü hatası giderildi
+    - 'İşlenmiş zayıf yaratık kemiği'nin üretimde kullanılamamasıyla ilgili hata giderildi
+    - belirli türden bir eşya yığını satıldıktan sonra kaydet/yükle yapılınca tüccarda ondan yalnızca 1 tane kalmasına yol açan bir hata giderildi
+
+    - 'Orman ayısı' güçlendirildi: can 3000'den 6000'e, saldırı 300'den 600'e, sezgi 100'den 200'e, saldırı hızı 0,7'den 0,8'e, savunma 300'den 500'e, tecrübe 30'dan 50'ye
+    - 'Duvar sıçanı' güçlendirildi: can 2000'den 4000'e, saldırı 70'ten 100'e, sezgi 90'dan 200'e, saldırı sayısı 3'ten 4'e
+    - bazı yolculuk süreleri artırıldı
+v0.5.0.7
+    - çiftlik görevinin sonraki aşamasına düzgün erişmeyi imkânsız kılabilen bir hata giderildi (geriye dönük uyumlulukta yanlış koşullar)
+    - üretim parçalarının 'Çıkış' düğmesinin üstüne taşmasıyla ilgili bir görüntü sorunu giderildi
+    - üretim penceresi kapatılıp yeniden açıldığında belirli üretim ipuçlarıyla ilgili bir görüntü sorunu giderildi
+    - 'Geniş yay' artık saldırı hızını x0,8'e düşürüyor
+v0.5.0.8
+    - düşman stat gösteriminin tek satıra sığmamasıyla ilgili bir sorun giderildi
+    - düşman vuruş animasyonunun sonraki vuruşlarda çalışmamasıyla ilgili sorun umarım giderildi; düşman grubu yenildikten sonra nasıl görünecekleri değiştirildi
+    - antoloji ipuçlarının beceri adlarını güncellemeyip "???" olarak tutmasıyla ilgili bir görüntü sorunu giderildi
+    - gruba karşı dövüşte beceri tecrübe kazançları, kahraman tecrübesinde zaten olduğu gibi, düşman sayısının 1/3 kuvvetiyle çarpılıyor (8 düşmanla dövüşmek iki kat tecrübe verecek)
+v0.5.0.9
+    - üretim gösteriminde, tetiklendiğinde ciddi bir hataya ve 'Köy'ün ana gösterimini yükleyecek hiçbir şeyi yapamamaya yol açan bir hata giderildi
+    - köy tüccarına normal demir eşyalar eklendi; in öncesi kenar mahalle tüccarında çelik silah çıkma şansı biraz düşürüldü
+v0.5.0.10
+    - tecrübe kazancı üst sınırlarının çalışmamasıyla ilgili bir hata giderildi
+    - 'Şüpheli adam'daki bir replik açılışı, bir lokasyonu temizlemekten temizledikten sonra ona haber vermeye taşındı
+    - can çubuğuna ve dayanıklılık çubuğuna yenilenme dökümleri eklendi; bunlar dövüş dışı edilgen yenilenmeyi içermiyor
+    - v0.5.0.8'deki grup yenilgisinde düşman animasyonu işleme değişikliği geri alındı, yerine yeni düşmanlar için ayrı bir animasyon eklendi
+    - geliştirme sürümünde sıfırlama yapmak artık ana sürüm kayıt dosyasını yine içe aktarmakla sonuçlanmayacak, sıfırdan başlamana izin verecek
+    - "Yenilenme" için temel tecrübe maliyeti 600'den 1000'e, ölçekleme x1.4'ten x1.5'e çıkarıldı
+    - dağa tırmanma eylemi artık başarıda biraz "Tırmanma" tecrübesi veriyor
+    - 'Çete ini'ni geçmek artık biraz para veriyor (dolaylı ganimet olarak)
+    - kaçınma/savuşturma beceri ipuçları, ikisinden yalnızca birinin geçerli olduğunu ve ikisini aynı anda yapamayacağını netleştirmek için güncellendi
+    - 'Köy muhafızı' repliklerinden biri düzeltildi
+    - bazı açıklamalar hafifçe düzeltildi; çoğunlukla eşyalardan '.' kaldırılarak daha tutarlı hâle getirildi
+v0.5.0.11
+    - beceriyle ölçeklenmeyen ve 0,5 savuşturmada kalan bir idman kalkanı eklendi
+    - aynı takas grubundan farklı bir eşya satışa eklendiğinde fiyatın biraz düşmesiyle ilgili hata [umarım] giderildi
+    - çiftlik görevinin tecrübe ödülü 100 binden 50 bine düşürüldü
+    - v0.5.0.10'daki gibi birkaç açıklama daha düzeltildi
+    - köy tüccarının açılış metni ve takas metni, sözde "orta boy bir köy"e daha uygun bir hava vermek için düzeltildi; aynı sebeple oradaki bazı eşyaların sayısı artırıldı
+    - hayvanlar kitabı içeriğinin kutunun dışına taşmasıyla ilgili bir görüntü sorunu giderildi
+    - bazı ipuçlarının gösterimi, içeriklerinin boyutuna daha iyi uyacak şekilde düzeltildi
+    - çok saldırılı düşmanlarda hangisinin hasar hangisinin sayı olduğu karışıklığını gidermek için, dövüşte düşman saldırı gücünün gösterimi biraz değiştirildi
+v0.5.0.12
+    - düzeltildi: 'Ayı derisi pelerin' artık üretilebilir olmalı
+    - 'Demir kürek' artık kenar mahalle tüccarında bulunabiliyor
+    - 'Ayı derisi pelerin' artık çete sonrası kenar mahalle tüccarında bulunabiliyor
+    - açıklamalardan daha da fazla nokta kaldırıldı
+v0.5.0.13
+    - kalkan gücünün her zaman 1 olarak işlenmesiyle ilgili bir hata giderildi
+v0.5.0.14
+    - takası düzeltmek için bir deneme daha
+    - tüccar envanterlerine kömür eklendi
+    - yün eldivenlerde soğuğa dayanıklılık 2'den 3'e çıkarıldı
+    - eşsiz eşyalar artık ipuçlarında böyle işaretleniyor
+    - köy muhafızı artık bir kadın
+    - "Ayı ini"ndeki yanlış açıklama düzeltildi
+v0.5.0.15
+    - yine takas düzeltmeleri, evet, imdat
+    - dövüş stat gösterimi düzeltildi
+v0.5.0.16
+    - üretilemeyen, 0 savunmalı ama ucuz deriden çok daha iyi saldırı hızı / çeviklik bonuslu "İş ayakkabısı" eklendi; tüm tüccarlarda bulunuyor
+    - alt kademe eşyaların pazar doygunluğuna etkisi, üst sınırın 1/2'sinden 1/8'ine düşürüldü
+    - dövüş stat gösterimi yine düzeltildi
+    - bazı diyaloglar biraz düzeltildi
+v0.5.0.17
+    - koşullar nesnesi artık itibarı içerebiliyor; henüz hazır olmadığı için köy muhafızının repliklerinden biri (şu an ulaşılamaz bir hedefle) bunun arkasına gizlendi
+    - zaman biçimlendirmesi biraz düzeltildi
+v0.5.0.18
+    - aynı eşyadan (ya da aynı gruptan) birden fazla takas edilirken fiyatların hesaplanma biçimi hafifçe değiştirildi; önceki yaklaşım biraz yanlış sonuç veriyordu
+    - son yamadaki ufak bir aksilikten sonra zaman biçimlendirmesi düzeltildi
+    - itibar artık kaydedilmek yerine yüklemede yeniden hesaplanıyor
+    - elle duruş değiştirmek dayanıklılık bitmişken artık "Azim" tecrübesi vermiyor
+v0.5.0.19
+    - takas fiyatlarıyla ilgili başka bir hata giderildi (yine gösterilen ile gerçek arasındaki uyumsuzluk)
+    - eşyaları geri satın almanın, gerçek sayı ne olursa olsun ilgili pazar doygunluğunu yalnızca 1 düşürmesine yol açan bir hata giderildi
+    - aletler artık envanterde diğer kuşanılabilirlerin üstüne otomatik sıralanmıyor; onları bir arada gruplamanın benzer etkisi "türe göre sırala" ile elde edilebiliyor
+    - teçhizat değiştirmek dayanıklılık bitmişken artık "Azim" tecrübesi vermiyor
+v0.5.0.20
+    - arka plan animasyonları için yanlış koşullar düzeltildi
+    - zaman biçimlendirmesi yine düzeltildi
+    - kvasın etkisi artık 'yiyecek' olarak etiketli ve 'Oburluk' becerisine tabi
+v0.5.0.21
+    - büyük artışlarda zaman ilerlemesinin amaçlandığı gibi çalışmamasıyla ilgili bir hata giderildi (bir günün/ayın/yılın son dakikalarında hızlı yolculuk yapmak gerekenden 1 fazla atlamaya yol açıyordu)
+    - bir eşyanın satılma sayısı hassasiyeti bozacak kadar büyükse ve saçma kod mantığı yüzünden küçük sayıları anlamsız kılıyorsa fiyatları 1'e düşüren bir hata giderildi (bunun olması için önce henüz doğrulanmamış başka bir hata gerekiyordu)
+    - takas fiyatı toparlanmasının çalışmamasıyla ilgili sorun giderildi
+    - bazı yiyecek etkileri biraz zayıflatıldı
+v0.5.0.22
+    - pazar doygunluğu sızmasının yanlış davranmasıyla ve satılma sayılarının akıl almaz derecede yüksek seviyelere çıkmasına yol açmasıyla ilgili bir hata giderildi (önceki sürümde giderilen 2. hataya yol açıyordu)
+        - önceki v0.5.0 sürümünden gelen tüm kayıtların ilgili değerleri oyun yüklenirken ayarlanacak
+v0.5.0.23
+    - favorilenmiş, kendini kilitleyen bir lokasyon temizlenirken oluşan küçük bir hata giderildi
+    - olası bazı hatalı davranışlar ele alındı
+    - bazı beceri açıklamaları düzeltildi
+    - görev başlıklarına üzerine gelince renk değişimi eklendi
+v0.5.0.24
+    - pazarı doyurmayan eşyalarda (yiyecek ve kitap) gösterilen fiyatlara tüccar çarpanının dahil edilmemesiyle ilgili küçük bir görüntü hatası giderildi
+v0.5.0.25
+    - düşman bloklarının biraz fazla yüksek olup ayrılmış alanın dışına taşmasıyla ilgili küçük bir görüntü hatası giderildi
+v0.5.0.26
+    - Mercurius sayesinde: bellek kullanımında tehlikeli bir artışa yol açabilecek veri tutulmasını önleyen bir düzeltme
+    - bazı erken lokasyonların temizleme tecrübe ödülleri artırıldı
+    - diyaloglardaki cevaplar artık ortalanmak yerine sola hizalanıyor
+v0.5.0.27
+    - eylemlerin bitirilmesiyle ilgili bir hata giderildi
+v0.5.0.28
+    - düşme şanslarıyla ilgili bir hata giderildi; saldırı hedef sayısı cezası, aynı anda kaç düşmana saldırıldığına bakmadan düşman grubunun boyutunu kullanıyordu
+    - her kitap için tik başına tecrübe kazancının, atanmış değerler yerine 1'e dönmesiyle ilgili bir hata giderildi
+</pre></div>
+<button type="button" class="collapsible">v0.4.6 - Eylemler (ve birkaç başka şey de) [test sürümü: 01/04/2025 / ana sürüm: 18/05/2025]</button>
+<div class="content"><pre>
+v0.4.6
+    - yeni bir özellik eklendi: lokasyon eylemleri. İdmanların aksine genelde tek seferliktirler ve açılışlarla başka ödüller verirler.
+        Tamamlanmaları farklı süreler alabilir; tam olarak belirtilmeyen ama açıklamalarda ima edilen farklı koşulları vardır;
+        koşulları denemeden önce ya da sonra kontrol edebilirler ve sağlanırsa ya kesin başarı ya da bir başarı şansı sunabilirler;
+        ikinci durumda gereksinimleri karşılamadığın için başarısız olmanla, sadece şanssız olup bir dahakine başarabilecek olman farklı mesajlarla ayrılır
+    
+    - aynı anda birden çok eşya/parça/teçhizat üretmek mümkün kılındı (x5/x10/hepsi)
+    - bonus beceri seviyesi mekaniği eklendi (örneğin daha iyi aletlerden); bunlar yalnızca temel etkilere uygulanıyor ve kilometre taşlarını etkilemiyor
+    - yatak olan her yerde erişilebilen, içeriği paylaşımlı kişisel depo eklendi
+    - hızlı yolculuk düğmesi eklendi; açılmış yataklı lokasyonlar ve/veya son dövüş lokasyonu arasında hızlı geçişe izin veriyor (normal yolculuk kategorisinden buraya taşındı)
+
+    - birçok yeni lokasyon ve dövüş bölgesi eklendi: <span class="spoiler">
+    * kenar mahallede haydut ini
+    * 'esrarengiz kapı' açıldıktan sonra iki lokasyon (biri normal, biri dövüş) (Sıçan Destanı sürüyor)
+    * yukarı tırmandıktan sonra birçok dağ lokasyonu (bir boss, bir dövüş, birkaç normal + bir kamp) (mağara lokasyonlarından biri geçilerek açılıyor)</span>
+    - malzeme toplamak için daha iyi aletler eklendi
+    - yeni bir üretim malzemesi, kömür, eklendi; artık tüm eritme tariflerinde kullanılıyor
+        Kendi tarifinin adı "odun kömürü", karıştırma
+        Herhangi bir "ham" odundan üretiliyor, en ucuzu önce kullanılıyor.
+        Çoklu üretim her tıklamada yalnızca tek malzeme türü kullanacak; yanlışlıkla üst kademeleri yakmamak için (ha, anladın mı?)
+    - 3. kademe yeni bir metal, çelik, eklendi; üretmek için demir + yeni bir cevher gerekiyor; karşılık gelen silah parçaları eklendi; çelik şöyle açılıyor:<span class="spoiler">
+        Dövme becerisinde 15. seviyeye ulaşmak; gereken cevher 'esrarengiz kapı' geçilerek açılıyor</span>
+    - dişbudak ve dişbudak parçaları eklendi, zayıf yaratık kemiği parçaları eklendi; ikisi de 3. kademe
+    - yeni etkinlik: tırmanma
+    - yeni beceriler: Tırmanma, Nefes, Tıp. Nefes düşük hızda edilgen tecrübe kazanıyor (herhangi bir idmanda x5'e çıkıyor)
+    - iki yeni kitap; ikisi de "yeni" tarifler açıyor (birçoğu zaten vardı ve sadece bunun arkasına kilitlendi) + biri Tıp becerisini açıyor
+    - 'zayıf iyileştirme tozu' ve 'zayıf iyileştirme iksiri' biraz güçlendirildi, ikisinin de güçlü sürümleri eklendi
+    - birkaç yeni malzeme ve tüketilebilir daha eklendi
+    - 'halat kangalı' ve 'kamp malzemeleri' çeşitli eşyaları eklendi; her biri şu an yalnızca tek bir eylemde kullanılıyor
+    - meditasyon için yeni bir nokta + beceri için bir kilometre taşı daha
+    - malzeme toplama becerileri artık ayrı bir beceri kategorisine ait ('Etkinlik becerileri' yerine)
+    - 'yüksek kaliteli kurt dişi' ve 'yüksek kaliteli yaban domuzu azı dişi' artık her biri 50 normal sürümünden üretilebiliyor
+    - lokasyon gezinmesi artık beceri gösterimine benzer bir yapı kullanıyor; yani bir arada gruplanıp tıklamayla açılıyorlar
+    - tecrübe çarpanlarının tüm beceri kategorilerini etkilemesi mümkün kılındı (örneğin tüm 'Etkinlik' becerileri)
+    - eşya nadirlik rütbesi artık ipucunda doğrudan gösteriliyor (öncesinde renkten/kaliteden tahmin etmek gerekiyordu)
+    - ilgili üretim becerilerinin ipuçları artık kalite üst sınırlarını gösteriyor
+    - etkinlikler (iş, idman, kaynak toplama) artık ilgili becerinin seviye atlaması için gereken süreyi gösteriyor
+        (oyun içi zaman biçiminde; örneğin 24 saat, standart tik hızında 24 gerçek dakika demek)
+    - bazı beceri kilometre taşları biraz genişletildi
+    - alt çubuğun sağ tarafına sayfama bağlantı veren bir Ko-fi simgesi eklendi
+
+    - envanter dağınıklığını azaltmak için teçhizat kaliteleri artık en yakın çift değere yuvarlanıyor (parçalarda zaten en yakın 4 katına yuvarlandığı gibi)
+    - kalkanlardan gelen saldırı hızı cezaları sertleştirildi; artık hafif kalkanlarda da var (ama ağır kalkanlardan çok daha zayıf)
+    - üretim parçalarının değeri ~%80'e düşürüldü, ama tam teçhizat fiyatları ~%125'e çıkarıldı (parçalar daha ucuz, ama teçhizat fiyatları çoğunlukla aynı kalıyor)
+    - üretim tarifleri artık tecrübe değerlerini ipuçlarında gösteriyor
+    - üretim kalitesi üst sınırı, teçhizatta 100 + 2,8 * beceri_seviyesi, parçalarda 100 + 2 * beceri_seviyesi'ne düşürüldü
+    - ilk 2 odun kesme ve madencilik noktasının başarı oranları güçlendirildi
+    - bazı tariflerin başarı oranları güçlendirildi
+    - bazı tecrübe göstergeleri hem yüzdeyi hem ham sayıları gösterecek şekilde güncellendi
+    - alt panel yükleme ekranında görünür kalıyor; bir şey bozulup takılırsa kayıt dosyası içe aktarılabilsin diye
+    - başlangıç canı/dayanıklılığı 40'tan 50'ye çıkarıldı
+    - 'aç kurt sıçanları' ve 'kurt sıçanları' biraz zayıflatıldı
+    - 'aç kurtlar' ve 'kurtlar' biraz zayıflatıldı
+    - kahraman seviyesi tecrübe maliyeti ölçeklemesi 1,8'den 1,7'ye düşürüldü (bu bir güçlendirme)
+    - yaban domuzlarının olduğu lokasyon artık doğrudan diyalogla açılmıyor; bunun yerine "orman yolu"nda onların bulunduğu bölgeyi arama eylemini açıyor
+        O diyaloğu zaten geçtiysen bölge açık kalacak ve eylem hiç görünmeyecek
+    - yaban domuzlarını halletmenin ödülü 4 G'ye çıkarıldı
+
+    - lokasyon türü cezalarının kodu biraz yeniden yazıldı; düz etkilere izin veriyor (örneğin her tikte sabit can kaybı)
+    - dövüş lokasyonunun N. temizleme ödülleri, bu kısıtlamanın yalnızca lokasyon açılışlarına değil her ödüle uygulanabileceği bir biçime yeniden yazıldı
+    - kısmi itibar sistemi eklendi; henüz gerçekten bir işe yaramıyor ve şu an hiçbir yerde gösterilmiyor (ileride genişletilecek)
+    - alt çubuğun gösterim ayarları hafifçe değiştirildi
+
+    - anahtar uyuşmazlığı yüzünden bazı etkinliklerin yeniden yüklemede konsolda uyarıyla durmasına yol açan bir hata giderildi
+    - üretimde, bazı teçhizatların seçilenden farklı bir parçayla çıkmasına yol açan bir hata giderildi
+    - pazar doygunluğunun düzgün çalışmamasıyla ilgili bir hata giderildi (eşya satılma sayısı güncellenmiyordu; bu da eşya fiyat düşüşünün yalnızca toplu takasta uygulanmasına yol açıyordu)
+    - parçasız teçhizattaki (giysi) ek statların nadirlikle ölçeklenmemesine yol açan bir hata giderildi
+    - teçhizat üretiminde parça kalitesinin ipuçlarında yok sayılmasıyla ilgili bir hata giderildi
+    - bir beceri seviye atlarken ad değiştirdiğinde, seviye artış mesajının yeni adı kullanmasına yol açan bir hata giderildi
+        ("X becerisi seviye atladı, X becerisi Y'ye yükseltildi" yerine "Y becerisi seviye atladı, X becerisi Y'ye yükseltildi" diyordu)
+    - açılan beceri kilometre taşlarının gösteriminde, açıklamaların bazen ", ," içermesiyle ilgili bir hata giderildi
+    - beceri kategorilerindeki açılır simgelere tıklamanın içeriği açmamasına yol açan bir hata giderildi
+    - bazı eski sürümlerden gelen kayıtların uyumluluğuyla ilgili sorunlar giderildi
+v0.4.6.1
+    - dağlardaki bozuk bir açılış düzeltildi
+    - tıklanan eşyaların, depo açık değilken depoya taşınmasıyla ilgili bir hata giderildi
+    - sonraki seviyeye kalan süre artık beceri tecrübe bonuslarını hesaba katıyor
+v0.4.6.2
+    - tüccar envanterlerine eksik aletler eklendi
+v0.4.6.3
+    - oraklardaki yanlış alet türüyle ilgili, ot toplamayı imkânsız kılan bir hata giderildi
+v0.4.6.4
+    - nefes becerisi açıklamasındaki yazım hatası düzeltildi
+    - atratan cevheri açılışındaki yazım hatası düzeltildi
+    - bazı kitapların açıklamaları düzeltildi
+    - dövüş sırasında kitap okumaya izin veren bir hata giderildi
+    - beceri adı değişikliği mesajındaki yanlış ad sırası düzeltildi, umarım bu kez gerçekten
+    - kısa bıçaklardaki çeviklik çarpanları düşürüldü
+v0.4.6.5
+    - simya becerisi açıklamasındaki yazım hatası düzeltildi
+    - itibar ödüllerinin oyunu bozmasıyla ilgili hata giderildi
+v0.4.6.6
+    - 'zihin gücü' azami seviyesi 10'dan 40'a çıkarıldı, tecrübe maliyeti ölçeklemesi biraz düşürüldü
+    - eksik çelik zincir zırh parça tarifleri düzeltildi
+    - parça/teçhizat üretim listesinde yanlış yerlere tıklandığında oluşan küçük hatalar düzeltildi
+v0.4.6.7
+    - 3. kademe malzeme tariflerinin seviye ölçeklemesi 7/17'den 10/20'ye değiştirildi
+    - çelik açılışı dövme 15'ten dövme 10'a taşındı
+    - üretim tecrübe kazançları ^1.2'ye yükseltildi
+    - kasabanın açık olması düzeltildi (orada gerçekten hiçbir şey yoktu, sadece boş bir kasaba meydanı)
+    - tekinsiz etkisinin can almak yerine can vermesi düzeltildi
+v0.4.6.8
+    - parçalar için üretim tecrübesi üssü, malzeme sayısı çarpanından önce uygulanacak şekilde düzeltildi
+    - düşmanlar için çoklu saldırı eklendi; aynı saldırıda birden çok vuruş yapıyor, hepsi tek bir kaçınma/savuşturma/kritik hesabına tabi
+    - Duvar Sıçanları x3 çoklu saldırı verilerek güçlendirildi (ama hasarları biraz düşürüldü)
+    - yardım sayfasının ve değişiklik günlüğünün yazı tipi oyunda kullanılanla değiştirildi
+    - dağ keçisi boynuzu düşme oranı, yaban domuzu azı dişleriyle eşleşecek şekilde artırıldı
+v0.4.6.9
+    - yardım sayfasının üretim bölümüne kalite/tecrübe üst sınırlarının kısa açıklaması eklendi, biraz eskimiş olan diğer bazı bölümler güncellendi
+    - üretim kalitesi formülleri hafifçe değiştirildi (kademe başına fark azaltıldı, temel değer parametresi biraz değiştirildi)
+v0.4.6.10
+    - beceri ipuçlarındaki yanlış üretim kalitesi üst sınırları düzeltildi
+v0.4.6.11
+    - 'azim' kilometre taşlarındaki 'zihin gücü' bonusları biraz daha yüksek seviyelere taşındı
+    - 'Teçhizat' sekmesinde yuvasına tıklayarak kalkanı çıkarmayı imkânsız kılan küçük bir hata giderildi
+    - muhtemelen gereksiz bazı stat güncellemeleri kaldırılarak oyunu iyileştirme denemesi yapıldı; gerçekten gerekli çıkarlarsa geri alınacak
+v0.4.6.12
+    - 'kömür' 'odun kömürü' ile değiştirildi; kömür kullanan tarifler belirli bir eşya yerine 'kömür' malzeme türünü kullanacak şekilde değiştirildi
+    - 'dövme' becerisinin ipucu, o becerinin tam teçhizat eşyası olmadığı için yalnızca parçaların kalite üst sınırını gösterecek şekilde düzeltildi
+    - zırhtan geçen asgari hasar %10'dan %5'e düşürüldü
+v0.4.6.13
+    - gerçek bir %0 vurulma şansına izin vermek için isabet/kaçınma formülü hafifçe değiştirildi; bu yüzden düşman grup sayısından ve düşman boyutundan (beceri üzerinden) gelen değiştiriciler SP/KP'ye uygulanacak şekilde değiştirildi (0'ı onlarla çarpmak anlamsız olacağı için), bu da etkilerinin ne kadar olduğunu değiştirebilir
+    - ilgili beceri açık değilken daha iyi alet kuşanırken oluşan bir hata giderildi
+v0.4.6.14
+    - 'sıfırlama'nın yalnızca geliştirme dışı kayıtta çalışması düzeltildi (geliştirmede olsanız bile onu yapıyordu, hoppala)
+    - seçenekler paneli artık 'Escape' tuşuyla kapatılabiliyor
+    - toplama kazançlarını her toplama döneminde ve toplama bittiğinde toplamı günlüğe yazma seçenekleri eklendi; ikisi de öntanımlı olarak işaretli
+    - bazı kategoriler için azami mesaj sayısı artırıldı
+    - yardım sayfasına hatayla ilgili bir bölüm eklendi
+v0.4.6.15
+    - 'sıfırlama' düzgün düzeltilmemiş olabilir
+    - 'Meditasyon'un ve muhtemelen başka bazı becerilerin, açık olmadıkları hâlde ipuçlarında '?????' yerine tam adlarıyla görünmesiyle ilgili küçük hata giderildi
+    - toplama eylemi sırasında .14'e geçildiğinde .gathered_materials tanımsız olduğu için hata oluşmasına yol açan ara sıra görülen hata giderildi
+v0.4.6.16
+    - gösterilen düşman isabet/kaçınma değerlerinin gerçek şansları yansıtmaması düzeltildi
+v0.4.6.17
+    - "Kenar mahalle"de çete yenilmemişken kullanılması gereken arka plan müziğinin, yenildikten SONRA kullanılmasına yol açan yanlış koşul düzeltildi
+    - 'Kenar mahalle kabadayısı' artık hayvanlar kitabında görünüyor
+v0.4.6.18
+    - 'Çete ini'nin düzgün kilitlenmemesiyle ilgili sorun giderildi
+    - basamak sayıları farklı olduğunda sürüm karşılaştırma işlevinin düzgün çalışmamasıyla ilgili sorun giderildi (örneğin 0.4.6 ile 0.4.6.1'i karşılaştırırken)
+    - kaçırılmış bazı geçmiş lokasyon açılışlarını verirken yüklemede oluşan ciddi bir hata giderildi
+v0.4.6.19
+    - iki tüccara uğrandığında ikincisinin bazı eşyalarda birincinin fiyatlarını göstermesine yol açan bir hata giderildi (kâr marjları farklı olmasına rağmen); bu gerçek takas fiyatlarını etkilemiyordu, yalnızca gösterimi
+    - teçhizatın gösterilen fiyatlarının yanlış olmasıyla ilgili bir hata giderildi
+v0.4.6.20
+    - ilaçların etkilerinin beceri seviyesiyle düzgün güncellenmemesiyle ilgili bir hata giderildi
+v0.4.6.21
+    - zırh fiyatlarının "hiçbir şey" olarak gösterilmesiyle ilgili bir hata giderildi
+    - diyalog cevaplarını gösteren kod hafifçe değiştirildi, başlangıç açıklaması ayarlamak mümkün kılındı
+v0.4.6.22
+    - oyun içi tarihin yanlış artmasıyla ilgili bir hata giderildi
+v0.4.6.23
+    - oyun içi tarih için bir düzeltme daha
+    - fazla efekt varken etkin efekt ipucunun görüş alanının dışına taşmasıyla ilgili bir görüntü sorunu giderildi; artık ek sütunlara sarıyor
+v0.4.6.24
+    - hızlı yolculuk sistemi, herhangi bir lokasyonu favorilemeye izin verecek şekilde genişletildi (adının yanındaki yıldız simgesine tıklayarak)
+v0.4.6.25
+    - lokasyon kilitlemeyle ilgili bir hata giderildi (yani meydan okumaları / çete inini geçmek)
+v0.4.6.26
+    - içinde bulunduğun bir lokasyonun favorisini kaldırırken oluşan bir hata giderildi
+    - lokasyon seçeneklerinin içeriği, ekranın dışına taşacaksa artık otomatik olarak görüş alanına kaydırılıyor
+v0.4.6.27
+    - tüm etkin efektlerin bir anda etkinleşmesiyle ilgili o şey düzeltildi
+v0.4.6.28
+    - tüketilebilirler için otomatik kullanma seçeneği eklendi; yalnızca dövüşte tetikleniyor ve eşya tükenince "unutuluyor"
+    - yer açmak için kahraman dövüş sekmesindeki "sld gücü" "sld" ile değiştirildi, yuvarlama biraz değiştirildi (100'e eşit/büyük değerler artık tam sayıya yuvarlanıyor)
+    - meditasyonun, açık olmasına rağmen bazı ipuçlarında hâlâ ara sıra '?????' görünmesiyle ilgili bir hata giderildi
+v0.4.6.29
+    - üretimin teçhizat sekmesinde gösterilen bazı parçaların, başka bir tarife geçildikten sonra görünür kalmasıyla ilgili bir hata giderildi
+v0.4.6.30
+    - dövüşte eşya tükenirse ciddi hata veren otomatik kullanma hatası giderildi
+v0.4.6.31
+    - dağ kampındaki akıl almaz derecede yüksek uyuma tecrübe kazancı düzeltildi
+v0.4.6.32
+    - karakter saldırı döngüsü, düşman saldırı döngülerinin çalışma biçimiyle tutarlı olacak şekilde setInterval yerine setTimeout kullanacak biçimde yeniden yazıldı; bu, uygulama farklılıklarından kaynaklanan Firefox'taki bekleme süresi tutarsızlığını hafifletmeli
+    - 'Uyuma' 5. seviyedeyse oyun yüklemede ciddi bir hata veren sorun giderildi (daha yüksek/düşük seviyeler sorunsuzdu; sorun, başka bir beceriyi açma eyleminin açan beceriyi ilgili olarak kaydetmeye yetmediği durumda oyunun ilgili becerilerin gösterimini güncellemeye çalışmasıydı)
+    - beceri seviye ilerlemesi % gösteriminde artık aşağı yuvarlanıyor
+v0.4.6.33
+    - dövüş döngüsüyle ilgili başka bir hata giderildi
+v0.4.6.34
+    - dayanıklılık veriminin yanlış değer göstermesiyle ilgili küçük hata giderildi
+v0.4.6.35
+    - dövüşte canın 0'a inmesine (düşman saldırıları yerine) negatif can yenilenmesi yol açtığında yanlış davranmasıyla ilgili bir hata giderildi
+v0.4.6.36
+    - kod artık paketleniyor
+v0.4.6.37
+    - daha ağır silah saplarının ek saldırı gücünün hesaplara katılmamasıyla (dolayısıyla hiçbir işe yaramamasıyla) ilgili bir hata giderildi
+v0.4.6.38
+    - yeni açılan yatakların hızlı yolculuğa otomatik eklenmemesiyle ve orada görünmek için kaydet+yeniden yükle gerektirmesiyle ilgili bir hata giderildi
+    - eski kayıtlarda 'Baraka'nın başlangıçta hızlı yolculuk listesinde olmamasıyla ve orada görünmek için kaydet+yeniden yükle gerektirmesiyle ilgili bir hata giderildi
+    - beceri adlarının bazı durumlarda düzgün güncellenmemesi düzeltildi
+    - nefes tecrübesi artık tüm dövüş lokasyonlarında da, idman dışındakiyle aynı hızda kazanılıyor ('seyrek hava' türü lokasyonlar bunun üstüne lokasyon türünden de tecrübe kazandırıyor)
+    - sıçan eti üretmek için gereken sıçan kuyruğu sayısı 8'den 3'e düşürüldü
+    - 'aptallar için tıp' artık küçük bir düz bonus yerine x1,2 Tıp beceri tecrübe kazancı veriyor
+v0.4.6.39
+    - favorilenmiş bir duruştan favorilenmemiş birine geçildiğinde, üzerine gelinen favori duruş listesinin önceki seçimi hâlâ etkin göstermesiyle ilgili küçük bir görüntü hatası giderildi
+    - toplama becerisinin gereken asgarinin altında olmasının toplama verimini azamiye çıkarmasına yol açan bir hata giderildi
+    - alet değiştirmenin (ve muhtemelen başka bazı tetikleyicilerin) mevcut etkinliğin ipucunda yol açtığı bir görüntü hatası giderildi
+    - eskiden çeviklik veren silahlar artık KP veriyor; zırhlar bu açıdan değiştirilmedi
+    - kılıçlar artık küçük bir SP bonusu veriyor
+    - silahsız becerisi bir KP bonusu kazandı
+</pre>
+</div>
+<button type="button" class="collapsible">v0.4.3/v0.4.4 - Arayüz yenilemesi ve Üretim</button>
+<div class="content"><pre>
+v0.4.3
+    - arayüz tek sekme olacak şekilde yenilendi
+    - bir üretim sistemi eklendi
+    - 3. tür edilgen etkinlik, kaynak toplama, eklendi; yeni oyun başlatmıyorsan hem bunun hem üretim için köy yaşlısıyla konuş
+    - bazı eylem simgeleri değiştirildi
+    - kahraman statlarının dökümleri genişletildi
+    - yeni teçhizat yuvası; şu an oraya girebilecek 1 üretilebilir şeyle
+    - zırhtan geçen asgari hasar artık 1 yerine özgün değerin %10'u
+    - silah becerileri (ve silahsız) artık isabet şansını artırıyor
+    - 2 yeni dövüş lokasyonu: sıçan destanı sürüyor + ormanda 3. dövüş lokasyonu (2.'yi geç, sonra biriyle konuş)
+    - lokasyon türü cezalarının beceri seviyesiyle ölçeklenmesi değiştirildi (artık seviyelerle sabit bir değişim oranı var; yani ilk birkaç seviye eskisi kadar keskin azaltmayacak)
+    - beceri açıklamaları artık id'lerini gösteriyor
+    - kitaplardaki ve beceri ödüllerindeki beceri adları artık başka yerlerde gösterilenle örtüşüyor (örneğin henüz açılmamış bir beceriye verilen çarpanın adı "????" olarak görünecek)
+    - arka plan 'seslerinin' sıklığı biraz düşürüldü
+    - biraz zayıflatıldı: 2. kademe teçhizatın saldırı gücü, duruşlar (ağır/hızlı), bazı düşmanların tecrübe değerleri, silahsız becerisinden gelen saldırı hızı, bazı beceri kilometre taşı ödülleri
+    - chrome'da geliştirici araçları açıkken ipuçlarının çok takılmasıyla ilgili sorun giderildi
+    - becerilerde 0. seviyeye ulaşma mesajlarıyla ilgili hata giderildi (belki bu kez sonunda çalışır, ha?)
+    - düşman boyutunun sürekli "küçük"e dönmesiyle ilgili bir hata giderildi
+    - 'demir deri' için tecrübe gereksinimleri artırıldı ve herhangi bir zırh giyilirken tecrübe kazancı daha da düşürüldü
+    - çok hedefli duruşlarda ipucu yenilenmesiyle ilgili bir hata giderildi
+    - lokasyon türlerinin ipuçları artık cezaları gösteriyor (hem güncel hem temel değerler)
+    - karakter statlarını güncelleyen kodun bir kısmı, ileride daha kolay kullanılsın diye yeniden yapılandırıldı
+    - basit bir yükleme ekranı eklendi
+    - bazı çirkin kodlar daha yönetilebilir bir hâle yeniden yazıldı
+v0.4.3a
+    - kalkan kullanırken dövüşü bozan hata giderildi
+v0.4.3b
+    - üretim ipuçları düzeltildi
+    - çalışmayan bazı açılışlar düzeltildi
+    - tüketilebilirlerin azami can/dayanıklılığı NaN yapmasıyla ilgili hata giderildi
+    - yeni teçhizattan bazılarını takas etmeye çalışırken oluşan hata giderildi
+v0.4.3c
+    - açılışlardan biriyle ilgili hata giderildi
+    - üretimdeki yanlış tarif adı düzeltildi
+    - yeni teçhizattan bazılarını takas etmeye çalışırken oluşan hata giderildi (yine)
+    - kalite yuvarlaması düzeltildi
+v0.4.3d
+    - üretim kalitesinin %100'e dönmesiyle ilgili hata giderildi
+    - açılmış bazı etkinliklerin yeniden yükledikten sonra tekrar kilitlenebilmesiyle ilgili hata giderildi
+v0.4.3d2
+    - kaynak toplamadaki yanlış şanslar düzeltildi (X olmaları gerekirken 1 eksi X oluyorlardı)
+v0.4.3e
+    - eşya üretimindeki yanlış başarı şansı düzeltildi
+    - erişilemeyen açılış düzeltildi
+    - yeni giysinin yeniden yükleme olmadan çıkarılamamasıyla ilgili hata giderildi
+    - silahsız hasar bonusunun iki kez uygulanmasıyla ilgili hata giderildi
+    - tariflerin otomatik kaydırılması, gereksiz olduğunda artık gerçekleşmeyecek şekilde düzeltildi
+v0.4.3f
+    - takas hatası giderildi
+v0.4.3f2
+    - "Çiftlik sorumlusu" ile konuşurken bozuk bir açılış düzeltildi
+v0.4.3g
+    - ışık düzeyi çarpanının ve silahsız saldırı hızının düzgün kaldırılmamasıyla ilgili hata giderildi
+    - bazı toplama eylemlerinin ölçeklemesi düzeltildi (artık 1 değil 0'dan başlıyorlar)
+    - yün artık kurt derisi yerine düzgünce yün kumaşa dönüşüyor
+    - saldırı döngüleri için zaman ayarlamasıyla ilgili sorun giderildi
+v0.4.3h
+    - elit kurt sıçanı muhafızlarına düşen eşyalar eklendi; şu an üretimde kullanımı olmayan ama ileride kazanabilecek yeni bir eşya dahil
+    - kaynak toplama ganimetinin ganimet kategorisi yerine olay kategorisinde gösterilmesiyle ilgili hata giderildi
+    - demir zincir zırh gövde parçasını takas etmeyi imkânsız kılan hata giderildi
+v0.4.3h2
+    - aynı yığınlanamaz eşyadan 3 veya daha fazlasıyla işlem yapılırken oluşan takas hatası giderildi
+v0.4.3h3
+    - önceki "düzeltmenin" yol açtığı berbat sorunlar giderildi
+    - 'Demir Zincir Zırh' üretmek artık doğru beceriye tecrübe veriyor
+v0.4.3i
+    - alet kuşanmayla ilgili hata giderildi
+    - dövüş zamanlayıcılarıyla ilgili hata giderildi
+v0.4.3i2
+    - başka bir takas hatası giderildi (umarım bu son olur...)
+v0.4.3j
+    - çevre becerilerinin açıklamaları formül değişikliğini yansıtacak şekilde güncellendi
+    - üretimle ilgili birkaç hata daha giderildi
+v0.4.3j2
+    - başka bir takas hatası giderildi
+v0.4.3k
+    - toplama/üretim şanslarının ölçekleme formülleri düzeltildi
+    - savunma artık düşmanlarda da kahramandaki gibi çalışıyor (%90'dan fazlasını savuşturmuyor)
+v0.4.3k2
+    - 3. orman lokasyonunu temizlemeye ait bozuk bir açılış düzeltildi ve oradan gelen alan türü tecrübe kazancı artırıldı
+v0.4.3l
+    - mesaj günlüğünün arka plan müziği süzgeci durumunun kaydedilmemesiyle ilgili sorun giderildi
+    - mesaj günlüğünde yanlış mesaj türünün kaldırılmasıyla ilgili bir hata giderildi
+    - düşme şanslarının hayvanlar kitabı ipuçlarında yanlış yerlerde görünmesiyle ilgili hata giderildi
+v0.4.3m
+    - gösterilen beceriler artık kategorilerde gruplanıyor
+    - kahraman seviyeleri artık beceri tecrübe kazancını artırıyor
+    - birkaç küçük denge düzeltmesi ve onarım
+    - iyileşme hatası giderildi
+    - çevre cezalarında belirli bir stata yalnızca tek bir etkinin uygulanmasıyla ilgili hata giderildi
+v0.4.3n
+    - parça değeri artık kaliteyle ölçekleniyor
+    - başka bir iyileşme hatası giderildi
+    - deri şapkalarla ilgili hata giderildi
+    - silah türüyle ilgili bonusların beceri seviye atlamasında uygulanmamasıyla ilgili bir hata giderildi
+
+v0.4.4
+    - tüm eşyalar artık yığınlanıyor (kalitesi olanlarda yalnızca kalite aynıysa)
+    - etkin efektlerin çalışma biçimi tamamen yeniden yazıldı ve gösterimleri güncellendi
+    - üretilen parçaların tecrübe değeri artık malzeme maliyetleriyle ölçekleniyor (artık yalnızca hançer bıçağı üretmek zorunda değilsin)
+    - bazı üretim tariflerinin malzeme maliyeti artırıldı
+    - asgari üretim tecrübe değeri artırıldı
+    - kaynak toplama etkinlikleri yavaşlatıldı
+    - beceri gereksinimlerin üstündeyken üretim tecrübesi artık azalıyor: eşya tariflerinde seviye başına -%20; parça/teçhizatta yumuşak sınır 8*kademe, katı sınır 8*kademe*sqrt(kalite_çarpanı)
+    - becerilere yapılan atıflar artık düzgün güncellenmeli, açıklamalarda artık "?????" yok
+    - adlar/fiyatlar aynıysa eşya kalitesi artık ek bir sıralama parametresi olarak kullanılıyor
+    - teçhizat üretiminde mevcut parçalar artık sıralanıyor (kademe -> ad -> kalite)
+    - üzerine gelince duruş listesinin genişliğinin hafifçe değişip tuhaf bir titremeye yol açtığı görsel hata giderildi
+    - ana ve geliştirme sürümlerinin kayıtları ayrıldı
+    - eşya değerleriyle ilgili bazı hatalar giderildi
+    - eşya fiyatı yuvarlaması düzeltildi
+    - bazı gösterim öğeleri, umarım yönetmesi çok daha kolay olacak bir biçime güncellendi
+    - eşya kalitesi kesirlerden tam sayılara yeniden yazıldı (artık kayan nokta hataları yok, yaşasın)
+v0.4.4a
+    - bir eşyadan 1'den fazlası satılırken oluşan hata giderildi
+    - eşya tarifi ipuçlarının gerektiğinde güncellenmemesiyle ilgili hata giderildi
+v0.4.4b
+    - bir eşyadan 1'den fazlası alınırken oluşan hata giderildi
+v0.4.4c
+    - üretim tecrübesi üst sınırıyla ilgili hata giderildi
+    - giysi tariflerinde malzeme sayısının her zaman 0 olmasıyla ilgili hata giderildi
+    - kitap okumayı imkânsız kılan hata giderildi
+v0.4.4d
+    - beceri katı sınırı geçtiğinde üretim artık 0 değil 1 tecrübe veriyor
+    - üretimde parça sıralaması düzeltildi
+v0.4.4e
+    - kayıt içe aktarmaya hızlı bir düzeltme
+v0.4.4f
+    - her 60 dakikada bir ek ayrı otomatik kayıt eklendi; seçenekler panelinden yüklenebiliyor
+    - seçenekler paneline diğer sürümden kayıt içe aktarma düğmesi eklendi (geliştirmedeysen ana, anadaysan geliştirme)
+    - başarısız üretimde tarif gösteriminin yenilenmemesi düzeltildi ('eşyalar' kategorisi için)
+    - dışa aktarılan dosyalardaki yanlış ay numaralandırması düzeltildi
+    - %'ye dayalı efektlerin bozuk adları düzeltildi
+v0.4.4g
+    - bazı kaynak toplama etkinliklerinin tecrübe kazançları düzeltildi
+    - parçasız teçhizatın fiyatlarıyla ilgili hata giderildi
+v0.4.4h
+    - diyalog üzerinden para alındıktan sonra gösterilen paranın güncellenmemesi düzeltildi
+    - bazı durumlarda geliştirmede kayıtların yüklenmemesiyle ilgili bir hata düzeltildi
+v0.4.4i
+    - parçaların ek statlarıyla ilgili hata giderildi
+</pre>
+</div>
+<button type="button" class="collapsible">v0.4 - Dövüş Duruşları</button>
+<div class="content"><pre>
+v0.4.0
+    - dövüş duruşları eklendi, açmak için köy muhafızıyla konuş (onunla daha önce tanıştıysan ipucu iste); adların çoğunu discord kanalımızdaki Varian önerdi
+    - dövüşle ilgili bazı beceriler artık özgün koşulu (örneğin bir eylemde başarılı olmak) sağlanmasa da tecrübe kazanıyor, gerçi yarı verimle
+    - sıçan destanı sürüyor
+    - köyden ayrıldıktan sonra biraz daha içerik
+    - bazı arka plan "sesleri" eklendi
+    - yeni beceriler ve etkinlikler (köydeki ve mağaradaki idman seçeneklerine bak; yeterince ilerlediysen anında açılmış olabilirler)
+    - denge düzeltmeleri; gösterilen bazı metinlerde değişiklikler
+    - değişiklik günlüğü ve yardım sayfası, gezinmesi daha kolay bir biçime getirildi
+    - uyurken yenilenme artık "Uyuma" becerisiyle ölçekleniyor
+    - hepsini takas et düğmesi + başka bir takas hatası düzeltmesi (lütfen bu son olsun)
+v0.4.0a
+    - denge değişiklikleri
+    - silah değiştirmek artık ölü düşmanların birden yeniden saldırmaya başlamasına yol açmıyor
+    - CSS düzeltmeleri
+    - diyalog metni düzeltmeleri
+    - "Varlık sezme" becerisinden seviye bonusları, başka bazı becerilerin bonusları genişletildi
+v0.4.0b
+    - daha fazla denge değişikliği
+    - bazı arka plan 'sesleri' değiştirildi
+    - hata düzeltmeleri
+v0.4.0c
+    - bazı saldırıların bir düşman dalgasını tek vuruşta yok ettiğinde dayanıklılığın iki kat harcanmasıyla ilgili hata giderildi
+    - arka plan 'seslerinin' sıklığı düşürüldü
+    - varlık sezmenin azami seviyesi yükseltildi ama başlangıç tecrübe maliyeti düşürüldü
+    - gösterilen canın yuvarlaması düzeltildi
+    - bazı beceri çubuklarının ikiye katlanması düzeltildi
+    - kitap okurken envanterin her gerçek saniyede sıralanmasına yol açan bir hata giderildi
+    - 'geniş yay'ın dayanıklılık maliyeti 4'e yükseltildi
+v0.4.0d
+    - çok hedefli duruşların vuruş sayısı artık gerektiğinde açıklamalarında düzgün güncelleniyor
+    - 'şüpheli duvar', 'köy muhafızı' ve 'şüpheli adam' artık 'küçük' hedef değil
+    - 'geniş yay'ın hasar çarpanı 0,4'e düşürüldü
+    - 'mağara derinlikleri' lokasyonu artık birazcık daha zor
+    - lokasyon türleri artık aşamalarını gösteriyor (örneğin 'karanlık III')
+    - 'çevik adımlar' becerisinin fazla düşük tecrübe maliyeti düzeltildi
+v0.4.0e
+    - düşman saldırılarının beklenenden yavaş tetiklenmesi sorununu gidermek için düşman saldırı zamanlayıcıları dengelendi (beklenen süre ile gerçek süreye göre)
+v0.4.0f
+    - beceri seviyelerinden gelen tecrübe çarpanı ödüllerinin oyun yeniden yüklendikten sonra düzgün çalışmamasıyla ilgili sorun giderildi
+v0.4.0g
+    - duruş becerilerinin hiçbir etkisi olmaması düzeltildi
+    - 'Veri'deki dayanıklılık verimi artık 2 ondalık basamakla gösteriliyor
+    - küçük CSS düzeltmesi
+v0.4.0h
+    - bazı beceri açıklamalarındaki yanlış duruş adları düzeltildi
+    - kritik oranı / kritik gücü dökümü artık 2 ondalık basamakla gösteriliyor
+v0.4.0i
+    - azami seviyeye ulaşmış bir beceriyle etkinliğe girildiğinde tecrübe %'sinin NaN olmasına yol açan bir hata giderildi
+    - envanter için CSS düzeltmeleri
+v0.4.0j
+    - önceki yamanın bozduğu çoklu takas düğmeleri düzeltildi
+v0.4.0k
+    - bazı kodlar basitleştirildi
+v0.4.0l
+    - envanter için CSS düzeltmeleri
+v0.4.0m
+    - beceriye özel tecrübe bonuslarının çalışmaması düzeltildi
+    - birkaç beceri seviyesi ödülü daha eklendi
+    - beceri seviyelerinden gelen tecrübe çarpanları ve kritik oranı biraz düşürüldü
+v0.4.0n
+    - envanter için başka bir CSS düzeltmesi
+    - takas için başka bir hata düzeltmesi (gösterilen değer ile gerçek değer bazen farklıydı)
+v0.4.0o
+    - duruş becerilerinin temel tecrübe maliyetleri 60'ta eşitlendi, tecrübe kazanma biçimleri değiştirildi
+    - duruş becerileri için üst beceri eklendi
+    - mevcut becerilere birkaç ad daha eklendi
+</pre>
+</div>
+
+<button type="button" class="collapsible">v0.3.5 - Ekonomi Yenilemesi</button>
+<div class="content"><pre>
+v0.3.5
+    - ekonomi yenilendi (düşme oranları artık düşmüyor; onun yerine düşman ganimeti daha çok satıldıkça fiyatı düşüyor, ayrıca zamanla yavaşça toparlanıyor; çözümü discord kanalımızdaki 10mart10 önerdi)
+    - [son dövüş lokasyonu] ve [oyuncunun son uyuduğu lokasyon] için hızlı yolculuk eklendi
+    - tecrübe çarpanları artık gösteriliyor: beceriler için üzerine gelince açılan ipucunda, kahraman için veri sekmesinde
+    - kalkan savunması becerisi artık savuşturulabilecek azami hasarı artırıyor; savuşturma şansı 5 puan düşürüldü (%75'ten %95'e çıkıyor)
+      ayrıca artık 20 değil 30 seviyesi var
+    - dövüş bölgelerinin açıklamaları artık adlarının üzerine gelince ipucu olarak görünüyor
+    - "yardım" bölümüne daha fazla girdi eklendi
+    - iki mağara bölgesinin temizleme tecrübe ödülleri zayıflatıldı, iki orman bölgesine tecrübe ödülleri eklendi
+    - kurtlar güçlendirildi (muhtemelen yeterince değil, siz fazla güçlüsünüz)
+    - beceriler, kahraman ve eşyalar için başka birkaç denge değişikliği
+    - dövüşteki düşmanlar artık SP/KP yerine kahramanı vurma ve kahramanın saldırısından kaçınma şanslarını gösteriyor
+    - bazı biçem düzeltmeleri, para için biçemlendirme
+    - üst beceri tecrübe kazancı düzeltildi (artık en çok seviye atlamış alt becerileriyle tecrübe olarak aynı hizada kalacaklar)
+    - beceri sıralaması eklendi (ada ve seviyeye göre); envanter sıralaması düzeltildi; artık düğmeye tekrar tıklayarak sıralama yönünü de ters çevirebilirsin (artan ile azalan arasında geçiş)
+v0.3.5a
+    - küçük CSS düzeltmesi
+v0.3.5b
+    - teçhizat gösterimi düzeltmesi
+    - takas hatası düzeltmesi
+v0.3.5c
+    - beceri ödüllerinin iki kez eklenmesi düzeltildi
+v0.3.5d
+    - bazı değerler düzgün yenilenmiyordu
+    - beklenmeyen sonuçlar için bazı uyarıların konsola yazılması eklendi
+    - bazı yuvarlama sorunları giderildi
+    - bazı denge değişiklikleri
+    - başka bir takas düzeltmesi
+v0.3.5e
+    - üst beceriden gelen tecrübe bonusu artık beceri ipucundaki tecrübe kazançlarına dahil
+    - küçük denge değişikliği
+    - bazı biçemlendirme düzeltildi
+v0.3.5f
+    - saldırı hızıyla ilgili sorun (umarım) giderildi
+v0.3.5g
+    - silahsız saldırı hızı bonusunun eklenmemesi düzeltildi
+v0.3.5h
+    - eski kayıtların yüklenmesiyle ilgili küçük hata giderildi
+v0.3.5i
+    - dayanıklılık 0'ken saldırıların hızlanması düzeltildi
+</pre>
+</div>
+<button type="button" class="collapsible">v0.3.4</button>
+<div class="content"><pre>
+v0.3.4
+    - kitaplar eklendi (şimdilik yalnızca 2 tane var); ikisi de bitirildiğinde tecrübe kazancına küçük bonuslar veriyor
+v0.3.4e
+    - kalkan savuşturma şansına büyük güçlendirme, başka denge değişiklikleri
+    - hata düzeltmeleri (takas, yükleme, hayvanlar kitabındaki yanlış değerler)
+    - otomatik kayıtta konsol mesajı eklendi
+    - okunmakta olan kitaba görsel ayrım eklendi
+    - lokasyonlardaki yolculuk seçenekleri, yolculuktan başka bir şey yoksa artık gruplanmıyor (örneğin mağarada)
+    - envanter gösterim işlevi, artık yalnızca tüm eşyaları değil tek bir eşyayı da yenileyebilecek şekilde değiştirildi
+    - eski sürümlerden gelen kayıtlar için uyumluluk
+    - dövüşteki o çirkin "svn" gösterimi düzeltildi
+v0.3.4f
+    - "dar manevralar" becerisinin ödülü düzeltildi
+    - "dayanıklılık verimi" ödülünün gösterimi düzeltildi
+    - bölge açılışlarıyla ilgili sorun giderildi (bir dövüş bölgesi temizlenerek açılması gerekiyorsa çalışmıyordu)
+    - küçük denge değişiklikleri
+v0.3.4g
+    - hayvanlar kitabındaki düşme şanslarının yanlış yuvarlanması düzeltildi
+    - okuma süresindeki yuvarlama eksikliği düzeltildi
+    - daha zor bölgelerden gelen tecrübe kazançları düzeltildi
+    - bazı açıklamalardan alt çizgiler kaldırıldı
+    - bazı tecrübe bonusları biraz zayıflatıldı
+v0.3.4h
+    - kalkan savuşturma şansının çok erken %100'e ulaşması düzeltildi
+    - dövüşteki savuşturma şansı gösterimi düzeltildi
+    - ileride kullanmak üzere kayıt dosyasına oyun sürümü eklendi
+v0.3.4i
+    - kalkan kullanılırken artık bir saldırıdan 1'den az hasar alınabiliyor
+    - bazı hasar sayıları yuvarlandı
+v0.3.4i-2
+    - CSS'e küçük düzeltme
+</pre></div>
+
+<button type="button" class="collapsible">v0.3.3</button>
+<div class="content"><pre>
+v0.3.3
+    - beceri kilometre taşlarından gelen stat kazançları yeniden dengelendi
+    - ilerleyişi yumuşatmak için kaynayan tarla ile mağara derinlikleri arasına bir dövüş lokasyonu daha eklendi
+    - beceri grupları üst becerilerle değiştirildi; artık yalnızca tecrübe bonusu veriyorlar ve alt becerilerin kendi kilometre taşları var
+    - becerilerden/kilometre taşlarından/teçhizattan/seviyeden gelen stat hesaplamaları daha yönetilebilir bir biçime yeniden düzenlendi
+    - teçhizat stat hesaplamaları yeniden düzenlendi
+    - tecrübe bonusları eklendi (şimdilik yalnızca beceri kilometre taşlarından)
+</pre></div>
+<button type="button" class="collapsible">v0.3</button>
+<div class="content"><pre>
+v0.3
+    - düşme şansı artık belirli bir düşmandan kaç tane öldürüldüğüyle ölçekleniyor; 999+ değerinde 1/10'una kadar iniyor
+    - yığınlanabilir eşyalar takas edilirken oluşan küçük hatalar giderildi
+    - başlangıç yılı 1000 olarak değiştirildi
+    - lokasyon seçenekleri artık yalnızca ikiden fazla olduğunda klasörleniyor (eskiden birden fazlada oluyordu)
+    - teçhizat fiyatları ~%50 artırıldı
+    - öldürülen tüm düşmanların listesini içeren hayvanlar kitabı eklendi (öldürme sayısı, açıklama, statlar, düşen eşyalar ve şansları)
+    - "uyuma" becerisinin ödülleri yeniden dengelendi
+v0.3b
+    - oyun yüklendikten sonra silah becerilerindeki yanlış kilometre taşı seviyeleri düzeltildi
+    - bazı becerilerin tecrübe ölçeklemesi değiştirildi
+    - kalkan savunması becerisindeki yanlış hesaplar düzeltildi
+v0.3c
+    - görünür olmak için gerekenden az tecrübesi olan bir beceri içeren kayıt yüklenirken oluşan küçük hata giderildi
+    - bir sürü sorunu önlemek için kayıt dosyalarının yüklenme biçimi değiştirildi
+</pre></div>
+<button type="button" class="collapsible">v0.2.9</button>
+<div class="content"><pre>
+v0.2.9
+    - biraz savunma veren "demir deri" becerisi eklendi; tecrübe, hiç zırh kuşanmadan dövüşerek kazanılıyor
+    - hiç zırh kuşanmadan dövüşürken kaçınma tecrübesi %50 artıyor (buna adrenalin bonusu diyelim)
+    - isabet şansı formülü doğrusal olmayan hâle getirildi
+v0.2.9b
+    - "demir deri" artık çalışıyor
+    - bazı formüllere küçük düzeltmeler
+</pre></div>
+<button type="button" class="collapsible">v0.2.8</button>
+<div class="content"><pre>
+v0.2.8
+    - mesaj günlüğü artık dövüş/seviye atlama ve açılış/olay/ganimet ile ilgili şeyler için süzülebiliyor
+    - artık herhangi bir kategoride (iş, idman, yolculuk, konuşma, takas) 1'den fazla seçenek varsa,
+      hepsi bir arada tıkıştırılmak yerine ayrı bir seçenek listesinden erişiliyor
+    - bazı beceri etkilerinin gösterilen değerleri yuvarlandı
+</pre></div>
+<button type="button" class="collapsible">v0.2.7</button>
+<div class="content"><pre>
+v0.2.7
+    - lokasyon türü sistemi yenilendi
+    - bazı işlerin ödemeleri artık ilgili beceriden etkileniyor
+    - diyalog cevapları (mesaj günlüğünden) diyalog kutusuna taşındı
+</pre></div>
+<button type="button" class="collapsible">v0.2.5</button>
+<div class="content"><pre>
+v0.2.5
+    - ipuçları ekranın dışına taşmayacak şekilde konumlandırması değiştirildi
+    - gösterilen bazı sayılar yuvarlandı
+    - ilk düşman türü biraz zayıflatıldı
+    - birkaç küçük hata düzeltmesi
+</pre></div>
+<button type="button" class="collapsible">v0.2.4</button>
+<div class="content"><pre>
+v0.2.4
+    - (dövüş bölgeleri için) lokasyon türleri eklendi; isabet/kaçınma şansına birkaç ek ceza getiriyorlar
+    - 2. dövüş bölgesi temizlendikten sonra açılan yeni bir iş eklendi
+</pre></div>
+<button type="button" class="collapsible">v0.2.2</button>
+<div class="content"><pre>
+v0.2.2
+    - çok düşmanlı lokasyonların X düşman grubu öldürmek yerine X düşman öldürmeyi gerektirmesiyle ilgili sorun giderildi
+    - dayanıklılığın karakterin saldırı hızı ve saldırı gücü üzerindeki etkileri eklendi
+    - [yaşayan] düşman sayısı artık karakterin isabet şansını olumsuz etkiliyor
+    - düşman sayısı, kazanılan karakter tecrübesini grup boyutunun kareköküyle çarpıyor
+    - yeni idman etkinliği
+</pre></div>
+<button type="button" class="collapsible">v0.2.1</button>
+<div class="content"><pre>
+v0.2.1
+    - dosya içe aktarırken çıkan iki küçük sorun giderildi
+    - bölge sayfası gizliyken dövüşün duraklamasıyla ilgili sorun giderildi
+    - dövüş döngüleri yeniden yazıldı, sekme odakta değilken de düzgün çalışacak hâle getirildi
+</pre></div>
+<button type="button" class="collapsible">v0.2</button>
+<div class="content"><pre>
+v0.2.0
+    - bulabildiğim tüm hatalar giderildi;
+    gruplara karşı dövüşmek artık sorunsuz çalışmalı (denge dışında)
+
+    - bir sürü kod yeniden yapılandırıldı; çoğunlukla şeyler yeni yerlere taşındı,
+    ama gösterimi güncellemek için birkaç yeni metot da yazıldı
+
+    - sayfa seçim düğmeleri en üste taşındı
+    - fontawesome'dan google icons'a geçildi
+</pre></div>
+    <script>
+        const btns = document.getElementsByClassName("collapsible");
+        //const content = document.getElementById("content");
+    
+        for(let i = 0; i < btns.length; i++) {
+            btns[i].addEventListener("click", () => {
+                btns[i].classList.toggle("active");
+                const content = btns[i].nextElementSibling;
+                if (content.style.display !== "block"){
+                    content.style.display = "block";
+                } else {
+                    content.style.display = "none";
+                }
+            });
+        }
+        
+    </script>
+    
+</body>
+</html>

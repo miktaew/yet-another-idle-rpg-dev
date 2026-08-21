@@ -444,6 +444,7 @@ const translated_pages = {
     },
     changelog: {
         english: "changelog.html",
+        turkish: "changelog.tr.html",
     },
 };
 
