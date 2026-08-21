@@ -350,9 +350,16 @@ const global_flags = globalThis.__test_flags;
     // the "text not found" placeholder. This picks the first still-missing id at
     // runtime rather than naming one, so translating more text cannot make the
     // check stale - it broke exactly that way once.
+    // Pick an id that has NO mofu# counterpart, so this checks the fallback and
+    // nothing else. With the variant flag on, getText prefers the variant, so an id
+    // that has one would legitimately fall back to the variant's text rather than
+    // the base - which is correct behaviour and is covered by its own checks below.
     const english_keys = Object.keys(translations.english);
-    first_untranslated = english_keys.find(key => !(key in translations.turkish));
-    check("there is still an untranslated id to test with", Boolean(first_untranslated));
+    first_untranslated = english_keys.find(key =>
+        !key.startsWith("mofu#")
+        && !(key in translations.turkish)
+        && !(`mofu#${key}` in translations.english));
+    check("there is still an untranslated id without a variant to test with", Boolean(first_untranslated));
 
     const untranslated = translationManager.getText("turkish", first_untranslated);
     check("an untranslated id falls back to English",
