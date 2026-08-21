@@ -620,21 +620,36 @@ const crafting_component_manager = {
                 const item_id = custom_names[material_key]?.[material.types[i]] || (capitalize_first_letter(material.name || material_key) + " " + type_to_name(material.types[i]));
                 let item;
 
+                //The parts a translated name is assembled from. item_id stays the
+                //canonical English because it is the registry key, and registry keys
+                //are written into save files - so the shown name is built separately.
+                //A custom_names entry means the English name is not "<material> <type>"
+                //at all, so it gets no parts and falls back to its own locale row.
+                const has_custom_name = Boolean(custom_names[material_key]?.[material.types[i]]);
+                const name_parts = has_custom_name ? null : {
+                    pattern: "pattern component name",
+                    parts: {
+                        material: `material name ${material_key}`,
+                        type: `component ${material.types[i]}`,
+                    },
+                };
+                const description_params = {material: `material ${material_key}`};
+
                 let material_count = material_count_per_type[material.types[i]];
                 const item_value = (material.value ? Math.round(material.value * material_count) : Math.round(material.tier * base_value * material_count))+10;
 
                 switch(material.types[i]) {
                     case component_types.SHORT_BLADE:
-                        description = `A short blade made of ${material_key}, perfect for a dagger or a spear`;
+                        description = "desc component short blade";
                         break;
                     case component_types.LONG_BLADE:
-                        description = `A long blade made of ${material_key}, perfect for a sword`;
+                        description = "desc component long blade";
                         break;
                     case component_types.AXE_HEAD:
-                        description = `An axe head made of ${material_key}`;
+                        description = "desc component axe head";
                         break;
                     case component_types.HAMMER_HEAD:
-                        description = `A hammer head made of ${material_key}`;
+                        description = "desc component hammer head";
                         break;       
                 }
                 
@@ -688,6 +703,9 @@ const crafting_component_manager = {
                         name: item_id,
                         id: item_id,
                         description,
+                        description_params,
+                        name_parts,
+                        material_id: material_key,
                         component_type: material.types[i],
                         value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
@@ -730,6 +748,9 @@ const crafting_component_manager = {
                     item = new WeaponComponent({ 
                         name: item_id,
                         description,
+                        description_params,
+                        name_parts,
+                        material_id: material_key,
                         component_type: material.types[i],
                         value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
@@ -740,6 +761,9 @@ const crafting_component_manager = {
                     item = new ShieldComponent({ 
                         name: item_id,
                         description,
+                        description_params,
+                        name_parts,
+                        material_id: material_key,
                         component_type: material.types[i],
                         value: item_value,
                         name_prefix: capitalize_first_letter(material.name || material_key),
@@ -754,6 +778,9 @@ const crafting_component_manager = {
                     item = new ShieldComponent({ 
                         name: item_id,
                         description,
+                        description_params,
+                        name_parts,
+                        material_id: material_key,
                         component_type: material.types[i],
                         value: item_value,
                         //name_prefix: capitalize_first_letter(material.name || material_key),
@@ -808,6 +835,9 @@ const crafting_component_manager = {
                         item = new Armor({
                             name: item_id,
                             description,
+                            description_params,
+                            name_parts,
+                            material_id: material_key,
                             component_type: material.types[i],
                             value: item_value,
                             name_prefix: capitalize_first_letter(material.name || material_key),
@@ -855,6 +885,10 @@ const crafting_component_manager = {
                         item = new ArmorComponent({
                             name: item_id,
                             description,
+                            description_params,
+                            name_parts,
+                            material_id: material_key,
+                            armor_piece: armor_names[material.types[i]],
                             full_armor_name: capitalize_first_letter(material.name || material_key) + " " + armor_names[material.types[i]],
                             component_type: material.types[i],
                             value: item_value,

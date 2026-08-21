@@ -156,6 +156,9 @@ function getEquipmentValue({components, quality = 100}) {
 class Item {
     constructor({name,
                 description,
+                description_params = null, //maps a {slot} in the description text to another text id
+                name_parts = null,        //{pattern, parts} for a name that is assembled rather than written
+
                 value = 10,
                 tags = {},
                 market_saturation_group,
@@ -175,6 +178,8 @@ class Item {
         }
         this.id = id;
         this.description = description;
+        this.description_params = description_params;
+        this.name_parts = name_parts;
         this.saturates_market = saturates_market ?? true;
 
         this.material_type = material_type;
@@ -278,18 +283,40 @@ class Item {
         }
     }
 
-    /** this.description holds a TEXT ID; the text lives in locales/. */
+    /**
+     * this.description holds a TEXT ID; the text lives in locales/.
+     * this.description_params, when present, maps a {slot} in that text to
+     * another text id - generated components describe themselves with one.
+     */
     getDescription() {
-        return this.description ? translationManager.getText(language, this.description) : this.description;
+        if(!this.description) {
+            return this.description;
+        }
+        return translationManager.getText(language, this.description,
+            translationManager.resolveParams(language, this.description_params));
     }
 
     /**
      * The name to show. Deliberately separate from getName(), which stays the
      * canonical English because the equippable constructors use it as this.id
      * and that id is written into save files.
+     *
+     * An explicit "name <English>" row always wins, so any name that does not
+     * fit a pattern can be written out in full. Failing that, an item that
+     * knows its own parts is assembled from them - which is how the generated
+     * components are covered without 203 hand-written rows.
      */
     getDisplayName() {
-        return translationManager.getDisplayName(language, this.getName());
+        const english = this.getName();
+        const explicit = translationManager.getOptionalText(language, `name ${english}`);
+        if(explicit !== undefined) {
+            return explicit;
+        }
+        if(this.name_parts) {
+            return translationManager.assembleName(language, this.name_parts.pattern,
+                this.name_parts.parts, {capitalise: true});
+        }
+        return english;
     }
 }
 
@@ -777,6 +804,25 @@ class Shield extends Equippable {
     getName() {
         return item_templates[this.components.shield_base].shield_name;
     }
+
+    /**
+     * shield_name is itself assembled English ("<Material> shield"), so the
+     * translation is built from the base's material rather than by looking up
+     * the assembled string - otherwise every material would need its own row.
+     */
+    getDisplayName() {
+        const english = this.getName();
+        const explicit = translationManager.getOptionalText(language, `name ${english}`);
+        if(explicit !== undefined) {
+            return explicit;
+        }
+        const base = item_templates[this.components.shield_base];
+        if(!base?.material_id) {
+            return english;
+        }
+        return translationManager.assembleName(language, "pattern name shield",
+            {material: `material ${base.material_id}`}, {capitalise: true});
+    }
 }
 
 class Armor extends Equippable {
@@ -910,6 +956,29 @@ class Armor extends Equippable {
 
         return this.name;
     }
+
+    /**
+     * full_armor_name is assembled English ("<Material> <piece>"), so the
+     * translation is built from the exterior's material and piece rather than
+     * from the assembled string. An interior-only armor has no exterior to
+     * ask, and a generated interior carries its own name_parts, so those fall
+     * through to the base implementation.
+     */
+    getDisplayName() {
+        const english = this.getName();
+        const explicit = translationManager.getOptionalText(language, `name ${english}`);
+        if(explicit !== undefined) {
+            return explicit;
+        }
+        const external = this.components?.external ? item_templates[this.components.external] : null;
+        if(external?.material_id && external?.armor_piece) {
+            return translationManager.assembleName(language, "pattern name armor", {
+                material: `material ${external.material_id}`,
+                piece: `armor piece ${external.armor_piece}`,
+            }, {capitalise: true});
+        }
+        return super.getDisplayName();
+    }
 }
 
 class Weapon extends Equippable {
@@ -982,6 +1051,24 @@ class Weapon extends Equippable {
 
     getName() {
         return `${item_templates[this.components.head].name_prefix} ${this.weapon_type === "hammer" ? "battle hammer" : this.weapon_type}`;
+    }
+
+    /** Assembled from the head's material and the weapon word. */
+    getDisplayName() {
+        const english = this.getName();
+        const explicit = translationManager.getOptionalText(language, `name ${english}`);
+        if(explicit !== undefined) {
+            return explicit;
+        }
+        const head = item_templates[this.components.head];
+        if(!head?.material_id) {
+            return english;
+        }
+        const weapon_word = this.weapon_type === "hammer" ? "battle hammer" : this.weapon_type;
+        return translationManager.assembleName(language, "pattern name weapon", {
+            material: `material ${head.material_id}`,
+            weapon: `weapon type ${weapon_word}`,
+        }, {capitalise: true});
     }
 }
 

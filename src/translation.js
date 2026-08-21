@@ -12,6 +12,15 @@ const variant_prefix = "mofu#";
 //only complained about once instead of flooding the console.
 const reported_missing = new Set();
 
+//Capitalising an assembled name has to know the locale: Turkish upper-cases a
+//dotless i to I and a dotted i to İ, and getting that wrong is immediately
+//visible in an item list.
+const locale_tags = {
+    english: "en",
+    turkish: "tr",
+};
+const language_tag = (language) => locale_tags[language] ?? "en";
+
 class TranslationManager {
     constructor() {}
 
@@ -84,10 +93,59 @@ class TranslationManager {
         return this.lookup(language, `name ${english_name}`) ?? english_name;
     };
 
-    getText = (language, text_id) => {
+    /**
+     * Substitutes {slot} placeholders in a resolved text.
+     *
+     * A slot with no value is left written out rather than blanked, so a broken
+     * pattern is visible on screen instead of quietly losing a word.
+     */
+    fill = (text, params) => {
+        if(!params || typeof text !== "string") {
+            return text;
+        }
+        return text.replace(/\{([a-z_]+)\}/g, (whole, slot) => params[slot] ?? whole);
+    };
+
+    /**
+     * Resolves every value in a params object as a text id, so a caller passes
+     * ids and never pre-translated strings. One convention: a param is an id.
+     */
+    resolveParams = (language, params) => {
+        if(!params) {
+            return undefined;
+        }
+        const resolved = {};
+        for(const slot of Object.keys(params)) {
+            resolved[slot] = this.getText(language, params[slot]);
+        }
+        return resolved;
+    };
+
+    /**
+     * A name that has to be built from parts, because it is generated rather
+     * than written out - "iron" plus "short blade".
+     *
+     * The parts go into the LANGUAGE'S OWN pattern, which is what lets a
+     * language reorder them instead of being forced into English word order.
+     * Turkish happens to share the order here, because a material name is an
+     * attributive with no suffix, but the indirection is the point: a language
+     * that needs the other order changes its pattern row and nothing else.
+     *
+     * capitalise applies to the assembled result, not to the parts, so the
+     * pattern decides which word ends up first.
+     */
+    assembleName = (language, pattern_id, part_ids, {capitalise = false} = {}) => {
+        const name = this.getText(language, pattern_id, this.resolveParams(language, part_ids));
+        if(!capitalise || !name) {
+            return name;
+        }
+        return name.charAt(0).toLocaleUpperCase(language_tag(language)) + name.slice(1);
+    };
+
+    getText = (language, text_id, params) => {
         const text = this.lookup(language, text_id);
         if(text !== undefined) {
-            return text;
+            return this.fill(text, params);
         }
 
         if(language !== default_language) {
@@ -97,7 +155,7 @@ class TranslationManager {
                     reported_missing.add(text_id);
                     console.warn(`Text "${text_id}" is not translated into '${language}' yet; showing the ${default_language} text.`);
                 }
-                return fallback;
+                return this.fill(fallback, params);
             }
         }
 

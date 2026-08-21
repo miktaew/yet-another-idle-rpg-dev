@@ -24,6 +24,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as os from "node:os";
 import { pathToFileURL } from "node:url";
 import { get_game_version } from "../src/game_version.js";
 
@@ -263,6 +264,133 @@ function strip_comments(src) {
     }
     return out;
 }
+/**
+ * The generated items: 203 components built at runtime from a material and a
+ * component type. Their shown names are assembled from locale rows, so this
+ * loads the real generator with stubbed item classes and checks two things.
+ *
+ * First, that every text id the generator hands to the translation layer exists.
+ *
+ * Second, and the reason this check is worth its length: the ASSEMBLED ENGLISH
+ * name has to come out equal to the registry key. Registry keys are written into
+ * save files, so if a pattern row is edited carelessly the shown name and the
+ * saved key drift apart and every affected item is quietly renamed on screen.
+ */
+async function check_generated_items() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const generator_path = path.join(repo_root, "src", "crafting_component_filling.js");
+    if (!fs.existsSync(generator_path)) {
+        error("src/crafting_component_filling.js is missing - this check is out of date.");
+        return;
+    }
+
+    let source = fs.readFileSync(generator_path, "utf8").split("\r\n").join("\n");
+    const item_import = 'import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";';
+    const display_import = 'import { capitalize_first_letter } from "./display.js";';
+    if (!source.includes(item_import) || !source.includes(display_import)) {
+        error("src/crafting_component_filling.js no longer has the imports this check stubs out - it is out of date.");
+        return;
+    }
+    source = source.replace(item_import, "").replace(display_import, "");
+
+    const shim = [
+        "const item_templates = {};",
+        "const capitalize_first_letter = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;",
+        "class Stub { constructor(d) { Object.assign(this, d); } }",
+        "class Armor extends Stub { }",
+        "class ArmorComponent extends Stub { }",
+        "class ShieldComponent extends Stub { }",
+        "class WeaponComponent extends Stub { }",
+        "",
+    ].join("\n");
+    const tail = "\ncrafting_component_manager.fill_components();\nexport const generated = item_templates;\n";
+
+    const temp_dir = fs.mkdtempSync(path.join(os.tmpdir(), "yairp-check-"));
+    const temp_file = path.join(temp_dir, "generator.mjs");
+    fs.writeFileSync(temp_file, shim + source + tail);
+
+    let generated;
+    try {
+        ({ generated } = await import(pathToFileURL(temp_file).href));
+    } catch (problem) {
+        error(`the component generator could not be run in isolation: ${problem.message}`);
+        return;
+    } finally {
+        fs.rmSync(temp_dir, { recursive: true, force: true });
+    }
+
+    const missing = new Set();
+    const resolve = (id) => {
+        const text = reference[id];
+        if (text === undefined) { missing.add(id); }
+        return text;
+    };
+    const fill = (text, params) =>
+        typeof text === "string" ? text.replace(/\{([a-z_]+)\}/g, (whole, slot) => params[slot] ?? whole) : text;
+    const capitalise = (text) => (text ? text.charAt(0).toUpperCase() + text.slice(1) : text);
+
+    const entries = Object.entries(generated);
+    let checked = 0;
+    let renamed = 0;
+
+    for (const [key, item] of entries) {
+        if (item.description) { resolve(item.description); }
+        if (item.description_params) {
+            for (const id of Object.values(item.description_params)) { resolve(id); }
+        }
+        if (!item.name_parts) continue;   //custom-named, covered by its own "name X" row
+
+        checked++;
+        const parts = {};
+        for (const [slot, id] of Object.entries(item.name_parts.parts)) { parts[slot] = resolve(id); }
+        const assembled = capitalise(fill(resolve(item.name_parts.pattern), parts));
+        if (assembled !== key) {
+            renamed++;
+            error(`generated item "${key}" assembles in ${default_language} as "${assembled}".`
+                + " The assembled name must equal the registry key, which is save data.");
+        }
+    }
+
+    //The equippable name patterns, checked the same way against the English the
+    //generator itself produced for shield_name and full_armor_name.
+    let equippable = 0;
+    for (const [, item] of entries) {
+        if (item.shield_name && item.material_id) {
+            equippable++;
+            const assembled = capitalise(fill(resolve("pattern name shield"),
+                {material: resolve(`material name ${item.material_id}`)}));
+            if (assembled !== item.shield_name) {
+                error(`shield name "${item.shield_name}" assembles as "${assembled}".`);
+            }
+        }
+        if (item.full_armor_name && item.material_id && item.armor_piece) {
+            equippable++;
+            const assembled = capitalise(fill(resolve("pattern name armor"), {
+                material: resolve(`material name ${item.material_id}`),
+                piece: resolve(`armor piece ${item.armor_piece}`),
+            }));
+            if (assembled !== item.full_armor_name) {
+                error(`armor name "${item.full_armor_name}" assembles as "${assembled}".`);
+            }
+        }
+    }
+
+    //The weapon words are not attached to a generated item, so they are listed.
+    for (const word of ["sword", "dagger", "spear", "axe", "battle hammer"]) {
+        resolve(`weapon type ${word}`);
+    }
+    resolve("pattern name weapon");
+
+    for (const id of missing) {
+        error(`the component generator references text id "${id}", which does not exist in locales/${default_language}.js.`);
+    }
+
+    console.log(`[check] generated items: ${entries.length} built, ${checked} assembled names`
+        + ` and ${equippable} equippable names verified against their registry keys`
+        + (renamed ? `, ${renamed} MISMATCHED` : ""));
+}
 async function check_content_text_ids() {
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -319,6 +447,7 @@ async function check_content_text_ids() {
 check_site();
 await check_locales();
 await check_content_text_ids();
+await check_generated_items();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

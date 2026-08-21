@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 16 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 17 -->
 
 # Changelog
 
@@ -17,6 +17,77 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-21
+
+### 203 generated items can be named now — P-7
+
+**A whole category of item that was invisible to the locale.** `src/items.js` looks
+like it holds the game's items, and the earlier pass translated the 245 it declares.
+It does not hold them all. `src/crafting_component_filling.js` builds another 203 at
+load time, one per material per component type — every blade, handle, shield base,
+armor interior and armor exterior in the game. Their names and descriptions are
+assembled from string templates, so there was no literal anywhere for a locale row
+to key on.
+
+It also explains something that looked odd in the previous pass: `items.js` carries
+a ~580 line commented-out block of hand-written components, plus several smaller
+ones. That is the old version of what the generator now produces.
+
+**Parameterised text.** `getText` takes an optional params object and substitutes
+`{slot}` placeholders. A slot with no value is left written out rather than blanked
+— a broken pattern should be visible on screen, not silently short a word. Params
+are always text ids, resolved through `resolveParams`, so there is one convention
+and no call site can accidentally pass a pre-translated string.
+
+`assembleName` builds a name from parts and puts them into **the language's own
+pattern**. Turkish happens to share English word order here, because a material
+name works as an attributive with no suffix — but the indirection is the point: a
+language that needs the other order edits `pattern component name` and nothing
+else.
+
+**Two things had to be got exactly right.**
+
+The first is that the assembled English must come out byte-identical to the
+registry key. `item_templates` keys are written into save files, so a careless edit
+to a pattern row would rename items on screen while the save still holds the old
+key. `npm run check` now runs the real generator with stubbed item classes and
+verifies all 196 assembled names and 98 equippable names against their keys.
+Verified by reversing `pattern component name` to `{type} {material}`, which fails
+with 196 mismatches, and by deleting one material row, which fails with 8.
+
+The second is that a material has **two** English forms and they are not
+interchangeable. A name uses `material.name` where the material defines one, so
+`rough wood` shows as `simple wooden`; a description uses the raw key and says
+"made of rough wood". They differ for five materials. Getting this wrong renames
+items rather than mistranslating them, so the two forms live in separate id
+namespaces, `material name <key>` and `material <key>`, and a test pins both.
+
+**Turkish cannot suffix a slot.** The English description reads "A short blade made
+of {material}". The direct Turkish would be "{material}dan yapılmış" — except the
+ablative is -dan, -den, -tan or -ten depending on the material's last vowel and
+consonant, so `demirden` but `çelikten` and `ketenden`. A slot cannot carry that.
+The pattern is therefore built so the slot stays bare: "{material} kullanılarak
+yapılmış kısa bir bıçak". A test asserts the slot is unsuffixed, because this is
+exactly the sort of phrasing someone later "improves" into being wrong.
+
+The same constraint shaped the material names themselves. English assembles
+"iron chainmail" plus the piece word "armor" into "Iron chainmail armor". Turkish
+for chainmail is "zincir zırh", which already contains the piece word — so the
+material's name form is "demir zincir" and its description form is "demir zincir
+zırh". Otherwise every chainmail armor would have read "Demir zincir zırh zırh".
+
+**Capitalisation is locale-aware.** An assembled name is capitalised with
+`toLocaleUpperCase`, because Turkish upper-cases a dotless i to I and a dotted i to
+İ. A plain `toUpperCase()` would put the wrong one at the front of an item name,
+which is the first character a player reads.
+
+The seven components with a `custom_names` entry — `Wool shirt`, `Linen bandanna`
+and friends — get no parts, because their English is not "<material> <type>" at
+all. They fall through to their own `name <English>` row, which the previous pass
+already wrote.
+
+96 new locale keys per language, covering 203 generated items, 13 shield names, 85
+full armor names and every craftable weapon. Turkish stays at 100% over 1459 keys,
+and `npm test` is at 56 checks.
 
 ### The swamp cast is finished, and the Turkish locale is complete — P-7
 

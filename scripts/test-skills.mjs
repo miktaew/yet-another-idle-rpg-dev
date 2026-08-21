@@ -363,6 +363,57 @@ const global_flags = globalThis.__test_flags;
     check("the fallback is not the not-found placeholder",
         !untranslated.startsWith("text not found"));
 
+    // -------------------------------------------------------- parameterised text
+    // 203 of the game's items are generated from a material and a component type,
+    // so their names and descriptions are assembled from patterns rather than
+    // written out. These checks cover the substitution those patterns rely on.
+    check("a {slot} is substituted",
+        translationManager.getText("english", "pattern component name",
+            {material: "iron", type: "short blade"}) === "iron short blade");
+
+    // A missing slot stays written out. Blanking it would lose a word silently;
+    // leaving it visible puts the broken pattern on screen where it gets noticed.
+    check("a slot with no value is left written out",
+        translationManager.getText("english", "pattern component name",
+            {material: "iron"}) === "iron {type}");
+
+    check("params are resolved as text ids, not passed through as strings",
+        JSON.stringify(translationManager.resolveParams("english",
+            {material: "material name rough wood"})) === JSON.stringify({material: "simple wooden"}));
+
+    // The assembled English has to equal the registry key, which is save data.
+    check("an assembled name matches its registry key",
+        translationManager.assembleName("english", "pattern component name",
+            {material: "material name rough wood", type: "component long handle"},
+            {capitalise: true}) === "Simple wooden long handle",
+        `got=${translationManager.assembleName("english", "pattern component name", {material: "material name rough wood", type: "component long handle"}, {capitalise: true})}`);
+
+    check("the same name assembles in Turkish",
+        translationManager.assembleName("turkish", "pattern component name",
+            {material: "material name rough wood", type: "component long handle"},
+            {capitalise: true}) === "Basit ahşap uzun sap",
+        `got=${translationManager.assembleName("turkish", "pattern component name", {material: "material name rough wood", type: "component long handle"}, {capitalise: true})}`);
+
+    // Turkish upper-cases a dotless i to I, not to İ. A plain toUpperCase() would
+    // give "İşlenmiş" here and be wrong in exactly the place a player looks first.
+    check("capitalising an assembled Turkish name respects the dotless i",
+        translationManager.assembleName("turkish", "pattern name armor",
+            {material: "material name black steel", piece: "armor piece armored pants"},
+            {capitalise: true}) === "Siyah zırhlı pantolon");
+
+    // A material whose name differs from its key: the description says what the
+    // item is made of, the name says how it is described. Mixing them up renames items.
+    check("the two material forms are kept apart",
+        translationManager.getText("english", "material rough wood") === "rough wood"
+        && translationManager.getText("english", "material name rough wood") === "simple wooden");
+
+    // Turkish cannot suffix a slot value - the ablative would need -dan/-den/-tan/
+    // -ten chosen from the material's last sounds - so the pattern is built to leave
+    // the slot bare. If someone "improves" it into "{material}dan", this fails.
+    check("a description pattern leaves its slot unsuffixed in Turkish",
+        translationManager.getText("turkish", "desc component axe head",
+            {material: "kaba odun"}).startsWith("kaba odun kullanılarak"),
+        `got=${translationManager.getText("turkish", "desc component axe head", {material: "kaba odun"})}`);
     check("an id that exists nowhere still reports itself",
         translationManager.getText("turkish", "no such id at all").startsWith("text not found"));
 

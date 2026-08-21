@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 16 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 17 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,79 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-21
+
+### 203 üretilmiş item artık adlandırılabiliyor — P-7
+
+**Locale'in hiç görmediği bir item kategorisi.** `src/items.js` oyunun item'larını
+tutuyor gibi görünüyor ve önceki paşlık orada bildirilen 245'ini çevirdi. Hepsini
+tutmuyor. `src/crafting_component_filling.js` yükleme anında 203 tane daha üretiyor;
+her malzeme için her bileşen türünden birer tane — oyundaki her bıçak, sap, kalkan
+gövdesi, zırh içi ve zırh dışı. Adları ve açıklamaları string şablonlarından
+kuruluyor, dolayısıyla bir locale satırının anahtarlanacağı hiçbir sabit metin yoktu.
+
+Bu aynı zamanda önceki paşlıkta tuhaf görünen bir şeyi de açıklıyor: `items.js`
+içinde elle yazılmış bileşenlerden oluşan ~580 satırlık yorumlanmış bir blok ve
+yanında birkaç küçüğü daha var. Onlar, generator'ın şimdi ürettiğinin eski hâli.
+
+**Parametreli metin.** `getText` artık isteğe bağlı bir params nesnesi alıyor ve
+`{slot}` yer tutucularını yerine koyuyor. Değeri olmayan bir slot boşaltılmıyor,
+yazıldığı gibi bırakılıyor — bozuk bir kalıp ekranda görünmeli, sessizce bir kelime
+eksiltmemeli. Params her zaman metin id'si; `resolveParams` üzerinden çözülüyor,
+böylece tek bir kural var ve hiçbir çağrı yeri yanlışlıkla çevrilmiş bir string
+geçiremiyor.
+
+`assembleName` adı parçalardan kuruyor ve parçaları **dilin kendi kalıbına**
+yerleştiriyor. Türkçe burada İngilizceyle aynı söz dizimini paylaşıyor, çünkü
+malzeme adı eksiz bir niteleyici gibi çalışıyor — ama asıl nokta bu dolaylama:
+başka bir sıra gereken bir dil yalnızca `pattern component name` satırını
+değiştirir, başka hiçbir şeyi.
+
+**Tam doğru olması gereken iki şey vardı.**
+
+Birincisi, birleştirilmiş İngilizcenin registry anahtarıyla bayt bayt aynı çıkması.
+`item_templates` anahtarları kayıt dosyalarına yazılıyor; dolayısıyla bir kalıp
+satırına özensiz bir dokunuş, kayıt hâlâ eski anahtarı tutarken item'ları ekranda
+yeniden adlandırırdı. `npm run check` artık gerçek generator'ı stub'lanmış item
+sınıflarıyla çalıştırıp 196 birleştirilmiş adın ve 98 kuşanılabilir adın tamamını
+anahtarlarına karşı doğruluyor. `pattern component name` `{type} {material}` olarak
+ters çevrilerek (196 uyuşmazlıkla düşüyor) ve tek bir malzeme satırı silinerek
+(8 uyuşmazlıkla düşüyor) sınandı.
+
+İkincisi, bir malzemenin **iki** İngilizce biçimi olması ve bunların birbirinin
+yerine geçmemesi. Ad, malzeme bir `name` tanımlıyorsa onu kullanıyor; yani
+`rough wood` ekranda `simple wooden` görünüyor. Açıklama ise ham anahtarı kullanıp
+"made of rough wood" diyor. Beş malzemede bu ikisi ayrışıyor. Burada hata yapmak
+yanlış çeviri değil, item'ı yeniden adlandırmak demek; o yüzden iki biçim ayrı id
+alanlarında duruyor — `material name <anahtar>` ve `material <anahtar>` — ve bir
+test ikisini de sabitliyor.
+
+**Türkçede bir slot'a ek takılamaz.** İngilizce açıklama "A short blade made of
+{material}" diyor. Doğrudan Türkçesi "{material}dan yapılmış" olurdu — ama ayrılma
+hâli eki malzemenin son ünlü ve ünsüzüne göre -dan, -den, -tan ya da -ten oluyor:
+`demirden` ama `çelikten`, `ketenden`. Bir slot bunu taşıyamaz. Bu yüzden kalıp,
+slot'u eksiz bırakacak biçimde kuruldu: "{material} kullanılarak yapılmış kısa bir
+bıçak". Bir test slot'un eksiz kaldığını doğruluyor; çünkü bu, sonradan birinin
+"iyileştirip" yanlış hâle getireceği türden bir ifade.
+
+Aynı kısıt malzeme adlarının kendisini de biçimlendirdi. İngilizce "iron chainmail"
+ile parça sözcüğü "armor"u birleştirip "Iron chainmail armor" yapıyor. Chainmail'in
+Türkçesi "zincir zırh"; yani parça sözcüğünü kendi içinde taşıyor. Bu nedenle
+malzemenin ad biçimi "demir zincir", açıklama biçimi ise "demir zincir zırh". Aksi
+hâlde her zincir zırh "Demir zincir zırh zırh" diye okunacaktı.
+
+**Büyük harfe çevirme locale farkında.** Birleştirilen ad `toLocaleUpperCase` ile
+büyütülüyor; çünkü Türkçe noktasız ı'yı I'ya, noktalı i'yi İ'ye çeviriyor. Düz bir
+`toUpperCase()` bunlardan yanlışını item adının başına koyardı — yani oyuncunun ilk
+okuduğu karaktere.
+
+`custom_names` girdisi olan yedi bileşen — `Wool shirt`, `Linen bandanna` ve
+arkadaşları — hiç parça almıyor; çünkü İngilizceleri zaten "<malzeme> <tür>"
+biçiminde değil. Onlar kendi `name <İngilizce>` satırlarına düşüyor; o satırları da
+önceki paşlık çoktan yazmıştı.
+
+Dil başına 96 yeni locale anahtarı; 203 üretilmiş item'ı, 13 kalkan adını, 85 tam
+zırh adını ve üretilebilen her silahı kapsıyor. Türkçe 1459 anahtar üzerinde %100'de
+kalıyor, `npm test` ise 56 kontrolde.
 
 ### Bataklık kadrosu tamamlandı, Türkçe locale bitti — P-7
 
