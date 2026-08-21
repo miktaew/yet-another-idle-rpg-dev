@@ -229,12 +229,15 @@ async function check_content_text_ids() {
 
     const scanned = [
         { file: "src/quests.js", patterns: [
-            /quest_name:\s*"([^"]+)"/g,
-            /quest_description:\s*"([^"]+)"/g,
-            /task_description:\s*"([^"]+)"/g,
+            /(?<![A-Za-z0-9_])quest_name:\s*"([^"]+)"/g,
+            /(?<![A-Za-z0-9_])quest_description:\s*"([^"]+)"/g,
+            /(?<![A-Za-z0-9_])task_description:\s*"([^"]+)"/g,
+        ]},
+        { file: "src/skills.js", patterns: [
+            /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
         ]},
         { file: "src/locations.js", patterns: [
-            /messages:\s*\[\s*"([^"]+)"\s*\]/g,
+            /(?<![A-Za-z0-9_])messages:\s*\[\s*"([^"]+)"\s*\]/g,
         ]},
     ];
 

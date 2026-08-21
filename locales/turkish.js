@@ -861,6 +861,91 @@ const names = {
     "name Woodworking": "Ahşap işçiliği",
 };
 
-const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names};
+const descriptions = {
+    /*
+        Skill açıklamaları. Id biçimi ve neden registry id'siyle anahtarlandığı
+        locales/english.js içinde açıklanıyor.
+
+        İki kaynak hatası sadık biçimde aktarıldı, düzeltilmedi:
+        - "desc skill Flowing water" ile "desc skill Berserker's stride"
+          İngilizcede birebir aynı metni taşıyor; belli ki kopyala-yapıştır. Akan su
+          savunmayı yok sayan bir stil olarak anlatılıyor, oysa adı ve stat'ları
+          bunun tersini ima ediyor. Açıklama uydurmak yerine olduğu gibi çevrildi.
+        - "desc skill Gathering mastery" İngilizcede "you being to see" diyor;
+          "begin" olmalı. Türkçe amaçlanan anlamı taşıyor.
+
+        Tooltip metinleri bilgilendirici ama oyunun alaycı sesini taşıyor - "Güneşe
+        bakma", "kemiklerini kırabilecekken", "daha iyi hazmedersin, değil mi?"
+        gibi yerler yavanlaştırılmadı.
+
+        `<br>` bir HTML etiketi ve olduğu gibi korunuyor.
+    */
+    "desc skill Combat": "Genel dövüş kabiliyeti",
+    "desc skill Pest killer": "Küçük düşmanlar pek tehlikeli görünmeyebilir, ama onlara isabet ettirmek o kadar da kolay değil!",
+    "desc skill Giant slayer": "İri rakipler korkutucu görünebilir, ama sen sadece darbe almamaya bak, gerisi hallolur!",
+    "desc skill Evasion": "Saldırılardan kaçınma kabiliyeti. Kalkan kullanırken bunu yapamazsın",
+    "desc skill Shield blocking": "Saldırıları kalkanla karşılama kabiliyeti. Kalkan kullanırken kaçınamazsın",
+    "desc skill Unarmed": "Bunun yerine bir silah kullanmak kesinlikle, tartışmasız, hiç kuşkusuz daha iyidir. Ama tabii, neden olmasın?",
+    "desc skill Stance mastery": "Dövüşte farklı duruşları nasıl uygulayacağına dair bilgi",
+    "desc skill Quick steps": "Güçten vazgeçip daha yüksek hız kazandıran, çabuk ve isabetli bir teknik",
+    "desc skill Heavy strike": "Hızdan vazgeçip ezici güçte saldırılar kazandıran, kuvvetli ve tehlikeli bir teknik",
+    "desc skill Wide swing": "Birden çok düşmana aynı anda vurmayı sağlayan, karşılığında genel verimi düşüren özel bir teknik. <br>Kazanılan xp'yi saldırılan düşman sayısına böler, düşme oranını da o sayıyla ters oranda azaltır (8 düşmana karşı 1/4'e kadar).",
+    "desc skill Defensive measures": "Saldırıdan çok savunmaya odaklanan, tedbirli bir teknik",
+    "desc skill Berserker's stride": "Kendi savunmasını tamamen yok sayarken olabildiğince çok hasar vermeye odaklanan, vahşi ve tehlikeli bir teknik",
+    "desc skill Flowing water": "Kendi savunmasını tamamen yok sayarken olabildiğince çok hasar vermeye odaklanan, vahşi ve tehlikeli bir teknik",
+    "desc skill Spatial awareness": "Diğer canlılara ve nesnelere göre nerede olduğunu kavramak",
+    "desc skill Tight maneuvers": "Saldırılardan kaçmaya pek yer olmayan dar ortamlarda dövüşmeyi öğren",
+    "desc skill Night vision": "Karanlıkta görme kabiliyeti",
+    "desc skill Presence sensing": "Gözlerini kullanmadan bir varlığı sezme kabiliyeti",
+    "desc skill Strength of mind": "Doğal olmayan etkiye diren ve onu reddet. Zihnini demir bir kaleye çevir",
+    "desc skill Scrambling": "Engebeli, gevşek ya da kaygan zeminde hızlı ve sağlam basarak hareket etme kabiliyeti",
+    "desc skill Heat resistance": "Yüksek sıcaklıkta hayatta kalma ve iş görme kabiliyeti",
+    "desc skill Cold resistance": "Düşük sıcaklıkta hayatta kalma ve iş görme kabiliyeti",
+    "desc skill Dazzle resistance": "Güneşe bakma, gözlerine zarar",
+    "desc skill Weapon mastery": "Bütün silahlara dair bilgi",
+    "desc skill Swords": "Kılıç kullanmanın asil sanatı",
+    "desc skill Axes": "Baltayla dövüşme kabiliyeti",
+    "desc skill Spears": "Tarihin en ölümcül silahıyla dövüşme kabiliyeti",
+    "desc skill Hammers": "Savaş çekiciyle dövüşme kabiliyeti. Bütün kemiklerini kırabilecekken birini kesmekle neden uğraşasın?",
+    "desc skill Daggers": "Hançerle dövüşmenin (ve saplamanın) hor görülen sanatı",
+    "desc skill Wands": "Büyülü değneklerle büyü yapma kabiliyeti, verilen hasarı artırır",
+    "desc skill Staffs": "Büyülü asalarla büyü yapma kabiliyeti, verilen hasarı artırır",
+    "desc skill Farming": "Tarla sürmek gibi basit bir iş bile beceri ve tecrübeyle daha iyi yapılabilir",
+    "desc skill Sleeping": "İyi ve düzenli uyku güçlenmenin temelidir, bedeninin iyileşmesine de yardım eder",
+    "desc skill Meditation": "Zihnini topla",
+    "desc skill Running": "Bedenin verimini artırmanın harika bir yolu",
+    "desc skill Weightlifting": "Güçlenmenin ağır şeyler kaldırmaktan daha iyi bir yolu yok",
+    "desc skill Swimming": "Hoş, yumuşak ve dinlendirici bir alıştırma. Yalnız dikkatli olmayı unutma",
+    "desc skill Equilibrium": "Hiçbir şey dengeni bozamayacak (en azından fiziksel olanını)",
+    "desc skill Climbing": "Kaslarının çoğunu çalıştıran, yoğun ve biraz tehlikeli bir idman biçimi",
+    "desc skill Gathering mastery": "Her türlü kaynağın nasıl toplanacağına dair bilgi. Her biri görünüşte tamamen farklı bir yolla toplanıyor olsa da, yeterince pratikle bazı ortak noktaları görmeye başlarsın.",
+    "desc skill Woodcutting": "Odun kesmekte ve işe yarar ağaçları tanımakta ustalaş",
+    "desc skill Mining": "Cevher ve taş çıkarmakta ustalaş",
+    "desc skill Digging": "Küreği savurmakta ustalaş",
+    "desc skill Herbalism": "İşe yarar bitkilere ve mantarlara dair bilgi",
+    "desc skill Animal handling": "Çok çeşitli hayvanlarla baş etmek için gereken bilgi ve beceriler",
+    "desc skill Fishing": "Her türden balığı oltaya getirmekte ustalaş",
+    "desc skill Crafting mastery": "El işçiliği, ahşap işçiliği ya da kasaplık gibi küçük zanaat dallarında ustalık",
+    "desc skill Crafting": "Küçük parçaları daha büyük tek bir şeye dönüştür",
+    "desc skill Smelting": "Ham cevheri ham metale dönüştürmek",
+    "desc skill Forging": "Ham metali işe yarar bir şeye dönüştürmek",
+    "desc skill Cooking": "Yenmeyeni yenilebilir kılmak",
+    "desc skill Alchemy": "Malzemelerin işe yarar özelliklerini ayıklamak ve güçlendirmek",
+    "desc skill Butchering": "Öldürdüğünden en iyi şekilde yararlanmak",
+    "desc skill Woodworking": "Odun kütüklerini işe yarar bir şeye dönüştürmek",
+    "desc skill Iron skin": "Koruyucu zırh giymemek, derinin dövüşte sürekli hasar alması demek; bu da onun tekrar tekrar yenilenerek sertleşmesine yol açar",
+    "desc skill Fortitude": "Yaralar yokmuş gibi davran",
+    "desc skill Persistence": "Ne olursa olsun pes etme",
+    "desc skill Perception": "Duyularına daha iyi hâkim olmak, küçük ve saklı şeyleri fark etmeni, gözlediğin şeyin gerçek niteliğini ayırt etmeni sağlar",
+    "desc skill Literacy": "Yazılı metni okuma ve anlama kabiliyeti",
+    "desc skill Medicine": "Daha iyi ilaçlar yap ve yara tedavisindeki becerini geliştir",
+    "desc skill Poison resistance": "Bedenin zehirlerden gitgide daha çok zarar gördükçe, onlara karşı yavaş yavaş bir direnç geliştirir",
+    "desc skill Gluttony": "Ne kadar çok yersen o kadar iyi hazmedersin, değil mi?",
+    "desc skill Breathing": "Oksijen, bedeninin performansını artırmak için en önemli kaynaktır. Onu daha verimli almayı öğren",
+    "desc skill Regeneration": "Bedenin gitgide daha çok yenilendikçe, bu işte yavaş yavaş daha yetkin hâle gelir",
+    "desc skill Haggling": "Anlaşma sanatı",
+};
+
+const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};
 
 export default turkish;

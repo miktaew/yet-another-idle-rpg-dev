@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 14 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 15 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,71 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-19
+
+### Sabit kodlanmış metin envanteri çıkarıldı, skill açıklamaları taşındı — P-7
+
+**Önce kalanın büyüklüğü.** `src/` içinde hâlâ kodda yazılı olan oyuncuya görünen
+metin tarandı ve her değerin zaten bir metin id'si olup olmadığına göre sınıflandırıldı:
+
+| Kategori | Adet |
+| --- | --- |
+| Görünen adlar — item 138, tarif 131, lokasyon 108, düşman 32, activity 15, trader 7 | 431 |
+| Açıklamalar — item 196, lokasyon 108, skill 64, efekt 47, activity ~30, diğer ~40 | ~485 |
+| Lokasyon eylem metni — starting, success, custom, unlock, leave | ~244 |
+| **Kalan** | **~1160** |
+
+Ham grep 1567 alan bildirimi diyor, ama bu fena hâlde fazla sayıyor:
+`dialogues.js` içindeki `name:` bildirimlerinin 195'i `"elder hello"` gibi Textline
+**id'si**, yani çoktan taşınmış. Yukarıdaki sayı, her değerin locale anahtarlarına
+karşı test edilmesinden sonra çıkan sayı — id ile ham metni gerçekten ayıran tek test bu.
+
+Yani bu tek paşlık değil, çok oturumluk bir iş. Artık tahmin değil, ölçülmüş durumda.
+
+**Skill açıklamaları tamam: 64 tanesi, kopyalanmadı taşındı.** `src/skills.js` artık
+`description: "desc skill <id>"` taşıyor, İngilizce metin ise `locales/english.js`
+içinde. Kopyalamak aynı paragrafı iki dosyada, hiçbir şey onları eş tutmazken
+bırakırdı; taşımak tek doğru kaynak demek — istenen de bu.
+
+Id biçimi `"desc <tür> <registry id>"`; `"name <İngilizce>"` isim alanının aksine
+İngilizce metinle değil id ile anahtarlanıyor. Bir açıklama paragraftır ve paragraf
+kötü bir anahtardır; id ayrıca İngilizce yeniden yazıldığında da sabit kalır.
+`Skill.getDescription()` onu çözüyor ve `skill.description` okuyan tek yer artık onu
+çağırıyor.
+
+`npm run check` bunları kapsıyor: 108 içerik metin id'si bildirildi, hepsi çözülüyor.
+Kasten yazım hatası ekleyip derlemeyi başarısız kıldığı doğrulandı.
+
+**Üç kez çarptığım ve nihayet kapattığım bir hata.** Bir regex'i `\b` ile shell
+heredoc üzerinden yazmak onu bozuyor: kaçış dosyaya gerçek bir backspace baytı olarak
+iniyor, dolayısıyla desen sessizce bir kontrol karakteri arıyor ve hiçbir şey
+bulamıyor. İlk seferinde gerçek zaman kaybettirdi, satırın hex dökümüyle teşhis
+edildi ve iki kez daha tekrarladı. Satır başına çapalamak bozulmayı düzeltti ama
+`new QuestTask({task_description: "..."})` gibi satır içi bildirimleri kırdı — kontrol
+108 yerine 77 id sayınca ortaya çıktı. Desenler artık açık bir
+`(?<![A-Za-z0-9_])` lookbehind kullanıyor: uzun uzun yazılmış bir word boundary,
+shell'in bozabileceği hiçbir kaçış içermiyor. Düzeltme script'i ayrıca hiçbir kontrol
+baytının hayatta kalmadığını da doğruluyor.
+
+**Açıklamaları okurken bulunan iki kaynak hatası**, sessizce düzeltilmek yerine
+bildirildi; çünkü açıklama metni uydurmak, özgün metni yeniden yazmama kuralına
+aykırı olurdu:
+
+- `Flowing water` ile `Berserker's stride` **birebir aynı** açıklamayı taşıyor —
+  kopyala-yapıştır. Akan su "kendi savunmasını tamamen yok sayan" bir stil olarak
+  anlatılıyor, ki bu hem adıyla hem stat'larının ima ettiği savunma-hareketlilik
+  rolüyle çelişiyor. Türkçe İngilizceye sadık, dolayısıyla tekrar İngilizce yeniden
+  yazılana kadar iki dilde de görünür.
+- `Gathering mastery` "with enough practice you being to see some commonalities"
+  diyor — "being" değil "begin" olmalı. Türkçe amaçlanan anlamı taşıyor.
+
+**Çevirilerine dair.** Bunlar tooltip metinleri: bilgilendirici, ama oyunun alaycı
+sesini taşıyorlar ve onu yavanlaştırmak kolay hata olurdu. "Don't look at the sun,
+it's bad for your eyes" omuz silkmeye devam ediyor. "Why bother trying to cut someone,
+when you can just crack all their bones?" neşesini koruyor. "Making the inedible
+edible" → "Yenmeyeni yenilebilir kılmak"; İngilizcesiyle aynı biçimde. Wide swing
+açıklamasındaki `<br>` etiketi olduğu gibi korunuyor.
+
+Kapsam %77.4'ten **%79.1**'e; referans, açıklamalar taşındıkça 837 anahtara çıktı.
 
 ### Yaşlı tamamlandı ve bataklığın iki ayrı sesi var — P-7
 

@@ -1072,6 +1072,83 @@ const names = {
     "name Woodworking": "Woodworking",
 };
 
-const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names};
+const descriptions = {
+    /*
+        Descriptions moved out of src/. Id shape: "desc <kind> <registry id>".
+
+        Keyed by the registry id rather than by the English text, unlike the
+        "name <English>" namespace: a description is a paragraph, and a paragraph
+        makes a poor key. The id is also stable against rewording the English.
+
+        The English lives HERE, not in src/. It was moved rather than copied, so
+        there is one source of truth and nothing to drift.
+    */
+    "desc skill Combat": "Overall combat ability",
+    "desc skill Pest killer": "Small enemies might not seem very dangerous, but it's not that easy to hit them!",
+    "desc skill Giant slayer": "Large opponents might seem scary, but just don't get hit and you should be fine!",
+    "desc skill Evasion": "Ability to evade attacks. You cannot do it while using a shield",
+    "desc skill Shield blocking": "Ability to block attacks with shield. You cannot evade while using one",
+    "desc skill Unarmed": "It's definitely, unquestionably, undoubtedly better to just use a weapon instead of doing this. But sure, why not?",
+    "desc skill Stance mastery": "Knowledge on how to apply different stances in combat",
+    "desc skill Quick steps": "A swift and precise technique that abandons strength in favor of greater speed",
+    "desc skill Heavy strike": "A powerful and dangerous technique that abandons speed in favor of overwhelmingly strong attacks",
+    "desc skill Wide swing": "A special technique that allows striking multiple enemies at once, although at a cost of lower overall efficiency. <br>Divides gained xp by number of enemies attacked, reduces drop rate in proportion to that number (down to 1/4th against 8).",
+    "desc skill Defensive measures": "A careful technique focused much more on defense than on attacking",
+    "desc skill Berserker's stride": "A wild and dangerous technique that focuses on dealing as much damage as possible, while completely ignoring own defense",
+    "desc skill Flowing water": "A wild and dangerous technique that focuses on dealing as much damage as possible, while completely ignoring own defense",
+    "desc skill Spatial awareness": "Understanding where you are in relation to other creatures and objects",
+    "desc skill Tight maneuvers": "Learn how to fight in narrow environment, where there's not much space for dodging attacks",
+    "desc skill Night vision": "Ability to see in darkness",
+    "desc skill Presence sensing": "Ability to sense a presence without using your eyes",
+    "desc skill Strength of mind": "Resist and reject the unnatural influence. Turn your psyche into an iron fortress",
+    "desc skill Scrambling": "Ability to act quickly and with secure footing in rough, loose, or unstable ground",
+    "desc skill Heat resistance": "Ability to survive and function in high temperatures",
+    "desc skill Cold resistance": "Ability to survive and function in low temperatures",
+    "desc skill Dazzle resistance": "Don't look at the sun, it's bad for your eyes",
+    "desc skill Weapon mastery": "Knowledge of all weapons",
+    "desc skill Swords": "The noble art of swordsmanship",
+    "desc skill Axes": "Ability to fight with axes",
+    "desc skill Spears": "The ability to fight with the most deadly weapon in history",
+    "desc skill Hammers": "Ability to fight with battle hammers. Why bother trying to cut someone, when you can just crack all their bones?",
+    "desc skill Daggers": "The disdained art of fighting (and stabbing) with daggers",
+    "desc skill Wands": "Ability to cast spells with magic wands, increases damage dealt",
+    "desc skill Staffs": "Ability to cast spells with magic staffs, increases damage dealt",
+    "desc skill Farming": "Even a simple action of plowing some fields, can be performed better with skills and experience",
+    "desc skill Sleeping": "Good, regular sleep is the basis of getting stronger and helps your body heal",
+    "desc skill Meditation": "Focus your mind",
+    "desc skill Running": "Great way to improve the efficiency of the body",
+    "desc skill Weightlifting": "No better way to get stronger than by lifting heavy things",
+    "desc skill Swimming": "A nice, gentle, and relaxing exercise. Just remember to be careful",
+    "desc skill Equilibrium": "Nothing will throw you off your balance (at least the physical one)",
+    "desc skill Climbing": "Intense and slightly dangerous form of training that involves majority of your muscles",
+    "desc skill Gathering mastery": "Knowledge on how to gather all the kinds of resources. While each of them is seemingly gathered in a completely different way, with enough practice you being to see some commonalities.",
+    "desc skill Woodcutting": "Get better with chopping the wood and recognizing useful trees",
+    "desc skill Mining": "Get better with mining for ore and stone",
+    "desc skill Digging": "Get better with swinging the shovel",
+    "desc skill Herbalism": "Knowledge of useful plants and mushrooms",
+    "desc skill Animal handling": "Knowledge and skills required to deal with a wide variety of animals",
+    "desc skill Fishing": "Get better at luring all kinds of fish",
+    "desc skill Crafting mastery": "A mastery of the minor crafting branches like tinkering, woodworking, or butchering",
+    "desc skill Crafting": "Turn smaller pieces into one bigger thing",
+    "desc skill Smelting": "Turning raw ore into raw metal",
+    "desc skill Forging": "Turning raw metal into something useful",
+    "desc skill Cooking": "Making the inedible edible",
+    "desc skill Alchemy": "Extracting and enhancing useful properties of the ingredients",
+    "desc skill Butchering": "Making the most of what you kill",
+    "desc skill Woodworking": "Turning wood logs into something useful",
+    "desc skill Iron skin": "Wearing no protective armor means that your skin keeps getting damaged in combat, which leads to it regenerating over and over to become tougher",
+    "desc skill Fortitude": "Pretend the wounds are not there",
+    "desc skill Persistence": "Do not give up, no matter what",
+    "desc skill Perception": "A better grasp on your senses allows you to notice small and hidden things, as well as to discern the true nature of what you observe",
+    "desc skill Literacy": "Ability to read and understand written text",
+    "desc skill Medicine": "Create better medicaments and improve your skill at treating wounds",
+    "desc skill Poison resistance": "As your body suffers from poisons more and more, it slowly builds up a resistance to them",
+    "desc skill Gluttony": "The more you eat the better you will be at digesting, right?",
+    "desc skill Breathing": "Oxygen is the most important resource for improving the performance of your body. Learn how to take it in more efficiently",
+    "desc skill Regeneration": "As your body regenerates more and more, it slowly becomes more proficient in this task",
+    "desc skill Haggling": "The art of the deal",
+};
+
+const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};
 
 export default english;

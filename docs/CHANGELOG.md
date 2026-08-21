@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 14 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 15 -->
 
 # Changelog
 
@@ -17,6 +17,74 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-19
+
+### Inventoried the hardcoded text, and moved the skill descriptions — P-7
+
+**First, the size of what is left.** A scan of `src/` for player-facing text that is
+still written in code, classified by whether the value is already a text id:
+
+| Category | Count |
+| --- | --- |
+| Display names — items 138, recipes 131, locations 108, enemies 32, activities 15, traders 7 | 431 |
+| Descriptions — items 196, locations 108, skills 64, effects 47, activities ~30, other ~40 | ~485 |
+| Location action text — starting, success, custom, unlock, leave | ~244 |
+| **Remaining** | **~1160** |
+
+The raw grep says 1567 field declarations, but that overcounts badly: 195 of the
+`name:` declarations in `dialogues.js` are Textline **ids** such as `"elder hello"`,
+already migrated. The number above is after testing each value against the locale
+keys, which is the only test that actually distinguishes an id from raw text.
+
+So this is a multi-session job, not a single pass. It is now measured rather than
+guessed at.
+
+**Skill descriptions are done: 64 of them, moved rather than copied.** `src/skills.js`
+now holds `description: "desc skill <id>"` and the English text lives in
+`locales/english.js`. Copying it would have left the same paragraph in two files with
+nothing keeping them in step; moving it means one source of truth, which is also what
+was asked for.
+
+The id shape is `"desc <kind> <registry id>"`, keyed by the id rather than by the
+English string — unlike the `"name <English>"` namespace. A description is a
+paragraph, and a paragraph makes a poor key; the id is also stable when the English
+gets reworded. `Skill.getDescription()` resolves it, and the one place that read
+`skill.description` now calls that.
+
+`npm run check` covers them: 108 content text ids declared, all resolving. Verified by
+planting a typo, which fails the build.
+
+**A bug I have now hit three times, and finally closed.** Writing a regex with `\b`
+through a shell heredoc corrupts it: the escape arrives in the file as a literal
+backspace byte, so the pattern silently matches a control character and finds nothing.
+It cost real time on the first occurrence, was diagnosed by hex-dumping the line, and
+recurred twice more. Anchoring on the start of a line fixed the corruption but broke
+inline declarations such as `new QuestTask({task_description: "..."})`, where the
+field is not at a line start — which showed up as the check counting 77 ids instead of
+108. The patterns now use an explicit `(?<![A-Za-z0-9_])` lookbehind: a word boundary
+written out longhand, using no escape a shell can mangle. The fix script also asserts
+no control bytes survive.
+
+**Two source defects found while reading the descriptions**, reported rather than
+quietly fixed, since inventing description text would contradict the standing rule
+about not rewriting the original:
+
+- `Flowing water` and `Berserker's stride` carry **byte-identical** descriptions — a
+  copy-paste. Flowing water is described as a style that "completely ignores own
+  defense", which contradicts both its name and the defensive-mobility role its stats
+  suggest. The Turkish is faithful to the English, so the duplication is visible in
+  both languages until the English is rewritten.
+- `Gathering mastery` says "with enough practice you being to see some commonalities" —
+  "being" should be "begin". The Turkish carries the intended meaning.
+
+**On translating them.** These are tooltip texts: informative, but they carry the
+game's wry voice, and flattening that would have been the easy mistake. "Don't look at
+the sun, it's bad for your eyes" stays a shrug. "Why bother trying to cut someone,
+when you can just crack all their bones?" keeps its cheer. "Making the inedible
+edible" is "Yenmeyeni yenilebilir kılmak", which has the same shape as the English.
+The `<br>` tag inside the Wide swing description is preserved exactly.
+
+Coverage 77.4% to **79.1%**, against a reference that grew to 837 keys as the
+descriptions moved in.
 
 ### The elder is finished, and the swamp has two voices — P-7
 

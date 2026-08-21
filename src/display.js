@@ -4594,7 +4594,7 @@ function create_new_skill_bar(skill) {
     skill_tooltip.appendChild(tooltip_milestones);
     skill_tooltip.appendChild(tooltip_next);
 
-    let html_content = `<span class="skill_id">id: "${skill.skill_id}"</span><br><br>${skill.description}<br>`;
+    let html_content = `<span class="skill_id">id: "${skill.skill_id}"</span><br><br>${skill.getDescription()}<br>`;
     if(skill.flavour_text) {
         html_content += `<br><span class="skill_flavour_text">"${skill.flavour_text}"</span>`;
     }
