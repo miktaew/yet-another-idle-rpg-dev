@@ -2345,7 +2345,7 @@ function create_location_choices({location, category, is_combat = false}) {
             
             const trader_div = document.createElement("div");  
 
-            insert_HTML(trader_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + traders[location.traders[i]].trade_text);
+            insert_HTML(trader_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + traders[location.traders[i]].getTradeText());
             trader_div.classList.add("start_trade", "location_choice");
             trader_div.setAttribute("data-trader", location.traders[i]);
             trader_div.setAttribute("onclick", "startTrade(this.getAttribute('data-trader'));");
@@ -4125,7 +4125,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
 
         if(dialogue.trader) {
             const trade_div = document.createElement("div");
-            insert_HTML(trade_div, `<i class="material-icons">storefront</i>  ` + traders[dialogue.trader].trade_text);
+            insert_HTML(trade_div, `<i class="material-icons">storefront</i>  ` + traders[dialogue.trader].getTradeText());
             trade_div.classList.add("dialogue_trade")
             trade_div.setAttribute("data-trader", dialogue.trader);
             trade_div.setAttribute("onclick", "startTrade(this.getAttribute('data-trader'))")

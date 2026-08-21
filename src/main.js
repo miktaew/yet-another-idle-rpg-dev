@@ -432,6 +432,33 @@ function option_combat_autoswitch(option) {
  * player moves around. Text already on screen keeps the old language until its
  * panel is redrawn.
  */
+/**
+ * The standalone pages - the help and the in-game changelog - open in a new tab,
+ * so they cannot go through the translation layer. Each language gets its own
+ * file, and a language with no translated page keeps the English one.
+ */
+const translated_pages = {
+    help: {
+        english: "help.html",
+        turkish: "help.tr.html",
+    },
+    changelog: {
+        english: "changelog.html",
+    },
+};
+
+function update_translated_page_links() {
+    document.querySelectorAll("a[data-page]").forEach(link => {
+        const pages = translated_pages[link.dataset.page];
+        if(!pages) {
+            console.warn(`No page map for "${link.dataset.page}".`);
+            return;
+        }
+        link.setAttribute("href", pages[language] ?? pages[default_language_for_pages]);
+    });
+}
+const default_language_for_pages = "english";
+
 async function option_language(option) {
     const selector = document.getElementById("options_language");
 
@@ -449,6 +476,8 @@ async function option_language(option) {
     language = chosen;
     await translationManager.init(language);
     translationManager.translateUI(language);
+
+    update_translated_page_links();
 
     //Nothing else redraws the bio panel, so it would otherwise keep the previous
     //language until the player reopened the character screen.
@@ -2401,9 +2430,9 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                 trader.is_unlocked = true;
                 if(!rewards.traders[i].skip_message) {
                     if(trader.unlock_message) {
-                        log_message(trader.unlock_message, "activity_unlocked");
+                        log_message(trader.getUnlockMessage(), "activity_unlocked");
                     } else {
-                        log_message(translationManager.getText(language, "log you can now trade with", {v1: trader.name}), "activity_unlocked");
+                        log_message(translationManager.getText(language, "log you can now trade with", {v1: trader.getDisplayName()}), "activity_unlocked");
                     }
                 }
             }
@@ -3934,7 +3963,7 @@ function load(save_data) {
         */
         update_displayed_reputation();
 
-        set_loading_screen_progress("Checking out your books");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading books"));
         
         if(save_data.skill_category_order) {
             save_data.skill_category_order.forEach((elem, idx) => {
@@ -4376,7 +4405,7 @@ function load(save_data) {
             player_storage.add_to_inventory(storage_item_list); // and then to storage inventory
         }
 
-        set_loading_screen_progress("Meowing at your cat");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading meowing"));
 
         Object.keys(save_data.dialogues).forEach(function(dialogue) {
             if(dialogues[dialogue]) {
@@ -4684,7 +4713,7 @@ function load(save_data) {
             }
         }); //load trader inventories
 
-        set_loading_screen_progress("Hiding rats in your walls");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading rats"));
 
         Object.keys(save_data.locations).forEach(function(key) {
             if(locations[key]) {
@@ -4929,7 +4958,7 @@ function load(save_data) {
             character.stats.add_active_effect_bonus();
         }
 
-        set_loading_screen_progress("Hiding from the vet");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading vet"));
 
         if(save_data.character.hp_to_full == null || save_data.character.hp_to_full >= character.stats.full.max_health) {
             character.stats.full.health = 1;
@@ -4946,7 +4975,7 @@ function load(save_data) {
             character.stats.full.stamina = character.stats.full.max_stamina - save_data.character.stamina_to_full;
         }
 
-        set_loading_screen_progress("Hiding rats in your walls (again!)");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading rats again"));
 
         if(save_data["enemy_killcount"]) {
             Object.keys(save_data["enemy_killcount"]).forEach(enemy_name => {
@@ -4955,7 +4984,7 @@ function load(save_data) {
             });
         }
 
-        set_loading_screen_progress("Looking for things that can be done tomorrow instead");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading procrastinating"));
 
         if(save_data["quests"]) {
             Object.keys(save_data["quests"]).forEach(quest => {
@@ -5093,7 +5122,7 @@ function load(save_data) {
             dialogues["farm supervisor"].textlines["troubled"].is_unlocked = true;
         }
         
-        set_loading_screen_progress("Mixing catnip with more catnip");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading catnip"));
 
         if(save_data["recipes"]) {
             Object.keys(save_data["recipes"]).forEach(category => {
@@ -5130,7 +5159,7 @@ function load(save_data) {
             });
         }
 
-        set_loading_screen_progress("Doing some finishing pats");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading finishing pats"));
 
         if(save_data.favourite_locations) {
             Object.keys(save_data.favourite_locations).forEach(location_key => {
@@ -5257,7 +5286,7 @@ function load_from_localstorage() {
         }
     } catch(error) {
         is_loading_error = true;
-        set_loading_screen_progress("Something went wrong 😭");
+        set_loading_screen_progress(translationManager.getText(language, "ui loading something went wrong"));
         set_loading_screen_errors_warning();
         console.error("Something went wrong on loading from localStorage!");
         console.error(error);
@@ -5943,6 +5972,8 @@ window.run = run;
 //Verify_Game_Objects();
 window.Verify_Game_Objects = Verify_Game_Objects;
 
+//Stays English: this is the first frame, before translationManager.init has run,
+//so there is no locale loaded to read a translation from.
 set_loading_screen_progress("Waking up from a nyap...");
 
 //check if there's an existing save file, otherwise just do some initial setup
@@ -5986,17 +6017,21 @@ if(language_selector) {
 }
 
 if(!is_loading_error) {
+    //Stays English for the same reason, and fittingly so: this is the message
+    //shown while the translations themselves are being loaded.
     set_loading_screen_progress("Translating the meows");
     await translationManager.init(language);
     set_loading_screen_progress("Waiting for you to click 'PLAY'");
     translationManager.translateUI(language);
+    update_translated_page_links();
     hide_loading_text();
     show_play_button();
 } else {
     hide_loading_text();
     await translationManager.init(language);
     translationManager.translateUI(language);
-    set_play_button_text("Play...?");
+    update_translated_page_links();
+    set_play_button_text(translationManager.getText(language, "ui play anyway"));
     show_play_button();
 }
 

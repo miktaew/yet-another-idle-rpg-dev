@@ -2903,6 +2903,28 @@ const descriptions = {
     "ui xp cost scaling": "Tecrübe maliyeti ölçeklemesi",
     "ui xp gain": "Tecrübe kazancı",
     "ui xp value": "Tecrübe değeri",
+
+    //TRADERS.
+    "ui trade village market": "Köy pazarında ticaret yap",
+    "ui unlocked village market": "Artık köy pazarını ziyaret edebilirsin",
+    "ui trade with": "{v1} ile ticaret yap",
+    "name village trader": "köy tüccarı",
+    "name suspicious trader": "şüpheli tüccar",
+    "name swampland trader": "bataklık tüccarı",
+    "name nekomimi cafe trader": "nekomimi kafe tüccarı",
+    "name cat cafe trader": "kedi kafe tüccarı",
+
+    //LOADING SCREEN. Jokes, not progress reports.
+    "ui loading books": "Kitaplarına göz atılıyor",
+    "ui loading meowing": "Kedine miyavlanıyor",
+    "ui loading rats": "Duvarlarına sıçan saklanıyor",
+    "ui loading vet": "Veterinerden saklanılıyor",
+    "ui loading rats again": "Duvarlarına sıçan saklanıyor (yine!)",
+    "ui loading procrastinating": "Yarına bırakılabilecek işler aranıyor",
+    "ui loading catnip": "Kedi nanesi biraz daha kedi nanesiyle karıştırılıyor",
+    "ui loading finishing pats": "Son sevgi patileri atılıyor",
+    "ui loading something went wrong": "Bir şeyler ters gitti 😭",
+    "ui play anyway": "Oyna...?",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

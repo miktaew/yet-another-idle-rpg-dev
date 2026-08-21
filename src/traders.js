@@ -1,4 +1,6 @@
 "use strict";
+import { language } from "./main.js";
+import { translationManager } from "./translation.js";
 
 import { character, get_total_level_bonus } from "./character.js";
 import { current_game_time } from "./game_time.js";
@@ -25,7 +27,22 @@ class Trader extends InventoryHaver {
         super();
         this.name = name;
         this.display_name = display_name || name;
-        this.trade_text = trade_text || `Trade with ${this.display_name}`;
+        //A TEXT ID when given; otherwise the default sentence is assembled from
+        //the shown name at render time, so it can be reordered per language.
+        this.trade_text = trade_text;
+
+        /** The shown name. this.name is the registry key and stays English. */
+        this.getDisplayName = () => translationManager.getDisplayName(language, this.display_name);
+
+        /** The label on the button that opens the shop. */
+        this.getTradeText = () => this.trade_text
+            ? translationManager.getText(language, this.trade_text)
+            : translationManager.getText(language, "ui trade with", {v1: this.getDisplayName()});
+
+        /** The unlock message, or null for a trader with none. */
+        this.getUnlockMessage = () => this.unlock_message
+            ? translationManager.getText(language, this.unlock_message)
+            : this.unlock_message;
         this.unlock_message = unlock_message,
         this.last_refresh = -1;  
         //just the day_count from game_time at which trader was supposedly last refreshed
@@ -151,8 +168,8 @@ class TradeItem {
         name: "village trader",
         inventory_template: "Basic",
         is_unlocked: false,
-        trade_text: "Trade on the village market",
-        unlock_message: "You can now visit the village market",
+        trade_text: "ui trade village market",
+        unlock_message: "ui unlocked village market",
         profit_margin: 4,
     });
     traders["suspicious trader"] = new Trader({

@@ -53,6 +53,7 @@ function check_site() {
     const expected = [
         "index.html",
         "help.html",
+        "help.tr.html",
         "changelog.html",
         "style.css",
         "favicon.ico",

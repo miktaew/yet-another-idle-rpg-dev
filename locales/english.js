@@ -2859,6 +2859,30 @@ const descriptions = {
     "ui xp cost scaling": "XP cost scaling",
     "ui xp gain": "XP gain",
     "ui xp value": "XP value",
+
+    //TRADERS. The trade button and the unlock message; the names are registry
+    //keys, shown on the button and in the log.
+    "ui trade village market": "Trade on the village market",
+    "ui unlocked village market": "You can now visit the village market",
+    "ui trade with": "Trade with {v1}",
+    "name village trader": "village trader",
+    "name suspicious trader": "suspicious trader",
+    "name swampland trader": "swampland trader",
+    "name nekomimi cafe trader": "nekomimi cafe trader",
+    "name cat cafe trader": "cat cafe trader",
+
+    //LOADING SCREEN. These are jokes, not progress reports; the Turkish keeps
+    //the joke rather than describing what is loading.
+    "ui loading books": "Checking out your books",
+    "ui loading meowing": "Meowing at your cat",
+    "ui loading rats": "Hiding rats in your walls",
+    "ui loading vet": "Hiding from the vet",
+    "ui loading rats again": "Hiding rats in your walls (again!)",
+    "ui loading procrastinating": "Looking for things that can be done tomorrow instead",
+    "ui loading catnip": "Mixing catnip with more catnip",
+    "ui loading finishing pats": "Doing some finishing pats",
+    "ui loading something went wrong": "Something went wrong 😭",
+    "ui play anyway": "Play...?",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .collapsible {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-weight: bold;
+            font-size: 16px;
+            border-top: 1px solid gray;
+        }
+        .collapsible:hover, .collapsible.active {
+            background-color: #ccc;
+        }
+        .content {
+            padding: 0 18px;
+            display: none;
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        #content_blocks {
+            overflow-y: scroll;
+            border: 4px solid black;
+        }
+
+        #header {
+            background-color: #eee;
+            color: #444;
+            font-size: 20px;
+            padding: 18px;
+            width: fit-content;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-family: sans-serif;
+        }
+
+        .separated { 
+            border-top: 4px solid gray;
+        }
+    </style>
+</head>
+<body onload = "resize_blocks()">
+    
+
+<h2>Kaydını dışa aktarmayı unutma!</h2>
+<br>
+<h4>Geri bildirimin ya da önerin mi var? Oyunun <a href="https://discord.gg/G4jCtEch7A">Arcanum discord sunucusunda</a> üzerinde bir köşesi var (en altta, Proto23'ün kanalının hemen altında)</h4>
+<br>
+
+<div id="header">İçeriğini açmak için bloklara tıkla</div>
+
+<h3> Aşağıdaki içeriği okumadan önce şunu göz önünde bulundur: gizem azaldıkça eğlence de azalabilir (ya da azalmaz, tamamen sana bağlı!)</h3>
+
+
+<div id="content_blocks">
+    <button type="button" class="collapsible">Mevcut oyun içeriği nerede bitiyor?</button>
+    <div class="content">
+        Mevcut oyun sürümü itibarıyla son dövüş bölgeleri şunlar:
+        Dağda: 'Yumuşak dağ yamacı'
+        Mağaralarda: 'Kıvranan tünel'
+        Ormanda: 'Ayı ini' ve 'Kırmızı karınca yuvası'
+        Nehrin aşağısında: 'Bataklıklar'
+        Kasabaya girmek ve ikinci kapıyı açmak henüz mümkün değil.
+    </div>
+
+    <button type="button" class="collapsible">Sanırım bir hata buldum, ne yapmalıyım?</button>
+    <div class="content">
+        Önce tarayıcı konsolunu aç ve içinde hata ya da uyarı olup olmadığına bak; varsa kopyala ya da ekran görüntüsünü al, sonra bana bildir; tercihen discord üzerinden.<br>
+        Ciddiyim, yalvarıyorum: bir hata mesajı varsa onu da ekle. Bu sağduyu gereği olmalı, ama çoğu insan geliştiricilerin neyin ters gittiğini hiçbir bilgi olmadan tahmin edip düzeltmesini bekliyor gibi.<br>
+        Tabii sorunun bir açıklamasına da ihtiyacım olacak; hata mesajı çok önemli olsa da tek başına pek işe yaramaz.<br>
+        
+        <br><br>
+        Ayrıca <a href="https://discord.gg/G4jCtEch7A">Arcanum sunucusundaki</a> özel kanalın yanı sıra r/incremental_games discord sunucusunda da bir gönderi var (game-posts kanalı), ama oraya nadiren bakıyorum; o yüzden beni kesinlikle etiketle (ve bildirimin, çoğu zaman olduğu gibi, bozulmaması için dua et)
+    </div>
+
+    <button type="button" class="collapsible">Büyü eklendi mi?</button>
+    <div class="content">
+        Tahmin ettiğin gibi, hayır. İleride, kasaba erişilebilir hâle geldikten sonra gelecek.
+    </div>
+
+    <button type="button" class="collapsible">Ekonomi</button>
+    <div class="content">
+        <ul>
+            <li> Para:
+                <ul>
+                    <li>
+                        10 W = 1 C, 100 C = 1 S, 100 S = 1 G
+                        T: Tahta, B: Bakır, G: Gümüş, A: Altın
+                    </li>
+                </ul>
+            </li>
+            <li>
+                Fiyatlar
+                <ul>
+                    <li>
+                        Tüccarlar eşyaları, aynı eşya için ödeyeceklerinden çok daha yüksek fiyata satar (nihayetinde onların da geçinmesi gerekiyor).
+                        <br>"Pazarlık" becerisi fiyat farkını biraz azaltır; azami seviyede %100'ün üzerindeki değer yarıya iner (yani %200 %150 olur, %300 %200 olur, vb.)
+                        <br>İtibar da bölgedeki tüccarların fiyatlarını düşürür. Mevcut itibarını "Veri" sekmesinden görebilirsin.
+                    </li>
+                </ul>
+            </li>
+            <li>
+                Pazar doygunluğu
+                <ul>
+                    <li>
+                        Düşman ganimetini daha çok sattıkça fiyatı yavaşça düşer ve başlangıç değerinin 1/10'unda durur. Bu tüm tüccarlar için geçerlidir. 
+                        <br>Fiyat zamanla toparlanır, ama bu çok yavaş bir süreç.
+                        <br><br>Doygunluk değerleri bölgelere göre ayrıdır. Dengeye ulaşana kadar her oyun günü aralarında sızar.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <button type="button" class="collapsible">Üretim</button>
+    <div class="content">
+        <ul>
+            <li> Üretim alt kategorileri:
+                <ul>
+                    <li> 
+                        Eşyalar: çoğunlukla sıradan şeyler; tüketilebilirler ve ileri üretim için malzemeler, ama takılacak hoş süs eşyaları da var
+                    </li>
+                    <li>
+                        Parçalar: her tür teçhizata birleştirilebilen şeyler.<br>
+                        Kaliteleri doğrudan teçhizat statlarına dönüşmez; bu yüzden kendi istatistikleri "temel değer" olarak gösterilir, yani %100 kalitede bir teçhizat parçasına katacakları değer olarak
+                    </li>
+                    <li>
+                        Teçhizat: gerçekten kuşanabildiğin şeyler. Çoğunlukla parçalardan üretilir; istisna, giyilebilir parça gibi çalışan 'giysi'<br>
+                        Kalite; beceri seviyesine, parçaların kalitesine (giysi olmayan teçhizatta) ve ya parçaların kademesine (giysi olmayanlarda) ya da ortaya çıkan giysinin kademesine dayanır
+                    </li>
+                </ul>
+            </li>
+            <li>Kaynakları lokasyonlardaki edilgen etkinliklerden ve/veya dövüş ganimetinden elde edebilirsin; üretimde kullanılabilen eşyalar bunu genellikle (ama her zaman değil) açıklamalarında belirtir<br>
+                Edilgen toplama etkinliklerinde gereken süre, başarı şansı ve kazanılan eşya sayısı gibi şeylerin hepsi beceri seviyesinden etkilenir.
+            </li>
+            <li>
+                Tecrübe ve kalite üst sınırları:
+                <ul>
+                    <li>
+                        Teçhizat kalitesinin üst sınırı, beceri seviyesi başına %100 + %2,8'dir.<br>
+                        Parça kalitesinin (teçhizata giren giysi hariç) üst sınırı, beceri seviyesi başına %100 + %2'dir.<br>
+                        Bu sınır esasen üst kademe malzemelerin bir noktada alt kademelilere yetişmesi için var.
+                    </li>
+                    <li>
+                        Eşya tariflerinden gelen tecrübe kazancı, başarı şansını azamiye çıkarmak için gereken değerin birkaç seviye üstüne çıktığında düşmeye başlar ve oradan istikrarlı biçimde 1'e iner.
+                        Parça/teçhizat tariflerinden gelen tecrübe kazancı, ilgili beceri 8*eşya_kademesi değerini geçtiğinde düşmeye başlar; ancak bu değer eşyanın nadirlik çarpanının kareköküyle de çarpılır (örneğin 'sıradışı' için sqrt(1,1)). Parçalarda 0,5*malzeme_sayısı'na, teçhizatta 1'e kadar iner.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <button type="button" class="collapsible">Dövüş</button>
+    <div class="content">
+        <ul>
+            <li>
+                SP / KP:
+                <ul>
+                    <li>İsabet/kaçınma şansını etkileyen statların ve becerilerin özeti. Duruma bağlı değiştiricileri içermez (örneğin düşman türüne dayanan becerilerden gelenler), ama çevresel değiştiricileri içerir (örneğin "dar" alanlarda daha düşük KP) </li>
+                    <li>Ölçekleme doğrusal değildir.</li>
+                    <li>Düşmanın KP'sinin 5 katı kadar SP, hedefi vurma şansını ~%98 yapar. </li>
+                    <li>Düşmanın KP'sinin iki katı kadar SP, hedefi vurma şansını ~%80 yapar. </li>
+                    <li>Düşmanın KP'sine eşit SP, hedefi vurma şansını %50'nin biraz üstüne çıkarır. </li>
+                    <li>Düşmanın KP'sinin yarısı kadar SP, hedefi vurma şansını ~%24 yapar. </li>
+                    <li>Düşmanın KP'sinin 1/5'i kadar SP, hedefi vurma şansını ~%5 yapar. </li>
+                </ul> 
+            </li><br>
+            <li>
+                İsabet / kaçınma şansı
+                <ul>
+                    <li>Dövüş sırasında düşmanın üstünde gösterilir</li>
+                    <li>DÜŞMANIN vurma ya da saldırılardan kaçınma şansını gösterirler</li>
+                </ul> 
+            </li><br>
+            <li>
+                Savunma tedbirleri
+                <ul>
+                    <li>"Kaçınma" tetiklenirse hasarı her zaman tamamen sıfırlar.</li>
+                    <li>Kalkan hasarı emebilir ve tetiklenme temel şansı çok yüksektir, ama genelde hasarı 0'a indirecek kadar güçlü olmaz; yine de mümkündür.</li>
+                    <li>"Savunma", alınan hasarda düz bir azaltma sağlar. Kalkanın hasar azaltmasından sonra uygulanır.<br>
+                        Alınan hasarı 1'in ya da özgün değerin %10'unun (hangisi büyükse) altına indiremez. Ancak kalkandan bundan azı geçiyorsa o değer kullanılır; bu da çok küçük hasar değerlerine ve/veya tam sıfırlamaya izin verir.</li>
+                </ul> 
+            </li><br>
+            <li>
+                Saldırı hızı:
+                <ul>
+                    <li>
+                        Birinin, dövüşteki başka bir katılımcıya kıyasla ne kadar hızlı saldırdığına doğrudan karşılık gelir. 2 kat fazla => 2 kat hızlı. 2 kat az => 2 kat yavaş.
+                    </li>
+                    <li>
+                        Çılgınlığı ve olası sorunları önlemek için, yeni bir dövüş başladığında hem karakterin hem düşmanların saldırı bekleme süreleri, kimse saniyede birden hızlı saldırmayacak biçimde ölçeklenir.
+                    </li>
+                </ul>
+            </li><br>
+            <li>Dayanıklılık:
+                <ul>
+                    <li>Dayanıklılık 0'a düştüğünde karakterin saldırı hızı ve saldırı gücü yarıya iner.</li>
+                    <li>Ceza, dayanıklılık olmadan dövüşerek seviye kazanan "Azim" becerisiyle azaltılabilir</li>
+                    <li>Azami dayanıklılığı yükselterek ve/veya dövüşte dayanıklılık yenilenmesi sağlayan yiyecekleri kullanarak da geciktirilebilir</li>
+                </ul>
+            </li><br>
+            <li>
+                Dövüş duruşları:
+                <ul>
+                    <li>
+                        Daha yüksek dayanıklılık maliyeti karşılığında farklı güçlendirmeler ve cezalar verir; farklı durumlarda işe yarar.
+                    </li>
+                    <li>
+                        Dövüş ortasında duruş değiştirmek saldırı çubuğunu sıfırlar (kurnazlığa izin yok).
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <button type="button" class="collapsible">Alan türleri, takvim, gece-gündüz döngüsü ve hava</button>
+    <div class="content">
+        <ul>
+            <li>
+                Bazı etkinlikler günün saatiyle ya da mevsimle sınırlıdır.
+            </li>
+            <li>
+                Normal alanlarda geceleyin (20 ile 4 arası) ve karanlık alanlarda (örneğin mağaralarda) her zaman, karakter isabet/kaçınma şansına ek ceza alır.
+                <br>
+                Bu ceza, böyle bir yerde bulunmakla edilgen olarak tecrübe kazanan "Gece görüşü" becerisiyle azaltılabilir.
+                <br>
+            </li><br>
+            <li>
+                Bazı dövüş alanlarının özel nitelikleri vardır ve bunlar belirli statlara ceza getirir. Örneğin bazı alanlar düzgün kaçınmak ya da silahla iyi bir savuruş yapmak için yeterli hareket alanı sunmaz
+                <br>
+                Genelde cezayı azaltan ve çoğunlukla yalnızca böyle bir yerde bulunmakla seviye kazanan bir becerileri vardır
+            </li>
+            <li>
+                Düşük sıcaklıkta fazla kalmak bazı olumsuz etkileri tetikler; sıcak tutan giysi almayı unutma. Islak olmak soğuğa dayanıklılığını azaltır.
+                <br>
+                Sıcaklıklar bölgeler arasında değişir; bazılarında daha az değişir, bazılarında sabittir. Yine de sistem tamamen belirlenimcidir.
+            </li>
+            <li>
+                Mevsimler gerçekten de bizim dünyamızdakinden farklı tarihlerde başlıyor, buna kafayı takma~
+            </li>
+            
+        </ul>
+    </div>
+    <button type="button" class="collapsible">Tecrübe puanı ve açılışlar</button>
+    <div class="content">
+        <ul>
+            <li> Tecrübe:
+                <ul>
+                    <li>Daha zor düşmanlar genelde daha çok tecrübe verir. Alan değiştiricilerinden etkilenmez, ama bir gruptaki düşman sayısından etkilenir (0,334 kuvvetine yükseltilir; 8'e karşı dövüşte x2 verir)</li>
+                    <li>Ayrıca birden çok kaynaktan gelen bir sürü bonus var (esasen beceri kilometre taşları ve bitirilen kitaplar, ama kahraman seviyesine dayanan hoş bir çarpan da).</li>
+                </ul> 
+            </li><br>
+            <li> Açılışlar: 
+                <ul>
+                    <li>Yeni lokasyonlar, eylemler ve etkinlikler; biriyle konuşarak, becerilerde belirli seviyelere ulaşarak, düşman bölgelerini temizleyerek (bazen birden fazla kez geçmek gerekebilir) ve eylemlerde başarılı olarak açılabilir</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <button type="button" class="collapsible">Üst beceriler</button>
+    <div class="content">
+        <ul>
+            <li>
+                Alt becerileri daha düşük seviyedeyse onların seviye kazanma hızını çarpar
+            </li>
+            <li>
+                En yüksek seviyeli alt becerileriyle aynı seviyede kalırlar
+            </li>
+        </ul>
+    </div>
+    <button type="button" class="collapsible">Eşyalar</button>
+    <div class="content">
+        <ul>
+            <li>
+                Teçhizat kalitesi 
+                <ul>
+                    <li>
+                        Kuşanılabilir her eşya bir "kalite" değeriyle gelir. Bu değer, eşyanın temel bonusunu (silahlarda saldırı, zırhlarda savunma, kalkanlarda azami savuşturma) ve değerini doğrudan çarpar.
+                        <br>
+                        Bunun üstüne, daha yüksek kalite rütbeleri (%100'de başlayan sıradışı rütbesinden itibaren) yalnızca temel bonusa değil, eşyanın diğer tüm statlarına da (yalnızca rütbeye dayanan) bir çarpan daha verir.
+                        Bu bonus, aksi hâlde fazla güçlü olacak bazı statlara azaltılmış oranda uygulanır.
+                        <br>
+                        <pre>
+        kalite      nadirlik       renk       ek_çarpan
+        %0-49       çöp            gri        x1
+        %50-99      sıradan        beyaz      x1
+        %100-129    sıradışı       yeşil      x1,1
+        %130-159    nadir          mavi       x1,3
+        %160-199    epik           mor        x1,6
+        %200-246    efsanevi       turuncu    x2
+        %247-250    mitik          ????       x2,5
+                        </pre>
+                    </li>
+                    <li>
+                        <strong><span class="game_version"></span> sürümü itibarıyla tüccarlardan alınabilen en yüksek eşya kalitesi %120</strong>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <button type="button" class="collapsible separated">Katkıda bulunma</button>
+    <div class="content">
+        Bir şeyin geliştirilebileceğini mi düşünüyorsun? <br>
+        Bazı diyalogların potansiyelini tam kullanmadığını ya da daha yumuşak olabileceğini mi düşünüyorsun? <br>
+        Yeni bir lokasyon, eşya, düşman, beceri eklemek mi istiyorsun? <br><br>
+        Katkılar çok makbule geçer! <br>
+        Bu sürüm bir devam çatallamasıdır. Şu adrese issue ya da pull request açabilirsin: <a href="https://github.com/Kuroiteiken/yairp" target="_blank" rel="noopener">https://github.com/Kuroiteiken/yairp</a>,<br>
+        yalnızca ilerleyişe dokunan her şey için önce iletişime geç lütfen; ham metin değişiklikleri ve kendini açıklayan diğer düzeltmeler doğrudan girebilir. <br>
+        Önerdiğin değişikliklerin reddedilebileceğini göz önünde bulundur, ama kendi modunu yapmaya sonuna kadar davetlisin!<br><br>
+        Özgün oyun Miktaew'e ait: <a href="https://github.com/miktaew/yet-another-idle-rpg" target="_blank" rel="noopener">https://github.com/miktaew/yet-another-idle-rpg</a>.
+    </div>
+    <button type="button" class="collapsible separated">Teşekkürler ve anmalar</button>
+    <div class="content">
+        <ul>
+            <li><a href="https://23html.github.io" target="_blank">Proto23</a> Corc'a ait; bir ilham kaynağı ve bu projenin başlamasının tek sebebi. Mutlaka bir bak!</li>
+            <li><a href="https://github.com/turuslan/HackTimer" target="_blank">HackTimer</a> Turuslan'a ait; sekme etkin değilken yavaşlamaları önlemek için kullanılıyor</li> 
+            <li>Material Icons ve Symbols, Google'a ait</li>
+            <li>
+                <dl>
+                    <dt>Bütün o harika katkıcılar</dt>
+                    <dd>
+                        - OnonokiNonon: içerik (orman gölü, balıkçılık) ve hepsini saymaya kalkışamayacağım kadar çok iyileştirme ve başka güzel şey için!
+                    </dd>
+                    <dd>
+                        - BD Jim: içerik (bataklık) için
+                    </dd>
+                    <dd>
+                        - Bram-Nordvegr: içerik (Carya kanyonu) için
+                    </dd>
+                    <dd>
+                        - Erlemar: içerik (yukarıda anılan bölgede yeni bir toplama noktası) için
+                    </dd>
+                    <dd>
+                        - Trilbyspaceclone: içerik (yeni bir kitap) için
+                    </dd>
+                    <dd>
+                        - Mercurius: olası bir bellek sızıntısını önleyen bir düzeltme için
+                    </dd>
+                    <dd>
+                        - Nicholas Biles: metin düzeltmeleri için
+                    </dd>
+                    <dd>
+                        - SardineMilk (leziz): metin düzeltmeleri için
+                    </dd>
+                </dl>
+            </li>
+            <li>Bütün o harika Ko-fi destekçilerine kocaman kocaman teşekkürler!</li>
+
+        </ul>
+    </div>
+    <button type="button" class="collapsible separated">Oyunu destekleme</button>
+    <div class="content">
+        Oyunu beğendiysen ve bir github hesabın varsa şu repoya bir yıldız vermeyi düşün: <a href="https://github.com/Kuroiteiken/yairp" target="_blank" rel="noopener">https://github.com/Kuroiteiken/yairp</a><br>
+        - ve devam ettirdiği özgün oyuna: <a href="https://github.com/miktaew/yet-another-idle-rpg" target="_blank" rel="noopener">https://github.com/miktaew/yet-another-idle-rpg</a><br>
+        Nihayetinde yükselen sayılar güzel bir dopamin patlaması sağlıyor, değil mi?
+        <br><br><br>
+        Gerçekten birine para vermek istiyorsan, bu sürümün devam ettirdiği oyunu yaratan Miktaew'e gönder. Ko-fi adresi: <a href="https://ko-fi.com/miktaew" target="_blank" rel="noopener"> https://ko-fi.com/miktaew</a>
+        <br><br>
+    </div>
+</div>
+
+<script>
+    const btns = document.getElementsByClassName("collapsible");
+    //const content = document.getElementById("content");
+
+    for(let i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", () => {
+            btns[i].classList.toggle("active");
+            const content = btns[i].nextElementSibling;
+            if (content.style.display !== "block"){
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+            }
+        });
+    }
+
+    const blocks = document.getElementById("content_blocks");
+    blocks.addEventListener("click", (event) => {
+        if(event.target.classList.contains("collapsible")) {
+            const rect = event.target.nextElementSibling.getBoundingClientRect();
+            const windowHeight = document.documentElement.clientHeight;
+
+            if (rect.top < 0 || rect.bottom > windowHeight) {
+                event.target.nextElementSibling.scrollIntoView({ behavior: 'smooth', block: 'end'});
+            }
+        }
+    });
+
+    window.addEventListener("resize", resize_blocks);
+
+    function resize_blocks() {
+        let target_height = window.innerHeight - document.getElementById("content_blocks").offsetTop - 16;
+
+        console.log(target_height);
+        document.getElementById("content_blocks").style.height = target_height + "px";
+    }
+    
+</script>
+
+</body>
+</html>

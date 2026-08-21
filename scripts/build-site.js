@@ -37,6 +37,7 @@ const version = get_game_version();
 const static_files = [
     "index.html",
     "help.html",
+    "help.tr.html",
     "changelog.html",
     "style.css",
     "favicon.ico",
