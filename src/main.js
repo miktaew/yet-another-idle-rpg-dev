@@ -661,7 +661,7 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
 
     if(typeof current_location !== "undefined" && current_location.id !== location.id){
         //so it's not called when initializing the location on page load or on reloading current location due to new unlocks
-        log_message(`[ Entering ${location.name} ]`, "message_travel");
+        log_message(translationManager.getText(language, "log entering v1", {v1: location.name}), "message_travel");
     }
 
     if(location.crafting) {
@@ -748,7 +748,7 @@ function start_activity(selected_activity) {
         //just check if slot is not empty
 
         if(!has_proper_tool) {
-            log_message("You need to equip a proper tool to do that!");
+            log_message(translationManager.getText(language, "log you need to equip a"));
             current_activity = null;
             return;
         }
@@ -766,10 +766,10 @@ function start_activity(selected_activity) {
 
 function end_activity() {
     
-    log_message(`%HeroName% finished ${current_activity.activity_name}`, "activity_finished");
+    log_message(translationManager.getText(language, "log heroname finished v1", {v1: translationManager.getDisplayName(language, current_activity.activity_name)}), "activity_finished");
     
     if(current_activity.earnings) {
-        log_message(`%HeroName% earned ${format_money(current_activity.earnings)}`, "activity_money");
+        log_message(translationManager.getText(language, "log heroname earned v1", {v1: format_money(current_activity.earnings)}), "activity_money");
         add_money_to_character(current_activity.earnings);
     }
 
@@ -973,7 +973,7 @@ function unlock_global_activity({activity_id}) {
         if(activities[activity_id].unlock_text) {
            message = rtp(activities[activity_id].unlock_text)+":\n";
         }
-        log_message(message + `Gained the ability of "${activities[activity_id].name}"`, "activity_unlocked");
+        log_message(message + translationManager.getText(language, "log gained the ability of", {v1: activities[activity_id].getName()}), "activity_unlocked");
     }
 }
 
@@ -998,7 +998,7 @@ function unlock_activity(activity_data) {
                 &&
                 activities[activity_data.activity.activity_name].base_skills_names.filter(skill_id => skills[skill_id].is_unlocked).length > 0
             ) {
-                log_message(message + `Unlocked activity "${activity_data.activity.activity_name}" in location "${activity_data.location}"`, "activity_unlocked");
+                log_message(message + translationManager.getText(language, "log unlocked activity in location", {v1: translationManager.getDisplayName(language, activity_data.activity.activity_name), v2: translationManager.getDisplayName(language, activity_data.location)}), "activity_unlocked");
             }
         }
         
@@ -1014,12 +1014,12 @@ function unlock_action(action_data) {
             if(action_data.location) {
                 if(locations[action_data.location].actions[action_data.action.action_id].unlock_text) {
                     message = locations[action_data.location].actions[action_data.action.action_id].getUnlockText()+":\n";
-                    log_message(message + `Unlocked action "${action_data.action.getActionName()}" in location "${action_data.location}"`, "activity_unlocked");
+                    log_message(message + translationManager.getText(language, "log unlocked action in location", {v1: action_data.action.getActionName(), v2: translationManager.getDisplayName(language, action_data.location)}), "activity_unlocked");
                 }
             } else if(action_data.dialogue) {
                 if(dialogues[action_data.dialogue].actions[action_data.action.action_id].unlock_text) {
                     message = dialogues[action_data.dialogue].actions[action_data.action.action_id].getUnlockText()+":\n";
-                    log_message(message + `Unlocked action "${action_data.action.getActionName()}" wit "${action_data.dialogue}"`, "activity_unlocked");
+                    log_message(message + translationManager.getText(language, "log unlocked action with", {v1: action_data.action.getActionName(), v2: translationManager.getDisplayName(language, action_data.dialogue)}), "activity_unlocked");
                 }
             }
         }
@@ -1180,7 +1180,7 @@ function do_reading() {
     add_xp_to_skill({skill: skills["Literacy"], xp_to_add: book.literacy_xp_rate});
 
     if(book.is_finished) {
-        log_message(`Finished the book "${is_reading}"`);
+        log_message(translationManager.getText(language, "log finished the book v1", {v1: is_reading}));
         update_booklist_entry(is_reading, true);
         end_reading();
 
@@ -1359,7 +1359,7 @@ function unlock_combat_stance(stance_id) {
     }
 
     if(!stances[stance_id].is_unlocked) {
-        log_message(`You have learned a new stance: "${stances[stance_id].getName()}"`, "location_unlocked");
+        log_message(translationManager.getText(language, "log you have learned a new", {v1: stances[stance_id].getName()}), "location_unlocked");
     }
     stances[stance_id].is_unlocked = true;
     update_displayed_stance_list(stances, current_stance, faved_stances);
@@ -1741,7 +1741,7 @@ function do_enemy_combat_action(enemy_id) {
             const blocked = character.equipment["off-hand"].getShieldStrength() * (character.equipment["off-hand"].tags.ignore_skill?1:character.stats.total_multiplier.block_strength);
 
             if(blocked > damages_dealt[0]) {
-                log_message("%HeroName% blocked an attack", "hero_blocked");
+                log_message(translationManager.getText(language, "log heroname blocked an attack"), "hero_blocked");
                 return; //damage fully blocked, nothing more can happen 
             } else {
                 damages_dealt = damages_dealt.map(val => Math.max(0,val-blocked));
@@ -1757,7 +1757,7 @@ function do_enemy_combat_action(enemy_id) {
             const xp_to_add = character.wears_armor() ? attacker.xp_value : attacker.xp_value * 1.5; 
             //50% more evasion xp if going without armor
             add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add/enemy_count_xp_mod});
-            log_message("%HeroName% evaded an attack", "enemy_missed");
+            log_message(translationManager.getText(language, "log heroname evaded an attack"), "enemy_missed");
             return; //damage fully evaded, nothing more can happen
         } else {
             add_xp_to_skill({skill: skills["Evasion"], xp_to_add: attacker.xp_value/(2*enemy_count_xp_mod)});
@@ -1784,17 +1784,17 @@ function do_enemy_combat_action(enemy_id) {
 
     if(critted) {
         if(partially_blocked) {
-            log_message("%HeroName% partially blocked, was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
+            log_message(translationManager.getText(language, "log hero partially blocked critically hit", {v1: hit_count_msg, v2: Math.ceil(10*damage_taken)/10}), "hero_attacked_critically");
         } 
         else {
-            log_message("%HeroName% was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
+            log_message(translationManager.getText(language, "log hero critically hit", {v1: hit_count_msg, v2: Math.ceil(10*damage_taken)/10}), "hero_attacked_critically");
         }
     } else {
         if(partially_blocked) {
-            log_message("%HeroName% partially blocked, was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
+            log_message(translationManager.getText(language, "log hero partially blocked hit", {v1: hit_count_msg, v2: Math.ceil(10*damage_taken)/10}), "hero_attacked");
         }
         else {
-            log_message("%HeroName% was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
+            log_message(translationManager.getText(language, "log hero hit", {v1: hit_count_msg, v2: Math.ceil(10*damage_taken)/10}), "hero_attacked");
         }
     }
 
@@ -1873,10 +1873,10 @@ function do_character_combat_action({target, attack_power, target_count}) {
             strongest_hit = damage_dealt;
         }
         if(critted) {
-            log_message(target.name + " was critically hit for " + damage_dealt + " dmg", "enemy_attacked_critically");
+            log_message(translationManager.getText(language, "log target critically hit", {v1: target.getName(), v2: damage_dealt}), "enemy_attacked_critically");
         }
         else {
-            log_message(target.name + " was hit for " + damage_dealt + " dmg", "enemy_attacked");
+            log_message(translationManager.getText(language, "log target hit", {v1: target.getName(), v2: damage_dealt}), "enemy_attacked");
         }
 
         target.on_damaged(character);
@@ -1886,7 +1886,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
             target.stats.health = 0; //to not go negative on displayed value
             target.on_death(character);
 
-            log_message(target.name + " was defeated", "enemy_defeated");
+            log_message(translationManager.getText(language, "log target defeated", {v1: target.getName()}), "enemy_defeated");
 
             //gained xp multiplied by TOTAL size of enemy group raised to 1/3
             let xp_reward = target.xp_value * groupsize_xp_multiplier;
@@ -1904,7 +1904,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
 
         update_displayed_health_of_enemies();
     } else {
-        log_message("%HeroName% has missed", "hero_missed");
+        log_message(translationManager.getText(language, "log heroname has missed"), "hero_missed");
     }
 }
 
@@ -1947,7 +1947,7 @@ function kill_enemy(target, do_quest_events = true) {
 function kill_player({is_combat = true} = {}) {
     if(is_combat) {
         total_deaths++;
-        log_message("%HeroName% has lost consciousness", "hero_defeat");
+        log_message(translationManager.getText(language, "log heroname has lost consciousness"), "hero_defeat");
 
         update_displayed_health();
         if(game_options.auto_return_to_bed && last_location_with_bed) {
@@ -2078,7 +2078,7 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
         update_displayed_skill_bar(skill, false);
         
         if(typeof should_info === "undefined" || should_info) {
-            log_message(`Unlocked new skill: ${skill.name()}`, "skill_raised");
+            log_message(translationManager.getText(language, "log unlocked new skill v1", {v1: skill.name()}), "skill_raised");
         }
     } 
 
@@ -2175,7 +2175,7 @@ function add_xp_to_skill({skill, xp_to_add = 1, should_info = true, use_bonus = 
             if(prev_name !== new_name) { //skill name has changed
                 //display of skill name in other places (like tooltips of other skills) is handled slightly earlier
                 if(!was_hidden && (typeof should_info === "undefined" || should_info)) {
-                    log_message(`Skill ${prev_name} upgraded to ${new_name}`, "skill_raised");
+                    log_message(translationManager.getText(language, "log skill v1 upgraded to v2", {v1: prev_name, v2: new_name}), "skill_raised");
                 }
 
                 if(current_location?.connected_locations && !current_activity) {
@@ -2316,7 +2316,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.money && typeof rewards.money === "number" && !only_unlocks) {
         if(inform_overall) {
-            log_message(`%HeroName% earned ${format_money(rewards.money)}`);
+            log_message(translationManager.getText(language, "log heroname earned v1", {v1: format_money(rewards.money)}));
         }
         add_money_to_character(rewards.money);
     }
@@ -2325,14 +2325,14 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         if(source_type === "location") {
             if(inform_overall) {
                 if(is_first_clear) {
-                    log_message(`Obtained ${rewards.xp}xp for clearing ${source_name} for the first time`, "location_reward");
+                    log_message(translationManager.getText(language, "log obtained v1 xp for clearing", {v1: rewards.xp, v2: source_name}), "location_reward");
                 } else {
-                    log_message(`Obtained additional ${rewards.xp}xp for clearing ${source_name}`, "location_reward");
+                    log_message(translationManager.getText(language, "log obtained additional v1 xp for", {v1: rewards.xp, v2: source_name}), "location_reward");
                 }
             }
         } else {
             //other sources
-            log_message(`Gained ${rewards.xp}xp`, "location_reward");
+            log_message(translationManager.getText(language, "log gained v1 xp", {v1: rewards.xp}), "location_reward");
         }
         add_xp_to_character(rewards.xp);
     }
@@ -2341,7 +2341,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         Object.keys(rewards.skill_xp).forEach(skill_key => {
             if(typeof rewards.skill_xp[skill_key] === "number") {
                 if(inform_overall) {
-                    log_message(`%HeroName% gained ${rewards.skill_xp[skill_key]}xp to ${skills[skill_key].name()}`);
+                    log_message(translationManager.getText(language, "log heroname gained v1 xp to", {v1: rewards.skill_xp[skill_key], v2: skills[skill_key].name()}));
                 }
                 add_xp_to_skill({skill: skills[skill_key], xp_to_add: rewards.skill_xp[skill_key], cap_gained_xp: false});
             }
@@ -2378,7 +2378,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             }
             if(any_unlocked && inform_textline && inform_overall && !rewards.textlines[i].skip_message && source_name !== rewards.textlines[i].dialogue) {
 
-                log_message(`You should talk to ${dialogues[rewards.textlines[i].dialogue].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})}`, "dialogue_unlocked");
+                log_message(translationManager.getText(language, "log you should talk to v1", {v1: dialogues[rewards.textlines[i].dialogue].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})}), "dialogue_unlocked");
                 //maybe do this only when there's just 1 dialogue with changes?
             }
         }
@@ -2389,7 +2389,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             const dialogue = dialogues[rewards.dialogues[i]]
             if(!dialogue.is_unlocked) {
                 dialogue.is_unlocked = true;
-                log_message(`You can now talk with ${dialogue.name}`, "activity_unlocked");
+                log_message(translationManager.getText(language, "log you can now talk with", {v1: dialogue.name}), "activity_unlocked");
             }
         }
     }
@@ -2403,7 +2403,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                     if(trader.unlock_message) {
                         log_message(trader.unlock_message, "activity_unlocked");
                     } else {
-                        log_message(`You can now trade with ${trader.name}`, "activity_unlocked");
+                        log_message(translationManager.getText(language, "log you can now trade with", {v1: trader.name}), "activity_unlocked");
                     }
                 }
             }
@@ -2424,7 +2424,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
     if(rewards.crafting) {
         for(let i = 0; i < rewards.crafting.length; i++) {
             locations[rewards.crafting[i]].crafting.is_unlocked = true;
-            log_message(`You can now use a crafting station in ${locations[rewards.crafting[i]].name}`, "activity_unlocked");
+            log_message(translationManager.getText(language, "log you can now use a", {v1: locations[rewards.crafting[i]].name}), "activity_unlocked");
         }
     }
 
@@ -2479,7 +2479,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                 create_new_skill_bar(skills[rewards.skills[i]]);
                 update_displayed_skill_bar(skills[rewards.skills[i]], false);
                 if(inform_overall) {
-                    log_message(`Unlocked new skill: ${skills[rewards.skills[i]].name()}`);
+                    log_message(translationManager.getText(language, "log unlocked new skill v1", {v1: skills[rewards.skills[i]].name()}));
                 }
 
                 if(source_type === "skill") {
@@ -2508,7 +2508,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             if(!recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].is_unlocked) {
                 recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].is_unlocked = true;
                 if(inform_overall) {
-                    log_message(`Unlocked new recipe: ${recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].name}`);
+                    log_message(translationManager.getText(language, "log unlocked new recipe v1", {v1: recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].name}));
                 }
             }
         }
@@ -2519,7 +2519,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             if(!questManager.isQuestActive(rewards.quests[i]) && !questManager.isQuestFinished(rewards.quests[i])) {
                 questManager.startQuest({quest_id: rewards.quests[i]});
                 if(inform_overall) {
-                    //log_message(`Received a new quest: ${quests[rewards.quests[i]].getQuestName()}`);
+                    //log_message(translationManager.getText(language, "log received a new quest v1", {v1: quests[rewards.quests[i]].getQuestName()}));
                     //already done in quests
                 }
             }
@@ -2596,7 +2596,7 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                 item.quality = rewards.items[i].quality;
             }
             
-            log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
+            log_message(translationManager.getText(language, "log heroname obtained v1 x v2", {v1: item.getName(), v2: count}));
             add_to_character_inventory([{item_key: item.getInventoryKey(), count}]);
         }
     }
@@ -2937,9 +2937,9 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                             const highest_qual = qualities[0];
 
                             if(crafted_count > 1) {
-                                log_message(`Created ${result.getName()} x${crafted_count} [highest quality: ${highest_qual}% x${crafted_items[highest_qual]}] (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                                log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
                             } else {
-                                log_message(`Created ${result.getName()} [${highest_qual}% quality] x1 (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                                log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                             }
 
                             add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, cap_gained_xp: false, use_bonus: false});
@@ -2958,10 +2958,10 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                         const highest_qual = qualities[0];
 
                         if(crafted_count > 1) {
-                            log_message(`Created ${result.getName()} x${crafted_count} [highest quality: ${highest_qual}% x${crafted_items[highest_qual]}] (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                            log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
 
                         } else {
-                            log_message(`Created ${result.getName()} [${highest_qual}% quality] x1 (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                            log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                         }
                         add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, cap_gained_xp: false, use_bonus: false});
                     }
@@ -3052,9 +3052,9 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     const highest_qual = qualities[0];
 
                     if(crafted_count > 1) {
-                        log_message(`Created ${result.getName()} x${crafted_count} [highest quality: ${highest_qual}% x${crafted_items[highest_qual]}] (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                        log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
                     } else {
-                        log_message(`Created ${result.getName()} [${highest_qual}% quality] x1 (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                        log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                     }
 
                     add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, use_bonus: false, cap_gained_xp: false});
@@ -3074,10 +3074,10 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 const highest_qual = qualities[0];
 
                 if(crafted_count > 1) {
-                    log_message(`Created ${result.getName()} x${crafted_count} [highest quality: ${highest_qual}% x${crafted_items[highest_qual]}] (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                    log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
 
                 } else {
-                    log_message(`Created ${result.getName()} [${highest_qual}% quality] x1 (+${Math.floor(accumulated_xp)} xp)`, "crafting");
+                    log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                 }
                 add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, use_bonus: false, cap_gained_xp: false});
             }
@@ -3435,7 +3435,7 @@ function do_quest_event({quest_event_type, quest_event_target, quest_event_count
  */
 function give_export_reward() {
     add_active_effect("Spark of Inspiration", 1800);
-    log_message("Gained a Spark of Inspiration!", "export_reward");
+    log_message(translationManager.getText(language, "log gained a spark of inspiration"), "export_reward");
 }
 
 function get_date() {
@@ -3757,7 +3757,7 @@ function create_save() {
     } catch(error) {
         console.error("Something went wrong on saving the game!");
         console.error(error);
-        log_message("FAILED TO CREATE A SAVE FILE, PLEASE CHECK CONSOLE FOR ERRORS AND REPORT IT", "message_critical");
+        log_message(translationManager.getText(language, "log failed to create a save"), "message_critical");
     }
 } 
 
@@ -3785,7 +3785,7 @@ function save_to_localStorage({key, is_manual}) {
     if(save) {
         localStorage.setItem(key, save);
         if(is_manual) {
-            log_message("Saved the game manually");
+            log_message(translationManager.getText(language, "log saved the game manually"));
             save_counter = 0;
         }
     }
@@ -5246,11 +5246,11 @@ function load_from_localstorage() {
         if(is_on_dev()) {
             if(localStorage.getItem(dev_save_key)){
                 load(JSON.parse(localStorage.getItem(dev_save_key)));
-                log_message("Loaded dev save. If you want to use save from live version, import it through options panel or manually");
+                log_message(translationManager.getText(language, "log loaded dev save if you"));
             } else {
                 //no need to check if it should import or do a fresh start (in case it's a result of hard reset), as that's already handled elsewhere
                 load(JSON.parse(localStorage.getItem(save_key)));
-                log_message("Dev save was not found. Loaded live version save.");
+                log_message(translationManager.getText(language, "log dev save was not found"));
             }
         } else {
             load(JSON.parse(localStorage.getItem(save_key)));
@@ -5272,7 +5272,7 @@ function load_backup() {
                 window.location.reload(false);
             } else {
                 console.log("Can't load backup as there is none yet.");
-                log_message("Can't load backup as there is none yet.");
+                log_message(translationManager.getText(language, "log can t load backup as"));
             }
         } else {
             if(localStorage.getItem(backup_key)){
@@ -5280,7 +5280,7 @@ function load_backup() {
                 window.location.reload(false);
             } else {
                 console.log("Can't load backup as there is none yet.")
-                log_message("Can't load backup as there is none yet.");
+                log_message(translationManager.getText(language, "log can t load backup as"));
             }
         }
     } catch(error) {
@@ -5297,7 +5297,7 @@ function load_other_release_save() {
                 window.location.reload(false);
             } else {
                 console.log("There are no saves on the other release.")
-                log_message("There are no saves on the other release.");
+                log_message(translationManager.getText(language, "log there are no saves on"));
             }
         } else {
             if(localStorage.getItem(dev_save_key)){
@@ -5305,7 +5305,7 @@ function load_other_release_save() {
                 window.location.reload(false);
             } else {
                 console.log("There are no saves on the other release.");
-                log_message("There are no saves on the other release.");
+                log_message(translationManager.getText(language, "log there are no saves on"));
             }
         }
     } catch(error) {
@@ -6060,7 +6060,7 @@ if(game_options.skip_play_button) {
 }
 
 if(is_on_dev()) {
-    log_message("It looks like you are playing on the dev release. It is recommended to keep the developer console open (in Chrome/Firefox/Edge it's at F12 => 'Console' tab) in case of any errors/warnings appearing in there.", "notification");
+    log_message(translationManager.getText(language, "log it looks like you are"), "notification");
 
     if(localStorage[dev_backup_key]) {
         update_backup_load_button(JSON.parse(localStorage[dev_backup_key]).saved_at);

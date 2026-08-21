@@ -431,6 +431,10 @@ async function check_content_text_ids() {
         { file: "src/activities.js", patterns: [
             /(?<![A-Za-z0-9_])(?:description|action_text):\s*"([^"]+)"/g,
         ]},
+        { file: "src/main.js", patterns: [
+            //The log messages are parameterised, so they are getText calls.
+            /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
+        ]},
     ];
 
     let checked = 0;

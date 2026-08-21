@@ -414,6 +414,38 @@ const global_flags = globalThis.__test_flags;
         translationManager.getText("turkish", "desc component axe head",
             {material: "kaba odun"}).startsWith("kaba odun kullanılarak"),
         `got=${translationManager.getText("turkish", "desc component axe head", {material: "kaba odun"})}`);
+    // %HeroName% is substituted by the log itself, not by the translation layer, so
+    // a locale that translates or drops it silently loses the hero's name from every
+    // combat line. Checked across every language, not just Turkish.
+    {
+        const reference_language = "english";
+        const log_ids = Object.keys(translations[reference_language]).filter(id => id.startsWith("log "));
+        const with_hero = log_ids.filter(id => translations[reference_language][id].includes("%HeroName%"));
+        check("there are log messages carrying %HeroName% to check",
+            with_hero.length >= 8, `found=${with_hero.length}`);
+        const broken = [];
+        for(const name of Object.keys(translations)) {
+            for(const id of with_hero) {
+                const text = translations[name][id];
+                if(text !== undefined && !text.includes("%HeroName%")) { broken.push(`${name}:${id}`); }
+            }
+        }
+        check("every locale keeps %HeroName% intact", broken.length === 0, broken.slice(0, 3).join(", "));
+
+        // The same for slots: a locale that drops one loses a number off the screen.
+        const slot_of = (text) => [...text.matchAll(/\{([a-z_][a-z0-9_]*)\}/g)].map(m => m[1]).sort().join(",");
+        const mismatched = [];
+        for(const name of Object.keys(translations)) {
+            if(name === reference_language) continue;
+            for(const id of Object.keys(translations[reference_language])) {
+                const other = translations[name][id];
+                if(other === undefined) continue;
+                if(slot_of(translations[reference_language][id]) !== slot_of(other)) { mismatched.push(`${name}:${id}`); }
+            }
+        }
+        check("every locale keeps the same {slots} as the reference",
+            mismatched.length === 0, mismatched.slice(0, 3).join(", "));
+    }
     check("an id that exists nowhere still reports itself",
         translationManager.getText("turkish", "no such id at all").startsWith("text not found"));
 
