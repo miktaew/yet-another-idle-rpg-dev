@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 20 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 21 -->
 
 # Changelog
 
@@ -17,6 +17,58 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-22
+
+### Wired the static interface labels in index.html
+
+The interface had two kinds of text. Labels painted by `src/display.js` went
+through `getText` in the earlier passes and were already translated. Labels
+written literally into `index.html` were not reached by any of that: they are
+translated only if they carry a `data-translation` attribute, because
+`translateUI` walks exactly those elements and sets `innerText` from the id. 34
+elements carried one; the rest were hard-coded English on every screen the player
+opens.
+
+97 attributes now, 89 distinct ids. 63 labels were wired: 52 needed a new locale
+row, and 11 could point at an id that already existed — the seven crafting
+category tabs are the skill names `name Tinkering` and friends, spelled the same
+way in both places, so giving them their own copies would have created two
+strings that must never disagree. Covered: the panel tabs (Combat, Quests,
+Bestiary, Anthology, Data), the trade panel, the crafting category and subpage
+tabs, all ten stat labels with their ten tooltips, the AP label and its tooltip,
+the equipment slots, Save / Export / Import, the sixteen options rows and the hard
+reset. 2537 keys per language became 2589.
+
+**`translateUI` sets `innerText`, which decides what can be wired at all.** It
+replaces the element's entire content, so an element can only carry the attribute
+if the label *is* all of it. Two buttons hold a nested tooltip div beside their
+text; wiring the button itself would have deleted the tooltip on the first
+language switch, so the label got its own `<span>` and the attribute went there.
+
+**Four visible strings are deliberately left in English.** `Yet Another Idle RPG`
+is the game's name. `Normal stance` is not static text at all — `display.js`
+overwrites it with `stance.getName()`, and the id would win only until the first
+redraw. The two save-slot buttons are the interesting case: their text is written
+at runtime with a date appended, so a `data-translation` id would let a language
+change replace a live dated value with a stale static label. For the import button
+the markup text is never on screen, because `update_other_save_load_button` always
+writes over it. The backup button is not clean yet: its no-backup branch sets
+styles and returns without setting any text, so the English placeholder is exactly
+what a player with no autosave reads. That one is a real leftover, fixed next, and
+it belongs to `display.js` rather than to the markup.
+
+**The duplicate-key check earned itself back.** `ui label defense` already held
+"Defense" for the item tooltip, which appends its own colon; the stat panel's
+label is "Defense:" with the colon baked in. Reusing the id looked right and
+would have made one of the two silently wrong in both languages, in a way no test
+asserts and both readings look plausible on screen. The panel label is
+`ui stat label defense`.
+
+One bug worth naming, because the failure was silent. The wiring script inserted
+the attribute with `open_tag.replace(/>$/, ...)` while several tags were passed
+with a trailing space, so the regex never matched — it stripped the label text and
+added no attribute, blanking 15 labels. Inserting before the last `>` instead
+fixes it, but the lesson is that the script had no assertion: it reported success
+for tags it had not touched. `index.html` was restored from a backup and rerun.
 
 ### Untracked `dist/`
 

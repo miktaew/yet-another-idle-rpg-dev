@@ -48,7 +48,7 @@
             <div id = "loading_screen_game_title">
                 Yet Another Idle RPG
                 <div id = "loading_screen_author">
-                    by <span class="bold" >Miktaew 🐱</span><br><span class="loading_screen_author_fork">continued by Kuroiteiken</span>
+                    by <span class="bold" >Miktaew 🐱</span><br><span class="loading_screen_author_fork" data-translation="ui continued by"></span>
                 </div>
             </div>
             
@@ -232,7 +232,7 @@
                 <div id = "inventory_combat_switch_selection" class="activable_buttons box_div flex_wrap">
                     <div id="switch_to_inventory" class="active_selection_button" onclick="switchToInventory()">Inventory
                     </div>
-                    <div id="switch_to_combat" onclick="switchToCombat()">Combat</div>
+                    <div id="switch_to_combat" onclick="switchToCombat()" data-translation="Combat"></div>
                 </div>
 
                 <!-- location info (name, types, description, etc?)-->
@@ -652,12 +652,12 @@
                         <div id = "trade_control_div">
 
                             <div id = "trader_cost_mult">
-                                <div id = "trader_cost_mult_text"> Prices: </div>
+                                <div id = "trader_cost_mult_text" data-translation="ui label prices"></div>
                                 <div id = "trader_cost_mult_value"> </div>
                             </div>
                             
                             <div id = "trade_price_div">
-                                <div id = "trade_price_text"> Total price: </div>
+                                <div id = "trade_price_text" data-translation="ui label total price"></div>
                                 <div id = "trade_price_value"> 0C </div>
                             </div>
 
@@ -707,18 +707,18 @@
 
                     <div id = "crafting_window" class="crafting_window">
                         <div id="crafting_mainpage_buttons" class="activable_buttons crafting_mainpage_buttons flex_wrap">
-                            <div class="crafting_mainpage_button" data-crafting_category="crafting" onclick="switchCraftingRecipesPage('crafting')">Tinkering</div>
-                            <div class="crafting_mainpage_button" data-crafting_category="butchering" onclick="switchCraftingRecipesPage('butchering')">Butchering</div>
-                            <div class="crafting_mainpage_button" data-crafting_category="cooking" onclick="switchCraftingRecipesPage('cooking')">Cooking</div>
-                            <div class="crafting_mainpage_button" data-crafting_category="woodworking" onclick="switchCraftingRecipesPage('woodworking')">Woodworking</div>
-                            <div class="crafting_mainpage_button" data-crafting_category="smelting" onclick="switchCraftingRecipesPage('smelting')">Smelting</div>
-                            <div class="crafting_mainpage_button" data-crafting_category="forging" onclick="switchCraftingRecipesPage('forging')">Forging</div>
-                            <div class="crafting_mainpage_button" data-crafting_category="alchemy" onclick="switchCraftingRecipesPage('alchemy')">Alchemy</div>
+                            <div class="crafting_mainpage_button" data-crafting_category="crafting" onclick="switchCraftingRecipesPage('crafting')" data-translation="name Tinkering"></div>
+                            <div class="crafting_mainpage_button" data-crafting_category="butchering" onclick="switchCraftingRecipesPage('butchering')" data-translation="name Butchering"></div>
+                            <div class="crafting_mainpage_button" data-crafting_category="cooking" onclick="switchCraftingRecipesPage('cooking')" data-translation="name Cooking"></div>
+                            <div class="crafting_mainpage_button" data-crafting_category="woodworking" onclick="switchCraftingRecipesPage('woodworking')" data-translation="name Woodworking"></div>
+                            <div class="crafting_mainpage_button" data-crafting_category="smelting" onclick="switchCraftingRecipesPage('smelting')" data-translation="name Smelting"></div>
+                            <div class="crafting_mainpage_button" data-crafting_category="forging" onclick="switchCraftingRecipesPage('forging')" data-translation="name Forging"></div>
+                            <div class="crafting_mainpage_button" data-crafting_category="alchemy" onclick="switchCraftingRecipesPage('alchemy')" data-translation="name Alchemy"></div>
                         </div>
                         <div id="crafting_subpage_buttons" class="crafting_subpage_buttons activable_buttons flex_wrap">
-                            <div class="crafting_subpage_button active_selection_button" data-crafting_subcategory="items" onclick="switchCraftingRecipesSubpage('items')">Items/trinkets</div>
-                            <div class="crafting_subpage_button" data-crafting_subcategory="components" onclick="switchCraftingRecipesSubpage('components')">Components</div>
-                            <div class="crafting_subpage_button" data-crafting_subcategory="equipment" onclick="switchCraftingRecipesSubpage('equipment')">Equipment</div>
+                            <div class="crafting_subpage_button active_selection_button" data-crafting_subcategory="items" onclick="switchCraftingRecipesSubpage('items')" data-translation="ui craft items"></div>
+                            <div class="crafting_subpage_button" data-crafting_subcategory="components" onclick="switchCraftingRecipesSubpage('components')" data-translation="ui craft components"></div>
+                            <div class="crafting_subpage_button" data-crafting_subcategory="equipment" onclick="switchCraftingRecipesSubpage('equipment')" data-translation="ui show equipment"></div>
                         </div>
                         <div id="recipe_categories" class="crafting_category"></div>
                         <div id="exit_crafting_button" onclick="closeCraftingWindow()">
@@ -734,7 +734,7 @@
                             </div>
                             <div id="skill_hiding_div">
                                 <input type="checkbox" id="options_hide_max_level_skills" name="options_hide_max_level_skills" onclick = "option_hide_max_level_skills()">
-                                <label for="options_hide_max_level_skills">Hide max level skills</label>
+                                <label for="options_hide_max_level_skills" data-translation="ui opt hide max skills"></label>
                             </div>
                             <div id="skill_sorting_buttons" class="activable_buttons flex_wrap">
                                 <div id="skill_sort_by_name" class="skill_sorting_button active_selection_button" onclick='sortSkills({sort_by:"name"})' .>
@@ -772,10 +772,10 @@
 
                 <div id = "journal_div" class = "box_div">
                     <div id = "journal_control_div" class="activable_buttons flex_wrap">
-                        <div id = "journal_show_quests" class = "journal_control_button active_selection_button" onclick = "showQuests()"> Quests </div>
-                        <div id = "journal_show_bestiary" class = "journal_control_button" onclick = "showBestiary()"> Bestiary </div>
-                        <div id = "journal_show_books" class = "journal_control_button" onclick = "showReadBooks()"> Anthology </div>
-                        <div id = "journal_show_data" class = "journal_control_button" onclick = "showData()"> Data </div>
+                        <div id = "journal_show_quests" class = "journal_control_button active_selection_button" onclick = "showQuests()" data-translation="ui tab quests"></div>
+                        <div id = "journal_show_bestiary" class = "journal_control_button" onclick = "showBestiary()" data-translation="ui tab bestiary"></div>
+                        <div id = "journal_show_books" class = "journal_control_button" onclick = "showReadBooks()" data-translation="ui tab anthology"></div>
+                        <div id = "journal_show_data" class = "journal_control_button" onclick = "showData()" data-translation="ui tab data"></div>
                     </div>
                     <div id = "journal_content_div">
                         <div id = "quests_box_div">
@@ -786,7 +786,7 @@
 
                             </div>
                             <div id = "quest_hiding_div">
-                                <label for="quest_hiding_button">Hide completed</label>
+                                <label for="quest_hiding_button" data-translation="ui opt hide completed"></label>
                                 <input type="checkbox" id="quest_hiding_button" name="quest_hiding_button" value="quest_hiding_button" onclick = "changeCompletedQuestVisibility()" >
                                 
                             </div>
@@ -821,36 +821,36 @@
                             </div>
                             <div class = "grid_container">
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Strength: </div>
+                                    <div class = "stat_name" data-translation="ui label strength">  </div>
                                     <div class = "stat_value" id = "strength_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Your strength. It affects power of physical attacks</div>
+                                        <div data-translation="ui tip strength"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Agility: </div>
+                                    <div class = "stat_name" data-translation="ui label agility">  </div>
                                     <div class = "stat_value" id = "agility_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Your agility. It affects your evasion chance</div>
+                                        <div data-translation="ui tip agility"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class = "grid_container">
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Dexterity: </div>
+                                    <div class = "stat_name" data-translation="ui label dexterity">  </div>
                                     <div class = "stat_value" id = "dexterity_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div> Your dexterity. It affects your chance to hit target </div>
+                                        <div data-translation="ui tip dexterity"> </div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Intuition </div>
+                                    <div class = "stat_name" data-translation="ui label intuition">  </div>
                                     <div class = "stat_value" id = "intuition_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Your intuition. It's necessary for magic, while also providing slight bonus to hit chance and evasion </div>
+                                        <div data-translation="ui tip intuition"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
@@ -859,18 +859,18 @@
                             
                             <div class = "grid_container">
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Defense: </div>
+                                    <div class = "stat_name" data-translation="ui stat label defense">  </div>
                                     <div class = "stat_value" id = "defense_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Your defense. Based on worn equipment, lowers damage taken </div>
+                                        <div data-translation="ui tip defense"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Magic: </div>
+                                    <div class = "stat_name" data-translation="ui label magic">  </div>
                                     <div class = "stat_value" id = "magic_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Your magic power. It affects the power of spells </div>
+                                        <div data-translation="ui tip magic"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
@@ -878,18 +878,18 @@
                             </div>
                             <div class = "grid_container">
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Atk power: </div>
+                                    <div class = "stat_name" data-translation="ui label atk power">  </div>
                                     <div class = "stat_value" id = "attack_power_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Attack power. Based on weapon statistics, strength and/or magic </div>
+                                        <div data-translation="ui tip atk power"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Atk spd: </div>
+                                    <div class = "stat_name" data-translation="ui label atk speed">  </div>
                                     <div class = "stat_value" id = "attack_speed_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Attack speed. Directly affects the attack frequency </div>
+                                        <div data-translation="ui tip atk speed"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
@@ -898,28 +898,28 @@
                             </div>
                             <div class = "grid_container">
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Crit rate: </div>
+                                    <div class = "stat_name" data-translation="ui label crit rate">  </div>
                                     <div class = "stat_value" id = "crit_rate_slot"></div> 
                                     <div class = "stat_tooltip">
-                                        <div> Your chance for critical attack </div>
+                                        <div data-translation="ui tip crit rate"> </div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> Crit mult: </div>
+                                    <div class = "stat_name" data-translation="ui label crit mult">  </div>
                                     <div class = "stat_value" id = "crit_multiplier_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div>Damage of your critical attacks </div>
+                                        <div data-translation="ui tip crit mult"></div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class = "grid_container">
                                 <div class = "stat_slot_div"> 
-                                    <div class = "stat_name"> AP: </div>
+                                    <div class = "stat_name" data-translation="ui label ap"> </div>
                                     <div class = "stat_value" id = "hit_chance_slot"></div> 
                                     <div class = "stat_tooltip"> 
-                                        <div> Attack points, a total value of everything that contributes to the chance to hit an enemy, except for some situational skills and modifiers. </div>
+                                        <div data-translation="ui tip attack points"> </div>
                                         <div class="stat_breakdown"></div>
                                     </div>
                                 </div>
@@ -937,7 +937,7 @@
 
                             <div id = "character_effects">
                                 <div id = "effects_div">
-                                    <div> Active effects: </div>
+                                    <div data-translation="ui label active effects"> </div>
                                     <div id = "active_effect_count"> 0 </div>
                                     <div id = "effects_tooltip"> 
                                         No active effects            
@@ -970,7 +970,7 @@
                             </div>
                             <div class = "grid_container">
                                 <div class = "equipment_slot_div" id = "weapon_slot"> weapon </div>
-                                <div class = "equipment_slot_div" id = "off-hand_slot"> off-hand </div>
+                                <div class = "equipment_slot_div" id = "off-hand_slot" data-translation="ui slot off-hand"></div>
                             </div>
                             <div class = "grid_container">
                                 <div class = "equipment_slot_div" id = "legs_slot"> legs </div>
@@ -988,7 +988,7 @@
                             <div class = "equipment_slot_div" id = "pickaxe_slot"> pickaxe </div>
                             <div class = "equipment_slot_div" id = "sickle_slot"> sickle </div>
                             <div class = "equipment_slot_div" id = "shovel_slot"> shovel </div>
-                            <div class = "equipment_slot_div" id = "fishing_slot"> fishing rod </div>
+                            <div class = "equipment_slot_div" id = "fishing_slot" data-translation="ui slot fishing_pole"></div>
                         </div>
                     </div>
                     <div id = "character_control_div" class="activable_buttons flex_wrap">
@@ -1030,9 +1030,9 @@
         </div>
 
         <div id = "bottom_panel_div" data-nosnippet>
-            <div id = "save_button" class = "sl_button" onclick = "saveProgress()"> Save </div>
-            <div id = "save_to_file_button" class = "sl_button" onclick = "saveToFile()"> Export <div id= "export_button_tooltip">Reward not available</div></div>
-            <label id = "load_from_file_button" class = "sl_button" for = "saved_file_input"> Import </label> 
+            <div id = "save_button" class = "sl_button" onclick = "saveProgress()" data-translation="ui btn save"></div>
+            <div id = "save_to_file_button" class = "sl_button" onclick = "saveToFile()"><span data-translation="ui btn export"></span><div id= "export_button_tooltip">Reward not available</div></div>
+            <label id = "load_from_file_button" class = "sl_button" for = "saved_file_input" data-translation="ui btn import"></label> 
             <input id = "saved_file_input" type='file' accept = 'text/plain' onchange = 'loadProgress(event)'>	
 
             <div id = "options_button" class = "game_info" onclick="openOptions()"><span><i class="material-icons">settings</i></span></div>
@@ -1047,60 +1047,60 @@
             <div id="options_choices">
                 <div class="options_choice">
                     <input type="checkbox" id="options_textsize" name="options_textsize" onclick = "option_uniform_textsize()" >
-                    <label for="options_textsize">Increase size of text in dialogues</label>
+                    <label for="options_textsize" data-translation="ui opt bigger dialogue text"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_bar_outline" name="options_bar_outline" onclick = "option_use_text_outlines_for_bars()" checked>
-                    <label for="options_bar_outline">Text outline on xp/stamina/mana/health bars</label>
+                    <label for="options_bar_outline" data-translation="ui opt bar outline"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_tooltip_outline" name="options_tooltip_outline" onclick = "option_use_text_outlines_for_tooltips()" checked>
-                    <label for="options_tooltip_outline">Text outline in item tooltips</label>
+                    <label for="options_tooltip_outline" data-translation="ui opt tooltip outline"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_bed_return" name="options_bed_return" onclick = "option_bed_return()" checked>
-                    <label for="options_bed_return">Return to last bed upon defeat</label>
+                    <label for="options_bed_return" data-translation="ui opt bed return"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_save_messagelog_settings" name="options_save_messagelog_settings" onclick = "option_remember_filters()">
-                    <label for="options_save_messagelog_settings">Remember message log filters</label>
+                    <label for="options_save_messagelog_settings" data-translation="ui opt remember log filters"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_dont_autoswitch_to_combat" name="options_dont_autoswitch_to_combat" onclick = "option_combat_autoswitch()">
-                    <label for="options_dont_autoswitch_to_combat">Don't autoswitch out from inventory when starting combat</label>
+                    <label for="options_dont_autoswitch_to_combat" data-translation="ui opt no autoswitch"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_dynamic_message" name="options_dynamic_message" onclick = "option_do_dynamic_loot_message()">
-                    <label for="options_dynamic_message">Use a single dynamically updated message for loot</label>
+                    <label for="options_dynamic_message" data-translation="ui opt dynamic loot message"></label>
                 </div>
                 <div class="options_choice options_choice_range">
-                    <label for="options_expo_threshold">Use scientific notation for values over:</label>
+                    <label for="options_expo_threshold" data-translation="ui opt scientific over"></label>
                     <input type="range" id="options_expo_threshold" name="options_expo_threshold" min="3" max="18" onchange="option_expo_threshold()" value="9" oninput="this.nextElementSibling.value = '1e'+this.value">
                     <output>1e9</output>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_use_uncivilised_temperature_scale" name="options_use_uncivilised_temperature_scale" onclick = "option_use_uncivilised_temperature_scale()">
-                    <label for="options_use_uncivilised_temperature_scale">Use Fahrenheit instead of Celsius</label>
+                    <label for="options_use_uncivilised_temperature_scale" data-translation="ui opt fahrenheit"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_do_background_animations" name="options_do_background_animations" onclick = "option_do_background_animations()">
-                    <label for="options_do_background_animations">Enable rain/snow/stars animations</label>
+                    <label for="options_do_background_animations" data-translation="ui opt weather animations"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_change_background_color" name="options_change_background_color" onclick = "option_change_background_color()">
-                    <label for="options_change_background_color">Enable light-level based background color change</label>
+                    <label for="options_change_background_color" data-translation="ui opt background color"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_do_enemy_onhit_animations" name="options_do_enemy_onhit_animations" onclick = "option_do_enemy_onhit_animations()" checked>
-                    <label for="options_do_enemy_onhit_animations">Enable on-hit / on-appear animations for enemies</label>
+                    <label for="options_do_enemy_onhit_animations" data-translation="ui opt enemy animations"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_skip_play_button" name="options_skip_play_button" onclick = "option_skip_play_button()">
-                    <label for="options_skip_play_button">Automatically skip the loading screen</label>
+                    <label for="options_skip_play_button" data-translation="ui opt skip loading screen"></label>
                 </div>
                 <div class="options_choice">
                     <input type="checkbox" id="options_mofu_mofu_mode" name="options_mofu_mofu_mode" onclick = "option_mofu_mofu_mode()" checked>
-                    <label for="options_mofu_mofu_mode">Enable kemonomimi mode</label>
+                    <label for="options_mofu_mofu_mode" data-translation="ui opt kemonomimi"></label>
                 </div>
                 <div class="options_choice options_choice_range">
                     <label for="options_language" data-translation="ui language">Language:</label>
@@ -1112,7 +1112,7 @@
             <div id="close_options" onclick="closeOptions()"> X </div>
             <div id = "backup_load_button" class="options_button" onclick = "loadTheBackup()">Load the backup autosave</div>
             <div id = "import_other_save_button" class="options_button" onclick = "importOtherSave()"> Import save from </div>
-            <div id = "hard_reset_button" class="options_button" onclick = "hardReset()"> Hard reset the game <i class="material-icons"> warning_amber </i> </div>
+            <div id = "hard_reset_button" class="options_button" onclick = "hardReset()"><span data-translation="ui btn hard reset"></span> <i class="material-icons"> warning_amber </i> </div>
         </div>
 
         <canvas id="foreground_canvas">

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 20 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 21 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,58 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-22
+
+### index.html'deki sabit arayüz etiketleri anahtarlara bağlandı
+
+Arayüzde iki tür metin vardı. `src/display.js`'in bastığı etiketler önceki
+geçişlerde `getText`'ten geçmişti ve zaten çeviriliydi. Doğrudan `index.html`'in
+içine yazılmış etiketlere ise bunların hiçbiri ulaşmıyordu: onlar yalnızca
+`data-translation` niteliği taşıyorsa çevrilir, çünkü `translateUI` tam olarak o
+öğeleri dolaşıp `innerText`'i id'den yazıyor. 34 öğe bu niteliği taşıyordu;
+geri kalanı, oyuncunun açtığı her ekranda sabit İngilizceydi.
+
+Artık 97 nitelik, 89 ayrı id var. 63 etiket bağlandı: 52'si yeni bir locale satırı
+gerektirdi, 11'i ise hâlihazırda var olan bir id'yi gösterebildi — yedi zanaat
+kategorisi sekmesi, iki yerde de aynı yazılan `name Tinkering` ve kardeşleri, yani
+skill adlarının kendisi; onlara ayrı kopyalar vermek, asla birbirinden ayrılmaması
+gereken iki metin yaratmak olurdu. Kapsanan yerler: panel sekmeleri (Savaş,
+Görevler, Yaratıklar, Antoloji, Veri), ticaret paneli, zanaat kategori ve alt sayfa
+sekmeleri, on stat etiketinin tamamı ve on ipucu, AP etiketi ile ipucu, ekipman
+yuvaları, Kaydet / Dışa aktar / İçe aktar, on altı seçenek satırı ve sert
+sıfırlama. Dil başına 2537 anahtar 2589'a çıktı.
+
+**`translateUI` `innerText` yazıyor; bir öğenin bağlanabilir olup olmadığını da bu
+belirliyor.** Öğenin tüm içeriğini değiştirdiği için, bir öğe niteliği ancak etiket
+onun *tamamıysa* taşıyabilir. İki düğme, metninin yanında iç içe bir tooltip div'i
+tutuyor; düğmenin kendisini bağlamak ilk dil değişiminde tooltip'i silerdi. Bu
+yüzden etiket kendi `<span>`'ini aldı ve nitelik oraya gitti.
+
+**Görünen dört metin bilerek İngilizce bırakıldı.** `Yet Another Idle RPG` oyunun
+adı. `Normal stance` ise sabit metin bile değil — `display.js` onu
+`stance.getName()` ile eziyor, yani id yalnızca ilk yeniden çizime kadar kazanırdı.
+İki kayıt yuvası düğmesi ise ilginç olan: metinleri çalışma anında, sonuna bir
+tarih eklenerek yazılıyor; dolayısıyla bir `data-translation` id'si, dil değişiminde
+canlı ve tarihli bir değerin yerine bayat bir sabit etiket koyabilirdi. İçe aktarma
+düğmesinde markup'taki metin hiç ekranda görünmüyor, çünkü
+`update_other_save_load_button` her seferinde üzerine yazıyor. Yedek düğmesi ise
+henüz temiz değil: yedeğin olmadığı dalı stilleri ayarlayıp hiç metin yazmadan
+dönüyor, yani otomatik kaydı olmayan bir oyuncunun okuduğu şey tam olarak o
+İngilizce yer tutucu. Bu gerçek bir kalıntı, sırada o var ve markup'a değil
+`display.js`'e ait.
+
+**Yinelenen anahtar kontrolü kendini geri ödedi.** `ui label defense`, item ipucu
+için "Defense" değerini zaten tutuyordu ve orada iki nokta kodla ekleniyor; stat
+panelinin etiketi ise iki noktası içine gömülü "Defense:". Id'yi yeniden kullanmak
+doğru görünüyordu ve ikisinden birini iki dilde de sessizce yanlış yapardı — hiçbir
+testin doğrulamadığı, ekranda iki okumanın da makul göründüğü bir biçimde. Panel
+etiketi artık `ui stat label defense`.
+
+Adı anılmayı hak eden bir hata, çünkü sessizce başarısız oluyordu. Bağlama betiği
+niteliği `open_tag.replace(/>$/, ...)` ile ekliyordu; oysa birkaç etiket sonunda
+boşlukla geçiliyordu, yani regex hiç eşleşmedi — etiket metnini siliyor, nitelik
+eklemiyordu ve 15 etiketi boşaltmıştı. Son `>`'den önce ekleyerek düzeliyor, ama
+asıl ders betiğin hiçbir doğrulaması olmamasıydı: dokunmadığı etiketler için de
+başarı bildiriyordu. `index.html` yedekten geri alınıp yeniden çalıştırıldı.
 
 ### `dist/` takipten çıkarıldı
 
