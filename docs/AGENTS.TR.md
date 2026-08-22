@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 5 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 6 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -24,7 +24,7 @@ Skill seviyelendirme üzerinden ilerlemeye odaklı, tarayıcı tabanlı metin id
 `miktaew/yet-another-idle-rpg` projesinin bir **devam fork'udur** (upstream'in bir
 de `-dev` reposu vardı). Upstream geliştirme durdu. Fork temel commit'i: `e5fba67`.
 
-`HEAD`, `v0.6` üzerinde yayınlanmamış çalışmadır; bir sürüm değildir.
+`HEAD`, `v0.6.0` üzerinde yayınlanmamış çalışmadır; bir sürüm değildir.
 
 Neyin değişebileceği ve değişemeyeceği dahil kalıcı proje yönü
 [PROPOSALS.TR.md](PROPOSALS.TR.md) içinde. Anlatı kanonu [STORY.TR.md](STORY.TR.md)
@@ -108,11 +108,19 @@ bölüm 8.
 
 ## 6. Sürüm yükseltme
 
-Üç yer, bu sırayla: `src/game_version.js` (tek doğru kaynak, `v` ön ekiyle),
-`package.json` (aynı numara, `v` ön eki **olmadan**, elle senkron) ve
-`changelog.html` (yeni bir collapsible, en yenisi üstte).
+Dört yer, bu sırayla: `src/game_version.js` (tek doğru kaynak, `v` ön ekiyle ve
+üç parçalı — `v0.6.0`; çünkü hikâye çalışması ve yeni bölgeler minor sürüm
+yükseltmesi alır), `package.json` (aynı numara, `v` ön eki **olmadan**, elle
+senkron), `changelog.html` (`<main class="versions">` başına yeni bir
+collapsible, en yenisi üstte) ve `changelog.tr.html` (aynı girdinin Türkçesi).
 
-Kök `index.html` sürüm değerlerine **dokunulmaz**. Bkz. bölüm 3.
+Dosyalardan biri yayımlanan sürüm için girdi taşımıyorsa `npm run check` hata
+verir; yani dördüncüsü isteğe bağlı değil.
+
+Kök `index.html` sürüm değerlerine **dokunulmaz**. Bkz. bölüm 3. Bağımsız
+sayfalardaki `<span class="game_version">` değerine de dokunulmaz:
+`scripts/build-site.js` `_site/` kopyalarını damgalar; repo kopyasındaki sabit
+değer yalnızca sayfa diskten açıldığında doğru okunsun diye orada.
 
 ## 7. Kalite kapıları
 
@@ -219,6 +227,12 @@ Tam liste: [AGENTS.md § 10](AGENTS.md#10-gotchas). En kritik olanlar:
 - **İşi kayda geçirin.** Yeni direktifler [PROPOSALS.TR.md](PROPOSALS.TR.md) içinde
   numaralı öneri olur; tamamlanan iş gerekçesiyle
   [CHANGELOG.TR.md](CHANGELOG.TR.md) içine yazılır.
+- **Oyun içi changelog da bu kaydın parçasıdır.** Her
+  [CHANGELOG.TR.md](CHANGELOG.TR.md) girdisi, aynı değişiklik içinde repo
+  kökündeki `changelog.html` ve `changelog.tr.html` dosyalarının **ikisine** de
+  oyuncuya yönelik bir girdi olarak işlenir. Hikâye içeriği ve yeni bölgeler kendi
+  minor sürüm başlığını alır. Dosyalardan biri yayımlanan `game_version` için bir
+  girdi taşımıyorsa `npm run check` hata verir.
 
 ## 12. Hikâye çalışması
 

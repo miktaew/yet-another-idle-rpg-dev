@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 22 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 23 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -9,15 +9,87 @@ Bu fork'un geliştirme geçmişi ve her değişikliğin arkasındaki gerekçe. B
 [PROPOSALS.TR.md](PROPOSALS.TR.md) içindeki karşılık gelen öneri `done` durumuna
 geldiğinde buraya girer.
 
-> **Bu, oyun içi changelog değildir.** Repo kökündeki `changelog.html`, oyunun
-> içinde gösterilen ve oyuncuya yönelik sürüm geçmişidir; elle bakılan HTML olarak
-> upstream'den devralınmıştır. Buradaki dosya ise geliştiriciye yönelik kayıttır:
-> araç zinciri, altyapı, refactor'lar ve bunların gerekçeleri. İkisi bilinçli
-> olarak ayrıdır ve biri diğerinin yerini almaz.
+> **Oyun içi changelog ile eşlidir.** Repo kökündeki `changelog.html` ve
+> `changelog.tr.html`, oyunun içinde gösterilen ve oyuncuya yönelik sürüm
+> geçmişidir. Burada yazılan her girdi, aynı değişiklik içinde oraya da karşılık
+> gelen bir girdi olarak işlenir: bu dosya gerekçeyi geliştirici derinliğinde
+> tutar, onlar oyuncunun okuduğu anlatımı taşır. Hikâye içeriği ve yeni bölgeler,
+> mevcut bir sürümün içine katlanmak yerine kendi minor sürüm başlığını alır
+> (0.6.1, 0.6.2, …). `npm run check`, iki HTML kopyanın da yayımlanan
+> `game_version` için bir girdi taşıdığını doğruluyor; böylece ikisi fark
+> edilmeden birbirinden uzaklaşamıyor.
 
 ---
 
 ## 2026-08-22
+
+### Oyun içi changelog artık kaydın parçası ve yeniden kuruldu
+
+**Yeni kalıcı kural.** Bu dosyadaki her girdi, aynı değişiklik içinde
+`changelog.html` ve `changelog.tr.html` dosyalarının ikisine de oyuncuya yönelik
+bir girdi olarak işlenir. Hikâye içeriği ve yeni bölgeler, mevcut bir sürümün
+içine katlanmak yerine kendi minor sürüm başlığını alır — 0.6.1, 0.6.2. Bu, bu
+dosyanın başında duran ve iki kaydı "bilinçli olarak ayrı" ilan eden notu tersine
+çeviriyor; ikisi hâlâ *hedef kitle* olarak ayrı — burada geliştirici derinliği,
+orada oyuncunun okuduğu anlatım — ama kapsam olarak değil.
+
+`npm run check` bunu kimsenin hatırlamasına güvenmek yerine zorunlu kılıyor: iki
+HTML dosyası da sürümü `game_version` ile eşleşen bir başlık taşımak zorunda.
+Sürümü yükseltip girdiyi unutan bir yayın, artık kendi changelog'unda kendinden
+söz etmeyen bir oyun göndermek yerine derlemede düşüyor.
+[AGENTS.TR.md](AGENTS.TR.md) 6. bölümü de aynı sebeple üç yerden dört yere çıktı.
+
+**Sürüm artık `v0.6.0`.** `src/game_version.js` `v0.6` derken `package.json`
+`0.6.0` diyordu; ayrıca minor hikâye yükseltmelerinin ihtiyacı da üç parça.
+`compare_game_version` kısa tarafı sıfırlarla dolduruyor, yani mevcut bir kayıttaki
+`v0.6` hâlâ `v0.6.0` ile eşit karşılaştırılıyor ve ortada bir migration yok.
+
+**İki changelog sayfası da kabuğundan içeri yeniden kuruldu.** Eski markup
+`<head>`'i `<body>`'nin *içine* koyuyordu, ne charset ne viewport taşıyordu ve bir
+başlığın olması gereken yerde tek satırlık bir talimatla, yalnızca aydınlık bir
+sayfa biçimlendiriyordu. 1114 satır girdinin tamamı birebir taşındı — girdi metni
+bir yedekle diff'lenerek doğrulandı: 0 kayıp satır, 20 spoiler span'ının hepsi
+yerinde — ve yalnızca `v0.6` başlığı yeniden adlandırılıp gövdesi genişletildi.
+
+Yeni olanlar: `<meta charset="utf-8">` taşıyan geçerli bir doküman; güncel sürümü
+ve tümünü-aç denetimini içeren gerçek bir başlık; sürüm başına, çizilmiş bir
+chevron'lu tek kart; `prefers-color-scheme` üzerinden aydınlık ve karanlık palet;
+telefonun yana kaymaması için `pre-wrap`; açılır bloklarda `aria-expanded`; sayfa
+açıldığında zaten açık duran en yeni sürüm; ve gösterdiği sürümü açan
+`#v0.5.5` tarzı derin bağlantılar. Spoiler'lar artık üzerine gelmenin yanı sıra
+tıklamayla da açılıyor, çünkü dokunmatik ekranda "üzerine gelme" diye bir şey yok.
+
+Eksik charset kozmetik bir sorun değildi. `changelog.tr.html`, `help.tr.html` ve
+İngilizce karşılıklarının hiçbirinde yoktu. GitHub Pages `charset=utf-8`
+gönderdiği için canlı site sorunsuzdu, ama dosyayı yerelden `file://` ile her açış
+Türkçeyi bozuk karakterlerle çözüyordu. Dört sayfanın hepsinde artık var.
+
+**İki ölü sürüm göstergesi, düzgün biçimde giderildi.** Changelog'lar
+`src/game_version.js`'i modül olarak yüklüyordu ve yardım sayfaları onun
+dolduracağı bir `<span class="game_version">` tutuyordu. İkisi de çalışmıyordu:
+`src/` deploy edilmiyor, yani o script canlı sitede 404'tü — doğrulandı — ve span'ı
+zaten dolduran bir şey yoktu. `scripts/build-site.js` artık span'ı `_site/`
+kopyalarında damgalıyor ve sayfa başına tam bir tane bulduğunu doğruluyor;
+`npm run check` de damganın yerine oturduğunu kontrol ediyor. Repo kopyaları,
+sayfa diskten açıldığında da anlamlı olsun diye okunabilir bir sabit değer
+tutuyor. Ölü script etiketi kaldırıldı.
+
+Türkçe changelog'un kendi başlığı hâlâ "Click on blocks to unfold their content"
+diyordu — o dosyada önceki çeviri geçişinin kaçırdığı tek metin; çünkü bir girdinin
+içinde değil, sayfanın kabuğunda duruyordu.
+
+**Bir düzeltme.** `compare_game_version`'ın gerçek bir hata taşıdığını bildirmiştim:
+`if(Number.parseInt(a[i]) && Number.parseInt(b[i]))` koruması bir `"0"` parçası
+için falsy oluyor ve karşılaştırmayı string'lere düşürüyor. Bu kadarı doğru ve
+yanlış görünüyor. Değil: `"0"`, harf sırasında en küçük rakam dizgisi; dolayısıyla
+string dalına ulaşan her vakada bir tarafta sıfır var ve sonuç yine doğru çıkıyor.
+Dokunmadan önce `v0.6.0`/`v0.6.10` iki yönde, `v0.6`/`v0.6.0`, `v0.6.9`/`v0.6.10`
+ve `v0.10.0`/`v0.9.0` üzerinde sınandı — ve sonra dokunulmadı. Koruma kırık değil,
+kırılgan görünüyor.
+
+Bu oturumda toplam üç yeni kontrol, hepsi iki yönde de negatif test edildi:
+changelog'un-sürümü-kapsaması çifti, sürüm span'ı damgası ve her sayfanın tam bir
+span taşıdığını doğrulayan derleme tarafı doğrulaması.
 
 ### Karakter oluşturma panelinin ilk dilinde kalması giderildi
 

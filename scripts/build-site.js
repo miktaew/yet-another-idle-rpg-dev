@@ -128,6 +128,35 @@ function transform_index(html) {
     return out;
 }
 
+/**
+ * The standalone pages that show the version number.
+ *
+ * They cannot read it at runtime: src/ is not deployed, so the module script the
+ * changelogs used to carry 404'd on the live site and the span in the help pages
+ * was permanently empty. Stamping it here drops the runtime dependency, and the
+ * repository copies keep a readable version so the pages still make sense opened
+ * straight from disk.
+ */
+const versioned_pages = [
+    "changelog.html",
+    "changelog.tr.html",
+    "help.html",
+    "help.tr.html",
+];
+
+function stamp_version_spans() {
+    const pattern = /<span class="game_version">[^<]*<\/span>/g;
+    for (const file of versioned_pages) {
+        const target = path.join(site_dir, file);
+        const html = fs.readFileSync(target, "utf8");
+        const found = html.match(pattern);
+        if (!found || found.length !== 1) {
+            fail(`${file} must hold exactly one <span class="game_version"> - found ${found ? found.length : 0}.`);
+        }
+        fs.writeFileSync(target, html.replace(pattern, `<span class="game_version">${version}</span>`));
+    }
+}
+
 function assemble() {
     fs.rmSync(site_dir, { recursive: true, force: true });
     fs.mkdirSync(site_dir, { recursive: true });
@@ -151,6 +180,8 @@ function assemble() {
     const index_path = path.join(site_dir, "index.html");
     const html = fs.readFileSync(index_path, "utf8");
     fs.writeFileSync(index_path, transform_index(html));
+
+    stamp_version_spans();
 
     console.log(`[build-site] site assembled in _site/ (version ${version})`);
 }

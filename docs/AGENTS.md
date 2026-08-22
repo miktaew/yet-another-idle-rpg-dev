@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 5 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 6 -->
 
 # Agent and contributor guide
 
@@ -22,7 +22,7 @@ It is a **continuation fork** of `miktaew/yet-another-idle-rpg` (upstream also
 had a `-dev` repository). Upstream development stopped. Fork base commit:
 `e5fba67`.
 
-`HEAD` is unreleased work in progress on `v0.6`, not a release.
+`HEAD` is unreleased work in progress on `v0.6.0`, not a release.
 
 Standing project direction, including what may and may not change, is in
 [PROPOSALS.md](PROPOSALS.md). Narrative canon is in [STORY.md](STORY.md).
@@ -120,14 +120,20 @@ is the same operation as renaming it. See section 8.
 
 ## 6. Version bump
 
-Three places, in this order:
+Four places, in this order:
 
-1. `src/game_version.js` — the source of truth, with the `v` prefix.
+1. `src/game_version.js` — the source of truth, with the `v` prefix. Three
+   segments (`v0.6.0`), because story work and new areas get minor bumps.
 2. `package.json` — same number, **without** the `v` prefix, hand-synced.
-3. `changelog.html` — a new collapsible immediately after `<div id="header">`,
+3. `changelog.html` — a new collapsible at the top of `<main class="versions">`,
    newest first.
+4. `changelog.tr.html` — the same entry, translated. `npm run check` fails if
+   either file has no entry for the shipped version, so this is not optional.
 
-The root `index.html` version strings are **not** touched. See section 3.
+The root `index.html` version strings are **not** touched. See section 3. The
+`<span class="game_version">` in the standalone pages is not touched either:
+`scripts/build-site.js` stamps the `_site/` copies, and the literal in the
+repository copy is only there so the page reads correctly opened from disk.
 
 ## 7. Quality gates
 
@@ -241,6 +247,11 @@ Match the surrounding code. Empirically, that means:
 - **Record work.** New directives become numbered proposals in
   [PROPOSALS.md](PROPOSALS.md); completed work is written up with its reasoning in
   [CHANGELOG.md](CHANGELOG.md).
+- **The in-game changelog is part of that record.** Every [CHANGELOG.md](CHANGELOG.md)
+  entry gets a matching player-facing entry in BOTH `changelog.html` and
+  `changelog.tr.html` at the repository root, in the same change. Story content
+  and new areas get their own minor version heading. `npm run check` fails if
+  either file lacks an entry for the shipped `game_version`.
 
 ## 12. Story work
 

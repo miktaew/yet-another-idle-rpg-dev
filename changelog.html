@@ -1,70 +1,234 @@
-
 <!DOCTYPE html>
-<html>
-<body>
-    <head>
-        <script type="module" src = "src/game_version.js"> </script>
-
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Yet Another Idle RPG - Changelog</title>
         <style>
+            /* Both changelogs share this sheet. Keep the two files' <style> blocks
+               identical: the only differences between them are the entry text and
+               the interface strings. */
+            :root {
+                color-scheme: light dark;
+
+                --bg: #f4f2ee;
+                --panel: #fffefb;
+                --panel_alt: #ebe7df;
+                --ink: #23201b;
+                --ink_soft: #6d665b;
+                --line: #d8d2c6;
+                --accent: #8a5622;
+                --accent_ink: #ffffff;
+                --shadow: 0 1px 2px rgba(35, 32, 27, 0.06), 0 4px 16px rgba(35, 32, 27, 0.05);
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #15141a;
+                    --panel: #1d1c23;
+                    --panel_alt: #26242e;
+                    --ink: #e9e6e0;
+                    --ink_soft: #a29b91;
+                    --line: #322f3b;
+                    --accent: #dca35c;
+                    --accent_ink: #1a1611;
+                    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.35);
+                }
+            }
+
+            * { box-sizing: border-box; }
+
             body {
-                font-family: Arial, Helvetica, sans-serif;
-            }
-            .collapsible {
-                background-color: #eee;
-                color: #444;
-                cursor: pointer;
-                padding: 18px;
-                width: 100%;
-                border: none;
-                text-align: left;
-                outline: none;
-                font-weight: bold;
+                margin: 0;
+                padding: 0 20px 80px;
+                background: var(--bg);
+                color: var(--ink);
+                font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
                 font-size: 16px;
-                border-top: 1px solid gray;
-            }
-            .collapsible:hover, .collapsible.active {
-                background-color: #ccc;
-            }
-            .content {
-                padding: 0 18px;
-                display: none;
-                overflow: hidden;
-                background-color: #f1f1f1;
+                line-height: 1.55;
+                -webkit-text-size-adjust: 100%;
             }
 
-            #header {
-                background-color: #eee;
-                color: #444;
-                font-size: 20px;
-                padding: 18px;
-                width: fit-content;
-                border: none;
+            .page_header,
+            .versions {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .page_header {
+                padding: 44px 0 28px;
+            }
+
+            .page_header h1 {
+                margin: 0;
+                font-size: 30px;
+                line-height: 1.2;
+                letter-spacing: -0.01em;
+            }
+
+            .subtitle {
+                margin: 8px 0 0;
+                color: var(--ink_soft);
+            }
+
+            .header_row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .version_badge {
+                display: inline-flex;
+                align-items: baseline;
+                gap: 6px;
+                padding: 5px 12px;
+                border-radius: 999px;
+                background: var(--accent);
+                color: var(--accent_ink);
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+            }
+
+            .text_button {
+                padding: 5px 12px;
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                background: var(--panel);
+                color: var(--ink_soft);
+                font: inherit;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .text_button:hover {
+                color: var(--ink);
+                border-color: var(--ink_soft);
+            }
+
+            /* One card per version. The button is the header, the .content div is
+               the panel it discloses; they are siblings, which is what the script
+               relies on. */
+            .collapsible {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                width: 100%;
+                margin-top: 10px;
+                padding: 15px 18px;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                background: var(--panel);
+                box-shadow: var(--shadow);
+                color: var(--ink);
+                font: inherit;
+                font-weight: 600;
                 text-align: left;
-                outline: none;
-                font-weight: bold;
-                margin-bottom: 20px;
-                font-family: sans-serif;
+                cursor: pointer;
             }
 
-            .spoiler {
-                color: rgb(17, 17, 17);
-                background-color: rgb(17, 17, 17);
-                width: fit-content;
-                height: fit-content;
-                margin: 0px;
-                padding: 0px;
-                height: fit-content;
+            .collapsible:hover {
+                border-color: var(--accent);
             }
-            .spoiler:hover {
-                color: white;
+
+            .collapsible:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
+            }
+
+            /* The chevron is drawn rather than lettered, so it needs no icon font
+               and cannot arrive as a missing glyph. */
+            .collapsible::before {
+                content: "";
+                flex: none;
+                width: 8px;
+                height: 8px;
+                margin: 6px 2px 0 2px;
+                border-right: 2px solid var(--accent);
+                border-bottom: 2px solid var(--accent);
+                transform: rotate(-45deg);
+                transition: transform 0.15s ease;
+            }
+
+            .collapsible.active::before {
+                transform: rotate(45deg);
+            }
+
+            .collapsible.active {
+                border-color: var(--accent);
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                margin-bottom: 0;
+            }
+
+            .content {
+                display: none;
+                padding: 4px 18px 18px;
+                border: 1px solid var(--accent);
+                border-top: none;
+                border-radius: 0 0 12px 12px;
+                background: var(--panel_alt);
+            }
+
+            .content.open {
+                display: block;
+            }
+
+            .content pre {
+                margin: 0;
+                overflow-x: auto;
+                font-family: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+                font-size: 13.5px;
+                line-height: 1.65;
+                /* pre-wrap rather than pre: the entries are hand-wrapped for a wide
+                   window and would otherwise force the page to scroll sideways on a
+                   phone. The indentation that carries their structure survives. */
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+
+            .content pre a {
+                color: var(--accent);
+            }
+
+            /* Blacked-out spoiler text. Hover reveals it on a mouse; the script adds
+               click, because hover does not exist on a touchscreen. */
+            .spoiler {
+                border-radius: 3px;
+                background-color: currentColor;
+                cursor: pointer;
+                transition: color 0.1s ease;
+            }
+
+            .spoiler:hover,
+            .spoiler.revealed {
+                background-color: transparent;
+            }
+
+            @media (max-width: 640px) {
+                body { padding: 0 12px 60px; }
+                .page_header { padding: 28px 0 20px; }
+                .page_header h1 { font-size: 24px; }
+                .collapsible { padding: 13px 14px; }
+                .content { padding: 4px 14px 14px; }
             }
         </style>
-    </head>
+</head>
+<body>
+    <header class="page_header">
+        <h1>Changelog</h1>
+        <p class="subtitle">Version history for Yet Another Idle RPG. Pick a version to unfold it.</p>
+        <div class="header_row">
+            <span class="version_badge">Current version: <span class="game_version">v0.6.0</span></span>
+            <button type="button" id="toggle_all" class="text_button">Expand all</button>
+        </div>
+    </header>
 
-<div id="header">Click on blocks to unfold their content</div>
-
-<button type="button" class="collapsible">v0.6</button>
-<div class="content"><pre>
+    <main class="versions">
+    <button type="button" class="collapsible">v0.6.0</button>
+    <div class="content"><pre>
     - added a hero creation page; includes age, height, and race;
         they are mostly cosmetic but usable for conditions (mostly to allow fluff with some unique dialogues), 
         but additional effects from height and race are supported and can be enabled in config.js, though they might not be very balanced
@@ -76,9 +240,31 @@
     - parent skills can now have custom multipliers to child skill xp gains per level of difference, instead of static *1.1
     
     - added Hits Counter https://hitscounter.dev
-</pre></div>
-<button type="button" class="collapsible">v0.5.5 - The Boring Stuff [testing release: 26/05/2026 / main release: 21.06.2026]</button>
-<div class="content"><pre>
+
+    - the game can now be played entirely in Turkish: interface, dialogue, quests, item and
+        location names, skills, stances, active effects, activities, recipes, traders and every
+        logged message
+    - added a language selector to the options panel; the switch is live, with no reload, and it
+        is saved with your game
+    - added a Turkish help page and a Turkish copy of this changelog; the language you pick now
+        decides which one the in-game links open
+    - the visitor counter added earlier in v0.6 is off by default now (config.show_visitor_counter)
+
+    - fixed the loading screen printing "text not found, id: ..." where the version block belongs
+    - fixed the hero creation panel staying in its original language when you switched language
+        while standing on it - the race names and their tooltips did not follow either
+
+    under the hood:
+    - every player-facing string now lives in locales/english.js and locales/turkish.js behind an
+        id; the registry keys stayed English on purpose, because saved games are keyed by them
+    - the equipment names that are generated rather than written out are assembled from the
+        language's own pattern, so a language is free to reorder the parts
+    - dist/ is no longer committed; the deployment builds it
+    - npm run check grew locale parity, duplicate-key, content-id and generated-name assertions,
+        and npm test now covers the translation layer
+    </pre></div>
+    <button type="button" class="collapsible">v0.5.5 - The Boring Stuff [testing release: 26/05/2026 / main release: 21.06.2026]</button>
+    <div class="content"><pre>
 v0.5.5
     - most of equipment components are now auto-generated based on certain set of properties; this changes the balance of the equipment by a lot in some cases
     - expanded Village content again
@@ -278,11 +464,11 @@ v0.5.5.30
     - fixed issues with inventory sorting
     - short blades have their EP bonus back
 
-</pre></div>
+    </pre></div>
 
 
-<button type="button" class="collapsible">v0.5.1  [testing release: 31/01/2026 / main release: 15/02/2026]</button>
-<div class="content"><pre>
+    <button type="button" class="collapsible">v0.5.1  [testing release: 31/01/2026 / main release: 15/02/2026]</button>
+    <div class="content"><pre>
 v0.5.1
     - added a new early game quest in the village, obtained after <span class="spoiler"> clearing the first cave area (Cave room) </span>
             tweaked a related dialogue to make it clear that it's optional and not part of the <b> main </b> progression (although still encouraged)
@@ -395,10 +581,10 @@ v0.5.1.10
 
 ======= released to main
 
-</pre></div>
+    </pre></div>
 
-<button type="button" class="collapsible">v0.5.0 - The Whimsy Edition: Quests, Weather, kemonomimi, and a lot of other things  [testing release: 28/11/2025 / main release: 30/12/2025] </button>
-<div class="content"><pre>
+    <button type="button" class="collapsible">v0.5.0 - The Whimsy Edition: Quests, Weather, kemonomimi, and a lot of other things  [testing release: 28/11/2025 / main release: 30/12/2025] </button>
+    <div class="content"><pre>
 v0.5.0
     - implemented a Quest system
     - implemented a simple weather system (temperature and rain), effects are mostly some penalties of varying degree if you get too cold; clothing now provides cold protection
@@ -649,9 +835,9 @@ v0.5.0.27
 v0.5.0.28
     - fixed a bug with drop chances, where penalty for attack target count used the size of enemy group instead, no matter how many were being attacked at once
     - fixed a bug where xp gains per tick for every book were being defaulted to 1 instead of using whatever values were assigned    
-</pre></div>
-<button type="button" class="collapsible">v0.4.6 - Actions (and some other things too) [testing release: 01/04/2025 / main release: 18/05/2025] </button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.4.6 - Actions (and some other things too) [testing release: 01/04/2025 / main release: 18/05/2025] </button>
+    <div class="content"><pre>
 v0.4.6
     - implemented new feature, location actions. Unlike trainings, they are generally a one-time thing that provides unlocks and other rewards.
         They can take different time to complete; have different conditions that are not fully specified but will be hinted at by descriptions; 
@@ -1150,10 +1336,10 @@ v0.3.4i
     - rounded some dmg numbers
 v0.3.4i-2
     - minor fix to CSS
-</pre></div>
+    </pre></div>
 
-<button type="button" class="collapsible">v0.3.3</button>
-<div class="content"><pre>
+    <button type="button" class="collapsible">v0.3.3</button>
+    <div class="content"><pre>
 v0.3.3
     - rebalanced stat gains from skill milestones
     - added another combat location between infested field and cave depths, to smooth the progression
@@ -1161,9 +1347,9 @@ v0.3.3
     - refactored calculations of stats from skills/milestones/equipment/level to a more manageable form
     - refactored equipment stat calculations
     - implemented xp bonuses (for now only from skill milestones)
-</pre></div>
-<button type="button" class="collapsible">v0.3</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.3</button>
+    <div class="content"><pre>
 v0.3
     - drop chance now scales with how many of specific enemy were killed, down to 1/10th at 999+
     - fixed minor bugs when trading stackable items
@@ -1179,9 +1365,9 @@ v0.3b
 v0.3c
     - fixed a minor error when loading save with any skill having less xp than needed to be visible
     - changed the way savefiles are loaded to avoid a bunch of issues
-</pre></div>
-<button type="button" class="collapsible">v0.2.9</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.9</button>
+    <div class="content"><pre>
 v0.2.9
     - added "iron skin" skill that provides a tiny bit of def, xp is gained for fighting with no armour equipped
     - evasion xp is increased by 50% when fighting with no armor equipped (let's call it an adrenaline bonus)
@@ -1189,54 +1375,54 @@ v0.2.9
 v0.2.9b
     - "iron skin" now works
     - minor fixes to some formulas
-</pre></div>
-<button type="button" class="collapsible">v0.2.8</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.8</button>
+    <div class="content"><pre>
 v0.2.8
     - message log can now be filtered for stuff related to combat/levelups&unlocks/events/loot
     - now if there's more than 1 option in any category (work, train, travel, talk, trade), 
       it's available via separate list of choices instead of all being crammed together
     - rounded displayed values for some skill effects
-</pre></div>
-<button type="button" class="collapsible">v0.2.7</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.7</button>
+    <div class="content"><pre>
 v0.2.7
     - reworked the location type system
     - payments for some jobs are now affected by related skill
     - moved dialogue answers to dialouge box (instead of message log)
-</pre></div>
-<button type="button" class="collapsible">v0.2.5</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.5</button>
+    <div class="content"><pre>
 v0.2.5
     - modified tooltip positioning so that they don't leave the screen
     - rounded some displayed numbers
     - slightly weakened first enemy type
     - some minor bugfixes
-</pre></div>
-<button type="button" class="collapsible">v0.2.4</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.4</button>
+    <div class="content"><pre>
 v0.2.4
     - introduced location types (for combat zones), that bring some additional penalties to hit/evasion chance
     - added a new job, unlocked after clearing 2nd combat zone
-</pre></div>
-<button type="button" class="collapsible">v0.2.2</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.2</button>
+    <div class="content"><pre>
 v0.2.2
     - fixed issue where multi-enemy locations required killing X enemies, instead of killing X enemy groups
     - implemented stamina effects on character's attack speed and attack power
     - number of [alive] enemies now has negative impact on character's hit chance
     - number of enemies multiplies gained character xp by sqrt of group size
     - new training activity
-</pre></div>
-<button type="button" class="collapsible">v0.2.1</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2.1</button>
+    <div class="content"><pre>
 v0.2.1
     - fixed two small problems when importing file
     - fixed issue with combat being paused when area page is hidden
     - rewrote the combat loops, made it work properly when tab is not focused
-</pre></div>
-<button type="button" class="collapsible">v0.2</button>
-<div class="content"><pre>
+    </pre></div>
+    <button type="button" class="collapsible">v0.2</button>
+    <div class="content"><pre>
 v0.2.0
     - fixed all the bugs I managed to find; 
     fighting against groups now should work without any issues (other than balance)
@@ -1246,24 +1432,63 @@ v0.2.0
 
     - moved the page selection buttons to the top
     - switched from fontawesome to google icons
-</pre></div>
+    </pre></div>
+    </main>
+
     <script>
-        const btns = document.getElementsByClassName("collapsible");
-        //const content = document.getElementById("content");
-    
-        for(let i = 0; i < btns.length; i++) {
-            btns[i].addEventListener("click", () => {
-                btns[i].classList.toggle("active");
-                const content = btns[i].nextElementSibling;
-                if (content.style.display !== "block"){
-                    content.style.display = "block";
-                } else {
-                    content.style.display = "none";
-                }
-            });
+        const buttons = Array.from(document.querySelectorAll(".collapsible"));
+        const toggle_all = document.getElementById("toggle_all");
+        const EXPAND = "Expand all";
+        const COLLAPSE = "Collapse all";
+
+        function set_open(button, open) {
+            button.classList.toggle("active", open);
+            button.setAttribute("aria-expanded", String(open));
+            button.nextElementSibling.classList.toggle("open", open);
         }
-        
+
+        function slug(button) {
+            //The heading starts with the version, which is what makes a usable
+            //anchor: everything after the first space is a release title or a date.
+            const first_word = button.textContent.trim().split(/\s+/)[0];
+            return first_word.replace(/[^\w.]/g, "") || "version";
+        }
+
+        buttons.forEach(button => {
+            const panel = button.nextElementSibling;
+            panel.id = slug(button);
+            button.setAttribute("aria-controls", panel.id);
+            button.setAttribute("aria-expanded", "false");
+            button.addEventListener("click", () => set_open(button, !button.classList.contains("active")));
+        });
+
+        //Whoever opens this page came for the newest release, so it starts unfolded.
+        if(buttons.length) {
+            set_open(buttons[0], true);
+        }
+
+        //A link to #v0.5.5 should land on that release already open.
+        if(location.hash.length > 1) {
+            const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+            if(target && target.previousElementSibling) {
+                set_open(target.previousElementSibling, true);
+                target.previousElementSibling.scrollIntoView({ block: "start" });
+            }
+        }
+
+        toggle_all.addEventListener("click", () => {
+            const opening = buttons.some(button => !button.classList.contains("active"));
+            buttons.forEach(button => set_open(button, opening));
+            toggle_all.textContent = opening ? COLLAPSE : EXPAND;
+        });
+
+        //Hover cannot reveal a spoiler on a touchscreen.
+        document.querySelectorAll(".spoiler").forEach(spoiler => {
+            spoiler.addEventListener("click", event => {
+                event.stopPropagation();
+                spoiler.classList.toggle("revealed");
+            });
+        });
     </script>
-    
 </body>
 </html>

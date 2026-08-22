@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 22 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 23 -->
 
 # Changelog
 
@@ -8,15 +8,85 @@ arrives here once the matching proposal in [PROPOSALS.md](PROPOSALS.md) reaches
 
 Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 
-> **Not the in-game changelog.** `changelog.html` at the repository root is the
-> player-facing version history shown inside the game, maintained by hand as
-> HTML and inherited from upstream. This file is the developer-facing record:
-> tooling, infrastructure, refactors and the reasoning behind them. The two are
-> deliberately separate and neither replaces the other.
+> **Paired with the in-game changelog.** `changelog.html` and
+> `changelog.tr.html` at the repository root are the player-facing version
+> history shown inside the game. Every entry written here gets a matching entry
+> there, in the same change: this file keeps the reasoning at developer depth,
+> they carry the player's account of it. Story content and new areas get their
+> own minor version heading (0.6.1, 0.6.2, …) rather than being folded into an
+> existing one. `npm run check` enforces that both HTML copies hold an entry for
+> the shipped `game_version`, so the two cannot drift apart unnoticed.
 
 ---
 
 ## 2026-08-22
+
+### The in-game changelog is now part of the record, and got a rebuild
+
+**New standing rule.** Every entry in this file gets a matching player-facing
+entry in both `changelog.html` and `changelog.tr.html`, in the same change.
+Story content and new areas get their own minor version heading — 0.6.1, 0.6.2 —
+rather than being folded into an existing one. This reverses the note that used
+to sit at the top of this file calling the two records "deliberately separate";
+they are still separate in *audience*, developer depth here and a player's
+account there, but no longer in scope.
+
+`npm run check` enforces it rather than trusting anyone to remember: both HTML
+files must hold a heading whose version matches `game_version`. A release that
+bumps the version and forgets the entry now fails the build instead of shipping a
+game whose own changelog does not mention it. Section 6 of
+[AGENTS.md](AGENTS.md) went from three places to four for the same reason.
+
+**The version is now `v0.6.0`.** `src/game_version.js` said `v0.6` while
+`package.json` said `0.6.0`; three segments is also what minor story bumps need.
+`compare_game_version` pads the shorter side with zeroes, so `v0.6` in an existing
+save still compares equal to `v0.6.0` and no migration is involved.
+
+**Both changelog pages were rebuilt from the shell inward.** The old markup put
+`<head>` *inside* `<body>`, carried no charset and no viewport, and styled a
+light-only page with a one-line instruction where a header belonged. All 1114
+lines of entries were carried over verbatim — verified by diffing the entry text
+against a backup, 0 lines lost, all 20 spoiler spans intact — and only the `v0.6`
+heading was renamed and its body extended.
+
+What is new: a valid document with `<meta charset="utf-8">`, a real header with
+the current version and an expand-all control, one card per version with a drawn
+chevron, light and dark palettes through `prefers-color-scheme`, `pre-wrap` so a
+phone does not scroll sideways, `aria-expanded` on the disclosures, the newest
+release unfolded on arrival, and `#v0.5.5`-style deep links that open the release
+they point at. Spoilers now reveal on click as well as hover, because hover does
+not exist on a touchscreen.
+
+The missing charset was not cosmetic. `changelog.tr.html`, `help.tr.html` and
+their English counterparts all lacked one. GitHub Pages sends `charset=utf-8` so
+the live site was fine, but every local `file://` open decoded the Turkish as
+mojibake. All four pages have it now.
+
+**Two dead version displays, fixed properly.** The changelogs loaded
+`src/game_version.js` as a module and the help pages held a
+`<span class="game_version">` for it to fill. Neither worked: `src/` is not
+deployed, so that script was a 404 on the live site — confirmed — and nothing
+filled the span in the first place. `scripts/build-site.js` now stamps the span in
+the `_site/` copies, asserting it finds exactly one per page, and `npm run check`
+verifies the stamp landed. The repository copies keep a readable literal so the
+pages still make sense opened from disk. The dead script tag is gone.
+
+The Turkish changelog's own header still read "Click on blocks to unfold their
+content" — the one string in that file the earlier translation pass missed,
+because it sat in the page shell rather than in an entry.
+
+**A correction.** I reported `compare_game_version` as carrying a real bug: its
+`if(Number.parseInt(a[i]) && Number.parseInt(b[i]))` guard is falsy for a `"0"`
+segment, which drops the comparison to strings. That much is true, and it looks
+wrong. It is not: `"0"` is the lexicographically smallest digit string, so every
+case that reaches the string branch has a zero on one side and compares correctly
+anyway. Checked across `v0.6.0`/`v0.6.10` in both directions, `v0.6`/`v0.6.0`,
+`v0.6.9`/`v0.6.10` and `v0.10.0`/`v0.9.0` before touching it — and then not
+touching it. The guard is fragile-looking rather than broken.
+
+Three new checks in total this session, all negative-tested in both directions:
+the changelog-covers-version pair, the version-span stamp, and the
+build-side assertion that each page holds exactly one span.
 
 ### Fixed the hero creation panel keeping its original language
 

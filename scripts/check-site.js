@@ -564,7 +564,45 @@ function check_language_switch_repaints() {
     }
 }
 
+/**
+ * The in-game changelogs must carry an entry for the version being shipped, and
+ * both of them, so the two languages cannot drift apart.
+ *
+ * They are the player-facing history: a release that bumps the version without
+ * writing an entry ships a game whose own changelog does not mention it. A heading
+ * may carry a release title and dates after the version, so only its first token
+ * has to match.
+ *
+ * The version span is checked in the BUILT copy, because that is where
+ * build-site.js stamps it - the repository copies deliberately hold a readable
+ * literal instead.
+ */
+function check_changelogs_cover_version() {
+    for (const file of ["changelog.html", "changelog.tr.html"]) {
+        const html = fs.readFileSync(path.join(repo_root, file), "utf8");
+
+        const headings = [...html.matchAll(/<button[^>]*class="collapsible"[^>]*>([^<]+)<\/button>/g)]
+            .map(match => match[1].trim().split(/\s+/)[0]);
+        if (headings.length === 0) {
+            error(`${file} has no collapsible version headings - this check is out of date.`);
+            continue;
+        }
+        if (!headings.includes(version)) {
+            error(`${file} has no entry for ${version} - its newest heading is "${headings[0]}".`
+                + " The in-game changelog is the player-facing history and has to cover the shipped version.");
+        }
+
+        const built = path.join(site_dir, file);
+        if (!fs.existsSync(built)) continue;
+        if (!fs.readFileSync(built, "utf8").includes(`<span class="game_version">${version}</span>`)) {
+            error(`_site/${file} does not show ${version} in its game_version span;`
+                + " build-site.js did not stamp it.");
+        }
+    }
+}
+
 check_site();
+check_changelogs_cover_version();
 check_language_switch_repaints();
 await check_locales();
 await check_content_text_ids();
