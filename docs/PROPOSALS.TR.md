@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 9 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 10 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -285,8 +285,8 @@ kayda geçiriliyorlar.
 
 Yeni bölgeler, item'lar ve dialogue kapsam dahilinde. Upstream senkronizasyonu
 artık bir hedef değil. Refactor'ların upstream ile merge-dostu kalması gerekmiyor
-ve Q-5 (`dist/` takipten çıkarma) mevcut hâlini koruması için ana gerekçesini
-yitiriyor.
+ve Q-5 (`dist/` takipten çıkarma) o zamandan beri takipten çıkarma yönünde
+karara bağlandı.
 
 ### Q-2 — Türkçe nereye kadar? **KARAR: her şey**
 
@@ -315,12 +315,22 @@ Kipin ikinci bir seçilebilir eksen olması arama mantığının yeniden yazılm
 gerektirirdi; ancak NPC bazında sabit bir kip yalnızca o satırın Türkçe metnine
 yazılır ve her satır zaten ayrı bir string id'dir.
 
-### Q-5 — `dist/` takipte kalsın mı?
+### Q-5 — `dist/` takipte kalsın mı? **KARAR: takipten çıkarıldı**
 
-Takipte kaldığı sürece her upstream senkronizasyonunda garanti bir birleştirilemez
-çatışma kaynağı. Takipten çıkarmak artık güvenli, çünkü CI build alıyor ve dev
-sunucusu `src/` üzerinden çalışıyor; ancak hem `.gitattributes` hem site
-derleyicisi takipte kalacağı varsayımıyla yazıldı.
+Commit'li kopyayı kullanan hiçbir şey yoktu. Deploy workflow'u yüklemeden önce
+`npm run build`'i kendisi çalıştırıyor, yani yayımlanan bundle her zaman CI'ın
+derlediğiydi; depo kökü geliştirme giriş noktası ve `index.html`'i `src/main.js`
+yüklüyor; ayrıca hiçbir kontrol commit'li bundle'ı `src/` ile karşılaştırmıyordu,
+yani bayat bir kopya yakalanmazdı. Karşılığında ödenen bedel 4 MB minified çıktı
+artı sourcemap'ti ve 121 commit boyunca her içerik değişikliğinde yeniden diff'e
+giriyordu. Birleştirilemez-çatışma gerekçesi Q-1 altında geçersiz kaldı, ama geri
+kalanı ona ihtiyaç duymuyor.
+
+`.gitignore` artık `dist/`'i yok sayıyor, blob'u diff'lerin dışında tutan
+`.gitattributes` girdileri onunla birlikte kalktı ve `scripts/build-site.js`,
+deploy workflow'u, iki README ile `docs/AGENTS`'ın iki yarısındaki yorumlar artık
+onun commit'li olduğunu söylemiyor. `npm run build`'in kendisi değişmedi: hâlâ önce
+`dist/bundle.js`'i yazıyor, sonra onu `_site/` içine kopyalıyor.
 
 ### Q-6 — Dil değiştirme: yeniden yükleme mi, canlı mı?
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 4 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 5 -->
 
 # Agent and contributor guide
 
@@ -33,7 +33,7 @@ Standing project direction, including what may and may not change, is in
 | --- | --- |
 | `npm install` | Installs the single dependency, esbuild. |
 | `npm run serve` | Static server on `127.0.0.1:8080`, **dev mode**. Source edits are live on reload. |
-| `npm run build` | Bundles `src/main.js` into `dist/bundle.js`, then assembles the deployable site into `_site/`. |
+| `npm run build` | Bundles `src/main.js` into `dist/bundle.js`, then assembles the deployable site into `_site/`. Both are untracked. |
 | `npm run check` | Validates the assembled site and locale key parity. `LOCALE_STRICT=1` makes missing translations fatal. |
 | `npm test` | Regression tests for the skill xp model. |
 | `npm run serve:site` | Static server on `127.0.0.1:8081` serving `_site/`, to verify the built site in bundle mode. |
@@ -217,9 +217,12 @@ Match the surrounding code. Empirically, that means:
   `is_on_dev()` / `is_on_main()`. `is_on_dev()` chooses which `localStorage` key
   holds the save, so pointing `dev` at a live deployment hands every existing
   player an empty save slot. Treat that field as dangerous.
-- **`dist/bundle.js` is committed** and is marked `-diff linguist-generated`, so
-  it shows as a binary blob in diffs. Regenerate with `npm run build`; never edit
-  it.
+- **`dist/` is not tracked.** It is esbuild output that `npm run build` writes
+  on every run, and the deploy workflow runs that build itself, so nothing
+  consumes a committed copy. Never edit it, and never commit it.
+- **`npm run build` does not need to be committed, but it does need to be run.**
+  `npm run check` reads `_site/`, which only exists after a build, so a check
+  run against a stale `_site/` is validating the previous change.
 - Several config switches gate authored-but-disabled content:
   `use_racial_bonuses` and `use_height_bonuses` are both `false`. If you enable
   either, remove the "purely cosmetic" note from the hero creation panel, as the

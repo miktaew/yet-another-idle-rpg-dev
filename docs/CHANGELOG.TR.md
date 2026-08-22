@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 19 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 20 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -16,6 +16,49 @@ geldiğinde buraya girer.
 > olarak ayrıdır ve biri diğerinin yerini almaz.
 
 ---
+
+## 2026-08-22
+
+### `dist/` takipten çıkarıldı
+
+**Commit'li bundle'ı okuyan hiçbir şey yoktu.** Deploy workflow'u `_site/`'ı
+yüklemeden önce `npm ci && npm run build` çalıştırıyor; yani yayımlanan her bundle
+her zaman CI'ın o an derlediğiydi — commit'li kopya hiç sunulmadı. Depo kökü
+geliştirme giriş noktası ve `index.html`'i `src/main.js` yüklüyor; dolayısıyla taze
+bir klon oyunu build almadan, hiç `dist/` olmadan çalıştırıyor. Ayrıca commit'li
+bundle'ı `src/` ile karşılaştıran bir şey de yoktu: `npm run check`, build'in az
+önce yazdığı `_site/`'ı doğruluyor; yani yirmi commit boyunca bayat kalmış bir
+bundle bütün kontrollerden geçerdi.
+
+Yani ortada, tüketicisi olmayan 4 MB'lık bir artefakt vardı — 1.1 MB bundle artı
+2.9 MB sourcemap — ve 121 commit boyunca her içerik değişikliğinde yeniden diff'e
+giriyordu. Dahası, duran bir tuzaktı: üretebileceği tek hata biçimi, kaynağı
+yeniden derlemeden commit'lemekti; bunu hiçbir kontrol yakalamıyordu ve takipsiz
+sürüm onu yapısal olarak imkânsız kılıyor.
+
+**Değişen tek şey takip durumu.** `npm run build`'e dokunulmadı: esbuild hâlâ önce
+`dist/bundle.js`'i yazıyor ve `build-site.js` hâlâ `static_dirs` üzerinden `dist/`'i
+`_site/` içine kopyalıyor — `_site/dist/bundle.js` oraya böyle geliyor. Kalkan şey,
+blob'u diff'lerin ve GitHub dil istatistiklerinin dışında tutan `.gitattributes`
+çiftiydi; yol yok sayıldığı anda işlevsiz hâle geliyordu.
+
+Eski düzeni iddia eden ve yalana dönüşecek altı yorum vardı: `.gitignore`,
+`.gitattributes`, `build-site.js` başlığı, deploy workflow'unun artifact adımı, iki
+README'nin dosya tabloları ve `docs/AGENTS`'ın iki yarısı. Hepsi aynı değişiklikte
+düzeltildi. "Commit'lidir, `-diff linguist-generated` işaretlidir" diyen
+`docs/AGENTS` maddesi artık tersini söylüyor ve ikinci bir madde kazandı: build'in
+`npm run check`'ten önce hâlâ *çalıştırılması* gerekiyor, çünkü check `_site/`'ı
+okuyor ve bayat bir `_site/` bir önceki değişikliği doğrulamak demek.
+
+Bu, PROPOSALS Q-5'i kapatıyor. Soru tam da `.gitattributes` ile site derleyicisinin
+takipte kalacağı varsayımıyla yazılmış olması yüzünden açık bırakılmıştı. İkisi de
+işin kolay yarısıydı; harekete geçme gerekçesi, onu tüketen bir şeyin olmamasıydı.
+
+`build.js` — fork öncesi derleyici; hiçbir npm script'ine bağlı değil ve
+`scripts/build-site.js` onun yerini aldı — hâlâ kökte duruyor, aynı çıktı yoluna
+yazıyor ve takip edilen kök `index.html`'i yerinde değiştiriyor. İlgisiz bir
+değişiklikte sessizce silmek yerine olduğu gibi bırakıldı; artık depoda `dist/`'i
+korunması gereken bir şey sayan tek dosya o.
 
 ## 2026-08-21
 

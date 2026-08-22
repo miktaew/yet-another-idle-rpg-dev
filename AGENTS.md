@@ -18,7 +18,7 @@ development stopped; this fork continues it.
 ```sh
 npm install
 npm run serve   # dev mode on :8080, no build step, edits live on reload
-npm run build   # bundle -> dist/, deployable site -> _site/
+npm run build   # bundle -> dist/, deployable site -> _site/ (both untracked)
 npm run check   # validate the built site and locale key parity
 ```
 

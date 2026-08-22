@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 4 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 5 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -38,7 +38,7 @@ Tam tablo: [AGENTS.md § 2](AGENTS.md#2-commands).
 | --- | --- |
 | `npm install` | Tek bağımlılık olan esbuild'i kurar. |
 | `npm run serve` | `127.0.0.1:8080` üzerinde statik sunucu, **dev modu**. Kaynak düzenlemeleri sayfa yenilenince canlı. |
-| `npm run build` | `src/main.js`'i `dist/bundle.js` içine paketler, ardından deploy edilebilir siteyi `_site/` içinde toplar. |
+| `npm run build` | `src/main.js`'i `dist/bundle.js` içine paketler, ardından deploy edilebilir siteyi `_site/` içinde toplar. İkisi de takip edilmiyor. |
 | `npm run check` | Toplanan siteyi ve locale anahtar eşliğini doğrular. `LOCALE_STRICT=1` eksik çevirileri ölümcül yapar. |
 | `npm test` | Skill xp modeli için regresyon testleri. |
 | `npm run serve:site` | `127.0.0.1:8081` üzerinde `_site/` sunar; derlenen siteyi bundle modunda doğrulamak için. |
@@ -198,9 +198,13 @@ Tam liste: [AGENTS.md § 10](AGENTS.md#10-gotchas). En kritik olanlar:
   anahtarında tutulduğunu seçer; dolayısıyla `dev` değerini canlı bir deployment'a
   yöneltmek mevcut her oyuncuya boş bir save yuvası verir. Bu alanı tehlikeli
   olarak görün.
-- **`dist/bundle.js` commit'lidir** ve `-diff linguist-generated` işaretlidir, yani
-  diff'lerde binary olarak görünür. `npm run build` ile yenileyin; asla elle
-  düzenlemeyin.
+- **`dist/` takip edilmiyor.** `npm run build`'in her çalıştırmada yazdığı
+  esbuild çıktısı; deploy workflow'u da o build'i kendisi çalıştırdığı için
+  commit'li bir kopyayı kullanan hiçbir şey yok. Asla elle düzenlemeyin, asla
+  commit'lemeyin.
+- **`npm run build`'in commit'lenmesi gerekmez, ama çalıştırılması gerekir.**
+  `npm run check` yalnızca build'den sonra var olan `_site/`'ı okur; yani bayat
+  bir `_site/` üzerinde çalışan check, bir önceki değişikliği doğrulamış olur.
 
 ## 11. Çalışma kuralları
 

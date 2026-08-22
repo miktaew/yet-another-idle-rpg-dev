@@ -93,7 +93,7 @@ pushes are skipped. There is nothing to do by hand.
 | `index.html` | The game page, and the dev entry point. |
 | `src/` | All game code. Systems and content registries. |
 | `locales/` | Player-facing text, keyed by string id. |
-| `dist/bundle.js` | Committed build output. Regenerate with `npm run build`. |
+| `dist/bundle.js` | Build output, untracked. Written by `npm run build`. |
 | `resources/` | Fonts, images, and vendored HackTimer. |
 | `help.html` | In-game help. |
 | `changelog.html` | In-game, player-facing version history. |

@@ -4,14 +4,14 @@
  * Site builder.
  *
  * Two things happen here, in order:
- *   1. esbuild bundles src/main.js into dist/bundle.js (same output path the
- *      legacy build.js uses, so the committed bundle stays refreshable).
+ *   1. esbuild bundles src/main.js into dist/bundle.js. dist/ is untracked
+ *      build output, written fresh on every run and consumed by step 2.
  *   2. The deployable site is assembled into _site/ — a copy of the static root
  *      files with index.html rewritten to load the bundle instead of src/main.js.
  *
  * Why a separate _site/ instead of deploying dist/ or the repo root:
- *   - dist/ is a committed artifact that only ever holds the bundle; overloading
- *     it with a full site copy would make the tracked contents unpredictable.
+ *   - dist/ only ever holds the esbuild output; overloading it with a full
+ *     site copy would mix generated and hand-written files in one directory.
  *   - The repo root is the DEV entry point: index.html deliberately points at
  *     src/main.js so the game runs off a plain static server with no build step.
  *     Rewriting that file in place (as build.js does) dirties a tracked file on

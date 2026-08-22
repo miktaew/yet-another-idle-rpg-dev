@@ -18,7 +18,7 @@ Upstream geliştirme durdu; bu fork onu devam ettiriyor.
 ```sh
 npm install
 npm run serve   # :8080 uzerinde dev modu, derleme adimi yok, duzenlemeler canli
-npm run build   # bundle -> dist/, deploy edilebilir site -> _site/
+npm run build   # bundle -> dist/, deploy edilebilir site -> _site/ (ikisi de takipsiz)
 npm run check   # derlenen siteyi ve locale anahtar esligini dogrula
 ```
 

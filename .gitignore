@@ -4,9 +4,10 @@ achievements.js
 # Dependencies
 /node_modules
 
-# Build output
-# scripts/build-site.js assembles the deployable site here. Throwaway:
-# dist/bundle.js stays tracked, _site/ never does.
+# Build output. Both are throwaway and neither is committed: `npm run build`
+# writes dist/bundle.js and then assembles _site/ from it, and the deploy
+# workflow runs that build itself before publishing.
+dist/
 _site/
 
 # Local-only tooling configs inherited from upstream. If a shared linter or

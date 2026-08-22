@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 9 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 10 -->
 
 # Proposals
 
@@ -275,7 +275,7 @@ at.
 
 New areas, items and dialogue are in scope. Upstream syncing is not a goal any
 more. Refactors no longer need to stay merge-friendly with upstream, and Q-5
-(untracking `dist/`) loses its main argument for staying as it is.
+(untracking `dist/`) has since been decided in favour of untracking.
 
 ### Q-2 — How far does Turkish go? **DECIDED: everything**
 
@@ -304,12 +304,21 @@ being a second selectable axis would have required rewriting the lookup, but a
 fixed per-NPC register is simply written into each line's Turkish text, and each
 line is already a separate string id.
 
-### Q-5 — Should `dist/` stay tracked?
+### Q-5 — Should `dist/` stay tracked? **DECIDED: untracked**
 
-Tracked, it is a guaranteed unmergeable conflict on every upstream sync.
-Untracking is safe now that CI builds and the dev server runs from `src/`, but
-both `.gitattributes` and the site builder were written on the assumption that it
-stays tracked.
+Nothing consumed the committed copy. The deploy workflow runs `npm run build`
+itself before uploading, so the published bundle was always the one CI built; the
+repository root is the dev entry point and its `index.html` loads `src/main.js`;
+and no check ever compared the committed bundle against `src/`, so a stale one
+would not have been caught. The cost was 4 MB of minified output plus sourcemap,
+re-diffed on every content change across 121 commits. The unmergeable-conflict
+argument is moot under Q-1, but the rest stands without it.
+
+`.gitignore` now ignores `dist/`, the `.gitattributes` entries that kept the blob
+out of diffs went with it, and the comments in `scripts/build-site.js`, the deploy
+workflow, both READMEs and both `docs/AGENTS` halves no longer claim it is
+committed. `npm run build` itself is unchanged: it still writes `dist/bundle.js`
+first and copies it into `_site/`.
 
 ### Q-6 — Language switch: reload or live?
 

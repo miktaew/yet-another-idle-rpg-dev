@@ -97,7 +97,7 @@ Pages'e yayınlar. Yalnızca doküman değişen push'lar atlanır. Elle yapılac
 | `index.html` | Oyun sayfası ve geliştirme giriş noktası. |
 | `src/` | Tüm oyun kodu. Sistemler ve içerik registry'leri. |
 | `locales/` | Oyuncuya görünen metinler, string id ile anahtarlanmış. |
-| `dist/bundle.js` | Commit'lenmiş derleme çıktısı. `npm run build` ile yenilenir. |
+| `dist/bundle.js` | Derleme çıktısı, takip edilmiyor. `npm run build` yazar. |
 | `resources/` | Fontlar, görseller ve devralınan HackTimer. |
 | `help.html` | Oyun içi yardım. |
 | `changelog.html` | Oyun içi, oyuncuya yönelik sürüm geçmişi. |

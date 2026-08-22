@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 19 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 20 -->
 
 # Changelog
 
@@ -15,6 +15,49 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 > deliberately separate and neither replaces the other.
 
 ---
+
+## 2026-08-22
+
+### Untracked `dist/`
+
+**Nothing was reading the committed bundle.** The deploy workflow runs
+`npm ci && npm run build` before it uploads `_site/`, so every published bundle
+has always been the one CI just built — the committed copy was never served. The
+repository root is the dev entry point and its `index.html` loads `src/main.js`,
+so a fresh clone runs the game with no build and no `dist/` at all. And nothing
+compared the committed bundle against `src/`: `npm run check` validates `_site/`,
+which the build had just written, so a bundle left stale for twenty commits would
+have passed every check.
+
+So it was a 4 MB artefact — 1.1 MB bundle plus a 2.9 MB sourcemap — re-diffed on
+every content change, across 121 commits, that no consumer had. Worse, it was a
+standing trap: the one failure mode it *could* produce was committing source
+without rebuilding, which no check would catch and which the untracked version
+makes structurally impossible.
+
+**What changed is only the tracking.** `npm run build` is untouched: esbuild still
+writes `dist/bundle.js` first, and `build-site.js` still copies `dist/` into
+`_site/` via `static_dirs`, which is how `_site/dist/bundle.js` gets there. What
+went away is the `.gitattributes` pair that kept the blob out of diffs and out of
+GitHub's language statistics — inert once the path is ignored.
+
+Six comments asserted the old arrangement and would have become lies:
+`.gitignore`, `.gitattributes`, the `build-site.js` header, the deploy workflow's
+artifact step, both READMEs' file tables, and both `docs/AGENTS` halves. All
+corrected in the same change. The `docs/AGENTS` bullet that said "is committed,
+marked `-diff linguist-generated`" now says the opposite and gained a second
+bullet: the build still has to be *run* before `npm run check`, because check
+reads `_site/` and a stale `_site/` means validating the previous change.
+
+This settles PROPOSALS Q-5, which had been left open specifically because
+`.gitattributes` and the site builder were written assuming it stayed tracked.
+Both were the easy half; the reason to act was that nothing consumed it.
+
+`build.js` — the pre-fork builder, bound to no npm script and superseded by
+`scripts/build-site.js` — still sits in the root writing to the same output path
+and rewriting the tracked root `index.html` in place. Left alone here rather than
+quietly deleted in an unrelated change; it is now the only file in the repository
+that treats `dist/` as something to preserve.
 
 ## 2026-08-21
 

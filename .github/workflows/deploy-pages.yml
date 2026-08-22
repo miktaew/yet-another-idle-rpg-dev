@@ -76,9 +76,9 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           # scripts/build-site.js assembles the deployable site here. It is not
-          # dist/: dist/ holds only the committed bundle, and the repository root
-          # is the dev entry point whose index.html deliberately loads
-          # src/main.js so the game runs with no build step.
+          # dist/: dist/ holds only the bundle this job just built, and the
+          # repository root is the dev entry point whose index.html deliberately
+          # loads src/main.js so the game runs with no build step.
           path: _site
 
   deploy:
