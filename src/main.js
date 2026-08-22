@@ -484,6 +484,12 @@ async function option_language(option) {
     //Nothing else redraws the bio panel, so it would otherwise keep the previous
     //language until the player reopened the character screen.
     fill_character_bio();
+
+    //Same problem, and worse: the hero creation panel is built once and never
+    //again, so its race names and tooltips would stay in the language it was
+    //built in - which on a new game is always the default. No-op once the hero
+    //exists and the panel is gone.
+    characterCreator.refresh_language();
 }
 
 function option_expo_threshold(option) {

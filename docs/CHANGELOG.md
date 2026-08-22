@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 21 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 22 -->
 
 # Changelog
 
@@ -17,6 +17,63 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-22
+
+### Fixed the hero creation panel keeping its original language
+
+**Reported from the game.** Switching to Turkish while creating a character
+translated the confirm button but left the race names and their tooltips in
+English.
+
+The two behave differently because they are reached differently. The confirm
+button is markup carrying `data-translation`, so `translateUI` rewrites it. The
+race buttons are built in JavaScript by `characterCreator.fill_creation_panel`,
+which resolves each name and tooltip through `getText` once and appends finished
+DOM. Nothing carries an id afterwards, so `translateUI` has nothing to walk and
+the text keeps whatever language it was built in.
+
+Which, on a new game, is always the default. `fill_creation_panel` runs during
+startup — before the player has reached the options panel at all — so the panel is
+built in English every single time, and the one screen where a player would
+naturally set their language is the one screen that ignored the setting.
+
+**The fix is a repaint, not a rebuild.** `option_language` already had this
+problem once and solved it for the bio panel with a `fill_character_bio()` call
+and a comment saying nothing else redraws it. The creation panel needed the same
+treatment, so `characterCreator.refresh_language()` joins it there.
+
+Re-running `fill_creation_panel` would have been wrong twice over: it writes the
+name field from `character.name`, discarding whatever the player has typed, and
+it attaches the confirmation click listener, so a second call would confirm hero
+creation twice. `refresh_language` rebuilds only the race buttons and, if
+`config.use_height_bonuses` is on, the height tooltips.
+
+Two details that are easy to get wrong. The current selection is read back from
+the DOM rather than from `this.race`, because the default race starts out marked
+active without a click and `this.race` stays empty until the player picks
+something — restoring from the field would silently reset the choice for anyone
+who had not clicked. And the queries are scoped to
+`hero_creation_panel_race_selection` rather than the document: the three category
+labels are siblings of the buttons, they carry `data-translation`, and
+`translateUI` has already dealt with them.
+
+Tooltip positioning survives the rebuild because `index.html` registers the
+*container* in `elements_with_restricted_tooltips` and dispatches on
+`event.target`, not the individual buttons — replacing children changes nothing it
+depends on.
+
+**Two checks, both negative-tested.** `option_language` must call `translateUI`
+and every repaint in a `language_switch_repaints` list; adding another
+imperatively built panel means adding its repaint there. This failure mode is
+silent by construction — the panel looks fine, in the wrong language — so nothing
+else would have caught it.
+
+`src/races.js` also joined the content-id scan, which it had never been part of.
+Its `name`, `alternative_name`, `description` and `gameplay_description` fields
+hold text ids rather than English, and a typo in one of them renders as the
+`text not found` placeholder inside a hero creation tooltip: a screen the player
+sees once, only on a new game, only on hover. 24 ids came under the check, taking
+it from 1254 to 1278. All 24 already resolved in both locales, so the race text
+itself was never the problem — the repaint was.
 
 ### Wired the static interface labels in index.html
 

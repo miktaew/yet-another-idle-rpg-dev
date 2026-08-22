@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 21 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 22 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,63 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-22
+
+### Karakter oluşturma panelinin ilk dilinde kalması giderildi
+
+**Oyundan bildirildi.** Karakter oluştururken Türkçeye geçmek onayla düğmesini
+çeviriyor, ama ırk adlarını ve tooltip'lerini İngilizce bırakıyordu.
+
+İkisi farklı davranıyor, çünkü onlara farklı yollardan ulaşılıyor. Onayla düğmesi
+`data-translation` taşıyan markup; `translateUI` onu yeniden yazıyor. Irk düğmeleri
+ise `characterCreator.fill_creation_panel` tarafından JavaScript'te kuruluyor: her
+adı ve tooltip'i bir kez `getText` ile çözüp bitmiş DOM'u ekliyor. Sonrasında
+hiçbiri id taşımıyor, yani `translateUI`'ın dolaşacağı bir şey yok ve metin hangi
+dilde kurulduysa o dilde kalıyor.
+
+Yeni bir oyunda bu her zaman öntanımlı dil demek. `fill_creation_panel` başlangıç
+sırasında çalışıyor — oyuncu seçenekler paneline hiç ulaşmamışken — yani panel her
+seferinde İngilizce kuruluyor ve bir oyuncunun dilini doğal olarak ayarlayacağı tek
+ekran, ayarı yok sayan tek ekran oluyordu.
+
+**Düzeltme yeniden kurmak değil, yeniden çizmek.** `option_language` bu sorunu bir
+kez zaten yaşamış ve bio paneli için bir `fill_character_bio()` çağrısı ile,
+"başka hiçbir şey onu yeniden çizmiyor" diyen bir yorumla çözmüştü. Oluşturma
+paneli de aynı muameleyi gerektiriyordu; `characterCreator.refresh_language()` ona
+orada eşlik ediyor.
+
+`fill_creation_panel`'i yeniden çağırmak iki bakımdan yanlış olurdu: ad alanını
+`character.name`'den yazıyor, yani oyuncunun yazdığı her şeyi atıyor; ayrıca onay
+click dinleyicisini bağlıyor, yani ikinci bir çağrı karakter oluşturmayı iki kez
+onaylardı. `refresh_language` yalnızca ırk düğmelerini ve
+`config.use_height_bonuses` açıksa boy tooltip'lerini yeniden kuruyor.
+
+Kolayca yanlış yapılabilecek iki ayrıntı. Mevcut seçim `this.race`'ten değil
+DOM'dan geri okunuyor; çünkü öntanımlı ırk hiç tıklanmadan aktif işaretli
+başlıyor ve oyuncu bir şey seçene kadar `this.race` boş kalıyor — alandan geri
+yüklemek, tıklamamış olan herkesin seçimini sessizce sıfırlardı. Sorgular da
+doküman geneli değil `hero_creation_panel_race_selection` ile sınırlı: üç kategori
+etiketi düğmelerin kardeşi, `data-translation` taşıyorlar ve `translateUI` onları
+çoktan halletti.
+
+Tooltip konumlandırması yeniden kurmadan sağ çıkıyor, çünkü `index.html`
+`elements_with_restricted_tooltips` içine tek tek düğmeleri değil *kapsayıcıyı*
+kaydediyor ve `event.target` üzerinden dağıtıyor — çocukları değiştirmek onun
+dayandığı hiçbir şeyi değiştirmiyor.
+
+**İki kontrol, ikisi de negatif test edildi.** `option_language` hem
+`translateUI`'ı hem de bir `language_switch_repaints` listesindeki her yeniden
+çizimi çağırmak zorunda; emirsel kurulan başka bir panel eklemek, onun yeniden
+çizimini oraya eklemek demek. Bu hata biçimi doğası gereği sessiz — panel düzgün
+görünüyor, yalnızca yanlış dilde — yani onu başka hiçbir şey yakalamazdı.
+
+`src/races.js` da, daha önce hiç dahil olmadığı içerik id taramasına katıldı.
+`name`, `alternative_name`, `description` ve `gameplay_description` alanları
+İngilizce değil metin id'si tutuyor ve birindeki bir yazım hatası, karakter
+oluşturma tooltip'inin içinde `text not found` yer tutucusu olarak çiziliyor:
+oyuncunun bir kez, yalnızca yeni oyunda, yalnızca üzerine gelince gördüğü bir
+ekran. 24 id kontrol altına girdi ve sayı 1254'ten 1278'e çıktı. Yirmi dördünün
+hepsi iki locale'de de zaten çözülüyordu; yani sorun ırk metninin kendisi hiç
+değildi — yeniden çizimdi.
 
 ### index.html'deki sabit arayüz etiketleri anahtarlara bağlandı
 

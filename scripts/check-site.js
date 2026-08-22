@@ -474,6 +474,12 @@ async function check_content_text_ids() {
         { file: "src/enemies.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
         ]},
+        { file: "src/races.js", patterns: [
+            //Race fields hold ids, not English, so a typo here shows up as the
+            //placeholder inside a hero creation tooltip - a screen the player sees
+            //exactly once and only on a new game.
+            /(?<![A-Za-z0-9_])(?:name|alternative_name|description|gameplay_description):\s*"([^"]+)"/g,
+        ]},
         { file: "src/combat_stances.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
         ]},
@@ -522,7 +528,44 @@ async function check_content_text_ids() {
     console.log(`[check] content text ids: ${checked} declared, ${checked - unresolved} resolved`);
 }
 
+/**
+ * Panels built imperatively - once, at startup, straight into the DOM - are
+ * invisible to translateUI, which only rewrites elements carrying a
+ * data-translation attribute. A language switch therefore has to repaint them by
+ * hand, and forgetting one fails silently: the panel simply keeps the language it
+ * was built in, which on a new game is always the default, because it is built
+ * before the player can choose anything. That is the bug the hero creation panel
+ * shipped with while the confirm button beside it switched correctly.
+ *
+ * Adding another such panel means adding its repaint here.
+ */
+const language_switch_repaints = [
+    "fill_character_bio()",
+    "characterCreator.refresh_language()",
+];
+
+function check_language_switch_repaints() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+
+    const body = source.match(/async function option_language\(option\) \{([\s\S]*?)\n\}/);
+    if (!body) {
+        error("src/main.js has no `async function option_language(option) { ... }` - this check is out of date.");
+        return;
+    }
+    if (!body[1].includes("translationManager.translateUI(language)")) {
+        error("option_language does not call translationManager.translateUI(language),"
+            + " so nothing carrying a data-translation attribute would change language at all.");
+    }
+    for (const call of language_switch_repaints) {
+        if (!body[1].includes(call)) {
+            error(`option_language does not call ${call}; that panel is built imperatively,`
+                + " so a language switch would leave it in the language it was built in.");
+        }
+    }
+}
+
 check_site();
+check_language_switch_repaints();
 await check_locales();
 await check_content_text_ids();
 await check_generated_items();
