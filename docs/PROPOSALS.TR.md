@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 10 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 11 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -259,11 +259,13 @@ Uygulama sırası, en yüksek kaldıraç önce:
    `display_conditions`'ı dikkate aldığı için Nekomimi cafe doğru şekilde
    beastkin ile kapılı; v0.4.6'dan beri ölü olan Lost memory görevi
    tamamlanabilir. [CHANGELOG.TR.md](CHANGELOG.TR.md) içinde yazılı.
-2. Orphan'larla birlikte bulunan geri kazanım engellerini düzelt: cat cafe tüccarı
-   yanlış adlandırılmış bir envanter şablonuna işaret ediyor; Mages guild
-   açıklaması Nekomimi cafe'nin kopyası; Nekomimi işletmecisinin dokuz
-   `lorem ipsum` metni duruyor; `Location` constructor'ı `display_conditions`'ı
-   sessizce düşürüyor, dolayısıyla mofu kapılaması push noktasında yapılmalı.
+2. **BİTTİ.** Dört geri kazanım engelinin hepsi kalktı ve varsayılmak yerine
+   kaynağa karşı doğrulandı: `inventory_templates["Cat cafe"]` var ve iki kafe
+   tüccarı da onu gösteriyor; Mages guild'in Nekomimi cafe'den kopyalanmış değil
+   kendi açıklaması var (iki geniş binanın arasına sıkışmış dar bir taş yapı);
+   `src/` veya `locales/` içinde hiçbir yerde `lorem ipsum` kalmadı; ve `Location`
+   `display_conditions`'ı saklıyor, `display.js` da onu çizim anında
+   değerlendiriyor; yani mofu kapılaması artık push yerinde yapılmak zorunda değil.
 3. Q3 ve Q4 merkezî gizemi tam bir tur ilerletiyor — soygun sipariş edilmişti — ve
    oyuncuya iki çıkmaz arasında fiziksel bir bağ veriyor.
 4. Q5 fare questline'ını kapatıyor, ikinci mağara kapısını odanın kendisinin ısrar
@@ -297,11 +299,18 @@ kalıcı olarak İngilizce kalır, çünkü onlar save verisidir; çevrilen şey
 başına ayrı bir gösterilen-ad metin id'sidir. Bunun hiçbir kısmı anahtar yeniden
 adlandırmaya izin vermez.
 
-### Q-3 — `help.html` ve `changelog.html` Türkçe kapsamında mı?
+### Q-3 — `help.html` ve `changelog.html` Türkçe kapsamında mı? **KARAR: ikisi de, tümüyle**
 
-İkisi birlikte repodaki en büyük İngilizce yüzey ve hiçbirinde i18n bağlantı
-noktası, hatta bağlanacak bir kapsayıcı bile yok. Öneri: elle yazılmış bir Türkçe
-yardım sayfası ve Türkçe bir not düşülmüş, İngilizce kalan bir changelog.
+Öneri, elle yazılmış bir Türkçe yardım sayfası ve Türkçe bir not taşıyan yalnızca
+İngilizce bir changelog'du. İkinci yarısı fazla çekingendi. İki sayfa da Türkçe
+olarak var — `help.tr.html` ve `changelog.tr.html` — ve
+`update_translated_page_links` oyun içi bağlantıları seçilen dile uyan dosyaya
+yöneltiyor; sayfası olmayan bir dil için İngilizceye düşüyor.
+
+Oyun içi changelog o zamandan beri devralınmış bir artefakt değil, geliştirme
+kaydının parçası hâline geldi; bu da sorunun geri kalanını kapatıyor: Türkçe
+kopyası bir nezaket değil, bakımı yapılan bir dosya. `npm run check`, iki
+kopyanın da yayımlanan `game_version` için bir girdi taşımasını şart koşuyor.
 
 ### Q-4 — Türkçe hitap kipi **KARAR: karma, NPC bazında**
 
@@ -332,11 +341,18 @@ deploy workflow'u, iki README ile `docs/AGENTS`'ın iki yarısındaki yorumlar a
 onun commit'li olduğunu söylemiyor. `npm run build`'in kendisi değişmedi: hâlâ önce
 `dist/bundle.js`'i yazıyor, sonra onu `_site/` içine kopyalıyor.
 
-### Q-6 — Dil değiştirme: yeniden yükleme mi, canlı mı?
+### Q-6 — Dil değiştirme: yeniden yükleme mi, canlı mı? **KARAR: canlı**
 
-Kaydet-sonra-yeniden-yükle yaklaşımı birkaç satır ve senkronizasyondan çıkması
-imkânsız. Gerçek bir canlı geçiş, display modülü bölünmeden var olmayan bir "tüm
-ekranları yenile" giriş noktası gerektiriyor.
+Burada anlatılan engel — canlı bir geçişin, display modülü bölünmeden var olmayan
+bir "tüm ekranları yenile" giriş noktası gerektirdiği — sorunun biçimi değilmiş.
+
+`translateUI`, `data-translation` taşıyan her şeyi yeniden yazıyor; geri kalan her
+şey de paneli çizilirken `getText` üzerinden çözülüyor, yani oyuncu dolaştıkça
+kendiliğinden dönüşüyor. Kalan şey, bir kez emirsel olarak kurulup bir daha hiç
+çizilmeyen kısa bir panel listesi: karakter bio'su ve karakter oluşturma paneli.
+Her biri `option_language` içinde açık bir yeniden çizim alıyor ve biri eksik
+olursa `npm run check` düşüyor; böylece liste sessizce büyüyemiyor. Yeniden yükleme
+yok ve hiçbir şeyin bölünmesi gerekmedi.
 
 ---
 

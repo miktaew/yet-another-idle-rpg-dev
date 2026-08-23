@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 25 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 26 -->
 
 # Changelog
 
@@ -20,6 +20,37 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-22
+
+### Closed three proposals the work had already answered
+
+Bookkeeping, but the kind that misleads if left: `PROPOSALS.md` still described
+three things as open that the last few weeks had settled.
+
+**P-9 step 2** listed four reclamation blockers. All four are cleared, and this
+was checked against the source rather than taken on trust:
+`inventory_templates["Cat cafe"]` exists at `traders.js:517` and both cafe traders
+point at it; the Mages guild has its own description instead of the Nekomimi
+cafe's; `grep -ric "lorem ipsum"` over `src/` and `locales/` returns nothing; and
+`Location` stores `display_conditions` while `display.js` evaluates it at render
+time, so mofu gating no longer has to happen at the push site.
+
+**Q-3** asked whether the help page and the changelog were in scope for Turkish,
+and recommended a Turkish help page with an English-only changelog carrying a
+note. The second half was too cautious: both pages exist in Turkish and the
+in-game links follow the selected language. The in-game changelog has since
+become part of the development record, which settles the rest — its Turkish copy
+is maintained, and `check` requires it.
+
+**Q-6** predicted that a live language switch needed a "refresh every display"
+entry point that could not exist until the display module was split. That was the
+wrong shape. `translateUI` handles everything carrying a `data-translation`
+attribute and everything else resolves through `getText` as its panel draws; what
+was actually needed was an explicit repaint for the two panels built imperatively
+and never redrawn, plus a check so that list cannot silently grow. Nothing was
+split and there is no reload.
+
+No player-facing entry for this one: everything in it that a player would notice
+is already in the v0.6.0 block from the commits that did the work.
 
 ### Swept for the English the leftover list had missed
 

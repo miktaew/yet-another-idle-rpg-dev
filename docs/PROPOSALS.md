@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 10 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 11 -->
 
 # Proposals
 
@@ -249,11 +249,13 @@ Execution order, highest leverage first:
    correctly beastkin-gated now that `Location` honours `display_conditions`; the
    Lost memory task dead since v0.4.6 is completable. Written up in
    [CHANGELOG.md](CHANGELOG.md).
-2. Fix the reclamation blockers found alongside the orphans: the cat cafe
-   trader points at a mis-named inventory template; the Mages guild description
-   is a copy-paste of the Nekomimi cafe's; the Nekomimi proprietress still has
-   nine `lorem ipsum` strings; `Location` silently drops `display_conditions`, so
-   mofu gating has to happen at the push site.
+2. **DONE.** All four reclamation blockers are cleared, verified against the
+   source rather than assumed: `inventory_templates["Cat cafe"]` exists and both
+   cafe traders point at it; the Mages guild has its own description (a narrow
+   stone building wedged between two wider ones) instead of the Nekomimi cafe's;
+   there are zero `lorem ipsum` strings left anywhere in `src/` or `locales/`; and
+   `Location` stores `display_conditions` and `display.js` evaluates it at render
+   time, so mofu gating no longer has to happen at the push site.
 3. Q3 and Q4 advance the central mystery by exactly one turn — the robbery was
    contracted — and hand the player a physical link between the two dead ends.
 4. Q5 closes the rat questline, opens the second cave gate with mind rather than
@@ -285,12 +287,18 @@ The consequence is the display-name indirection layer described in P-7. Registry
 keys stay English forever, because they are save data; what gets translated is a
 separate shown-name text id per entry. Nothing about this permits renaming a key.
 
-### Q-3 — Are `help.html` and `changelog.html` in scope for Turkish?
+### Q-3 — Are `help.html` and `changelog.html` in scope for Turkish? **DECIDED: both, fully**
 
-Together they are the largest English surface in the repository and neither has
-any i18n hook, or even a container to attach one to. Recommendation: a
-hand-written Turkish help page, and an English-only changelog with a Turkish
-note.
+The recommendation was a hand-written Turkish help page and an English-only
+changelog carrying a Turkish note. That was too cautious on the second half. Both
+pages exist in Turkish — `help.tr.html` and `changelog.tr.html` — and
+`update_translated_page_links` points the in-game links at whichever file matches
+the selected language, falling back to English for a language with no page.
+
+The in-game changelog has since become part of the development record rather than
+an inherited artefact, which settles the rest of the question: its Turkish copy is
+maintained, not a courtesy. `npm run check` requires both copies to carry an entry
+for the shipped `game_version`.
 
 ### Q-4 — Turkish address register **DECIDED: mixed, per NPC**
 
@@ -320,11 +328,19 @@ workflow, both READMEs and both `docs/AGENTS` halves no longer claim it is
 committed. `npm run build` itself is unchanged: it still writes `dist/bundle.js`
 first and copies it into `_site/`.
 
-### Q-6 — Language switch: reload or live?
+### Q-6 — Language switch: reload or live? **DECIDED: live**
 
-Persist-then-reload is a few lines and cannot desync. A true live switch needs a
-"refresh every display" entry point that does not exist until the display module
-is split.
+The blocker described here — that a live switch needs a "refresh every display"
+entry point which does not exist until the display module is split — turned out
+not to be the shape of the problem.
+
+`translateUI` rewrites everything carrying a `data-translation` attribute, and
+everything else resolves through `getText` when its panel is drawn, so it changes
+over as the player moves around. What remains is a short list of panels built
+imperatively once and never redrawn: the character bio, and the hero creation
+panel. Each gets an explicit repaint in `option_language`, and `npm run check`
+fails if one of them is missing, so the list cannot silently grow. No reload, and
+nothing had to be split.
 
 ---
 

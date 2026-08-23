@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 25 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 26 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,37 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-22
+
+### İşin çoktan yanıtladığı üç öneri kapatıldı
+
+Kayıt tutma işi, ama bırakılırsa yanıltan türden: `PROPOSALS.md`, son haftaların
+çözdüğü üç şeyi hâlâ açık olarak anlatıyordu.
+
+**P-9 adım 2** dört geri kazanım engeli sayıyordu. Dördü de kalktı ve bu, güvene
+dayanmak yerine kaynağa karşı denetlendi: `inventory_templates["Cat cafe"]`,
+`traders.js:517`'de var ve iki kafe tüccarı da onu gösteriyor; Mages guild'in
+Nekomimi cafe'nin değil kendi açıklaması var; `src/` ve `locales/` üzerinde
+`grep -ric "lorem ipsum"` hiçbir şey döndürmüyor; ve `Location`
+`display_conditions`'ı saklarken `display.js` onu çizim anında değerlendiriyor,
+yani mofu kapılaması artık push yerinde yapılmak zorunda değil.
+
+**Q-3**, yardım sayfası ile changelog'un Türkçe kapsamında olup olmadığını
+soruyor ve Türkçe bir yardım sayfası ile not taşıyan yalnızca İngilizce bir
+changelog öneriyordu. İkinci yarısı fazla çekingendi: iki sayfa da Türkçe var ve
+oyun içi bağlantılar seçilen dili izliyor. Oyun içi changelog o zamandan beri
+geliştirme kaydının parçası oldu; bu da geri kalanı kapatıyor — Türkçe kopyasının
+bakımı yapılıyor ve `check` onu şart koşuyor.
+
+**Q-6**, canlı bir dil geçişinin, display modülü bölünmeden var olamayacak bir
+"tüm ekranları yenile" giriş noktası gerektirdiğini öngörüyordu. Biçim yanlıştı.
+`translateUI`, `data-translation` taşıyan her şeyi hallediyor; geri kalanı paneli
+çizilirken `getText` üzerinden çözülüyor. Gerçekten gereken şey, emirsel olarak
+kurulup bir daha çizilmeyen iki panel için açık bir yeniden çizim ve o listenin
+sessizce büyümesini engelleyen bir kontroldü. Hiçbir şey bölünmedi, yeniden
+yükleme de yok.
+
+Bunun için oyuncuya yönelik girdi yok: içindeki, bir oyuncunun fark edeceği her
+şey, işi yapan commit'lerden gelen v0.6.0 bloğunda zaten var.
 
 ### Kalıntı listesinin kaçırdığı İngilizce metinler için süpürme yapıldı
 
