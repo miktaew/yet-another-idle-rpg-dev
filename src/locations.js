@@ -1689,6 +1689,7 @@ function get_location_type_penalty(type, stage, stat, category) {
     locations["Town square"] = new Location({ 
         connected_locations: [{location: locations["Town outskirts"], travel_time: 40}],
         description: "desc location Town square",
+        dialogues: ["square broker"],
         name: "Town square",
         is_unlocked: false,
         getBackgroundNoises: function() {
@@ -1767,6 +1768,7 @@ function get_location_type_penalty(type, stage, stat, category) {
     locations["Adventurer's guild"] = new Location({
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: "desc location Adventurer's guild",
+        dialogues: ["guild clerk"],
         name: "Adventurer's guild",
         is_unlocked: true,
         getBackgroundNoises: function() {

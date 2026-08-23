@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 12 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 13 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -266,6 +266,56 @@ karşı denetliyor. Yerelleştirme çalışmasından önceki gerçek bir v0.5.5.
 11 görev, 8 kitap, 131 tarif ve 90 eşya id'sinin tamamı çözülüyor. Registry
 anahtarlarının save verisi olduğu kuralı, bugüne dek gerçek bir save'e karşı hiç
 denetlenmemişti.
+
+---
+
+### P-9 — Hikâyeyi devam ettir `open`
+
+Kanon, frontier, orphan envanteri ve planlanan ark artık
+[STORY.TR.md](STORY.TR.md) içinde yazılı. Q-1 tam ayrışma yönünde karara
+bağlandığı için yeni içerik kapsam dahilinde.
+
+Ark **"The Merchant's Word"**; frontier'dan tam olarak başlayan altı quest.
+Premisi tamamen kanondan türetildi: kasaba kapısı tek iki anahtar olarak
+yurttaşlığı veya tüccar loncası üyeliğini sayıyor ve bataklıktan sonra loncaya
+şelalelerin ötesinden tedarik yapabilecek tek yaşayan kişi kahramandır. Kahraman
+kasabaya kahraman olarak değil, tedarikçi olarak girer.
+
+Uygulama sırası, en yüksek kaldıraç önce:
+
+1. **Q2 — TAMAMLANDI.** Kapı açıldı, Town itibarının tamamı olan 150'ye
+   kapılandı ve böylece o itibar ilk tüketicisini kazandı. Town square, Cat cafe,
+   Antique store ve Adventurer's guild erişilebilir; `Location` artık
+   `display_conditions`'ı dikkate aldığı için Nekomimi cafe doğru şekilde
+   beastkin ile kapılı; v0.4.6'dan beri ölü olan Lost memory görevi
+   tamamlanabilir. [CHANGELOG.TR.md](CHANGELOG.TR.md) içinde yazılı.
+2. **BİTTİ.** Dört geri kazanım engelinin hepsi kalktı ve varsayılmak yerine
+   kaynağa karşı doğrulandı: `inventory_templates["Cat cafe"]` var ve iki kafe
+   tüccarı da onu gösteriyor; Mages guild'in Nekomimi cafe'den kopyalanmış değil
+   kendi açıklaması var (iki geniş binanın arasına sıkışmış dar bir taş yapı);
+   `src/` veya `locales/` içinde hiçbir yerde `lorem ipsum` kalmadı; ve `Location`
+   `display_conditions`'ı saklıyor, `display.js` da onu çizim anında
+   değerlendiriyor; yani mofu kapılaması artık push yerinde yapılmak zorunda değil.
+3. **Q3 BİTTİ, sırada Q4.** *Kasabada Bir Yerde* yayında: lonca kâtibi adı buluyor
+   ve yeşil tentenin altındaki komisyoncu, soyguncunun andığı eski patron. İşin
+   ödendiğini, sözleşmede tam olarak tek bir nesnenin tarif edildiğini ve geri kalan
+   her şeyin meydanın karşısındaki koleksiyoncuya gittiğini veriyor. Kimin ödediğini
+   vermiyor; kanon onu açık tutuyor. Tarif ettiği nesne — avuç büyüklüğünde, yassı,
+   *"üzerine oyulmuş kareler dönüp başladıkları yere geliyor"* — mağaraya giden
+   fiziksel bağ; ve geldiği gece elinden çıktığı için Q4'ün geri satın aldığı şey o
+   değil.
+
+   Q4, *Nothing but Pants*, geri satın alma: alınanların geri kalanı koleksiyoncuda
+   ve o adam satmıyor — bunu dükkânın kendi açıklaması, bunların hiçbiri yazılmadan
+   önce zaten söylüyordu.
+4. Q5 fare questline'ını kapatıyor, ikinci mağara kapısını odanın kendisinin ısrar
+   ettiği gibi kuvvetle değil zihinle açıyor ve park edilmiş gümüş zincirine
+   nihayet bir kullanım noktası veriyor.
+5. Q6 köy muhafızının on yıllık savuşturmasını karşılığa bağlıyor.
+
+Açık kalması gerekenler: soygunun parasını kimin ödediği, kahramanın o nesneye
+nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.
+
 ---
 
 ## Bekleyen kararlar

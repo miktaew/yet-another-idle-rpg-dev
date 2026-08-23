@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 27 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 28 -->
 
 # Changelog
 
@@ -20,6 +20,86 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### Quest 3 of the arc: "Somewhere in the Town"
+
+The quest's name is the robber's own words. Beaten in the slums, he gives up the
+only thing he has: *"It was my group that robbed you… If you want answers, ask my
+ex-boss. He's somewhere in the town."* That line has been in the game since before
+the fork and pointed at nothing.
+
+**Two NPCs, in two rooms that were authored and left empty.** The Adventurer's
+guild had roughly fifty ambient barks and nobody to talk to; Town square had nine
+and the same. Neither had ever held a dialogue.
+
+The **guild clerk** finds the name. She is dry and transactional - three ledgers
+open at once and a fourth held down with a dagger - and she corrects the player's
+tense before answering: *"Used to. That's the right tense, and most people get it
+wrong."* She will not say where he sits. She says the awning is green.
+
+The **broker** under the green awning is the ex-boss, and he is a broker rather
+than a gang leader because the robber's line says *ex*-boss and means it. He
+answers in flat statements and never raises his voice.
+
+**The turn: the robbery was contracted.** Paid up front, half again on delivery.
+His people held that road for a week and were told exactly one thing to look for.
+They were not told to leave nobody breathing - *"that part they decided on their
+own, and it is the only part I would have done differently."*
+
+What he will not give up is who paid, and that is deliberate: canon keeps it open.
+The money came through two hands before it reached his, which is what a man pays a
+broker for. He can say it was clean coin minted in the town, and that whoever
+counted it had done it before. No name. *"If I had one I would already have sold
+it, to you or to somebody else."*
+
+**The object is the link between the two mysteries.** Not a purse, not a weapon:
+palm-sized, flat, *"with squares cut into it that come back around to where they
+started."* The cave under the village has pre-human architecture where *"all these
+squares make a circle, in some impossible to understand way"* - the same shape,
+named the same way, by a man who has never been down there and has no idea what he
+is describing. Neither mystery moves an inch closer to an answer, and they are now
+tied together by a physical thing.
+
+It left his hands the night it arrived, so it is not what quest 4 buys back.
+Everything else went in one lot to the collector across the square, who *"pays
+badly and pays immediately"* and **does not sell** - which the Antique store's own
+description already said, years before this was written: *"most of them apparently
+not for sale as this place also functions as a private museum."* Quest 4 starts
+from a closed door that was closed before anyone thought to knock on it.
+
+**Wiring, and the one trick in it.** The robber's confession now also unlocks the
+clerk's question. That confession happens in the slums, at hero level ten or so,
+long before the town is reachable - so the line simply waits at a counter the
+player has not seen yet, and needs no flag of its own. Three tasks: find him, ask
+him about the road, learn where what was taken went. Who paid is deliberately not
+among them.
+
+**Verified in a browser, not by reading.** The dev server was driven through the
+whole chain: the confession unlocks the clerk's line, the clerk starts the quest
+and unlocks the confrontation, the confrontation unlocks the three follow-ups, and
+the last one finishes the quest. The description advances through all three of its
+states in Turkish. `Verify_Game_Objects()` runs clean with the new content in
+place.
+
+### The reported language bug had a second cause
+
+That same browser session found what the earlier fix had missed. Switching language
+on the hero creation screen was supposed to repaint the panel, and the repaint call
+was never reached: `option_language` calls `fill_character_bio` first, and on a new
+game `character.personal.race` is not set yet, so `playable_races[undefined].name`
+threw and aborted the whole handler.
+
+That throw predates this work - the bio call was already there and already failing -
+but it was invisible, because nothing came after it. Adding the creation-panel
+repaint put something after it, and the exception ate it. `fill_character_bio` now
+returns early while the hero does not exist.
+
+With both halves in place and checked live: the confirm button reads `Onayla`, the
+races read `İnsan`, `Elf`, `Yarı elf`, the tooltip reads Turkish, the three category
+labels read Turkish, and the selection survives the switch. Reading the code would
+not have caught this. Running it did.
+
+2634 keys per language; `check` at 1715 content ids and 18 dialogue names.
 
 ### Closed the NaN warnings, and checked a real save against the registries
 

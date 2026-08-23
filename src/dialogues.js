@@ -996,7 +996,10 @@ class DialogueAction extends GameAction {
                 text: "sus defeated answ",
                 locks_lines: ["defeated"],
                 rewards: {
-                    textlines: [{dialogue: "suspicious man", lines: ["behave", "situation"]}],
+                    textlines: [
+                        {dialogue: "suspicious man", lines: ["behave", "situation"]},
+                        {dialogue: "guild clerk", lines: ["asking"]},
+                    ],
                     quest_progress: [
                         {quest_id: "Lost memory", task_index: 3},
                     ]
@@ -2320,6 +2323,100 @@ class DialogueAction extends GameAction {
                 return "swampscout description 1";
             }}
         });
+
+    /*
+        QUEST 3 - "Somewhere in the Town".
+
+        Both of these sit in rooms that were authored and then left empty. The
+        clerk finds the name; the broker is the ex-boss the robber names in
+        "sus defeated answ", and he is a broker rather than a gang leader because
+        the line says "ex-boss" and means it.
+
+        What he gives up: the job was paid, the contract named one object, and
+        everything else went to the collector. What he does not give up, because
+        canon keeps it open: who paid.
+    */
+    dialogues["guild clerk"] = new Dialogue({
+        name: "guild clerk",
+        is_unlocked: true,
+        description: "clerk description",
+        textlines: {
+            "hello": new Textline({
+                name: "clerk hello",
+                text: "clerk hello answ",
+                rewards: {
+                    textlines: [{dialogue: "guild clerk", lines: ["board"]}],
+                },
+                locks_lines: ["hello"],
+            }),
+            "board": new Textline({
+                name: "clerk board",
+                is_unlocked: false,
+                text: "clerk board answ",
+                locks_lines: ["board"],
+            }),
+            //Unlocked by the robber's confession, which happens long before the
+            //town is reachable. The line simply waits here until the player
+            //arrives, which is why it needs no flag of its own.
+            "asking": new Textline({
+                name: "clerk asking",
+                is_unlocked: false,
+                text: "clerk asking answ",
+                rewards: {
+                    quests: ["Somewhere in the Town"],
+                    quest_progress: [{quest_id: "Somewhere in the Town", task_index: 0}],
+                    textlines: [{dialogue: "square broker", lines: ["confront"]}],
+                },
+                locks_lines: ["asking"],
+            }),
+        },
+    });
+
+    dialogues["square broker"] = new Dialogue({
+        name: "square broker",
+        is_unlocked: true,
+        description: "broker description",
+        textlines: {
+            "hello": new Textline({
+                name: "broker hello",
+                text: "broker hello answ",
+                locks_lines: ["hello"],
+            }),
+            "confront": new Textline({
+                name: "broker confront",
+                is_unlocked: false,
+                text: "broker confront answ",
+                rewards: {
+                    quest_progress: [{quest_id: "Somewhere in the Town", task_index: 1}],
+                    textlines: [{dialogue: "square broker", lines: ["who", "object", "rest"]}],
+                },
+                locks_lines: ["confront"],
+            }),
+            "who": new Textline({
+                name: "broker who",
+                is_unlocked: false,
+                text: "broker who answ",
+                locks_lines: ["who"],
+            }),
+            "object": new Textline({
+                name: "broker object",
+                is_unlocked: false,
+                text: "broker object answ",
+                locks_lines: ["object"],
+            }),
+            "rest": new Textline({
+                name: "broker rest",
+                is_unlocked: false,
+                text: "broker rest answ",
+                rewards: {
+                    xp: 1200,
+                    reputation: {Town: 40},
+                    quest_progress: [{quest_id: "Somewhere in the Town", task_index: 2}],
+                },
+                locks_lines: ["rest"],
+            }),
+        },
+    });
 
     /*
     dialogues["cute little rat"] = new Dialogue({

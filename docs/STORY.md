@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 3 -->
+<!-- doc-source: docs/STORY.md  doc-version: 4 -->
 
 # Story canon
 
@@ -184,7 +184,10 @@ Reclaiming these takes priority over inventing new content.
 | **`Silver ingot` recipe** | Commented out, waiting for a sink. Its level range already sits correctly between the live iron and steel recipes. |
 | **Two combat stances** | `berserk` and `flowing water`, with their skills, granted by nothing today. |
 
-**Status: the gate is open.** Quest 2 of the arc shipped, so Town square, the Cat
+**Status: the gate is open and quest 3 has shipped.** The Adventurer's guild and
+Town square now hold NPCs - the guild clerk and the broker under the green awning
+- which is the first content either room has ever had. Quest 2 shipped before
+them, so Town square, the Cat
 cafe, the Antique store and the Adventurer's guild are now reachable, and the
 proprietress's nine placeholder strings are written. The Nekomimi cafe is reachable
 only with the beastkin flag set, which is what its author intended and which now

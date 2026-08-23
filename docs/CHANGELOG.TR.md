@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 27 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 28 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,80 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### Arkın 3. görevi: "Kasabada Bir Yerde"
+
+Görevin adı, soyguncunun kendi sözleri. Slum'larda yenildiğinde elindeki tek şeyi
+veriyor: *"Seni soyan benim grubumdu… Cevap istiyorsan eski patronuma sor. Kasabada
+bir yerde."* Bu satır fork'tan da önce oyundaydı ve hiçbir yeri göstermiyordu.
+
+**İki NPC; yazılıp boş bırakılmış iki odada.** Adventurer's guild'in elli civarı
+ortam repliği vardı ve konuşacak kimsesi yoktu; Town square'in dokuz repliği vardı
+ve aynı durumdaydı. İkisi de bugüne dek hiç dialogue tutmamıştı.
+
+**Lonca kâtibi** adı buluyor. Kuru ve işini bilen biri — aynı anda üç defter açık,
+dördüncüsü bir hançerle bastırılmış — ve cevap vermeden önce oyuncunun zaman kipini
+düzeltiyor: *"Yönetmiş. Doğru zaman kipi bu ve çoğu insan yanlış kullanıyor."*
+Nerede oturduğunu söylemiyor. Tentenin yeşil olduğunu söylüyor.
+
+Yeşil tentenin altındaki **komisyoncu** eski patron; ve çete lideri değil
+komisyoncu, çünkü soyguncunun satırı *eski* patron diyor ve bunu kastediyor. Düz
+cümlelerle konuşuyor, sesini hiç yükseltmiyor.
+
+**Dönüş noktası: soygun sipariş edilmişti.** Peşin ödenmiş, teslimde yarısı daha.
+Adamları o yolu bir hafta tutmuş ve aranacak tek bir şey söylenmiş. Kimseyi soluk
+alırken bırakmamaları söylenmemiş — *"o kısma kendileri karar verdi ve benim farklı
+yapardım dediğim tek kısım o."*
+
+Vermediği şey kimin ödediği ve bu bilinçli: kanon onu açık tutuyor. Para ona
+ulaşmadan önce iki elden geçmiş; insan bir komisyoncuya zaten bunun için para verir.
+Temiz sikke olduğunu, kasabada basıldığını ve sayan kişinin bunu daha önce de
+yaptığını söyleyebiliyor. İsim yok. *"Olsaydı çoktan satmış olurdum — sana ya da
+başkasına."*
+
+**Nesne, iki gizemin arasındaki bağ.** Kese değil, silah değil: avuç büyüklüğünde,
+yassı, *"üzerine oyulmuş kareler dönüp başladıkları yere geliyor."* Köyün altındaki
+mağarada insan öncesi bir mimari var ve orada *"bütün bu kareler, anlaşılması
+imkânsız bir şekilde bir daire yapıyor"* — aynı biçim, aynı sözlerle; hem de oraya
+hiç inmemiş ve neyi tarif ettiğini hiç bilmeyen bir adamın ağzından. İki gizem de
+cevaba bir adım yaklaşmıyor ve artık fiziksel bir şeyle birbirine bağlı.
+
+Nesne geldiği gece elinden çıkmış, yani 4. görevin geri satın aldığı şey o değil.
+Geri kalan her şey tek kalem hâlinde meydanın karşısındaki koleksiyoncuya gitmiş; o
+adam *"kötü öder ama hemen öder"* ve **satmaz** — bunu Antique store'un kendi
+açıklaması, bunlar yazılmadan yıllar önce zaten söylüyordu: *"çoğu satılık değil,
+çünkü burası aynı zamanda özel bir müze işlevi görüyor."* 4. görev, kimse kapıyı
+çalmayı akıl etmeden önce kapanmış bir kapıdan başlıyor.
+
+**Bağlantılar ve içindeki tek numara.** Soyguncunun itirafı artık kâtibin sorusunu
+da açıyor. O itiraf slum'larda, kahraman on. seviye civarındayken, kasabaya çok
+önce gerçekleşiyor — yani satır, oyuncunun henüz görmediği bir tezgâhta bekliyor ve
+kendine ait bir flag'e ihtiyaç duymuyor. Üç görev adımı: onu bul, ona yolu sor,
+alınanların nereye gittiğini öğren. Kimin ödediği bilinçli olarak aralarında değil.
+
+**Okuyarak değil, tarayıcıda doğrulandı.** Dev sunucu zincirin tamamından geçirildi:
+itiraf kâtibin satırını açıyor, kâtip görevi başlatıp yüzleşmeyi açıyor, yüzleşme üç
+devam sorusunu açıyor ve son soru görevi bitiriyor. Açıklama üç durumunun hepsinde
+Türkçe ilerliyor. `Verify_Game_Objects()` yeni içerikle temiz geçiyor.
+
+### Bildirilen dil hatasının ikinci bir nedeni varmış
+
+Aynı tarayıcı oturumu, önceki düzeltmenin kaçırdığı şeyi buldu. Karakter oluşturma
+ekranında dil değiştirmek paneli yeniden çizmeliydi ve yeniden çizme çağrısına hiç
+varılmıyordu: `option_language` önce `fill_character_bio`'yu çağırıyor ve yeni bir
+oyunda `character.personal.race` henüz atanmamış olduğu için
+`playable_races[undefined].name` hata atıp bütün işleyiciyi iptal ediyordu.
+
+O hata bu çalışmadan önce de vardı — bio çağrısı zaten oradaydı ve zaten
+düşüyordu — ama görünmezdi, çünkü ardından hiçbir şey gelmiyordu. Oluşturma paneli
+yeniden çizimini eklemek ardına bir şey koydu ve istisna onu yedi.
+`fill_character_bio` artık kahraman yokken erken dönüyor.
+
+İki yarı da yerine oturunca ve canlı kontrol edilince: onay düğmesi `Onayla`,
+ırklar `İnsan`, `Elf`, `Yarı elf`, tooltip Türkçe, üç kategori etiketi Türkçe ve
+seçim geçişten sağ çıkıyor. Kodu okumak bunu yakalamazdı. Çalıştırmak yakaladı.
+
+Dil başına 2634 anahtar; `check` 1715 içerik id'si ve 18 dialogue adında.
 
 ### NaN uyarıları kapatıldı ve gerçek bir save registry'lere karşı denetlendi
 

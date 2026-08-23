@@ -530,6 +530,32 @@ const questManager = {
             new QuestTask({task_description: "quest Giant Enemy Crab task 1"}), //beat the crab twice
         ]
     });
+    /*
+        Quest 3 of "The Merchant's Word". Its name is the robber's own phrasing.
+
+        The three tasks are the three things the player does not know yet: where
+        the man is, why the road was worth robbing, and where what was taken
+        went. Who paid is deliberately not among them.
+    */
+    quests["Somewhere in the Town"] = new Quest({
+        quest_name: "quest Somewhere in the Town",
+        display_priority: 10,
+        getQuestDescription: ()=>{
+            if(quests["Somewhere in the Town"].quest_tasks[2].is_finished) {
+                return "quest Somewhere in the Town desc 3";
+            } else if(quests["Somewhere in the Town"].quest_tasks[1].is_finished) {
+                return "quest Somewhere in the Town desc 2";
+            } else {
+                return "quest Somewhere in the Town desc 1";
+            }
+        },
+        questline: "The Merchant's Word",
+        quest_tasks: [
+            new QuestTask({task_description: "quest Somewhere in the Town task 1"}),
+            new QuestTask({task_description: "quest Somewhere in the Town task 2"}),
+            new QuestTask({task_description: "quest Somewhere in the Town task 3"}),
+        ]
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

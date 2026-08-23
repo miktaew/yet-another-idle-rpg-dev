@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 3 -->
+<!-- doc-source: docs/STORY.md  doc-version: 4 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -189,7 +189,10 @@ Bunları geri kazanmak yeni içerik uydurmaya göre önceliklidir.
 | **`Silver ingot` tarifi** | Yorum içinde, bir kullanım noktası bekliyor. Seviye aralığı zaten canlı demir ve çelik tarifleri arasında doğru yerde. |
 | **İki combat stance** | `berserk` ve `flowing water`, skill'leriyle birlikte; bugün hiçbir şey vermiyor. |
 
-**Durum: kapı açıldı.** Arkın 2. quest'i tamamlandı; Town square, Cat cafe, Antique
+**Durum: kapı açık ve 3. quest yayında.** Adventurer's guild ile Town square artık
+NPC tutuyor — lonca kâtibi ve yeşil tentenin altındaki komisyoncu — ki bu, iki
+odanın da bugüne dek sahip olduğu ilk içerik. 2. quest onlardan önce tamamlandı;
+Town square, Cat cafe, Antique
 store ve Adventurer's guild artık erişilebilir ve işletmecinin dokuz yer tutucu metni
 yazıldı. Nekomimi cafe yalnızca beastkin flag'i açıkken erişilebilir — yazarının
 amaçladığı şey buydu ve artık gerçekten çalışıyor. Mages guild 4. quest için kilitli

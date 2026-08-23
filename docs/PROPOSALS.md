@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 12 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 13 -->
 
 # Proposals
 
@@ -282,8 +282,18 @@ Execution order, highest leverage first:
    there are zero `lorem ipsum` strings left anywhere in `src/` or `locales/`; and
    `Location` stores `display_conditions` and `display.js` evaluates it at render
    time, so mofu gating no longer has to happen at the push site.
-3. Q3 and Q4 advance the central mystery by exactly one turn — the robbery was
-   contracted — and hand the player a physical link between the two dead ends.
+3. **Q3 DONE, Q4 next.** *Somewhere in the Town* ships: the guild clerk finds the
+   name, and the broker under the green awning is the ex-boss the robber names.
+   He gives up that the job was paid, that the contract described exactly one
+   object, and that everything else went to the collector across the square. He
+   does not give up who paid, which canon keeps open. The object he describes -
+   palm-sized, flat, *"squares cut into it that come back around to where they
+   started"* - is the physical link to the cave, and it left his hands the night
+   it arrived, so it is not what Q4 buys back.
+
+   Q4, *Nothing but Pants*, is the buy-back: the collector has the rest of what
+   was taken and does not sell, which the store's own description already said
+   before any of this was written.
 4. Q5 closes the rat questline, opens the second cave gate with mind rather than
    strength as the room itself insists, and finally gives the parked silver chain
    a sink.

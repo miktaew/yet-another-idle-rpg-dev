@@ -5543,7 +5543,21 @@ function change_completed_quest_visibility() {
     }
 }
 
+/**
+ * Fills the character bio panel.
+ *
+ * Returns early while the hero does not exist yet. On a new game the creation
+ * panel is up and character.personal.race is unset, so playable_races[undefined]
+ * is undefined and reading .name off it throws - which is exactly what happened
+ * when a player switched language on the creation screen, because
+ * option_language calls this. The throw aborted the rest of that handler, so the
+ * creation panel never got repainted either: the reported "race tooltips stay
+ * English" had two causes, and this was the one that hid the other.
+ */
 function fill_character_bio() {
+    if(!playable_races[character.personal.race]) {
+        return;
+    }
     const age_div = document.getElementById("character_age_div");
     age_div.innerText = translationManager.getText(language, "age") + ": "+ translationManager.getText(language, character.personal.age);
 

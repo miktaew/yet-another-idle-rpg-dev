@@ -3006,6 +3006,36 @@ const descriptions = {
     //its registry key.
     "ui go back": "Go back",
     "name proprietress": "proprietress",
+
+    //QUEST 3 - "Somewhere in the Town". The guild clerk, the broker who used
+    //to run the slum gang, and the quest that follows him.
+    "name guild clerk": "guild clerk",
+    "name square broker": "square broker",
+    "clerk description": "A woman behind a long counter, three ledgers open at once and a fourth held down with a dagger. She does not look up when the door opens, only when it closes.",
+    "clerk hello": "Is this where jobs get posted?",
+    "clerk hello answ": "Posted, priced and argued about. *[She turns a page without looking at it]* If you want work, the board is behind you and everything on it is worse than it reads. If you want something else, say it plainly. I charge the same either way, which is nothing.",
+    "clerk board": "What is on the board?",
+    "clerk board answ": "An escort nobody sane takes. A cellar full of something. Two notices for the same missing dog, posted by two people who each think it is theirs. *[She finally looks up]* You have swamp on your boots. Whatever you did out there is worth more than anything on that board, and you already know it.",
+    "clerk asking": "I am looking for a man who used to run a gang in the slums.",
+    "clerk asking answ": "*[She stops writing.]*\n\nUsed to. *[A pause]* That is the right tense, and most people get it wrong.\n\nHe does not run anything now. He brokers - grain, hides, whatever comes up the road - from under a green awning on the square, and he pays his dues to this guild on time, which is more than the honest ones manage. *[She goes back to the ledger]* I did not tell you where he sits. The awning is green.",
+    "broker description": "A heavy man under a green awning, sitting very still behind a table of samples: grain in one bowl, wool in another, a strip of leather weighted down with a stone. Nothing about him is in a hurry.",
+    "broker hello": "You buy and sell?",
+    "broker hello answ": "I buy. Selling is what the man next to me does, and he does it badly. *[He turns a handful of grain over without looking at it]* Bring me a quantity and I will give you a number. Bring me a story and I will give you nothing.",
+    "broker confront": "There was a traveller on the forest road. Robbed and left for dead.",
+    "broker confront answ": "*[His hand stops in the grain. He does not look up, and he does not pretend not to understand.]*\n\nThat was a job. *[He says it the way another man would say the weather]* Paid up front, half again on delivery. My people held that road for one week and were told exactly one thing to look for.\n\nThey were not told to leave nobody breathing. That part they decided on their own, and it is the only part I would have done differently.",
+    "broker who": "Who paid you?",
+    "broker who answ": "*[He almost smiles]* You have never bought anything, have you.\n\nThe money came through two hands before it reached mine, and that is what a man pays a broker for. I can tell you it was clean coin, minted in the town, and I can tell you whoever counted it had done it before. A name I do not have. If I had one I would already have sold it, to you or to somebody else.",
+    "broker object": "What were they told to look for?",
+    "broker object answ": "Not a purse. Not a weapon. *[He sets the grain down]* A thing the size of your palm, flat, with squares cut into it that come back around to where they started. The note said I would know it when I saw it, and the note was right - I have never seen anything like it, before or since.\n\nIt went out the same night it came in. I did not hold it long enough to wonder.",
+    "broker rest": "And everything else you took off that road?",
+    "broker rest answ": "Sold, in one lot, to the collector across the square. *[He nods at the old store on the far side]* He pays badly and he pays immediately, which is the arrangement I prefer.\n\nWhatever was yours is in there behind glass with a card under it. *[He picks the grain back up]* He does not sell. Not to me, not to the guild, not to the man who owns his building. You will want to understand that before you walk in.",
+    "quest Somewhere in the Town": "Somewhere in the Town",
+    "quest Somewhere in the Town desc 1": "The man who used to run a gang in the slums knows why that road was worth robbing. He is somewhere in the town.",
+    "quest Somewhere in the Town desc 2": "The robbery was a job, paid for by someone whose name he never learned. The contract described one object.",
+    "quest Somewhere in the Town desc 3": "Everything else went to the collector on the square - and he does not sell.",
+    "quest Somewhere in the Town task 1": "Find the man who ran the gang",
+    "quest Somewhere in the Town task 2": "Ask him about the forest road",
+    "quest Somewhere in the Town task 3": "Find out where what was taken went",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

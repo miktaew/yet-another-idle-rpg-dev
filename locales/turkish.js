@@ -3046,6 +3046,36 @@ const descriptions = {
     //its registry key.
     "ui go back": "Geri dön",
     "name proprietress": "işletmeci",
+
+    //QUEST 3 - "Somewhere in the Town". The guild clerk, the broker who used
+    //to run the slum gang, and the quest that follows him.
+    "name guild clerk": "lonca kâtibi",
+    "name square broker": "meydandaki komisyoncu",
+    "clerk description": "Uzun bir tezgâhın arkasında bir kadın; aynı anda üç defter açık, dördüncüsü bir hançerle bastırılmış. Kapı açılırken başını kaldırmıyor, ancak kapandığında kaldırıyor.",
+    "clerk hello": "İşler buraya mı asılıyor?",
+    "clerk hello answ": "Asılıyor, fiyatlanıyor ve üzerine tartışılıyor. *[Sayfaya bakmadan çeviriyor]* İş arıyorsanız pano arkanızda ve üzerindeki her şey yazdığından kötü. Başka bir şey arıyorsanız açık açık söyleyin. İki durumda da aynı ücreti alıyorum, yani hiç.",
+    "clerk board": "Panoda ne var?",
+    "clerk board answ": "Aklı başında kimsenin almadığı bir refakat işi. İçi bir şeyle dolu bir mahzen. Aynı kayıp köpek için iki ilan; ikisini de köpeği kendisinin sandığı iki kişi asmış. *[Sonunda başını kaldırır]* Botlarınızda bataklık var. Orada ne yaptıysanız o panodaki her şeyden değerli, bunu siz de biliyorsunuz.",
+    "clerk asking": "Slum'larda bir çete yönetmiş bir adamı arıyorum.",
+    "clerk asking answ": "*[Yazmayı bırakır.]*\n\nYönetmiş. *[Bir duraklama]* Doğru zaman kipi bu ve çoğu insan yanlış kullanıyor.\n\nArtık hiçbir şey yönetmiyor. Komisyonculuk yapıyor — tahıl, deri, yoldan ne gelirse — meydandaki yeşil bir tentenin altında; ve bu loncaya aidatını zamanında ödüyor, ki bunu dürüst olanların çoğu beceremiyor. *[Deftere döner]* Nerede oturduğunu söylemedim. Tente yeşil.",
+    "broker description": "Yeşil bir tentenin altında ağır bir adam; numunelerle dolu bir masanın arkasında kılını kıpırdatmadan oturuyor. Bir kâsede tahıl, bir başkasında yün, bir taşla bastırılmış bir şerit deri. Hiçbir yeri acele etmiyor.",
+    "broker hello": "Alıp satıyor musun?",
+    "broker hello answ": "Alıyorum. Satmak yanımdaki adamın işi ve onu da kötü yapıyor. *[Bakmadan bir tutam tahılı avucunda çevirir]* Bana bir miktar getir, sana bir sayı veririm. Bana bir hikâye getirirsen hiçbir şey vermem.",
+    "broker confront": "Orman yolunda bir yolcu vardı. Soyulup ölüme bırakıldı.",
+    "broker confront answ": "*[Eli tahılın içinde durur. Başını kaldırmaz ve anlamamış gibi de yapmaz.]*\n\nO bir işti. *[Başka biri havadan söz ederken kullanacağı tonla söylüyor]* Peşin ödendi, teslimde yarısı daha. Adamlarım o yolu bir hafta tuttu ve aranacak tek bir şey söylendi.\n\nKimseyi soluk alırken bırakmamaları söylenmemişti. O kısma kendileri karar verdi ve benim farklı yapardım dediğim tek kısım o.",
+    "broker who": "Sana kim ödeme yaptı?",
+    "broker who answ": "*[Neredeyse gülümser]* Sen hayatında hiçbir şey satın almadın, değil mi.\n\nPara bana ulaşmadan önce iki elden geçti; insan bir komisyoncuya zaten bunun için para verir. Şunu söyleyebilirim: temiz sikkeydi, kasabada basılmıştı ve onu sayan kişi bunu daha önce de yapmıştı. Elimde bir isim yok. Olsaydı çoktan satmış olurdum — sana ya da başkasına.",
+    "broker object": "Aramaları söylenen şey neydi?",
+    "broker object answ": "Kese değil. Silah değil. *[Tahılı bırakır]* Avucun kadar, yassı, üzerine kareler oyulmuş; o kareler dönüp başladıkları yere geliyor. Notta \"görünce anlarsın\" yazıyordu ve not doğruydu — ne öncesinde ne sonrasında öyle bir şey gördüm.\n\nGeldiği gece çıktı. Merak edecek kadar elimde kalmadı.",
+    "broker rest": "Peki o yoldan aldığınız diğer her şey?",
+    "broker rest answ": "Tek kalem hâlinde meydanın karşısındaki koleksiyoncuya satıldı. *[Karşı taraftaki eski dükkâna başıyla işaret eder]* Kötü öder ama hemen öder; ben de bu düzeni tercih ederim.\n\nSana ait olan ne varsa orada, cam arkasında, altında bir kartla duruyor. *[Tahılı yeniden eline alır]* O adam satmaz. Ne bana, ne loncaya, ne de binasının sahibine. İçeri girmeden önce bunu anlamak istersin.",
+    "quest Somewhere in the Town": "Kasabada Bir Yerde",
+    "quest Somewhere in the Town desc 1": "Slum'larda bir çete yönetmiş adam, o yolun neden soyulmaya değer olduğunu biliyor. Kasabada bir yerde.",
+    "quest Somewhere in the Town desc 2": "Soygun bir işti; adını hiç öğrenmediği biri tarafından ödenmişti. Sözleşmede tek bir nesne tarif ediliyordu.",
+    "quest Somewhere in the Town desc 3": "Geriye kalan her şey meydandaki koleksiyoncuya gitti — ve o adam satmıyor.",
+    "quest Somewhere in the Town task 1": "Çeteyi yönetmiş adamı bul",
+    "quest Somewhere in the Town task 2": "Ona orman yolunu sor",
+    "quest Somewhere in the Town task 3": "Alınanların nereye gittiğini öğren",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};
