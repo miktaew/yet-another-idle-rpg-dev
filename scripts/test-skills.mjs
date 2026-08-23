@@ -540,6 +540,48 @@ const global_flags = globalThis.__test_flags;
         `id=${english_only_id}`);
 }
 
+// ---------------------------------------------------------------------------
+// slerp - the interpolation behind gathering times, drop chances and crafting
+// success. It used to return NaN for any pair starting at zero, which then
+// reached the skill-xp guard in main.js as a non-numeric gain: the console
+// warning this was reported as. These checks pin both the geometric curve and
+// the fallback that replaced the NaN.
+// ---------------------------------------------------------------------------
+{
+    const { slerp } = await load_with_stubs("src/misc.js", ["./main.js"], `
+const game_options = {};
+`);
+
+    const close = (a, b) => Math.abs(a - b) < 1e-9;
+
+    // The geometric form, which is the one all live content uses.
+    check("slerp returns the low end at t = 0", slerp([30, 10], 0) === 30);
+    check("slerp returns the high end at t = 1", close(slerp([30, 10], 1), 10));
+    check("slerp is geometric in between, not linear",
+        close(slerp([1, 100], 0.5), 10),
+        `got=${slerp([1, 100], 0.5)} (linear would be 50.5)`);
+
+    // The cases that used to produce NaN. Endpoints must still be exact, because a
+    // fallback that moved them would change what the author wrote.
+    check("a pair starting at zero no longer gives NaN",
+        Number.isFinite(slerp([0, 10], 0.5)), `got=${slerp([0, 10], 0.5)}`);
+    check("a pair starting at zero keeps both endpoints",
+        slerp([0, 10], 0) === 0 && slerp([0, 10], 1) === 10);
+    check("a pair starting at zero interpolates linearly",
+        close(slerp([0, 10], 0.5), 5), `got=${slerp([0, 10], 0.5)}`);
+    check("a zero-to-zero pair gives zero rather than NaN",
+        slerp([0, 0], 0.5) === 0, `got=${slerp([0, 0], 0.5)}`);
+    check("a negative end no longer gives NaN",
+        Number.isFinite(slerp([10, -10], 0.5)), `got=${slerp([10, -10], 0.5)}`);
+
+    // The old expression, kept here as the thing being guarded against: if someone
+    // "simplifies" slerp back to it, the checks above start failing and this one
+    // documents why.
+    const old_form = (arr, t) => arr[0] * (arr[1] / arr[0]) ** t;
+    check("the old expression really did produce NaN, so these checks are not vacuous",
+        Number.isNaN(old_form([0, 10], 0.5)));
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 11 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 12 -->
 
 # Proposals
 
@@ -172,7 +172,7 @@ switch to. What remains is written up as structural notes in the known gaps of
 [I18N.md](I18N.md) - two pre-init loading messages, the standalone pages' drift
 risk, and a couple of places where the English itself duplicates a number.
 
-### P-8 — Fix the reported NaN warnings `active`
+### P-8 — Fix the reported NaN warnings `done`
 
 Framing correction from the audit: the adversarial pass refuted every candidate
 for *rendered* `NaN` text. What exists is a console **warning** — the phrasing in
@@ -222,12 +222,38 @@ adversarially verified as not worth fixing:
   finite, `total_xp` starts at 0 and is only incremented, and the load path's input
   comes from a save the other three wrote. Defence in depth at best.
 
-**Still open** - the interpolation helpers (`slerp`, the recipe equivalent) and the
-market-saturation divisor. These are latent authoring traps rather than live bugs:
-they break when a content array starts at 0, and none currently does. Worth fixing
-before someone authors the array that triggers one, and worth teaching the verifier
-to assert the numeric pairs are positive - it currently only checks that resource
-names resolve.
+**Closed.** Both interpolation helpers are fixed and guarded.
+
+`slerp` interpolates geometrically, which has no reading when a pair starts at zero
+- `(to / 0)` is `Infinity` and `0 * Infinity ** t` is `NaN` - nor when either end is
+negative. It now falls back to linear where the geometric form is undefined, which
+agrees with it at both endpoints. `crafting_recipes.js` held an inline copy of the
+same expression for crafting success and calls the helper instead, so the guard
+lives in one place. All 193 content pairs are positive today, so no current number
+moved.
+
+The **market-saturation divisor did not reproduce.** The only division on that path
+is reached solely when `sold >= 1e13`, so it cannot divide by zero; the other is by
+a constant. Recorded as refuted rather than carried forward. Two nearby no-ops were
+fixed while looking: single-argument `Math.max(x ?? 0)` returns `x` and never
+clamped anything.
+
+Three guards, so the trap cannot return:
+
+- `npm run check` asserts that every interpolated pair in the content source has two
+  positive ends - 192 of them - and runs on every push.
+- `npm test` pins the geometric curve AND the fallback, including a check that the
+  old expression really did return `NaN`, so the new ones are not vacuous.
+- `Verify_Game_Objects` reports the same pairs from inside the game. Its gathering
+  check was found dead while this was added: the loop read `gained_resources?.length`,
+  undefined because `gained_resources` is an object holding a `resources` array, so it
+  ran zero times and the resource-name check inside it had never once executed.
+
+Separately, `npm run check:save` is new: it audits an exported savegame against every
+registry. Run against a real v0.5.5.30 save from before the localisation work, all
+61 locations, 14 dialogues, 60 skills, 15 activities, 4 traders, 11 quests, 8 books,
+131 recipes and 90 item ids resolve. The rule that registry keys are save data had
+never been checked against an actual save.
 
 ### P-9 — Continue the story `open`
 

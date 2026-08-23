@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 11 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 12 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -178,7 +178,7 @@ bölümünde yapısal notlar olarak yazılı: init öncesi iki yükleme mesajı,
 sayfaların ayrışma riski ve İngilizcenin kendisinin bir sayıyı tekrarladığı birkaç
 yer.
 
-### P-8 — Bildirilen NaN uyarılarını gider `active`
+### P-8 — Bildirilen NaN uyarılarını gider `done`
 
 Analizden gelen çerçeve düzeltmesi: çekişmeli doğrulama, *ekrana basılan* `NaN`
 metni için öne sürülen tüm adayları çürüttü. Var olan şey bir konsol
@@ -232,50 +232,40 @@ tahmini; ve boy/ırk fonksiyonu ile birlikte boy koşul bloğu. Hepsi
   yükleme yolunun girdisi ise diğer üçünün yazdığı bir kayıttan geliyor. En iyi
   hâlde derinlemesine savunma.
 
-**Hâlâ açık** - interpolasyon yardımcıları (`slerp` ve tarif eşdeğeri) ile
-market doygunluğu böleni. Bunlar canlı hata değil, uykuda duran yazım tuzakları: bir
-içerik dizisi 0'dan başladığında bozuluyorlar ve şu anda hiçbiri başlamıyor. Birisi
-tetikleyecek diziyi yazmadan önce düzeltmeye değer; ayrıca verifier'a sayısal
-çiftlerin pozitif olduğunu doğrulamayı öğretmeye değer — şu anda yalnızca kaynak
-adlarının çözülüp çözülmediğini kontrol ediyor.
+**Kapandı.** İki interpolasyon yardımcısı da düzeltildi ve korumaya alındı.
 
-### P-9 — Hikâyeyi devam ettir `open`
+`slerp` geometrik interpolasyon yapıyor; bir çift sıfırdan başladığında bunun okuması
+yok - `(to / 0)` `Infinity`, `0 * Infinity ** t` `NaN` - iki uçtan biri negatif
+olduğunda da yok. Artık geometrik biçimin tanımsız olduğu yerde doğrusala düşüyor;
+doğrusal, iki uçta da onunla aynı sonucu veriyor. `crafting_recipes.js` zanaat başarısı
+için aynı ifadenin satır içi bir kopyasını tutuyordu, artık yardımcıyı çağırıyor; yani
+koruma tek yerde. Bugün 193 içerik çiftinin hepsi pozitif, dolayısıyla hiçbir mevcut
+sayı kaymadı.
 
-Kanon, frontier, orphan envanteri ve planlanan ark artık
-[STORY.TR.md](STORY.TR.md) içinde yazılı. Q-1 tam ayrışma yönünde karara
-bağlandığı için yeni içerik kapsam dahilinde.
+**Market doygunluk böleni yeniden üretilemedi.** O yoldaki tek bölmeye ancak
+`sold >= 1e13` iken varılıyor, yani sıfıra bölemez; diğeri bir sabite bölüyor. İleriye
+taşınmak yerine çürütülmüş olarak kaydedildi. Bakarken yakındaki iki işlevsiz çağrı da
+düzeltildi: tek argümanlı `Math.max(x ?? 0)` `x` döndürüyor ve hiçbir şeyi
+sınırlamıyordu.
 
-Ark **"The Merchant's Word"**; frontier'dan tam olarak başlayan altı quest.
-Premisi tamamen kanondan türetildi: kasaba kapısı tek iki anahtar olarak
-yurttaşlığı veya tüccar loncası üyeliğini sayıyor ve bataklıktan sonra loncaya
-şelalelerin ötesinden tedarik yapabilecek tek yaşayan kişi kahramandır. Kahraman
-kasabaya kahraman olarak değil, tedarikçi olarak girer.
+Tuzağın geri dönmemesi için üç koruma:
 
-Uygulama sırası, en yüksek kaldıraç önce:
+- `npm run check` içerik kaynağındaki her interpolasyon çiftinin iki ucunun da pozitif
+  olduğunu doğruluyor - 192 çift - ve her push'ta çalışıyor.
+- `npm test` hem geometrik eğriyi hem düşüş davranışını sabitliyor; içinde eski
+  ifadenin gerçekten `NaN` döndürdüğünü doğrulayan bir kontrol de var, yani yenileri
+  boş değil.
+- `Verify_Game_Objects` aynı çiftleri oyunun içinden bildiriyor. Bu eklenirken onun
+  toplama kontrolünün ölü olduğu bulundu: döngü `gained_resources?.length` okuyordu ve
+  `gained_resources` bir `resources` dizisi tutan nesne olduğu için bu `undefined`;
+  yani sıfır tur atıyor ve içindeki kaynak-adı kontrolü hiç çalışmamıştı.
 
-1. **Q2 — TAMAMLANDI.** Kapı açıldı, Town itibarının tamamı olan 150'ye
-   kapılandı ve böylece o itibar ilk tüketicisini kazandı. Town square, Cat cafe,
-   Antique store ve Adventurer's guild erişilebilir; `Location` artık
-   `display_conditions`'ı dikkate aldığı için Nekomimi cafe doğru şekilde
-   beastkin ile kapılı; v0.4.6'dan beri ölü olan Lost memory görevi
-   tamamlanabilir. [CHANGELOG.TR.md](CHANGELOG.TR.md) içinde yazılı.
-2. **BİTTİ.** Dört geri kazanım engelinin hepsi kalktı ve varsayılmak yerine
-   kaynağa karşı doğrulandı: `inventory_templates["Cat cafe"]` var ve iki kafe
-   tüccarı da onu gösteriyor; Mages guild'in Nekomimi cafe'den kopyalanmış değil
-   kendi açıklaması var (iki geniş binanın arasına sıkışmış dar bir taş yapı);
-   `src/` veya `locales/` içinde hiçbir yerde `lorem ipsum` kalmadı; ve `Location`
-   `display_conditions`'ı saklıyor, `display.js` da onu çizim anında
-   değerlendiriyor; yani mofu kapılaması artık push yerinde yapılmak zorunda değil.
-3. Q3 ve Q4 merkezî gizemi tam bir tur ilerletiyor — soygun sipariş edilmişti — ve
-   oyuncuya iki çıkmaz arasında fiziksel bir bağ veriyor.
-4. Q5 fare questline'ını kapatıyor, ikinci mağara kapısını odanın kendisinin ısrar
-   ettiği gibi kuvvetle değil zihinle açıyor ve park edilmiş gümüş zincirine
-   nihayet bir kullanım noktası veriyor.
-5. Q6 köy muhafızının on yıllık savuşturmasını karşılığa bağlıyor.
-
-Açık kalması gerekenler: soygunun parasını kimin ödediği, kahramanın o nesneye
-nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.
-
+Ayrıca `npm run check:save` eklendi: dışa aktarılmış bir savegame'i her registry'ye
+karşı denetliyor. Yerelleştirme çalışmasından önceki gerçek bir v0.5.5.30 save'i
+üzerinde çalıştırıldığında 61 lokasyon, 14 dialogue, 60 skill, 15 etkinlik, 4 tüccar,
+11 görev, 8 kitap, 131 tarif ve 90 eşya id'sinin tamamı çözülüyor. Registry
+anahtarlarının save verisi olduğu kuralı, bugüne dek gerçek bir save'e karşı hiç
+denetlenmemişti.
 ---
 
 ## Bekleyen kararlar

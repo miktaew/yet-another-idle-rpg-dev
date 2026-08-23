@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 6 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 7 -->
 
 # Agent and contributor guide
 
@@ -34,6 +34,7 @@ Standing project direction, including what may and may not change, is in
 | `npm install` | Installs the single dependency, esbuild. |
 | `npm run serve` | Static server on `127.0.0.1:8080`, **dev mode**. Source edits are live on reload. |
 | `npm run build` | Bundles `src/main.js` into `dist/bundle.js`, then assembles the deployable site into `_site/`. Both are untracked. |
+| `npm run check:save` | Audits an exported savegame against the current registries. Takes the save path. Not in CI: it needs a save file. |
 | `npm run check` | Validates the assembled site and locale key parity. `LOCALE_STRICT=1` makes missing translations fatal. |
 | `npm test` | Regression tests for the skill xp model. |
 | `npm run serve:site` | Static server on `127.0.0.1:8081` serving `_site/`, to verify the built site in bundle mode. |

@@ -67,8 +67,36 @@ function random_range(min, max) {
     return Math.round(Math.random() * (max-min) + min);
 }
 
+/**
+ * Interpolates from arr[0] to arr[1] as t runs 0 -> 1.
+ *
+ * The intended form is GEOMETRIC - repeated multiplication by a constant ratio -
+ * which is what makes a [30, 10] gathering time shrink smoothly rather than
+ * linearly. That form has no meaning when the start is zero, because nothing
+ * scales 0 upwards, and none when either end is negative, because a fractional
+ * power of a negative number is not real.
+ *
+ * Both cases used to come back NaN and travel onwards into gathering times, drop
+ * chances and crafting success: (arr[1] / 0) is Infinity, and 0 * Infinity ** t is
+ * NaN for every t above zero. It then reached the skill-xp guard in main.js as a
+ * non-numeric gain, which is the console warning this was reported as.
+ *
+ * Where the geometric form is undefined this falls back to LINEAR interpolation.
+ * Linear agrees with geometric at both endpoints, stays monotone in between, and
+ * is what an author writing [0, n] means. No content pair is non-positive today -
+ * all 193 of them are checked by `npm run check` - so this changes no current
+ * number. It is here so that the day someone authors [0, n], the game produces a
+ * number instead of a warning.
+ *
+ * @param {Number[]} arr two ends, [from, to]
+ * @param {Number} t position between them, normally 0..1
+ */
 function slerp(arr, t) {
-    return arr[0] * (arr[1] / arr[0]) ** t;
+    const [from, to] = arr;
+    if(from > 0 && to > 0) {
+        return from * (to / from) ** t;
+    }
+    return from + (to - from) * t;
 }
 
 /**

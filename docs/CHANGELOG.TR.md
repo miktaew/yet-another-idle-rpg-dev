@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 26 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 27 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,91 @@ geldiğinde buraya girer.
 > (0.6.1, 0.6.2, …). `npm run check`, iki HTML kopyanın da yayımlanan
 > `game_version` için bir girdi taşıdığını doğruluyor; böylece ikisi fark
 > edilmeden birbirinden uzaklaşamıyor.
+
+---
+
+## 2026-08-23
+
+### NaN uyarıları kapatıldı ve gerçek bir save registry'lere karşı denetlendi
+
+**Tuzak.** `slerp`, toplama sürelerinin, düşen eşya şanslarının ve zanaat başarısının
+arkasındaki interpolasyon. Çiftini GEOMETRİK okuyor - `from * (to / from) ** t` - ki
+`[30, 10]` bir toplama süresini düz çizgi yerine eğriyle küçülten şey de bu. O biçimin
+çift sıfırdan başladığında anlamı yok, çünkü 0'ı yukarı ölçekleyen bir şey yok; iki
+uçtan biri negatifken de yok, çünkü negatif bir sayının kesirli kuvveti gerçek değil.
+İkisi de `NaN` döndürüyordu ve o `NaN` yol alıyordu: `main.js` içindeki skill xp
+korumasına sayısal olmayan bir kazanç olarak varıyordu - işin başında bildirilen konsol
+uyarısı da tam olarak buydu.
+
+Artık geometrik biçimin tanımsız olduğu yerde DOĞRUSALA düşüyor. Doğrusal, iki uçta da
+geometrikle aynı sonucu veriyor ve arada monoton kalıyor; `[0, n]` yazan bir yazarın
+kastettiği şey de bu. `crafting_recipes.js` zanaat başarısı için aynı ifadenin satır
+içi bir kopyasını tutuyordu; artık yardımcıyı çağırıyor, yani hatırlanacak iki yer
+yerine tek koruma var.
+
+**Hiçbir mevcut sayı kaymadı.** Hiçbir şeye dokunmadan önce ölçüldü: içerikteki 193
+interpolasyon çiftinin iki ucu da pozitif, yani düşüş davranışına bugün ulaşılamıyor.
+Zaten amaç buydu - bu, tetikleyecek diziyi yazacak kişi için bir tuzak; canlı bir hata
+değil.
+
+**Bildirilen üç maddeden biri yeniden üretilemedi.** Market doygunluk bölenine ancak
+`sold >= 1e13` iken varılıyor, yani sıfıra bölemez; o yoldaki diğer bölme bir sabite.
+İleriye taşınmayı bırakması için çürütülmüş olarak kaydedildi. Bakarken yakındaki iki
+işlevsiz çağrı düzeltildi: tek argümanlı `Math.max(sold_by_tier[i] ?? 0)` argümanını
+döndürüyor ve hiçbir şeyi sınırlamıyordu.
+
+**Geri dönmemesi için üç koruma.** `npm run check` içerik kaynağındaki her
+interpolasyon çiftinin iki ucunun da pozitif olduğunu doğruluyor - 192 çift; 193'üncü
+yorumlanmış bir tarifin içinde - ve her push'ta çalışıyor. `npm test` geometrik eğriyi
+ve düşüş davranışını sabitliyor; ayrıca ESKİ ifadenin gerçekten `NaN` döndürdüğünü
+doğrulayan bir kontrol içeriyor, yani yenileri boş yere geçemiyor. İkisi de negatif
+test edildi.
+
+Üçüncü korumanın bir şeyi koruyabilmesi için önce tamir edilmesi gerekti.
+`Verify_Game_Objects` toplama kaynaklarını kontrol etmeliydi ve döngüsü
+`gained_resources?.length` okuyordu - `undefined`, çünkü `gained_resources` bir
+`resources` dizisi tutan nesne. Sıfır tur atıyordu. İçindeki eşya-adı kontrolü hiç
+çalışmamıştı. Düzeltildi ve iki ucu pozitif olmayan her çifti bildirecek şekilde
+genişletildi.
+
+### `npm run check:save`
+
+Fork'lanan repodan dışa aktarılmış bir savegame analiz için geldi ve projenin en katı
+kuralı için elde bulunan en güçlü sınav olduğu ortaya çıktı. Registry anahtarları save
+verisidir: eşya id'leri, lokasyon anahtarları, dialogue ve textline anahtarları, skill
+id'leri, tarif adları, etkinlik adları. Birini yeniden adlandırmak mevcut her save'i
+sessizce bozar ve bütün yerelleştirme çalışması bunu hiç yapmamaya dayanıyordu - hiçbir
+şeyin gerçek bir save'e karşı denetlemediği bir iddia. `npm run check` kodu ancak
+kendisine karşı doğrulayabiliyor.
+
+Save **v0.5.5.30**, yani yerelleştirme çalışmasının tamamından önce. İçindeki her
+anahtar çözülüyor: 61 lokasyon, 14 dialogue, 60 skill, 15 etkinlik, 4 tüccar, 11 görev,
+8 kitap, 131 tarif adı ve 90 eşya id'si. Hiçbir şey yeniden adlandırılmamış.
+
+Betiğin öğrenmesi gereken üç şey vardı; her biri önce yanlış bir sonuç üretti:
+
+- **Tarifler skill ve tür başına gruplanıyor** ve aynı ad birden çok skill altında
+  meşru biçimde görünüyor. İlk geçiş yalnızca `.items[...]` ile eşleşti ve 44 hayalet
+  boşluk bildirdi; çünkü regex'teki `.components` alternatifi grup 2'ye yakalıyordu,
+  kod ise grup 1'i okuyordu.
+- **Envanter bir JSON dizgisiyle anahtarlanıyor**, id'yle değil: bir yığın hem id'siyle
+  hem kalitesiyle tanımlanıyor, parçalardan kurulan ekipman ise hiç id'si olmadan
+  bileşenleriyle. Anahtarları id olarak okumak sıfır eşya buldu.
+- **203 şablon çalışma anında üretiliyor**; bir materyal ile bir bileşen türünden, yani
+  anahtarları hiçbir kaynak sabitinde yok. Üstelik giyilen ekipman, bileşenlerinden
+  birleştirilen üçüncü bir ad türü taşıyor. Locale'den materyal ve bileşen adlarını
+  çekip eşleştiren bir heuristik doğru göründü ve yanlıştı - parçalar küçük harfle
+  saklanıyor, birleştirilen anahtar ise büyük harfli; dolayısıyla üretilen her eşya
+  çözülemedi. Betik artık gerçek generator'ı çalıştırıyor.
+
+Sondaki artık `scripts/lib/generated-items.mjs` içinde yaşıyor ve aynı stub'la-çalıştır
+işini satır içinde yapan `npm run check` ile paylaşılıyor. Bunun iki kopyası birbirinden
+uzaklaşırdı; uzaklaşmış bir kopya da hiçbir şeyi denetlemezken temiz sonuç bildirir.
+
+Save'in kendisi commit'lenmiyor - gerçek karakter verisi - ve `.gitignore`, dışa
+aktarmanın öntanımlı dosya adı için bir desen taşıyor; böylece kazayla eklenemiyor.
+
+`npm test` 79 kontrolde; `check` 192 interpolasyon çiftinde.
 
 ---
 

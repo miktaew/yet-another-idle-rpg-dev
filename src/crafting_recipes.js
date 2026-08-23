@@ -3,7 +3,7 @@
 import { character, get_total_skill_level } from "./character.js";
 import { Armor, ArmorComponent, Cape, Shield, ShieldComponent, Weapon, WeaponComponent, Amulet, item_templates } from "./items.js";
 import { skills } from "./skills.js";
-import { clamp, random_range } from "./misc.js";
+import { clamp, random_range, slerp } from "./misc.js";
 import { game_options } from "./main.js";
 
 const crafting_recipes = {items: {}, components: {}, equipment: {}};
@@ -64,7 +64,8 @@ class Recipe {
     get_success_chance(station_tier=1) {
         const level = clamp(get_total_skill_level(this.recipe_skill), 0, this.recipe_level[1]) - this.recipe_level[0] + 1;
         const skill_modifier = Math.min(1,(0||(level+(station_tier-1))/(this.recipe_level[1]-this.recipe_level[0]+1)));
-        return this.success_chance[0]*(this.success_chance[1]/this.success_chance[0])**skill_modifier;
+        //Was an inline copy of slerp, carrying the same divide-by-zero trap.
+        return slerp(this.success_chance, skill_modifier);
     }
 
     get_quality_range(tier = 0, component_quality) {

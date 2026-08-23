@@ -24,9 +24,9 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as os from "node:os";
 import { pathToFileURL } from "node:url";
 import { get_game_version } from "../src/game_version.js";
+import { load_generated_item_templates } from "./lib/generated-items.mjs";
 
 const repo_root = path.resolve(import.meta.dirname, "..");
 const site_dir = path.join(repo_root, "_site");
@@ -332,45 +332,10 @@ async function check_generated_items() {
     const reference = await load_locale(default_language);
     if (!reference) return;
 
-    const generator_path = path.join(repo_root, "src", "crafting_component_filling.js");
-    if (!fs.existsSync(generator_path)) {
-        error("src/crafting_component_filling.js is missing - this check is out of date.");
+    const { generated, problem } = await load_generated_item_templates(repo_root);
+    if (problem) {
+        error(`${problem} - this check is out of date.`);
         return;
-    }
-
-    let source = fs.readFileSync(generator_path, "utf8").split("\r\n").join("\n");
-    const item_import = 'import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";';
-    const display_import = 'import { capitalize_first_letter } from "./display.js";';
-    if (!source.includes(item_import) || !source.includes(display_import)) {
-        error("src/crafting_component_filling.js no longer has the imports this check stubs out - it is out of date.");
-        return;
-    }
-    source = source.replace(item_import, "").replace(display_import, "");
-
-    const shim = [
-        "const item_templates = {};",
-        "const capitalize_first_letter = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;",
-        "class Stub { constructor(d) { Object.assign(this, d); } }",
-        "class Armor extends Stub { }",
-        "class ArmorComponent extends Stub { }",
-        "class ShieldComponent extends Stub { }",
-        "class WeaponComponent extends Stub { }",
-        "",
-    ].join("\n");
-    const tail = "\ncrafting_component_manager.fill_components();\nexport const generated = item_templates;\n";
-
-    const temp_dir = fs.mkdtempSync(path.join(os.tmpdir(), "yairp-check-"));
-    const temp_file = path.join(temp_dir, "generator.mjs");
-    fs.writeFileSync(temp_file, shim + source + tail);
-
-    let generated;
-    try {
-        ({ generated } = await import(pathToFileURL(temp_file).href));
-    } catch (problem) {
-        error(`the component generator could not be run in isolation: ${problem.message}`);
-        return;
-    } finally {
-        fs.rmSync(temp_dir, { recursive: true, force: true });
     }
 
     const missing = new Set();
@@ -706,7 +671,70 @@ async function check_trader_display_names() {
     console.log(`[check] trader display names: ${declarations.length} resolved`);
 }
 
+/**
+ * Every pair that reaches slerp must have two positive ends.
+ *
+ * slerp interpolates GEOMETRICALLY, and that has no reading when a pair starts at
+ * zero or holds a negative: it used to come back NaN and travel into gathering
+ * times, drop chances and crafting success. It now falls back to linear instead,
+ * but a fallback is a different curve from the one the author drew, so the pair
+ * itself is what should be caught.
+ *
+ * Verify_Game_Objects reports the same thing, but only when a human opens the
+ * browser console and calls it. This runs on every push.
+ *
+ * Read from the source text rather than by importing: locations.js reaches
+ * display.js, which needs a document. Comments are blanked first, so a
+ * commented-out recipe is not held to the rule.
+ */
+function check_interpolated_pairs() {
+    const scanned = [
+        { file: "src/locations.js", patterns: [
+            [/(?<![A-Za-z0-9_])(time_period|chance):\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g,
+             match => [[match[1], match[2], match[3]]]],
+            // ammount is [[min_low, max_low], [min_high, max_high]] and slerp is
+            // called down the COLUMNS - [min_low, min_high] and [max_low, max_high] -
+            // not across the rows, which is the easy thing to get wrong here.
+            [/(?<![A-Za-z0-9_])ammount:\s*\[\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]\s*,\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]\s*\]/g,
+             match => [["minimum ammount", match[1], match[3]],
+                       ["maximum ammount", match[2], match[4]]]],
+        ]},
+        { file: "src/crafting_recipes.js", patterns: [
+            [/(?<![A-Za-z0-9_])(success_chance):\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g,
+             match => [[match[1], match[2], match[3]]]],
+        ]},
+    ];
+
+    let checked = 0;
+    for (const entry of scanned) {
+        const full_path = path.join(repo_root, entry.file);
+        if (!fs.existsSync(full_path)) {
+            error(`${entry.file} is missing - this check is out of date.`);
+            continue;
+        }
+        const source = strip_comments(fs.readFileSync(full_path, "utf8"));
+
+        for (const [pattern, expand] of entry.patterns) {
+            for (const match of source.matchAll(pattern)) {
+                for (const [label, from, to] of expand(match)) {
+                    checked++;
+                    if (!(Number(from) > 0) || !(Number(to) > 0)) {
+                        error(`${entry.file} declares a ${label} of [${from}, ${to}];`
+                            + " both ends of an interpolated pair must be positive, or slerp"
+                            + " falls back to a linear curve instead of the geometric one.");
+                    }
+                }
+            }
+        }
+    }
+    if (checked === 0) {
+        error("found no interpolated pairs to check - this check is out of date.");
+    }
+    console.log(`[check] interpolated pairs: ${checked} checked`);
+}
+
 check_site();
+check_interpolated_pairs();
 check_changelogs_cover_version();
 check_language_switch_repaints();
 await check_locales();

@@ -216,12 +216,36 @@ function Verify_Game_Objects() {
                     console.error(`Location "${key}" refers to a non-existent activity "${location.activities[activity_key].activity_name}"`);
                     has_issue = true;
                 }
-                for(let i = 0; i < location.activities[activity_key].gained_resources?.length; i++) {
-                    if(!item_templates[location.activities[activity_key].gained_resources.resources[i].name]) {
-                        console.error(`Activity "${activity_key}" in location "${key}" refers to a non-existent item "${location.activities[activity_key].gained_resources.resources[i].name}"`);
+                //This loop read gained_resources.length, which is undefined -
+                //gained_resources is an OBJECT holding a resources array - so it ran
+                //zero times and the item check inside it had never once executed.
+                const gained = location.activities[activity_key].gained_resources;
+                for(let i = 0; i < (gained?.resources?.length ?? 0); i++) {
+                    const resource = gained.resources[i];
+                    if(!item_templates[resource.name]) {
+                        console.error(`Activity "${activity_key}" in location "${key}" refers to a non-existent item "${resource.name}"`);
                         has_issue = true;
                     }
-                }   
+                    //Both ends of every interpolated pair have to be positive. slerp
+                    //reads them geometrically, and a zero or a negative there has no
+                    //geometric reading - it used to come back NaN, and now falls back
+                    //to linear, which is a silent change of curve rather than a
+                    //number an author asked for.
+                    for(const [label, pair] of [
+                        ["chance", resource.chance],
+                        ["minimum ammount", [resource.ammount?.[0]?.[0], resource.ammount?.[1]?.[0]]],
+                        ["maximum ammount", [resource.ammount?.[0]?.[1], resource.ammount?.[1]?.[1]]],
+                    ]) {
+                        if(!(pair?.[0] > 0) || !(pair?.[1] > 0)) {
+                            console.error(`Activity "${activity_key}" in location "${key}": resource "${resource.name}" has a ${label} of [${pair?.[0]}, ${pair?.[1]}]. Both ends must be positive numbers.`);
+                            has_issue = true;
+                        }
+                    }
+                }
+                if(gained && (!(gained.time_period?.[0] > 0) || !(gained.time_period?.[1] > 0))) {
+                    console.error(`Activity "${activity_key}" in location "${key}" has a time_period of [${gained.time_period?.[0]}, ${gained.time_period?.[1]}]. Both ends must be positive numbers.`);
+                    has_issue = true;
+                }
             });
         } else if(location.tags["combat zone"]) {
 

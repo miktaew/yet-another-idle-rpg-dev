@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 6 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 7 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -39,6 +39,7 @@ Tam tablo: [AGENTS.md § 2](AGENTS.md#2-commands).
 | `npm install` | Tek bağımlılık olan esbuild'i kurar. |
 | `npm run serve` | `127.0.0.1:8080` üzerinde statik sunucu, **dev modu**. Kaynak düzenlemeleri sayfa yenilenince canlı. |
 | `npm run build` | `src/main.js`'i `dist/bundle.js` içine paketler, ardından deploy edilebilir siteyi `_site/` içinde toplar. İkisi de takip edilmiyor. |
+| `npm run check:save` | Dışa aktarılmış bir savegame'i güncel registry'lere karşı denetler. Save'in yolunu alır. CI'da değil: bir save dosyası gerekiyor. |
 | `npm run check` | Toplanan siteyi ve locale anahtar eşliğini doğrular. `LOCALE_STRICT=1` eksik çevirileri ölümcül yapar. |
 | `npm test` | Skill xp modeli için regresyon testleri. |
 | `npm run serve:site` | `127.0.0.1:8081` üzerinde `_site/` sunar; derlenen siteyi bundle modunda doğrulamak için. |

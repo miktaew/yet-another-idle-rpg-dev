@@ -11,6 +11,7 @@
   "scripts": {
     "build": "node scripts/build-site.js",
     "check": "node scripts/check-site.js",
+    "check:save": "node scripts/check-save.js",
     "test": "node scripts/test-skills.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8080",
     "serve:site": "esbuild --servedir=_site --serve=127.0.0.1:8081"

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 26 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 27 -->
 
 # Changelog
 
@@ -16,6 +16,88 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 > own minor version heading (0.6.1, 0.6.2, …) rather than being folded into an
 > existing one. `npm run check` enforces that both HTML copies hold an entry for
 > the shipped `game_version`, so the two cannot drift apart unnoticed.
+
+---
+
+## 2026-08-23
+
+### Closed the NaN warnings, and checked a real save against the registries
+
+**The trap.** `slerp` is the interpolation behind gathering times, drop chances and
+crafting success. It reads its pair GEOMETRICALLY - `from * (to / from) ** t` - which
+is what makes a `[30, 10]` gathering time shrink on a curve rather than a line. That
+form has no meaning when the pair starts at zero, because nothing scales 0 upwards,
+and none when either end is negative, because a fractional power of a negative is not
+real. Both came back `NaN`, and the `NaN` travelled: it reached the skill-xp guard in
+`main.js` as a non-numeric gain, which is the console warning this was reported as in
+the first place.
+
+It now falls back to LINEAR where the geometric form is undefined. Linear agrees with
+geometric at both endpoints and stays monotone between them, which is what an author
+writing `[0, n]` means. `crafting_recipes.js` held an inline copy of the same
+expression for crafting success; it calls the helper now, so there is one guard rather
+than two places to remember.
+
+**No current number moved.** Measured before touching anything: all 193 interpolated
+pairs in the content are positive on both ends, so the fallback is unreachable today.
+That was the point - this is a trap for whoever authors the array that triggers it,
+not a live bug.
+
+**One of the three reported items did not reproduce.** The market-saturation divisor
+is reached only when `sold >= 1e13`, so it cannot divide by zero; the other division
+on that path is by a constant. Recorded as refuted so it stops being carried forward.
+Two no-ops nearby were fixed while looking: `Math.max(sold_by_tier[i] ?? 0)` with a
+single argument returns its argument and never clamped anything.
+
+**Three guards, so it cannot come back.** `npm run check` asserts both ends of every
+interpolated pair in the content source are positive - 192 of them, the 193rd being
+inside a commented-out recipe - and runs on every push. `npm test` pins the geometric
+curve and the fallback, and includes a check that the OLD expression really did return
+`NaN`, so the new ones cannot pass vacuously. Both negative-tested.
+
+The third guard needed repairing before it could guard anything. `Verify_Game_Objects`
+was supposed to check gathering resources, and its loop read
+`gained_resources?.length` - `undefined`, because `gained_resources` is an object
+holding a `resources` array. It ran zero times. The item-name check inside it had never
+executed once. Fixed, and extended to report any pair whose ends are not both positive.
+
+### `npm run check:save`
+
+A savegame exported from the fork arrived for analysis, and it turned out to be the
+strongest test available for the project's hardest rule. Registry keys are save data:
+item ids, location keys, dialogue and textline keys, skill ids, recipe names, activity
+names. Renaming one silently breaks every existing save, and the whole localisation
+effort rested on never doing it - a claim nothing had ever checked against an actual
+save. `npm run check` can only verify the code against itself.
+
+The save is **v0.5.5.30**, from before any of the localisation work. Every key in it
+resolves: 61 locations, 14 dialogues, 60 skills, 15 activities, 4 traders, 11 quests,
+8 books, 131 recipe names and 90 item ids. Nothing was renamed.
+
+Three things the script had to learn, each of which produced a false result first:
+
+- **Recipes are grouped per skill and per kind**, and the same name legitimately
+  appears under several skills. The first pass matched only `.items[...]` and reported
+  44 phantom gaps, because the `.components` alternative in the regex captured into
+  group 2 while the code read group 1.
+- **The inventory is keyed by a JSON string**, not an id: a stack is identified by its
+  id AND quality, and equipment built from parts is identified by its components with
+  no id at all. Reading the keys as ids found zero items.
+- **203 templates are generated at runtime** from a material and a component type, so
+  their keys exist in no source literal, and worn equipment carries a third kind of
+  name assembled from its components. A heuristic matching material and component
+  names out of the locale looked right and was wrong - the parts are stored lowercase
+  and the assembled key is capitalised, so every generated item came back unresolved.
+  The script runs the actual generator instead.
+
+That last one now lives in `scripts/lib/generated-items.mjs`, shared with
+`npm run check`, which was doing the same stub-and-run inline. Two copies of that would
+drift, and a drifted copy reports a clean result while checking nothing.
+
+The save itself is NOT committed - it is real character data - and `.gitignore` carries
+a pattern for the export's default filename so it cannot be added by accident.
+
+`npm test` at 79 checks; `check` at 192 interpolated pairs.
 
 ---
 

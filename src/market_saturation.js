@@ -209,7 +209,9 @@ function calculate_total_saturation({sold_by_tier, target_tier, cap}) {
     let count = 0;
     for(let i = target_tier - 1; i >= 0; i--) {
         //x0.25 for each tier going down
-        count += Math.max(sold_by_tier[i] ?? 0)*0.1**(target_tier-i);
+        //Math.max of one argument is that argument: this never clamped. A sold
+        //count below zero is not reachable today, so the clamp is defence only.
+        count += Math.max(sold_by_tier[i] ?? 0, 0)*0.1**(target_tier-i);
     }
     
     //lower tier impact capped at eight of the cap
@@ -218,7 +220,7 @@ function calculate_total_saturation({sold_by_tier, target_tier, cap}) {
 
     for(let i = target_tier + 1 ; i < sold_by_tier.length; i++) {
         //x1 for each tier going down
-        count += Math.max(sold_by_tier[i] ?? 0);
+        count += Math.max(sold_by_tier[i] ?? 0, 0);
     }
     return count;
 }

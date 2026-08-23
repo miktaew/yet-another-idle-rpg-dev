@@ -17,6 +17,10 @@ _site/
 .dependency-cruiser.js
 dependency-graph.svg
 
+# Sample savegames dropped in the root for analysis. These are exported player
+# saves - real character data - and must never be committed.
+yet-another-idle-rpg*.txt
+
 # Logs
 *.log
 npm-debug.log*
