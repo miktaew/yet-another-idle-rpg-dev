@@ -452,6 +452,10 @@ async function check_content_text_ids() {
             /(?<![A-Za-z0-9_])quest_name:\s*"([^"]+)"/g,
             /(?<![A-Za-z0-9_])quest_description:\s*"([^"]+)"/g,
             /(?<![A-Za-z0-9_])task_description:\s*"([^"]+)"/g,
+            //The quest-progress log lines are parameterised, so they are getText
+            //calls rather than a field. Unscanned, they were the last place three
+            //hard-coded English sentences survived a whole localisation pass.
+            /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
         ]},
         { file: "src/skills.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
@@ -473,6 +477,17 @@ async function check_content_text_ids() {
         ]},
         { file: "src/enemies.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
+            //The on_hit / on_damaged combat messages.
+            /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
+        ]},
+        { file: "src/dialogues.js", patterns: [
+            //Textline fields sit at sixteen spaces; the Dialogue's own `name` sits at
+            //eight and is a registry key, not an id, so the indentation is what keeps
+            //the two apart. Comments are blanked before this runs, which matters here:
+            //a whole commented-out dialogue ("cute little rat") still holds raw
+            //English, and it is unreachable content rather than a translation gap.
+            /^ {16}(?:name|text):\s*"([^"]+)"/gm,
+            /(?<![A-Za-z0-9_])(?:description|starting_text):\s*"((?:desc|ui|sup|g |sus|elder|craftsman|guard|nekomimi|swamp|slum) [^"]*)"/g,
         ]},
         { file: "src/races.js", patterns: [
             //Race fields hold ids, not English, so a typo here shows up as the
@@ -619,20 +634,37 @@ async function check_dialogue_display_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
 
-    const source = fs.readFileSync(path.join(repo_root, "src/dialogues.js"), "utf8");
-    const keys = [...source.matchAll(/dialogues\["([^"]+)"\]\s*=\s*new Dialogue/g)].map(match => match[1]);
-    if (keys.length === 0) {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/dialogues.js"), "utf8"));
+
+    // The lookup key is the Dialogue's `name` FIELD, not its registry key: getName
+    // returns this.name, and one dialogue's name ("proprietress") differs from its
+    // key ("nekomimi proprietress"). Checking the key instead passes while the
+    // button it is meant to protect renders a placeholder - which is exactly what
+    // happened. The field cannot be renamed to match, because `id` defaults to it
+    // and the id is save data.
+    const declarations = [...source.matchAll(/dialogues\["([^"]+)"\]\s*=\s*new Dialogue\(\{/g)];
+    if (declarations.length === 0) {
         error("src/dialogues.js declares no dialogues - this check is out of date.");
         return;
     }
 
-    for (const name of [...keys, ...dialogue_name_variants]) {
+    const shown_names = [];
+    for (const [index, declaration] of declarations.entries()) {
+        const start = declaration.index;
+        const end = declarations[index + 1]?.index ?? source.length;
+        // The Dialogue's own fields sit at eight spaces; a Textline's sit deeper,
+        // so the indentation is what keeps this off the textline names.
+        const field = source.slice(start, end).match(/^ {8}name:\s*"([^"]+)"/m);
+        shown_names.push(field ? field[1] : declaration[1]);
+    }
+
+    for (const name of [...shown_names, ...dialogue_name_variants]) {
         if (!(`name ${name}` in reference)) {
             error(`locales/${default_language}.js has no "name ${name}" row;`
                 + " the dialogue's button label would render as a placeholder.");
         }
     }
-    console.log(`[check] dialogue display names: ${keys.length + dialogue_name_variants.length} resolved`);
+    console.log(`[check] dialogue display names: ${shown_names.length + dialogue_name_variants.length} resolved`);
 }
 
 /**

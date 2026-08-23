@@ -1040,7 +1040,6 @@ const names = {
     "name suspicious man": "şüpheli adam",
     "name old woman of the slums": "slum'ların yaşlı kadını",
     "name farm supervisor": "çiftlik sorumlusu",
-    "name nekomimi proprietress": "nekomimi işletmecisi",
     "name swampland chief": "bataklık şefi",
     "name swampland cook": "bataklık aşçısı",
     "name swampland tailor": "bataklık terzisi",
@@ -3026,6 +3025,27 @@ const descriptions = {
     "log started a new quest": "Yeni görev başladı: {v1}",
     "ui loading no issues": "Yükleme sırasında sorun çıkmadı :)",
     "ui no backup autosave": "Yedek otomatik kayıt yok",
+
+    //The quest log lines, the frog and dragonfly combat messages, and the
+    //bestiary stat labels - all missed by the first sweep.
+    "log finished a quest": "Görev tamamlandı: \"{v1}\"",
+    "log finished a quest task": "Görev adımı tamamlandı: \"{v1}\"",
+    "log quest progress": "Görevde ilerleme kaydedildi: \"{v1}\"",
+    "log frog sticky tongue": "Kurbağanın uzun dili seni yapış yapış salyaya buluyor!",
+    "log frog toxins on hit": "Kurbağanın saldırısı üzerinde biraz toksin bırakıyor!",
+    "log frog toxins bare hands": "Kurbağaya çıplak elle dokunmak ellerini toksine buluyor!",
+    "log frog toxins splash": "Kurbağaya vurmak üzerine toksin sıçratıyor!",
+    "log dragonfly stinger": "Yusufçuk iğnesini hızla saplayıp geri çekiliyor",
+    "log dragonfly queen stinger": "Yusufçuk kraliçesi büyük iğnesini hızla saplayıp geri çekiliyor",
+    "ui stat label health": "Sağlık:",
+    "ui stat label attack power": "Saldırı gücü:",
+    "ui stat label attack speed": "Saldırı hızı:",
+    "ui stat label ep": "KP:",
+
+    //The dialogue exit option, and the one dialogue whose name field is not
+    //its registry key.
+    "ui go back": "Geri dön",
+    "name proprietress": "işletmeci",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

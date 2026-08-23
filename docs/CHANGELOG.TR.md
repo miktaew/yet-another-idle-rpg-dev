@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 24 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 25 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,72 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-22
+
+### Kalıntı listesinin kaçırdığı İngilizce metinler için süpürme yapıldı
+
+Önceki girdi, sabit kodlanmış son İngilizcenin bittiğini söylüyordu. Bitmemişti.
+Oyuncuya görünen çağrılar içinde İngilizce cümle tutanları arayan bir grep, on altı
+yer daha buldu; üçü, aynı geçişin hemen az önce düzelttiği satırın altındaydı.
+
+**Kalanlar.** Üç görev günlük satırı — görevi tamamlamak, adımı tamamlamak, ilerleme
+kaydetmek — çevrilmiş olan `Started a new quest:` satırının hemen altında
+duruyordu. Zehirli kurbağa ve iki yusufçuk üzerinde altı savaş mesajı;
+`on_hit` ile `on_damaged` işleyicilerinin içine
+`log_message("The frog's long tongue …")` olarak yazılmışlardı. Yaratıklar
+tooltip'inde altı stat etiketi. Ve `ending_text`; oyundaki her konuşmayı kapatan
+"Go back" seçeneği.
+
+Altı stat etiketinin ikisi yeni satır gerektirmedi: `Defense:` ve `AP:` için,
+karakter panelinden ve eşya tooltip'inden gelen, birebir aynı yazılmış satırlar
+zaten vardı. Aynı kelimeleri tutan iki satır, asla birbirinden ayrılmaması gereken
+iki satırdır; o yüzden yeniden kullanıldılar.
+
+**Neden saklanabildikleri, düzeltilmeye değer olan kısım.** `npm run check` bildirilen
+her içerik id'sinin var olduğunu doğruluyor; ama yalnızca taradığı dosyalarda ve
+yalnızca bildiği kalıplarla. `quests.js`, `quest_name`, `quest_description` ve
+`task_description` için taranıyordu — parametreli bir günlük satırının ta kendisi
+olan `getText` çağrıları için değil. `enemies.js` yalnızca `description` için
+taranıyordu. İkisi artık `getText(language, "log …")` ile de eşleşiyor.
+
+`src/dialogues.js` ise taramada hiç yoktu. Depodaki en büyük içerik dosyası. Onu
+eklemek kontrolü 1298 bildirilen id'den **1695**'e çıkardı — locale'e karşı hiç
+doğrulanmamış 397 textline adı ve metni; hepsi çözülüyor. Kalıp on altı boşluk
+girintiye tutunuyor, çünkü bir `Textline`'ın `name`'i metin id'si iken iki seviye
+yukarıdaki `Dialogue`'un kendi `name`'i bir registry anahtarı ve ikisini ayıran tek
+şey girinti.
+
+Yorumlar önce boşaltılıyor; burada bunun önemi var: yorumlanmış bir diyaloğun
+tamamı, ham İngilizce on dört alan tutuyor. Aşağıya bakın.
+
+**Bir saat önce kendi yazdığım kontrolde hata.** Dialogue görünen-ad kontrolü
+registry anahtarı üzerinden gidiyordu. `getName` ise `name` *alanını* döndürüyor ve
+bir diyaloğun alanı anahtarından farklı: `dialogues["nekomimi proprietress"]`'in
+`name: "proprietress"` değeri var. Yani kontrol, hiçbir şeyin ulaşamadığı bir satır
+olan `name nekomimi proprietress` üzerinden geçiyordu; kodun gerçekten istediği
+satır — `name proprietress` — ise yoktu. Korumak için yazıldığı düğme bir yer
+tutucu basıyordu.
+
+Bu, aynı oturumda, aynı sebeple, tüccar kontrolünde az önce düzelttiğim hatanın
+aynısı. Alan, anahtara uyacak şekilde yeniden adlandırılamaz: `id` öntanımlı olarak
+`name`'den geliyor ve id kayıt verisi. Bu yüzden satır alana uyduruldu, ulaşılamayan
+satır silindi ve kontrol, gerekçesi yanına yazılmış hâlde alan üzerinden gidiyor.
+
+**Bulunan ama dokunulmayan erişilemez içerik.** `dialogues["cute little rat"]`
+yorumlanmış durumda — yedi textline; Vaat Edilmiş Sıçan Prensi Ratzor Rathai, duvar
+gibi şeylerin eskiden insan olduğunu ve kanının papa gücüyle dolu olduğunu
+anlatıyor. Bilinçli olarak bozuk bir kipte yazılmış, bataklığın doğurduğu soruları
+yanıtlıyor ve bir çeviri boşluğu değil, bir hikâye kancası. Buraya kaydedildi ve
+dokunulmadı: onu bağlamak, sıçanın nerede olduğuna ve onu neyin açtığına karar
+vermek demek; bu bir içerik kararı.
+
+Bütün bunları bulan süpürme artık hiçbir şey döndürmüyor: `src/` içinde İngilizce
+cümle tutan `log_message`, `insert_HTML`, `set_HTML` veya `innerText` yok. Aynı
+grep'in hâlâ bildirdiği şey konsol ve `throw` metinleri — "No such recipe as",
+"Combat stance cannot target less than 1 enemy!" — ki onlar geliştiriciye yönelik
+ve doğru biçimde İngilizce.
+
+Dil başına 2607 anahtar; `check` 1695 içerik id'si, 16 dialogue ve 7 tüccar adında;
+`npm test` 70'te.
 
 ### Sabit kodlanmış son İngilizce metinler çevrildi, Türkçenin küçük harfle başlaması giderildi
 

@@ -22,7 +22,9 @@ class Dialogue {
             ? translationManager.getText(language, this.starting_text)
             : translationManager.assembleName(language, "ui talk to",
                 {v1: `name ${this.name}`}, {capitalise: true}),
-        ending_text = `Go back`,
+        //TEXT ID for the option that ends the conversation.
+        ending_text = "ui go back",
+        getEndingText = () => translationManager.getText(language, this.ending_text),
         is_unlocked = true,
         is_finished = false,
         textlines = {},
@@ -36,7 +38,8 @@ class Dialogue {
         this.id = id || this.name;
         this.starting_text = starting_text;
         this.getStartingText = getStartingText;
-        this.ending_text = ending_text; //text shown on option to finish talking
+        this.ending_text = ending_text; //TEXT ID for the option to finish talking
+        this.getEndingText = getEndingText;
         this.is_unlocked = is_unlocked;
         this.is_finished = is_finished; //separate bool to hide dialogue option if it's considered to be finished
         this.textlines = textlines; //all the lines in dialogue

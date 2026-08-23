@@ -992,7 +992,6 @@ const names = {
     "name suspicious man": "suspicious man",
     "name old woman of the slums": "old woman of the slums",
     "name farm supervisor": "farm supervisor",
-    "name nekomimi proprietress": "nekomimi proprietress",
     "name swampland chief": "swampland chief",
     "name swampland cook": "swampland cook",
     "name swampland tailor": "swampland tailor",
@@ -2986,6 +2985,27 @@ const descriptions = {
     "log started a new quest": "Started a new quest: {v1}",
     "ui loading no issues": "No issues in the loading process :)",
     "ui no backup autosave": "No backup autosave",
+
+    //The quest log lines, the frog and dragonfly combat messages, and the
+    //bestiary stat labels - all missed by the first sweep.
+    "log finished a quest": "Finished a quest: \"{v1}\"",
+    "log finished a quest task": "Finished a task for a quest: \"{v1}\"",
+    "log quest progress": "Made some progress in quest: \"{v1}\"",
+    "log frog sticky tongue": "The frog's long tongue leaves you covered in sticky saliva!",
+    "log frog toxins on hit": "The frog's attack leaves some of its toxins on you!",
+    "log frog toxins bare hands": "Touching the frog with your bare hands leaves them covered in toxins!",
+    "log frog toxins splash": "Striking the frog causes some toxins to splash on you!",
+    "log dragonfly stinger": "The dragonfly quickly stabs you with its stinger and retreats",
+    "log dragonfly queen stinger": "The dragonfly queen quickly stabs you with its large stinger and retreats",
+    "ui stat label health": "Health:",
+    "ui stat label attack power": "Attack power:",
+    "ui stat label attack speed": "Attack speed:",
+    "ui stat label ep": "EP:",
+
+    //The dialogue exit option, and the one dialogue whose name field is not
+    //its registry key.
+    "ui go back": "Go back",
+    "name proprietress": "proprietress",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 24 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 25 -->
 
 # Changelog
 
@@ -20,6 +20,70 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-22
+
+### Swept for the English the leftover list had missed
+
+The previous entry claimed the last hard-coded English was gone. It was not. A
+grep for player-facing calls holding an English sentence found sixteen more sites,
+three of them directly below a line the same pass had just fixed.
+
+**What was left.** Three quest log lines — finishing a quest, finishing a task,
+making progress — sitting immediately under the `Started a new quest:` line that
+had been translated. Six combat messages on the toxic frog and the two
+dragonflies, written as `log_message("The frog's long tongue …")` inside their
+`on_hit` and `on_damaged` handlers. Six stat labels in the bestiary tooltip. And
+`ending_text`, the "Go back" option that closes every conversation in the game.
+
+Two of the six stat labels needed no new row: `Defense:` and `AP:` already had
+one, spelled identically, from the character panel and the item tooltip. Two rows
+holding the same words are two rows that must never disagree, so they are reused.
+
+**Why they hid, which is the part worth fixing.** `npm run check` verifies that
+every declared content id exists, but only in the files it scans and only through
+the patterns it knows. `quests.js` was scanned for `quest_name`, `quest_description`
+and `task_description` — not for `getText` calls, which is what a parameterised log
+line is. `enemies.js` was scanned for `description` only. Both now match
+`getText(language, "log …")` as well.
+
+And `src/dialogues.js` was not in the scan at all. It is the largest content file
+in the repository. Adding it took the check from 1298 declared ids to **1695** —
+397 textline names and texts that had never been verified against the locale, all
+of which resolve. The pattern anchors on sixteen spaces of indentation, because a
+`Textline`'s `name` is a text id while the `Dialogue`'s own `name` two levels up is
+a registry key, and indentation is the only thing that separates them.
+
+Comments are blanked first, which matters here: a whole commented-out dialogue
+holds fourteen fields of raw English. See below.
+
+**A bug in a check I had written an hour earlier.** The dialogue display-name
+check keyed on the registry key. `getName` returns the `name` *field*, and one
+dialogue's field differs from its key: `dialogues["nekomimi proprietress"]` has
+`name: "proprietress"`. So the check passed on `name nekomimi proprietress`, a row
+nothing can reach, while the row the code actually asks for — `name proprietress` —
+did not exist. The button it was written to protect rendered a placeholder.
+
+This is the same error I had just corrected in the trader check, in the same
+session, for the same reason. The field cannot be renamed to match the key: `id`
+defaults to `name`, and the id is save data. So the row matches the field, the
+unreachable row is deleted, and the check keys on the field with the reason
+written next to it.
+
+**Unreachable content, found and left alone.** `dialogues["cute little rat"]` is
+commented out — seven textlines in which Ratzor Rathai, the Rat Prince Who Be
+Promised, explains that the wall-like things used to be people and that his blood
+is full of papa power. It is written in a deliberate broken register, it answers
+questions the swamp raises, and it is a story hook rather than a translation gap.
+Recorded here and not touched: connecting it means deciding where the rat is and
+what unlocks him, which is a content decision.
+
+The sweep that found all of this now returns nothing: no `log_message`,
+`insert_HTML`, `set_HTML` or `innerText` in `src/` holds an English sentence. What
+the same grep still reports is console and `throw` text — "No such recipe as",
+"Combat stance cannot target less than 1 enemy!" — which is developer-facing and
+correctly English.
+
+2607 keys per language; `check` at 1695 content ids, 16 dialogue and 7 trader
+names; `npm test` at 70.
 
 ### Translated the last hard-coded English, and stopped Turkish opening in lowercase
 

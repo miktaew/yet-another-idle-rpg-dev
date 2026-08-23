@@ -374,21 +374,21 @@ const enemy_abilites = {
             const roll = Math.random();
             if(roll < 0.1) {
                 //todo: add some category for these messages
-                log_message("The frog's long tongue leaves you covered in sticky saliva!", "hero_attacked");
+                log_message(translationManager.getText(language, "log frog sticky tongue"), "hero_attacked");
                 add_active_effect("Sticky", 30);
             } else if (roll < 0.2) {
-                log_message("The frog's attack leaves some of its toxins on you!", "hero_attacked");
+                log_message(translationManager.getText(language, "log frog toxins on hit"), "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }
         },
         on_damaged: (character) => {
             const roll = Math.random();
             if (character.equipment.weapon == null && roll < 0.1) {
-                log_message("Touching the frog with your bare hands leaves them covered in toxins!", "hero_attacked");
+                log_message(translationManager.getText(language, "log frog toxins bare hands"), "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }
             else if (character.equipment.weapon != null && roll < 0.05) {
-                log_message("Striking the frog causes some toxins to splash on you!", "hero_attacked");
+                log_message(translationManager.getText(language, "log frog toxins splash"), "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }
         },
@@ -431,7 +431,7 @@ const enemy_abilites = {
         on_hit: () => {
             const roll = Math.random();
             if(roll < 0.2) {
-                log_message("The dragonfly quickly stabs you with its stinger and retreats", "hero_attacked");
+                log_message(translationManager.getText(language, "log dragonfly stinger"), "hero_attacked");
                 add_active_effect("Dragonfly venom", 10);
             }
         },
@@ -448,7 +448,7 @@ const enemy_abilites = {
         on_hit: () => {
             const roll = Math.random();
             if(roll < 0.2) {
-                log_message("The dragonfly queen quickly stabs you with its large stinger and retreats", "hero_attacked");
+                log_message(translationManager.getText(language, "log dragonfly queen stinger"), "hero_attacked");
                 add_active_effect("Dragonfly queen venom", 10);
             }
         },

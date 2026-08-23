@@ -4133,7 +4133,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
 
         const end_dialogue_div = document.createElement("div");
 
-        insert_HTML(end_dialogue_div, "<i class='material-icons'>arrow_back</i> " + dialogue.ending_text);
+        insert_HTML(end_dialogue_div, "<i class='material-icons'>arrow_back</i> " + dialogue.getEndingText());
         end_dialogue_div.classList.add("end_dialogue_button");
         end_dialogue_div.setAttribute("onclick", "end_dialogue()");
 
@@ -5169,17 +5169,17 @@ function create_bestiary_stat_entry(enemy, stat_name) {
 
     switch(stat_name) {
         case "Health": 
-            stat_name_div.innerText = "Health:";
+            stat_name_div.innerText = translationManager.getText(language, "ui stat label health");
             stat_value_div.innerText = `${enemy.stats.health}`;
             stat_entry.append(stat_name_div, stat_value_div);
         break;
         case "Defense":
-            stat_name_div.innerText = `Defense:`;
+            stat_name_div.innerText = translationManager.getText(language, "ui stat label defense");
             stat_value_div.innerText = `${enemy.stats.defense}`;
             stat_entry.append(stat_name_div, stat_value_div);
         break;
         case "Attack power":
-            stat_name_div.innerText = "Attack power:";
+            stat_name_div.innerText = translationManager.getText(language, "ui stat label attack power");
             stat_value_div.innerText = `${enemy.stats.attack}`;
             if(enemy.stats.attack_count > 1) {
                 stat_value_div.innerText += `x${enemy.stats.attack_count}`;
@@ -5187,17 +5187,17 @@ function create_bestiary_stat_entry(enemy, stat_name) {
             stat_entry.append(stat_name_div, stat_value_div);
         break;
         case "Attack speed":
-            stat_name_div.innerText = `Attack speed:`;
+            stat_name_div.innerText = translationManager.getText(language, "ui stat label attack speed");
             stat_value_div.innerText = `${enemy.stats.attack_speed}`;
             stat_entry.append(stat_name_div, stat_value_div);
         break;
         case "AP":
-            stat_name_div.innerText = "AP:";
+            stat_name_div.innerText = translationManager.getText(language, "ui label ap");
             stat_value_div.innerText = `${Math.round(enemy.stats.dexterity * Math.sqrt(enemy.stats.intuition || 1))}`;
             stat_entry.append(stat_name_div, stat_value_div);
         break;
         case "EP":
-            stat_name_div.innerText = "EP:";
+            stat_name_div.innerText = translationManager.getText(language, "ui stat label ep");
             stat_value_div.innerText = `${Math.round(enemy.stats.agility * Math.sqrt(enemy.stats.intuition || 1))}`;
             stat_entry.append(stat_name_div, stat_value_div);
         break;

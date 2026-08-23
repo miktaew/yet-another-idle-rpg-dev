@@ -142,7 +142,8 @@ const questManager = {
             if(!quests[quest_id].is_hidden) {
                 update_displayed_quest(quest_id);
                 if(!is_from_loading) {
-                    log_message(`Finished a quest: "${quests[quest_id].getQuestName()}"`);
+                    log_message(translationManager.getText(language, "log finished a quest",
+                        {v1: quests[quest_id].getQuestName()}));
                 }
             }
 
@@ -161,9 +162,11 @@ const questManager = {
                 update_displayed_quest(quest_id);
                 if(!skip_message) {
                     if(!quests[quest_id].quest_tasks[task_index].is_hidden) {
-                        log_message(`Finished a task for a quest: "${quests[quest_id].getQuestName()}"`);
+                        log_message(translationManager.getText(language, "log finished a quest task",
+                            {v1: quests[quest_id].getQuestName()}));
                     } else if(!quests[quest_id].quest_tasks[task_index].skip_message){
-                        log_message(`Made some progress in quest: "${quests[quest_id].getQuestName()}"`);
+                        log_message(translationManager.getText(language, "log quest progress",
+                            {v1: quests[quest_id].getQuestName()}));
                     }
                 }
             }
