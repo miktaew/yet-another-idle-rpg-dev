@@ -34,10 +34,19 @@ class Trader extends InventoryHaver {
         /** The shown name. this.name is the registry key and stays English. */
         this.getDisplayName = () => translationManager.getDisplayName(language, this.display_name);
 
-        /** The label on the button that opens the shop. */
+        /**
+         * The label on the button that opens the shop.
+         *
+         * assembleName rather than getText for the default: trader display
+         * names are stored lowercase, and a language that puts the name first
+         * - Turkish does - would otherwise open the button with a lowercase
+         * letter. Capitalising the assembled result leaves English untouched,
+         * because there the pattern's own first word already carries it.
+         */
         this.getTradeText = () => this.trade_text
             ? translationManager.getText(language, this.trade_text)
-            : translationManager.getText(language, "ui trade with", {v1: this.getDisplayName()});
+            : translationManager.assembleName(language, "ui trade with",
+                {v1: `name ${this.display_name}`}, {capitalise: true});
 
         /** The unlock message, or null for a trader with none. */
         this.getUnlockMessage = () => this.unlock_message

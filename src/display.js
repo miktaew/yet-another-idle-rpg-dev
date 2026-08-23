@@ -2126,7 +2126,7 @@ function update_displayed_normal_location(location) {
             const crafting_button = document.createElement("div");
             crafting_button.classList.add("location_choices", "choice_craft");
             crafting_button.setAttribute("onclick", 'openCraftingWindow()');
-            insert_HTML(crafting_button, `<i class="material-icons">construction</i> ${location.crafting.use_text}`);
+            insert_HTML(crafting_button, `<i class="material-icons">construction</i> ${translationManager.getText(language, location.crafting.use_text)}`);
             location_choice_divs["crafting"] = crafting_button;
             //action_div.appendChild(crafting_button);
         }
@@ -2138,7 +2138,7 @@ function update_displayed_normal_location(location) {
     if(location.housing?.is_unlocked) { 
         const start_sleeping_div = document.createElement("div");
         
-        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + location.housing.text_to_sleep);
+        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translationManager.getText(language, location.housing.text_to_sleep));
         start_sleeping_div.id = "start_sleeping_div";
         start_sleeping_div.setAttribute('onclick', 'start_sleeping()');
 
@@ -5732,6 +5732,7 @@ function update_backup_load_button(date_string){
         backup_load_button.style.color = "white";
         backup_load_button.style.cursor = "pointer";
     } else {
+        backup_load_button.innerText = translationManager.getText(language, "ui no backup autosave");
         backup_load_button.style["background-image"] = "none";
         backup_load_button.style["background-color"] = "#181818";
         backup_load_button.style.color = "gray";

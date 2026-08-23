@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 23 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 24 -->
 
 # Changelog
 
@@ -20,6 +20,84 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-22
+
+### Translated the last hard-coded English, and stopped Turkish opening in lowercase
+
+**Five sites were still English in `src/` and `index.html`.** Both `Talk to the X`
+builders — the `Dialogue` constructor's default and the "suspicious man"'s own
+override — the `Started a new quest:` log prefix, the loading screen's all-clear
+line, and the crafting and sleep buttons in every location that has them. The last
+two are the odd ones: `location.crafting.use_text` and
+`location.housing.text_to_sleep` already held text ids, and were interpolated raw
+into the button, so the player read the id. They were held back until `check`'s
+content-id scan covered `text_to_sleep`, because touching them first was the one
+edit that could have created a placeholder instead of removing one.
+
+The backup-save button was a sixth. `update_backup_load_button` sets its text from
+a parameterised id when an autosave exists, but its no-backup branch set four
+styles and returned, so the English left in the markup was exactly what a player
+without an autosave read — permanently, in any language.
+
+**A correction that mattered.** I had recorded that `resolveParams` treats every
+`getText` param as a text id. It does not: `getText` passes params straight to
+`fill`, which substitutes them literally, and `resolveParams` is reached only
+through `assembleName`. Checked by running the real module rather than reasoning
+about it — passing an already-resolved name works, passing an id does not.
+
+That correction found a live bug. `main.js` built the "You should talk to X" log
+line with `{v1: dialogue.getName(...)}`, and `getName` returns the *canonical
+English* name by design — the display-name layer is a separate accessor. So a
+Turkish game logged "suspicious man" inside a Turkish sentence. `display.js` does
+the same call correctly two lines away, wrapped in `getDisplayName`.
+
+**Turkish opens three of these patterns with the name, and names are stored
+lowercase.** Of 535 `name ...` rows, 489 are capitalised and 46 are not — and the
+46 are exactly the NPCs and traders, matching English, where the pattern's own
+first word carries the capital. English "Talk to the village elder" is right;
+Turkish "{v1} ile konuş" gave "köy yaşlısı ile konuş" on a button.
+
+So the three go through `assembleName` with `capitalise` instead of `getText`:
+the parts land in the language's own pattern, and the *assembled* result is
+capitalised, which is the only way to get a capital there when the name leads.
+English is untouched by it. The results, checked against the real locales:
+`Köy yaşlısı ile konuş`, `Köy tüccarı ile ticaret yap`,
+`Şüpheli adam ile konuşmalısın` — and `Enik ile konuş` for the mofu-mofu variant,
+which has its own `name puppy` row.
+
+The four `desc component ...` descriptions had the same defect from the other end:
+they opened with `{material}`, material names are lowercase, so the Turkish
+tooltip started mid-sentence where the English one starts "A short blade".
+Reworded so a real word leads — `Kısa bir bıçak; kaba odun kullanılarak
+yapılmış, …` — with the slot still bare, because Turkish cannot suffix a slot.
+
+**Three checks and a corrected test.**
+
+`text_to_sleep` joined the locations scan, bringing its 4 ids under the check that
+would have caught the raw interpolation in the first place. A dialogue
+display-name check requires a `name <key>` row for all 15 dialogues plus the two
+variants the "suspicious man" returns from its own `getName`, since those are
+chosen by arbitrary logic rather than declared as a field. A trader check does the
+same for all 7 traders, keyed on `display_name` and not the registry key: two
+traders deliberately share a shown name while keeping separate keys and
+inventories, and one has a `name` field that differs from its key outright.
+
+That distinction is worth recording, because I got it wrong first: keyed on the
+registry key, the scan reported three traders missing Turkish rows. All seven
+resolve. `suspicious trader 2` shows as `suspicious trader`, `swampland trader 2`
+as `swampland trader`, and `nekomimi trader`'s `name` field reads
+`nekomimi cafe trader`. Checking the wrong field invents gaps and hides the real
+one.
+
+The existing slot-suffix test asserted the Turkish description `startsWith` the
+material, which conflated "the slot takes no suffix" with "the slot comes first"
+— so it failed the moment the slot moved for the capitalisation fix. Rewritten to
+assert the invariant it meant, position-independent, and paired with a new one
+that fails if a component description opens with `{material}` again. Both
+negative-tested, across all four descriptions rather than the one. `npm test` went
+from 63 checks to 70.
+
+2593 keys per language; `check` at 1282 content ids, 17 dialogue names and 7
+trader names.
 
 ### The in-game changelog is now part of the record, and got a rebuild
 

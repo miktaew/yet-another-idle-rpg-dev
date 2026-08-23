@@ -2415,7 +2415,15 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             }
             if(any_unlocked && inform_textline && inform_overall && !rewards.textlines[i].skip_message && source_name !== rewards.textlines[i].dialogue) {
 
-                log_message(translationManager.getText(language, "log you should talk to v1", {v1: dialogues[rewards.textlines[i].dialogue].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})}), "dialogue_unlocked");
+                //getName returns the canonical English name, so it has to go
+                //through the display-name layer or the English would sit inside
+                //the translated sentence. assembleName does that and capitalises
+                //the result, which Turkish needs because its pattern opens with
+                //the name and NPC names are stored lowercase.
+                log_message(translationManager.assembleName(language, "log you should talk to v1",
+                    {v1: `name ${dialogues[rewards.textlines[i].dialogue]
+                        .getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})}`},
+                    {capitalise: true}), "dialogue_unlocked");
                 //maybe do this only when there's just 1 dialogue with changes?
             }
         }

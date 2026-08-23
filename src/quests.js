@@ -108,7 +108,10 @@ const questManager = {
         if(!quest.is_hidden) {
             add_quest_to_display(quest_id);
             if(should_inform) {
-                log_message(`Started a new quest: ${quests[quest_id].getQuestName()}`);
+                //getQuestName already resolves to displayable text, and a
+                //getText param is substituted literally, so it goes in as-is.
+                log_message(translationManager.getText(language, "log started a new quest",
+                    {v1: quests[quest_id].getQuestName()}));
             }
         }
     },

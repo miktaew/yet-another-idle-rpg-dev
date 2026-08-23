@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 23 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 24 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,84 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-22
+
+### Sabit kodlanmış son İngilizce metinler çevrildi, Türkçenin küçük harfle başlaması giderildi
+
+**`src/` ve `index.html` içinde hâlâ beş yer İngilizceydi.** İki `Talk to the X`
+kurucusu — `Dialogue` yapıcısının varsayılanı ve "şüpheli adam"ın kendi override'ı
+— `Started a new quest:` günlük öneki, yükleme ekranının "sorun yok" satırı ve
+sahip olan her lokasyondaki zanaat ile uyku düğmeleri. Son ikisi tuhaf olanlar:
+`location.crafting.use_text` ve `location.housing.text_to_sleep` zaten metin id'si
+tutuyordu ve düğmeye ham hâlde yerleştiriliyordu; yani oyuncu id'yi okuyordu.
+`check`'in içerik id taraması `text_to_sleep`'i kapsayana kadar bekletildiler,
+çünkü onlara önce dokunmak, yer tutucu kaldırmak yerine yer tutucu *yaratabilecek*
+tek düzenlemeydi.
+
+Yedek kayıt düğmesi altıncısıydı. `update_backup_load_button`, bir otomatik kayıt
+varsa metnini parametreli bir id'den yazıyor; ama yedeğin olmadığı dalı dört stil
+ayarlayıp dönüyordu. Yani markup'ta kalan İngilizce, otomatik kaydı olmayan bir
+oyuncunun okuduğu şeyin tam olarak kendisiydi — kalıcı olarak ve her dilde.
+
+**Önemli bir düzeltme.** `resolveParams`'ın her `getText` parametresini metin id'si
+saydığını kaydetmiştim. Saymıyor: `getText` parametreleri doğrudan `fill`'e
+geçiriyor, o da onları birebir yerleştiriyor; `resolveParams`'a ise yalnızca
+`assembleName` üzerinden ulaşılıyor. Üzerine akıl yürütmek yerine gerçek modülü
+çalıştırarak sınandı — çözülmüş bir adı geçirmek işliyor, id geçirmek işlemiyor.
+
+Bu düzeltme canlı bir hata buldu. `main.js`, "You should talk to X" günlük satırını
+`{v1: dialogue.getName(...)}` ile kuruyordu; `getName` ise tasarım gereği
+*kanonik İngilizce* adı döndürüyor — görünen ad katmanı ayrı bir erişimci. Yani
+Türkçe bir oyun, Türkçe bir cümlenin içine "suspicious man" yazıyordu. `display.js`
+iki satır ötede aynı çağrıyı `getDisplayName` ile sarmalayarak doğru yapıyor.
+
+**Türkçe bu kalıpların üçünü adla açıyor ve adlar küçük harfle saklanıyor.** 535
+`name ...` satırının 489'u büyük harfli, 46'sı değil — ve o 46, tam olarak NPC'ler
+ile tüccarlar; İngilizceyle birebir örtüşüyor, çünkü orada büyük harfi kalıbın ilk
+kelimesi taşıyor. İngilizce "Talk to the village elder" doğru; Türkçe
+"{v1} ile konuş" ise bir düğmede "köy yaşlısı ile konuş" veriyordu.
+
+Bu yüzden üçü `getText` yerine `capitalise` ile `assembleName`'den geçiyor: parçalar
+dilin kendi kalıbına yerleşiyor ve *birleştirilmiş* sonuç büyük harfe çekiliyor —
+ad başta olduğunda oraya büyük harf koymanın tek yolu bu. İngilizce bundan
+etkilenmiyor. Gerçek locale'lerle sınanan sonuçlar: `Köy yaşlısı ile konuş`,
+`Köy tüccarı ile ticaret yap`, `Şüpheli adam ile konuşmalısın` — ve mofu-mofu
+varyantı için `Enik ile konuş`; onun da kendi `name puppy` satırı var.
+
+Dört `desc component ...` açıklaması aynı kusuru öbür uçtan taşıyordu: `{material}`
+ile başlıyorlardı, materyal adları küçük harfli, dolayısıyla Türkçe tooltip
+İngilizcesinin "A short blade" ile başladığı yerde cümlenin ortasından başlıyordu.
+Gerçek bir kelime öne gelecek şekilde yeniden yazıldı — `Kısa bir bıçak; kaba odun
+kullanılarak yapılmış, …` — slot yine eksiz, çünkü Türkçede bir slota ek
+getirilemez.
+
+**Üç kontrol ve düzeltilmiş bir test.**
+
+`text_to_sleep` lokasyon taramasına katıldı ve 4 id'sini, ham yerleştirmeyi zaten
+yakalayacak olan kontrolün altına aldı. Bir dialogue görünen-ad kontrolü, 15
+dialogue'un tamamı artı "şüpheli adam"ın kendi `getName`'inden döndürdüğü iki
+varyant için `name <key>` satırı istiyor; o ikisi bir alan olarak bildirilmek yerine
+keyfî bir mantıkla seçildiği için. Bir tüccar kontrolü aynısını 7 tüccar için
+yapıyor; registry anahtarı değil `display_name` üzerinden: iki tüccar bilinçli
+olarak aynı görünen adı paylaşırken ayrı anahtar ve ayrı envanter tutuyor, birinin
+`name` alanı ise anahtarından tamamen farklı.
+
+Bu ayrım kayda değer, çünkü önce yanlış yaptım: registry anahtarı üzerinden
+tarayınca üç tüccarın Türkçe satırı eksik göründü. Yedisi de çözülüyor.
+`suspicious trader 2`, `suspicious trader` olarak görünüyor; `swampland trader 2`,
+`swampland trader` olarak; `nekomimi trader`'ın `name` alanı ise
+`nekomimi cafe trader` diyor. Yanlış alanı kontrol etmek, olmayan boşluklar
+uyduruyor ve gerçek olanı saklıyor.
+
+Mevcut slot-eki testi, Türkçe açıklamanın materyalle `startsWith` olduğunu
+doğruluyordu; bu da "slot ek almıyor" ile "slot başta" koşullarını birbirine
+karıştırıyordu — dolayısıyla büyük harf düzeltmesi için slot yer değiştirdiği anda
+düştü. Kastettiği değişmezi konumdan bağımsız doğrulayacak şekilde yeniden yazıldı
+ve bir bileşen açıklaması yeniden `{material}` ile başlarsa düşen yeni bir
+değişmezle eşleştirildi. İkisi de, bir açıklama değil dördünün tamamı üzerinde
+negatif test edildi. `npm test` 63 kontrolden 70'e çıktı.
+
+Dil başına 2593 anahtar; `check` 1282 içerik id'si, 17 dialogue adı ve 7 tüccar
+adında.
 
 ### Oyun içi changelog artık kaydın parçası ve yeniden kuruldu
 

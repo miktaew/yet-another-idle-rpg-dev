@@ -2978,6 +2978,14 @@ const descriptions = {
     "ui opt skip loading screen": "Automatically skip the loading screen",
     "ui opt kemonomimi": "Enable kemonomimi mode",
     "ui btn hard reset": "Hard reset the game",
+
+    //LAST OF THE HARD-CODED ENGLISH: the dialogue button pattern, the
+    //new-quest log line, the loading-screen status and the disabled
+    //backup button.
+    "ui talk to": "Talk to the {v1}",
+    "log started a new quest": "Started a new quest: {v1}",
+    "ui loading no issues": "No issues in the loading process :)",
+    "ui no backup autosave": "No backup autosave",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

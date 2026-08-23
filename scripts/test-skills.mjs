@@ -430,13 +430,27 @@ const global_flags = globalThis.__test_flags;
         translationManager.getText("english", "material rough wood") === "rough wood"
         && translationManager.getText("english", "material name rough wood") === "simple wooden");
 
+    // Two invariants per component description, both about the slot.
+    //
     // Turkish cannot suffix a slot value - the ablative would need -dan/-den/-tan/
-    // -ten chosen from the material's last sounds - so the pattern is built to leave
-    // the slot bare. If someone "improves" it into "{material}dan", this fails.
-    check("a description pattern leaves its slot unsuffixed in Turkish",
-        translationManager.getText("turkish", "desc component axe head",
-            {material: "kaba odun"}).startsWith("kaba odun kullanılarak"),
-        `got=${translationManager.getText("turkish", "desc component axe head", {material: "kaba odun"})}`);
+    // -ten chosen from the material's last sounds - so the pattern must leave the
+    // slot bare. If someone "improves" it into "{material}dan", the first check
+    // fails. Position-independent on purpose: the earlier version of this check
+    // asserted startsWith, which conflated "unsuffixed" with "slot first" and
+    // failed the moment the slot was moved for the reason below.
+    //
+    // And the slot must NOT open the text. Material names are stored lowercase, so
+    // a pattern beginning with {material} produces a tooltip that starts
+    // mid-sentence in lowercase where the English one starts with "A short blade".
+    for(const id of ["desc component short blade", "desc component long blade",
+                     "desc component axe head", "desc component hammer head"]) {
+        const filled = translationManager.getText("turkish", id, {material: "kaba odun"});
+        check(`${id} leaves its slot unsuffixed in Turkish`,
+            /kaba odun(?!\p{L})/u.test(filled), `got=${filled}`);
+        check(`${id} does not open with its slot in Turkish`,
+            !translations.turkish[id].startsWith("{material}"),
+            `got=${translations.turkish[id]}`);
+    }
     // %HeroName% is substituted by the log itself, not by the translation layer, so
     // a locale that translates or drops it silently loses the hero's name from every
     // combat line. Checked across every language, not just Turkish.

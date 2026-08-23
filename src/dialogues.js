@@ -1,6 +1,8 @@
 "use strict";
 
 import { GameAction } from "./actions.js";
+import { language } from "./main.js";
+import { translationManager } from "./translation.js";
 
 const dialogues = {};
 
@@ -9,8 +11,17 @@ class Dialogue {
         name,
         getName = () =>{return this.name},
         id,
-        starting_text = `Talk to the ${name}`,
-        getStartingText = () =>{return this.starting_text},
+        //OPTIONAL text id for the button that opens this dialogue. Left out,
+        //getStartingText builds "Talk to the <name>" from the display name.
+        starting_text,
+        //assembleName rather than getText: the parts go into the LANGUAGE'S
+        //pattern, so a language is free to put the name first, and it
+        //capitalises the assembled result - which is the only way to get a
+        //capital there when the name leads the sentence.
+        getStartingText = () => this.starting_text
+            ? translationManager.getText(language, this.starting_text)
+            : translationManager.assembleName(language, "ui talk to",
+                {v1: `name ${this.name}`}, {capitalise: true}),
         ending_text = `Go back`,
         is_unlocked = true,
         is_finished = false,
@@ -960,7 +971,12 @@ class DialogueAction extends GameAction {
             }
         },
         getStartingText: (context)=>{
-            return `Talk to the ${dialogues["suspicious man"].getName(context)}`;
+            //getName returns the canonical English variant - "puppy",
+            //"no-longer-suspicious guy" or the key itself - and each one has a
+            //"name <variant>" row, which is what the pattern takes.
+            return translationManager.assembleName(language, "ui talk to",
+                {v1: `name ${dialogues["suspicious man"].getName(context)}`},
+                {capitalise: true});
         },
         textlines: {
             "hello": new Textline({ 

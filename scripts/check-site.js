@@ -464,7 +464,7 @@ async function check_content_text_ids() {
             //Every text field in a location, an activity or a game action now holds
             //an id. The dynamic getDescription and getBackgroundNoises bodies call
             //getText directly, so those are matched by the call rather than a field.
-            /(?<![A-Za-z0-9_])(?:description|starting_text|success_text|action_text|action_name|unlock_text|leave_text|custom_text|use_text):\s*"((?:desc|action|activity|loc|travel|noise|ui) [^"]+)"/g,
+            /(?<![A-Za-z0-9_])(?:description|starting_text|success_text|action_text|action_name|unlock_text|leave_text|custom_text|use_text|text_to_sleep):\s*"((?:desc|action|activity|loc|travel|noise|ui) [^"]+)"/g,
             /(?<![A-Za-z0-9_])(?:conditional_loss|random_loss|unable_to_begin):\s*\[\s*"((?:action) [^"]+)"\s*\]/g,
             /translationManager\.getText\(language,\s*"((?:desc|action|activity|loc|travel|noise|ui) [^"]+)"/g,
         ]},
@@ -601,10 +601,85 @@ function check_changelogs_cover_version() {
     }
 }
 
+/**
+ * Every dialogue needs a "name <key>" row for its display name.
+ *
+ * The default getStartingText assembles the button label from it, and the label is
+ * the only place a dialogue's name reaches the player, so a missing row shows up
+ * as a placeholder on a button rather than anywhere a test would look. The
+ * registry key stays English and stays save data; the row is the shown name.
+ *
+ * The three names the "suspicious man" returns from its own getName override -
+ * itself, "puppy" and "no-longer-suspicious guy" - are checked as literals,
+ * because they are chosen by arbitrary logic rather than declared as a field.
+ */
+const dialogue_name_variants = ["puppy", "no-longer-suspicious guy"];
+
+async function check_dialogue_display_names() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const source = fs.readFileSync(path.join(repo_root, "src/dialogues.js"), "utf8");
+    const keys = [...source.matchAll(/dialogues\["([^"]+)"\]\s*=\s*new Dialogue/g)].map(match => match[1]);
+    if (keys.length === 0) {
+        error("src/dialogues.js declares no dialogues - this check is out of date.");
+        return;
+    }
+
+    for (const name of [...keys, ...dialogue_name_variants]) {
+        if (!(`name ${name}` in reference)) {
+            error(`locales/${default_language}.js has no "name ${name}" row;`
+                + " the dialogue's button label would render as a placeholder.");
+        }
+    }
+    console.log(`[check] dialogue display names: ${keys.length + dialogue_name_variants.length} resolved`);
+}
+
+/**
+ * Every trader needs a "name <display_name>" row.
+ *
+ * The lookup key is display_name, NOT the registry key - two traders deliberately
+ * share a shown name while keeping separate keys and separate inventories
+ * ("suspicious trader 2" shows as "suspicious trader"), and one has a name field
+ * that differs from its key outright. Checking the registry key instead reports
+ * three phantom gaps and misses the only row that matters.
+ *
+ * A missing row leaves getDisplayName falling back to the English name, so the
+ * shop button in a Turkish game would read half in English.
+ */
+async function check_trader_display_names() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const source = fs.readFileSync(path.join(repo_root, "src/traders.js"), "utf8");
+    const declarations = [...source.matchAll(/traders\["([^"]+)"\]\s*=\s*new Trader\(\{([\s\S]*?)\n {4}\}\);/g)];
+    if (declarations.length === 0) {
+        error("src/traders.js declares no traders - this check is out of date.");
+        return;
+    }
+
+    for (const [, key, body] of declarations) {
+        const name = body.match(/(?<![A-Za-z0-9_])name:\s*"([^"]+)"/);
+        const display = body.match(/(?<![A-Za-z0-9_])display_name:\s*"([^"]+)"/);
+        const shown = (display ?? name)?.[1];
+        if (!shown) {
+            error(`src/traders.js trader "${key}" declares neither name nor display_name.`);
+            continue;
+        }
+        if (!(`name ${shown}` in reference)) {
+            error(`locales/${default_language}.js has no "name ${shown}" row, shown by trader "${key}";`
+                + " its shop button would fall back to the English name.");
+        }
+    }
+    console.log(`[check] trader display names: ${declarations.length} resolved`);
+}
+
 check_site();
 check_changelogs_cover_version();
 check_language_switch_repaints();
 await check_locales();
+await check_dialogue_display_names();
+await check_trader_display_names();
 await check_content_text_ids();
 await check_generated_items();
 

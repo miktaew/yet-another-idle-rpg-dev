@@ -1910,10 +1910,10 @@ const descriptions = {
 
     //GENERATED ITEMS - the four component descriptions. {material} is
     //filled from the "material X" rows above.
-    "desc component short blade": "{material} kullanılarak yapılmış kısa bir bıçak; bir hançer ya da mızrak için biçilmiş kaftan",
-    "desc component long blade": "{material} kullanılarak yapılmış uzun bir bıçak; bir kılıç için biçilmiş kaftan",
-    "desc component axe head": "{material} kullanılarak yapılmış bir balta başı",
-    "desc component hammer head": "{material} kullanılarak yapılmış bir çekiç başı",
+    "desc component short blade": "Kısa bir bıçak; {material} kullanılarak yapılmış, bir hançer ya da mızrak için biçilmiş kaftan",
+    "desc component long blade": "Uzun bir bıçak; {material} kullanılarak yapılmış, bir kılıç için biçilmiş kaftan",
+    "desc component axe head": "Bir balta başı; {material} kullanılarak yapılmış",
+    "desc component hammer head": "Bir çekiç başı; {material} kullanılarak yapılmış",
 
     //GENERATED ITEMS - the name patterns. A language reorders an
     //assembled name by changing these rows and nothing else.
@@ -3018,6 +3018,14 @@ const descriptions = {
     "ui opt skip loading screen": "Yükleme ekranını otomatik atla",
     "ui opt kemonomimi": "Kemonomimi modunu aç",
     "ui btn hard reset": "Oyunu sıfırla",
+
+    //LAST OF THE HARD-CODED ENGLISH: the dialogue button pattern, the
+    //new-quest log line, the loading-screen status and the disabled
+    //backup button.
+    "ui talk to": "{v1} ile konuş",
+    "log started a new quest": "Yeni görev başladı: {v1}",
+    "ui loading no issues": "Yükleme sırasında sorun çıkmadı :)",
+    "ui no backup autosave": "Yedek otomatik kayıt yok",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};
