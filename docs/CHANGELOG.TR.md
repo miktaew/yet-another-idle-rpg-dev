@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 38 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 39 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,63 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### 3. bölge: körfez
+
+*"A-ha~! Ta kuzeyde! Oradan çok baharat, et, metal ve deri gelir! Çok uzaktan! İyi
+yerdir gitmek için! Ayrılmak için!"*
+
+PROPOSALS bu bölgenin ayrılmak için bir sebep oluşana kadar beklemesi gerektiğini
+söylüyordu; 4. görev o sebebi verdi. Koleksiyoncunun son repliği çıktığı günden beri
+cevapsız duruyordu: *"O partide bir parça daha vardı ve geceyi çıkarmadı... o gece
+onu almaya gelen kişi pazarlık etmedi."* Körfez, o parçanın gittiği yer.
+
+**Aşçı değil, mubayaacı açıyor.** Aşçı körfezi adlandırıyor ve ne işe yaradığını
+söylüyor, ama bir bataklık uzakta ve oraya hiç gitmemiş. Mubayaacı, oyunda işi yol
+olan tek kişi - *"Yoldan ne geldiğini ve buraya vardığında ne ettiğini yazıyor"* - ve
+ona öbür yönü kimse sormamış. Cevabı bölgenin kendisi: *"Bu masada on bir yıl; kuzeye
+boş giden arabaları seyrettim ve içlerinde ne olduğunu yazmam için bir kez bile para
+almadım."*
+
+**Yol bir koridor değil, engel.** `Coast road`, Kasaba dışı'na bağlı bir Combat_zone
+ve körfezi haritaya koyan şey onu temizlemek. Yeni bir şey değil, dev kurtlar: iyi
+yapılmış ama kenarında kimsenin yaşamadığı bir yol tam onların işi ve bölgenin
+tehlikesi egzotik olması değil, boş olması olmalı. (Bir Combat_zone'un
+`parent_location`'ı ve `leave_text`'i var, kendi seyahat listesi yok; yani ara durak
+olamaz - körfez de doğrudan Kasaba dışı'na bağlı.)
+
+**Körfez bir ayrılış olarak kuruldu.** On bir yapı, dokuzu depo; meydan yok, kuyu
+yok, sur yok - orada savunulacak bir şey ve buralı bir kimse yok. Sayman,
+mubayaacının karşı numarası ve onun ikinci bir kopyası olmaması gerekiyordu:
+mubayaacı kendi küçüklüğüyle eğleniyor, sayman kendisinden yorulmuş; ve sayfaya değil
+suya bakıyor, çünkü gerçekten saydığı şey orada.
+
+**Tuz evi var, çünkü aşçının repliği bir alışveriş listesi.** *"Çok baharat, et, metal
+ve deri"* bir vaat ve onu dürüstçe tutmanın yolu, oyuncunun bugüne kadar yalnızca
+yaparak ya da avlayarak edindiği şeylerin durduğu bir raf: külçe hâlinde demir ve
+çelik, miktarla deri, çuvalla baharat - hem de 8 kâr marjıyla; bataklıktan da kenar
+mahalleden de yüksek. Yeni eşya yok: uzaklık kısmı fiyatta, ganimette değil. Kendi
+pazar bölgesi var ve hiçbir yere bağlı değil; çünkü doygunluk oyuncunun tek bir yere
+ne kadar yığdığını modelliyor ve körfez, oyundaki diğer bütün pazarlardan bir ay
+uzakta.
+
+**Ödül, bir deftere düşülmüş bir satır.** `read the departures`, ovalardaki `read the
+ground`'un aynası: merkez odada, Algı'ya bağlı, eşya değil bilgi veren bir eylem.
+Verdiği şey **Marrowmoth**: kırk ton, orman yolundan sonraki gece cezirle çıkmış, bir
+sandık tartılmamış ve hesap sütununda geri kalan her şeyle aynı elle, üzerinden iki
+kez geçilmiş tek bir çizgi. *"Her teknenin bir hesabı olur. Hesap bunun için vardır -
+bir şey ters gittiğinde yazılacak bir adam olsun diye."*
+
+Kimin ödediği hâlâ bu oyunda değil. Yeni olan şey, yılda iki kez dönen ve vakti
+gelmemiş bir tekne ile geldiğinde sana haber salmayacak bir adam. Bu, kapanmış bir
+gizem değil, açılmış bir kanca - ki bu ark tam bunun için var.
+
+**Oyunun kendi doğrulayıcısı, `npm run check`'in yakalamadığını yakaladı.**
+`src/verifier.js`, tüccarı olup pazar bölgesi olmayan bir odayı reddediyor ve bunu
+`check` çoktan geçtikten sonra, bir tarayıcıda söyledi. Sıra yanlış; o yüzden aynı
+iddia artık derlemede de var - odanın kendi girinti düzeyine sabitlenmiş hâlde, çünkü
+ilk sürüm Gang hideout'un yinelenen ödülündeki `locks: {traders: [...]}` satırını bir
+savaş bölgesindeki dükkân sanıp var olmayan bir kusur bildirdi.
 
 ### İngilizcenin kalanı: bakarak değil tarayarak bulundu
 

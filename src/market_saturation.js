@@ -9,6 +9,10 @@ const group_key_prefix = "type_";
 const market_regions = {};
 const market_region_mapping = {
     "Village": ["Slums", "Swamp"],
+    //The bay bleeds into nothing. It is a month up the coast from everything else
+    //here, so what the player sells there does not move a price in the village -
+    //and a market that does not remember the village is the point of the region.
+    "Bay": [],
 };
 
 //different caps for normal items and for equipment/components, with the first reaching 1/10th around 1000 sold and latter around 200 sold

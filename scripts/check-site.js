@@ -961,6 +961,74 @@ function strip_interpolations(body) {
 }
 
 /**
+ * A location with a trader needs a market region, and the region has to exist.
+ *
+ * The game has its own verifier (src/verifier.js) which says exactly this, and it
+ * is the one that caught the salt house - in a browser, after `npm run check` had
+ * already passed. That is the wrong order: the verifier needs the whole module
+ * graph and the circular imports that only resolve in a browser, so it cannot run
+ * here, but this particular assertion is plain text and belongs in the build.
+ *
+ * Without a region, market_saturation has no counter for the shop and the prices it
+ * quotes are not the prices it charges.
+ */
+async function check_trader_market_regions() {
+    const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
+    const market_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/market_saturation.js"), "utf8"));
+
+    const mapping = market_source.match(/const market_region_mapping = \{([\s\S]*?)\n\};/);
+    if (!mapping) {
+        error("src/market_saturation.js has no `const market_region_mapping = { ... }`"
+            + " - this check is out of date.");
+        return;
+    }
+    const regions = new Set([...mapping[1].matchAll(/"([^"]+)"\s*:/g)].map(match => match[1]));
+    //The mapping is symmetrised at load: anything named as a neighbour becomes a
+    //region of its own too.
+    for (const match of mapping[1].matchAll(/:\s*\[([^\]]*)\]/g)) {
+        for (const neighbour of match[1].matchAll(/"([^"]+)"/g)) {
+            regions.add(neighbour[1]);
+        }
+    }
+
+    //Each `locations["X"] = new Location({ ... });` block, so traders and
+    //market_region can be read as belonging to the same room. Only Location: a
+    //Combat_zone cannot hold a shop.
+    const blocks = [...locations_source.matchAll(/locations\["([^"]+)"\]\s*=\s*new Location\(\{([\s\S]*?)\n {4}\}\);/g)];
+    if (blocks.length === 0) {
+        error("could not read any location blocks out of src/locations.js - this check is out of date.");
+        return;
+    }
+
+    //Anchored at the room's own indentation. A `traders:` nested inside a reward is
+    //a different thing entirely: Gang hideout's repeatable_reward carries
+    //`locks: {traders: [...]}`, which is a trader being taken away from the Slums,
+    //and reading that as a shop inside a combat zone is how this check first
+    //reported a defect that was not there.
+    const own_field = (body, field) => body.match(new RegExp(`^ {8}${field}\\s*:\\s*(.*)$`, "m"));
+
+    let with_traders = 0;
+    for (const [, name, body] of blocks) {
+        const traders = own_field(body, "traders");
+        if (!traders || !/\[\s*"/.test(traders[1])) continue;
+        with_traders++;
+
+        const region_field = own_field(body, "market_region");
+        const region = region_field && region_field[1].match(/^"([^"]+)"/);
+        if (!region) {
+            error(`location "${name}" has a trader but no market_region, so market saturation has`
+                + " no counter for its shop. src/verifier.js refuses this at runtime.");
+            continue;
+        }
+        if (!regions.has(region[1])) {
+            error(`location "${name}" claims market_region "${region[1]}", which is not a region in`
+                + " market_region_mapping.");
+        }
+    }
+    console.log(`[check] trader market regions: ${with_traders} shops across ${regions.size} regions`);
+}
+
+/**
  * Registry VALUES that reach the screen need rows too.
  *
  * The DOM scan cannot find these: `${item.material_type}` is an interpolation, and
@@ -1371,6 +1439,7 @@ await check_item_display_names();
 await check_equipment_slot_names();
 await check_no_english_in_dom();
 await check_registry_value_names();
+await check_trader_market_regions();
 await check_required_items();
 await check_content_text_ids();
 await check_generated_items();

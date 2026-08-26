@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 20 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 21 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -426,9 +426,20 @@ Uygulama sırası, en yüksek kaldıraç önce:
 
    Sürgün kabile hâlâ bulunmuyor. İzleri orada; ne oldukları, bataklığın üstüne
    kurulduğu açık soru olarak kalıyor.
-3. **Körfez.** En büyüğü ve oyunun geri kalanının çoktan işaret ettiği yer: lonca
-   mubayaacısının üç malı kapıdan kuzeye gidiyor ve aşçı, körfezin *ayrıldığın* yer
-   olduğunu söylüyor. Ayrılmak için bir sebep oluştuktan sonra kurulmalı.
+3. **Körfez — TAMAM.** Kapının üç gün kuzeyi; mubayaacıya yoldan geri ne gittiğini
+   sorarak açılıyor. Ayrılmak için sebep 4. görevle geldi: koleksiyoncunun ikinci
+   parçası *"geceyi çıkarmadı"* ve bu, o parçanın çıktığı yol.
+
+   Yol bir engel - Kasaba dışı'na bağlı, içinden geçilen değil temizlenen bir
+   Combat_zone - ve körfezin kendisi bir ayrılış olarak kuruldu: on bir yapı,
+   dokuzu depo, kimse buralı değil. Tuz evi, aşçının *"baharat, et, metal ve
+   deri"* vaadini mevcut şablonlardan tutuyor; içindeki her şeyin tekneyle
+   geldiğini söyleyen bir marjla ve kendi pazar bölgesinde, çünkü oyundaki diğer
+   bütün pazarlardan bir ay uzakta.
+
+   Ödül çıkış defteri: **Marrowmoth**, tartılmamış bir sandık ve üzerinden iki kez
+   geçilmiş bir hesap sütunu. Kimin ödediğine dokunulmuyor. Yeni olan şey, yılda
+   iki kez dönen ve vakti gelmemiş bir tekne.
 4. **Dağ.** En son, çünkü var. Zemin değil derinlik.
 
 **Onun dördüne dahil olmayan beşinci bir iplik.** Forest lake'in ötesindeki `gaze`

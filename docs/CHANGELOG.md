@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 38 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 39 -->
 
 # Changelog
 
@@ -20,6 +20,66 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### Region 3: the bay
+
+*"A-ha~! Far to the north! Many spice and meat and metal and leather come from
+there! From very far away! It good place to go! To leave!"*
+
+PROPOSALS said this one should wait until there was a reason to leave, and quest 4
+supplied it. The collector's last line has been sitting unanswered since it
+shipped: *"There was one other piece in that lot and it did not stay the night...
+whoever came for it that night did not haggle."* The bay is where it went.
+
+**Opened by the factor, not by the cook.** The cook names the bay and says what it
+is for, but he is a swamp away and has never been there. The factor is the only
+person in the game whose job is the road - *"He is writing down what comes up the
+road and what it was worth when it got here"* - and nobody has ever asked him about
+the other direction. His answer is the region: *"Eleven years at this table, and I
+have watched carts go north empty, and I have never once been paid to write down
+what was in them."*
+
+**The road is the obstacle, not a corridor.** `Coast road` is a Combat_zone off the
+Town outskirts, and clearing it is what puts the bay on the map. Direwolves rather
+than something new: a well-made road with nobody living along it is what they are
+for, and the region's danger should be that it is empty rather than that it is
+exotic. (A Combat_zone has a `parent_location` and a `leave_text` and no travel list
+of its own, so it cannot be a waypoint - the bay hangs off the outskirts too.)
+
+**The bay is built as a departure.** Eleven buildings, nine of them sheds, no
+square, no well, no wall - nothing there needs defending and nobody there is from
+there. The tallyman is the factor's opposite number and had to not be a second copy
+of him: the factor is amused by his own smallness, the tallyman is tired of his, and
+he looks at the water instead of at the page because what he is counting is out
+there.
+
+**The salt house exists because the cook's line is a shopping list.** *"Many spice
+and meat and metal and leather"* is a promise, and the honest way to keep it is a
+shelf holding things the player has only ever had by making or hunting them - iron
+and steel in bars, leather in quantity, spice by the sack - at a margin of 8,
+higher than the swamp and the slums both. No new items: the far-away part is the
+price, not the loot. It has its own market region, linked to nothing, because
+saturation models what the player has dumped in one place and the bay is a month
+from every other market in the game.
+
+**The payoff is an entry in a book.** `read the departures` mirrors `read the
+ground` on the plains - an action on the hub room, gated on Perception, that hands
+back a fact rather than an item. What it hands back is the **Marrowmoth**, forty
+tons, out on the ebb the night after the forest road, one crate unweighed, and an
+account column with a single stroke drawn across it twice in the same hand as
+everything else. *"Every hull has an account. That is what an account is for - so
+that when a thing goes wrong there is a man to write to."*
+
+Who paid is still not in this game. What is new is a hull that comes back twice a
+year and is not due, and a man who will not send for you when it does. That is a
+hook opened, not a mystery closed, which is what the arc is for.
+
+**The game's own verifier caught what `npm run check` did not.** `src/verifier.js`
+refuses a location that has a trader and no market region, and it said so in a
+browser after `check` had already passed. That is the wrong order, so the assertion
+is now in the build as well - anchored at the room's own indentation, because the
+first version read `locks: {traders: [...]}` inside Gang hideout's repeatable
+reward as a shop in a combat zone and reported a defect that was not there.
 
 ### The rest of the English, found by scanning instead of looking
 

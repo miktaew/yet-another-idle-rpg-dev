@@ -2349,6 +2349,147 @@ function get_location_type_penalty(type, stage, stat, category) {
         }),
     };
 	
+
+    /*
+        P-10 REGION 3 - the bay.
+
+        "A-ha~! Far to the north! Many spice and meat and metal and leather come
+        from there! From very far away! It good place to go! To leave!"
+
+        Built as a departure. The other three regions are places the snake's soul
+        lost; this one was never the snake's, and the cook is the only person in the
+        game who talks about leaving as a good outcome.
+
+        It hangs off the Town outskirts rather than off the swamp, because the
+        factor's road is the only road there is: he sits at a folding table writing
+        down what comes up it. Everything in this region is a ledger of one kind or
+        another.
+    */
+    locations["Coast road"] = new Combat_zone({
+        description: "desc location Coast road",
+        //Reused rather than invented: a long road that carries everything worth
+        //carrying, with nobody living along it, is what direwolves are for. The
+        //region's own danger is that it is empty, not that it is exotic.
+        enemies_list: ["Direwolf", "Direwolf hunter"],
+        types: [{type: "open", stage: 2, xp_gain: 9}, {type: "wet", stage: 1, xp_gain: 4}],
+        enemy_count: 80,
+        enemy_group_size: [2, 4],
+        enemy_stat_variation: 0.2,
+        is_unlocked: false,
+        name: "Coast road",
+        unlock_text: "loc Coast road unlock",
+        leave_text: "loc Coast road leave",
+        parent_location: locations["Town outskirts"],
+        first_reward: {
+            xp: 8000,
+            locations: [{location: "The bay"}],
+        },
+        repeatable_reward: {
+            xp: 4000,
+            quest_progress: [{quest_id: "A Good Place to Leave", task_index: 1}],
+        },
+        temperature_range_modifier: 1.1,
+        is_under_roof: false,
+    });
+
+    locations["Town outskirts"].connected_locations.push({location: locations["Coast road"],
+        custom_text: "travel Take the [Coast road] north", travel_time: 300});
+
+    locations["The bay"] = new Location({
+        connected_locations: [{location: locations["Town outskirts"],
+            custom_text: "travel Start the long walk back south to the [Town outskirts]", travel_time: 300}],
+        description: "desc location The bay",
+        dialogues: ["harbour tallyman"],
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise The bay 1"),
+                    translationManager.getText(language, "noise The bay 2"),
+                    translationManager.getText(language, "noise The bay 3"),
+                    translationManager.getText(language, "noise The bay 4"),
+                    translationManager.getText(language, "noise The bay 5"),
+                    translationManager.getText(language, "noise The bay 6")];
+        },
+        name: "The bay",
+        is_unlocked: false,
+        unlock_text: "loc The bay unlock",
+        //Warmer than the coast road and less variable: a working harbour with water
+        //on three sides does not swing the way an open road does.
+        temperature_modifier: 1.1,
+        temperature_range_modifier: 0.7,
+        is_under_roof: false,
+    });
+
+    //Off the outskirts, not off the road: a Combat_zone has a parent_location and a
+    //leave_text and no travel list of its own, so the road cannot be a waypoint. It
+    //is the obstacle instead - clearing it is what puts the bay on the map.
+    locations["Town outskirts"].connected_locations.push({location: locations["The bay"],
+        custom_text: "travel Walk the whole coast road north to [The bay]", travel_time: 300});
+
+    /*
+        The salt house. The cook's line is a shopping list - "many spice and meat and
+        metal and leather" - so the region has to hold a trader or the line is a lie.
+        Its stock is assembled from templates that already exist, because the point
+        of the room is that things arrive here from further away than the player can
+        go, not that there is new loot in the game.
+    */
+    locations["The salt house"] = new Location({
+        connected_locations: [{location: locations["The bay"],
+            custom_text: "travel Step back out onto the quay", travel_time: 4}],
+        description: "desc location The salt house",
+        name: "The salt house",
+        is_unlocked: false,
+        traders: ["bay trader"],
+        //Its own market, linked to nothing. Saturation models how much of a thing
+        //the player has already dumped in one place, and the bay is a month's walk
+        //from every other market in the game - which is the whole reason the region
+        //is worth walking to.
+        market_region: "Bay",
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise The salt house 1"),
+                    translationManager.getText(language, "noise The salt house 2"),
+                    translationManager.getText(language, "noise The salt house 3"),
+                    translationManager.getText(language, "noise The salt house 4")];
+        },
+        is_under_roof: true,
+        is_temperature_static: true,
+        static_temperature: 14,
+    });
+
+    locations["The bay"].connected_locations.push({location: locations["The salt house"],
+        custom_text: "travel Go into [The salt house]", travel_time: 4});
+
+    /*
+        The departures book, which is the region's answer and the whole of it.
+
+        Mirrors "read the ground" on the plains: an action on the hub room, gated on
+        Perception, that hands back a fact rather than an item. What it hands back is
+        deliberately incomplete - a hull, a tide, and a name column somebody left
+        empty. The plains keep the banished tribe open; the bay keeps who paid open.
+    */
+    locations["The bay"].actions = {
+        "read the departures": new GameAction({
+            action_id: "read the departures",
+            action_name: "action read the departures name",
+            starting_text: "action read the departures starting",
+            description: "action read the departures desc",
+            action_text: "action read the departures during",
+            success_text: "action read the departures success",
+            is_unlocked: false,
+            conditions: [
+                {skills: {Perception: 15}},
+                {skills: {Perception: 34}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action read the departures fail conditional_loss 1"],
+            },
+            attempt_duration: 300,
+            success_chances: [0.3, 1],
+            rewards: {
+                skill_xp: {Perception: 1200},
+                quest_progress: [{quest_id: "A Good Place to Leave", task_index: 3}],
+            },
+        }),
+    };
+
     locations["Longhouse"] = new Location({
         connected_locations: [{location: locations["Swampland tribe"], custom_text: "travel Go back out to the [Swampland tribe]", travel_time: 5}],
         description: "desc location Longhouse",

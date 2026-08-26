@@ -2466,6 +2466,64 @@ class DialogueAction extends GameAction {
         from the cook's. Nobody who has not been past the falls can bring him any
         of it, which is why the membership is worth writing.
     */
+    /*
+        P-10 region 3. The harbour's counterpart to the guild factor: the factor
+        writes down what comes up the road, and this one writes down what goes out on
+        the water. Same trade, opposite direction, and neither of them is paid to
+        care what it is.
+
+        He is the answer to quest 4's loose end and he must not close it. What he can
+        give is a hull, a tide and a name column somebody left empty. Who paid is not
+        in this game yet.
+    */
+    dialogues["harbour tallyman"] = new Dialogue({
+        name: "harbour tallyman",
+        is_unlocked: true,
+        description: "tallyman description",
+        textlines: {
+            "tallyman hello": new Textline({
+                name: "tallyman hello",
+                text: "tallyman hello answ",
+                is_unlocked: true,
+                unlocks: {
+                    textlines: [{dialogue: "harbour tallyman", lines: ["tallyman what leaves"]}],
+                },
+                locks_lines: ["tallyman hello"],
+            }),
+            "tallyman what leaves": new Textline({
+                name: "tallyman what leaves",
+                text: "tallyman what leaves answ",
+                is_unlocked: false,
+                rewards: {
+                    locations: [{location: "The salt house"}],
+                    traders: ["bay trader"],
+                    quest_progress: [{quest_id: "A Good Place to Leave", task_index: 2}],
+                },
+                unlocks: {
+                    textlines: [{dialogue: "harbour tallyman", lines: ["tallyman that night"]}],
+                },
+                locks_lines: ["tallyman what leaves"],
+            }),
+            "tallyman that night": new Textline({
+                name: "tallyman that night",
+                text: "tallyman that night answ",
+                is_unlocked: false,
+                //The book is not handed over. It is pointed at, which is what turns
+                //the region's answer into an action the player has to be good enough
+                //to perform.
+                rewards: {
+                    actions: [{location: "The bay", action: "read the departures"}],
+                },
+                locks_lines: ["tallyman that night"],
+            }),
+            "tallyman after": new Textline({
+                name: "tallyman after",
+                text: "tallyman after answ",
+                is_unlocked: false,
+            }),
+        }
+    });
+
     dialogues["guild factor"] = new Dialogue({
         name: "guild factor",
         is_unlocked: true,
@@ -2492,6 +2550,26 @@ class DialogueAction extends GameAction {
             }),
             //Asked after the third delivery. The note is the second key the gate
             //guard names, and the only one the hero can earn from outside.
+            /*
+                P-10 region 3. He records arrivals for a living, so asking him what
+                goes the other way is the one question he has never been paid to
+                answer - and he answers it the way he answers everything, by telling
+                you what it was worth.
+
+                He gives the road, not the destination. The road is a Combat_zone and
+                clearing it is what puts the bay on the map.
+            */
+            "road north": new Textline({
+                name: "factor road north",
+                text: "factor road north answ",
+                is_unlocked: false,
+                rewards: {
+                    locations: [{location: "Coast road"}],
+                    quests: ["A Good Place to Leave"],
+                    quest_progress: [{quest_id: "A Good Place to Leave", task_index: 0}],
+                },
+                locks_lines: ["road north"],
+            }),
             "note": new Textline({
                 name: "factor note",
                 is_unlocked: false,
@@ -2718,10 +2796,14 @@ class DialogueAction extends GameAction {
                 name: "collector other",
                 is_unlocked: false,
                 text: "collector other answ",
+                //P-10 region 3 opens here. This is the only line in the game that
+                //says the second piece left, and the factor is the only person whose
+                //job is the road it left on.
                 rewards: {
                     xp: 1500,
                     reputation: {Town: 60},
                     quest_progress: [{quest_id: "Nothing but Pants", task_index: 2}],
+                    textlines: [{dialogue: "guild factor", lines: ["road north"]}],
                 },
                 locks_lines: ["other"],
             }),

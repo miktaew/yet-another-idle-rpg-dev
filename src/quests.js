@@ -684,6 +684,47 @@ const questManager = {
             new QuestTask({task_description: "quest No Snakes Go to the Plains task 4"}),
         ]
     });
+    /*
+        P-10 region 3. Four tasks, and the last one is a page in a book.
+
+        The quest is named after the cook's line about the bay - "It good place to
+        go! To leave!" - because the whole region is built on the second half of it.
+        He meant it as the way out. The player goes there to find out what used it.
+
+        The reward is not an item and not a name. It is an entry: a hull, a tide, and
+        a name column somebody left empty. Who paid for the robbery is one of the
+        things STORY.md keeps open and this does not touch it.
+    */
+    quests["A Good Place to Leave"] = new Quest({
+        quest_name: "quest A Good Place to Leave",
+        display_priority: 15,
+        getQuestDescription: ()=>{
+            if(quests["A Good Place to Leave"].quest_tasks[2].is_finished) {
+                return "quest A Good Place to Leave desc 4";
+            } else if(quests["A Good Place to Leave"].quest_tasks[1].is_finished) {
+                return "quest A Good Place to Leave desc 3";
+            } else if(quests["A Good Place to Leave"].quest_tasks[0].is_finished) {
+                return "quest A Good Place to Leave desc 2";
+            } else {
+                return "quest A Good Place to Leave desc 1";
+            }
+        },
+        questline: "The Snake's Soul",
+        quest_tasks: [
+            new QuestTask({task_description: "quest A Good Place to Leave task 1"}),
+            new QuestTask({task_description: "quest A Good Place to Leave task 2"}),
+            new QuestTask({task_description: "quest A Good Place to Leave task 3"}),
+            new QuestTask({task_description: "quest A Good Place to Leave task 4"}),
+        ],
+        quest_rewards: {
+            xp: 40000,
+            money: 20000,
+            reputation: {
+                Town: 40,
+            },
+            textlines: [{dialogue: "harbour tallyman", lines: ["tallyman after"]}],
+        }
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

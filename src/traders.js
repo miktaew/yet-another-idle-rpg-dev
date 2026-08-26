@@ -206,6 +206,23 @@ class TradeItem {
         is_unlocked: false,
         profit_margin: 5,
     });
+    /*
+        The bay trader. Locked until the region is - the salt house is inside it.
+
+        Its stock is deliberately assembled out of templates that already exist. The
+        cook promised "many spice and meat and metal and leather... from very far
+        away", and the honest way to deliver that is a shelf holding things the
+        player has only ever had to make or hunt for, at a price that says somebody
+        carried them a long way. Not new loot.
+    */
+    traders["bay trader"] = new Trader({
+        name: "bay trader",
+        inventory_template: "Bay",
+        is_unlocked: false,
+        //Higher than the swamp and the slums both. Everything here has been on a
+        //boat, and the price says so.
+        profit_margin: 8,
+    });
     traders["nekomimi trader"] = new Trader({
         name: "nekomimi cafe trader",
         inventory_template: "Cat cafe",
@@ -481,6 +498,28 @@ class TradeItem {
             new TradeItem({item_name: "Wild onion", count: [1,3]}),
             new TradeItem({item_name: "Wild garlic", count: [1,3]}),
             new TradeItem({item_name: "Wild potato", count: [1,3]}),
+    ];
+	inventory_templates["Bay"] =
+    [
+            //The spice and the meat. The far-away part is the price, not the item.
+            new TradeItem({item_name: "Cooking herbs", count: [6,12]}),
+            new TradeItem({item_name: "Wild garlic", count: [6,12]}),
+            new TradeItem({item_name: "Wild onion", count: [6,12]}),
+            new TradeItem({item_name: "Snake jerky", count: [3,6]}),
+            new TradeItem({item_name: "Turtle jerky", count: [3,6]}),
+
+            //The metal. Iron and steel bars in quantity, which the player has only
+            //ever had by smelting them one at a time.
+            new TradeItem({item_name: "Iron ingot", count: [4,8], chance: 0.8}),
+            new TradeItem({item_name: "Steel ingot", count: [2,5], chance: 0.5}),
+            new TradeItem({item_name: "Piece of iron ore", count: [6,12], chance: 0.6}),
+
+            //The leather.
+            new TradeItem({item_name: "Piece of leather", count: [4,9], chance: 0.7}),
+            new TradeItem({item_name: "Piece of rough leather", count: [4,9], chance: 0.7}),
+
+            new TradeItem({item_name: "Healing balm", count: [1,3], chance: 0.3}),
+            new TradeItem({item_name: "Healing powder", count: [1,3], chance: 0.3}),
     ];
 	inventory_templates["Swamp plus"] = 
     [

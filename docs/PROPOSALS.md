@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 20 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 21 -->
 
 # Proposals
 
@@ -419,9 +419,20 @@ Execution order, highest leverage first:
 
    The banished tribe are still not found. Their traces are there; who they became
    stays the open question the swamp is built on.
-3. **The bay.** The largest, and the one the rest of the game already points at:
-   the guild factor's three goods go north from the gate, and the cook says the bay
-   is where you *leave* from. It should be built after there is a reason to leave.
+3. **The bay — DONE.** Three days north of the gate, opened by asking the factor what
+   goes back down the road. The reason to leave arrived with quest 4: the collector's
+   second piece *"did not stay the night"*, and this is the road it left on.
+
+   The road is the obstacle - a Combat_zone off the outskirts, cleared rather than
+   walked through - and the bay itself is built as a departure: eleven buildings,
+   nine of them sheds, nobody from there. The salt house keeps the cook's promise of
+   *"spice and meat and metal and leather"* out of existing templates at a margin
+   that says everything in it has been on a boat, in its own market region because
+   it is a month from every other market in the game.
+
+   The payoff is the departures book: the **Marrowmoth**, one unweighed crate, and
+   an account column struck through twice. Who paid is untouched. What is new is a
+   hull that comes back twice a year and is not due.
 4. **The mountain.** Last, because it exists. Depth rather than ground.
 
 **A fifth thread, not one of his four.** The `gaze` action past the Forest lake ends
