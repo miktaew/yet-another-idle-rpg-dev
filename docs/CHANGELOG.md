@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 43 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 44 -->
 
 # Changelog
 
@@ -20,6 +20,62 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### Three audits, and the bug the third one found
+
+With every proposal closed, the useful work was to audit the classes of defect
+nothing checked yet. Three were worth doing and one of them found a bug that had
+been in front of players since character creation existed.
+
+**English left in a translation: clean.** A scan of all 2985 Turkish rows for English
+function words found nothing. Getting that answer took two corrections, both worth
+recording because they are how this kind of scan goes wrong:
+
+- **Whole words only.** A run-of-lowercase match finds `are` inside `Fare`, which is
+  Turkish for mouse, and duly reported every line the mill mice speak.
+- **No homographs.** `her` is Turkish for every, `has` appears in *kendine has*,
+  `not` is a note, `his` is a feeling. With those in the word list the output was 94
+  rows of noise; without them it was three, and all three were *his*.
+
+The check is in the build now with the homograph list written out, so the next person
+can see the omissions are deliberate.
+
+**Rows nothing asks for: one.** `check_content_text_ids` already does the forward
+direction - every id the source names exists, so nothing renders "text not found".
+Nobody had done the reverse. It needed a model of the computed id families -
+`name ${key}`, `desc item ${item}`, `material ${material}`, `ui slot ${slot}` and
+thirty more - because a literal-only scan reports thousands of live rows. With those
+subtracted: `log received a new quest v1`, referenced from one commented-out line in
+`main.js` while `log started a new quest` does the job. Deleted, and so was the
+commented call that would have broken if anybody uncommented it.
+
+Four more went with it: `hit_chance` and `evasion`, bare and ` long`. Those were
+aliases in `stat_names`, the English table that came out of `misc.js` last commit,
+and no `stats: {}` object anywhere grants either of them.
+
+**And the one that mattered.** The audit also flagged `middle-aged`, which looked
+like another dead row. It was not. The hero creation panel's third age button carries
+`data-age="middle aged"` - with a space - and `confirm_hero_creation` puts that string
+straight into `character.personal.age`, which `fill_character_bio` then looks up as a
+text id. The row was written with a hyphen.
+
+So every player who chose the third age option had been reading this on their own
+character sheet, in both languages, from the moment they made the character:
+
+> `Age: text not found, id: middle aged`
+
+Confirmed in a browser before and after. The hyphen is what moved, not the attribute:
+that value goes into the save, and the rule for save data is the same rule the
+registry keys follow.
+
+**That is now checked forward as well.** The panel's buttons carry two strings and
+only one of them was ever verified - `data-translation` is the button's own label and
+`translateUI` resolves it, while `data-age` and `data-height` are values that become
+text ids later. Six values checked. Race is deliberately not among them: its buttons
+are built from `playable_races`, so the value cannot drift from the registry the way a
+hand-written attribute can.
+
+All three negative-tested by planting the defect.
 
 ### The gaze action's two unreachable endings
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 43 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 44 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,63 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Üç denetim, ve üçüncüsünün bulduğu hata
+
+Bütün öneriler kapandığına göre yapılacak faydalı iş, henüz hiçbir şeyin kontrol
+etmediği kusur sınıflarını denetlemekti. Üçü yapmaya değerdi ve biri, karakter
+oluşturma var olduğundan beri oyuncuların gözünün önünde duran bir hata buldu.
+
+**Çeviride kalan İngilizce: temiz.** 2985 Türkçe satırın tamamında İngilizce işlev
+sözcüğü taraması hiçbir şey bulmadı. Bu cevaba varmak iki düzeltme aldı ve ikisi de
+kayda değer, çünkü bu tür bir taramanın nasıl yanlış gittiğini gösteriyorlar:
+
+- **Yalnızca tam kelimeler.** Küçük harf dizisi eşleşmesi, "Fare" içinde "are"
+  buluyor ve değirmen farelerinin söylediği her satırı usulünce bildiriyor.
+- **Eşyazımlılar hariç.** "her" Türkçe, "has" *kendine has*ta geçiyor, "not" bir not,
+  "his" bir duygu. Bunlar kelime listesinde olduğunda çıktı 94 satır gürültüydü;
+  çıkarıldığında üçe düştü ve üçü de "his"ti.
+
+Kontrol artık derlemede ve eşyazımlı listesi açıkça yazılı; böylece bir sonraki kişi
+eksiklerin bilinçli olduğunu görebiliyor.
+
+**Hiçbir şeyin istemediği satırlar: bir.** `check_content_text_ids` ileri yönü zaten
+yapıyor — kaynağın adını verdiği her kimlik mevcut, yani hiçbir şey "text not found"
+basmıyor. Tersini kimse yapmamıştı. Hesaplanan kimlik ailelerinin bir modeli
+gerekiyordu — `name ${key}`, `desc item ${item}`, `material ${material}`,
+`ui slot ${slot}` ve otuz tanesi daha — çünkü yalnızca sabit arayan bir tarama binlerce
+canlı satırı bildiriyor. Onlar çıkarıldığında kalan:
+`log received a new quest v1`; `main.js` içindeki tek bir yorumlanmış satırdan
+referanslı, oysa işi `log started a new quest` yapıyor. Silindi; biri yorumu kaldırsa
+kırılacak olan o çağrı da.
+
+Onunla birlikte dört tane daha gitti: `hit_chance` ve `evasion`, hem yalın hem
+` long`. Bunlar `stat_names`'teki takma adlardı — geçen commit'te `misc.js`'ten çıkan
+İngilizce tablo — ve hiçbir yerdeki hiçbir `stats: {}` nesnesi ikisini de vermiyor.
+
+**Ve asıl olan.** Denetim `middle-aged`'i de işaretledi; başka bir ölü satır gibi
+görünüyordu. Değildi. Kahraman oluşturma panelinin üçüncü yaş düğmesi
+`data-age="middle aged"` taşıyor — boşluklu — ve `confirm_hero_creation` o dizgeyi
+doğrudan `character.personal.age`'e koyuyor; `fill_character_bio` da onu bir metin
+kimliği olarak arıyor. Satır ise tireyle yazılmıştı.
+
+Yani üçüncü yaş seçeneğini seçen her oyuncu, karakteri oluşturduğu andan itibaren
+kendi karakter kâğıdında, iki dilde de şunu okuyordu:
+
+> `Age: text not found, id: middle aged`
+
+Öncesi ve sonrası tarayıcıda doğrulandı. Yer değiştiren şey tire, nitelik değil: o
+değer kayda giriyor ve kayıt verisinin kuralı, kayıt anahtarlarının izlediği kuralın
+aynısı.
+
+**Bu artık ileri yönde de kontrol ediliyor.** Panelin düğmeleri iki dizge taşıyor ve
+yalnızca biri bugüne kadar doğrulanıyordu — `data-translation` düğmenin kendi etiketi
+ve onu `translateUI` çözüyor; `data-age` ile `data-height` ise sonradan metin kimliği
+olan değerler. Altı değer kontrol edildi. Irk bilerek aralarında değil: düğmeleri
+`playable_races`'ten kuruluyor, yani değer, elle yazılmış bir niteliğin
+kayabileceği gibi kayıttan kayamıyor.
+
+Üçü de kusur ekilerek negatif test edildi.
 
 ### Gaze eyleminin ulaşılamayan iki sonu
 

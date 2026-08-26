@@ -2596,7 +2596,9 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             if(!questManager.isQuestActive(rewards.quests[i]) && !questManager.isQuestFinished(rewards.quests[i])) {
                 questManager.startQuest({quest_id: rewards.quests[i]});
                 if(inform_overall) {
-                    //log_message(translationManager.getText(language, "log received a new quest v1", {v1: quests[rewards.quests[i]].getQuestName()}));
+                    //No log here: Quest.startQuest already logs it, with the id that is
+                    //actually live ("log started a new quest"). This line named a second row
+                    //saying the same thing, which was the only dead row in the locale.
                     //already done in quests
                 }
             }

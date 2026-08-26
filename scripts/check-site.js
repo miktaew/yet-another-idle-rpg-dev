@@ -961,6 +961,194 @@ function strip_interpolations(body) {
 }
 
 /**
+ * Every choice on the hero creation panel needs a locale row for its VALUE.
+ *
+ * The panel's buttons carry two different strings and only one of them was ever
+ * checked. `data-translation` is the button's own label and `translateUI` resolves
+ * it. `data-age` / `data-height` / `data-race_id` is the value that goes into
+ * `character.personal`, into the save, and back out through
+ * `getText(language, character.personal.age)` in fill_character_bio - and nothing
+ * verified that one.
+ *
+ * `data-age="middle aged"` had no row, because the row was written `"middle-aged"`
+ * with a hyphen. Every player who picked the third age option read
+ * `Age: text not found, id: middle aged` in their own character bio, in both
+ * languages, from the moment they made the character.
+ *
+ * The hyphen is what has to move, not the attribute: the attribute value is save
+ * data. That is the same rule the registry keys follow.
+ */
+async function check_creation_panel_values() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+
+    //field -> where the value ends up, for the error message. Race is not here:
+    //its buttons are built by character_creation.js from playable_races, so the
+    //value cannot drift from the registry the way a hand-written attribute can, and
+    //the race name goes through playable_races[key].name rather than the key itself.
+    const fields = [
+        { attribute: "data-age", stored_as: "character.personal.age" },
+        { attribute: "data-height", stored_as: "character.personal.height" },
+    ];
+
+    let checked = 0;
+    for (const { attribute, stored_as } of fields) {
+        const values = new Set([...html.matchAll(new RegExp(`${attribute}="([^"]*)"`, "g"))]
+            .map(match => match[1]));
+        if (values.size === 0) {
+            error(`index.html has no ${attribute} attributes - this check is out of date.`);
+            continue;
+        }
+
+        for (const value of values) {
+            checked++;
+            if (!(value in reference)) {
+                error(`index.html offers ${attribute}="${value}", which has no row in`
+                    + ` locales/${default_language}.js. That value is stored as ${stored_as} and`
+                    + " looked up as a text id, so the character bio would read \"text not found,"
+                    + ` id: ${value}\". Fix the row's key - the attribute value is save data.`);
+            }
+        }
+    }
+    console.log(`[check] hero creation panel values: ${checked} resolved`);
+}
+
+/**
+ * A translation must not contain English function words.
+ *
+ * This is the cheapest possible guard on the thing that matters most about a
+ * bilingual build: a row that was copied across and never translated. Function
+ * words are the tell, because "the", "with", "from" and "would" appear in no
+ * Turkish sentence.
+ *
+ * Two traps this had to avoid, and both of them were fallen into first:
+ *
+ *   - whole words only. A run-of-lowercase match finds "are" inside "Fare", which
+ *     is Turkish for mouse, and reports every line the mill mice speak.
+ *   - no homographs. "her" is Turkish for every, "has" appears in "kendine has",
+ *     "not" is a note, "his" is a feeling. Any of those in the word list turns the
+ *     output into noise.
+ *
+ * The list is therefore short and conservative on purpose. It is meant to catch a
+ * row nobody translated, not to grade prose.
+ */
+async function check_translations_have_no_english() {
+    const english_only = new Set(("the and you your with from that this these those they them "
+        + "their there what when where which while would could should have having been being "
+        + "was were about into onto over under after before because but for our ours its his "
+        + "him she hers does doing cannot something someone anything everything somebody "
+        + "nobody nothing always never really quite such another said says told asked knew "
+        + "thought wanted made took gave came going").split(" "));
+
+    //Turkish words that are also English words. Listed so the next person can see
+    //that the omissions are deliberate rather than oversights.
+    const homographs = new Set(["her", "has", "not", "his", "an", "at", "on", "o", "bu", "ne",
+        "de", "da", "ol", "el", "en", "in", "il", "is", "it", "as", "am", "are", "be", "by",
+        "to", "no", "so", "we", "me", "my", "if", "of", "or", "a", "i"]);
+
+    const names = fs.readdirSync(locales_dir)
+        .filter(file => file.endsWith(".js"))
+        .map(file => file.slice(0, -3))
+        .filter(name => name !== default_language);
+
+    //Any letter, Turkish included. \p{L} rather than a-z, or every ş and ğ becomes a
+    //word boundary and the scan reports fragments.
+    const word = /\p{L}+/gu;
+
+    let scanned = 0;
+    for (const name of names) {
+        const source = fs.readFileSync(path.join(locales_dir, `${name}.js`), "utf8");
+
+        source.split(/\r?\n/).forEach((line, index) => {
+            const row = line.match(/^\s+"((?:[^"\\]|\\.)*)"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+            if (!row) return;
+            scanned++;
+
+            const found = new Set();
+            for (const match of row[2].matchAll(word)) {
+                const lower = match[0].toLowerCase();
+                //Capitalised words are names: Marrowmoth, Obaru, and the item and
+                //location names a translation legitimately keeps.
+                if (match[0][0] !== lower[0]) continue;
+                if (homographs.has(lower)) continue;
+                if (english_only.has(lower)) found.add(lower);
+            }
+            if (found.size) {
+                error(`locales/${name}.js:${index + 1} "${row[1]}" still contains English:`
+                    + ` ${[...found].join(", ")}. If one of those is a word in this language,`
+                    + " add it to the homographs list in check_translations_have_no_english.");
+            }
+        });
+    }
+    console.log(`[check] no English in the translations: ${scanned} rows scanned`);
+}
+
+/**
+ * Every locale row has to be reachable.
+ *
+ * check_content_text_ids does the forward direction - every id the source names
+ * exists in the locale, so nothing renders "text not found". This is the reverse: a
+ * row no code path can ask for is dead weight that a translator still translates.
+ *
+ * The whole difficulty is the computed ids. Most of this game's text is reached
+ * through an assembled key - `name ${registry_key}`, `desc item ${item_name}`,
+ * `material ${material}`, `ui slot ${slot}` - so a scan for the literal key reports
+ * thousands of rows that are perfectly alive. The prefixes below are those families.
+ * Adding a new one is a deliberate act and belongs in this list.
+ */
+async function check_no_unused_locale_rows() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    let source = "";
+    for (const file of fs.readdirSync(path.join(repo_root, "src")).filter(f => f.endsWith(".js"))) {
+        source += strip_comments(fs.readFileSync(path.join(repo_root, "src", file), "utf8"));
+    }
+    source += fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+
+    //Id families assembled at runtime from a registry key or another value.
+    const computed = [
+        "name ", "desc item ", "desc enemy ", "desc location ", "desc skill ",
+        "material ", "material name ", "component ", "armor piece ",
+        "ui slot ", "material type ", "weapon type ",
+        "ui stat source ", "ui xp target ", "ui task type ", "ui task group ",
+        "ui skill category ", "season ", "weekday ", "time of day ",
+        "skill effect ", "skill milestone ", "book ", "effect ",
+        "loc ", "noise ", "travel ", "activity ", "action ", "quest ", "recipe ",
+        "age ", "height ", "race ",
+    ];
+
+    //Stat keys are looked up bare and with a " long" suffix, off a runtime key.
+    const stat_block = strip_comments(fs.readFileSync(path.join(repo_root, "src/character.js"), "utf8"))
+        .match(/this\.base_stats = \{([\s\S]*?)\n\s{16}\};/);
+    const stat_keys = new Set(stat_block
+        ? [...stat_block[1].matchAll(/([a-z_]+)\s*:/g)].map(match => match[1])
+        : []);
+
+    const unused = [];
+    for (const key of Object.keys(reference)) {
+        //A mofu# variant is reached exactly when its base is.
+        const probe = key.startsWith(variant_prefix) ? key.slice(variant_prefix.length) : key;
+        if (source.includes(`"${probe}"`) || source.includes(`\`${probe}\``)
+            || source.includes(`'${probe}'`)) continue;
+        if (computed.some(prefix => probe.startsWith(prefix))) continue;
+        const bare = probe.endsWith(" long") ? probe.slice(0, -5) : probe;
+        if (stat_keys.has(bare)) continue;
+        unused.push(key);
+    }
+
+    for (const key of unused) {
+        error(`locales/${default_language}.js declares "${key}", which nothing in src/ asks for.`
+            + " Delete it, or - if it belongs to a family of ids assembled at runtime - add that"
+            + " prefix to the computed list in check_no_unused_locale_rows.");
+    }
+    console.log(`[check] locale rows reachable: ${Object.keys(reference).length - unused.length}`
+        + `/${Object.keys(reference).length}`);
+}
+
+/**
  * No locale row may be a placeholder.
  *
  * `"action gaze success": "[TBD]"` shipped in both locales for as long as the action
@@ -1585,6 +1773,9 @@ await check_registry_value_names();
 await check_trader_market_regions();
 await check_global_flags();
 await check_no_placeholder_text();
+await check_translations_have_no_english();
+await check_no_unused_locale_rows();
+await check_creation_panel_values();
 check_action_branches();
 await check_required_items();
 await check_content_text_ids();
