@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 35 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 36 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,48 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### 1. bölge: ıslak ormanlar
+
+Bataklık aşçısının saydığı dört bölgenin ilki ve şartnamenin tamamı onun repliği:
+*"Düşen suyun güneyi! Islak ormanlar! Bizim toplandığımız yer orasıydı! Ama şimdi?!
+Sadece yürüyen kayaların evi!"*
+
+Orası **sorarak** bulunuyor. Coğrafya dersinde ormanları adlandıran replik, onları
+açan replik; yani ormanları hiç sormayan bir oyuncu bölgeyi hiç almıyor — yalnızca
+bir kişinin hafızasında var olan bir yer için doğru sıra bu.
+
+Suyun içinde duran bir orman; kökler dizinizin altında bir yerde, ışık yeşil ve elden
+düşme geliyor. Onun yürüyen kayaları taş yengeçler; 700 savunmalarıyla ve dağılmak
+yerine dönme alışkanlıklarıyla çoktan vardılar, yani bölge yaratık değil zemin
+gerektirdi. Odanın açıklaması Drowned grove'un temizlenme sayısıyla üç aşamada
+değişiyor — Waterfall basin'in yengeç üreme alanlarıyla zaten yaptığı gibi. Anahtar
+gibi değil, iyileşiyormuş gibi okunan bir bölge.
+
+**Topladıkları şey keten ve bu bir süs değil, bir onarım.** 1. görevdeki lonca
+mubayaacısı yirmi Keten kumaş istiyor. Bir kumaş on Flax. O iki yüzün hepsi haritanın
+öbür ucundaki tek bir Riverbank herbalism aktivitesinden gelmek zorundaydı; bu da
+teslimatı bir arz koşusu değil bir eziyet yapıyordu — 1. görev sahip olmadığı bir arz
+zinciriyle yayına çıkmıştı ve bunu, bölgenin kendi kanonu işaret edene kadar fark
+etmedim. Toplama alanı Riverbank'in bir-üçüne karşı biçimde iki-altı keten veriyor ve
+koru temizlenene kadar kilitli; çünkü burada kimsenin toplamamasının sebebi kayalar.
+
+Aşçı, o derste herhangi bir repliğin bugüne dek aldığı tek cevabı alıyor. Kepçe
+tencerenin yarısındayken duruyor, ünlemi deneyip tutturamıyor, ikinci denemede
+tutturuyor ve sonra ketenin sıra sıra olduğunu söylüyor — *"Anneannemin anneannesi
+onları sıra sıra dikti, su onları korudu, kayalar da üstlerine oturdu"* — ardından
+kepçeyi bırakıyor; oyunda bunu bir kez bile yapmamıştı. Sonra, kahkahasız: *"Ruh bugün
+biraz daha büyük."*
+
+**Kurarken yakalanan iki şey.** Bölge `aquatic` olarak türlenmişti; o Swimming
+eğitiyor, oysa odanın kendi metni yürüyerek geçtiğinizi söylüyor — artık `wet` artı
+`narrow`: açık su değil, durgun su ve sık ağaçlar. Ayrıca aşçının repliği Swamp
+itibarı verecekti; o ise bir market bölgesi olarak var ve başka hiçbir şey olarak yok:
+onu veren de tüketen de yok, yani bir şey gibi görünüp hiçbir şey yapmayan bir ödül
+olurdu. Yerine tecrübe veriyor.
+
+Dil başına 2763 anahtar; `check` 1804 içerik id'si, 201 interpolasyon çifti, 269
+bildirilmiş textline ve action.
 
 ### Sourcemap prodüksiyona gidiyordu
 

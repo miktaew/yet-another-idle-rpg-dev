@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 17 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 19 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -381,6 +381,62 @@ nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.
 
 ---
 
+### P-10 — Dört bölgeyi inşa et `active`
+
+Direktif: inşa edilmemiş bölgeler inşa edilecek ve hikâye çalışması sürecek.
+
+**Dördü de çoktan adlandırılmış, hem de tek bir NPC tarafından.** Bataklık aşçısının
+coğrafya dersi şartnamenin tamamı ve bir harita değil bir yas: her satır, yılanın
+ruhunun eskiden neyi kapsadığıyla ilgili:
+
+> *"Ahh`! Topraklar! Onlar ruhtur! Ama eskiden daha büyüktü! Dağ! Ovalar! Ormanlar!
+> Körfez! Hepsi eskiden yılanın ruhundaydı!"*
+
+| Bölge | Onun repliği | Durum |
+| --- | --- | --- |
+| **Dağ** | *"Kuzeybatı; yürüyen kayaların ve düşen suyun olduğu yer!"* | Kısmen kurulu: Mountain path, Mountain camp, Waterfall basin. Yaratmak değil derinlik gerekiyor. |
+| **Islak ormanlar** | *"Düşen suyun güneyi! Islak ormanlar! Bizim toplandığımız yer orasıydı! Ama şimdi?! Sadece yürüyen kayaların evi!"* | Kurulmadı. |
+| **Ovalar** | *"Güneydoğu! Yılan avlanırdı! Ama yılan bölündü! Ve artık hiçbir yılan ovalara gitmiyor!"* | Kurulmadı. Sürgün kabilenin gittiği yer. |
+| **Körfez** | *"Çok kuzeyde! Oradan çok baharat, et, metal ve deri gelir! Çok uzaktan! Gidilecek iyi bir yer! Ayrılmak için!"* | Kurulmadı. Loncanın mallarının aktığı ticaret merkezi. |
+
+Uygulama sırası, en yüksek kaldıraç önce:
+
+1. **Islak ormanlar — BİTTİ.** Waterfall basin'den güneye; oraya rastlayarak değil
+   aşçıya ormanları sorarak bulunuyor: onları adlandıran replik, onları açan replik.
+   Suyun içinde duran bir orman, onun yürüyen kayalarının elinde; Drowned grove'u
+   temizlemek kabilenin eskiden topladığı şeyi geri veriyor.
+
+   Topladıkları şey keten ve bu bir süs değildi. Lonca mubayaacısı yirmi Keten kumaş
+   istiyor, bir kumaş on Flax ve o iki yüz Flax'in hepsi haritanın öbür ucundaki tek
+   bir Riverbank aktivitesinden gelmek zorundaydı — yani 1. görev, sahip olmadığı bir
+   arzla yayına çıkmıştı. Toplama alanı, kendisinden önce gelen görevi onarıyor;
+   *"bizim toplandığımız yer orasıydı"* zaten bunu söylüyor.
+
+   Odanın açıklaması korunun temizlenme sayısıyla üç aşamada değişiyor; böylece bölge
+   bir anahtar gibi değil iyileşiyormuş gibi okunuyor. Aşçı da coğrafya dersindeki
+   herhangi bir repliğin bugüne dek aldığı tek cevabı alıyor.
+2. **Ovalar.** Yılan bölündü ve ovalar, ayrılan yarıyla birlikte gitti. Ulaşılabilir;
+   kabilenin kendisi bulunmuyor. Aşağıya bakın.
+3. **Körfez.** En büyüğü ve oyunun geri kalanının çoktan işaret ettiği yer: lonca
+   mubayaacısının üç malı kapıdan kuzeye gidiyor ve aşçı, körfezin *ayrıldığın* yer
+   olduğunu söylüyor. Ayrılmak için bir sebep oluştuktan sonra kurulmalı.
+4. **Dağ.** En son, çünkü var. Zemin değil derinlik.
+
+**Onun dördüne dahil olmayan beşinci bir iplik.** Forest lake'in ötesindeki `gaze`
+eylemi şöyle bitiyor: *"Uzakta uçan bir kuşa benzeyen şeyin ayrıntılarını seçmeye
+çalışıyorsun. Dört bacağı var... [tbc]"* — ormanın kalbi, kendi yazarı tarafından
+devam edecek diye işaretlenmiş. Hiçbir bölgeye ait değil ve birinin içine
+katlanmamalı.
+
+**Açık kalması gerekenler.** Sürgün kabilenin kendisi: ovalar yürünebilir ve izleri
+bulunabilir, ama *onları* bulmak, bataklığın üzerine kurulduğu soruyu yanıtlar.
+Dört bacaklı kuş. Sıçan Tanrı. Soygunun parasını kimin ödediği. Köy muhafızının
+emekli maceracı olup olmadığı.
+
+İki `[To be continued]` görev adımı da bağlanmamış durumda ve bu listeye değil
+bölgelere ait: `Village expansion` adım 7 ve `Light in the darkness` adım 2.
+
+---
 ## Bekleyen kararlar
 
 Bunların her biri neyin inşa edileceğini değiştirir. Tahmin edilmek yerine burada

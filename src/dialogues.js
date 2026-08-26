@@ -1670,6 +1670,12 @@ class DialogueAction extends GameAction {
                 name: "swampcook surround3",
                 text: "swampcook surround3 answ",
                 is_unlocked: false,
+                //Being told where the wet woods are is what opens them.
+                rewards: {
+                    locations: [{location: "Wet woods"}],
+                    quests: ["Where We Gathered"],
+                    quest_progress: [{quest_id: "Where We Gathered", task_index: 0}],
+                },
                 locks_lines: ["swampcook surround3"],
             }),
             "swampcook surround4": new Textline({
@@ -1677,6 +1683,24 @@ class DialogueAction extends GameAction {
                 text: "swampcook surround4 answ",
                 is_unlocked: false,
                 locks_lines: ["swampcook surround4"],
+            }),
+            /*
+                P-10 region 1. He named the wet woods in his geography lesson and
+                said what they were for; this is the only line in that set that
+                gets an answer.
+            */
+            "swampcook woods": new Textline({
+                name: "swampcook woods",
+                text: "swampcook woods answ",
+                is_unlocked: false,
+                rewards: {
+                    //No reputation: nothing in the game grants or consumes a Swamp
+                    //reputation, so a grant here would be a reward that looks like
+                    //something and does nothing. The gathering ground IS the reward.
+                    xp: 2000,
+                    quest_progress: [{quest_id: "Where We Gathered", task_index: 2}],
+                },
+                locks_lines: ["swampcook woods"],
             }),
             "swampcook surroundend": new Textline({
                 name: "swampcook surroundend",

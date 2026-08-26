@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 17 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 19 -->
 
 # Proposals
 
@@ -373,6 +373,61 @@ the banished tribe, and the Rat God.
 
 ---
 
+### P-10 — Build the four regions `active`
+
+Directive: the unbuilt regions are to be built, and story work continues.
+
+**All four are already named, and by one NPC.** The swamp cook's geography lesson
+is the whole specification, and it is grief rather than a map - every line is about
+what the snake's soul used to include:
+
+> *"Ahh`! The lands! They are the soul! But it used to be larger! The mountain! The
+> plains! The woods! The bay! All used to be with the snake's soul!"*
+
+| Region | His line | State |
+| --- | --- | --- |
+| **The mountain** | *"Northwest, where the walking rocks and falling water are!"* | Partly built: Mountain path, Mountain camp, Waterfall basin. Needs depth, not creation. |
+| **The wet woods** | *"South of the falling water! The wet woods! That was where we gathered! But now?! It is just home of the walking rocks!"* | Unbuilt. |
+| **The plains** | *"Southeast! The snake would hunt! But the snake split! And now no snakes go to the plains!"* | Unbuilt. Where the banished tribe went. |
+| **The bay** | *"Far to the north! Many spice and meat and metal and leather come from there! From very far away! It good place to go! To leave!"* | Unbuilt. The trade hub the guild's goods flow toward. |
+
+Execution order, highest leverage first:
+
+1. **The wet woods — DONE.** South from the Waterfall basin, found by asking the
+   cook about the woods rather than by stumbling on it: the line that names them
+   is the line that opens them. A forest standing in water, held by his walking
+   rocks, and clearing the Drowned grove hands back what the tribe used to gather.
+
+   What they gathered is flax, and that was not decoration. The guild factor wants
+   twenty Linen cloth, a cloth is ten Flax, and every one of those two hundred had
+   to come from a single Riverbank activity on the far side of the map - so quest 1
+   shipped with a supply it did not have. The gathering ground fixes the quest that
+   preceded it, which is what *"that was where we gathered"* has to mean.
+
+   The room's description moves in three stages with the grove's clear count, so
+   the region reads as recovering rather than as a switch, and the cook gets the
+   only answer any line in his geography lesson has ever had.
+2. **The plains.** The snake split and the plains went with the half that left.
+   Reachable; the tribe itself is not found. See below.
+3. **The bay.** The largest, and the one the rest of the game already points at:
+   the guild factor's three goods go north from the gate, and the cook says the bay
+   is where you *leave* from. It should be built after there is a reason to leave.
+4. **The mountain.** Last, because it exists. Depth rather than ground.
+
+**A fifth thread, not one of his four.** The `gaze` action past the Forest lake ends
+*"You try to make out the details of what looks like a bird flying in the distance.
+It has four legs... [tbc]"* - the forest's heart, marked to be continued by its own
+author. It belongs to no region and should not be folded into one.
+
+**What must stay open.** The banished tribe themselves: the plains can be walked
+and their traces found, but finding *them* answers the question the swamp is built
+on. The four-legged bird. The Rat God. Who paid for the robbery. Whether the
+village guard is the retired adventurer.
+
+Two `[To be continued]` quest tasks also sit unwired and belong to regions rather
+than to this list: `Village expansion` task 7 and `Light in the darkness` task 2.
+
+---
 ## Open decisions
 
 Each of these changes what gets built. They are recorded here rather than guessed

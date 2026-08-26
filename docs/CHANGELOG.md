@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 35 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 36 -->
 
 # Changelog
 
@@ -20,6 +20,50 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### Region 1: the wet woods
+
+The first of the four regions the swamp cook names, and his line is the entire
+brief: *"South of the falling water! The wet woods! That was where we gathered! But
+now?! It is just home of the walking rocks!"*
+
+It is found by **asking**. The line in his geography lesson that names the woods is
+the line that opens them, so a player who never asks about the woods never gets the
+region - which is the right way round for a place that only exists in one person's
+memory.
+
+A forest standing in water, roots somewhere below your knees, light arriving green
+and second-hand. His walking rocks are the stone crabs, which already existed with
+700 defence and a habit of turning rather than scattering, so the region needed
+ground rather than bestiary. The room's description moves through three stages with
+the Drowned grove's clear count, the way the Waterfall basin already does with the
+crab spawning grounds - a region that reads as recovering rather than flipping.
+
+**What they gathered is flax, and that is a fix rather than a flourish.** The guild
+factor in quest 1 wants twenty Linen cloth. A cloth is ten Flax. All two hundred had
+to come from one Riverbank herbalism activity on the far side of the map, which made
+the delivery a grind rather than a supply run - quest 1 shipped with a supply chain
+it did not have, and I did not notice until the region's own canon pointed at it.
+The gathering ground yields flax at two to six a cut against the Riverbank's one to
+three, and it is locked until the grove is clear, because the crabs are the reason
+nobody gathers here.
+
+The cook gets the only answer any line in that lesson has ever had. He stops with
+the ladle halfway out of the pot, tries the exclamation and misses it, gets it on the
+second attempt, and then tells you the flax is in rows - *"My grandmother's
+grandmother put them in rows and the water kept them and the rocks sat on them"* -
+before putting the ladle down, which he has not done once in the game. Then, without
+the laugh: *"The soul is a little larger today."*
+
+**Two things caught while building it.** The zone was typed `aquatic`, which trains
+Swimming, while the room's own text says you wade - it is `wet` plus `narrow` now,
+which is standing water and close trees rather than open water. And the cook's line
+was going to grant Swamp reputation, which exists as a market region and as nothing
+else: nothing grants it and nothing consumes it, so it would have been a reward that
+looks like something and does nothing. It gives xp.
+
+2763 keys per language; `check` at 1804 content ids, 201 interpolated pairs, 269
+declared textlines and actions.
 
 ### The sourcemap was being deployed
 

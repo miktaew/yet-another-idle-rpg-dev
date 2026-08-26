@@ -3158,6 +3158,33 @@ const descriptions = {
     "quest The Merchant's Word task 3": "Deliver 20 Pieces of alligator leather",
     "quest The Merchant's Word task 4": "Deliver 30 Alligator jerky",
     "quest The Merchant's Word task 5": "Ask him for the account",
+
+    //P-10 REGION 1 - the wet woods, south of the falling water. The cook's
+    //geography lesson named it and said what it was for.
+    "desc location Wet woods dyn 3": "A forest standing in water. The trees carry on down into it and keep going, roots somewhere below your knees, and the light that gets through arrives green and second-hand. Every clear patch of ground has something grey and unhurried standing on it.",
+    "desc location Wet woods dyn 2": "A forest standing in water, and quieter than it was. The grey shapes have thinned out toward the middle, and in the gaps they left there are stands of something tall and blue-flowered that nobody has cut in a very long time.",
+    "desc location Wet woods dyn 1": "A forest standing in water, and nothing in it is grey any more. The flax runs in long uncut stands wherever the ground comes up, which is most places once you know to look. Somebody laid stepping stones through here, a long time ago, and they are still where they were put.",
+    "loc Wet woods unlock": "South of the falling water, exactly where he said.",
+    "noise Wet woods 1": "*Water moving where nothing is moving it*",
+    "noise Wet woods 2": "*Something heavy setting itself down*",
+    "noise Wet woods 3": "*Frogs, and then no frogs*",
+    "noise Wet woods 4": "*A stand of dry stalks knocking together*",
+    "travel Wade south into the [Wet woods]": "Wade south into the [Wet woods]",
+    "travel Follow the water back up to the [Waterfall basin]": "Follow the water back up to the [Waterfall basin]",
+    "desc location Drowned grove": "The middle of it, where the water is deepest and the trees are closest together. The grey shapes are thickest here and they do not scatter when you come in - they turn, which is worse.",
+    "loc Drowned grove leave": "Wade back out",
+    "travel Push into the [Drowned grove]": "Push into the [Drowned grove]",
+    "activity Wet woods herbalism starting": "Cut flax",
+    "activity Wet woods herbalism unlock": "With the grove clear, the stands are reachable. Somebody planted these in rows.",
+    "swampcook woods": "The wet woods are clear. The walking rocks are gone.",
+    "swampcook woods answ": "*[He stops with the ladle halfway out of the pot. He does not say anything for long enough that it becomes a thing that is happening.]*\n\nGone. *[Not an exclamation. He tries again and it comes out properly]* A-ha~! Gone! Obaru went south and the rocks are gone!\n\nYou will see rows! Not wild! Rows! My grandmother's grandmother put them in rows and the water kept them and the rocks sat on them! *[He puts the ladle down, which he has not done once]* Take what you cut. All of it. It grows back and we did not grow it, she did.\n\n*[Then, quieter, and without the laugh]* The soul is a little larger today.",
+    "quest Where We Gathered": "Where We Gathered",
+    "quest Where We Gathered desc 1": "The cook named four lands the snake's soul used to include, and the wet woods is the one he named a use for. South of the falling water.",
+    "quest Where We Gathered desc 2": "It is standing water and walking rocks, and somewhere under them is whatever the tribe used to gather here.",
+    "quest Where We Gathered desc 3": "Flax, in rows, planted by somebody's grandmother's grandmother. He should hear it from you rather than from the water.",
+    "quest Where We Gathered task 1": "Go south from the falling water",
+    "quest Where We Gathered task 2": "Clear the walking rocks out of the grove",
+    "quest Where We Gathered task 3": "Tell the cook",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

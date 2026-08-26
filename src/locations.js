@@ -2074,6 +2074,73 @@ function get_location_type_penalty(type, stage, stat, category) {
     });
     locations["Lake beach"].connected_locations.push({location: locations["Waterfall basin"], custom_text: "travel Rappel down to the [Waterfall basin]", travel_time: 40, travel_time_skills: ["Climbing"]});
 
+    /*
+        P-10 REGION 1 - the wet woods.
+
+        "South of the falling water! The wet woods! That was where we gathered!
+        But now?! It is just home of the walking rocks!" - the swamp cook, whose
+        geography lesson is the specification for all four regions.
+
+        The stone crabs are his walking rocks and they already existed; the region
+        needed no new bestiary, only the ground they took.
+    */
+    locations["Wet woods"] = new Location({
+        connected_locations: [{location: locations["Waterfall basin"],
+            custom_text: "travel Follow the water back up to the [Waterfall basin]", travel_time: 60}],
+        getDescription: function() {
+            //Mirrors the Waterfall basin: the room reports how much of it has been
+            //taken back, so the region reads as recovering rather than as a switch.
+            if(locations["Drowned grove"].enemy_groups_killed >= locations["Drowned grove"].enemy_count) {
+                return translationManager.getText(language, "desc location Wet woods dyn 1");
+            } else if(locations["Drowned grove"].enemy_groups_killed >= locations["Drowned grove"].enemy_count / 2) {
+                return translationManager.getText(language, "desc location Wet woods dyn 2");
+            } else {
+                return translationManager.getText(language, "desc location Wet woods dyn 3");
+            }
+        },
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise Wet woods 1"),
+                    translationManager.getText(language, "noise Wet woods 2"),
+                    translationManager.getText(language, "noise Wet woods 3"),
+                    translationManager.getText(language, "noise Wet woods 4")];
+        },
+        name: "Wet woods",
+        is_unlocked: false,
+        unlock_text: "loc Wet woods unlock",
+        temperature_modifier: 1.5,
+        is_under_roof: false,
+    });
+
+    locations["Waterfall basin"].connected_locations.push({location: locations["Wet woods"],
+        custom_text: "travel Wade south into the [Wet woods]", travel_time: 60});
+
+    locations["Drowned grove"] = new Combat_zone({
+        description: "desc location Drowned grove",
+        enemies_list: ["Stone crab"],
+        types: [{type: "wet", stage: 1, xp_gain: 3}, {type: "narrow", stage: 2, xp_gain: 5}],
+        enemy_count: 40,
+        enemy_group_size: [2, 3],
+        enemy_stat_variation: 0.15,
+        is_unlocked: true,
+        name: "Drowned grove",
+        leave_text: "loc Drowned grove leave",
+        parent_location: locations["Wet woods"],
+        first_reward: {
+            xp: 5000,
+        },
+        repeatable_reward: {
+            xp: 2500,
+            activities: [{location: "Wet woods", activity: "herbalism"}],
+            textlines: [{dialogue: "swampland cook", lines: ["swampcook woods"]}],
+            quest_progress: [{quest_id: "Where We Gathered", task_index: 1}],
+        },
+        temperature_range_modifier: 0.8,
+        is_under_roof: false,
+    });
+
+    locations["Wet woods"].connected_locations.push({location: locations["Drowned grove"],
+        custom_text: "travel Push into the [Drowned grove]", travel_time: 20});
+
     locations["Crab spawning grounds"] = new Combat_zone({
         description: "desc location Crab spawning grounds",       //final punchline to the "big crab nest/big crabs' nest/big crab's nest" setup
         enemy_count: 50, 
@@ -2911,6 +2978,35 @@ function get_location_type_penalty(type, stage, stat, category) {
         }),
     };
 	
+
+    /*
+        What they gathered. Flax is the point: the guild factor wants twenty Linen
+        cloth, a cloth is ten Flax, and until now all two hundred had to come from
+        a single Riverbank activity on the far side of the map. A tribe gathering
+        ground that yields the tribe's own cloth material closes that loop.
+
+        Locked until the grove is cleared, because the crabs are the reason nobody
+        gathers here.
+    */
+    locations["Wet woods"].activities = {
+        "herbalism": new LocationGatheringActivity({
+            activity_name: "herbalism",
+            starting_text: "activity Wet woods herbalism starting",
+            skill_xp_per_tick: 12,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [
+                    {name: "Flax", ammount: [[2, 3], [4, 6]], chance: [0.6, 1]},
+                    {name: "Cooking herbs", ammount: [[1, 1], [1, 2]], chance: [0.2, 0.5]},
+                ],
+                time_period: [100, 35],
+                skill_required: [15, 28],
+            },
+            require_tool: true,
+            unlock_text: "activity Wet woods herbalism unlock",
+        }),
+    };
+
     locations["Swampland tribe"].activities = {
         "herbalism": new LocationGatheringActivity({
             activity_name: "herbalism",

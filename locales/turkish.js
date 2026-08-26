@@ -3198,6 +3198,33 @@ const descriptions = {
     "quest The Merchant's Word task 3": "20 Timsah derisi parçası teslim et",
     "quest The Merchant's Word task 4": "30 Kurutulmuş timsah eti teslim et",
     "quest The Merchant's Word task 5": "Ondan hesabı iste",
+
+    //P-10 REGION 1 - the wet woods, south of the falling water. The cook's
+    //geography lesson named it and said what it was for.
+    "desc location Wet woods dyn 3": "Suyun içinde duran bir orman. Ağaçlar aşağı doğru devam ediyor ve devam etmeye devam ediyor; kökleri dizinizin altında bir yerde ve içeri sızan ışık yeşil ve elden düşme geliyor. Zeminin her açık parçasında gri ve acelesi olmayan bir şey duruyor.",
+    "desc location Wet woods dyn 2": "Suyun içinde duran bir orman ve eskisinden daha sessiz. Gri şekiller ortaya doğru seyrekleşti ve bıraktıkları aralıklarda, uzun süredir kimsenin biçmediği, uzun ve mavi çiçekli bir şeyden kümeler var.",
+    "desc location Wet woods dyn 1": "Suyun içinde duran bir orman ve içinde artık gri hiçbir şey yok. Zeminin yükseldiği her yerde keten, biçilmemiş uzun kümeler hâlinde uzanıyor — nereye bakacağınızı bildiğinizde çoğu yerde. Buraya çok uzun zaman önce biri basamak taşları koymuş ve hâlâ konuldukları yerde duruyorlar.",
+    "loc Wet woods unlock": "Düşen suyun güneyi; tam onun dediği yerde.",
+    "noise Wet woods 1": "*Hiçbir şeyin hareket ettirmediği yerde suyun hareketi*",
+    "noise Wet woods 2": "*Ağır bir şeyin kendini yere bırakması*",
+    "noise Wet woods 3": "*Kurbağalar, sonra hiç kurbağa*",
+    "noise Wet woods 4": "*Bir demet kuru sapın birbirine vurması*",
+    "travel Wade south into the [Wet woods]": "Güneye, [Wet woods] içine doğru yürü",
+    "travel Follow the water back up to the [Waterfall basin]": "Suyu takip ederek [Waterfall basin]'e geri çık",
+    "desc location Drowned grove": "Ortası; suyun en derin, ağaçların birbirine en yakın olduğu yer. Gri şekiller burada en yoğun ve girdiğinizde dağılmıyorlar — dönüyorlar, ki bu daha kötü.",
+    "loc Drowned grove leave": "Yürüyerek geri çık",
+    "travel Push into the [Drowned grove]": "[Drowned grove] içine sokul",
+    "activity Wet woods herbalism starting": "Keten biç",
+    "activity Wet woods herbalism unlock": "Koru temizlenince kümelere ulaşılabiliyor. Bunları biri sıra sıra ekmiş.",
+    "swampcook woods": "Islak ormanlar temiz. Yürüyen kayalar gitti.",
+    "swampcook woods answ": "*[Kepçe tencerenin yarısındayken duruyor. Yeterince uzun bir süre hiçbir şey söylemiyor; öyle ki bu sessizlik olan bir şeye dönüşüyor.]*\n\nGitti. *[Ünlem değil. Yeniden deniyor ve bu kez düzgün çıkıyor]* A-ha~! Gitti! Obaru güneye gitti ve kayalar gitti!\n\nSıralar göreceksin! Yabani değil! Sıralar! Anneannemin anneannesi onları sıra sıra dikti, su onları korudu, kayalar da üstlerine oturdu! *[Kepçeyi bırakıyor; bunu bir kez bile yapmamıştı]* Biçtiğini al. Hepsini. Yeniden büyüyor ve onu biz büyütmedik, o büyüttü.\n\n*[Sonra, daha sessiz ve kahkahasız]* Ruh bugün biraz daha büyük.",
+    "quest Where We Gathered": "Toplandığımız Yer",
+    "quest Where We Gathered desc 1": "Aşçı, yılanın ruhunun eskiden kapsadığı dört toprağı saydı; ıslak ormanlar, bir işlevini de söylediği tek yer. Düşen suyun güneyinde.",
+    "quest Where We Gathered desc 2": "Orası durgun su ve yürüyen kayalar; altlarında bir yerde de kabilenin eskiden burada topladığı şey var.",
+    "quest Where We Gathered desc 3": "Keten, sıra sıra; birinin anneannesinin anneannesi dikmiş. Bunu sudan değil sizden duyması gerek.",
+    "quest Where We Gathered task 1": "Düşen sudan güneye git",
+    "quest Where We Gathered task 2": "Yürüyen kayaları korudan temizle",
+    "quest Where We Gathered task 3": "Aşçıya söyle",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

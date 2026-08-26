@@ -636,6 +636,29 @@ const questManager = {
             new QuestTask({task_description: "quest The Merchant's Word task 5"}),
         ]
     });
+    /*
+        P-10 region 1. Three tasks and the last one is telling him, because the
+        region's premise is his loss rather than the player's gain.
+    */
+    quests["Where We Gathered"] = new Quest({
+        quest_name: "quest Where We Gathered",
+        display_priority: 13,
+        getQuestDescription: ()=>{
+            if(quests["Where We Gathered"].quest_tasks[1].is_finished) {
+                return "quest Where We Gathered desc 3";
+            } else if(quests["Where We Gathered"].quest_tasks[0].is_finished) {
+                return "quest Where We Gathered desc 2";
+            } else {
+                return "quest Where We Gathered desc 1";
+            }
+        },
+        questline: "The Snake's Soul",
+        quest_tasks: [
+            new QuestTask({task_description: "quest Where We Gathered task 1"}),
+            new QuestTask({task_description: "quest Where We Gathered task 2"}),
+            new QuestTask({task_description: "quest Where We Gathered task 3"}),
+        ]
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,
