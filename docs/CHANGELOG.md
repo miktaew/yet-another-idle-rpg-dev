@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 32 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 33 -->
 
 # Changelog
 
@@ -20,6 +20,46 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### A check that no player can reach dead content
+
+The rat's `who` line was unreachable from the day it was written: the line before
+it unlocked `walls` instead, so nothing in the game ever unlocked `who`. That is a
+failure with no symptom. No test notices it, because the content is syntactically
+perfect and every id resolves; no player reports it, because a player cannot report
+a conversation branch they have never been offered. It was only found because the
+whole dialogue was commented out and had to be read line by line to reclaim it.
+
+`npm run check` now builds the unlock graph and walks it. Every textline and action
+declared `is_unlocked: false` must be unlocked by something, and every unlock must
+name something that is actually declared. 268 declared, 203 of them locked, 230
+unlock references. **All reachable, nothing dangling** - including everything built
+over the last two days.
+
+Three mechanisms unlock content and all three are counted: `rewards.textlines`,
+`rewards.actions`, and the `otherUnlocks` callbacks that assign `.is_unlocked`
+directly, which is how the village guard opens her third stance line only after the
+first two are done.
+
+The first draft scanned two files and reported the village elder's `more training`
+as dead. It is not: `quests.js` unlocks it. Rewards live in five files, and a
+reachability check that reads two of them invents corpses. Negative-tested by
+restoring the rat's original slip, which it catches with the line's own name, and
+by pointing an unlock at a line that does not exist.
+
+### LOCALE_STRICT is on in CI
+
+The missing-translation warning existed for a translation still in progress. Turkish
+is at 2739 of 2739 keys, so the warning has become a way for the first untranslated
+key to ship quietly. CI sets `LOCALE_STRICT=1` and a missing key is now an error.
+
+Both directions checked: with a key removed, the run warns and passes without the
+flag and fails with it. Adding a language that is *not* complete means turning this
+off again on purpose, which is noted where the flag is read and in both AGENTS
+halves.
+
+No player-facing entry: neither change alters anything in the game. They exist so
+that the next thing that does is caught before it ships.
 
 ### Quest 1: "The Merchant's Word", and the gate's second key
 

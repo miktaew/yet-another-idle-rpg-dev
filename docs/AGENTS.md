@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 7 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 8 -->
 
 # Agent and contributor guide
 
@@ -22,7 +22,8 @@ It is a **continuation fork** of `miktaew/yet-another-idle-rpg` (upstream also
 had a `-dev` repository). Upstream development stopped. Fork base commit:
 `e5fba67`.
 
-`HEAD` is unreleased work in progress on `v0.6.0`, not a release.
+`HEAD` is the released line: `v0.6.0` through `v0.6.5` all shipped, and the
+minor number moves with story content rather than with tooling.
 
 Standing project direction, including what may and may not change, is in
 [PROPOSALS.md](PROPOSALS.md). Narrative canon is in [STORY.md](STORY.md).
@@ -35,7 +36,7 @@ Standing project direction, including what may and may not change, is in
 | `npm run serve` | Static server on `127.0.0.1:8080`, **dev mode**. Source edits are live on reload. |
 | `npm run build` | Bundles `src/main.js` into `dist/bundle.js`, then assembles the deployable site into `_site/`. Both are untracked. |
 | `npm run check:save` | Audits an exported savegame against the current registries. Takes the save path. Not in CI: it needs a save file. |
-| `npm run check` | Validates the assembled site and locale key parity. `LOCALE_STRICT=1` makes missing translations fatal. |
+| `npm run check` | Validates the assembled site, locale key parity, and that content is reachable and its references resolve. `LOCALE_STRICT=1` makes missing translations fatal; **CI sets it**, because Turkish is complete. |
 | `npm test` | Regression tests for the skill xp model. |
 | `npm run serve:site` | Static server on `127.0.0.1:8081` serving `_site/`, to verify the built site in bundle mode. |
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 32 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 33 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,44 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### Hiçbir oyuncunun ulaşamadığı içeriği yakalayan bir kontrol
+
+Farenin `who` satırı yazıldığı günden beri erişilemezdi: bir önceki satır onun
+yerine `walls`'ı açıyordu, yani oyunda `who`'yu açan hiçbir şey yoktu. Bu, belirtisi
+olmayan bir arıza. Hiçbir test fark etmiyor, çünkü içerik sözdizimsel olarak kusursuz
+ve her id çözülüyor; hiçbir oyuncu bildirmiyor, çünkü kendisine hiç sunulmamış bir
+konuşma dalını bildiremez. Ancak diyaloğun tamamı yorumdayken, geri kazanmak için
+satır satır okunduğu için bulundu.
+
+`npm run check` artık açma grafiğini kurup üzerinde yürüyor. `is_unlocked: false`
+olarak bildirilen her textline ve action'ı bir şeyin açması, her açmanın da gerçekten
+bildirilmiş bir şeyi göstermesi gerekiyor. 268 bildirim, 203'ü kilitli, 230 açma
+referansı. **Hepsi erişilebilir, hiçbiri sarkmıyor** — son iki günde kurulan her şey
+dahil.
+
+İçeriği açan üç mekanizma var ve üçü de sayılıyor: `rewards.textlines`,
+`rewards.actions` ve `.is_unlocked`'ı doğrudan atayan `otherUnlocks` geri çağrıları —
+köy muhafızı üçüncü duruş satırını ancak ilk ikisi bitince böyle açıyor.
+
+İlk taslak iki dosya tarıyordu ve köy yaşlısının `more training` satırını ölü olarak
+bildirdi. Değil: onu `quests.js` açıyor. Ödüller beş dosyada yaşıyor ve ikisini okuyan
+bir erişilebilirlik kontrolü olmayan cesetler uyduruyor. Farenin orijinal hatası geri
+konarak negatif test edildi — satırın kendi adını vererek yakalıyor — ve bir açma, var
+olmayan bir satıra yöneltilerek.
+
+### CI'da LOCALE_STRICT açık
+
+Eksik çeviri uyarısı, henüz süren bir çeviri için vardı. Türkçe 2739 anahtarın
+2739'unda; yani uyarı artık ilk çevrilmemiş anahtarın sessizce yayına çıkma yolu hâline
+geldi. CI `LOCALE_STRICT=1` ayarlıyor ve eksik bir anahtar artık hata.
+
+İki yön de sınandı: bir anahtar kaldırıldığında bayraksız çalıştırma uyarıp geçiyor,
+bayrakla düşüyor. Tamamlanmamış bir dil eklemek, bunu bilerek yeniden kapatmak demek;
+bu, bayrağın okunduğu yerde ve iki AGENTS yarısında da not düşüldü.
+
+Oyuncuya yönelik girdi yok: iki değişiklik de oyunda hiçbir şeyi değiştirmiyor. Bir
+sonraki değiştirecek şeyin yayına çıkmadan yakalanması için varlar.
 
 ### 1. görev: "Tüccarın Sözü" ve kapının ikinci anahtarı
 

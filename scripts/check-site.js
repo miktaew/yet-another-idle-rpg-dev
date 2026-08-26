@@ -16,10 +16,12 @@
  *   - unknown keys in a translation        -> ERROR (always a bug: typo or drift)
  *   - orphaned mofu# variant without base  -> ERROR (variant can never be reached)
  *   - keys missing from a translation      -> WARNING + coverage percentage,
- *                                             so CI stays green while a
- *                                             translation is still in progress.
- *     Set LOCALE_STRICT=1 to promote missing keys to an error once a
- *     translation is meant to be complete.
+ *                                             or ERROR under LOCALE_STRICT=1.
+ *
+ * The warning existed for a translation still in progress. Turkish is at 100%,
+ * so CI now sets LOCALE_STRICT=1: leaving it a warning would let the first
+ * untranslated key ship silently. Adding a language that is NOT complete means
+ * turning that off again, deliberately.
  */
 
 import * as fs from "node:fs";
@@ -917,6 +919,111 @@ function check_reward_keys() {
 }
 
 /**
+ * Every locked textline and action must be unlocked by something, and every unlock
+ * must name something that exists.
+ *
+ * A textline with is_unlocked: false that nothing ever unlocks is dead content the
+ * author cannot see is dead. That is not hypothetical: the "cute little rat"
+ * dialogue's ~who~ line sat unreachable from the day it was written, because the
+ * line before it unlocked ~walls~ instead - a copy-paste slip no test could notice
+ * and no player could report, since nobody could reach the dialogue at all.
+ *
+ * Three mechanisms unlock things and all three are counted: rewards.textlines,
+ * rewards.actions, and the otherUnlocks callbacks that assign .is_unlocked
+ * directly. Rewards are read from five files, not two - quests unlock textlines
+ * too, and missing that reported the village elder's "more training" as dead when
+ * quests.js is what unlocks it.
+ */
+function check_content_is_reachable() {
+    const read = file => strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"))
+        .split("\r\n").join("\n");
+
+    const dialogues_src = read("src/dialogues.js");
+    const locations_src = read("src/locations.js");
+    const reward_sources = [dialogues_src, locations_src,
+        ...["src/quests.js", "src/enemies.js", "src/actions.js"].map(read)];
+
+    /** key -> is it declared locked */
+    const declared = new Map();
+
+    const collect = (owner, body, kind, constructor_name) => {
+        const marker = new RegExp(`${kind}:\\s*\\{`);
+        const found = body.match(marker);
+        if (!found) return;
+        const group = braced_body(body, found.index + found[0].length - 1);
+        if (group === null) return;
+
+        const entries = new RegExp(`"([^"]+)":\\s*new ${constructor_name}\\(\\{`, "g");
+        for (const entry of group.matchAll(entries)) {
+            const inner = braced_body(group, entry.index + entry[0].length - 1);
+            declared.set(`${owner}|${entry[1]}|${kind}`, /is_unlocked:\s*false/.test(inner ?? ""));
+        }
+    };
+
+    for (const match of dialogues_src.matchAll(/dialogues\["([^"]+)"\]\s*=\s*new Dialogue\(\{/g)) {
+        const body = braced_body(dialogues_src, match.index + match[0].length - 1);
+        if (body === null) continue;
+        collect(match[1], body, "textlines", "Textline");
+        collect(match[1], body, "actions", "DialogueAction");
+    }
+    for (const match of locations_src.matchAll(/locations\["([^"]+)"\]\.actions\s*=\s*\{/g)) {
+        const group = braced_body(locations_src, match.index + match[0].length - 1);
+        if (group === null) continue;
+        for (const entry of group.matchAll(/"([^"]+)":\s*new GameAction\(\{/g)) {
+            const inner = braced_body(group, entry.index + entry[0].length - 1);
+            declared.set(`${match[1]}|${entry[1]}|actions`, /is_unlocked:\s*false/.test(inner ?? ""));
+        }
+    }
+
+    const unlocked = new Set();
+    for (const source of reward_sources) {
+        // Both property orders, because content uses both.
+        for (const match of source.matchAll(/\{\s*dialogue:\s*"([^"]+)"\s*,\s*lines:\s*\[([^\]]*)\]/g)) {
+            for (const line of match[2].matchAll(/"([^"]+)"/g)) {
+                unlocked.add(`${match[1]}|${line[1]}|textlines`);
+            }
+        }
+        for (const match of source.matchAll(/\{\s*lines:\s*\[([^\]]*)\]\s*,\s*dialogue:\s*"([^"]+)"/g)) {
+            for (const line of match[1].matchAll(/"([^"]+)"/g)) {
+                unlocked.add(`${match[2]}|${line[1]}|textlines`);
+            }
+        }
+        for (const match of source.matchAll(/\{\s*(?:dialogue|location):\s*"([^"]+)"\s*,\s*action:\s*"([^"]+)"\s*\}/g)) {
+            unlocked.add(`${match[1]}|${match[2]}|actions`);
+        }
+        for (const match of source.matchAll(/\{\s*action:\s*"([^"]+)"\s*,\s*(?:dialogue|location):\s*"([^"]+)"\s*\}/g)) {
+            unlocked.add(`${match[2]}|${match[1]}|actions`);
+        }
+        for (const match of source.matchAll(
+            /(?:dialogues|locations)\["([^"]+)"\]\.(textlines|actions)\["([^"]+)"\]\.is_unlocked\s*=\s*true/g)) {
+            unlocked.add(`${match[1]}|${match[3]}|${match[2]}`);
+        }
+    }
+
+    if (declared.size === 0 || unlocked.size === 0) {
+        error("found no content to check reachability for - this check is out of date.");
+        return;
+    }
+
+    for (const [key, locked] of declared) {
+        if (locked && !unlocked.has(key)) {
+            const [owner, name, kind] = key.split("|");
+            error(`${kind.replace(/s$/, "")} "${name}" on "${owner}" starts locked and nothing`
+                + " unlocks it, so no player can ever reach it.");
+        }
+    }
+    for (const key of unlocked) {
+        if (!declared.has(key)) {
+            const [owner, name, kind] = key.split("|");
+            error(`something unlocks ${kind.replace(/s$/, "")} "${name}" on "${owner}",`
+                + " which is not declared there.");
+        }
+    }
+    console.log(`[check] content reachability: ${declared.size} declared,`
+        + ` ${[...declared.values()].filter(Boolean).length} locked, ${unlocked.size} unlocks`);
+}
+
+/**
  * Every item id named by a requirement has to be a real template.
  *
  * `items_by_id` is how actions charge the player in goods, and a typo there is
@@ -962,6 +1069,7 @@ async function check_required_items() {
 check_site();
 check_interpolated_pairs();
 check_reward_keys();
+check_content_is_reachable();
 check_money_requirements();
 check_changelogs_cover_version();
 check_language_switch_repaints();

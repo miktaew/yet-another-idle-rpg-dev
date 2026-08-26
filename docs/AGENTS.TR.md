@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 7 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 8 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -24,7 +24,8 @@ Skill seviyelendirme üzerinden ilerlemeye odaklı, tarayıcı tabanlı metin id
 `miktaew/yet-another-idle-rpg` projesinin bir **devam fork'udur** (upstream'in bir
 de `-dev` reposu vardı). Upstream geliştirme durdu. Fork temel commit'i: `e5fba67`.
 
-`HEAD`, `v0.6.0` üzerinde yayınlanmamış çalışmadır; bir sürüm değildir.
+`HEAD` yayınlanan hattır: `v0.6.0`'dan `v0.6.5`'e kadar hepsi yayına çıktı ve
+minor numara araç zinciriyle değil hikâye içeriğiyle ilerliyor.
 
 Neyin değişebileceği ve değişemeyeceği dahil kalıcı proje yönü
 [PROPOSALS.TR.md](PROPOSALS.TR.md) içinde. Anlatı kanonu [STORY.TR.md](STORY.TR.md)
@@ -40,7 +41,7 @@ Tam tablo: [AGENTS.md § 2](AGENTS.md#2-commands).
 | `npm run serve` | `127.0.0.1:8080` üzerinde statik sunucu, **dev modu**. Kaynak düzenlemeleri sayfa yenilenince canlı. |
 | `npm run build` | `src/main.js`'i `dist/bundle.js` içine paketler, ardından deploy edilebilir siteyi `_site/` içinde toplar. İkisi de takip edilmiyor. |
 | `npm run check:save` | Dışa aktarılmış bir savegame'i güncel registry'lere karşı denetler. Save'in yolunu alır. CI'da değil: bir save dosyası gerekiyor. |
-| `npm run check` | Toplanan siteyi ve locale anahtar eşliğini doğrular. `LOCALE_STRICT=1` eksik çevirileri ölümcül yapar. |
+| `npm run check` | Toplanan siteyi, locale anahtar eşliğini ve içeriğin erişilebilir olup referanslarının çözüldüğünü doğrular. `LOCALE_STRICT=1` eksik çevirileri ölümcül yapar; **CI bunu açıyor**, çünkü Türkçe tamamlandı. |
 | `npm test` | Skill xp modeli için regresyon testleri. |
 | `npm run serve:site` | `127.0.0.1:8081` üzerinde `_site/` sunar; derlenen siteyi bundle modunda doğrulamak için. |
 

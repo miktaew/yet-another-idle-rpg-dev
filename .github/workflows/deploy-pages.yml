@@ -59,9 +59,13 @@ jobs:
         run: npm run build
 
       - name: Validate site and locale parity
-        # Fails on a broken site layout or on translation keys that do not exist
-        # in the default locale. Missing translations are reported as warnings
-        # with a coverage percentage; set LOCALE_STRICT=1 to make them fatal.
+        # LOCALE_STRICT promotes a missing translation from a warning to an error.
+        # It is on because Turkish is at 100%: the warning existed for a
+        # translation still in progress, and leaving it a warning now would let the
+        # first untranslated key ship silently. Adding a language that is NOT
+        # complete means turning this off again, deliberately.
+        env:
+          LOCALE_STRICT: "1"
         run: npm run check
 
       - name: Run regression tests
