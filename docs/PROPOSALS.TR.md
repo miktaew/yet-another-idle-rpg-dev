@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 15 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 16 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -269,7 +269,7 @@ denetlenmemişti.
 
 ---
 
-### P-9 — Hikâyeyi devam ettir `open`
+### P-9 — Hikâyeyi devam ettir `active`
 
 Kanon, frontier, orphan envanteri ve planlanan ark artık
 [STORY.TR.md](STORY.TR.md) içinde yazılı. Q-1 tam ayrışma yönünde karara
@@ -337,7 +337,28 @@ Uygulama sırası, en yüksek kaldıraç önce:
    olmadığını anlatıyor. Girişte üç bağlantı hatası onarıldı — bkz.
    [CHANGELOG.TR.md](CHANGELOG.TR.md). The Infinite Rat Saga'nın yazıldığından beri
    `(tbc)` işaretli son adımı artık tamamlanabilir.
-5. Q6 köy muhafızının on yıllık savuşturmasını karşılığa bağlıyor.
+5. **BİTTİ.** Q6 köy muhafızının geçiştirmesinin karşılığını ödüyor ve mekanizmayı
+   onun kendi replikleri veriyor. *"İkisi sparring'le kolayca gösterilebilir, o
+   yüzden onunla başlayalım. Üçüncüsünü anlatmam gerekecek"* — yani bugün hiçbir
+   şeyin vermediği iki duruş, ancak atlatılarak öğrenilebilen ikisi; üçte
+   durmasının sebebi de bu, *"öğretmen olarak berbatım"* sözünün alçakgönüllülük
+   değil bir yöntem olmasının sebebi de. Onları öğretmiyor. Dövüşerek içine işliyor
+   ve sana şimdiden yanlış yaptığını söylüyor; asıl nokta da bu.
+
+   Challenge_zone değil: *"ben senin için fazla ağır sıkletim"* kanon, yani o,
+   oyuncunun yendiği bir düşman olamaz. Ölçülen şey, aşırmaya değer bir şey görecek
+   kadar ayakta kalmak.
+
+   Açık kalan şey, değirmencilerin zaten dokunmamayı seçtiği şey: geri dönmesinden
+   hemen önce emekli olan o en iyi on maceracıdan biri olup olmadığı. Soruyu açık
+   açık reddediyor ve yalnızca zanaatkârın hükmünü düzeltiyor: *"yetenek değildi."*
+
+**Yukarıdaki sıralı iş bitti. Q1 bitmedi ve hiç sıraya girmemişti.**
+*The Merchant's Word* — tüccar loncasına, ona kabile malı tedarik ederek gövde
+kazandıran görev — hâlâ kurulmadı; dolayısıyla kapı yalnızca vatandaş yolundan
+açıldı: çiftlik sorumlusunun kahramana kefil olmasıyla, premisin adını aldığı
+tedarikçi yolundan değil. Kapı muhafızının işaret ettiği *"çeşmenin ötesindeki"*
+lonca mahallesi hâlâ bir yer değil, bir yön. Bu önerinin sıradaki parçası bu.
 
 Açık kalması gerekenler: soygunun parasını kimin ödediği, kahramanın o nesneye
 nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.

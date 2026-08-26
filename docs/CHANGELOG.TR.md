@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 30 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 31 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,73 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### 6. görev: "Senin İçin Fazla Ağır Sıklet"
+
+Onun repliği ve onun yöntemi. Köy muhafızı, köyün bütün oyun olduğu zamandan beri
+aynı soruyu savuşturuyor: *"Ohooo, birileri tatlı muhafız ablayı etkilemek mi
+istiyor? Kusura bakma ama ben senin için fazla ağır sıkletim`"* — ve ayrıca,
+*"Kusura bakma ama olmaz, bu kadarıyla yetineceksin. İnan bana, öğretmen olarak
+berbatım; tecrübeyle sabit."*
+
+**Mekanizma çoktan onun içine yazılmıştı.** Oyuncuya ilk üç duruşu veren replik,
+`guard teach answ`, nasıl çalıştığını söylüyor: *"İkisi sparring'le kolayca
+gösterilebilir, o yüzden onunla başlayalım. Üçüncüsünü anlatmam gerekecek."*
+Gösterilebilene dövüş, ancak gösterilemeyene anlatım.
+
+Oyunda hiçbir şeyin vermediği iki duruş — becerileriyle birlikte yazılmış ama
+kimsenin ulaşamadığı `Berserker's Stride` ve `Flowing Water` — ancak atlatılarak
+öğrenilebilen ikisi. Üçte durmasının sebebi de bu; "öğretmen olarak berbatım"
+sözünün alçakgönüllülük değil bir yöntem olmasının sebebi de: elinde sözcüklerin
+taşıyabileceği bir şey kalmamış.
+
+Bu yüzden onları öğretmiyor. *"Ders değil — sebebini söyledim ve ciddiydim. Ama
+bunlardan iki tane daha var ve ikisi de anlatılamaz… O yüzden durana kadar üstüme
+gel; aşırmaya değer bir şey görürsen aşır. Ben onları böyle edindim. Öğrenmenin
+berbat bir yolu."*
+
+**Challenge_zone değil.** "Ben senin için fazla ağır sıkletim" kanon; yani o,
+oyuncunun yendiği bir düşman olamaz — kaybettiği bir düello, görevin adını aldığı
+repliği yazılmamış hâle getirirdi. Bu, Combat ve Evasion'a bağlı, yinelenebilir bir
+spar; ölçtüğü şey aşırmaya değer bir şey görecek kadar ayakta kalmak. Başarı metni
+iki duruşu da adını anmadan tarif ediyor: iki kez, bulunduğun yerin etrafından
+dolanmak yerine içinden geçti, bütün ağırlığını toparlanmasına imkân olmayan bir
+vuruşa verdi *"ve toparlandı, çünkü vuruşu savurmadan önce toparlanmayı harcamaya
+çoktan karar vermişti"*; iki kez de hiç basmadı, hiç bağlanmadı, *"sanki durmak hiç
+listede olmamış gibi"*. Sonra: *"Şimdiden yanlış yapıyorsun. Bir ay boyunca yanlış
+yap, o zaman benim değil senin olurlar; daha iyisi de bu."*
+
+**Yanıtlamadığı şey.** Değirmenciler bunu çok önce çözdü ve dokunmamayı seçti: o,
+*"sözlü tariflere bakılırsa"*, geri dönmesinden hemen önce emekli olan, kıtanın en
+iyi on maceracısından biri. *"Bunu pek önemsemiyor gibi; muhtemelen huzur ve
+sessizlik tercih ediyor. Bırakalım öyle olsun."* Öte yandan yaşlı zanaatkâr, soran
+herkese onun yetenek yokluğundan başarısız olduğunu anlatıyor.
+
+Sorulduğunda açık açık reddediyor — *"İnsanlar ya istedikleri için ya da mecbur
+oldukları için emekli olur; hangisi olduğu bana ait. Sormadın. İyi ettin."* — ve
+devriyesine dönerken tek bir şeyi düzeltiyor: *"yaşlı zanaatkâr sana bunun yetenek
+eksikliği olduğunu söylediğinde — söyleyecek, herkese söylüyor — bırak söylesin. Ama
+yetenek değildi."*
+
+Kahraman seviyesi 25'e bağlı; sınır orası. Çünkü onun tepki verdiği şey, oyuncunun
+tetiklediği bir flag değil, oyuncunun ne hâle geldiği.
+
+### P-9'un sıralı işi bitti, Q1 bitmedi
+
+Önerinin tamamlanmış gibi okunmasına izin vermek yerine bunu açıkça söylemek
+gerekiyor. P-9'daki uygulama sırası 2. görevi, geri kazanım engellerini, 3. ve 4.
+görevleri, 5. ve 6. görevleri kapsıyordu. Beşi de bitti. **1. görev o sıraya hiç
+girmemişti ve hiç kurulmadı.**
+
+*The Merchant's Word*, tüccar loncasına ona kabile malı tedarik ederek gövde
+kazandıran görev; ve arkın kendi premisi bu — kahraman kasabaya tedarikçi olarak
+giriyor. O olmadan kapı yalnızca vatandaş yolundan açıldı: çiftlik sorumlusunun
+aşağı yürüyüp kapıya bir isim bırakması. Premisin adını aldığı tedarikçi yolu var
+değil ve kapı muhafızının işaret ettiği *"çeşmenin ötesindeki"* lonca mahallesi
+hâlâ bir yer değil, bir yön. P-9 bu yüzden `done` değil `active` oluyor.
+
+Dil başına 2711 anahtar; `check` 1769 içerik id'si, 265 ödül nesnesi, 20 dialogue
+adı, 247 eşya adında.
 
 ### 5. görev: ikinci kapı, gümüşle açıldı
 

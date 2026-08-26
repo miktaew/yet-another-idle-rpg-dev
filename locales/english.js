@@ -3108,6 +3108,25 @@ const descriptions = {
     "rat walls answ": "Only in soul. They be given the blessing of papa, but they try to reject but be too weak to really reject so they end up looking funny.",
     "rat kill": "Okay, give me one reason why I shouldn't kill you.",
     "rat kill answ": "I don't mind, if I die my soul be return to papa. But my blood be full of papa power, don't do it unless you want to face him personally.",
+
+    //QUEST 6 - "Way Too Strong for You". The last two stances, shown rather
+    //than taught, and the question she still will not answer.
+    "guard serious 2": "I want to try you again. Not to impress you.",
+    "guard serious 2 answ": "*[She looks at you for longer than she ever has. Not the once-over she gives the boys on patrol - the other one, the one she uses on the treeline.]*\n\nHuh.\n\nYou went into the swamp and you came out of it. People come back from near the swamp and call it the swamp. *[She takes the spear off her shoulder]*\n\nFine. Not a lesson - I told you why and I meant it. But there are two more of these, and neither one can be explained, which is the whole reason I stopped at three. So come at me until you stop, and if you see something worth stealing, steal it.\n\nThat is how I got them. It is a terrible way to learn.",
+    "guard spar name": "Spar with her",
+    "guard spar": "[Come at her until you stop]",
+    "guard spar desc": "She has not moved her feet since she agreed. That is the first thing worth noticing.",
+    "guard spar during": "Spear. Spear. Daggers, when you get inside the spear. Again.",
+    "guard spar answ": "You stop when your arms stop, which is later than the first time and a good deal later than the time before that.\n\nTwice she went through where you were instead of around it, her whole weight committed to a strike she had no business recovering from - and recovered, because she had already decided to spend the recovery before she threw it. Twice more she did the exact opposite: never planted, never committed, every strike arriving from wherever the last one had left her, as though stopping had simply never been on the list.\n\n*[She sets the butt of the spear in the dirt]* You are already doing them wrong. Do them wrong for a month and they will be yours instead of mine, which is better. *[She is not quite smiling]* Told you I am a terrible teacher.",
+    "guard spar fail conditional_loss 1": "You stop early. She lets you, and does not comment on it, which is worse.",
+    "guard after": "The millers think you used to be somebody.",
+    "guard after answ": "*[She laughs - properly, briefly, the first time you have heard it.]*\n\nThe millers think the well is haunted.\n\n*[She shoulders the spear again]* I will tell you what I told them, which was nothing, and one thing besides. Whoever that was, she retired. People retire because they want to or because they have to, and which of those it was is mine. You did not ask. Good.\n\n*[She starts walking her round]* And when the old craftsman tells you it was a shortage of talent - he will, he tells everyone - you can let him. But it was not talent.",
+    "quest Way Too Strong for You": "Way Too Strong for You",
+    "quest Way Too Strong for You desc 1": "The village guard has been deflecting the same question for as long as you have been asking it. Ask it once more, now that you have been somewhere.",
+    "quest Way Too Strong for You desc 2": "She agreed. Not to a lesson.",
+    "quest Way Too Strong for You desc 3": "Two techniques she never taught you, and one answer she did not give.",
+    "quest Way Too Strong for You task 1": "Ask the village guard for a real bout",
+    "quest Way Too Strong for You task 2": "Last until your arms stop",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

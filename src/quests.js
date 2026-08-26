@@ -582,6 +582,32 @@ const questManager = {
             new QuestTask({task_description: "quest Nothing but Pants task 3"}),
         ]
     });
+    /*
+        Quest 6, and the name is hers: "Sorry, but I'm way too strong for you~".
+
+        Two tasks, because there are only two things to do: ask the question again
+        now that it is not a joke, and stay upright long enough to steal something.
+        Whether she is the adventurer the millers recognise is not a task and never
+        becomes one.
+    */
+    quests["Way Too Strong for You"] = new Quest({
+        quest_name: "quest Way Too Strong for You",
+        display_priority: 12,
+        getQuestDescription: ()=>{
+            if(quests["Way Too Strong for You"].quest_tasks[1].is_finished) {
+                return "quest Way Too Strong for You desc 3";
+            } else if(quests["Way Too Strong for You"].quest_tasks[0].is_finished) {
+                return "quest Way Too Strong for You desc 2";
+            } else {
+                return "quest Way Too Strong for You desc 1";
+            }
+        },
+        questline: "The Merchant's Word",
+        quest_tasks: [
+            new QuestTask({task_description: "quest Way Too Strong for You task 1"}),
+            new QuestTask({task_description: "quest Way Too Strong for You task 2"}),
+        ]
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

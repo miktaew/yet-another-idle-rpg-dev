@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 30 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 31 -->
 
 # Changelog
 
@@ -20,6 +20,74 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### Quest 6: "Way Too Strong for You"
+
+Her line, and her method. The village guard has been brushing off the same
+question since the village was the whole game: *"Ohhh, someone wants to impress
+the cute guard lady? Sorry, but I'm way too strong for you`"*, and separately,
+*"I'm sorry, but no, that will have to be enough. Trust me, I'm generally a
+terrible teacher, I know that from experience."*
+
+**The mechanism was already written into her.** `guard teach answ`, the line that
+gave the player their first three stances, says how she works: *"Two can be easily
+presented through some sparring, so let's start with it. The third I'll just have
+to explain."* Sparring for what can be shown; explaining only what cannot.
+
+The two stances nothing in the game grants - `Berserker's Stride` and
+`Flowing Water`, authored with their skills and reachable by nobody - are the two
+that can only be survived. Which is also why she stopped at three, and why "I'm a
+terrible teacher" is a method rather than modesty: she has nothing left that words
+will carry.
+
+So she does not teach them. *"Not a lesson - I told you why and I meant it. But
+there are two more of these, and neither one can be explained… So come at me until
+you stop, and if you see something worth stealing, steal it. That is how I got
+them. It is a terrible way to learn."*
+
+**Not a Challenge_zone.** "I'm way too strong for you" is canon, so she cannot be
+an enemy the player defeats - a duel she loses would unwrite the line the quest is
+named after. It is a repeatable spar gated on Combat and Evasion, and what it
+measures is lasting long enough to steal something. The success text describes both
+stances without naming either: twice she went through where you were with her whole
+weight behind a strike she had no business recovering from, *"and recovered, because
+she had already decided to spend the recovery before she threw it"*; twice more she
+never planted and never committed, *"as though stopping had simply never been on
+the list"*. Then: *"You are already doing them wrong. Do them wrong for a month and
+they will be yours instead of mine, which is better."*
+
+**What it does not answer.** The millers worked it out long ago and decided to
+leave it: she is, *"as far as oral descriptions go"*, one of the continent's top ten
+adventurers, who retired just before she came back. *"She doesn't seem to care much
+about it, probably prefers peace and quiet. Let her have that."* Meanwhile the old
+craftsman tells anyone who asks that she failed for want of talent.
+
+Asked about it, she refuses in as many words - *"People retire because they want to
+or because they have to, and which of those it was is mine. You did not ask.
+Good."* - and corrects exactly one thing on her way back to her round:
+*"when the old craftsman tells you it was a shortage of talent - he will, he tells
+everyone - you can let him. But it was not talent."*
+
+Gated on hero level 25, which is where the frontier is, because what she is
+reacting to is what the player has become rather than a flag they tripped.
+
+### P-9's ordered work is finished, and Q1 is not
+
+Worth stating plainly rather than letting the proposal read as complete. The
+execution order in P-9 covered quest 2, the reclamation blockers, quests 3 and 4,
+quest 5 and quest 6. All five are done. **Quest 1 was never in that order and has
+never been built.**
+
+*The Merchant's Word* is the quest that gives the merchant guild a body by
+supplying it with tribe goods, and it is the arc's own premise - the hero enters
+the town as a supplier. Without it the gate opened by the citizen path only: the
+farm supervisor walking down to leave a name with the gate. The supplier path the
+premise is named after does not exist, and the guild quarter the gate guard points
+at *"past the fountain"* is still a direction rather than a place. P-9 goes back to
+`active` rather than `done`.
+
+2711 keys per language; `check` at 1769 content ids, 265 reward objects, 20
+dialogue names, 247 item names.
 
 ### Quest 5: the second gate, opened with silver
 

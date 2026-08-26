@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 15 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 16 -->
 
 # Proposals
 
@@ -255,7 +255,7 @@ registry. Run against a real v0.5.5.30 save from before the localisation work, a
 131 recipes and 90 item ids resolve. The rule that registry keys are save data had
 never been checked against an actual save.
 
-### P-9 — Continue the story `open`
+### P-9 — Continue the story `active`
 
 Canon, the frontier, the orphan inventory and the planned arc are now written up
 in [STORY.md](STORY.md). Q-1 is decided in favour of full divergence, so new
@@ -326,10 +326,34 @@ Execution order, highest leverage first:
    blessing and were too weak to reject it. Three link errors were repaired on the
    way in - see [CHANGELOG.md](CHANGELOG.md). The Infinite Rat Saga's last task,
    marked `(tbc)` since it was written, is completable.
-5. Q6 pays off the village guard's decade of deflection.
+5. **DONE.** Q6 pays off the village guard's deflection, and her own lines
+   supplied the mechanism. *"Two can be easily presented through some sparring,
+   so let's start with it. The third I'll just have to explain"* - so the two
+   stances nothing grants today are the two that can only be survived, which is
+   also why she stopped at three, and why *"I'm generally a terrible teacher"* is
+   a method rather than modesty. She does not teach them. She spars them into you
+   and tells you that you are already doing them wrong, which is the point.
+
+   Not a Challenge_zone: *"I'm way too strong for you"* is canon, so she cannot
+   be an enemy the player defeats. What is measured is lasting long enough to
+   steal something.
+
+   What stays open is what the millers already chose to leave alone - whether she
+   is the top-ten adventurer who retired just before she came back. She refuses
+   the question in as many words, and corrects only the craftsman's verdict:
+   *"it was not talent."*
+
+**The ordered work above is finished. Q1 is not, and was never in the order.**
+*The Merchant's Word* - the quest that gives the merchant guild a body by
+supplying it with tribe goods - remains unbuilt, so the gate opened by the
+citizen path only: the farm supervisor vouching for the hero, not the supplier
+path the premise is named after. The guild quarter the gate guard points at,
+*"past the fountain"*, is still a direction rather than a place. That is the
+next piece of this proposal.
 
 What must stay open: who paid for the robbery, how the hero came to have the
-object, the four unbuilt regions, the banished tribe, and the Rat God.
+object, whether the guard is the retired adventurer, the four unbuilt regions,
+the banished tribe, and the Rat God.
 
 ---
 

@@ -3148,6 +3148,25 @@ const descriptions = {
     "rat walls answ": "Sadece ruhta. Onlara papamın lütfu verilmiş olur, ama reddetmeye çalışıyor, gerçekten reddedecek kadar güçlü olmuyor, o yüzden komik görünüyor.",
     "rat kill": "Peki, seni öldürmemem için bana bir sebep söyle.",
     "rat kill answ": "Bana fark etmiyor, ölürsem ruhum papama döner olur. Ama kanım papa gücüyle dolu olur; onunla bizzat yüzleşmek istemiyorsan yapma.",
+
+    //QUEST 6 - "Way Too Strong for You". The last two stances, shown rather
+    //than taught, and the question she still will not answer.
+    "guard serious 2": "Seninle yeniden denemek istiyorum. Etkilemek için değil.",
+    "guard serious 2 answ": "*[Sana şimdiye kadar baktığından daha uzun bakıyor. Devriyedeki çocuklara attığı o üstünkörü bakış değil — ötekisi; ağaç sınırına bakarken kullandığı.]*\n\nHmm.\n\nBataklığa girdin ve içinden çıktın. İnsanlar bataklığın yakınından döner, sonra ona bataklık der. *[Mızrağı omzundan indiriyor]*\n\nPeki. Ders değil — sebebini söyledim ve ciddiydim. Ama bunlardan iki tane daha var ve ikisi de anlatılamaz; üçte durmamın bütün sebebi bu. O yüzden durana kadar üstüme gel; aşırmaya değer bir şey görürsen aşır.\n\nBen onları böyle edindim. Öğrenmenin berbat bir yolu.",
+    "guard spar name": "Onunla dövüş",
+    "guard spar": "[Durana kadar üstüne git]",
+    "guard spar desc": "Kabul ettiğinden beri ayaklarını yerinden oynatmadı. Fark edilmeye değer ilk şey bu.",
+    "guard spar during": "Mızrak. Mızrak. Mızrağın içine girdiğinde hançerler. Yeniden.",
+    "guard spar answ": "Kolların durduğunda duruyorsun; bu, ilk seferden geç ve ondan öncekinden hayli geç.\n\nİki kez, bulunduğun yerin etrafından dolanmak yerine içinden geçti; bütün ağırlığını toparlanmasına imkân olmayan bir vuruşa verdi — ve toparlandı, çünkü vuruşu savurmadan önce toparlanmayı harcamaya çoktan karar vermişti. İki kez de tam tersini yaptı: hiç basmadı, hiç bağlanmadı; her vuruş, bir öncekinin onu bıraktığı yerden geldi — sanki durmak hiç listede olmamış gibi.\n\n*[Mızrağın dipçiğini toprağa dayıyor]* Şimdiden yanlış yapıyorsun. Bir ay boyunca yanlış yap, o zaman benim değil senin olurlar; daha iyisi de bu. *[Tam olarak gülümsemiyor]* Öğretmen olarak berbat olduğumu söylemiştim.",
+    "guard spar fail conditional_loss 1": "Erken duruyorsun. Buna izin veriyor ve hiçbir şey söylemiyor; bu daha kötü.",
+    "guard after": "Değirmenciler eskiden biri olduğunu düşünüyor.",
+    "guard after answ": "*[Gülüyor — gerçekten, kısacık; ilk kez duyuyorsun.]*\n\nDeğirmenciler kuyunun perili olduğunu da düşünüyor.\n\n*[Mızrağı yeniden omzuna alıyor]* Onlara ne söylediysem sana da onu söyleyeceğim, yani hiçbir şey; bir de şunu. O kim olduysa, emekli oldu. İnsanlar ya istedikleri için ya da mecbur oldukları için emekli olur; hangisi olduğu bana ait. Sormadın. İyi ettin.\n\n*[Devriyesine başlıyor]* Ve yaşlı zanaatkâr sana bunun yetenek eksikliği olduğunu söylediğinde — söyleyecek, herkese söylüyor — bırak söylesin. Ama yetenek değildi.",
+    "quest Way Too Strong for You": "Senin İçin Fazla Ağır Sıklet",
+    "quest Way Too Strong for You desc 1": "Köy muhafızı, sen sorduğun sürece aynı soruyu geçiştiriyor. Bir yerlere gittikten sonra bir kez daha sor.",
+    "quest Way Too Strong for You desc 2": "Kabul etti. Bir derse değil.",
+    "quest Way Too Strong for You desc 3": "Sana hiç öğretmediği iki teknik ve vermediği bir cevap.",
+    "quest Way Too Strong for You task 1": "Köy muhafızından gerçek bir dövüş iste",
+    "quest Way Too Strong for You task 2": "Kolların durana kadar dayan",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

@@ -725,6 +725,33 @@ class DialogueAction extends GameAction {
                     }
                 }
             }),
+            /*
+                QUEST 6. Gated on hero level rather than on a flag, because what she
+                is reacting to is what the player has become - the frontier is level
+                25 to 30, which is where this becomes askable without being a joke.
+
+                She grants the last two stances the same way she granted the first
+                three: by sparring, which "guard teach answ" already establishes as
+                her method for anything that cannot be explained.
+            */
+            "serious 2": new Textline({
+                name: "guard serious 2",
+                is_unlocked: true,
+                text: "guard serious 2 answ",
+                display_conditions: {hero_level: 25},
+                rewards: {
+                    quests: ["Way Too Strong for You"],
+                    quest_progress: [{quest_id: "Way Too Strong for You", task_index: 0}],
+                    actions: [{dialogue: "village guard", action: "spar"}],
+                },
+                locks_lines: ["serious 2", "serious"],
+            }),
+            "after": new Textline({
+                name: "guard after",
+                is_unlocked: false,
+                text: "guard after answ",
+                locks_lines: ["after"],
+            }),
             "teach more": new Textline({
                 name: "guard teach more",
                 is_unlocked: false,
@@ -764,6 +791,41 @@ class DialogueAction extends GameAction {
                 success_text: "guard pats answ",
                 attempt_duration: 0,
                 success_chances: [1],
+            }),
+            /*
+                Deliberately not a Challenge_zone. "I'm way too strong for you" is
+                canon, so this cannot be an enemy the player defeats; what is being
+                measured is whether they last long enough to steal something.
+
+                Repeatable, because she says to come at her until you stop, and
+                because the stances arrive on the first success and the rest is
+                practice.
+            */
+            "spar": new DialogueAction({
+                action_id: "spar",
+                is_unlocked: false,
+                action_name: "guard spar name",
+                starting_text: "guard spar",
+                description: "guard spar desc",
+                action_text: "guard spar during",
+                success_text: "guard spar answ",
+                repeatable: true,
+                conditions: [
+                    {skills: {Combat: 20, Evasion: 15}},
+                    {skills: {Combat: 40, Evasion: 35}},
+                ],
+                failure_texts: {
+                    conditional_loss: ["guard spar fail conditional_loss 1"],
+                },
+                attempt_duration: 90,
+                success_chances: [0.25, 1],
+                rewards: {
+                    xp: 2500,
+                    skill_xp: {Combat: 900, Evasion: 900},
+                    stances: ["berserk", "flowing water"],
+                    quest_progress: [{quest_id: "Way Too Strong for You", task_index: 1}],
+                    textlines: [{dialogue: "village guard", lines: ["after"]}],
+                },
             }),
             "try to pat": new DialogueAction({
                 action_id: "try to pat",
