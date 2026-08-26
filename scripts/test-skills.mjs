@@ -100,18 +100,22 @@ function capture_errors(run) {
 
 const { skills } = await load_with_stubs(
     "src/skills.js",
-    ["./character.js", "./crafting_recipes.js", "./misc.js", "./translation.js", "./main.js"],
+    ["./character.js", "./crafting_recipes.js", "./translation.js", "./main.js"],
     `
 const get_total_level_bonus = () => 0;
 const get_total_skill_coefficient = () => 1;
 const get_total_skill_level = (id) => (skills[id] ? skills[id].current_level : 0);
 const get_crafting_quality_caps = () => ({});
-const stat_names = {};
 const language = "english";
 // Skill.name() asks the translation layer for a display name and falls back to the
 // English it already holds. The stub reproduces the fallback, which is the branch
 // that matters here: these tests are about xp, not about localisation.
-const translationManager = { getDisplayName: (lang, english_name) => english_name };
+// getText now also carries the stat abbreviations that stat_names in misc.js used
+// to hold, so the stub returns the id for those the same way.
+const translationManager = {
+    getDisplayName: (lang, english_name) => english_name,
+    getText: (lang, id) => id,
+};
 `);
 
 console.log(`skills loaded: ${Object.keys(skills).length}`);

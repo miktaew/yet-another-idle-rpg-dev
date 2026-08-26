@@ -2,43 +2,8 @@
 
 import { game_options } from "./main.js"
 
-const stat_names = {  //can be removed once everything is moved to translations
-    "strength": "str",
-    "health": "hp",
-    "max_health": "hp", //same as for "health"
-    "health_regeneration_flat": "hp regen",
-    "health_regeneration_percent": "hp % regen",
-    "health_loss_flat": "hp loss",
-    "health_loss_percent": "hp % loss",
-    "stamina_regeneration_flat": "stam regen",
-    "stamina_regeneration_percent": "stam % regen",
-    "max_stamina": "stamina",
-    "agility": "agl",
-    "dexterity": "dex",
-    "magic": "magic",
-    "attack_speed": "attack speed",
-    "attack_power": "attack power",
-    "crit_rate": "crit rate",
-    "crit_multiplier": "crit dmg",
-    "stamina_efficiency": "stamina efficiency",
-    "intuition": "int",
-    "block_strength": "shield strength",
-    "hit_chance": "hit chance",
-    "evasion": "EP",
-    "evasion_points": "EP",
-    "attack_points": "AP",
-    "heat_tolerance": "heat resistance",
-    "cold_tolerance": "cold resistance",
-    "unarmed_power": "unarmed base dmg",
-    "armor_penetration": "armor pen",
-    "defense": "defense",
-};
 
-const task_type_names = {
-    "kill": "kill",
-    "kill_any": "kill",
-    "clear": "clear",
-}
+
 
 //skill-tag mapping for when consumables are used
 //also gets used for effects from other sources
@@ -389,7 +354,7 @@ export {
     expo, random_range, clamp, slerp, format_reading_time, format_working_time, 
         get_hit_chance, round_item_price,
         compare_game_version, is_a_older_than_b,
-        stat_names, task_type_names, skill_consumable_tags, crafting_tags_to_skills,
+        skill_consumable_tags, crafting_tags_to_skills,
         celsius_to_fahrenheit,
         select_outline_class,
         component_name_mapping, get_component_name,

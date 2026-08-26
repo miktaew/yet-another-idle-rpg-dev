@@ -5,9 +5,20 @@ const skill_categories = {};
 
 import { get_total_level_bonus, get_total_skill_coefficient, get_total_skill_level } from "./character.js";
 import { get_crafting_quality_caps } from "./crafting_recipes.js";
-import {stat_names} from "./misc.js";
 import { translationManager } from "./translation.js";
 import { language } from "./main.js";
+
+/**
+ * Abbreviated display name for a stat key: "max_health" -> "hp".
+ *
+ * Was stat_names from misc.js, which is an English-only table. Every one of its
+ * keys has a "<key>" locale row holding the same abbreviation, so this reads the
+ * locale instead and the milestone list stops being English under a Turkish
+ * interface.
+ */
+function stat_label_short(stat_key) {
+    return translationManager.getText(language, stat_key);
+}
 
 const weapon_type_to_skill = {
     "axe": "Axes",
@@ -231,10 +242,10 @@ class Skill {
                     if (gains.stats) {
                         Object.keys(gains.stats).forEach(stat => {
                             if(gains.stats[stat].flat) {
-                                message += `\n +${gains.stats[stat].flat} ${stat_names[stat].replace("_"," ")}`;
+                                message += `\n +${gains.stats[stat].flat} ${stat_label_short(stat)}`;
                             }
                             if(gains.stats[stat].multiplier) {
-                                message += `\n x${Math.round(100*gains.stats[stat].multiplier)/100} ${stat_names[stat].replace("_"," ")}`;
+                                message += `\n x${Math.round(100*gains.stats[stat].multiplier)/100} ${stat_label_short(stat)}`;
                             }   
                         });
                     }
@@ -400,16 +411,16 @@ function format_skill_rewards(milestone){
         Object.keys(milestone.stats).forEach(stat => {
             if(milestone.stats[stat].flat) {
                 if(formatted) {
-                    formatted += `, +${milestone.stats[stat].flat} ${stat_names[stat]}`;
+                    formatted += `, +${milestone.stats[stat].flat} ${stat_label_short(stat)}`;
                 } else {
-                    formatted = `+${milestone.stats[stat].flat} ${stat_names[stat]}`;
+                    formatted = `+${milestone.stats[stat].flat} ${stat_label_short(stat)}`;
                 }
             }
             if(milestone.stats[stat].multiplier) {
                 if(temp) {
-                    temp += `, x${milestone.stats[stat].multiplier} ${stat_names[stat]}`;
+                    temp += `, x${milestone.stats[stat].multiplier} ${stat_label_short(stat)}`;
                 } else {
-                    temp = `x${milestone.stats[stat].multiplier} ${stat_names[stat]}`;
+                    temp = `x${milestone.stats[stat].multiplier} ${stat_label_short(stat)}`;
                 }
             }
         });

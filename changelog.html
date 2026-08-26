@@ -227,6 +227,26 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.8</button>
+    <div class="content"><pre>
+    - the rest of the interface is translated. Item tooltips, the crafting window, the
+        stance table, the bestiary, the skill headings, the stat breakdowns and the
+        activity panel were all still partly English
+    - stat names come from the language file now instead of a built-in English table,
+        so an item that gives "+3 hp" says it in your language
+    - so do the things that used to be printed straight off their internal name: the
+        weapon type on a tooltip, where a stat bonus comes from, which region a
+        reputation belongs to, and what a quest task is counting
+    - switching language also repaints the three bars, the inventory rows and the
+        stance list, which used to keep the language they were first drawn in
+    - "40/40stamina" now has its space back
+    - the empty tool and equipment slots read as slots rather than as their internal
+        names
+    - an item's material type is a word again instead of the name the game keeps it
+        under, so bread is bread
+    - the intuition line in the stat panel had lost its colon, and the level line kept
+        saying "Lvl: 0" until the first time you levelled
+    </pre></div>
     <button type="button" class="collapsible">v0.6.7</button>
     <div class="content"><pre>
     - switching language now retranslates the whole interface instead of half of it. The

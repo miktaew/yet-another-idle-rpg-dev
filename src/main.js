@@ -493,6 +493,8 @@ async function option_language(option) {
     //somewhere else.
     fill_character_bio();
     update_save_load_buttons();
+    //The stance list takes the current stance and the favourites, which live here.
+    update_displayed_stance_list(stances, current_stance, faved_stances);
     retranslate_interface({
         location: current_location,
         active_quest_ids: Object.keys(active_quests),
@@ -5259,7 +5261,8 @@ function load(save_data) {
                 start_activity(activity_id);
                 if(activities[current_location.activities[activity_id].activity_name].type === "JOB") {
                     current_activity.earnings = save_data.current_activity.earnings * ((is_from_before_eco_rework == 1)*10 || 1);
-                    document.getElementById("action_end_earnings").innerText = `(earnings: ${format_money(current_activity.earnings)})`;
+                    document.getElementById("action_end_earnings").innerText = translationManager.getText(language, "ui earnings",
+                        {v1: format_money(current_activity.earnings)});
                 } else if(activities[current_location.activities[activity_id].activity_name].type === "GATHERING") {
                     //current_activity.gathered_materials = save_data.current_activity.gathered_materials || {};
                     //pretty sure this was used only for logging purposes, but let's just leave it commented out instead of deleting

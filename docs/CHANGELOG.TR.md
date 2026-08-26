@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 37 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 38 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,93 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### İngilizcenin kalanı: bakarak değil tarayarak bulundu
+
+Önceki madde, ekran görüntülerinin yanlış alet olduğunu itiraf ederek bitiyor. Bu
+da onları değiştirmenin bulduğu şey.
+
+Ekran görüntüsü, o an açık olan paneli gösterir. İki güne yayılan dördü, beş
+düzeltme ve beşinci bir bildirim üretti - ve beşinci bildirim haklıydı, çünkü zanaat
+penceresi, duruş tablosu, bestiary ve bütün baloncuklar hiçbir ekran görüntüsünde
+yer almamıştı. Bu yüzden kaynak tarandı: `innerText`/`innerHTML` atayan ya da
+`set_HTML`/`insert_HTML` çağıran her ifadedeki her dizge sabiti, yerel kimlikler,
+biçimlendirme ve `material-icons` simge adları çıkarıldıktan sonra.
+
+**Yirmi sekiz yer, iki sınıf.** İlk sınıf beklenen olan - `"Slot:"`, `"Result:"`,
+`"Finish"`, `"Sleeping..."`, duruş tablosundaki `"Fav"`/`"Select"`/`"Name"`,
+`"Stamina cost:"`, önceki geçişin kaçırdığı iki yerdeki `"Breakdown:"`,
+`"(with global: …)"`, `"Materials required:"`.
+
+İkinci sınıf ilginç olanı: **ekrana basmak için biçimlendirilmiş kayıt anahtarları.**
+Altı eşya baloncuğu sitesi ve etki baloncuğu, stat etiketlerini anahtardan
+`capitalize_first_letter(effect_key).replace("_"," ")` ile kuruyordu; Türkçe oynayan
+biri "Attack power" okuyordu. O anahtarları çeviren satırlar - `<stat> long` - ırk
+baloncuğu yazıldığından beri vardı; siteler onları hiç kullanmamıştı. Yukarıdaki
+maddenin anlattığı boş kuşanma yuvalarının aynı biçimi. Bu sınıfta ayrıca:
+baloncuktaki silah türü, bir statın ya da tecrübe bonusunun nereden geldiği
+(`skill_milestones`, `light_level`), itibarın hangi bölgeye ait olduğu ve görev
+koşulunun üç düzeyinin tamamı.
+
+**İki İngilizce tablo da onunla gitti.** `misc.js` içindeki `stat_names` kendi
+kaldırma notunu taşıyordu - *"her şey çevirilere taşındığında kaldırılabilir"* - ve
+kaldırılabilirdi: 29 anahtarının hepsinin aynı kısaltmayı tutan bir `"<key>"` yerel
+satırı var, yani tablo hiçbir çevirinin ulaşamadığı, varsayılan yerelin ikinci bir
+kopyasıydı. `display.js` ve `skills.js` boyunca 15 çağrı noktası vardı; bir kilometre
+taşı ödülünün, geri kalanı Türkçe olan bir baloncukta "+3 hp" diye okunmasının sebebi
+buydu. `task_type_names` de gitti ve çevrilmemiş olmaktan da kötüydü: görevler beş
+tür kullanırken tablo üç girdi tutuyordu, yani görünür bir `reach_skill` görevi
+"undefined:" diye çizilecekti. O görevlerin ikisi de gizli, yani kimse görmedi; ama
+geri düşüş artık anahtarın adını yazıyor.
+
+**Ve `retranslate_interface`'in kendi boşlukları vardı.** Üç çubuk kendi
+güncelleyicileri tarafından çiziliyor ve her biri bir kelime taşıyor; bu yüzden can,
+dayanıklılık ve tecrübe eski dilde kalıyordu. Envanter daha kötüydü:
+`update_displayed_character_inventory`, hâlihazırda var olan bir satırın yalnızca
+adedine, baloncuğuna ve fiyatına dokunuyor; yani eşya adları ve `[use]`/`[equip]`
+düğmeleri hiç değişmiyordu. Artık her satırı yerinde değiştiren bir `rebuild`
+seçeneği var - `replaceWith` DOM konumunu koruduğu için oyuncunun sıralaması sağ
+kalıyor. Duruş listesi `main.js`'ten çağrılıyor, çünkü mevcut duruşu ve favorileri
+argüman olarak alıyor.
+
+**Asıl mesele kontrol.** `npm run check` artık taramayı her koşuda yapıyor, yani bu
+geri gelemez. Doğru yapmak iki deneme aldı ve iki başarısızlık da kayda değer, çünkü
+ikisi de içerik kimliği taramasının başarısızlığının aynısı:
+
+- İlk sürüm `innerText\s*=` ile eşleşiyordu; bu `innerText ===` ile de eşleşir.
+  Envanter sıralama karşılaştırıcısındaki `innerText === "[Comp]"` satırını
+  işaretledi - bu bir **okuma**. Onu çevirmek, bir sıralama anahtarının içine yerel
+  bir dizge sokardı.
+- İkinci sürüm satır satır tarıyordu; iki satıra yayılan bir şablon sabiti iki
+  dizge olarak bildirildi. `material-icons icon skill_dropdown_icon`'u işaretledi,
+  çünkü bu kontrolün doğrulamak için var olduğu düzeltme kapanış `</i>`'sini alt
+  satıra taşımıştı. Artık karakterleri yürüyor ve bir sabitin DOM'a ulaşıp
+  ulaşmadığına, bulunduğu satırdan değil, içinde durduğu ifadeden karar veriyor.
+
+Üç kusur ekilerek negatif test edildi: düz bir etiket, çok satırlı bir şablonun
+içindeki bir etiket ve bir karşılaştırma. İki yazmayı yakaladı, karşılaştırmaya
+dokunmadı.
+
+**Tarayıcının bulduğu iki şey daha; taramanın yapısal olarak bulamayacağı türden.**
+Eşya baloncuğu `${item.material_type}` basıyordu - bir sabit değil, bir kayıt
+*değeri*; ve interpolasyonları sıyırmak, DOM kontrolünün hâlihazırda görünen ad olan
+kısımları görmezden gelmesini sağlayan şeyin tam kendisi. Yani o sınıf ters yönde bir
+kontrol istiyor: içeriğin bildirdiği değerleri okuyup her biri için satır zorunlu
+kılan bir kontrol. `material_type` ve `weapon_type` ona bağlandı ve negatif test
+edildi. Yirmi beş malzeme türü satır bekliyordu.
+
+Öteki hiç çeviri hatası değildi: `ui label intuition`'da iki nokta yoktu, oysa bütün
+kardeşlerinde var; yani stat paneli İngilizcede de "Dexterity: 10.0" ile "Magic: 0.0"
+arasında "Intuition 10.0" okunuyordu. Seviye satırı da yalnızca seviye atlandığında
+yazılıyordu, yani `index.html` içindeki sabit `Lvl: 0` oyuncu ilk seviyesini atlayana
+kadar duruyordu - İngilizce olarak ve kodun kullandığından farklı kelimelerle. Artık
+her seferinde yazılıyor ve biçimlendirme boş.
+
+**Bulunup elle sürülmeyen bir ölü karşılaştırma.** Hiçbir yerde hiçbir şey
+`"[Comp]"` ya da `"[Book]"` yazmıyor, yani envanter karşılaştırıcısının o iki dalı
+asla eşleşemez. Bu bir çeviri hatasından çok bir üst-akış hatası ve düzeltmek, bir
+satırın bileşen olduğunu nasıl duyuracağına karar vermek demek - tahmin etmek yerine
+buraya yazıldı.
 
 ### 2. bölge: ovalar
 

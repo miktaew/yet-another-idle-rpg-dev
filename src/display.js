@@ -24,7 +24,7 @@ import { format_time, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, get_location_type_penalty, location_types, locations } from "./locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
-import { expo, format_reading_time, stat_names, get_hit_chance, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
+import { expo, format_reading_time, get_hit_chance, round_item_price, format_working_time, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { effect_templates } from "./active_effects.js";
@@ -243,7 +243,11 @@ const other_save_load_button = document.getElementById("import_other_save_button
 
 const export_button_tooltip = document.getElementById("export_button_tooltip");
 
-const default_dialogue_return_text = "Nevermind";
+//Read at render time rather than at import: a const here is evaluated before a
+//language has been chosen, so it could only ever hold the default one.
+function default_dialogue_return_text() {
+    return translationManager.getText(language, "ui nevermind");
+}
 
 /**
  * general function for clearing HTML content of an element, for easier management if approach changes
@@ -283,6 +287,71 @@ function set_HTML(element, html_string) {
  *        it to a raw English stat key would render "intuition" as "İntuition".
  *        Callers that pass an untranslated identifier must leave this false.
  */
+/**
+ * Display name for whatever a quest task is counting.
+ *
+ * The target is a registry key whose meaning depends on the task type: an enemy
+ * group for a kill, a location for a clear or an entry, a skill for reach_skill.
+ * Each of those already knows its own display name, so this only has to pick the
+ * right registry. An unknown type falls back to the key, visibly, rather than to
+ * undefined.
+ */
+function quest_target_label(task_type, target_id) {
+    if(task_type === "reach_skill") {
+        return skills[target_id]?.name() ?? target_id;
+    }
+    if(task_type === "clear" || task_type === "enter_location") {
+        return locations[target_id]?.getName() ?? translationManager.getDisplayName(language, target_id);
+    }
+    return translationManager.getDisplayName(language, target_id);
+}
+/**
+ * Display name for a stat key, e.g. "max_health" -> "health" / "sağlık".
+ *
+ * The `<stat> long` rows have existed since the race tooltip was translated; six
+ * item-tooltip sites and the effect tooltip were building the label out of the key
+ * instead, which is why an item read "Attack power" under a Turkish interface.
+ */
+function stat_label(stat_key) {
+    return capitalize_first_letter(translationManager.getText(language, `${stat_key} long`), true);
+}
+
+/**
+ * The abbreviated form of the same, for inline lists: "+3 hp", "x1.2 agl".
+ *
+ * This is what stat_names in misc.js held. Its own comment said it could go once
+ * everything was translated, and it can: all 29 of its keys have a "<key>" locale
+ * row carrying the same abbreviation, so the table was a second copy of the default
+ * locale that no translation could reach.
+ */
+function stat_label_short(stat_key) {
+    return translationManager.getText(language, stat_key);
+}
+
+/**
+ * Display name for a stat or xp-bonus SOURCE, e.g. "skill_milestones".
+ *
+ * These are the keys of character.stats.flat / .multiplier and
+ * character.xp_bonuses.multiplier, and they were printed by replacing the
+ * underscore with a space. Unlike the stat keys these had no rows, so they have
+ * their own now.
+ */
+function stat_source_label(source_key) {
+    return translationManager.getText(language, `ui stat source ${source_key}`);
+}
+
+/**
+ * Display name for what an xp multiplier applies to.
+ *
+ * Anything that is not one of the three aggregate targets is a skill id, and skills
+ * already know their own display name.
+ */
+function xp_target_label(target_key) {
+    if(target_key === "all" || target_key === "hero" || target_key === "all_skill") {
+        return translationManager.getText(language, `ui xp target ${target_key}`);
+    }
+    return capitalize_first_letter(skills[target_key].name(), true);
+}
 function capitalize_first_letter(some_string, is_translated = false) {
     const tag = is_translated ? language_tags[language] : undefined;
     return some_string.charAt(0).toLocaleUpperCase(tag) + some_string.slice(1);
@@ -418,9 +487,15 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
 
     //add stats if can be equipped
     if(item.item_type === "EQUIPPABLE") { 
-        item_tooltip += `<br>Slot: <b>${item.equip_slot}</b>`;
+        //Computed into a variable: the content-id scan cannot follow a concatenation
+        //and is right to refuse to guess at one.
+        const slot_text_id = `ui slot ${item.equip_slot}`;
+        item_tooltip += `<br>${translationManager.getText(language, "ui tooltip slot")} <b>${translationManager.getText(language, slot_text_id)}</b>`;
         if(item.equip_slot === "weapon") {
-            item_tooltip += `<br>Type: <b>${item.weapon_type}</b>`;
+            //items.js calls a hammer a "battle hammer" when it builds the item's own
+            //name, and the locale row follows that. The weapon_type stays "hammer".
+            const weapon_word = item.weapon_type === "hammer" ? "battle hammer" : item.weapon_type;
+            item_tooltip += `<br>${translationManager.getText(language, "ui tooltip weapon type")} <b>${translationManager.getText(language, "weapon type " + weapon_word)}</b>`;
         }
 
         if(item.components) {
@@ -462,20 +537,20 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
             Object.keys(equip_stats_0).forEach(effect_key => {
                 if(equip_stats_0[effect_key].flat != null) {
                     item_tooltip += 
-                    `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: +${equip_stats_0[effect_key].flat} - ${equip_stats_1[effect_key].flat}`;
+                    `<br>${stat_label(effect_key)}: +${equip_stats_0[effect_key].flat} - ${equip_stats_1[effect_key].flat}`;
                 }
                 if(equip_stats_0[effect_key].multiplier != null) {
                     item_tooltip += 
-                    `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: x${equip_stats_0[effect_key].multiplier} - ${equip_stats_1[effect_key].multiplier}`;
+                    `<br>${stat_label(effect_key)}: x${equip_stats_0[effect_key].multiplier} - ${equip_stats_1[effect_key].multiplier}`;
                 }
             });
         } else {
             if(item.getAttack) {
                 item_tooltip += 
-                    `<br><br>Attack: ${Math.round(10*item.getAttack())/10}`;
+                    `<br><br>${translationManager.getText(language, "ui tooltip attack")} ${Math.round(10*item.getAttack())/10}`;
             } else if(item.getDefense) { 
                 item_tooltip += 
-                `<br><br>Defense: ${Math.round(10*item.getDefense())/10}`;
+                `<br><br>${translationManager.getText(language, "ui tooltip defense")} ${Math.round(10*item.getDefense())/10}`;
             } else if(item.offhand_type === "shield") {
                 if(item.tags.ignore_skill) {
                     item_tooltip += 
@@ -495,11 +570,11 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
                 if(equip_stats[effect_key].flat != null) {
                     const sign = equip_stats[effect_key].flat > 0?"+":"";
                         item_tooltip +=
-                    `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: ${sign}${equip_stats[effect_key].flat}`;
+                    `<br>${stat_label(effect_key)}: ${sign}${equip_stats[effect_key].flat}`;
                 }
                 if(equip_stats[effect_key].multiplier != null) {
                         item_tooltip +=
-                    `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: x${equip_stats[effect_key].multiplier}`;
+                    `<br>${stat_label(effect_key)}: x${equip_stats[effect_key].multiplier}`;
                     }
                 });
         }
@@ -537,11 +612,11 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
             if(item.component_stats[effect_key].flat != null) {
                 const sign = item.component_stats[effect_key].flat > 0?"+":"";
                 item_tooltip += 
-                `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: ${sign}${item.component_stats[effect_key].flat}`;
+                `<br>${stat_label(effect_key)}: ${sign}${item.component_stats[effect_key].flat}`;
             }
             if(item.component_stats[effect_key].multiplier != null) {
                 item_tooltip += 
-                `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: x${item.component_stats[effect_key].multiplier}`;
+                `<br>${stat_label(effect_key)}: x${item.component_stats[effect_key].multiplier}`;
             }
         });
     }
@@ -551,7 +626,7 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     }
 
     if (item.effects?.length > 0) {
-        item_tooltip += "<br><br>Effects: "
+        item_tooltip += "<br><br>" + translationManager.getText(language, "ui tooltip effects") + " "
 
         for (let i = 0; i < item.effects.length; i++) {
             item_tooltip += create_effect_tooltip({ effect_name: item.effects[i].effect, duration: item.effects[i].duration, add_bonus: true }).outerHTML;
@@ -585,7 +660,11 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     }
 
     if(item.material_type) {
-        item_tooltip += `<br><br>${translationManager.getText(language, "ui label material type")}: ${item.material_type}`;
+        //material_type is a registry value, so it needs its own row like every other
+        //name. Computed into a variable because the content-id scan cannot follow a
+        //concatenation.
+        const material_text_id = `material type ${item.material_type}`;
+        item_tooltip += `<br><br>${translationManager.getText(language, "ui label material type")}: ${translationManager.getText(language, material_text_id)}`;
     }
 
     if(!item.tags.unique && item.getBaseValue()) {
@@ -646,7 +725,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     }
 
     for(const [key, stat_value] of Object.entries(effects.stats)) {
-        tooltip_html_content += `<br>${capitalize_first_letter(stat_names[key])}`;
+        tooltip_html_content += `<br>${capitalize_first_letter(stat_label_short(key), true)}`;
         
         let flat = false;
         if(stat_value.flat) {
@@ -669,12 +748,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     const xp_multipliers = Object.keys(effects.xp_multipliers);
     if(xp_multipliers.length > 0) {
         let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            name = skills[xp_multipliers[0]].name();
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
-        name = capitalize_first_letter(name);
+        name = xp_target_label(xp_multipliers[0]);
         if(tooltip_html_content) {
             tooltip_html_content += `<br>${translationManager.getText(language, "ui xp gain for", {v1: name, v2: effects.xp_multipliers[xp_multipliers[0]]})}`;
         } else {
@@ -682,11 +756,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
             let name;
-            if(xp_multipliers[i] !== "all" && xp_multipliers[i] !== "hero" && xp_multipliers[i] !== "all_skill") {
-                name = skills[xp_multipliers[i]].name();
-            } else {
-                name = xp_multipliers[i].replace("_"," ");
-            }
+            name = xp_target_label(xp_multipliers[i]);
             tooltip_html_content += `<br>${translationManager.getText(language, "ui xp gain for", {v1: name, v2: effects.xp_multipliers[xp_multipliers[i]]})}`;
         }
     }
@@ -896,32 +966,28 @@ function format_book_bonuses(bonuses) {
     if(bonuses.stats) {
         const stats = Object.keys(bonuses.stats);
         
-        formatted = `+${bonuses.stats[stats[0]]} ${stat_names[stats[0]]}`;
+        formatted = `+${bonuses.stats[stats[0]]} ${stat_label_short(stats[0])}`;
         for(let i = 1; i < stats.length; i++) {
-            formatted += `, +${bonuses.stats[stats[i]]} ${stat_names[stats[i]]}`;
+            formatted += `, +${bonuses.stats[stats[i]]} ${stat_label_short(stats[i])}`;
         }
     }
 
     if(bonuses.multipliers) {
         const multipliers = Object.keys(bonuses.multipliers);
         if(formatted) {
-            formatted += `, x${bonuses.multipliers[multipliers[0]]} ${stat_names[multipliers[0]]}`;
+            formatted += `, x${bonuses.multipliers[multipliers[0]]} ${stat_label_short(multipliers[0])}`;
         } else {
-            formatted = `x${bonuses.multipliers[multipliers[0]]} ${stat_names[multipliers[0]]}`;
+            formatted = `x${bonuses.multipliers[multipliers[0]]} ${stat_label_short(multipliers[0])}`;
         }
 
         for(let i = 1; i < multipliers.length; i++) {
-            formatted += `, x${bonuses.multipliers[multipliers[i]]} ${stat_names[multipliers[i]]}`;
+            formatted += `, x${bonuses.multipliers[multipliers[i]]} ${stat_label_short(multipliers[i])}`;
         }
     }
     if(bonuses.xp_multipliers) {
         const xp_multipliers = Object.keys(bonuses.xp_multipliers);
         let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            name = skills[xp_multipliers[0]].name();
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
+        name = xp_target_label(xp_multipliers[0]);
 
         if(formatted) {
             formatted += `, ${translationManager.getText(language, "ui xp gain multiplier", {v1: bonuses.xp_multipliers[xp_multipliers[0]], v2: name})}`;
@@ -930,11 +996,7 @@ function format_book_bonuses(bonuses) {
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
             let name;
-            if(xp_multipliers[i] !== "all" && xp_multipliers[i] !== "hero" && xp_multipliers[i] !== "all_skill") {
-                name = skills[xp_multipliers[i]].name();
-            } else {
-                name = xp_multipliers[i].replace("_"," ");
-            }
+            name = xp_target_label(xp_multipliers[i]);
             formatted += `, ${translationManager.getText(language, "ui xp gain multiplier", {v1: bonuses.xp_multipliers[xp_multipliers[i]], v2: name})}`;
         }
     }
@@ -1462,7 +1524,7 @@ function update_displayed_trader_inventory({item_key, trader_sorting="name", sor
  * @param {Object} data
  * @param {Boolean} data.is_trade whethere player is in trade, affecting whether displayed price be basic or trade-specific
  */
-function update_displayed_character_inventory({item_key, equip_slot, character_sorting, sorting_direction="asc", was_anything_new_added=false, is_trade=false, skip_sorting=false} = {}) {    
+function update_displayed_character_inventory({item_key, equip_slot, character_sorting, sorting_direction="asc", was_anything_new_added=false, is_trade=false, skip_sorting=false, rebuild=false} = {}) {    
     //removal of unneeded divs
     if(!item_key){
         Object.keys(item_divs).forEach(div_key => {
@@ -1564,6 +1626,14 @@ function update_displayed_character_inventory({item_key, equip_slot, character_s
                 item_divs[inventory_key] = create_inventory_item_div({key: inventory_key, item_count, target: "character", is_trade});
                 inventory_div.appendChild(item_divs[inventory_key]);
                 was_anything_new_added = true;
+            } else if(rebuild) {
+                //Replaced rather than patched: the branch below only touches the count,
+                //the tooltip and the price, so an item name and its [use]/[equip]
+                //buttons would keep whatever language they were first written in.
+                //replaceWith keeps the DOM position, so the sort order survives.
+                const rebuilt = create_inventory_item_div({key: inventory_key, item_count, target: "character", is_trade});
+                item_divs[inventory_key].replaceWith(rebuilt);
+                item_divs[inventory_key] = rebuilt;
             } else {
                 //in display, just update it
                 let div_count = Number.parseInt(item_divs[inventory_key].getElementsByClassName("item_count")[0].innerText.replace("x",""));
@@ -1606,6 +1676,10 @@ function update_displayed_character_inventory({item_key, equip_slot, character_s
                     inventory_div.appendChild(item_divs[eq_slot]);
                     was_anything_new_added = true;
                 }
+            } else if(rebuild) {
+                const rebuilt = create_inventory_item_div({key: eq_slot, target: "character", is_equipped: true, is_trade});
+                item_divs[eq_slot].replaceWith(rebuilt);
+                item_divs[eq_slot] = rebuilt;
             }
         });
 
@@ -1874,7 +1948,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         } else if(target_item.item_type === "BOOK") {
             const item_read_button = document.createElement("div");
             item_read_button.classList.add("item_use_button");
-            item_read_button.innerText = "[read]";
+            item_read_button.innerText = translationManager.getText(language, "ui btn read");
             item_additional.appendChild(item_read_button);
 
             item_div.classList.add("item_book");
@@ -2768,7 +2842,7 @@ function create_location_types_display(current_location){
                 if(effects[stat].multiplier) {
                     const base = effects[stat].multiplier;
                     const actual = get_location_type_penalty(type, stage, stat, "multiplier");
-                    type_tooltip_html_content += `<br>${stat_names[stat]} x${Math.round(1000*actual)/1000}`;
+                    type_tooltip_html_content += `<br>${stat_label_short(stat)} x${Math.round(1000*actual)/1000}`;
                     if(base != actual) {
                         type_tooltip_html_content += ` [${translationManager.getText(language, "ui base value", {v1: "x" + effects[stat].multiplier})}]`;
                     }
@@ -2776,7 +2850,7 @@ function create_location_types_display(current_location){
                 if(effects[stat].flat) {
                     const base = effects[stat].flat;
                     const actual = get_location_type_penalty(type, stage, stat, "flat");
-                    type_tooltip_html_content += `<br>${stat_names[stat]}: ${Math.round(1000*actual)/1000}`;
+                    type_tooltip_html_content += `<br>${stat_label_short(stat)}: ${Math.round(1000*actual)/1000}`;
                     if(base != actual) {
                         type_tooltip_html_content += ` [${translationManager.getText(language, "ui base value", {v1: effects[stat].flat})}]`;
                     }
@@ -3040,7 +3114,8 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
         });
 
         const accept_recipe_button = document.createElement("div");
-        insert_HTML(accept_recipe_button, "<span class='recipe_creation_span'>Create</span>");
+        insert_HTML(accept_recipe_button, "<span class='recipe_creation_span'>"
+            + translationManager.getText(language, "ui recipe create") + "</span>");
 
         accept_recipe_button.classList.add("recipe_creation_button");
         accept_recipe_button.append(create_craft_amount_buttons());
@@ -3221,12 +3296,15 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
 
     if(subcategory === "items") {   //TODO base on result present? class?
         const success_chance = Math.round(100*recipe.get_success_chance(station_tier));
-        tooltip += `${translationManager.getText(language, "ui success rate")}: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>Materials required:<br>`;
+        tooltip += `${translationManager.getText(language, "ui success rate")}: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>${translationManager.getText(language, "ui materials required")}<br>`;
         for (let i = 0; i < recipe.materials.length; i++) {
             const material = find_recipe_material({material: recipe.materials[i], ignore_stop: true});
 
             //base type
-            let main_name = recipe.materials[i].material_type ? "Any " + recipe.materials[i].material_type + ":" : obscure_name(recipe.materials[i].material_id);
+            let main_name = recipe.materials[i].material_type
+            ? translationManager.getText(language, "ui any material of type",
+                {v1: translationManager.getText(language, "material type " + recipe.materials[i].material_type)})
+            : obscure_name(recipe.materials[i].material_id);
             let any_available = recipe.materials[i].count <= material.count;
 
             tooltip += `<span style="color:${any_available?"lime":"red"}"><b>${main_name} x${material.count}/${recipe.materials[i].count}</b></span><br>`;
@@ -3244,7 +3322,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         }
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id});
         tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1}`;
-        tooltip += `<br>Result: <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
+        tooltip += `<br>${translationManager.getText(language, "ui recipe result")} <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
     } else if(!components) {
         //some component
         let name = obscure_name(material.material_id);
@@ -3264,10 +3342,10 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, material_count: material.count, result_tier: result_tier, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
 
         tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1} - ${xp_val_2}<br>`;
-        tooltip += `<br>Result:<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[material.result_id], options: {quality: quality_range}})}</div>`;
+        tooltip += `<br>${translationManager.getText(language, "ui recipe result")}<br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[material.result_id], options: {quality: quality_range}})}</div>`;
     } else {
         if (components.length < recipe.components.length) {
-            tooltip += `Result:<br><div class="recipe_result">${translationManager.getText(language, "ui select one component")}</div>`;
+            tooltip += `${translationManager.getText(language, "ui recipe result")}<br><div class="recipe_result">${translationManager.getText(language, "ui select one component")}</div>`;
         } else if(components.length == recipe.components.length) {
             let item = "";
             
@@ -3308,7 +3386,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
             const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: components, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[0])]});
             const xp_val_2 = get_recipe_xp_value({category, subcategory, recipe_id, selected_components: components, rarity_multiplier: rarity_multipliers[getItemRarity(quality_range[1])]});
             tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1} - ${xp_val_2}<br>`;
-            tooltip += `Result:<br><div class="recipe_result">${create_item_tooltip_content({item, options: {quality: quality_range}})}</div>`;
+            tooltip += `${translationManager.getText(language, "ui recipe result")}<br><div class="recipe_result">${create_item_tooltip_content({item, options: {quality: quality_range}})}</div>`;
         } else {
             throw new Error(`Somehow recipe "${category}" -> "${subcategory}" -> "${recipe_id}" received more components than there should be (${components.length} instead of ${recipe.components.length})`)
         }
@@ -3521,7 +3599,7 @@ function create_gathering_tooltip(location_activity) {
     }
 
     if(location_activity.gained_resources.skill_required) {
-        tooltip_content += `<span class="activity_efficiency_info">${translationManager.getText(language, "ui efficiency scaling")}:<br>"${skill_names}" skill lvl ${location_activity.gained_resources.skill_required[0]} to ${location_activity.gained_resources.skill_required[1]}</span><br><br>`;
+        tooltip_content += `<span class="activity_efficiency_info">${translationManager.getText(language, "ui efficiency scaling")}:<br>${translationManager.getText(language, "ui skill level range", {v1: skill_names, v2: location_activity.gained_resources.skill_required[0], v3: location_activity.gained_resources.skill_required[1]})}</span><br><br>`;
     }
 
     tooltip_content += `${translationManager.getText(language, "ui every chance to find", {v1: format_working_time(gathering_time_needed)})}`;
@@ -3561,11 +3639,15 @@ function update_gathering_tooltip(activity) {
     }
 
     if(activity.gained_resources.skill_required) {
-        tooltip_content = `<span class="activity_efficiency_info">${translationManager.getText(language, "ui efficiency scaling")}:<br>"${skill_names}" skill lvl ${activity.gained_resources.skill_required[0]} to ${activity.gained_resources.skill_required[1]}</span><br><br>`;
+        tooltip_content = `<span class="activity_efficiency_info">${translationManager.getText(language, "ui efficiency scaling")}:<br>${translationManager.getText(language, "ui skill level range", {v1: skill_names, v2: activity.gained_resources.skill_required[0], v3: activity.gained_resources.skill_required[1]})}</span><br><br>`;
     }
     tooltip_content += `${translationManager.getText(language, "ui every chance to find", {v1: format_working_time(gathering_time_needed)})}`;
     for (let i = 0; i < gained_resources.length; i++) {
-        tooltip_content += `<br>x${gained_resources[i].count[0] === gained_resources[i].count[1] ? gained_resources[i].count[0] : `${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`} "${obscure_name(gained_resources[i].name)} " at ${Math.round(100*gained_resources[i].chance)}%`;
+        const shown_count = gained_resources[i].count[0] === gained_resources[i].count[1]
+            ? gained_resources[i].count[0]
+            : `${gained_resources[i].count[0]}-${gained_resources[i].count[1]}`;
+        tooltip_content += `<br>${translationManager.getText(language, "ui resource at chance",
+            {v1: shown_count, v2: obscure_name(gained_resources[i].name), v3: Math.round(100*gained_resources[i].chance)})}`;
     }
     set_HTML(gathering_tooltip, tooltip_content);
 }
@@ -3643,10 +3725,12 @@ function update_displayed_stats() {
     } else {
         atk = Math.round(10*atk)/10;
     }
-    attack_stats.children[0].innerText = `Atk: ${atk}`;
-    attack_stats.children[1].innerText = `Spd: ${Math.round(character.get_attack_speed()*100)/100}`;
-    attack_stats.children[2].innerText = `AP:  ${Math.round(ap)}`;
-    attack_stats.children[4].innerText = `Def: ${Math.round(character.stats.full.defense)} `;
+    //The abbreviation rows already existed for the enemy tooltip; this strip was
+    //spelling them out in English instead.
+    attack_stats.children[0].innerText = `${translationManager.getText(language, "ui abbr attack")}: ${atk}`;
+    attack_stats.children[1].innerText = `${translationManager.getText(language, "ui abbr speed")}: ${Math.round(character.get_attack_speed()*100)/100}`;
+    attack_stats.children[2].innerText = `${translationManager.getText(language, "ui label ap")}  ${Math.round(ap)}`;
+    attack_stats.children[4].innerText = `${translationManager.getText(language, "ui abbr defense")}: ${Math.round(character.stats.full.defense)} `;
 }
 
 function update_stat_description(stat) {
@@ -3744,13 +3828,15 @@ function update_xp_bar_tooltip() {
 
     if(character.xp_bonuses.total_multiplier.hero != 1) {
         html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat hero xp multiplier") + ":</b> " + Math.round(100*character.xp_bonuses.total_multiplier.hero)/100 
-                                        + " (with global: " + Math.round(get_hero_xp_gain()*100)/100 +")<br>";
+                                        + " " + translationManager.getText(language, "ui with global",
+                                            {v1: Math.round(get_hero_xp_gain()*100)/100}) + "<br>";
         html_content += create_xp_bonus_breakdown("hero", false);
     }
 
     if(character.xp_bonuses.total_multiplier.all_skill != 1) {
         html_content += "<br>------------------------<br><b>" + translationManager.getText(language, "ui stat skill xp multiplier") + ":</b> " + Math.round(100*character.xp_bonuses.total_multiplier.all_skill)/100
-                                        + " (with global: " + Math.round(get_skills_overall_xp_gain()*100)/100 +")<br>";
+                                        + " " + translationManager.getText(language, "ui with global",
+                                            {v1: Math.round(get_skills_overall_xp_gain()*100)/100}) + "<br>";
         html_content += create_xp_bonus_breakdown("all_skill", false);
     }
 
@@ -3784,20 +3870,20 @@ function create_stat_breakdown(stat) {
             <br>${translationManager.getText(language, "ui base value heading")} ${Math.round(100 * character.stats.total_flat[stat])/100}`;
     } else {
        html_string += 
-        `<br>Breakdown:
-        <br>Base value: ${Math.round(100*character.base_stats[stat])/100}`;
+        `<br>${translationManager.getText(language, "ui breakdown")}
+        <br>${translationManager.getText(language, "ui base value heading")} ${Math.round(100*character.base_stats[stat])/100}`;
     }
 
     Object.keys(character.stats.flat).forEach(stat_type => {
         if(character.stats.flat[stat_type][stat] && character.stats.flat[stat_type][stat] !== 0) {
             const sign = character.stats.flat[stat_type][stat]>=0?"+":"";
-            html_string +=  `<br>${capitalize_first_letter(stat_type.replace("_"," "))}: ${sign}${Math.round(100*character.stats.flat[stat_type][stat])/100}`;
+            html_string +=  `<br>${stat_source_label(stat_type)}: ${sign}${Math.round(100*character.stats.flat[stat_type][stat])/100}`;
         }
     });
 
     Object.keys(character.stats.multiplier).forEach(stat_type => {
         if(character.stats.multiplier[stat_type][stat] && character.stats.multiplier[stat_type][stat] !== 1) {
-            html_string +=  `<br>${capitalize_first_letter(stat_type.replace("_"," "))}: x${Math.round(100*character.stats.multiplier[stat_type][stat])/100}`;
+            html_string +=  `<br>${stat_source_label(stat_type)}: x${Math.round(100*character.stats.multiplier[stat_type][stat])/100}`;
         }
     });
 
@@ -3824,12 +3910,12 @@ function create_xp_bonus_breakdown(bonus, include_multipliers) {
         }
     }
 
-    html_string += `<br>Breakdown:
-        <br>Base value: ${Math.round(100*xp_bonus_value)/100}`;
+    html_string += `<br>${translationManager.getText(language, "ui breakdown")}
+        <br>${translationManager.getText(language, "ui base value heading")} ${Math.round(100*xp_bonus_value)/100}`;
     
     Object.keys(character.xp_bonuses.multiplier).forEach(bonus_type => {
         if(character.xp_bonuses.multiplier[bonus_type]?.[bonus] && character.xp_bonuses.multiplier[bonus_type]?.[bonus] !== 1) {
-            html_string +=  `<br>${capitalize_first_letter(bonus_type.replace("_"," "))}: x${Math.round(100*character.xp_bonuses.multiplier[bonus_type][bonus])/100}`;
+            html_string +=  `<br>${stat_source_label(bonus_type)}: x${Math.round(100*character.xp_bonuses.multiplier[bonus_type][bonus])/100}`;
         }
     });
 
@@ -3949,11 +4035,15 @@ function create_temperature_tooltip() {
     let html_content = "";
     if(!game_options.use_uncivilised_temperature_scale) {
         html_content = `${translationManager.getText(language, "ui lowest tolerable temperature")}: <strong>${Math.round(10*(lowest_tolerable_temperature - get_character_cold_tolerance()))/10}</strong>`;
-        html_content += `<br>(<strong>${lowest_tolerable_temperature}</strong> base minus <strong>${Math.round(10*get_character_cold_tolerance())/10}</strong> cold protection)<br>`;
+        html_content += `<br>${translationManager.getText(language, "ui cold protection breakdown",
+            {v1: `<strong>${lowest_tolerable_temperature}</strong>`,
+             v2: `<strong>${Math.round(10*get_character_cold_tolerance())/10}</strong>`})}<br>`;
         html_content += create_stat_breakdown("cold_tolerance");
     } else {
         html_content = `${translationManager.getText(language, "ui lowest tolerable temperature")}: <strong>${Math.round(10*(celsius_to_fahrenheit(lowest_tolerable_temperature - get_character_cold_tolerance())))/10}</strong>`;
-        html_content += `<br>(<strong>${Math.round(10*celsius_to_fahrenheit(lowest_tolerable_temperature))/10}</strong> base minus <strong>${Math.round(10*celsius_to_fahrenheit(get_character_cold_tolerance())-320)/10}</strong> cold protection)<br>`;
+        html_content += `<br>${translationManager.getText(language, "ui cold protection breakdown",
+            {v1: `<strong>${Math.round(10*celsius_to_fahrenheit(lowest_tolerable_temperature))/10}</strong>`,
+             v2: `<strong>${Math.round(10*celsius_to_fahrenheit(get_character_cold_tolerance())-320)/10}</strong>`})}<br>`;
         html_content += create_stat_breakdown("cold_tolerance");
         html_content += `<br>${translationManager.getText(language, "ui scale conversion")}`;
     }
@@ -4004,8 +4094,12 @@ function update_displayed_character_xp(did_level = false) {
     character_xp_div.children[0].children[0].style.width = `${100*character.xp.current_xp/character.xp.xp_to_next_lvl}%`;
     character_xp_div.children[1].innerText = `${expo({number: character.xp.current_xp})} / ${expo({number: character.xp.xp_to_next_lvl})} ${translationManager.getText(language, "ui bar xp")}`;
 
+    //Written every time rather than only on a level-up: the markup in index.html
+    //carried a hard-coded "Lvl: 0" that stood until the first level, in English and
+    //in different words from the ones this line uses.
+    character_level_div.innerText = translationManager.getText(language, "ui level", {v1: character.xp.current_level});
+
     if(did_level) {
-        character_level_div.innerText = `Level: ${character.xp.current_level}`;
         update_displayed_health();
     }
 }
@@ -4036,7 +4130,10 @@ function update_displayed_reputation() {
             clear_HTML_content(rep_name_span);
             clear_HTML_content(rep_value_span);
 
-            insert_HTML(rep_name_span, capitalize_first_letter(reputation_region) + " reputation");
+            //The region is a registry key and has a "name <region>" row like every
+            //other name in the game.
+            insert_HTML(rep_name_span, translationManager.getText(language, "ui region reputation",
+                {v1: translationManager.getDisplayName(language, reputation_region)}));
             insert_HTML(rep_value_span, character.reputation[reputation_region]);
 
             rep_div.appendChild(rep_name_span);
@@ -4203,7 +4300,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
 
         const backstep_dialogue_div = document.createElement("div");
 
-        insert_HTML(backstep_dialogue_div, "<i class='material-icons'>arrow_back</i> " + default_dialogue_return_text);
+        insert_HTML(backstep_dialogue_div, "<i class='material-icons'>arrow_back</i> " + default_dialogue_return_text());
         backstep_dialogue_div.classList.add("backstep_dialogue_button");
         backstep_dialogue_div.setAttribute("onclick", `start_dialogue("${dialogue_key}")`);
 
@@ -4248,14 +4345,16 @@ function start_activity_display(current_activity) {
     action_end_div.id = "action_end_div";
 
     const action_end_text = document.createElement("div");
-    action_end_text.innerText = `Finish ${current_activity.activity_name}`;
+    //activity_name is the registry key; getName is the display name.
+    action_end_text.innerText = translationManager.getText(language, "ui finish activity",
+        {v1: base_activity.getName()});
     action_end_text.id = "action_end_text";
 
     action_end_div.appendChild(action_end_text);
 
     if(is_job) {
         const action_end_earnings = document.createElement("div");        
-        action_end_earnings.innerText = `(earnings: ${format_money(0)})`;
+        action_end_earnings.innerText = translationManager.getText(language, "ui earnings", {v1: format_money(0)});
         action_end_earnings.id = "action_end_earnings";
 
         action_end_div.appendChild(action_end_earnings);
@@ -4294,7 +4393,8 @@ function update_displayed_ongoing_activity(current_activity) {
     const base_activity = activities[current_activity.activity_name];
 
     if(base_activity.type === "JOB") {
-        set_HTML(document.getElementById("action_end_earnings"), `(earnings: ${format_money(current_activity.earnings)})`);
+        set_HTML(document.getElementById("action_end_earnings"),
+            translationManager.getText(language, "ui earnings", {v1: format_money(current_activity.earnings)}));
         const time_info_div = document.getElementById("time_for_earnings_div");
         
         if(!enough_time_for_earnings(current_activity)) {
@@ -4334,14 +4434,15 @@ function update_displayed_ongoing_activity(current_activity) {
         //testing the skill itself is both correct and cheap.
         const is_maxed = skill.current_xp === "Max" || skill.current_level >= skill.max_level;
 
-        if (base_activity.type !== "GATHERING") {
-            action_xp_div.innerText += `Getting ${xp_rate} base xp per in-game minute to `;
-        } else {
-            action_xp_div.innerText += `Getting ${xp_rate} base xp per gathering cycle to `;
-        }
+        //The skill name is a parameter rather than a suffix: Turkish puts it at the
+        //front of the sentence, and a fragment ending in "to" cannot be translated.
+        const xp_line_id = base_activity.type !== "GATHERING"
+            ? "ui xp per game minute"
+            : "ui xp per gathering cycle";
+        action_xp_div.innerText += translationManager.getText(language, xp_line_id, {v1: xp_rate, v2: skill.name()});
 
         if (is_maxed) {
-            action_xp_div.innerText += ` ${skill.name()} (${translationManager.getText(language, "ui maxed out")})`;
+            action_xp_div.innerText += ` (${translationManager.getText(language, "ui maxed out")})`;
         } else {
             //Read as numbers and check them before use. is_maxed above covers the
             //normal max-level sentinels; these guards cover a skill whose stored
@@ -4360,7 +4461,7 @@ function update_displayed_ongoing_activity(current_activity) {
             const shown_curr_xp = has_usable_xp ? expo({number: curr_xp}) : "?";
             const shown_needed_xp = has_usable_xp ? expo({number: needed_xp}) : "?";
 
-            action_xp_div.innerText += ` ${skill.name()} (${percent_xp}  [${shown_curr_xp} / ${shown_needed_xp}])`;
+            action_xp_div.innerText += ` (${percent_xp}  [${shown_curr_xp} / ${shown_needed_xp}])`;
 
             //Must match what add_xp_to_skill will really grant, including the
             //global and parent-skill multipliers and the per-gain cap. Computing
@@ -4373,7 +4474,7 @@ function update_displayed_ongoing_activity(current_activity) {
                 : NaN;
 
             if(Number.isFinite(time_needed)) {
-                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}realtime)`);
+                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}${translationManager.getText(language, "ui realtime")})`);
             } else {
                 insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level unknown")}`);
             }
@@ -4434,7 +4535,7 @@ function set_game_action_finish_text(text) {
 }
 
 function update_game_action_finish_button() {
-    document.getElementById("action_end_div").innerText = "Finish";
+    document.getElementById("action_end_div").innerText = translationManager.getText(language, "ui finish");
 }
 
 /**
@@ -4486,7 +4587,7 @@ function start_sleeping_display(){
     clear_action_div();
 
     const action_status_div = document.createElement("div");
-    action_status_div.innerText = "Sleeping...";
+    action_status_div.innerText = translationManager.getText(language, "ui sleeping");
     action_status_div.id = "action_status_div";
 
     const action_end_div = document.createElement("div");
@@ -4538,7 +4639,9 @@ function create_new_skill_bar(skill) {
         skill_bar_divs[skill.category] = {};
 
         const skill_category_div = document.createElement("div");
-        insert_HTML(skill_category_div, `<i class="material-icons icon skill_dropdown_icon"> keyboard_double_arrow_down </i>${skill.category} skills`);
+        //skill.category is a registry key: "Weapon", "Environmental".
+        insert_HTML(skill_category_div, `<i class="material-icons icon skill_dropdown_icon"> keyboard_double_arrow_down </i>${translationManager.getText(language, "ui skill category heading",
+            {v1: translationManager.getText(language, `ui skill category ${skill.category}`)})}`);
         skill_category_div.dataset.skill_category = skill.category;
         skill_category_div.classList.add("skill_category_div");
 
@@ -4695,7 +4798,7 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
 
     } else {
         skill_bar_divs[skill.category][skill.skill_id].children[0].classList.add("skill_bar_capped");
-        skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[1].innerText = `Max!`;
+        skill_bar_divs[skill.category][skill.skill_id].children[0].children[0].children[1].innerText = translationManager.getText(language, "ui max short");
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[0].innerText = `${translationManager.getText(language, "ui maxed out")}`;
         //Set explicitly: .skill_bar_current has no width rule in style.css, so a
         //stale inline width from just before the final level-up would survive.
@@ -4713,7 +4816,8 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
     }
 
     if(typeof get_next_skill_milestone(skill.skill_id) !== "undefined") {
-        skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[5].innerText  = `lvl ${get_next_skill_milestone(skill.skill_id)}: ???`;
+        skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[5].innerText  = translationManager.getText(language, "ui next milestone unknown",
+            {v1: get_next_skill_milestone(skill.skill_id)});
     } else {
         skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[5].innerText = "";
     }
@@ -4869,9 +4973,9 @@ function update_displayed_stance_list(stances, current_stance, fav_stances) {
 
     set_HTML(stance_list, 
         `<tr class="stance_list_entry stance_list_header">
-            <th class="stance_list_header stance_list_header_fav">Fav</th>
-            <th class="stance_list_header stance_list_header_select">Select</th>
-            <th class="stance_list_header stance_list_header_name">Name</th>
+            <th class="stance_list_header stance_list_header_fav">${translationManager.getText(language, "ui stance col fav")}</th>
+            <th class="stance_list_header stance_list_header_select">${translationManager.getText(language, "ui stance col select")}</th>
+            <th class="stance_list_header stance_list_header_name">${translationManager.getText(language, "ui stance col name")}</th>
         </tr>`
     ); //why is this not in .html file...?
 
@@ -4933,7 +5037,7 @@ function create_stance_tooltip(stance) {
     let html_content = 
         `<div>${stance.getName()}</div><br>
         <div>${stance.getDescription()}</div><br>
-        <div>Stamina cost: ${stance.stamina_cost}</div>
+        <div>${translationManager.getText(language, "ui stance stamina cost", {v1: stance.stamina_cost})}</div>
         <div class='stance_tooltip_stats'>${create_stance_tooltip_stats(stance)}</div`;
 
     let target_count = stance.target_count;
@@ -4954,7 +5058,7 @@ function create_stance_tooltip_stats(stance) {
     let desc = "";
     const stats = stance.getStats()
     Object.keys(stats).forEach(stat => {
-        desc += `<br>x${Math.round(100*stats[stat])/100} ${stat_names[stat]}`;
+        desc += `<br>x${Math.round(100*stats[stat])/100} ${stat_label_short(stat)}`;
     });
 
     return desc;
@@ -5102,7 +5206,7 @@ function create_bestiary_entry_tooltip(enemy_name) {
     insert_HTML(tooltip_tags, "<br><br>");
 
     const tooltip_stats = document.createElement("div"); //base enemy stats
-    insert_HTML(tooltip_stats, "Stats: <br>");
+    insert_HTML(tooltip_stats, translationManager.getText(language, "ui bestiary stats") + " <br>");
 
     const stat_line_0 = document.createElement("div");
     stat_line_0.classList.add("grid_container");
@@ -5511,20 +5615,27 @@ function create_displayed_quest_task(quest_id, task_index) {
                 requirements: [], //additional triggers needed, like "weapon_unarmed"
     */
     //goes through the properties and sets up display
+    //
+    //All three levels were printed as their registry keys: the group as "any:" or
+    //"all:", the type through task_type_names in misc.js which only ever held three
+    //English words, and the target as the id of the enemy group, location or skill.
+    //Whether the group label is written at all is decided after the count is known,
+    //rather than by searching the finished text for "any:" and deleting it.
     let total_tasks = 0;
+    const group_divs = [];
     Object.keys(task.task_condition).forEach(task_group => {
         if(Object.keys(task.task_condition[task_group]).length) {
             const task_condition_div = document.createElement("div");
             task_condition_div.classList.add("task_condition_div");
-            task_condition_div.innerText += task_group + ":";
+            group_divs.push({div: task_condition_div, group: task_group});
             Object.keys(task.task_condition[task_group]).forEach(task_type => {
                 const task_type_div = document.createElement("div");
                 task_type_div.classList.add("task_type_div");
-                task_type_div.innerText += task_type_names[task_type] +":";
+                task_type_div.innerText += translationManager.getText(language, `ui task type ${task_type}`) + ":";
                 Object.keys(task.task_condition[task_group][task_type]).forEach(task_target_id => {
                     const task_target_div = document.createElement("div");
                     task_target_div.classList.add("task_target_div");
-                    task_target_div.innerText += task_target_id + ": " + task.task_condition[task_group][task_type][task_target_id].current +"/"+task.task_condition[task_group][task_type][task_target_id].target;
+                    task_target_div.innerText += quest_target_label(task_type, task_target_id) + ": " + task.task_condition[task_group][task_type][task_target_id].current +"/"+task.task_condition[task_group][task_type][task_target_id].target;
                     task_type_div.appendChild(task_target_div);
                     total_tasks++;
                 });
@@ -5535,11 +5646,10 @@ function create_displayed_quest_task(quest_id, task_index) {
         }
     });
     
-    if(total_tasks == 1) {
-        //hides the "any"/"all" texts if there's only 1 task, as there's no point in displaying them in this specific case
-        const divs = task_conditions_div.getElementsByClassName("task_condition_div");
-        for(let i = 0; i < divs.length; i++) {
-            divs.item(i).innerText = divs.item(i).innerText.replace("any:","").replace("all:","");
+    //A single task needs no "any"/"all" label - there is nothing to choose between.
+    if(total_tasks > 1) {
+        for(const {div, group} of group_divs) {
+            div.prepend(translationManager.getText(language, `ui task group ${group}`) + ":");
         }
     }
 
@@ -5607,10 +5717,18 @@ function retranslate_interface({location, active_quest_ids = []} = {}) {
     update_displayed_equipment();
     update_displayed_effects();
     update_displayed_reputation();
+    update_displayed_temperature();
 
+    //The three bars each carry a word: "hp", "stamina", "xp".
+    update_displayed_health();
+    update_displayed_stamina();
+    update_displayed_character_xp(true);
+
+    //rebuild: the rows carry item names and [use]/[equip] buttons, which the
+    //ordinary update path does not touch.
     //skip_sorting: the player's chosen order is not a translation and should not be
     //disturbed by changing language.
-    update_displayed_character_inventory({skip_sorting: true});
+    update_displayed_character_inventory({skip_sorting: true, rebuild: true});
 
     for(const skill_id of Object.keys(skills)) {
         if(skills[skill_id].is_unlocked) {

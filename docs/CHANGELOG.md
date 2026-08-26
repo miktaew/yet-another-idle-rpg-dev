@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 37 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 38 -->
 
 # Changelog
 
@@ -20,6 +20,88 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The rest of the English, found by scanning instead of looking
+
+The previous entry ends by admitting that the screenshots were the wrong
+instrument. This is what replacing them found.
+
+A screenshot shows the panel that happened to be open. Four of them, over two
+days, produced five fixes and a fifth report - and the fifth report was correct,
+because the crafting window, the stance table, the bestiary and every tooltip had
+never been in a screenshot. So the source got scanned instead: every string literal
+on a statement that assigns `innerText`/`innerHTML` or calls `set_HTML`/`insert_HTML`,
+minus the ones that are locale ids, markup or `material-icons` glyph names.
+
+**Twenty-eight sites, in two classes.** The first class is what you would expect -
+`"Slot:"`, `"Result:"`, `"Finish"`, `"Sleeping..."`, `"Fav"`/`"Select"`/`"Name"` on
+the stance table, `"Stamina cost:"`, `"Breakdown:"` in the two places the earlier
+pass had missed, `"(with global: …)"`, `"Materials required:"`.
+
+The second class is the interesting one: **registry keys formatted for display.**
+Six item-tooltip sites and the effect tooltip built their stat labels out of the key
+with `capitalize_first_letter(effect_key).replace("_"," ")`, so a Turkish player read
+"Attack power". The rows to translate those keys - `<stat> long` - had existed since
+the race tooltip was written; the sites just never used them. The same shape as the
+empty equipment slots the entry above describes. Also in this class: the weapon type
+on a tooltip, where a stat or xp bonus comes from (`skill_milestones`, `light_level`),
+which region a reputation belongs to, and all three levels of a quest task condition.
+
+**Two English tables went with it.** `stat_names` in `misc.js` carried its own
+removal note - *"can be removed once everything is moved to translations"* - and it
+could: all 29 of its keys have a `"<key>"` locale row holding the same abbreviation,
+so the table was a second copy of the default locale that no translation could
+reach. It had 15 call sites across `display.js` and `skills.js`, which is why a
+milestone reward read "+3 hp" in an otherwise Turkish tooltip. `task_type_names` went
+too, and it was worse than untranslated: it held three entries while quests use five,
+so a visible `reach_skill` task would have rendered "undefined:". Both of those
+quests are hidden, so nobody saw it, but the fallback now names the key instead.
+
+**And `retranslate_interface` had gaps of its own.** The three bars are painted by
+their own updaters and each carries a word, so hp, stamina and xp kept their old
+language. The inventory was worse: `update_displayed_character_inventory` only
+patches the count, the tooltip and the price of a row that already exists, so item
+names and the `[use]`/`[equip]` buttons never changed. It has a `rebuild` option now
+that replaces each row in place - `replaceWith` keeps the DOM position, so the
+player's sort order survives. The stance list is called from `main.js`, because it
+takes the current stance and the favourites as arguments.
+
+**The check is the point.** `npm run check` now performs the scan on every run, so
+this cannot come back. Getting it right took two tries, and both failures are worth
+recording because they are the same failure the content-id scan had:
+
+- The first version matched `innerText\s*=`, which also matches `innerText ===`. It
+  flagged `innerText === "[Comp]"` in the inventory sort comparator - a **read**.
+  Translating that would have put a locale string into a sort key.
+- The second version scanned line by line, so a template literal spanning two lines
+  was reported as two strings. It flagged `material-icons icon skill_dropdown_icon`
+  because the fix this check exists to verify had moved the closing `</i>` onto the
+  next line. It walks characters now, and decides whether a literal reaches the DOM
+  from the statement it sits in rather than from its line.
+
+Negative-tested by planting three defects: a plain label, a label inside a
+multi-line template, and a comparison. It caught the two writes and left the
+comparison alone.
+
+**Two more the browser found, which the scan structurally could not.** The item
+tooltip printed `${item.material_type}` - a registry *value*, not a literal, and
+stripping interpolations is exactly what lets the DOM check ignore the parts that
+are already display names. So that class needs the opposite check, reading the
+values the content declares and requiring a row for each; `material_type` and
+`weapon_type` are wired to it, and it is negative-tested. Twenty-five material
+types needed rows.
+
+The other was not a translation bug at all: `ui label intuition` had no colon while
+every one of its siblings does, so the stat panel read "Intuition 10.0" between
+"Dexterity: 10.0" and "Magic: 0.0" in English too. And the level line was written
+only on a level-up, so the hard-coded `Lvl: 0` in `index.html` stood until the
+player first levelled - in English, and in different words from the ones the code
+uses. It is written every time now and the markup is empty.
+
+**One dead comparison found and left alone.** Nothing anywhere writes `"[Comp]"` or
+`"[Book]"`, so those two branches of the inventory comparator can never match. That
+is an upstream bug rather than a translation one, and fixing it means deciding how a
+row should advertise being a component - recorded here rather than guessed at.
 
 ### Region 2: the plains
 

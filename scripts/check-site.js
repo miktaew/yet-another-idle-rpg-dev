@@ -933,6 +933,202 @@ function check_reward_keys() {
 }
 
 /**
+ * Removes every ${...} from a template literal body, nesting included.
+ *
+ * A regex cannot do this: `${getText(language, "id", {v1: getText(...)})}` is three
+ * levels of braces deep, and a non-nesting pattern stops at the first `}` and
+ * leaves the tail behind as what looks like prose.
+ */
+function strip_interpolations(body) {
+    let out = "";
+    let i = 0;
+    while (i < body.length) {
+        if (body[i] === "$" && body[i + 1] === "{") {
+            let depth = 0;
+            i++;
+            do {
+                if (body[i] === "{") { depth++; }
+                if (body[i] === "}") { depth--; }
+                i++;
+            } while (i < body.length && depth > 0);
+            out += " ";
+            continue;
+        }
+        out += body[i];
+        i++;
+    }
+    return out;
+}
+
+/**
+ * Registry VALUES that reach the screen need rows too.
+ *
+ * The DOM scan cannot find these: `${item.material_type}` is an interpolation, and
+ * stripping interpolations is exactly what lets that check ignore the parts which
+ * are already display names. So this one goes the other way - it reads the values
+ * the content declares and requires a row for each.
+ *
+ * A missing row here renders as "text not found, id: material type bone" in game,
+ * which is at least loud. Before the row existed at all the tooltip printed the raw
+ * value instead, which is quiet and is how "Material type: bread" survived a full
+ * Turkish pass.
+ */
+async function check_registry_value_names() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    //field -> {files, prefix}. Add a row here when a new registry field starts
+    //being shown to the player.
+    const shown_values = [
+        { field: "material_type", files: ["src/items.js", "src/crafting_recipes.js"], prefix: "material type" },
+        { field: "weapon_type", files: ["src/items.js"], prefix: "weapon type" },
+    ];
+
+    let total = 0;
+    for (const { field, files, prefix } of shown_values) {
+        const values = new Set();
+        for (const relative of files) {
+            const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+            const pattern = new RegExp(`${field}\\s*[:=]\\s*"([^"]+)"`, "g");
+            for (const match of source.matchAll(pattern)) {
+                values.add(match[1]);
+            }
+        }
+        if (values.size === 0) {
+            error(`no ${field} values found in ${files.join(", ")} - this check is out of date.`);
+            continue;
+        }
+
+        for (const value of values) {
+            //items.js calls a hammer a "battle hammer" everywhere it shows one, and the
+            //row follows the shown name rather than the stored one.
+            const shown = field === "weapon_type" && value === "hammer" ? "battle hammer" : value;
+            if (!(`${prefix} ${shown}` in reference)) {
+                error(`locales/${default_language}.js has no "${prefix} ${shown}" row, so an item`
+                    + ` with ${field} "${value}" would show that value untranslated.`);
+            }
+        }
+        total += values.size;
+    }
+    console.log(`[check] registry value names: ${total} resolved`);
+}
+
+/**
+ * No English may be written straight into the DOM.
+ *
+ * This is the check that should have existed before the interface was translated
+ * panel by panel from screenshots. A screenshot only shows what is on screen; a
+ * scan sees the crafting window, the bestiary and the stance list too, and it found
+ * twenty-eight more sites after the last screenshot had been fixed.
+ *
+ * It looks at every string literal on a line that assigns innerText / innerHTML or
+ * calls set_HTML / insert_HTML, and subtracts what is legitimately not prose:
+ *
+ *   - locale text ids (those ARE the translation)
+ *   - markup: tags, attributes, entities, ${...} interpolations
+ *   - material-icons glyph names and CSS class lists, which are single tokens
+ *   - the explicit allowlist below, for the handful of real exceptions
+ *
+ * What is left is a word a player can read that no translation can reach.
+ */
+async function check_no_english_in_dom() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+    const locale_keys = new Set(Object.keys(reference));
+
+    //Literals that reach the DOM and are correctly not translated. Each one needs a
+    //reason, because the point of the check is that "it is only a word" is not one.
+    const allowed = new Set([
+        //A unit that reads the same in both languages, in markup nothing ever rewrites.
+        "mana",
+    ]);
+
+    //=[^=] and not just =: `innerText === "[Comp]"` reads the DOM, it does not write
+    //to it, and flagging a comparison would push a translation into a sort key.
+    const writers = /(?:innerText|innerHTML)\s*=[^=]|set_HTML\(|insert_HTML\(/;
+
+    let flagged = 0;
+    let checked = 0;
+    for (const relative of ["src/display.js", "src/main.js"]) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const literal of read_string_literals(source)) {
+            //Everything back to the previous statement boundary. Whether a literal
+            //reaches the DOM is a property of its statement, not of the line it starts
+            //on - a template literal can span four lines.
+            const boundary = Math.max(source.lastIndexOf(";", literal.start),
+                                      source.lastIndexOf("{", literal.start),
+                                      source.lastIndexOf("}", literal.start));
+            const statement = source.slice(boundary + 1, literal.start);
+            if (!writers.test(statement)) continue;
+            //A diagnostic is for the developer's console, not for the player.
+            if (/console\.(warn|error|log)|throw new Error/.test(statement)) continue;
+
+            checked++;
+            if (locale_keys.has(literal.body)) continue;
+            if (allowed.has(literal.body.trim())) continue;
+
+            const text = strip_interpolations(literal.body)
+                .replace(/<i\b[^>]*material-icons[^>]*>[^<]*<\/i>/g, " ")
+                .replace(/<[^>]*>/g, " ")
+                .replace(/&[a-z]+;/g, " ")
+                .replace(/\\[nrt]/g, " ")
+                .trim();
+            if (!text) continue;
+            //A single lowercase token is an id, a class name or an icon glyph name.
+            if (/^[a-z0-9_.\-]+$/.test(text)) continue;
+            //Needs two adjacent letters somewhere to be a word rather than a symbol.
+            if (!/[A-Za-z]{2}/.test(text)) continue;
+
+            flagged++;
+            error(`${relative}:${literal.line} writes "${text.slice(0, 60)}" into the DOM as a`
+                + " literal. Player-facing text goes through a locale row; if this one is not"
+                + " player-facing, add it to the allowlist in check_no_english_in_dom with a"
+                + " reason.");
+        }
+    }
+    if (flagged === 0) {
+        console.log(`[check] no English written straight into the DOM: ${checked} literals`);
+    }
+}
+
+/**
+ * Every string literal in the source, with its offset and starting line.
+ *
+ * Walks characters because a template literal can span lines, and splitting on
+ * newlines first reports each half as if it were a whole string - which is how a
+ * `<i class="material-icons">` opening tag came to look like prose once the closing
+ * tag moved to the next line. Comments are already blanked by strip_comments, so
+ * anything quoted here is real code.
+ *
+ * @returns {{body: String, start: Number, line: Number}[]}
+ */
+function read_string_literals(source) {
+    const found = [];
+    let i = 0;
+    let line = 1;
+    while (i < source.length) {
+        const c = source[i];
+        if (c === "\n") { line++; i++; continue; }
+        if (c !== '"' && c !== "'" && c !== "`") { i++; continue; }
+
+        const start = i;
+        const start_line = line;
+        let body = "";
+        i++;
+        while (i < source.length && source[i] !== c) {
+            if (source[i] === "\\") { body += source[i] + (source[i + 1] ?? ""); i += 2; continue; }
+            if (source[i] === "\n") { line++; }
+            body += source[i];
+            i++;
+        }
+        i++;
+        found.push({ body, start, line: start_line });
+    }
+    return found;
+}
+
+/**
  * Every equipment slot needs a "ui slot <key>" row.
  *
  * The empty-slot label is built from the slot key at runtime -
@@ -1173,6 +1369,8 @@ await check_dialogue_display_names();
 await check_trader_display_names();
 await check_item_display_names();
 await check_equipment_slot_names();
+await check_no_english_in_dom();
+await check_registry_value_names();
 await check_required_items();
 await check_content_text_ids();
 await check_generated_items();
