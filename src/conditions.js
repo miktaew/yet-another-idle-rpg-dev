@@ -91,6 +91,37 @@ function money_required(condition) {
 }
 
 /**
+ * How much money an attempt should actually take, which is a different question
+ * from how much it required.
+ *
+ * A bare number gates and takes nothing; only the object form can be spent, and
+ * which flag it uses depends on where it was written. A `conditions` entry uses
+ * `remove`, matching items_by_id there; an action's `required` uses
+ * `remove_on_success` / `remove_on_fail`, matching items_by_id there. Both are
+ * handled here rather than at the call site, because this sits next to
+ * money_required and the two have to agree about the shape - a gate that asks for
+ * one number while the charge reads another is the failure this whole mechanism
+ * was rebuilt to avoid.
+ *
+ * Pure, so it can be tested. The DOM-bound function in main.js that held this
+ * logic could not be.
+ *
+ * @param {Object} condition a conditions entry, or an action's `required`
+ * @param {Boolean} is_won whether the attempt succeeded
+ * @returns {Number} the amount to remove, 0 when nothing should be
+ */
+function money_spent(condition, is_won) {
+    const money = condition?.money;
+    if(typeof money !== "object" || money === null) {
+        return 0;
+    }
+    const takes_it = money.remove
+        || (money.remove_on_success && is_won)
+        || (money.remove_on_fail && !is_won);
+    return takes_it ? (money.number ?? 0) : 0;
+}
+
+/**
      * Analyzes passed conditions, returns their status (0 or 1 if single element array, fuzzy value if two element array)
      * @param {*} character 
      * @param {*} condition 
@@ -309,4 +340,4 @@ const process_conditions = (conditions, character) => {
 
 
 
-export {process_conditions, money_required};
+export {process_conditions, money_required, money_spent};

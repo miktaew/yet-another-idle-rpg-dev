@@ -590,7 +590,7 @@ const game_options = {};
 // actually leave the purse.
 // ---------------------------------------------------------------------------
 {
-    const { process_conditions, money_required } = await load_with_stubs(
+    const { process_conditions, money_required, money_spent } = await load_with_stubs(
         "src/conditions.js",
         ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js"],
         `
@@ -638,6 +638,41 @@ const playable_races = {};
         process_conditions([q4], purse(29999)) === 0);
     check("quest 4's price allows a purse that covers it",
         process_conditions([q4], purse(30000)) === 1);
+
+    // ---------------------------------------------------------------------
+    // money_spent: how much actually leaves the purse. Separate from the gate
+    // on purpose - a bare number gates and takes nothing - and pure so that it
+    // can be tested at all. The equivalent logic used to sit inside a DOM-bound
+    // function in main.js where no test could reach it.
+    // ---------------------------------------------------------------------
+    check("a bare number requires money but never spends it",
+        money_spent({money: 500}, true) === 0 && money_spent({money: 500}, false) === 0);
+    check("nothing named spends nothing",
+        money_spent({}, true) === 0 && money_spent(undefined, true) === 0);
+
+    check("remove_on_success spends only on a win",
+        money_spent(q4, true) === 30000 && money_spent(q4, false) === 0);
+    const on_fail = {money: {number: 700, remove_on_fail: true}};
+    check("remove_on_fail spends only on a loss",
+        money_spent(on_fail, false) === 700 && money_spent(on_fail, true) === 0);
+    const both = {money: {number: 900, remove_on_success: true, remove_on_fail: true}};
+    check("both flags spend either way",
+        money_spent(both, true) === 900 && money_spent(both, false) === 900);
+
+    // `remove` is the conditions-side flag, and it does not care about the outcome,
+    // which is how items_by_id behaves in the same position.
+    const on_conditions = {money: {number: 400, remove: true}};
+    check("the conditions-side remove flag spends regardless of the outcome",
+        money_spent(on_conditions, true) === 400 && money_spent(on_conditions, false) === 400);
+
+    // The object form with no flag at all is the shape `check` rejects in content:
+    // it gates correctly and charges nothing, which is a silent pass.
+    check("an object with no removal flag spends nothing",
+        money_spent({money: {number: 30000}}, true) === 0);
+
+    // The gate and the charge must agree, which is the whole reason both live here.
+    check("what is spent equals what was required, for the shape quest 4 uses",
+        money_spent(q4, true) === money_required(q4));
 }
 
 console.log("");
