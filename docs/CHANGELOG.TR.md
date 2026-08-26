@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 39 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 40 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,62 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### 4. bölge: dağ, ve P-10 tamamlandı
+
+*"Kuzeybatı, yürüyen kayaların ve düşen suyun olduğu yer!"*
+
+PROPOSALS bunu sona bıraktı ve sebebini açıkça yazdı: zaten var. Dağ yolu, Küçük düz
+alan, Dağ kampı, Yumuşak dağ yamacı ve Şelale havzası çoktan oradaydı; yani bölgenin
+daha fazla zemine değil, orada olmak için bir sebebe ihtiyacı vardı.
+
+**Sebep STORY.md'nin kendi sınır notundaydı.** *"Ekipman tavanı, 5. kademe simya
+odunu saplı 3. kademe çelik bir başlık... 3. kademe istasyon olmadığı için 2. kademe
+bir istasyonda üretilmiş."* Durum o cümlenin söylediğinden kötü. Oyundaki her zanaat
+istasyonunda **dövme ve eritme 1. kademede** — köyde yedi kategorinin hepsi 1'de,
+kabile beşini 2'ye çıkardı ve o ikisine dokunmadı — oysa parçalar 5. kademeye kadar
+çıkıyor. `roll_quality`, `station_tier - component_tier` alıyor; yani 1. kademe bir
+istasyonda dövülen 5. kademe bir parça eksi dört ile atıyor. Oyuncunun bugüne kadar
+dövdüğü her şey cezalı dövüldü.
+
+**Çözümü dağa koyan üç şey zaten oyunda vardı.** Kamp oyuncunun kendisinin —
+*"daha ileri keşifler için mükemmel bir üs olsun diye senin kurduğun"* — yani kimsenin
+onu ona vermesi gerekmiyor. Kampın kendi ortam repliği *"Şiddetli rüzgâr yanından
+uğulduyor"* ve bir eritme ocağı hava akımı ister; bu da kampı çekilmez kılan şeyi
+ateşi çalıştıran şey yapıyor. Tuğla da demir de hemen aşağıdaki Yakındaki mağaradan
+çıkıyor.
+
+**Bunu yaşlı zanaatkâr söylüyor, çünkü öğretisi zaten bu biçimdeydi.** *"Sıçan
+derisiyle uğraşarak öğrenebileceklerinin de bir sınırı var, değil mi?"* Adını hiç
+koymadığı sınır kendi ocağındaydı: köy bir çukurda, çukurdaki ateşi elle üfürmek
+gerekir, el yorulur ve külçe dinlenirken soğur. Anlattığı şeyi kendisi kuramıyor —
+*"Ben seksen bir yaşındayım ve rüzgâr bu vadide değil"* — ve bunu kendine acıklı
+hâle getirmiyor.
+
+Repliği ona veren şey bir görev işareti değil, kampa varmak: o rüzgârın içinde kendi
+kampında dikilmek argümanın tamamı, o yüzden argümanı oda kuruyor.
+
+**Mekanizma bir getter.** `Dağ kampı`nın `crafting.tiers`'ı,
+`global_flags.is_mountain_forge_built` okuyan bir `get tiers()` oldu. İki okuyucu da
+— üretim anında `main.js` ve kategori düğmelerini yerleştirirken `display.js` —
+`current_location.crafting.tiers[category]`'yi canlı okuyor; yani bayrak dışında
+kaydedilecek bir şey yok ve `global_flags` zaten kaydedilip yükleniyor. Yanlış
+(falsy) bir kademe kategori düğmesini tamamen gizliyor; istenen davranış da bu:
+bacadan önce kampta kötü bir ocak değil, hiç ocak yok.
+
+İki değil üç, bilerek. İki, kabileyle eşitlenir ve 4. ile 5. kademe parçaları hâlâ
+cezalı atmaya bırakırdı; sınır notunun anlattığı tavanı gerçekten oynatan şey üç.
+
+**Bunun gerektirdiği kontrol.** Bütün bölge tek bir bayrak adına dayanıyor ve bayrak,
+sade bir nesnenin dizge anahtarı — `global_flags.is_mountain_forge_buit` undefined'dır,
+undefined falsy'dir, yani ocak sessizce hiç görünmez ve hiçbir şey nedenini söylemez.
+`npm run check` artık `main.js` dışında adı geçen her bayrağın `global_flags` içinde
+tanımlı olmasını istiyor; iki yönde de: özellik olarak okunma ve ödül dizgesi olarak
+verilme. İki yönde de negatif test edildi.
+
+**Bununla P-10 kapandı.** Aşçının coğrafya dersinde saydığı dört toprağın tamamı
+oyunda: ıslak ormanlar, ovalar, körfez ve dağ. Her biri için söylediği şey, her
+birinin ne olduğu çıktı.
 
 ### 3. bölge: körfez
 

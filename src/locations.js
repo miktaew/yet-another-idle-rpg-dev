@@ -1895,9 +1895,26 @@ function get_location_type_penalty(type, stage, stat, category) {
         crafting: {
             is_unlocked: true,
             use_text: "ui craft use Mountain camp",
-            tiers: {
-                cooking: 1
-            }
+            /*
+                A getter, not a value. main.js and display.js both read
+                current_location.crafting.tiers[category] at the moment of the craft,
+                so this evaluates then and the flue needs nothing saved beyond its
+                flag. A falsy tier hides the category button entirely
+                (display.js), which is the behaviour wanted: before the flue there is
+                no forge at the camp, not a bad one.
+
+                Three, not two. The tribe's station is the game's best at 2 and it does
+                not touch forging or smelting; components go to tier 5, and a tier-5
+                component forged at tier 1 rolls its quality at minus four. Three is
+                what makes the frontier's gear ceiling move.
+            */
+            get tiers() {
+                return {
+                    cooking: 1,
+                    forging: global_flags.is_mountain_forge_built ? 3 : 0,
+                    smelting: global_flags.is_mountain_forge_built ? 3 : 0,
+                };
+            },
         },
         is_unlocked: false,
         getBackgroundNoises: function() {
@@ -1906,9 +1923,59 @@ function get_location_type_penalty(type, stage, stat, category) {
         },
         temperature_range_modifier: 0.5,
         is_under_roof: true,
+        //P-10 region 4. Standing in your own camp in that wind is the whole argument,
+        //so the room is what gives the old craftsman something to say - not a marker.
+        entrance_rewards: {
+            textlines: [{dialogue: "old craftsman", lines: ["heat"]}],
+        },
     });
     locations["Nearby cave"].connected_locations.push({location: locations["Mountain camp"], travel_time: 140, travel_time_skills: ["Climbing", "Running"]});
     locations["Mountain path"].connected_locations.push({location: locations["Mountain camp"], travel_time: 120});
+
+    /*
+        P-10 region 4. The flue.
+
+        Precedent for the scale is the village bridge, which asks for 500 Stone
+        bricks and 100 Wood logs; this asks for less, and the bricks come from the
+        mining activity in the Nearby cave directly below.
+
+        Two condition steps like "read the ground" on the plains, on Smelting rather
+        than on Perception: the question is not whether you can see it, it is whether
+        you have run a fire hot enough to know what one wants.
+    */
+    locations["Mountain camp"].actions = {
+        "cut a flue": new GameAction({
+            action_id: "cut a flue",
+            action_name: "action cut a flue name",
+            starting_text: "action cut a flue starting",
+            description: "action cut a flue desc",
+            action_text: "action cut a flue during",
+            success_text: "action cut a flue success",
+            is_unlocked: false,
+            required: {
+                items_by_id: {
+                    "Stone brick": {count: 200, remove_on_success: true},
+                    "Iron ingot": {count: 10, remove_on_success: true},
+                    "Charcoal": {count: 30, remove_on_success: true},
+                },
+            },
+            failure_texts: {
+                unable_to_begin: ["action cut a flue fail unable_to_begin 1"],
+                conditional_loss: ["action cut a flue fail conditional_loss 1"],
+            },
+            conditions: [
+                {skills: {Smelting: 12}},
+                {skills: {Smelting: 30}},
+            ],
+            attempt_duration: 600,
+            success_chances: [0.4, 1],
+            rewards: {
+                skill_xp: {Smelting: 2000, Forging: 1000},
+                flags: ["is_mountain_forge_built"],
+                quest_progress: [{quest_id: "A Fire in a Hollow", task_index: 1}],
+            },
+        }),
+    };
 
     locations["Gentle mountain slope"] = new Combat_zone({
         description: "desc location Gentle mountain slope",

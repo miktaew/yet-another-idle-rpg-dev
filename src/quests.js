@@ -725,6 +725,34 @@ const questManager = {
             textlines: [{dialogue: "harbour tallyman", lines: ["tallyman after"]}],
         }
     });
+    /*
+        P-10 region 4. Two tasks, because the mountain does not need a third.
+
+        The whole region is the answer to one sentence in STORY.md's frontier note,
+        and the reward is not a thing the player carries - it is a station that lets
+        every tier-4 and tier-5 component they already own come out at the quality it
+        was always worth.
+    */
+    quests["A Fire in a Hollow"] = new Quest({
+        quest_name: "quest A Fire in a Hollow",
+        display_priority: 16,
+        getQuestDescription: ()=>{
+            if(quests["A Fire in a Hollow"].quest_tasks[0].is_finished) {
+                return "quest A Fire in a Hollow desc 2";
+            } else {
+                return "quest A Fire in a Hollow desc 1";
+            }
+        },
+        questline: "The Snake's Soul",
+        quest_tasks: [
+            new QuestTask({task_description: "quest A Fire in a Hollow task 1"}),
+            new QuestTask({task_description: "quest A Fire in a Hollow task 2"}),
+        ],
+        quest_rewards: {
+            xp: 30000,
+            textlines: [{dialogue: "old craftsman", lines: ["heat after"]}],
+        }
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

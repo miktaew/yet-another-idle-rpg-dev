@@ -3420,6 +3420,26 @@ const descriptions = {
     "quest A Good Place to Leave task 2": "Make the coast road passable",
     "quest A Good Place to Leave task 3": "Ask the tallyman what leaves the bay",
     "quest A Good Place to Leave task 4": "Read the departures book",
+
+    //P-10 region 4, the mountain. Depth rather than ground: the camp is already
+    //yours and the wind is already in the ambient text. What was missing was a
+    //forge, and the man who taught crafting is the one who knows why.
+    "craftsman heat": "My components are as good as I can make them and the equipment still comes out poorly.",
+    "craftsman heat answ": "Ahh. *[He turns your work over twice and gives it back without comment on the work itself]* No, that is not you. That is my hearth.\n\nI told you once that there is a limit to what you can learn from rat leather. There is a limit to what you can learn from a fire as well, and I never said it, because I have never had a way past it and a teacher who names a wall he cannot climb is just complaining.\n\nA good bar wants a fire that does not drop when you stop working it. Mine drops. This village sits in a hollow - lovely for sleeping, hopeless for burning - and a fire in a hollow has to be blown by hand, and a hand gets tired, and the bar cools while it rests. Everything you have ever made here was made in a fire that was going out.\n\n*[He points, roughly north, without looking]* You have been up on that mountain. You know that wind. It does not stop and it does not get tired. Cut a stack into the rock above your camp, brick it so it will not spall, put a grate in it, and the wind will do the work of a boy on the bellows for the rest of your life.\n\nI am eighty-one and the wind is not in this valley. *[He goes back to his accessories]* Go on, then. It is your camp.",
+    "craftsman heat after": "The flue works.",
+    "craftsman heat after answ": "Ahh. *[He does not ask what you made in it. He asks the other thing.]* And did it hold when you stopped?\n\n*[Whatever you say, he nods at it]* Then it is a hearth and not a fire. There is a difference and you will spend the rest of your life on the near side of it now, which is a good place to be and a boring thing to be told.\n\nBring me something you made up there one day. Not to check it. I would just like to hold one.",
+    "action cut a flue name": "Cut a flue",
+    "action cut a flue desc": "A stack cut into the rock above the camp, bricked so it will not spall, with a grate in it. The wind does the rest.",
+    "action cut a flue starting": "You start cutting into the rock face behind the tent, where the wind comes across rather than down.",
+    "action cut a flue during": "Cut, brick, cut, brick. The wind takes the dust away from your face, which you notice, and keep noticing.",
+    "action cut a flue success": "You lay the last brick, set the grate, and light it with a handful of charcoal because there is nothing to make yet and you want to see it.\n\nIt catches. Then it does the thing the old man described and did not have words for: you stand back, and stop feeding it, and walk away from it, and it does not drop. The wind comes across the mouth of the stack and the coals go from red to a colour you have not seen a fire make before.\n\n*[You leave it burning while you sit down, which is a thing you have never once been able to do.]*",
+    "action cut a flue fail unable_to_begin 1": "Two hundred bricks, ten bars of iron and enough charcoal to prove it works. There is no half of this that is worth building.",
+    "action cut a flue fail conditional_loss 1": "The stack draws and then chokes itself, and the third time you take it down you understand why: you are guessing at the throat. You have run fires. You have not run one hot enough to know what one wants.",
+    "quest A Fire in a Hollow": "A Fire in a Hollow",
+    "quest A Fire in a Hollow desc 1": "Everything you have ever forged was forged in a fire that was going out. The old craftsman has known that for longer than you have been alive and never said it, because he has no way past it.",
+    "quest A Fire in a Hollow desc 2": "A stack cut into the rock above your own camp, bricked, grated, and fed by a wind that does not stop and does not get tired.",
+    "quest A Fire in a Hollow task 1": "Ask the old craftsman why your work comes out poorly",
+    "quest A Fire in a Hollow task 2": "Cut a flue into the rock above the mountain camp",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

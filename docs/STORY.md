@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 7 -->
+<!-- doc-source: docs/STORY.md  doc-version: 8 -->
 
 # Story canon
 
@@ -143,12 +143,20 @@ English in the original. Preserve the effect; do not tidy their grammar.
 
 ## 7. Where the story currently stops
 
-**The frontier.** A player at the end of authored content is **hero level 25 to
-30**, standing in the **Longhouse at the Swampland tribe**, having just completed
-*In Times of Need* — the last completable quest in the game. Their gear ceiling is
-a tier-3 steel head on a tier-5 alchemical-wood handle with tier-5
+**The frontier, as of P-10.** The wall this section described has moved. A player at
+the end of authored content has walked all four of the lands in the cook's geography
+lesson, and the frontier is now the **coast road at the bay** rather than the
+Longhouse: the last thing the game tells them is a hull name with no account against
+it, and a man who will not send for them when she comes back.
+
+**The gear ceiling has moved too, and that was the point of region 4.** It used to be
+*"a tier-3 steel head on a tier-5 alchemical-wood handle with tier-5
 alligator/snakeskin armour, crafted at a tier-2 station because no tier-3 station
-exists.
+exists"*. That sentence understated it: every station in the game had **forging and
+smelting at 1** while components go to tier 5, so `roll_quality` was taking
+`station_tier - component_tier` and everything the player forged rolled at a penalty.
+The flue at the Mountain camp is a tier-3 forging and smelting station, which is the
+first one in the game above 1.
 
 **Every NPC is exhausted.** The elder rests on *"Not yet, but hopefully soon"*.
 The guard rests on *"that will have to be enough… I'm generally a terrible
@@ -225,9 +233,16 @@ register for this game.
 | 6 | *Way Too Strong for You* | Pays off the village guard's decade of deflection. She shows rather than teaches, which respects her refusal to teach. |
 
 **What stays open, deliberately:** who paid for the robbery; how the hero came to
-have the object at all; the four regions in the cook's geography lesson; the
-banished tribe in the southeastern plains; and the Rat God himself. The arc opens
-both dead ends and closes neither mystery.
+have the object at all; the banished tribe whose traces are in the plains; the
+four-legged bird past the Forest lake; and the Rat God himself. The arc opens both
+dead ends and closes neither mystery.
+
+**And one the bay opened.** The **Marrowmoth**, forty tons, out on the ebb the night
+after the forest road with one unweighed crate and a stroke drawn twice through her
+account column. She comes back twice a year. The tallyman will not send word.
+
+The four regions in the cook's geography lesson are no longer on this list: all four
+are built. What he said about each one is what each one turned out to be.
 
 ## 10. Authoring rules
 

@@ -616,6 +616,28 @@ class DialogueAction extends GameAction {
                 text: "craftsman remind 4 answ",
                 is_unlocked: false,
             }),
+            /*
+                P-10 region 4. His own teaching already has this shape - "there's a
+                limit to how much you can learn by working with rat leather" - and the
+                limit he never named is the one in his own hearth. He cannot build the
+                thing he is describing, and he says so without making it sad.
+            */
+            "heat": new Textline({
+                name: "craftsman heat",
+                text: "craftsman heat answ",
+                is_unlocked: false,
+                rewards: {
+                    actions: [{location: "Mountain camp", action: "cut a flue"}],
+                    quests: ["A Fire in a Hollow"],
+                    quest_progress: [{quest_id: "A Fire in a Hollow", task_index: 0}],
+                },
+                locks_lines: ["heat"],
+            }),
+            "heat after": new Textline({
+                name: "craftsman heat after",
+                text: "craftsman heat after answ",
+                is_unlocked: false,
+            }),
             "about guard": new Textline({
                 name: "craftsman about guard",
                 text: "craftsman about guard answ",

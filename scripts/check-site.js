@@ -961,6 +961,65 @@ function strip_interpolations(body) {
 }
 
 /**
+ * Every global_flags name referenced outside main.js has to exist in main.js.
+ *
+ * The flags are a string-keyed object, so a rename or a typo is silent in both
+ * directions: `global_flags.is_mountain_forge_buit` is undefined, which is falsy,
+ * which means the Mountain camp's forge would simply never appear and nothing would
+ * say why. A reward granting a flag that main.js does not declare adds a key
+ * nothing reads.
+ *
+ * This is the check the mountain forge needed, because the whole mechanism is a
+ * getter reading one flag name: `get tiers()` on the camp's crafting object
+ * evaluates at the moment of the craft (main.js and display.js both read
+ * current_location.crafting.tiers[category] live), and a falsy tier hides the
+ * category button entirely. That behaviour is right, and it is also exactly why a
+ * misspelled flag would look like a design decision rather than a bug.
+ */
+async function check_global_flags() {
+    const main_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+
+    const block = main_source.match(/const global_flags = \{([\s\S]*?)\n\};/);
+    if (!block) {
+        error("src/main.js has no `const global_flags = { ... }` - this check is out of date.");
+        return;
+    }
+    const declared = new Set([...block[1].matchAll(/^\s+([A-Za-z_][A-Za-z0-9_]*)\s*:/gm)]
+        .map(match => match[1]));
+    if (declared.size === 0) {
+        error("could not read any names out of global_flags - this check is out of date.");
+        return;
+    }
+
+    //Two ways a flag is named: read as a property, or granted as a reward string.
+    const scanned = ["src/locations.js", "src/dialogues.js", "src/quests.js", "src/enemies.js"];
+    let references = 0;
+    for (const relative of scanned) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const match of source.matchAll(/global_flags\.([A-Za-z_][A-Za-z0-9_]*)/g)) {
+            references++;
+            if (!declared.has(match[1])) {
+                error(`${relative} reads global_flags.${match[1]}, which src/main.js does not`
+                    + " declare. An undeclared flag is undefined, which is falsy, so whatever it"
+                    + " gates would silently never appear.");
+            }
+        }
+        //`flags: ["is_x"]` in a rewards object, and `required_flags: {yes: [...]}`.
+        for (const list of source.matchAll(/(?:^|[^_])\bflags\s*:\s*(\{[^}]*\}|\[[^\]]*\])/g)) {
+            for (const name of list[1].matchAll(/"([A-Za-z_][A-Za-z0-9_]*)"/g)) {
+                references++;
+                if (!declared.has(name[1])) {
+                    error(`${relative} names flag "${name[1]}", which src/main.js does not declare`
+                        + " in global_flags.");
+                }
+            }
+        }
+    }
+    console.log(`[check] global flags: ${declared.size} declared, ${references} references resolved`);
+}
+
+/**
  * A location with a trader needs a market region, and the region has to exist.
  *
  * The game has its own verifier (src/verifier.js) which says exactly this, and it
@@ -1440,6 +1499,7 @@ await check_equipment_slot_names();
 await check_no_english_in_dom();
 await check_registry_value_names();
 await check_trader_market_regions();
+await check_global_flags();
 await check_required_items();
 await check_content_text_ids();
 await check_generated_items();

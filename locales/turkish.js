@@ -3460,6 +3460,26 @@ const descriptions = {
     "quest A Good Place to Leave task 2": "Sahil yolunu geçilebilir hâle getir",
     "quest A Good Place to Leave task 3": "Saymana körfezden ne gittiğini sor",
     "quest A Good Place to Leave task 4": "Çıkış defterini oku",
+
+    //P-10 region 4, the mountain. Depth rather than ground: the camp is already
+    //yours and the wind is already in the ambient text. What was missing was a
+    //forge, and the man who taught crafting is the one who knows why.
+    "craftsman heat": "Parçalarım yapabileceğimin en iyisi ama ekipman hâlâ kötü çıkıyor.",
+    "craftsman heat answ": "Ahh. *[Yaptığını iki kez çevirip, iş hakkında tek söz etmeden geri veriyor]* Hayır, bu sen değilsin. Bu benim ocağım.\n\nBir zamanlar sana sıçan derisinden öğrenebileceğinin bir sınırı olduğunu söylemiştim. Bir ateşten öğrenebileceğinin de bir sınırı var; ama onu hiç söylemedim, çünkü onu aşacak bir yolum hiç olmadı ve tırmanamadığı duvarın adını koyan bir hoca yalnızca sızlanıyor demektir.\n\nİyi bir külçe, sen işlemeyi bıraktığında düşmeyen bir ateş ister. Benimki düşer. Bu köy bir çukurda kurulu — uyumak için harika, yakmak için umutsuz — ve çukurdaki ateşi elle üfürmek gerekir; el yorulur, dinlenirken de külçe soğur. Burada bugüne kadar yaptığın her şey, sönmekte olan bir ateşte yapıldı.\n\n*[Bakmadan, kabaca kuzeyi işaret ediyor]* O dağa çıktın. O rüzgârı biliyorsun. Durmaz ve yorulmaz. Kampının üstündeki kayaya bir baca aç, çatlamayacak şekilde tuğlala, içine bir ızgara koy — ve rüzgâr, ömrünün sonuna kadar körüğü çeken çocuğun işini yapar.\n\nBen seksen bir yaşındayım ve rüzgâr bu vadide değil. *[Takılarına dönüyor]* Hadi git bakalım. Kamp senin.",
+    "craftsman heat after": "Baca çalışıyor.",
+    "craftsman heat after answ": "Ahh. *[İçinde ne yaptığını sormuyor. Öbür şeyi soruyor.]* Peki sen bıraktığında tuttu mu?\n\n*[Ne dersen ona başını sallıyor]* O hâlde artık ateş değil, ocak. Aralarında bir fark var ve bundan sonra ömrünü onun bu tarafında geçireceksin; iyi bir yer ve söylenince sıkıcı bir şey.\n\nBir gün orada yaptığın bir şeyi bana getir. Kontrol etmek için değil. Sadece bir kez elimde tutmak isterim.",
+    "action cut a flue name": "Baca aç",
+    "action cut a flue desc": "Kampın üstündeki kayaya açılmış, çatlamayacak şekilde tuğlalanmış, içine ızgara konmuş bir baca. Gerisini rüzgâr yapıyor.",
+    "action cut a flue starting": "Çadırın arkasındaki kaya yüzünü kesmeye başlıyorsun — rüzgârın aşağıya değil, enine vurduğu yer.",
+    "action cut a flue during": "Kes, tuğlala, kes, tuğlala. Rüzgâr tozu yüzünden alıp götürüyor; bunu fark ediyorsun ve fark etmeye devam ediyorsun.",
+    "action cut a flue success": "Son tuğlayı koyuyor, ızgarayı yerleştiriyor ve henüz yapacak bir şey olmadığı hâlde, sadece görmek için bir tutam kömürle yakıyorsun.\n\nTutuyor. Sonra yaşlı adamın anlattığı ama kelimesini bulamadığı şeyi yapıyor: geri çekiliyorsun, beslemeyi bırakıyorsun, yanından uzaklaşıyorsun — ve düşmüyor. Rüzgâr bacanın ağzından enine geçiyor ve korlar, bir ateşin yaptığını daha önce görmediğin bir renge geçiyor.\n\n*[Oturmak için onu yanar hâlde bırakıyorsun; bugüne kadar bir kez bile yapabildiğin bir şey değil.]*",
+    "action cut a flue fail unable_to_begin 1": "İki yüz tuğla, on külçe demir ve çalıştığını kanıtlayacak kadar kömür. Bunun kurmaya değer bir yarısı yok.",
+    "action cut a flue fail conditional_loss 1": "Baca önce çekiyor, sonra kendini boğuyor; üçüncü kez sökerken nedenini anlıyorsun: boğaz ölçüsünü tahminle koyuyorsun. Ateş yaktın. Ama bir ateşin ne istediğini bilecek kadar sıcağını hiç yakmadın.",
+    "quest A Fire in a Hollow": "Çukurdaki Ateş",
+    "quest A Fire in a Hollow desc 1": "Bugüne kadar dövdüğün her şey, sönmekte olan bir ateşte dövüldü. Yaşlı zanaatkâr bunu sen doğmadan önce biliyordu ve hiç söylemedi; çünkü onu aşacak bir yolu yok.",
+    "quest A Fire in a Hollow desc 2": "Kendi kampının üstündeki kayaya açılmış, tuğlalanmış, ızgaralanmış ve durmayan, yorulmayan bir rüzgârla beslenen bir baca.",
+    "quest A Fire in a Hollow task 1": "Yaşlı zanaatkâra işinin neden kötü çıktığını sor",
+    "quest A Fire in a Hollow task 2": "Dağ kampının üstündeki kayaya bir baca aç",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

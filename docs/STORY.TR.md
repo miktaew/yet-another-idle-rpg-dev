@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 7 -->
+<!-- doc-source: docs/STORY.md  doc-version: 8 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -149,11 +149,20 @@ Bataklık kadrosu kırık, basitleştirilmiş Türkçe konuşur; özgün metinde
 
 ## 7. Hikâye şu anda nerede duruyor
 
-**Frontier.** Yazılmış içeriğin sonundaki oyuncu **hero level 25-30** aralığında,
-**Swampland tribe'daki Longhouse**'ta duruyor ve *In Times of Need* görevini yeni
-tamamlamış — oyundaki tamamlanabilir son quest. Ekipman tavanı, tier-5 alkimyasal
-ahşap sap üzerinde tier-3 çelik başlık ve tier-5 timsah/yılan derisi zırh; tier-3
-istasyon olmadığı için tier-2 istasyonda üretilmiş.
+**Frontier, P-10 sonrası.** Bu bölümün anlattığı duvar yer değiştirdi. Yazılmış
+içeriğin sonundaki oyuncu, aşçının coğrafya dersindeki dört toprağın hepsini
+yürümüş oluyor ve frontier artık Longhouse değil, **körfezdeki sahil yolu**: oyunun
+ona söylediği son şey, karşısında hesabı olmayan bir tekne adı ve o tekne döndüğünde
+kendisine haber salmayacak bir adam.
+
+**Ekipman tavanı da yer değiştirdi; 4. bölgenin amacı da buydu.** Eskiden şöyleydi:
+*"tier-5 alkimyasal ahşap sap üzerinde tier-3 çelik başlık ve tier-5 timsah/yılan
+derisi zırh; tier-3 istasyon olmadığı için tier-2 istasyonda üretilmiş"*. O cümle
+durumu hafife alıyordu: oyundaki her istasyonda **dövme ve eritme 1. kademedeydi**,
+oysa parçalar 5. kademeye çıkıyor; yani `roll_quality`, `station_tier -
+component_tier` alıyordu ve oyuncunun dövdüğü her şey cezalı atıyordu. Dağ
+kampındaki baca, 3. kademe bir dövme ve eritme istasyonu — oyunda 1'in üstündeki
+ilk istasyon.
 
 **Her NPC tükenmiş durumda.** Yaşlı *"Not yet, but hopefully soon"* üzerinde
 duruyor. Muhafız *"that will have to be enough… I'm generally a terrible teacher"*
@@ -227,9 +236,16 @@ için doğru register budur.
 | 6 | *Way Too Strong for You* | Köy muhafızının on yıllık savuşturmasını karşılığa bağlar. Öğretmez, gösterir — böylece öğretmeyi reddedişine saygı gösterir. |
 
 **Bilinçli olarak açık kalanlar:** soygunun parasını kimin ödediği; kahramanın o
-nesneye nasıl sahip olduğu; aşçının coğrafya dersindeki dört bölge; güneydoğu
-ovalarındaki sürgün kabile; ve Rat God'ın kendisi. Ark iki çıkmazı da açar,
+nesneye nasıl sahip olduğu; izleri ovalarda duran sürgün kabile; Orman gölünün
+ötesindeki dört bacaklı kuş; ve Rat God'ın kendisi. Ark iki çıkmazı da açar,
 hiçbir gizemi kapatmaz.
+
+**Ve körfezin açtığı bir tane.** **Marrowmoth**: kırk ton, orman yolundan sonraki
+gece cezirle çıkmış, tartılmamış bir sandık ve hesap sütununda üzerinden iki kez
+geçilmiş bir çizgi. Yılda iki kez dönüyor. Sayman haber salmayacak.
+
+Aşçının coğrafya dersindeki dört bölge artık bu listede değil: dördü de kuruldu.
+Her biri için söylediği şey, her birinin ne olduğu çıktı.
 
 ## 10. Yazım kuralları
 

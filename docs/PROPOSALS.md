@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 21 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 22 -->
 
 # Proposals
 
@@ -373,7 +373,7 @@ the banished tribe, and the Rat God.
 
 ---
 
-### P-10 — Build the four regions `active`
+### P-10 — Build the four regions `done`
 
 Directive: the unbuilt regions are to be built, and story work continues.
 
@@ -433,7 +433,19 @@ Execution order, highest leverage first:
    The payoff is the departures book: the **Marrowmoth**, one unweighed crate, and
    an account column struck through twice. Who paid is untouched. What is new is a
    hull that comes back twice a year and is not due.
-4. **The mountain.** Last, because it exists. Depth rather than ground.
+4. **The mountain — DONE.** Depth rather than ground, and the depth was already
+   named in [STORY.md](STORY.md)'s frontier note: the gear ceiling is a station
+   ceiling. Every crafting station in the game had forging and smelting at 1 while
+   components go to tier 5, so everything the player had ever forged rolled its
+   quality at a penalty.
+
+   The camp is already the player's own and its own ambient line is the wind, so a
+   draught-fed forge belongs there and nobody has to hand it over. The old craftsman
+   names the limit in his own hearth, which his teaching had always implied and never
+   said. The tiers are a getter over a global flag, at 3 rather than 2, because 2
+   would leave tier-4 and tier-5 components still rolling short.
+
+   **All four lands are now in the game.**
 
 **A fifth thread, not one of his four.** The `gaze` action past the Forest lake ends
 *"You try to make out the details of what looks like a bird flying in the distance.

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 39 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 40 -->
 
 # Changelog
 
@@ -20,6 +20,64 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### Region 4: the mountain, and P-10 is finished
+
+*"Northwest, where the walking rocks and falling water are!"*
+
+PROPOSALS put this one last and was explicit about why: it exists. Mountain path,
+Small flat area, Mountain camp, Gentle mountain slope and the Waterfall basin were
+all already there, so the region needed a reason to be up there rather than more
+ground.
+
+**The reason was in STORY.md's own frontier note.** *"Their gear ceiling is a tier-3
+steel head on a tier-5 alchemical-wood handle... crafted at a tier-2 station because
+no tier-3 station exists."* It is worse than that sentence says. Every crafting
+station in the game has **forging and smelting at 1** - the village has all seven
+categories at 1, and the tribe raised five of them to 2 and left those two alone -
+while components go up to tier 5. `roll_quality` takes `station_tier -
+component_tier`, so a tier-5 component forged at a tier-1 station rolls at minus
+four. Everything the player has ever forged was forged at a penalty.
+
+**Three things already in the game put the fix on the mountain.** The camp is the
+player's own - *"created by you to be a perfect base for further exploration"* - so
+nobody has to give it to them. The camp's own ambient line is *"Strong wind whooshes
+past you"*, and a smelter wants a draught, which makes the thing that makes the camp
+unpleasant the thing that makes the fire work. And the bricks and the iron both come
+out of the Nearby cave directly below it.
+
+**The old craftsman says it, because his teaching already had this shape.** *"There's
+a limit to how much you can learn by working with rat leather, isn't there?"* The
+limit he never named is the one in his own hearth: the village sits in a hollow, a
+fire in a hollow has to be blown by hand, a hand gets tired, and the bar cools while
+it rests. He cannot build the thing he is describing - *"I am eighty-one and the wind
+is not in this valley"* - and he does not make that sad about himself.
+
+Reaching the camp is what gives him the line, rather than a quest marker: standing in
+your own camp in that wind is the whole argument, so the room makes it.
+
+**The mechanism is a getter.** `Mountain camp`'s `crafting.tiers` became
+`get tiers()` reading `global_flags.is_mountain_forge_built`. Both readers -
+`main.js` at the moment of a craft and `display.js` when it lays out the category
+buttons - take `current_location.crafting.tiers[category]` live, so nothing has to
+be saved beyond the flag, and `global_flags` is already saved and loaded. A falsy
+tier hides the category button entirely, which is the wanted behaviour: before the
+flue there is no forge at the camp rather than a bad one.
+
+Three rather than two, deliberately. Two would match the tribe and leave tier-4 and
+tier-5 components still rolling at a penalty; three is what actually moves the
+ceiling the frontier note describes.
+
+**The check this needed.** The whole region turns on one flag name, and a flag is a
+string key on a plain object - `global_flags.is_mountain_forge_buit` is undefined,
+which is falsy, which means the forge silently never appears and nothing says why.
+`npm run check` now requires every flag named outside `main.js` to be declared in
+`global_flags`, in both directions: read as a property, or granted as a reward
+string. Negative-tested both ways.
+
+**With this, P-10 is closed.** All four of the lands in the cook's geography lesson
+are in the game: the wet woods, the plains, the bay and the mountain. What he said
+about each one is what each one turned out to be.
 
 ### Region 3: the bay
 

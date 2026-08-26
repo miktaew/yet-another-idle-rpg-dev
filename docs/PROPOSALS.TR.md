@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 21 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 22 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -381,7 +381,7 @@ nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.
 
 ---
 
-### P-10 — Dört bölgeyi inşa et `active`
+### P-10 — Dört bölgeyi inşa et `done`
 
 Direktif: inşa edilmemiş bölgeler inşa edilecek ve hikâye çalışması sürecek.
 
@@ -440,7 +440,19 @@ Uygulama sırası, en yüksek kaldıraç önce:
    Ödül çıkış defteri: **Marrowmoth**, tartılmamış bir sandık ve üzerinden iki kez
    geçilmiş bir hesap sütunu. Kimin ödediğine dokunulmuyor. Yeni olan şey, yılda
    iki kez dönen ve vakti gelmemiş bir tekne.
-4. **Dağ.** En son, çünkü var. Zemin değil derinlik.
+4. **Dağ — TAMAM.** Zemin değil derinlik; ve derinlik çoktan
+   [STORY.md](STORY.md)'nin sınır notunda adlandırılmıştı: ekipman tavanı bir
+   istasyon tavanı. Oyundaki her zanaat istasyonunda dövme ve eritme 1. kademedeydi,
+   oysa parçalar 5. kademeye çıkıyor; yani oyuncunun bugüne kadar dövdüğü her şey
+   kalitesini cezalı attı.
+
+   Kamp zaten oyuncunun kendisinin ve kendi ortam repliği rüzgâr; yani hava akımıyla
+   beslenen bir ocak oraya ait ve kimsenin onu teslim etmesi gerekmiyor. Yaşlı
+   zanaatkâr, öğretisinin hep ima ettiği ama hiç söylemediği sınırı — kendi
+   ocağındaki sınırı — adlandırıyor. Kademeler bir küresel bayrak üzerinden getter
+   ve 2 değil 3; çünkü 2, 4. ve 5. kademe parçaları hâlâ eksik atmaya bırakırdı.
+
+   **Dört toprağın tamamı artık oyunda.**
 
 **Onun dördüne dahil olmayan beşinci bir iplik.** Forest lake'in ötesindeki `gaze`
 eylemi şöyle bitiyor: *"Uzakta uçan bir kuşa benzeyen şeyin ayrıntılarını seçmeye
