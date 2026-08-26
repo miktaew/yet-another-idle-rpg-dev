@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 40 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 41 -->
 
 # Changelog
 
@@ -20,6 +20,47 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The village hearth, and `Village expansion` is finishable
+
+The last task of `Village expansion` has read **"[To be continued]"** since before
+the swamp existed. Its author left the instruction on the line that was blocking it:
+
+> `"further work"`: *doesn't lock itself for now; to be updated with lock, unlocks,
+> and different text when more stuff is added on the other side of river*
+
+**Region 4 is what "more stuff" turned out to be.** The old craftsman had just
+explained why nothing the player forges holds - *"this village sits in a hollow,
+lovely for sleeping, hopeless for burning"* - and said in the same breath that he
+could not fix it: *"I am eighty-one and the wind is not in this valley."* The player
+then went and built the thing he described, on a mountain, out of two hundred bricks.
+So the fourth work is bringing that back down, and the elder's *"Not yet, but
+hopefully soon"* stops being the last thing he can say.
+
+**He does not get the mountain's answer, and he is not disappointed by that.** He has
+known about the hollow since the craftsman told him, *"a long time ago, and he was
+younger than you are when he did"*, and what the village has instead of wind is
+hands: *"It has hands, though. It has always had hands."* So a boy stands on the
+bellows every day of his life, the fire dips when he changes hands, and the village
+station is **2 and never 3**. That is the craftsman's own explanation turned into a
+number rather than a balance decision, and the elder says the right thing about it:
+*"It does not have to be. It has to hold long enough to finish a bar."*
+
+**The mechanism deliberately differs from the mountain's.** Up there the flue is a
+**skill** check - nobody else is on that mountain, and it chokes itself until the
+player knows what a throat wants. Down here it is a **supply** check: no conditions,
+no failure roll, `success_chances: [1]`, and 120 bricks against the mountain's 200.
+The hard part was solved up the hill; what is left is whether you can pay for it.
+The mill boys form a line without being told to.
+
+**And the craftsman gets what he actually asked for.** His line after the flue was
+*"Bring me something you made up there one day. Not to check it. I would just like to
+hold one."* He gets somewhere to stand instead, which he notices is more than he
+asked for and is gracious about for exactly one sentence before going to tell the boy
+he is blowing it wrong.
+
+Two getters now, both over `global_flags`, and the check added with region 4 covers
+both: a misspelled flag would make either forge silently never appear.
 
 ### Region 4: the mountain, and P-10 is finished
 

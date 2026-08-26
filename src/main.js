@@ -137,6 +137,9 @@ const global_flags = {
     //P-10 region 4. Read live by the Mountain camp's crafting tiers, so the flue is
     //a flag rather than a saved tier - global_flags are already saved and loaded.
     is_mountain_forge_built: false,
+    //P-11. Same shape as the mountain flue, one tier lower, for the same reason the
+    //old craftsman gave: down here the draught is a boy and a boy gets tired.
+    is_village_hearth_built: false,
 };
 //TEXT IDS, resolved where the message is logged.
 const flag_unlock_texts = {

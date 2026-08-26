@@ -943,7 +943,7 @@ const quests = {
     "quest Village expansion task 0": "Islah kanalını kaz",
     "quest Village expansion task 3": "Malzeme topla (Odun kütüğü x100, Taş tuğla x500) ve sonra yeni köprünün yapımına yardım et",
     "quest Village expansion task 6": "Dev yusufçukları temizle ve sonra haber ver",
-    "quest Village expansion task 7": "[Devam edecek]",
+    "quest Village expansion task 7": "Köy kuyusunun arkasına bir ocak kur",
 
     //BONEMEAL DELIVERY
     "quest Bonemeal delivery": "Kemik unu teslimatı",
@@ -3480,6 +3480,19 @@ const descriptions = {
     "quest A Fire in a Hollow desc 2": "Kendi kampının üstündeki kayaya açılmış, tuğlalanmış, ızgaralanmış ve durmayan, yorulmayan bir rüzgârla beslenen bir baca.",
     "quest A Fire in a Hollow task 1": "Yaşlı zanaatkâra işinin neden kötü çıktığını sor",
     "quest A Fire in a Hollow task 2": "Dağ kampının üstündeki kayaya bir baca aç",
+
+    //P-11. Village expansion task 7: the elder's fourth work, which was waiting
+    //for the mountain flue to exist before it had an answer.
+    "elder hollow": "Dağın üstünde bir ocak kurdum. Aynı şey burada da işe yarar, daha küçüğü.",
+    "elder hollow answ": "*[Elindeki şeyi bırakıyor; köprü için bunu yapmamıştı.]*\n\nDaha küçüğü. Evet. Neden daha küçüğü, biliyorum — yetmiş yıldır bu çukurda yaşıyorum ve içinde adı rüzgâr olmaya değer bir esinti bir kez bile duymadım.\n\nZanaatkâr söylemiş demek. Bana da anlatmıştı, uzun zaman önce; anlattığında senden gençti ve ben de bir şey yapamadım. Köyün hiçbir zaman iki yüz tuğlası artmadı ve onlarla ne yapacağını bilen biri de hiç olmadı.\n\nAma eli var. Eli her zaman vardı. Tuğlayı ve demiri getirirsen değirmendeki çocuklar taşır, birinin oğlu da ömrünün her günü körüğün başında durur — ve senin yukarıdaki kadar iyi olmaz.\n\n*[Kuyunun arkasındaki boşluğa bakıyor; olacağı yer orası ve yetmiş yıldır olacağı yer orası]*\n\nOlmak zorunda da değil. Bir külçeyi bitirecek kadar tutması yeterli.",
+    "action build a hearth name": "Köy ocağını kur",
+    "action build a hearth desc": "Kuyunun arkasında, yaşlının yetmiş yıldır baktığı yerde. Tuğla, bir ızgara ve körüğün başında bir çocuk.",
+    "action build a hearth starting": "Kuyunun arkasında yerini işaretliyorsun. Bir saat içinde tuğla taşıyan, istediğinden fazla insan oluyor.",
+    "action build a hearth during": "Biri, kimse söylemeden değirmen çocuklarını sıraya dizmiş. Sen tuğla örüyorsun, sana tuğla veriliyor ve iş, rüzgârın onda biriyle dağdakinden hızlı ilerliyor.",
+    "action build a hearth success": "Son tuğlayı ikindi vakti örüyorsun ve körüğü ilk kimin çekeceği üstüne bir tartışma çıkıyor; tartışmayı yaşlı, kötü bir şekilde, küçüğün lehine kapatıyor.\n\nYanıyor. Dağınkinin yaptığı renkte değil, turuncu yanıyor; çocuk el değiştirmek için durduğunda düşüyor ve geri geliyor. Bütün fark bu; küçük bir fark değil ve asıl mesele de değil.\n\n*[Yaşlı nutuk çekmiyor. Bir süre ona bakıyor, sonra şunu diyor:]* \"Yetmiş yıl o toprak parçasına baktım.\" *[Ve sonra, o olduğu için:]* \"Kuyu, benim koyacağımdan yakın olmuş. İdare ederiz.\"",
+    "action build a hearth fail unable_to_begin 1": "Yüz yirmi tuğla, altı külçe demir ve yakmak için kömür. Değirmen çocukları çoktan etrafta umutla dikiliyor; bu, dikilmemelerinden daha kötü.",
+    "craftsman hearth": "Kuyunun arkasında artık bir ocak var.",
+    "craftsman hearth answ": "Ahh. *[Duyup duymadığını merak edecek kadar sessiz kalıyor.]*\n\nSana o dağda yaptığın bir şeyi getirmeni söylemiştim. Sen bana onun yerine durabileceğim bir yer getirdin; istediğimden fazlası ve bu konuda tam olarak bir cümle daha nazik olacağım.\n\n*[Çoktan kalkıyor]* Pekâlâ. Çocuk yanlış üfürüyordur. Hep yanlış üfürürler — sert, sonra hiç; körük dövülecek bir şeymiş gibi. Meselenin tamamı düzenli olmak. Düzenli ve sıkıcı, sonsuza kadar.\n\nKırk yıllık bunu insanlara anlatma birikimim var ve anlatacak bir yerim yoktu. *[Kapıda]* Beni bekleme, kuyunun nerede olduğunu biliyorum.",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 23 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 24 -->
 
 # Proposals
 
@@ -471,7 +471,7 @@ Neither had an answer when they were written. Both have one now, and in both cas
 the answer came out of something built since rather than something invented for the
 occasion.
 
-#### 1. `Village expansion` task 7 — the elder's fourth work
+#### 1. `Village expansion` task 7 — the elder's fourth work — **DONE**
 
 His three works are water, access and safety: the melioration channel, the bridge,
 and clearing the huge dragonflies. Then:

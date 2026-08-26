@@ -878,17 +878,30 @@ function get_location_type_penalty(type, stage, stat, category) {
         market_region: "Village",
         name: "Village", 
         crafting: {
-            is_unlocked: true, 
-            use_text: "ui craft use Village", 
-            tiers: {
-                crafting: 1,
-                forging: 1,
-                smelting: 1,
-                cooking: 1,
-                alchemy: 1,
-                butchering: 1,
-                woodworking: 1,
-            }
+            is_unlocked: true,
+            use_text: "ui craft use Village",
+            /*
+                A getter, like the Mountain camp's. Forging and smelting are the only
+                two that move, because a hearth is a hearth - the loom and the pot and
+                the tanning frame are not waiting on a draught.
+
+                Two, and never three. The mountain has a wind that does not stop; the
+                village has a boy on the bellows, and the whole reason the flue was
+                worth building is that a boy gets tired. The village staying one tier
+                behind is the craftsman's explanation, not a balance decision.
+            */
+            get tiers() {
+                const forge = global_flags.is_village_hearth_built ? 2 : 1;
+                return {
+                    crafting: 1,
+                    forging: forge,
+                    smelting: forge,
+                    cooking: 1,
+                    alchemy: 1,
+                    butchering: 1,
+                    woodworking: 1,
+                };
+            },
         },
     });
 
@@ -1973,6 +1986,9 @@ function get_location_type_penalty(type, stage, stat, category) {
                 skill_xp: {Smelting: 2000, Forging: 1000},
                 flags: ["is_mountain_forge_built"],
                 quest_progress: [{quest_id: "A Fire in a Hollow", task_index: 1}],
+                //P-11. You can tell the elder the moment it works, rather than after a
+                //quest closes: what you are bringing him is the fact that it held.
+                textlines: [{dialogue: "village elder", lines: ["hollow"]}],
             },
         }),
     };
@@ -3517,6 +3533,43 @@ function get_location_type_penalty(type, stage, stat, category) {
                     ]
             }, 
         }),
+        /*
+            P-11. Village expansion task 7 - the elder's fourth work.
+
+            No skill conditions and no failure roll, unlike the mountain flue. The
+            hard part was done up there; here there are people who will carry brick
+            all day and a man who has wanted this for longer than the player has been
+            alive. What is left is whether you can supply it.
+        */
+        "build a hearth": new GameAction({
+            action_id: "build a hearth",
+            action_name: "action build a hearth name",
+            starting_text: "action build a hearth starting",
+            description: "action build a hearth desc",
+            action_text: "action build a hearth during",
+            success_text: "action build a hearth success",
+            is_unlocked: false,
+            required: {
+                items_by_id: {
+                    "Stone brick": {count: 120, remove_on_success: true},
+                    "Iron ingot": {count: 6, remove_on_success: true},
+                    "Charcoal": {count: 20, remove_on_success: true},
+                },
+            },
+            failure_texts: {
+                unable_to_begin: ["action build a hearth fail unable_to_begin 1"],
+            },
+            attempt_duration: 480,
+            success_chances: [1],
+            rewards: {
+                skill_xp: {Smelting: 800, Forging: 800},
+                flags: ["is_village_hearth_built"],
+                reputation: {Village: 150},
+                quest_progress: [{quest_id: "Village expansion", task_index: 7}],
+                textlines: [{dialogue: "old craftsman", lines: ["hearth"]}],
+            },
+        }),
+
         "bridge mat delivery": new GameAction({
             action_id: "bridge mat delivery",
             starting_text: "action bridge mat delivery starting",

@@ -396,7 +396,30 @@ class DialogueAction extends GameAction {
                 name: "elder further work",
                 text: "elder further work answ",
                 is_unlocked: false,
-                //doesn't lock itself for now; to be updated with lock, unlocks, and different text when more stuff is added on the other side of river
+                //The author's note here asked for "lock, unlocks, and different text when
+                //more stuff is added". P-11 is that: building the mountain flue gives the
+                //player something to bring him, and "hollow" locks this line because "not
+                //yet, but hopefully soon" stops being true the moment there is an answer.
+            }),
+            /*
+                P-11. Village expansion task 7.
+
+                The player has just built a draught furnace on a mountain because the old
+                craftsman explained why a fire in a hollow cannot hold. This is bringing
+                that back down to the man who has been asking for a fourth project since
+                the dragonflies went.
+
+                He does not get the mountain's answer. He gets the one that works in a
+                hollow, which is a boy, and he is not disappointed by that.
+            */
+            "hollow": new Textline({
+                name: "elder hollow",
+                text: "elder hollow answ",
+                is_unlocked: false,
+                rewards: {
+                    actions: [{location: "Village", action: "build a hearth"}],
+                },
+                locks_lines: ["hollow", "further work"],
             }),
 
             "ask to leave 2": new Textline({
@@ -636,6 +659,13 @@ class DialogueAction extends GameAction {
             "heat after": new Textline({
                 name: "craftsman heat after",
                 text: "craftsman heat after answ",
+                is_unlocked: false,
+            }),
+            //P-11. He asked to hold one thing made up there. He gets the hearth instead,
+            //which is the same request answered better than he made it.
+            "hearth": new Textline({
+                name: "craftsman hearth",
+                text: "craftsman hearth answ",
                 is_unlocked: false,
             }),
             "about guard": new Textline({

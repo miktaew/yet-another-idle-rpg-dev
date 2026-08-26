@@ -893,7 +893,7 @@ const quests = {
     "quest Village expansion task 0": "Dig the melioration channel",
     "quest Village expansion task 3": "Gather materials (Wood log x100, Stone brick x500) and then help constructing the new bridge",
     "quest Village expansion task 6": "Clear out huge dragonflies and then report back",
-    "quest Village expansion task 7": "[To be continued]",
+    "quest Village expansion task 7": "Build a hearth behind the village well",
 
     //BONEMEAL DELIVERY
     "quest Bonemeal delivery": "Bonemeal delivery",
@@ -3440,6 +3440,19 @@ const descriptions = {
     "quest A Fire in a Hollow desc 2": "A stack cut into the rock above your own camp, bricked, grated, and fed by a wind that does not stop and does not get tired.",
     "quest A Fire in a Hollow task 1": "Ask the old craftsman why your work comes out poorly",
     "quest A Fire in a Hollow task 2": "Cut a flue into the rock above the mountain camp",
+
+    //P-11. Village expansion task 7: the elder's fourth work, which was waiting
+    //for the mountain flue to exist before it had an answer.
+    "elder hollow": "I built a furnace up on the mountain. The same thing would work here, in a smaller way.",
+    "elder hollow answ": "*[He puts down what he is holding, which he did not do for the bridge.]*\n\nSmaller. Yes. I know why smaller - I have lived in this hollow for seventy years and I have never once felt a wind in it worth calling one.\n\nThe craftsman told you, then. He told me about it as well, a long time ago, and he was younger than you are when he did, and I could not do anything about it either. The village has never had two hundred bricks spare and it has never had anybody who knew what to do with them.\n\nIt has hands, though. It has always had hands. If you bring the brick and the iron, the boys from the mill will carry it, and somebody's son will stand on the bellows every day of his life, and it will not be as good as yours up there.\n\n*[He looks at the space behind the well, which is where it would go, and has been where it would go for seventy years]*\n\nIt does not have to be. It has to hold long enough to finish a bar.",
+    "action build a hearth name": "Build the village hearth",
+    "action build a hearth desc": "Behind the well, where the elder has been looking for seventy years. Brick, a grate, and a boy on the bellows.",
+    "action build a hearth starting": "You mark it out behind the well. Within the hour there are more people carrying brick than you asked for.",
+    "action build a hearth during": "Somebody has organised the mill boys into a line without being told to. You are laying brick and being handed brick and it is going faster than the mountain did in a tenth of the wind.",
+    "action build a hearth success": "You lay the last brick in the middle of the afternoon and there is an argument about who gets to work the bellows first, which is settled by the elder, badly, in favour of the smaller one.\n\nIt lights. It runs orange rather than the colour the mountain makes, and when the boy stops to change hands it dips and comes back. That is the whole difference and it is not a small one and it is also not the point.\n\n*[The elder does not make a speech. He watches it for a while, then says:]* \"Seventy years I have looked at that patch of ground.\" *[And then, because he is who he is:]* \"The well is closer than I would have put it. We will manage.\"",
+    "action build a hearth fail unable_to_begin 1": "A hundred and twenty bricks, six bars of iron, and charcoal to light it with. The mill boys are already standing about looking hopeful, which is worse than if they were not.",
+    "craftsman hearth": "There's a hearth behind the well now.",
+    "craftsman hearth answ": "Ahh. *[He is quiet for long enough that you wonder whether he heard.]*\n\nI asked you to bring me something you made up on that mountain. You have brought me somewhere to stand instead, which is more than I asked for and I am going to be gracious about it for exactly one more sentence.\n\n*[He is already getting up]* Right. The boy will be blowing it wrong. They always blow it wrong - hard and then nothing, like a bellows is a thing you beat. Steady is the whole of it. Steady and boring, forever.\n\nI have forty years of telling people that and nowhere to tell them it. *[At the door]* Do not wait for me, I know where the well is.",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

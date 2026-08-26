@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 40 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 41 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,47 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Köy ocağı, ve `Village expansion` artık bitirilebilir
+
+`Village expansion`'ın son maddesi, bataklık daha yokken beri **"[To be continued]"**
+yazıyordu. Yazarı, onu tıkayan satırın üstüne talimatını bırakmıştı:
+
+> `"further work"`: *şimdilik kendini kilitlemiyor; nehrin öbür tarafına daha fazla
+> şey eklendiğinde kilit, açılış ve farklı metinle güncellenecek*
+
+**"Daha fazla şey"in ne olduğu 4. bölge çıktı.** Yaşlı zanaatkâr, oyuncunun dövdüğü
+hiçbir şeyin neden tutmadığını yeni anlatmıştı — *"bu köy bir çukurda kurulu; uyumak
+için harika, yakmak için umutsuz"* — ve aynı nefeste bunu düzeltemeyeceğini de
+söylemişti: *"Ben seksen bir yaşındayım ve rüzgâr bu vadide değil."* Oyuncu da gidip
+onun anlattığı şeyi bir dağın üstünde, iki yüz tuğlayla kurdu. Yani dördüncü iş, onu
+geri aşağı getirmek; ve yaşlının *"Henüz yok, ama umarım yakında"* repliği artık
+söyleyebileceği son şey olmaktan çıkıyor.
+
+**Dağın cevabını almıyor ve buna da üzülmüyor.** Çukuru, zanaatkâr ona anlattığından
+beri biliyor — *"uzun zaman önce; anlattığında senden gençti"* — ve köyün rüzgâr
+yerine sahip olduğu şey el: *"Ama eli var. Eli her zaman vardı."* Yani birinin oğlu
+ömrünün her günü körüğün başında duruyor, el değiştirdiğinde ateş düşüyor ve köy
+istasyonu **2 ve asla 3 değil**. Bu, bir denge kararı değil, zanaatkârın kendi
+açıklamasının sayıya dönüşmüş hâli; ve yaşlı da bu konuda doğru şeyi söylüyor:
+*"Olmak zorunda da değil. Bir külçeyi bitirecek kadar tutması yeterli."*
+
+**Mekanizma dağınkinden bilerek farklı.** Yukarıda baca bir **beceri** sınavı — o
+dağda başka kimse yok ve oyuncu bir bacanın boğazının ne istediğini bilene kadar
+kendini boğuyor. Aşağıda bir **tedarik** sınavı: koşul yok, başarısızlık atışı yok,
+`success_chances: [1]`, ve dağın 200 tuğlasına karşı 120. Zor kısım tepede çözüldü;
+kalan şey bunu ödeyip ödeyemediğin. Değirmen çocukları kimse söylemeden sıraya
+diziliyor.
+
+**Ve zanaatkâr asıl istediği şeyi alıyor.** Bacadan sonraki repliği şuydu: *"Bir gün
+orada yaptığın bir şeyi bana getir. Kontrol etmek için değil. Sadece bir kez elimde
+tutmak isterim."* Onun yerine durabileceği bir yer alıyor; istediğinden fazlası
+olduğunu fark ediyor ve bu konuda tam bir cümle boyunca nazik olduktan sonra çocuğa
+yanlış üfürdüğünü söylemeye gidiyor.
+
+Artık iki getter var, ikisi de `global_flags` üzerinden ve 4. bölgeyle eklenen kontrol
+ikisini de kapsıyor: yanlış yazılmış bir bayrak, iki ocaktan birini sessizce hiç
+görünmez yapardı.
 
 ### 4. bölge: dağ, ve P-10 tamamlandı
 

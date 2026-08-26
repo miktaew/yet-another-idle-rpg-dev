@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 23 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 24 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -479,7 +479,7 @@ Yazıldıklarında ikisinin de bir cevabı yoktu. Şimdi ikisinin de var ve iki 
 cevap, bu iş için uydurulmuş bir şeyden değil, o zamandan beri kurulmuş bir şeyden
 çıktı.
 
-#### 1. `Village expansion` 7. madde — yaşlının dördüncü işi
+#### 1. `Village expansion` 7. madde — yaşlının dördüncü işi — **TAMAM**
 
 Üç işi su, erişim ve güvenlik: ıslah kanalı, köprü ve dev yusufçukların temizlenmesi.
 Sonra:
