@@ -1562,6 +1562,18 @@ book_stats["Counting Mice"] = new BookData({
         description: "desc item Glass bottle",
         value: 20,
     });
+    /*
+        Not a weapon and not worn: a thing you carry to the chamber under the
+        village. The ore has always said silver "directs or disrupts magic" and the
+        ingot "has potential for use in magic tools" - this is that tool, and the
+        room it is for insists it cannot be opened with brute strength.
+    */
+    item_templates["Silver divining rod"] = new OtherItem({
+        name: "Silver divining rod",
+        description: "desc item Silver divining rod",
+        value: 12000,
+        tags: {unsellable: true},
+    });
     item_templates["Camping supplies"] = new OtherItem({
         name: "Camping supplies",
         description: "desc item Camping supplies",

@@ -927,7 +927,7 @@ const quests = {
     "quest The Infinite Rat Saga task 0": "Daha derine in",
     "quest The Infinite Rat Saga task 1": "Gizemli kapıyı aç",
     "quest The Infinite Rat Saga task 2": "Bozulmuş tünelden geç",
-    "quest The Infinite Rat Saga task 3": "Daha da derine in (devam edecek)",
+    "quest The Infinite Rat Saga task 3": "İkinci kapıyı aç",
 
     //IT WON'T MILL ITSELF
     "quest It won't mill itself": "Kendi kendine öğütmez",
@@ -3109,6 +3109,45 @@ const descriptions = {
     "name Cooked potato": "Pişmiş patates",
     "name Cooked clam": "Pişmiş midye",
     "name Traveller's tally": "Yolcu plakası",
+
+    //The sink silver was waiting for, and the key to the second gate.
+    "name Silver divining rod": "Gümüş bulucu çubuk",
+    "desc item Silver divining rod": "Yumuşak gümüşten ince bir çubuk; bilerek parlatılmamış. Gümüş, nasıl tutulduğuna göre büyüyü yönlendirir ya da bozar; üç külçesi ne bir darbeyi durdurur ne bir halatı keser. Bu, gücün yanlış fikir olduğunu size çoktan söylemiş bir oda için.",
+
+    //QUEST 5 - the second gate, and the room behind it. The rat's lines are
+    //carried over verbatim from the commented-out original.
+    "desc location Throne room": "Küçük, yuvarlak, rahatsız edecek kadar sıcak bir oda; işaret edebileceğiniz hiçbir şey tarafından aydınlatılmıyor. Zemin, dışarıdaki salonun imkânsız döşemesini sürdürüyor ve kapıdan ortaya doğru bir yol hâlinde aşınıp parlamış. Ortada bir minder var.",
+    "loc Throne room unlock": "Kapı razı oluyor ve arkasında bir oda var.",
+    "noise Throne room 1": "*Çok küçük bir şey, horluyor*",
+    "noise Throne room 2": "*Bir taç, yerine oturuyor*",
+    "travel Step through the second gate": "İkinci kapıdan geç",
+    "action read the tiles name": "Zemini incele",
+    "action read the tiles starting": "[Zemini incele]",
+    "action read the tiles desc": "Döşemeler kare kare dizilmiş ve o kareler bir daire çiziyor. İkisi de doğru ve olmamaları gerekiyor.",
+    "action read the tiles during": "Sayıyorsunuz. Sayıyı kaybediyorsunuz. Başka bir döşemeden yeniden başlıyorsunuz.",
+    "action read the tiles success": "Bütün zemini bir anda görmeye çalışmayı bırakıp tek bir kenarı izliyorsunuz ve hile elinizde dağılıyor. Kareler bir daire yapmıyor. Öyle basık bir sarmal yapıyorlar ki gözünüzün kabul edeceği tek şey daire oluyor.\n\nYani kapı bir kapı değil. Sarmalın sonu; ve itilmeyi değil okunmayı bekliyor. Onu okuyacak bir şey gerekir - akıma karşı koymak yerine onu taşıyan bir şey. Başka hiçbir işe yaramayacak kadar yumuşak bir şey.",
+    "action read the tiles fail conditional_loss 1": "İzlediğiniz kenarı yolun üçte biri civarında kaybediyorsunuz ve zemin yeniden sıradan bir zemine dönüyor.",
+    "action trace the pattern name": "Sarmalı izle",
+    "action trace the pattern starting": "[Sarmalı çubukla izle]",
+    "action trace the pattern desc": "Çubuk bir elde, en dıştaki döşemeden başlayıp kenarı içe doğru izleyerek. Ne kadar sürerse sürecek.",
+    "action trace the pattern during": "Kenarı izliyorsunuz. Çubuk soğuyor.",
+    "action trace the pattern success": "Çubuk yolun üçte ikisine gelmeden soğuyor, sonra daha da soğuyor; son dönüşte onu yeninizin içinden tutuyorsunuz. Ucunu ortadaki döşemeye koyduğunuzda kapı açılmıyor, razı oluyor.\n\nArkasında küçük bir oda var; sıcak ve tanımlayamadığınız bir şeyle aydınlanmış. Ortasında bir minder duruyor.",
+    "action trace the pattern fail unable_to_begin 1": "Sarmalı parmağınızla izleyebilirsiniz, iki kez izlediniz de. Parmak gümüş değil.",
+    "rat description": "Sevimli küçük bir sıçan görüyorsunuz. Tamamen zararsız görünüyor. Sevimli küçük kafasında sevimli küçük bir taç var ve sevimli küçük rahat bir minderin üzerinde oturuyor.",
+    "rat hello": "Ee, merhaba?",
+    "rat hello answ": "Merhaba, ey yüce maceracı!",
+    "rat what": "Sen... nesin?",
+    "rat what answ": "Benim adım Ratzor Rathai olur, Vaat Edilmiş Sıçan Prensi!",
+    "rat who": "Kim vaat etmiş?",
+    "rat who answ": "Papam tabii ki, yüce Sıçan Tanrı! Bu boyuta Sonsuz Sıçan Lütfu Getiren O!",
+    "rat monsters": "Yolda dövüştüğüm o tuhaf yaratıklar, bahsettiğin şu 'lütuflar' arasında mı?",
+    "rat monsters answ": "Hayır hayır, onlar lütuf değil olur, onlar lütuflanmış olur! Bütün yaratılışın canlıları, papamın armağanını kabul edenler! Yaratıklar, hayvanlar, maceracılar, bitkiler, papa hepsini kabul ediyor!",
+    "rat mind": "Buraya gelirken bu kadar sıçanı kesmem seni rahatsız etmiyor mu?",
+    "rat mind answ": "Niye? Güçlü olan zayıfı öldürür, dünyanın kuralı bu ve papa da buna inanıyor! Hem, belki bir gün sen bize katılır? İçindeki sıçanın hakikatini kabul et ve insan kabuğunu reddet!",
+    "rat walls": "Yani o duvar gibi şeylerin bazıları bir zamanlar insan mıydı?",
+    "rat walls answ": "Sadece ruhta. Onlara papamın lütfu verilmiş olur, ama reddetmeye çalışıyor, gerçekten reddedecek kadar güçlü olmuyor, o yüzden komik görünüyor.",
+    "rat kill": "Peki, seni öldürmemem için bana bir sebep söyle.",
+    "rat kill answ": "Bana fark etmiyor, ölürsem ruhum papama döner olur. Ama kanım papa gücüyle dolu olur; onunla bizzat yüzleşmek istemiyorsan yapma.",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

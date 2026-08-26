@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 29 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 30 -->
 
 # Changelog
 
@@ -20,6 +20,93 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### Quest 5: the second gate, opened with silver
+
+The chamber under the village has said what it wants since before the fork:
+*"the floor is covered in square tiles in the center, yet you cannot help but
+notice that all these squares make a circle, in some impossible to understand
+way… There's another gate on the wall in front of you, but you have a strange
+feeling that you won't be able to open it with brute strength."*
+
+So it opens in two steps, and neither is a fight. **Study the floor** and the trick
+comes apart: stop trying to see the whole thing and follow one edge, and the
+squares are not a circle at all - they are a spiral so shallow that a circle is
+the only thing the eye will accept. Which means the gate is the end of the spiral,
+and it is waiting to be read rather than pushed. You would need something that
+carries a current instead of fighting it, and is too soft to be good for anything
+else.
+
+**Silver**, which is not an invention either: `Silver ore` has always been
+*"peculiar for its ability to direct or disrupt magic"* and `Silver ingot` *"too
+soft to use as weapon material, but has potential for use in magic tools"*. Three
+ingots make a divining rod. **Trace the spiral** with it and the rod goes cold by
+the last turn, and the gate does not so much open as agree.
+
+### The silver chain was authored and broken in two places at once
+
+This is why silver had no purpose, and it was not for lack of content.
+
+The forest lake's second-stage dive is the game's only silver tap - clear it and
+the `mining` activity that yields `Silver ore` unlocks. Its reward read
+`action: [{location: "Forest lake", action: "mining"}]`, and that is wrong twice:
+`action` singular is not a reward key, so `process_rewards` never looked at it, and
+`mining` is an ACTIVITY, so even under the correct `actions` key it would have been
+searched for in `.actions` and never found. The dive itself was then locked, with
+the author's note: *"locked as the reward doesn't really have any uses yet"* - half
+right, for a reason nobody had traced.
+
+The `Silver ingot` recipe sat commented out, its level range already sitting
+correctly between the live iron and steel recipes, *"waiting for a sink"*. Both are
+live now, with the rod between them: fifteen ore for one gate.
+
+**A check for that whole class of bug.** `npm run check` now validates every key
+inside every `rewards`, `first_reward` and `repeatable_reward` block against what
+`main.js` actually reads - 263 reward objects - and does the same for `locks`. A
+reward key nobody reads is silent by construction: the content looks like it grants
+something and the game grants nothing. Negative-tested by putting the singular
+`action:` back, which it catches with the exact key name.
+
+The list is taken from `main.js` rather than from `src/rewards.js`, because the
+schema document was itself missing four keys the code reads: `skills`,
+`global_activities`, `locks.actions` and `locks.quests`. Those are documented now.
+
+### Ratzor Rathai, reclaimed
+
+Behind the gate is a small round room, uncomfortably warm, lit by nothing you can
+point at, with a cushion in the middle of it. On the cushion is the
+`cute little rat` dialogue - seven textlines that have sat inside a
+`/* */` block since before this fork, written before the localisation layer existed
+and so with its text inline.
+
+He is the Rat Prince Who Be Promised, his papa is the great Rat God, and he
+answers the question the Writhing tunnel raises without softening it: the things
+that ARE the walls *"be given the blessing of papa, but they try to reject but be
+too weak to really reject so they end up looking funny."* Only in soul, he says.
+
+His English is carried over verbatim, *"Infite"* and *"uppon"* included - that is
+his voice, the same way `Twist liek a snek` is a book title rather than a typo. The
+one correction is `litle` in the narrator's description of him, which is narration
+and not his. The Turkish uses the slip the swamp cast already uses: third-person
+agreement where first or second is required, which is the house register for this
+and not a new invention.
+
+**Three link errors were repaired on the way in**, all copy-paste. `what` unlocked
+`walls` instead of `who`, which left `who` unreachable by anything at all. `walls`
+unlocked ITSELF and locked `monsters` rather than itself. `kill` unlocked `walls`
+again. The tree is now hello → what → who → monsters → {walls, kill, mind}, each
+terminal, which is what the rewards were plainly reaching for.
+
+The Infinite Rat Saga's fourth task has read *"Go even deeper (tbc)"* since it was
+written. It reads *"Open the second gate"*, and it can be finished.
+
+**Not browser-verified.** Playwright is still disconnected, so this rests on
+`npm run check` - which now includes the reward-key validation that would have
+caught the bug this quest was blocked on - plus the save audit, which still
+resolves every key in a real v0.5.5.30 save against the new content.
+
+2695 keys per language; `check` at 1760 content ids, 20 dialogue names, 247 item
+names, 263 reward objects.
 
 ### Quest 4: "Nothing but Pants", and the money the game could not spend
 

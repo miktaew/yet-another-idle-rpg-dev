@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 5 -->
+<!-- doc-source: docs/STORY.md  doc-version: 6 -->
 
 # Story canon
 
@@ -194,7 +194,8 @@ only with the beastkin flag set, which is what its author intended and which now
 actually works. The Mages guild stays locked for quest 4, but no longer carries the
 Nekomimi cafe's description.
 
-Still unreclaimed: the commented-out `cute little rat` dialogue, the Forest lake deep
+Still unreclaimed: nothing from this list. The `cute little rat` dialogue, the Forest
+lake deep
 dive and its silver, the `Silver ingot` recipe, and the two combat stances. Those
 belong to quests 3 through 6.
 

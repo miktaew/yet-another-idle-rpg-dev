@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 29 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 30 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,90 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### 5. görev: ikinci kapı, gümüşle açıldı
+
+Köyün altındaki salon ne istediğini fork'tan da önce söylüyordu: *"zeminin ortası
+kare döşemelerle kaplı; yine de bütün bu karelerin, anlaşılması imkânsız bir
+şekilde bir daire yaptığını fark etmemek elde değil… Karşı duvarda bir kapı daha
+var, ama onu kaba kuvvetle açamayacağına dair tuhaf bir his taşıyorsun."*
+
+Bu yüzden iki adımda açılıyor ve ikisi de dövüş değil. **Zemini incele** ve hile
+dağılıyor: bütününü görmeye çalışmayı bırakıp tek bir kenarı izleyin; kareler
+aslında daire değil — gözün ancak daire olarak kabul edeceği kadar basık bir
+sarmal. Yani kapı, sarmalın sonu; itilmeyi değil okunmayı bekliyor. Akıma karşı
+koymak yerine onu taşıyan ve başka hiçbir işe yaramayacak kadar yumuşak bir şey
+gerekiyor.
+
+**Gümüş** — ki o da uydurma değil: `Silver ore` baştan beri *"büyüyü yönlendirme
+ya da bozma yeteneğiyle tuhaf"*, `Silver ingot` ise *"silah malzemesi olarak fazla
+yumuşak, ama büyülü aletlerde kullanım potansiyeli var"*. Üç külçe bir bulucu
+çubuk ediyor. **Sarmalı izle**: çubuk son dönüşte buz gibi oluyor ve kapı
+açılmıyor, razı oluyor.
+
+### Gümüş zinciri yazılmış ama iki yerden birden kopmuş
+
+Gümüşün bir işe yaramamasının sebebi buydu ve içerik eksikliğinden değildi.
+
+Orman gölünün ikinci aşama dalışı oyundaki tek gümüş musluğu: temizleyince
+`Silver ore` veren `mining` aktivitesi açılıyor. Ödülü
+`action: [{location: "Forest lake", action: "mining"}]` diyordu ve bu iki kez
+yanlış: tekil `action` bir ödül anahtarı değil, yani `process_rewards` ona hiç
+bakmıyordu; `mining` ise bir AKTİVİTE, dolayısıyla doğru `actions` anahtarı altında
+bile `.actions` içinde aranıp asla bulunamayacaktı. Dalışın kendisi de kilitliydi;
+yazarın notuyla: *"ödülün gerçekten bir işe yaramadığı için kilitli"* — yarısı
+doğru, ama kimsenin izini sürmediği bir sebeple.
+
+`Silver ingot` tarifi, seviye aralığı yayındaki demir ve çelik tariflerinin arasına
+çoktan doğru oturmuş hâlde, *"gideceği yer bekleniyor"* diye yorumda duruyordu.
+İkisi de artık yayında ve aralarında çubuk var: bir kapı için on beş cevher.
+
+**Bu hata sınıfının tamamı için bir kontrol.** `npm run check` artık her `rewards`,
+`first_reward` ve `repeatable_reward` bloğundaki her anahtarı `main.js`'in gerçekten
+okuduklarına karşı doğruluyor — 263 ödül nesnesi — ve aynısını `locks` için de
+yapıyor. Kimsenin okumadığı bir ödül anahtarı doğası gereği sessiz: içerik bir şey
+veriyor gibi görünüyor, oyun hiçbir şey vermiyor. Tekil `action:` geri konarak
+negatif test edildi; kontrol onu anahtarın adını vererek yakalıyor.
+
+Liste `src/rewards.js`'ten değil `main.js`'ten alındı; çünkü şema dosyasının kendisi
+kodun okuduğu dört anahtarı atlıyordu: `skills`, `global_activities`,
+`locks.actions` ve `locks.quests`. Artık onlar da belgeli.
+
+### Ratzor Rathai geri kazanıldı
+
+Kapının arkasında küçük, yuvarlak, rahatsız edecek kadar sıcak, işaret
+edebileceğiniz hiçbir şeyle aydınlanmayan bir oda ve ortasında bir minder var.
+Minderin üstünde de `cute little rat` diyaloğu — bu fork'tan önce bir `/* */`
+bloğuna girmiş, yerelleştirme katmanı var olmadan yazıldığı için metni satır içinde
+duran yedi textline.
+
+O, Vaat Edilmiş Sıçan Prensi; papası yüce Sıçan Tanrı. Writhing tunnel'ın
+doğurduğu soruyu yumuşatmadan yanıtlıyor: duvar OLAN şeylere *"papamın lütfu
+verilmiş olur, ama reddetmeye çalışıyor, gerçekten reddedecek kadar güçlü olmuyor,
+o yüzden komik görünüyor."* Sadece ruhta, diyor.
+
+İngilizcesi birebir taşındı; *"Infite"* ve *"uppon"* dahil — o onun sesi, tıpkı
+`Twist liek a snek`'in yazım hatası değil bir kitap adı olması gibi. Tek düzeltme,
+anlatıcının onu tarif ettiği cümledeki `litle`; o anlatım, onun sesi değil.
+Türkçesi bataklık kadrosunun zaten kullandığı kaymayı kullanıyor: birinci ya da
+ikinci şahıs gerekirken üçüncü şahıs çekimi. Bu, yeni bir icat değil, evin kipi.
+
+**Girişte üç bağlantı hatası onarıldı**, hepsi kopyala-yapıştır. `what`, `who`
+yerine `walls`'ı açıyordu; bu da `who`'yu hiçbir şeyin ulaşamadığı bir satır hâline
+getiriyordu. `walls` KENDİSİNİ açıyor ve kendisi yerine `monsters`'ı kilitliyordu.
+`kill` yine `walls`'ı açıyordu. Ağaç artık hello → what → who → monsters →
+{walls, kill, mind}; her biri son durak — ödüllerin açıkça amaçladığı şey buydu.
+
+The Infinite Rat Saga'nın dördüncü adımı, yazıldığından beri *"Daha da derine in
+(devam edecek)"* diyordu. Artık *"İkinci kapıyı aç"* diyor ve bitirilebiliyor.
+
+**Tarayıcıda doğrulanmadı.** Playwright hâlâ bağlı değil; bu yüzden iş
+`npm run check`'e dayanıyor — ki artık bu görevin tıkandığı hatayı yakalayacak ödül
+anahtarı doğrulamasını da içeriyor — artı save denetimine: gerçek bir v0.5.5.30
+save'inin her anahtarı yeni içerikle hâlâ çözülüyor.
+
+Dil başına 2695 anahtar; `check` 1760 içerik id'si, 20 dialogue adı, 247 eşya adı,
+263 ödül nesnesinde.
 
 ### 4. görev: "Üstünde Sadece Pantolon" ve oyunun harcayamadığı para
 

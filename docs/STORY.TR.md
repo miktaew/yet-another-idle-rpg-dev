@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 5 -->
+<!-- doc-source: docs/STORY.md  doc-version: 6 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -198,7 +198,7 @@ yazıldı. Nekomimi cafe yalnızca beastkin flag'i açıkken erişilebilir — y
 amaçladığı şey buydu ve artık gerçekten çalışıyor. Mages guild 4. quest için kilitli
 kalıyor ama artık Nekomimi cafe'nin açıklamasını taşımıyor.
 
-Hâlâ geri kazanılmayanlar: yorum içindeki `cute little rat` dialogue'u, Forest lake
+Bu listeden geri kazanılmayan kalmadı. `cute little rat` dialogue'u, Forest lake
 derin dalışı ve gümüşü, `Silver ingot` tarifi ve iki combat stance. Bunlar 3-6.
 quest'lere ait.
 

@@ -2503,66 +2503,80 @@ class DialogueAction extends GameAction {
     });
 
     /*
+        Reclaimed. This was written before the localisation layer existed, so its
+        text sat inline; it is behind ids now like everything else.
+
+        Three link errors were repaired on the way in, all of them copy-paste:
+        "what" unlocked "walls", which left "who" unreachable by anything;
+        "walls" unlocked ITSELF and locked "monsters" instead of itself; and
+        "kill" unlocked "walls" again. The tree is now
+        hello -> what -> who -> monsters -> {walls, kill, mind}, each terminal.
+
+        His register is the tribe's, not a mistake: "be" for everything, no
+        articles, papa for the Rat God. Kept verbatim in English. The Turkish uses
+        the same slip the swamp cast already uses - third-person agreement where
+        first or second is required.
+    */
     dialogues["cute little rat"] = new Dialogue({
         name: "cute little rat",
-        description: "You see a cute little rat. It appears completely harmless. It has a cute litle crown on its cute little head and is sitting on a cute little comfortable pillow.",
+        is_unlocked: true,
+        description: "rat description",
         textlines: {
-            "hello": new Textline({ 
-                name: "Uhm, hi?",
-                text: "Hello, o mighty adventurer!",
+            "hello": new Textline({
+                name: "rat hello",
+                text: "rat hello answ",
                 rewards: {
                     textlines: [{dialogue: "cute little rat", lines: ["what"]}],
                 },
                 locks_lines: ["hello"],
             }),
-            "what": new Textline({ 
-                name: "What... are you?",
-                text: "My name be Ratzor Rathai, the Rat Prince Who Be Promised!",
+            "what": new Textline({
+                name: "rat what",
+                is_unlocked: false,
+                text: "rat what answ",
                 rewards: {
-                    textlines: [{dialogue: "cute little rat", lines: ["walls"]}],
+                    textlines: [{dialogue: "cute little rat", lines: ["who"]}],
                 },
                 locks_lines: ["what"],
             }),
-            "who": new Textline({ 
-                name: "Promised by who?",
-                text: "By my papa, the great Rat God, of course! The He Who Bring Infite Rat Blessings uppon this dimension!",
+            "who": new Textline({
+                name: "rat who",
+                is_unlocked: false,
+                text: "rat who answ",
                 rewards: {
                     textlines: [{dialogue: "cute little rat", lines: ["monsters"]}],
                 },
                 locks_lines: ["who"],
             }),
-            "monsters": new Textline({ 
-                name: "Are those strange monsters that I fought on the way amonst those 'blessings' you speak of?",
-                text: "No no, they don't be blessings, they be the blessed! Creatures of all the creation, who embrace the gift of my papa! Monsters, animals, adventurers, plants, papa accepts all!",
+            "monsters": new Textline({
+                name: "rat monsters",
+                is_unlocked: false,
+                text: "rat monsters answ",
                 rewards: {
                     textlines: [{dialogue: "cute little rat", lines: ["walls", "kill", "mind"]}],
                 },
                 locks_lines: ["monsters"],
             }),
-            "mind": new Textline({ 
-                name: "And you don't mind that I slaughtered so many rats on my way here?",
-                text: "Why? It's the rule of the world that the strong kill the weak and papa believe it too! Besides, maybe you be join us one day? Embrace the truth of your inner rat and reject the human shell!",
+            "walls": new Textline({
+                name: "rat walls",
+                is_unlocked: false,
+                text: "rat walls answ",
+                locks_lines: ["walls"],
+            }),
+            "mind": new Textline({
+                name: "rat mind",
+                is_unlocked: false,
+                text: "rat mind answ",
                 locks_lines: ["mind"],
             }),
-            "walls": new Textline({ 
-                name: "So some of those wall-like things could have once been human?",
-                text: "Only in soul. They be given the blessing of papa, but they try to reject but be too weak to really reject so they end up looking funny.",
-                rewards: {
-                    textlines: [{dialogue: "cute little rat", lines: ["walls"]}],
-                },
-                locks_lines: ["monsters"],
-            }),
-            "kill": new Textline({ 
-                name: "Okay, give me one reason why I shouldn't kill you.",
-                text: "I don't mind, if I die my soul be return to papa. But my blood be full of papa power, don't do it unless you want to face him personally.",
-                rewards: {
-                    textlines: [{dialogue: "cute little rat", lines: ["walls"]}],
-                },
+            "kill": new Textline({
+                name: "rat kill",
+                is_unlocked: false,
+                text: "rat kill answ",
                 locks_lines: ["kill"],
             }),
         },
     });
-    */
 })();
 
 

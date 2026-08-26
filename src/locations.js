@@ -1260,6 +1260,30 @@ function get_location_type_penalty(type, stage, stat, category) {
 
     locations["Nearby cave"].connected_locations.push({location: locations["Mysterious depths"], custom_text: "travel Climb down to [Mysterious depths]", travel_time: 120});
 
+    /*
+        Behind the second gate. Small, warm, lit by nothing, and containing a
+        cushion - which is the joke the rat has been waiting to land since before
+        this fork.
+    */
+    locations["Throne room"] = new Location({
+        connected_locations: [{location: locations["Mysterious depths"], travel_time: 20}],
+        description: "desc location Throne room",
+        dialogues: ["cute little rat"],
+        name: "Throne room",
+        is_unlocked: false,
+        unlock_text: "loc Throne room unlock",
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise Throne room 1"),
+                    translationManager.getText(language, "noise Throne room 2")];
+        },
+        is_temperature_static: true,
+        static_temperature: 26,
+        is_under_roof: true,
+    });
+
+    locations["Mysterious depths"].connected_locations.push(
+        {location: locations["Throne room"], custom_text: "travel Step through the second gate", travel_time: 20});
+
     locations["Forest road"] = new Location({ 
         connected_locations: [{location: locations["Village"], travel_time: 240}],
         description: "desc location Forest road",
@@ -1461,9 +1485,7 @@ function get_location_type_penalty(type, stage, stat, category) {
         },
         repeatable_reward: {
             xp: 800,
-            actions: [
-                //{location: "Forest lake", action: "search2"} //locked as the reward doesn't really have any uses yet
-            ],
+            actions: [{location: "Forest lake", action: "search2"}],
         },
         temperature_range_modifier: 0.8,
         is_under_roof: false,
@@ -2615,6 +2637,63 @@ function get_location_type_penalty(type, stage, stat, category) {
             unlock_text: "activity Carya Canyon herbalism unlock",
         }),
     };
+
+    /*
+        The second gate, in two steps, because the room's own line is about
+        understanding rather than force: first you work out what the floor is doing
+        and what that means you need, then you make it and use it.
+
+        The rod is REQUIRED but not removed. It is a key, not a consumable.
+    */
+    locations["Mysterious depths"].actions = {
+        "read the tiles": new GameAction({
+            action_id: "read the tiles",
+            action_name: "action read the tiles name",
+            starting_text: "action read the tiles starting",
+            description: "action read the tiles desc",
+            action_text: "action read the tiles during",
+            success_text: "action read the tiles success",
+            is_unlocked: true,
+            conditions: [
+                {skills: {Perception: 10}},
+                {skills: {Perception: 25}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action read the tiles fail conditional_loss 1"],
+            },
+            attempt_duration: 120,
+            success_chances: [0.3, 1],
+            rewards: {
+                skill_xp: {Perception: 600},
+                recipes: [{category: "crafting", subcategory: "items", recipe_id: "Silver divining rod"}],
+            },
+        }),
+        "trace the pattern": new GameAction({
+            action_id: "trace the pattern",
+            action_name: "action trace the pattern name",
+            starting_text: "action trace the pattern starting",
+            description: "action trace the pattern desc",
+            action_text: "action trace the pattern during",
+            success_text: "action trace the pattern success",
+            is_unlocked: false,
+            required: {
+                items_by_id: {"Silver divining rod": {count: 1}},
+            },
+            failure_texts: {
+                unable_to_begin: ["action trace the pattern fail unable_to_begin 1"],
+            },
+            attempt_duration: 180,
+            success_chances: [1],
+            rewards: {
+                xp: 3000,
+                locations: [{location: "Throne room"}],
+                quest_progress: [{quest_id: "The Infinite Rat Saga", task_index: 3}],
+            },
+        }),
+    };
+    locations["Mysterious depths"].actions["read the tiles"].rewards.actions =
+        [{location: "Mysterious depths", action: "trace the pattern"}];
+
     locations["Town outskirts"].activities = {
         "herbalism": new LocationGatheringActivity({
             activity_name: "herbalism",
@@ -3733,7 +3812,10 @@ function get_location_type_penalty(type, stage, stat, category) {
             attempt_duration: 60,
             success_chances: [0.2, 1],
             rewards: {
-                action: [{ location: "Forest lake", action: "mining" }],
+                //Was `action:` with an `action` entry. `action` singular is not a
+                //reward key, and mining is an activity rather than an action, so
+                //this unlocked nothing twice over.
+                activities: [{location: "Forest lake", activity: "mining"}],
                 skill_xp: { Swimming: 800, Breathing: 800, Perception: 800, },
             },
         }),

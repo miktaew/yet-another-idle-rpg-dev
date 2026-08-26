@@ -59,6 +59,10 @@
         
         stances: [String] //an arrays of stance keys
 
+        skills: [String] //an array with skill ids to unlock
+
+        global_activities: [String] //an array with activity keys, unlocked everywhere
+
         recipes: [
             {
                 category: String, 
@@ -89,7 +93,14 @@
                 "dialogue_key": [String] //an array with textline keys
             },
             traders: [String] //an array with trader keys
+            actions: [String] //an array with action keys
+            quests: [String] //an array with quest ids
         }
+
+        //`npm run check` holds this list too, taken from what main.js reads rather
+        //than from here, because this file was missing skills, global_activities,
+        //locks.actions and locks.quests. A key nobody reads is silent: the content
+        //looks like it grants something and the game grants nothing.
 
         items: [
             {

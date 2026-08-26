@@ -1034,6 +1034,24 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [12,25],
         recipe_skill: "Butchering",
     });
+    /*
+        The sink silver was waiting for.
+
+        Deliberately expensive in ore rather than in level: three ingots is
+        fifteen ore, and the only tap is a second-stage dive that needs Swimming,
+        Breathing and Perception together. Nothing else in the game consumes
+        silver, so the price is the whole of the gate's cost.
+    */
+    crafting_recipes.items["Silver divining rod"] = new ItemRecipe({
+        name: "Silver divining rod",
+        is_unlocked: false,
+        recipe_type: "material",
+        materials: [{material_id: "Silver ingot", count: 3}],
+        result: {result_id: "Silver divining rod", count: 1},
+        success_chance: [0.3,1],
+        recipe_skill: "Crafting",
+        recipe_level: [15,25],
+    });
     crafting_recipes.items["Wool cloth"] = new ItemRecipe({
         name: "Wool cloth",
         recipe_type: "material",
@@ -1141,7 +1159,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [5,15],
         recipe_skill: "Smelting",
     });
-    /*
+    //Was commented out "waiting for a sink". It has one now: the divining rod
+    //below, and through it the second gate under the village.
     smelting_recipes.items["Silver ingot"] = new ItemRecipe({
         name: "Silver ingot",
         recipe_type: "material",
@@ -1151,7 +1170,6 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [7,17],
         recipe_skill: "Smelting",
     });
-    */
     smelting_recipes.items["Steel ingot (inefficient)"] = new ItemRecipe({
         name: "Steel ingot (inefficient)",
         recipe_type: "material",

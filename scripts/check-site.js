@@ -819,8 +819,106 @@ function check_money_requirements() {
     console.log(`[check] money requirements: ${checked} checked`);
 }
 
+/**
+ * Every key inside a `rewards: { ... }` must be one process_rewards actually reads.
+ *
+ * A reward key nobody reads is silent: the content looks like it grants something,
+ * the game grants nothing, and no check notices. That is not hypothetical - the
+ * forest lake's deep dive rewarded `action: [...]` singular, which is not a key, so
+ * unlocking the game's only silver tap did nothing for as long as it existed. The
+ * author's note beside it read "locked as the reward doesn't really have any uses
+ * yet", and it was half right for the wrong reason.
+ *
+ * The list is taken from what main.js reads, not from the schema in
+ * src/rewards.js - that document is missing `global_activities` and `skills`, so
+ * trusting it would reject two working keys.
+ */
+const reward_keys = [
+    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
+    "housing", "items", "locations", "locks", "messages", "money", "move_to",
+    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills",
+    "stances", "textlines", "traders", "xp",
+];
+const lock_keys = ["actions", "dialogues", "locations", "quests", "textlines", "traders"];
+
+/** The source text of the object literal starting at the `{` at `open`. */
+function braced_body(source, open) {
+    let depth = 0;
+    for (let i = open; i < source.length; i++) {
+        if (source[i] === "{") { depth++; }
+        else if (source[i] === "}") {
+            depth--;
+            if (depth === 0) { return source.slice(open + 1, i); }
+        }
+    }
+    return null;
+}
+
+/** Top-level `key:` names of an object literal body, ignoring nested ones. */
+function top_level_keys(body) {
+    const keys = [];
+    let depth = 0;
+    for (const line of body.split("\n")) {
+        const trimmed = line.trim();
+        if (depth === 0) {
+            const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*:/);
+            if (match) { keys.push(match[1]); }
+        }
+        for (const character of line) {
+            if (character === "{" || character === "[") { depth++; }
+            else if (character === "}" || character === "]") { depth--; }
+        }
+    }
+    return keys;
+}
+
+function check_reward_keys() {
+    let blocks = 0;
+    for (const file of ["src/locations.js", "src/dialogues.js", "src/quests.js", "src/enemies.js"]) {
+        const full_path = path.join(repo_root, file);
+        if (!fs.existsSync(full_path)) {
+            error(`${file} is missing - this check is out of date.`);
+            continue;
+        }
+        const source = strip_comments(fs.readFileSync(full_path, "utf8")).split("\r\n").join("\n");
+
+        for (const match of source.matchAll(/(?:rewards|first_reward|repeatable_reward):\s*\{/g)) {
+            const open = match.index + match[0].length - 1;
+            const body = braced_body(source, open);
+            if (body === null) {
+                error(`${file} has a reward object that never closes - this check is out of date.`);
+                continue;
+            }
+            blocks++;
+
+            for (const key of top_level_keys(body)) {
+                if (!reward_keys.includes(key)) {
+                    error(`${file} has a reward key "${key}", which nothing reads.`
+                        + ` Valid keys: ${reward_keys.join(", ")}.`);
+                }
+            }
+
+            const locks = body.match(/(?<![A-Za-z0-9_])locks:\s*\{/);
+            if (locks) {
+                const lock_body = braced_body(body, locks.index + locks[0].length - 1);
+                for (const key of top_level_keys(lock_body ?? "")) {
+                    if (!lock_keys.includes(key)) {
+                        error(`${file} has a lock key "${key}", which nothing reads.`
+                            + ` Valid keys: ${lock_keys.join(", ")}.`);
+                    }
+                }
+            }
+        }
+    }
+    if (blocks === 0) {
+        error("found no reward objects to check - this check is out of date.");
+    }
+    console.log(`[check] reward objects: ${blocks} checked`);
+}
+
 check_site();
 check_interpolated_pairs();
+check_reward_keys();
 check_money_requirements();
 check_changelogs_cover_version();
 check_language_switch_repaints();

@@ -877,7 +877,7 @@ const quests = {
     "quest The Infinite Rat Saga task 0": "Go deeper",
     "quest The Infinite Rat Saga task 1": "Open the mysterious gate",
     "quest The Infinite Rat Saga task 2": "Get through the corrupted tunnel",
-    "quest The Infinite Rat Saga task 3": "Go even deeper (tbc)",
+    "quest The Infinite Rat Saga task 3": "Open the second gate",
 
     //IT WON'T MILL ITSELF
     "quest It won't mill itself": "It won't mill itself",
@@ -3069,6 +3069,45 @@ const descriptions = {
     "name Cooked potato": "Cooked potato",
     "name Cooked clam": "Cooked clam",
     "name Traveller's tally": "Traveller's tally",
+
+    //The sink silver was waiting for, and the key to the second gate.
+    "name Silver divining rod": "Silver divining rod",
+    "desc item Silver divining rod": "A slim rod of soft silver, deliberately left unpolished. Silver directs or disrupts magic depending on how it is held, and three ingots of it will not stop a blow or cut a rope. It is for a room that has already told you strength is the wrong idea.",
+
+    //QUEST 5 - the second gate, and the room behind it. The rat's lines are
+    //carried over verbatim from the commented-out original.
+    "desc location Throne room": "A small round room, uncomfortably warm, lit by nothing you can point at. The floor carries on the impossible tiling from the chamber outside, worn smooth in a path from the gate to the middle. In the middle there is a cushion.",
+    "loc Throne room unlock": "The gate agrees, and there is a room behind it.",
+    "noise Throne room 1": "*Something very small, snoring*",
+    "noise Throne room 2": "*A crown, settling*",
+    "travel Step through the second gate": "Step through the second gate",
+    "action read the tiles name": "Study the floor",
+    "action read the tiles starting": "[Study the floor]",
+    "action read the tiles desc": "The tiles are laid in squares and the squares describe a circle. Both of those are true, and they should not be.",
+    "action read the tiles during": "Counting. Losing count. Starting again from a different tile.",
+    "action read the tiles success": "You stop trying to see the whole floor at once and follow a single edge instead, and the trick comes apart in your hands. The squares do not make a circle. They make a spiral so shallow that a circle is the only thing your eye will accept.\n\nWhich means the gate is not a door. It is the end of the spiral, and it is waiting to be read rather than pushed. You would need something to read it with - something that carries a current instead of fighting it. Something too soft to be good for anything else.",
+    "action read the tiles fail conditional_loss 1": "You lose the edge you were following about a third of the way round, and the floor goes back to being a floor.",
+    "action trace the pattern name": "Trace the spiral",
+    "action trace the pattern starting": "[Trace the spiral with the rod]",
+    "action trace the pattern desc": "The rod in one hand, starting at the outermost tile, following the edge inwards. It will take as long as it takes.",
+    "action trace the pattern during": "Following the edge. The rod is getting cold.",
+    "action trace the pattern success": "The rod goes cold about two thirds of the way in, and colder, and by the last turn you are holding it through your sleeve. When you set its tip on the centre tile the gate does not so much open as agree.\n\nBehind it is a small room, warm, lit by nothing you can identify. There is a cushion in the middle of it.",
+    "action trace the pattern fail unable_to_begin 1": "You could follow the spiral with a finger, and you have, twice. A finger is not silver.",
+    "rat description": "You see a cute little rat. It appears completely harmless. It has a cute little crown on its cute little head and is sitting on a cute little comfortable pillow.",
+    "rat hello": "Uhm, hi?",
+    "rat hello answ": "Hello, o mighty adventurer!",
+    "rat what": "What... are you?",
+    "rat what answ": "My name be Ratzor Rathai, the Rat Prince Who Be Promised!",
+    "rat who": "Promised by who?",
+    "rat who answ": "By my papa, the great Rat God, of course! The He Who Bring Infite Rat Blessings uppon this dimension!",
+    "rat monsters": "Are those strange monsters that I fought on the way amongst those 'blessings' you speak of?",
+    "rat monsters answ": "No no, they don't be blessings, they be the blessed! Creatures of all the creation, who embrace the gift of my papa! Monsters, animals, adventurers, plants, papa accepts all!",
+    "rat mind": "And you don't mind that I slaughtered so many rats on my way here?",
+    "rat mind answ": "Why? It's the rule of the world that the strong kill the weak and papa believe it too! Besides, maybe you be join us one day? Embrace the truth of your inner rat and reject the human shell!",
+    "rat walls": "So some of those wall-like things could have once been human?",
+    "rat walls answ": "Only in soul. They be given the blessing of papa, but they try to reject but be too weak to really reject so they end up looking funny.",
+    "rat kill": "Okay, give me one reason why I shouldn't kill you.",
+    "rat kill answ": "I don't mind, if I die my soul be return to papa. But my blood be full of papa power, don't do it unless you want to face him personally.",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

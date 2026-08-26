@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 14 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 15 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -317,9 +317,26 @@ Uygulama sırası, en yüksek kaldıraç önce:
    yassı, üzerinde dönüp kendi başlangıcına gelen kareler oyulmuş — ve bu kasabayı
    kırk yıl kataloglamış biri, onun burada onu yapacak kimse yokken yapıldığını
    söylüyor.
-4. Q5 fare questline'ını kapatıyor, ikinci mağara kapısını odanın kendisinin ısrar
-   ettiği gibi kuvvetle değil zihinle açıyor ve park edilmiş gümüş zincirine
-   nihayet bir kullanım noktası veriyor.
+4. **BİTTİ.** İkinci kapı iki adımda açılıyor; çünkü odanın kendi repliği güçle
+   değil anlamayla ilgili: zemini incele — kareler, gözün daire olarak görmek
+   zorunda kaldığı kadar basık bir sarmal — ve bu sana kapının itilmeyip okunduğunu
+   ve neyle okunacağını söylüyor. Gümüşle; çünkü cevherin açıklaması baştan beri
+   onun "büyüyü yönlendirdiğini ya da bozduğunu", külçenin de "büyülü aletlerde
+   kullanım potansiyeli olduğunu" söylüyor.
+
+   Bu, gümüşe gideceği yeri verdi ve yazılmış ama iki yerden birden kopmuş zinciri
+   yeniden bağladı. Orman gölündeki derin dalış — oyundaki tek gümüş musluğu —
+   ödül olarak tekil `action:` veriyordu; bu bir ödül anahtarı değil. Gösterdiği
+   `mining` ise bir aktivite, yani `.actions` altında da asla bulunamazdı.
+   `Silver ingot` tarifi de "gideceği yer bekleniyor" diye yorumdaydı. İkisi de
+   artık yayında, aralarında bir bulucu çubukla.
+
+   Kapının arkasında, yorumlanmış bir bloktan geri kazanılan `cute little rat`
+   diyaloğu var: Vaat Edilmiş Sıçan Prensi Ratzor Rathai'nin yedi textline'ı; duvar
+   OLAN şeylere papasının lütfunun verildiğini ve onların reddedecek kadar güçlü
+   olmadığını anlatıyor. Girişte üç bağlantı hatası onarıldı — bkz.
+   [CHANGELOG.TR.md](CHANGELOG.TR.md). The Infinite Rat Saga'nın yazıldığından beri
+   `(tbc)` işaretli son adımı artık tamamlanabilir.
 5. Q6 köy muhafızının on yıllık savuşturmasını karşılığa bağlıyor.
 
 Açık kalması gerekenler: soygunun parasını kimin ödediği, kahramanın o nesneye

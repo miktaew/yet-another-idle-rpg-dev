@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 14 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 15 -->
 
 # Proposals
 
@@ -306,9 +306,26 @@ Execution order, highest leverage first:
    same night, flat and cut through with squares that turn back to their own
    beginning, and forty years of cataloguing this town told him it was made
    before there was anybody here to make it.
-4. Q5 closes the rat questline, opens the second cave gate with mind rather than
-   strength as the room itself insists, and finally gives the parked silver chain
-   a sink.
+4. **DONE.** The second gate opens in two steps, because the room's line is about
+   understanding rather than force: study the floor - the squares are a spiral so
+   shallow the eye insists on a circle - and that tells you the gate is read, not
+   pushed, and what it has to be read with. Silver, because the ore's description
+   has always said it "directs or disrupts magic" and the ingot "has potential for
+   use in magic tools".
+
+   That gave silver its sink and reconnected the whole chain, which was authored
+   and broken in two places at once. The forest lake's deep dive - the game's only
+   silver tap - rewarded `action:` singular, which is not a reward key, pointing at
+   `mining`, which is an activity and so could never have been found under
+   `.actions` either. The `Silver ingot` recipe was commented out "waiting for a
+   sink". Both live now, with a divining rod between them.
+
+   Behind the gate is the `cute little rat` dialogue, reclaimed from a
+   commented-out block: seven textlines of Ratzor Rathai, the Rat Prince Who Be
+   Promised, explaining that the things that ARE the walls were given his papa's
+   blessing and were too weak to reject it. Three link errors were repaired on the
+   way in - see [CHANGELOG.md](CHANGELOG.md). The Infinite Rat Saga's last task,
+   marked `(tbc)` since it was written, is completable.
 5. Q6 pays off the village guard's decade of deflection.
 
 What must stay open: who paid for the robbery, how the hero came to have the
