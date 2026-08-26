@@ -90,6 +90,20 @@ function check_site() {
     if (script_tags.length < 2) {
         error(`_site/index.html has ${script_tags.length} external script tag(s); expected the HackTimer tag and the bundle tag.`);
     }
+
+    // The sourcemap must not be deployed. It is 3 MB and it publishes the whole
+    // unminified source; it was being served to every visitor for as long as dist/
+    // was copied wholesale. The map is still built into dist/ for local use.
+    if (fs.existsSync(path.join(site_dir, "dist/bundle.js.map"))) {
+        error("_site/dist/bundle.js.map exists - the sourcemap must not be deployed."
+            + " build-site.js copies the bundle on its own for exactly this reason.");
+    }
+    const bundle_path = path.join(site_dir, "dist/bundle.js");
+    if (fs.existsSync(bundle_path)
+        && fs.readFileSync(bundle_path, "utf8").includes("sourceMappingURL")) {
+        error("_site/dist/bundle.js still references a sourceMappingURL, so every devtools"
+            + " session would chase a file that is deliberately not deployed.");
+    }
 }
 
 async function load_locale(name) {

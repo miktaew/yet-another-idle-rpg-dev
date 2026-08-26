@@ -48,8 +48,11 @@ const static_files = [
 
 // Directories copied recursively. `locales` is included so that a site served in
 // dev mode still resolves them; in bundle mode they are already inlined.
+//
+// `dist` is NOT here on purpose: copying it wholesale shipped dist/bundle.js.map
+// as well, which is a 3 MB file that publishes the complete unminified source and
+// was being served to every visitor. The bundle is copied on its own below.
 const static_dirs = [
-    "dist",
     "locales",
     "resources",
 ];
@@ -145,6 +148,34 @@ const versioned_pages = [
     "help.tr.html",
 ];
 
+/**
+ * Copies the bundle into the site WITHOUT its sourcemap.
+ *
+ * The map is still written to dist/ - it is worth having locally, and dist/ is
+ * untracked - but it does not belong on the deployed site: 3 MB of payload that
+ * publishes the entire unminified source, fetched by anyone who opens devtools.
+ *
+ * The `//# sourceMappingURL=` comment goes with it. Leaving it in would make every
+ * devtools session chase a file that is deliberately not there, which reads as a
+ * broken deploy rather than a decision.
+ */
+function copy_bundle_without_sourcemap() {
+    const from = path.join(repo_root, "dist/bundle.js");
+    if (!fs.existsSync(from)) {
+        fail("dist/bundle.js is missing - the bundling step should have written it.");
+    }
+    const bundle = fs.readFileSync(from, "utf8");
+
+    const reference = /\n?\/\/# sourceMappingURL=[^\n]*\n?/;
+    if (!reference.test(bundle)) {
+        fail("dist/bundle.js has no sourceMappingURL comment to strip - esbuild's"
+             + " sourcemap output changed, so this step is out of date.");
+    }
+
+    fs.mkdirSync(path.join(site_dir, "dist"), { recursive: true });
+    fs.writeFileSync(path.join(site_dir, "dist/bundle.js"), bundle.replace(reference, "\n"));
+}
+
 function stamp_version_spans() {
     const pattern = /<span class="game_version">[^<]*<\/span>/g;
     for (const file of versioned_pages) {
@@ -177,6 +208,8 @@ function assemble() {
         }
         fs.cpSync(from, path.join(site_dir, dir), { recursive: true });
     }
+
+    copy_bundle_without_sourcemap();
 
     const index_path = path.join(site_dir, "index.html");
     const html = fs.readFileSync(index_path, "utf8");

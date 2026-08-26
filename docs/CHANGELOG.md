@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 34 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 35 -->
 
 # Changelog
 
@@ -20,6 +20,28 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### The sourcemap was being deployed
+
+`_site/dist/bundle.js.map` was live, 3 MB of it, served with a 200 to anyone who
+asked - confirmed against the deployed site rather than inferred. It shipped
+because `dist` was in `static_dirs` and got copied wholesale, so the map came
+along with the bundle and nothing ever looked at what else was in the directory.
+
+Two costs. It roughly tripled the deployed JavaScript payload, and it published
+the complete unminified source with original file names and line numbers - which
+for a game whose whole content model is readable registry keys means publishing
+the content too.
+
+`dist` is out of `static_dirs` and the bundle is copied on its own, with its
+`//# sourceMappingURL=` comment stripped: leaving the comment would send every
+devtools session after a file that is deliberately absent, which reads as a broken
+deploy rather than a decision. The map is still written to `dist/`, which is
+untracked, so local debugging is unchanged. Deployed payload goes from 4.2 MB to
+1.16 MB.
+
+`npm run check` now fails if the map appears in `_site/` or if the bundle still
+references one. Both negative-tested.
 
 ### build.js refuses instead of quietly breaking things
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 34 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 35 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,28 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### Sourcemap prodüksiyona gidiyordu
+
+`_site/dist/bundle.js.map` canlıdaydı; 3 MB'ı, isteyen herkese 200 ile
+sunuluyordu — çıkarım değil, yayındaki siteye karşı doğrulandı. Yayına çıkma
+sebebi `dist`'in `static_dirs` içinde olması ve bütün klasör olarak
+kopyalanmasıydı; harita da bundle'la birlikte gitti ve klasörde başka ne olduğuna
+kimse bakmadı.
+
+İki bedeli var. Yayımlanan JavaScript yükünü kabaca üçe katlıyordu ve özgün dosya
+adlarıyla satır numaralarıyla birlikte tüm minified olmayan kaynağı yayımlıyordu —
+ki bütün içerik modeli okunabilir registry anahtarları olan bir oyun için bu,
+içeriği de yayımlamak demek.
+
+`dist` artık `static_dirs` dışında ve bundle tek başına kopyalanıyor;
+`//# sourceMappingURL=` yorumu da temizleniyor: yorumu bırakmak, her devtools
+oturumunu bilerek bulunmayan bir dosyanın peşine gönderirdi ve bu bir karar değil
+bozuk bir deploy gibi okunur. Harita hâlâ takip edilmeyen `dist/` içine yazılıyor,
+yani yerel hata ayıklama değişmedi. Yayımlanan yük 4,2 MB'dan 1,16 MB'a düşüyor.
+
+`npm run check` artık harita `_site/` içinde görünürse ya da bundle hâlâ bir
+haritaya atıfta bulunuyorsa düşüyor. İkisi de negatif test edildi.
 
 ### build.js sessizce bozmak yerine reddediyor
 
