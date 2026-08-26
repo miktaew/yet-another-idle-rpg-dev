@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 36 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 37 -->
 
 # Changelog
 
@@ -16,6 +16,85 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 > own minor version heading (0.6.1, 0.6.2, …) rather than being folded into an
 > existing one. `npm run check` enforces that both HTML copies hold an entry for
 > the shipped `game_version`, so the two cannot drift apart unnoticed.
+
+---
+
+## 2026-08-26
+
+### Region 2: the plains
+
+*"Southeast! The snake would hunt! But the snake split! And now no snakes go to the
+plains!"*
+
+The second of the cook's four lands, and the one his grief is most specific about.
+The other three lines describe places that changed; this one describes a place that
+was **abandoned**. The snake split, half of it left, and the hunting ground went
+with the half that left.
+
+So the plains are built as an absence. Grass to the horizon, southeast past the
+Swampland fields, and nothing hunting in it - which is the danger rather than the
+safety. What moved into a hunting ground with no hunters is the **Old hunting
+ground**, a combat zone whose enemies are what the tribe used to keep down.
+
+**The quest is named after his line.** `No Snakes Go to the Plains` opens when the
+cook talks about the plains and closes when the ground is cleared, and its reward is
+not an item: the swampland chief finishes a sentence he broke off the day he gave
+you his ring. That was the deliberately-open hook - he stops mid-thought, and
+nothing in the game had ever come back to it.
+
+**The banished tribe are not found, and that is the point.** The plains can be
+walked and their traces are there; who they became is the question the whole swamp
+is built on and it stays open. This region hands back the ground, not the people.
+
+### Switching language now repaints the whole interface
+
+The reported bug was "the UI is half Turkish and half English", with four
+screenshots across two days. Each screenshot was fixed, and the next screenshot
+found more, which is the shape of a problem being chased rather than solved.
+
+The cause is structural. `translateUI(language)` only rewrites elements carrying a
+`data-translation` attribute, and it sets `innerText` - so it can only own an
+element whose entire content is one label. Everything the game paints from
+JavaScript, which is most of what a player looks at, was written once in whatever
+language was current and never revisited. `option_language` changed the language and
+then did nothing about what was already on screen.
+
+`retranslate_interface({location, active_quest_ids})` is the answer: one function
+that repaints the time, the money, the stats, the equipment, the effects, the
+reputation, the inventory, every unlocked skill bar, the current location and every
+quest on the panel. `option_language` calls it, along with `fill_character_bio`,
+`update_save_load_buttons` and the character creator's own refresh.
+
+Three things that came out of doing it:
+
+- **`fill_character_bio` threw on a new game.** `playable_races[undefined].name` is a
+  TypeError, and on the creation screen the race is not chosen yet. That throw
+  aborted `option_language` before the repaint could run, so the reported "race
+  tooltips stay English on the creation screen" had **two** causes and the throw was
+  hiding the other one. It returns early now.
+- **The date line could not be translated at the source.** `game_time.js` returns the
+  season, the weekday and the time of day as English strings, and it has to keep
+  doing so: `conditions.js` compares `getSeason()` against a `season: {yes: "Summer"}`
+  written in content, and `toString()` feeds the save's `saved_at` stamp. Translating
+  them where they are produced would break a condition silently and put Turkish into
+  save data. So the numbers come from the clock and the words come from the locale,
+  keyed on the English the clock returns - the same split the registry keys already
+  use.
+- **The empty equipment slots had translations all along.** Every `ui slot <key>` row
+  existed; the label was being built from the raw registry key instead, which is why
+  a Turkish player read "fishing pole slot". The id is now computed into a variable,
+  which the content-id scan cannot follow, so `npm run check` grew a check that reads
+  the slot list out of `equipment_slots_divs` and requires a row for each of the 16.
+
+**One thing stays English on purpose.** Lines already printed in the message log keep
+the language they were printed in. `log_message` takes composed text rather than an
+id and its params, so making the log retranslatable means changing what 44 call sites
+pass. It is recorded here rather than done quietly.
+
+**And the screenshots were the wrong instrument.** After the last one was fixed, a
+scan of every string literal reaching `innerText`/`set_HTML` in `display.js` found
+another twenty-eight sites that no screenshot had happened to show. That pass is the
+next entry, not this one.
 
 ---
 

@@ -2257,6 +2257,97 @@ function get_location_type_penalty(type, stage, stat, category) {
         }
     });
     locations["Swampland fields"].connected_locations.push({location: locations["Swampland tribe"], travel_time: 90, travel_time_skills: ["Scrambling", "Running"]});
+
+    /*
+        P-10 REGION 2 - the plains.
+
+        "Southeast! The snake would hunt! But the snake split! And now no snakes go
+        to the plains!"
+
+        No snakes is a hard constraint, so none of the swamp's bestiary is here.
+        What makes it dangerous is the absence: the apex predator left and nothing
+        replaced it, so the prey did. The warthog the player met once as a single
+        boss at Carya Canyon runs in herds here, for the same reason.
+
+        The description is static, unlike the wet woods. That region was
+        recovering; this one is not.
+    */
+    locations["The plains"] = new Location({
+        connected_locations: [{location: locations["Swampland fields"],
+            custom_text: "travel Head back northwest into the [Swampland fields]", travel_time: 120}],
+        description: "desc location The plains",
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise The plains 1"),
+                    translationManager.getText(language, "noise The plains 2"),
+                    translationManager.getText(language, "noise The plains 3"),
+                    translationManager.getText(language, "noise The plains 4")];
+        },
+        name: "The plains",
+        is_unlocked: false,
+        unlock_text: "loc The plains unlock",
+        temperature_modifier: 1.2,
+        is_under_roof: false,
+    });
+
+    locations["Swampland fields"].connected_locations.push({location: locations["The plains"],
+        custom_text: "travel Walk southeast out onto [The plains]", travel_time: 120});
+
+    locations["Old hunting ground"] = new Combat_zone({
+        description: "desc location Old hunting ground",
+        enemies_list: ["Warthog"],
+        types: [{type: "open", stage: 2, xp_gain: 8}],
+        enemy_count: 60,
+        enemy_group_size: [3, 4],
+        enemy_stat_variation: 0.2,
+        is_unlocked: true,
+        name: "Old hunting ground",
+        leave_text: "loc Old hunting ground leave",
+        parent_location: locations["The plains"],
+        first_reward: {
+            xp: 6000,
+        },
+        repeatable_reward: {
+            xp: 3000,
+            quest_progress: [{quest_id: "No Snakes Go to the Plains", task_index: 1}],
+        },
+        temperature_range_modifier: 1.1,
+        is_under_roof: false,
+    });
+
+    locations["The plains"].connected_locations.push({location: locations["Old hunting ground"],
+        custom_text: "travel Walk out into the [Old hunting ground]", travel_time: 30});
+
+    /*
+        The traces. This is the region's whole point and it must not resolve: the
+        banished half of the tribe is one of the things STORY.md keeps open, so what
+        is found is that people were here, that they built properly, and that they
+        left on purpose. Not who, not where, not whether they are alive.
+    */
+    locations["The plains"].actions = {
+        "read the ground": new GameAction({
+            action_id: "read the ground",
+            action_name: "action read the ground name",
+            starting_text: "action read the ground starting",
+            description: "action read the ground desc",
+            action_text: "action read the ground during",
+            success_text: "action read the ground success",
+            is_unlocked: true,
+            conditions: [
+                {skills: {Perception: 12}},
+                {skills: {Perception: 30}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action read the ground fail conditional_loss 1"],
+            },
+            attempt_duration: 240,
+            success_chances: [0.3, 1],
+            rewards: {
+                skill_xp: {Perception: 900},
+                quest_progress: [{quest_id: "No Snakes Go to the Plains", task_index: 2}],
+                textlines: [{dialogue: "swampland chief", lines: ["swampchief plains"]}],
+            },
+        }),
+    };
 	
     locations["Longhouse"] = new Location({
         connected_locations: [{location: locations["Swampland tribe"], custom_text: "travel Go back out to the [Swampland tribe]", travel_time: 5}],

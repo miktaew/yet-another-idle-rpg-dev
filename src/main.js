@@ -104,6 +104,7 @@ import { end_activity_animation,
          set_light_based_background_color,
          unassign_dynamic_loot_message,
          fill_character_bio,
+         retranslate_interface,
          insert_HTML,
         } from "./display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp } from "./misc.js";
@@ -485,14 +486,21 @@ async function option_language(option) {
 
     update_translated_page_links();
 
-    //Nothing else redraws the bio panel, so it would otherwise keep the previous
-    //language until the player reopened the character screen.
+    //translateUI has just done the markup. Everything else is painted imperatively
+    //and only when its own panel changes, so without this the interface stays
+    //visibly half translated - the tabs and stat labels turn over, the room the
+    //player is standing in does not, and it keeps its old language until they walk
+    //somewhere else.
     fill_character_bio();
+    update_save_load_buttons();
+    retranslate_interface({
+        location: current_location,
+        active_quest_ids: Object.keys(active_quests),
+    });
 
-    //Same problem, and worse: the hero creation panel is built once and never
-    //again, so its race names and tooltips would stay in the language it was
-    //built in - which on a new game is always the default. No-op once the hero
-    //exists and the panel is gone.
+    //The hero creation panel is built once and never again, so its race names and
+    //tooltips would stay in the language it was built in - which on a new game is
+    //always the default. No-op once the hero exists and the panel is gone.
     characterCreator.refresh_language();
 }
 
@@ -6140,32 +6148,39 @@ if(game_options.skip_play_button) {
     play_button.click();
 }
 
+/**
+ * Writes the two save-slot buttons from whatever is in localStorage.
+ *
+ * Pulled out of the startup sequence so a language switch can call it as well.
+ * Their labels were translated but written exactly once, during startup, so
+ * switching language left "No backup autosave" and "Import save from dev
+ * version" sitting in English under an otherwise Turkish options panel.
+ *
+ * The dates are read here rather than passed in, because which localStorage key
+ * holds which slot depends on is_on_dev() and that is main.js's business.
+ */
+function update_save_load_buttons() {
+    const backup = is_on_dev() ? dev_backup_key : backup_key;
+    const other = is_on_dev() ? save_key : dev_save_key;
+
+    if(localStorage[backup]) {
+        update_backup_load_button(JSON.parse(localStorage[backup]).saved_at);
+    } else {
+        update_backup_load_button();
+    }
+
+    if(localStorage[other]) {
+        update_other_save_load_button(JSON.parse(localStorage[other]).saved_at || "", is_on_dev());
+    } else {
+        update_other_save_load_button(is_on_dev() ? null : undefined, is_on_dev() || undefined);
+    }
+}
 if(is_on_dev()) {
     log_message(translationManager.getText(language, "log it looks like you are"), "notification");
 
-    if(localStorage[dev_backup_key]) {
-        update_backup_load_button(JSON.parse(localStorage[dev_backup_key]).saved_at);
-    } else {
-        update_backup_load_button();
-    }
-
-    if(localStorage[save_key]) {
-        update_other_save_load_button(JSON.parse(localStorage[save_key]).saved_at || "", true);
-    } else {
-        update_other_save_load_button(null, true);
-    }
+    update_save_load_buttons();
 } else {
-    if(localStorage[backup_key]) {
-        update_backup_load_button(JSON.parse(localStorage[backup_key]).saved_at);
-    } else {
-        update_backup_load_button();
-    }
-
-    if(localStorage[dev_save_key]) {
-        update_other_save_load_button(JSON.parse(localStorage[dev_save_key]).saved_at || "");
-    } else {
-        update_other_save_load_button();
-    }
+    update_save_load_buttons();
 }
 
 //Visitor counter, off by default (config.show_visitor_counter). The whole block is

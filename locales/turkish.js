@@ -3152,7 +3152,7 @@ const descriptions = {
     //QUEST 6 - "Way Too Strong for You". The last two stances, shown rather
     //than taught, and the question she still will not answer.
     "guard serious 2": "Seninle yeniden denemek istiyorum. Etkilemek için değil.",
-    "guard serious 2 answ": "*[Sana şimdiye kadar baktığından daha uzun bakıyor. Devriyedeki çocuklara attığı o üstünkörü bakış değil — ötekisi; ağaç sınırına bakarken kullandığı.]*\n\nHmm.\n\nBataklığa girdin ve içinden çıktın. İnsanlar bataklığın yakınından döner, sonra ona bataklık der. *[Mızrağı omzundan indiriyor]*\n\nPeki. Ders değil — sebebini söyledim ve ciddiydim. Ama bunlardan iki tane daha var ve ikisi de anlatılamaz; üçte durmamın bütün sebebi bu. O yüzden durana kadar üstüme gel; aşırmaya değer bir şey görürsen aşır.\n\nBen onları böyle edindim. Öğrenmenin berbat bir yolu.",
+    "guard serious 2 answ": "*[Sana şimdiye kadar baktığından daha uzun bakıyor. Devriyedeki çocuklara attığı o üstünkörü bakış değil — ötekisi; ağaç sınırına bakarken kullandığı.]*\n\nHmm.\n\nBataklığa girdin ve içinden çıktın. İnsanlar bataklığın yakınından döner, sonra ona bataklık der. *[Mızrağı omzundan indiriyor]*\n\nPeki. Ders değil — sebebini söyledim ve ciddiydim. Ama bunlardan iki tane daha var ve ikisi de anlatılamaz; üçte durmamın bütün sebebi bu. O yüzden durana kadar üstüme gel; çalmaya değer bir şey görürsen çal.\n\nBen onları böyle edindim. Öğrenmenin berbat bir yolu.",
     "guard spar name": "Onunla dövüş",
     "guard spar": "[Durana kadar üstüne git]",
     "guard spar desc": "Kabul ettiğinden beri ayaklarını yerinden oynatmadı. Fark edilmeye değer ilk şey bu.",
@@ -3225,6 +3225,86 @@ const descriptions = {
     "quest Where We Gathered task 1": "Düşen sudan güneye git",
     "quest Where We Gathered task 2": "Yürüyen kayaları korudan temizle",
     "quest Where We Gathered task 3": "Aşçıya söyle",
+
+    //P-10 REGION 2 - the plains, southeast. What the chief could not finish
+    //the day he gave away the ring.
+    "desc location The plains": "Ufka kadar ot; içinden geçerken kendinizi duyacak kadar kuru. Bataklıktan sonra ilk fark ettiğiniz şey açıklık, ikincisi sessizlik: adını hak eden bir kuş sesi yok, havada dönen bir şey yok ve kendi izinizi kesen tek iz, canı nereye çekerse oraya giden o geniş, kaygısız izler.",
+    "loc The plains unlock": "Güneydoğu; durgun suyun bittiği yerin ötesi. Zemin yükseliyor ve yüksek kalıyor.",
+    "noise The plains 1": "*Rüzgâr; önünde hiçbir şey olmadan*",
+    "noise The plains 2": "*Büyük bir şey, acele etmiyor*",
+    "noise The plains 3": "*Kuru ot, kuru ot, bir de kuru ot*",
+    "noise The plains 4": "*Kuş yok. Bunu fark etmeye devam ediyorsunuz*",
+    "travel Walk southeast out onto [The plains]": "Güneydoğuya, [The plains] üzerine yürü",
+    "travel Head back northwest into the [Swampland fields]": "Kuzeybatıya, [Swampland fields] içine geri dön",
+    "desc location Old hunting ground": "Otun kökten biçilip sonra bir daha biçildiği sığ bir vadi. Bir zamanlar bir şeyin sürüldüğü yer burası; ve bir zamanlar sürülen şeylerin şimdi açıkta durup size döndüğü, sizin fikrinizden hiç rahatsız olmadığı yer de burası.",
+    "loc Old hunting ground leave": "Vadiden geri çık",
+    "travel Walk out into the [Old hunting ground]": "[Old hunting ground] içine yürü",
+    "action read the ground name": "Zemini oku",
+    "action read the ground starting": "[Ovaları dolaş ve zemini oku]",
+    "action read the ground desc": "Ot her şeyi saklar ve hiçbir şeyi saklamaz. Burada ne yapıldıysa, hâlâ altındaki zeminin biçimi olarak duruyor.",
+    "action read the ground during": "Bir hat boyunca yürüyorsunuz, sonra on adım yanından aynı hattı yeniden.",
+    "action read the ground success": "Yarım günlük yürüyüş ve zemin size aynı şeyi dört kez söylüyor.\n\nAv siperleri. Bir tane değil — bir hat hâlinde; bir şeyi vadi boyunca, aşağıda çoktan bekleyen insanlara doğru sürecek olsanız aralarına koyacağınız mesafeyle. Burada yetişmeyen bir kamıştan örülmüş; yani taşınmış, yani biri bu işin düzgün yapılmaya değer olduğunu düşünmüş.\n\nVe harap değiller. Dönüp dönüp geldiğiniz kısım bu. Kimse onları yakmamış, kimse yıkmamış. Yaşlılar; kamış grileşip kırılganlaşmış ve birinde en son oturan kişi, bırakmadan önce hasırı katlamış.",
+    "action read the ground fail conditional_loss 1": "Kendi hattınızı iki kez kesiyorsunuz ve başka bir şey bulmadan önce ikinci kesişmeyi buluyorsunuz; zemini okumaktan çok üzerinde yürüdüğünüzü de böyle anlıyorsunuz.",
+    "swampchief plains": "Ovalarda av siperleri var. Biri gitmeden önce hasırları katlamış.",
+    "swampchief plains answ": "*[Bir süre kımıldamıyor. Konuştuğunda, kamp için kullandığı ses değil.]*\n\nKatlamış. *[Bir nefes]* Elbette katlamışlar. Başka her ne olursak olalım, hayvan değiliz.\n\nYılanın iki dişi var, yabancı. Kabilenin adını benden yeterince duydun; neden Yılan Dişi Kabilesi değil de Yılan Dişleri olmadığını merak etmiş olmalısın. *[Güneydoğuya bakıyor; bunu kimsenin görebileceği bir yerde yapmaz]* Bir diş bataklıkta avlanıyor. Öteki ovalara açıldı ve dönmedi; sana nedenini söylemeyeceğim, sen yine de soracaksın, ben de yine hayır diyeceğim.\n\n*[Geri dönüyor]* Haracını verdiğin ve sana yüzüğü verdiğim gün tamamlayamadığım şey buydu. Adımızı her söylediğimde bana hatırlatılıyor. Artık şeklini biliyorsun, gerisini bilmiyorsun.",
+    "quest No Snakes Go to the Plains": "Ovalara Hiçbir Yılan Gitmiyor",
+    "quest No Snakes Go to the Plains desc 1": "Aşçının dört toprağından ikincisi. Güneydoğu; yılanın eskiden avlandığı ve onun deyimiyle artık hiçbir yılanın gitmediği yer.",
+    "quest No Snakes Go to the Plains desc 2": "Açık ot, kuş yok ve avlanmanın ne olduğunu unutmuş sürüler. Burada bir şey yapılmış ve zemin hâlâ onun biçimini taşıyor.",
+    "quest No Snakes Go to the Plains desc 3": "Düzgün yapılmış, derli toplu bırakılmış av siperleri. Şefin bunu sizden duyması gerek.",
+    "quest No Snakes Go to the Plains task 1": "Ovalara doğru yürü",
+    "quest No Snakes Go to the Plains task 2": "Eski av alanını temizle",
+    "quest No Snakes Go to the Plains task 3": "Zemini oku",
+    "quest No Snakes Go to the Plains task 4": "Şefe söyle",
+
+    //Static interface labels whose text sits on the line after the opening
+    //tag, which the first wiring pass could not see.
+    "ui tab inventory": "Envanter",
+    "ui btn accept trade": "Kabul et",
+    "ui btn cancel trade": "İptal",
+    "ui btn exit": "Çık",
+    "ui sort level": "Seviyeye göre sırala",
+    "ui sort progress": "İlerlemeye göre sırala",
+    "ui tab skills": "Beceriler",
+    "ui tab stances": "Duruşlar",
+    "ui tab magic": "Büyü",
+    "ui quests header": "= Görevler =",
+    "ui log filter unlocks": "Seviyeler / açılanlar",
+    "ui log filter events": "Olaylar",
+    "ui log filter crafting": "Zanaat",
+    "ui log filter loot": "Ganimet",
+    "ui log filter bgm": "BGM",
+    "ui label enemy groups left": "Kalan düşman grubu:",
+
+    //The date line. game_time.js returns these as English because conditions
+    //compare against them and the save stamp is built from them; the words are
+    //translated where they are displayed, keyed on the English.
+    "season Spring": "İlkbahar",
+    "season Summer": "Yaz",
+    "season Autumn": "Sonbahar",
+    "season Winter": "Kış",
+    "weekday Mon": "Pzt",
+    "weekday Tue": "Sal",
+    "weekday Wed": "Çar",
+    "weekday Thu": "Per",
+    "weekday Fri": "Cum",
+    "weekday Sat": "Cmt",
+    "weekday Sun": "Paz",
+    "time of day Day": "Gündüz",
+    "time of day Night": "Gece",
+
+    //The bars, the empty slots, the stat breakdown headings and the inventory
+    //buttons - the last of the interface that was still hard-coded English.
+    "ui bar hp": "can",
+    "ui bar stamina": "dayanıklılık",
+    "ui bar xp": "tecrübe",
+    "ui bar mana empty": "0/0 mana",
+    "ui empty slot": "{v1} yuvası",
+    "ui breakdown": "Dağılım:",
+    "ui base value heading": "Temel değer:",
+    "ui base value weapon": "Temel değer (silah * kuvvet/10):",
+    "ui btn use": "[kullan]",
+    "ui btn auto use": "oto",
+    "ui btn equip": "[kuşan]",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

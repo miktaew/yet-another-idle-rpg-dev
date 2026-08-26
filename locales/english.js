@@ -3185,6 +3185,86 @@ const descriptions = {
     "quest Where We Gathered task 1": "Go south from the falling water",
     "quest Where We Gathered task 2": "Clear the walking rocks out of the grove",
     "quest Where We Gathered task 3": "Tell the cook",
+
+    //P-10 REGION 2 - the plains, southeast. What the chief could not finish
+    //the day he gave away the ring.
+    "desc location The plains": "Grass to the horizon, dry enough to hear yourself walk through it. After the bog the openness is the first thing and the quiet is the second: no bird noise worth the name, nothing circling, and no tracks crossing your own except the wide untroubled ones that go wherever they like.",
+    "loc The plains unlock": "Southeast, past the last of the standing water. The ground comes up and stays up.",
+    "noise The plains 1": "*Wind, with nothing in the way of it*",
+    "noise The plains 2": "*Something large, not hurrying*",
+    "noise The plains 3": "*Dry grass, and dry grass, and dry grass*",
+    "noise The plains 4": "*No birds. You keep noticing it*",
+    "travel Walk southeast out onto [The plains]": "Walk southeast out onto [The plains]",
+    "travel Head back northwest into the [Swampland fields]": "Head back northwest into the [Swampland fields]",
+    "desc location Old hunting ground": "A shallow valley where the grass has been cropped to the root and then cropped again. This is where something used to be driven, and it is where the things that used to be driven now stand around in the open, facing you, entirely unbothered by the idea of you.",
+    "loc Old hunting ground leave": "Back up out of the valley",
+    "travel Walk out into the [Old hunting ground]": "Walk out into the [Old hunting ground]",
+    "action read the ground name": "Read the ground",
+    "action read the ground starting": "[Walk the plains and read the ground]",
+    "action read the ground desc": "Grass hides everything and keeps nothing. Whatever was done out here is still the shape of the ground under it.",
+    "action read the ground during": "Walking a line, then walking it again ten paces over.",
+    "action read the ground success": "Half a day of walking, and the ground tells you the same thing four times.\n\nHunting blinds. Not one - a line of them, spaced the way you would space them if you were driving something down a valley toward people who were already waiting at the bottom of it. Woven from a reed that does not grow out here, which means it was carried, which means somebody thought this was worth doing properly.\n\nAnd they are not ruined. That is the part you keep coming back to. Nobody burned them and nobody pulled them down. They are old, the reed has gone grey and brittle, and the last person to sit in one folded the mat before they left it.",
+    "action read the ground fail conditional_loss 1": "You cross your own line twice and find the second crossing before you find anything else, which is how you know you are not reading the ground so much as walking on it.",
+    "swampchief plains": "There are hunting blinds on the plains. Somebody folded the mats before they left.",
+    "swampchief plains answ": "*[He does not move for a while. When he speaks it is not the voice he uses for the encampment.]*\n\nFolded. *[A breath]* Of course they did. We are not animals, whatever else we are.\n\nThe snake has two fangs, stranger. You have heard me say the tribe's name often enough to have wondered why it is not the Snake Tooth Tribe. *[He looks southeast, which he does not do where anyone can see him]* One fang hunts the bog. The other went out onto the plains and did not come back, and I will not tell you why, and you will ask me anyway, and I will say no again.\n\n*[He turns back]* That is what I could not finish, the day you gave tribute and I gave you the ring. I am reminded every time I say our name. Now you have the shape of it and none of the rest.",
+    "quest No Snakes Go to the Plains": "No Snakes Go to the Plains",
+    "quest No Snakes Go to the Plains desc 1": "The second of the cook's four lands. Southeast, where the snake used to hunt and where, he says, no snakes go now.",
+    "quest No Snakes Go to the Plains desc 2": "Open grass, no birds, and herds that have forgotten what it is to be hunted. Something was done out here and the ground still has the shape of it.",
+    "quest No Snakes Go to the Plains desc 3": "Hunting blinds, built properly, left tidy. The chief should hear it from you.",
+    "quest No Snakes Go to the Plains task 1": "Walk out onto the plains",
+    "quest No Snakes Go to the Plains task 2": "Clear the old hunting ground",
+    "quest No Snakes Go to the Plains task 3": "Read the ground",
+    "quest No Snakes Go to the Plains task 4": "Tell the chief",
+
+    //Static interface labels whose text sits on the line after the opening
+    //tag, which the first wiring pass could not see.
+    "ui tab inventory": "Inventory",
+    "ui btn accept trade": "Accept",
+    "ui btn cancel trade": "Cancel",
+    "ui btn exit": "Exit",
+    "ui sort level": "Sort by level",
+    "ui sort progress": "Sort by progress",
+    "ui tab skills": "Skills",
+    "ui tab stances": "Stances",
+    "ui tab magic": "Magic",
+    "ui quests header": "= Quests =",
+    "ui log filter unlocks": "Levels / unlocks",
+    "ui log filter events": "Events",
+    "ui log filter crafting": "Crafting",
+    "ui log filter loot": "Loot",
+    "ui log filter bgm": "BGM",
+    "ui label enemy groups left": "Enemy groups left:",
+
+    //The date line. game_time.js returns these as English because conditions
+    //compare against them and the save stamp is built from them; the words are
+    //translated where they are displayed, keyed on the English.
+    "season Spring": "Spring",
+    "season Summer": "Summer",
+    "season Autumn": "Autumn",
+    "season Winter": "Winter",
+    "weekday Mon": "Mon",
+    "weekday Tue": "Tue",
+    "weekday Wed": "Wed",
+    "weekday Thu": "Thu",
+    "weekday Fri": "Fri",
+    "weekday Sat": "Sat",
+    "weekday Sun": "Sun",
+    "time of day Day": "Day",
+    "time of day Night": "Night",
+
+    //The bars, the empty slots, the stat breakdown headings and the inventory
+    //buttons - the last of the interface that was still hard-coded English.
+    "ui bar hp": "hp",
+    "ui bar stamina": "stamina",
+    "ui bar xp": "xp",
+    "ui bar mana empty": "0/0 mana",
+    "ui empty slot": "{v1} slot",
+    "ui breakdown": "Breakdown:",
+    "ui base value heading": "Base value:",
+    "ui base value weapon": "Base value (weapon * str/10):",
+    "ui btn use": "[use]",
+    "ui btn auto use": "auto",
+    "ui btn equip": "[equip]",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

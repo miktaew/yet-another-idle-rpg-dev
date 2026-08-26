@@ -933,6 +933,86 @@ function check_reward_keys() {
 }
 
 /**
+ * Every equipment slot needs a "ui slot <key>" row.
+ *
+ * The empty-slot label is built from the slot key at runtime -
+ * `ui slot ${key}` - so the content-id scan cannot see the finished id and
+ * deliberately refuses to guess at a concatenation. This replaces that coverage
+ * by checking the same list display.js builds its slot map from.
+ *
+ * Before this, the label was assembled from the raw key instead of the locale,
+ * which is why every empty slot read "head slot", "fishing pole slot" and so on in
+ * English while the rows to translate them had existed all along.
+ */
+async function check_equipment_slot_names() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/display.js"), "utf8"));
+    const map = source.match(/const equipment_slots_divs\s*=\s*\{([\s\S]*?)\n\};/);
+    if (!map) {
+        error("src/display.js has no `const equipment_slots_divs = { ... }` - this check is out of date.");
+        return;
+    }
+
+    // Keys are bare or quoted: `head:` and `"off-hand":` both appear.
+    const slots = [...map[1].matchAll(/(?:^|,)\s*"?([A-Za-z_-]+)"?\s*:/g)].map(match => match[1]);
+    if (slots.length === 0) {
+        error("could not read any slot keys out of equipment_slots_divs - this check is out of date.");
+        return;
+    }
+
+    for (const slot of slots) {
+        if (!(`ui slot ${slot}` in reference)) {
+            error(`locales/${default_language}.js has no "ui slot ${slot}" row, so that empty`
+                + " equipment slot would render a placeholder.");
+        }
+    }
+    console.log(`[check] equipment slot names: ${slots.length} resolved`);
+}
+
+/**
+ * Every location type a zone claims must exist, at a stage that exists.
+ *
+ * The stages are where a type's effects and skill scaling live, so a zone asking
+ * for a stage the type does not define asks for nothing: it reads as a configured
+ * environment and behaves as an unconfigured one. Caught while writing the plains,
+ * which claimed `open` at stage 3 when `open` defines 1 and 2.
+ *
+ * The stage numbers are read from the LocationType declarations rather than
+ * hard-coded, so adding a stage to a type does not need a change here.
+ */
+function check_location_types() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"))
+        .split("\r\n").join("\n");
+
+    const defined = new Map();
+    for (const match of source.matchAll(/location_types\["([^"]+)"\]\s*=\s*new LocationType\(\{/g)) {
+        const body = braced_body(source, match.index + match[0].length - 1);
+        if (body === null) continue;
+        defined.set(match[1], [...body.matchAll(/^\s{12}(\d+):\s*\{/gm)].map(stage => Number(stage[1])));
+    }
+    if (defined.size === 0) {
+        error("src/locations.js declares no location types - this check is out of date.");
+        return;
+    }
+
+    let checked = 0;
+    for (const match of source.matchAll(/\{type:\s*"([^"]+)",\s*stage:\s*(\d+)/g)) {
+        checked++;
+        const [, type, stage] = match;
+        if (!defined.has(type)) {
+            error(`a zone claims location type "${type}", which is not declared.`);
+        } else if (!defined.get(type).includes(Number(stage))) {
+            error(`a zone claims location type "${type}" at stage ${stage}, which it does not`
+                + ` define (it has ${defined.get(type).join(", ")}). The stage carries the`
+                + " type's effects and scaling, so the zone would get none of them.");
+        }
+    }
+    console.log(`[check] location types: ${checked} claims across ${defined.size} types`);
+}
+
+/**
  * Every locked textline and action must be unlocked by something, and every unlock
  * must name something that exists.
  *
@@ -1083,6 +1163,7 @@ async function check_required_items() {
 check_site();
 check_interpolated_pairs();
 check_reward_keys();
+check_location_types();
 check_content_is_reachable();
 check_money_requirements();
 check_changelogs_cover_version();
@@ -1091,6 +1172,7 @@ await check_locales();
 await check_dialogue_display_names();
 await check_trader_display_names();
 await check_item_display_names();
+await check_equipment_slot_names();
 await check_required_items();
 await check_content_text_ids();
 await check_generated_items();

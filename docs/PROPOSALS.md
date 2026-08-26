@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 19 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 20 -->
 
 # Proposals
 
@@ -407,8 +407,18 @@ Execution order, highest leverage first:
    The room's description moves in three stages with the grove's clear count, so
    the region reads as recovering rather than as a switch, and the cook gets the
    only answer any line in his geography lesson has ever had.
-2. **The plains.** The snake split and the plains went with the half that left.
-   Reachable; the tribe itself is not found. See below.
+2. **The plains — DONE.** Southeast past the Swampland fields, opened by the cook
+   talking about them. Built as an absence rather than as a place: his line is about
+   a hunting ground that was abandoned, so the danger is that nothing hunts there
+   any more, and what moved in is the Old hunting ground.
+
+   `No Snakes Go to the Plains` takes its name from his line, and its reward is not
+   an item - the swampland chief finishes the sentence he broke off the day he gave
+   you his ring. That was a deliberately-open hook and nothing had ever come back
+   to it.
+
+   The banished tribe are still not found. Their traces are there; who they became
+   stays the open question the swamp is built on.
 3. **The bay.** The largest, and the one the rest of the game already points at:
    the guild factor's three goods go north from the gate, and the cook says the bay
    is where you *leave* from. It should be built after there is a reason to leave.

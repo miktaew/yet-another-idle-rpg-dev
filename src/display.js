@@ -1860,10 +1860,10 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         if(target_item.item_type === "USABLE") {
             const item_use_button = document.createElement("div");
             item_use_button.classList.add("item_use_button");
-            item_use_button.innerText = "[use]";
+            item_use_button.innerText = translationManager.getText(language, "ui btn use");
             const item_auto_use_button = document.createElement("div");
             item_auto_use_button.classList.add("item_auto_use_button");
-            item_auto_use_button.innerText = "auto";
+            item_auto_use_button.innerText = translationManager.getText(language, "ui btn auto use");
 
             if(favourite_consumables[target_item.id]) {
                 item_auto_use_button.classList.add("item_auto_use_button_active");
@@ -1882,7 +1882,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         if(typeof trade_index === "undefined" && target_item.tags.equippable) {
             if(!is_equipped) {
                 let item_equip_span = document.createElement("span");
-                insert_HTML(item_equip_span, "[equip]")
+                insert_HTML(item_equip_span, translationManager.getText(language, "ui btn equip"))
                 item_equip_span.classList.add("equip_item_button", "item_controls");
                 item_additional.appendChild(item_equip_span);
             } else {
@@ -1925,7 +1925,12 @@ function update_displayed_equipment() {
         if(character.equipment[key] == null) { //no item in slot
             eq_tooltip = document.createElement("span");
             eq_tooltip.classList.add("item_tooltip");
-            set_HTML(equipment_slots_divs[key], `${key.replace("_"," ")} slot`);
+            //The "ui slot <key>" rows have existed all along - the label was built
+            //from the raw key instead, which is why every empty slot read English.
+            //fishing_pole is the one key with an underscore, and its row keeps it.
+            const slot_text_id = `ui slot ${key}`;
+            set_HTML(equipment_slots_divs[key], translationManager.getText(language, "ui empty slot",
+                {v1: translationManager.getText(language, slot_text_id)}));
             equipment_slots_divs[key].classList.add("equipment_slot_empty");
             set_HTML(eq_tooltip, `${translationManager.getText(language, "ui your slot", {v1: translationManager.getText(language, `ui slot ${key}`)})}`);
         } else {
@@ -3570,15 +3575,18 @@ function update_displayed_health() { //call it when using healing items, resting
     const sign = total_regen > 0 ? "+":"";
     current_health_value_div.innerText = Math.ceil(character.stats.full.health) + "/" + Math.ceil(character.stats.full.max_health)
         + (total_regen != 0 ? " ("+ sign + expo({number: total_regen, precision: 1}) + "/s) " : "")
-        + " hp";
+        + " " + translationManager.getText(language, "ui bar hp");
     current_health_bar.style.width = (character.stats.full.health*100/character.stats.full.max_health).toString() +"%";
 }
 function update_displayed_stamina() { //call it when eating, resting or fighting
     const total_regen = character.stats.get_stamina_regeneration_total();
     const sign = total_regen > 0 ? "+":"";
+    //The label was concatenated with no leading space, so with no regeneration to
+    //print between them this read "40/40stamina". The health bar above has the
+    //space; this one never did.
     current_stamina_value_div.innerText = Math.round(character.stats.full.stamina) + "/" + Math.round(character.stats.full.max_stamina)
         + (total_regen != 0 ? " (" + sign + expo({number: total_regen, precision: 1}) + "/s) " : "")
-        + "stamina";
+        + " " + translationManager.getText(language, "ui bar stamina");
     current_stamina_bar.style.width = (character.stats.full.stamina*100/character.stats.full.max_stamina).toString() +"%";
 }
 
@@ -3759,12 +3767,12 @@ function create_stat_breakdown(stat) {
 
     if(stat === "attack_power") {
         html_string += 
-        `<br>Breakdown:
-        <br>Base value (weapon * str/10): ${Math.round(100* character.stats.total_flat.attack_power)/100}`;
+        `<br>${translationManager.getText(language, "ui breakdown")}
+        <br>${translationManager.getText(language, "ui base value weapon")} ${Math.round(100* character.stats.total_flat.attack_power)/100}`;
     } else if (stat === "attack_points"){
         html_string += 
-        `<br>Breakdown:
-        <br>Base value: ${Math.round(100* character.stats.total_flat.attack_points)/100}`;
+        `<br>${translationManager.getText(language, "ui breakdown")}
+        <br>${translationManager.getText(language, "ui base value heading")} ${Math.round(100* character.stats.total_flat.attack_points)/100}`;
     } else if(stat === "defensive_points"){
         if(character.equipment["off-hand"] != null && character.equipment["off-hand"].offhand_type === "shield") {
             stat = "block_chance";
@@ -3772,8 +3780,8 @@ function create_stat_breakdown(stat) {
             stat = "evasion_points";
         }
         html_string += 
-            `<br>Breakdown:
-            <br>Base value: ${Math.round(100 * character.stats.total_flat[stat])/100}`;
+            `<br>${translationManager.getText(language, "ui breakdown")}
+            <br>${translationManager.getText(language, "ui base value heading")} ${Math.round(100 * character.stats.total_flat[stat])/100}`;
     } else {
        html_string += 
         `<br>Breakdown:
@@ -3863,12 +3871,31 @@ function update_displayed_effect_durations() {
     });
 }
 
+/**
+ * Paints the date line, translating the parts that are words.
+ *
+ * game_time.js returns the season, the weekday and the time of day as ENGLISH
+ * strings and has to keep doing so: conditions.js compares getSeason() against a
+ * `season: {yes: "Summer"}` written in content, and toString() feeds the save's
+ * saved_at stamp. Translating them at the source would break a condition quietly
+ * and put Turkish into save data.
+ *
+ * So the numbers come from the clock and the words come from the locale, keyed on
+ * the English the clock returns - the same split the registry keys use.
+ */
 function update_displayed_time() {
-    let time_of_the_day = current_game_time.getTimeOfDaySimple();
+    const season = current_game_time.getSeason();
+    const weekday = current_game_time.getDayOfTheWeek();
+    const time_of_the_day = current_game_time.getTimeOfDaySimple();
 
-    //color coding like it used to be done with icon?
+    const pad = (value) => value > 9 ? `${value}` : `0${value}`;
+    const date = `${pad(current_game_time.day)}/${pad(current_game_time.month)}/`
+        + `${current_game_time.year} ${pad(current_game_time.hour)}:${pad(current_game_time.minute)}`;
 
-    set_HTML(time_field, current_game_time.toString() + ", <b>" + time_of_the_day + "</b>");
+    set_HTML(time_field, `${date}, `
+        + `${translationManager.getText(language, "season " + season)}, `
+        + `${translationManager.getText(language, "weekday " + weekday)}`
+        + `, <b>${translationManager.getText(language, "time of day " + time_of_the_day)}</b>`);
 }
 
 function update_displayed_temperature() {
@@ -3975,7 +4002,7 @@ function update_displayed_character_xp(did_level = false) {
         charaxter_xp_value
     */
     character_xp_div.children[0].children[0].style.width = `${100*character.xp.current_xp/character.xp.xp_to_next_lvl}%`;
-    character_xp_div.children[1].innerText = `${expo({number: character.xp.current_xp})} / ${expo({number: character.xp.xp_to_next_lvl})} xp`;
+    character_xp_div.children[1].innerText = `${expo({number: character.xp.current_xp})} / ${expo({number: character.xp.xp_to_next_lvl})} ${translationManager.getText(language, "ui bar xp")}`;
 
     if(did_level) {
         character_level_div.innerText = `Level: ${character.xp.current_level}`;
@@ -4650,7 +4677,11 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
                     tooltip_next
     */
 
-    if(!skill_bar_divs[skill.category][skill.skill_id]) {
+    //The guard was one level too shallow: a whole category can be absent from
+    //skill_bar_divs, and reading [skill_id] off undefined throws rather than
+    //returning. Nothing called either of these for a skill in an unbuilt category
+    //until the language switch began repainting every unlocked skill.
+    if(!skill_bar_divs[skill.category]?.[skill.skill_id]) {
         return;
     }
 
@@ -4712,7 +4743,11 @@ function update_displayed_skill_level(skill) {
 }
 
 function update_displayed_skill_description(skill) {
-    if(!skill_bar_divs[skill.category][skill.skill_id]) {
+    //The guard was one level too shallow: a whole category can be absent from
+    //skill_bar_divs, and reading [skill_id] off undefined throws rather than
+    //returning. Nothing called either of these for a skill in an unbuilt category
+    //until the language switch began repainting every unlocked skill.
+    if(!skill_bar_divs[skill.category]?.[skill.skill_id]) {
         return;
     }
     skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[3].innerText = `${skill.get_effect_description()}`;
@@ -5544,6 +5579,62 @@ function change_completed_quest_visibility() {
 }
 
 /**
+ * Repaints every panel that holds translated text, for a language switch.
+ *
+ * translateUI covers everything carrying a data-translation attribute. This covers
+ * everything else, and there is a lot of it: the location's name and description,
+ * its travel and dialogue choices, the inventory, the purse, the equipment, the
+ * stat readouts, the active effects, the skill bars, the quest list and the date.
+ *
+ * Without this a switch left the interface visibly half translated. The tabs and
+ * stat labels turned over because they are markup; the room the player was
+ * standing in did not, and stayed English until they walked somewhere else. Q-6 in
+ * PROPOSALS.md guessed that "everything else changes over as the player moves
+ * around" would be good enough. It is not, and a screenshot settled it.
+ *
+ * Everything called here has to be safe to call at any moment, since a player can
+ * switch language from anywhere. The location branch mirrors main.js: a combat zone
+ * is the one with no connected_locations.
+ *
+ * @param {Object} params
+ * @param {Object} params.location the location the player is currently in
+ * @param {String[]} params.active_quest_ids ids of quests currently on the panel
+ */
+function retranslate_interface({location, active_quest_ids = []} = {}) {
+    update_displayed_time();
+    update_displayed_money();
+    update_displayed_stats();
+    update_displayed_equipment();
+    update_displayed_effects();
+    update_displayed_reputation();
+
+    //skip_sorting: the player's chosen order is not a translation and should not be
+    //disturbed by changing language.
+    update_displayed_character_inventory({skip_sorting: true});
+
+    for(const skill_id of Object.keys(skills)) {
+        if(skills[skill_id].is_unlocked) {
+            update_displayed_skill_bar(skills[skill_id], false);
+        }
+    }
+
+    if(location) {
+        if("connected_locations" in location) {
+            update_displayed_normal_location(location);
+        } else {
+            update_displayed_combat_location(location);
+        }
+        update_displayed_location_types(location);
+    }
+
+    for(const quest_id of active_quest_ids) {
+        if(quests[quest_id]) {
+            update_displayed_quest(quest_id);
+        }
+    }
+}
+
+/**
  * Fills the character bio panel.
  *
  * Returns early while the hero does not exist yet. On a new game the creation
@@ -5931,6 +6022,6 @@ export {
     set_HTML,
     set_light_based_background_color,
     unassign_dynamic_loot_message,
-    fill_character_bio, create_race_tooltip, create_height_tooltip,
+    fill_character_bio, retranslate_interface, create_race_tooltip, create_height_tooltip,
     insert_HTML
 }

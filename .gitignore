@@ -21,6 +21,10 @@ dependency-graph.svg
 # saves - real character data - and must never be committed.
 yet-another-idle-rpg*.txt
 
+# Playwright MCP output. Page snapshots and console logs written into the repo
+# root while driving the game in a browser to verify a change. Throwaway.
+.playwright-mcp/
+
 # Logs
 *.log
 npm-debug.log*

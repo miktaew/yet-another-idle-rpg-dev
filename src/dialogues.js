@@ -1516,6 +1516,22 @@ class DialogueAction extends GameAction {
                 },
                 locks_lines: ["swampchief accept"],
             }),
+            /*
+                P-10 region 2. This finishes the sentence he breaks off in
+                "swampchief confirm answ" - "I should know. I'm reminded every time
+                I..." - and finishes nothing else. The banished half stays where
+                STORY.md puts it: open.
+            */
+            "swampchief plains": new Textline({
+                name: "swampchief plains",
+                text: "swampchief plains answ",
+                is_unlocked: false,
+                rewards: {
+                    xp: 3000,
+                    quest_progress: [{quest_id: "No Snakes Go to the Plains", task_index: 3}],
+                },
+                locks_lines: ["swampchief plains"],
+            }),
             "swampchief generic": new Textline({
                 name: "swampchief generic",
                 text: "swampchief generic answ",
@@ -1664,6 +1680,13 @@ class DialogueAction extends GameAction {
                 name: "swampcook surround2",
                 text: "swampcook surround2 answ",
                 is_unlocked: false,
+                //Being told where the plains are is what opens them, as with the
+                //wet woods. He gives directions; he does not come along.
+                rewards: {
+                    locations: [{location: "The plains"}],
+                    quests: ["No Snakes Go to the Plains"],
+                    quest_progress: [{quest_id: "No Snakes Go to the Plains", task_index: 0}],
+                },
                 locks_lines: ["swampcook surround2"],
             }),
             "swampcook surround3": new Textline({

@@ -659,6 +659,31 @@ const questManager = {
             new QuestTask({task_description: "quest Where We Gathered task 3"}),
         ]
     });
+    /*
+        P-10 region 2. Four tasks, and the fourth is the only one that matters: the
+        chief hears it. Whether the banished half is alive is not a task and does
+        not become one.
+    */
+    quests["No Snakes Go to the Plains"] = new Quest({
+        quest_name: "quest No Snakes Go to the Plains",
+        display_priority: 14,
+        getQuestDescription: ()=>{
+            if(quests["No Snakes Go to the Plains"].quest_tasks[2].is_finished) {
+                return "quest No Snakes Go to the Plains desc 3";
+            } else if(quests["No Snakes Go to the Plains"].quest_tasks[0].is_finished) {
+                return "quest No Snakes Go to the Plains desc 2";
+            } else {
+                return "quest No Snakes Go to the Plains desc 1";
+            }
+        },
+        questline: "The Snake's Soul",
+        quest_tasks: [
+            new QuestTask({task_description: "quest No Snakes Go to the Plains task 1"}),
+            new QuestTask({task_description: "quest No Snakes Go to the Plains task 2", is_hidden: true}),
+            new QuestTask({task_description: "quest No Snakes Go to the Plains task 3"}),
+            new QuestTask({task_description: "quest No Snakes Go to the Plains task 4"}),
+        ]
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

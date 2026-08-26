@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 19 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 20 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -415,8 +415,17 @@ Uygulama sırası, en yüksek kaldıraç önce:
    Odanın açıklaması korunun temizlenme sayısıyla üç aşamada değişiyor; böylece bölge
    bir anahtar gibi değil iyileşiyormuş gibi okunuyor. Aşçı da coğrafya dersindeki
    herhangi bir repliğin bugüne dek aldığı tek cevabı alıyor.
-2. **Ovalar.** Yılan bölündü ve ovalar, ayrılan yarıyla birlikte gitti. Ulaşılabilir;
-   kabilenin kendisi bulunmuyor. Aşağıya bakın.
+2. **Ovalar — TAMAM.** Bataklık tarlaları'nın güneydoğusu; aşçının ovalardan
+   bahsetmesiyle açılıyor. Bir yer olarak değil, bir yokluk olarak kuruldu: repliği
+   terk edilmiş bir av sahasından bahsediyor, yani tehlike orada artık hiçbir şeyin
+   avlanmaması, ve yerleşen şey de Eski av sahası.
+
+   `No Snakes Go to the Plains` adını onun repliğinden alıyor ve ödülü bir eşya
+   değil - bataklık reisi, yüzüğünü verdiği gün yarıda bıraktığı cümleyi
+   tamamlıyor. Kasıtlı bırakılmış bir kancaydı ve hiçbir şey ona geri dönmemişti.
+
+   Sürgün kabile hâlâ bulunmuyor. İzleri orada; ne oldukları, bataklığın üstüne
+   kurulduğu açık soru olarak kalıyor.
 3. **Körfez.** En büyüğü ve oyunun geri kalanının çoktan işaret ettiği yer: lonca
    mubayaacısının üç malı kapıdan kuzeye gidiyor ve aşçı, körfezin *ayrıldığın* yer
    olduğunu söylüyor. Ayrılmak için bir sebep oluştuktan sonra kurulmalı.

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 36 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 37 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,84 @@ geldiğinde buraya girer.
 > (0.6.1, 0.6.2, …). `npm run check`, iki HTML kopyanın da yayımlanan
 > `game_version` için bir girdi taşıdığını doğruluyor; böylece ikisi fark
 > edilmeden birbirinden uzaklaşamıyor.
+
+---
+
+## 2026-08-26
+
+### 2. bölge: ovalar
+
+*"Güneydoğu! Yılan avlanırdı! Ama yılan bölündü! Ve artık ovalara hiç yılan
+gitmiyor!"*
+
+Aşçının dört toprağından ikincisi ve yasının en açık konuştuğu yer. Diğer üç
+repliği değişmiş yerleri anlatıyor; bu repliği **terk edilmiş** bir yeri. Yılan
+bölündü, yarısı gitti, av sahası da gidenin yanında gitti.
+
+Bu yüzden ovalar bir yokluk olarak kuruldu. Ufka kadar ot, Bataklık tarlaları'nın
+güneydoğusu ve içinde avlanan hiçbir şey yok - tehlike olan da bu, güvenlik değil.
+Avcısı kalmamış bir av sahasına yerleşen şey **Eski av sahası**: kabilenin bir
+zamanlar bastırdığı şeylerin barındığı bir savaş bölgesi.
+
+**Görevin adı onun repliği.** `No Snakes Go to the Plains`, aşçı ovalardan
+bahsedince açılıyor ve toprak temizlenince kapanıyor; ödülü de bir eşya değil:
+bataklık reisi, yüzüğünü verdiği gün yarıda bıraktığı cümleyi tamamlıyor.
+Kasıtlı bırakılmış kanca buydu - adam sözünü ortasında kesiyor ve oyunda hiçbir şey
+o cümleye geri dönmüyordu.
+
+**Sürgün kabile bulunmuyor, ve asıl mesele bu.** Ovalar yürünebiliyor, izleri de
+orada; ne oldukları bütün bataklığın üstüne kurulduğu soru ve açık kalıyor. Bu
+bölge toprağı geri veriyor, insanları değil.
+
+### Dil değiştirmek artık arayüzün tamamını yeniden çiziyor
+
+Bildirilen hata "UI yarı Türkçe yarı İngilizce"ydi; iki güne yayılmış dört ekran
+görüntüsüyle. Her ekran görüntüsü düzeltildi ve bir sonraki daha fazlasını buldu -
+bu, çözülen değil, peşinden koşulan bir sorunun biçimi.
+
+Sebep yapısal. `translateUI(language)` yalnızca `data-translation` niteliği taşıyan
+öğeleri yeniden yazıyor ve `innerText` atıyor - yani ancak içeriğinin tamamı tek bir
+etiket olan bir öğeyi sahiplenebiliyor. Oyunun JavaScript'ten çizdiği her şey, ki
+oyuncunun baktığı şeylerin çoğu, o an hangi dil geçerliyse o dille bir kez yazılıp
+bir daha elden geçirilmiyordu. `option_language` dili değiştiriyor, ekranda hâlihazırda
+duran şey için hiçbir şey yapmıyordu.
+
+Cevap `retranslate_interface({location, active_quest_ids})`: saati, parayı,
+statları, kuşanılanı, etkileri, itibarı, envanteri, açılmış her yetenek çubuğunu,
+bulunduğun konumu ve panelde duran her görevi yeniden çizen tek bir fonksiyon.
+`option_language` bunu, `fill_character_bio`, `update_save_load_buttons` ve karakter
+oluşturucunun kendi yenilemesiyle birlikte çağırıyor.
+
+Bunu yaparken çıkan üç şey:
+
+- **`fill_character_bio` yeni oyunda hata fırlatıyordu.**
+  `playable_races[undefined].name` bir TypeError'dır ve oluşturma ekranında ırk henüz
+  seçilmemiştir. Bu fırlatma, yeniden çizim çalışamadan `option_language`'i kesiyordu;
+  yani bildirilen "oluşturma ekranında ırk tooltipleri İngilizce kalıyor" hatasının
+  **iki** sebebi vardı ve fırlatma ötekini gizliyordu. Artık erken dönüyor.
+- **Tarih satırı kaynağında çevrilemezdi.** `game_time.js` sezonu, gün adını ve günün
+  vaktini İngilizce döndürüyor ve döndürmeye devam etmek zorunda: `conditions.js`,
+  `getSeason()` ile içerikte yazılı `season: {yes: "Summer"}` değerini karşılaştırıyor,
+  `toString()` de kaydın `saved_at` damgasını besliyor. Bunları üretildikleri yerde
+  çevirmek bir koşulu sessizce bozar ve kayıt verisine Türkçe sokardı. Bu yüzden
+  sayılar saatten, kelimeler yerelden geliyor; anahtar da saatin döndürdüğü İngilizce -
+  kayıt anahtarlarının zaten kullandığı ayrımın aynısı.
+- **Boş kuşanma yuvalarının çevirisi baştan beri vardı.** Her `ui slot <key>` satırı
+  mevcuttu; etiket bunun yerine ham kayıt anahtarından kuruluyordu, Türkçe oynayan
+  birinin "fishing pole slot" okumasının sebebi bu. Kimlik artık bir değişkene
+  hesaplanıyor, ki içerik kimliği taramasının izleyemeyeceği bir şey - bu yüzden
+  `npm run check`, yuva listesini `equipment_slots_divs` içinden okuyup 16 yuvanın her
+  biri için satır isteyen bir kontrol kazandı.
+
+**Bir şey bilerek İngilizce kalıyor.** Mesaj kaydına düşmüş satırlar, düştükleri dilde
+kalıyor. `log_message` kimlik ve parametreleri değil, kurulmuş metni alıyor; yani
+kaydı yeniden çevrilebilir yapmak 44 çağrı noktasının ne geçirdiğini değiştirmek
+demek. Sessizce yapmak yerine buraya yazıldı.
+
+**Ve ekran görüntüleri yanlış aletti.** Son görüntü de düzeltildikten sonra
+`display.js` içinde `innerText`/`set_HTML`'e ulaşan her dizge sabitini tarayan bir
+geçiş, hiçbir ekran görüntüsünün denk gelmediği yirmi sekiz yer daha buldu. O geçiş
+bir sonraki madde, bu değil.
 
 ---
 
@@ -243,13 +321,13 @@ taşıyabileceği bir şey kalmamış.
 
 Bu yüzden onları öğretmiyor. *"Ders değil — sebebini söyledim ve ciddiydim. Ama
 bunlardan iki tane daha var ve ikisi de anlatılamaz… O yüzden durana kadar üstüme
-gel; aşırmaya değer bir şey görürsen aşır. Ben onları böyle edindim. Öğrenmenin
+gel; çalmaya değer bir şey görürsen çal. Ben onları böyle edindim. Öğrenmenin
 berbat bir yolu."*
 
 **Challenge_zone değil.** "Ben senin için fazla ağır sıkletim" kanon; yani o,
 oyuncunun yendiği bir düşman olamaz — kaybettiği bir düello, görevin adını aldığı
 repliği yazılmamış hâle getirirdi. Bu, Combat ve Evasion'a bağlı, yinelenebilir bir
-spar; ölçtüğü şey aşırmaya değer bir şey görecek kadar ayakta kalmak. Başarı metni
+spar; ölçtüğü şey çalmaya değer bir şey görecek kadar ayakta kalmak. Başarı metni
 iki duruşu da adını anmadan tarif ediyor: iki kez, bulunduğun yerin etrafından
 dolanmak yerine içinden geçti, bütün ağırlığını toparlanmasına imkân olmayan bir
 vuruşa verdi *"ve toparlandı, çünkü vuruşu savurmadan önce toparlanmayı harcamaya

@@ -147,9 +147,7 @@
                             <div id = "character_mana_bar_current">
                             </div>
                         </div>
-                        <div id = "character_mana_value" class="outline_black_static">
-                            0/0 mana
-                        </div>
+                        <div id = "character_mana_value" class="outline_black_static" data-translation="ui bar mana empty"></div>
                         <div id="character_mana_tooltip" class="character_bar_tooltip">
                         </div>
                     </div>
@@ -228,8 +226,7 @@
                 </div>
 
                 <div id = "inventory_combat_switch_selection" class="activable_buttons box_div flex_wrap">
-                    <div id="switch_to_inventory" class="active_selection_button" onclick="switchToInventory()">Inventory
-                    </div>
+                    <div id="switch_to_inventory" class="active_selection_button" onclick="switchToInventory()" data-translation="ui tab inventory"></div>
                     <div id="switch_to_combat" onclick="switchToCombat()" data-translation="Combat"></div>
                 </div>
 
@@ -606,8 +603,7 @@
                     </div>
                     <div id = "enemy_count_div">
                         <div id = "enemy_count_content">
-                            <div style = "display:inline-block;"> 
-                                Enemy groups left: 
+                            <div style = "display:inline-block;" data-translation="ui label enemy groups left">
                             </div>
                             <div id = "enemies_left_div">
                                 
@@ -659,15 +655,9 @@
                                 <div id = "trade_price_value"> 0C </div>
                             </div>
 
-                            <div id = "accept_trade_button" onclick = "acceptTrade()">
-                                Accept
-                            </div> 
-                            <div id = "cancel_trade_button" onclick = "cancelTrade()">
-                                Cancel
-                            </div> 
-                            <div id = "exit_trade_button" onclick = "exitTrade()">
-                                Exit
-                            </div>
+                            <div id = "accept_trade_button" onclick = "acceptTrade()" data-translation="ui btn accept trade"></div> 
+                            <div id = "cancel_trade_button" onclick = "cancelTrade()" data-translation="ui btn cancel trade"></div> 
+                            <div id = "exit_trade_button" onclick = "exitTrade()" data-translation="ui btn exit"></div>
                         </div>
                     </div>
 
@@ -697,8 +687,7 @@
 
                         </div>
                         <div id = "storage_control_div">
-                            <div id = "exit_storage_button" onclick = "exitStorage()">
-                                Exit
+                            <div id = "exit_storage_button" onclick = "exitStorage()" data-translation="ui btn exit">
                             </div>
                         </div>
                     </div>
@@ -719,8 +708,7 @@
                             <div class="crafting_subpage_button" data-crafting_subcategory="equipment" onclick="switchCraftingRecipesSubpage('equipment')" data-translation="ui show equipment"></div>
                         </div>
                         <div id="recipe_categories" class="crafting_category"></div>
-                        <div id="exit_crafting_button" onclick="closeCraftingWindow()">
-                            Exit
+                        <div id="exit_crafting_button" onclick="closeCraftingWindow()" data-translation="ui btn exit">
                         </div>
                     </div>
                 </div>
@@ -735,15 +723,9 @@
                                 <label for="options_hide_max_level_skills" data-translation="ui opt hide max skills"></label>
                             </div>
                             <div id="skill_sorting_buttons" class="activable_buttons flex_wrap">
-                                <div id="skill_sort_by_name" class="skill_sorting_button active_selection_button" onclick='sortSkills({sort_by:"name"})' .>
-                                    Sort by name
-                                </div>
-                                <div id="skill_sort_by_level" class="skill_sorting_button" onclick='sortSkills({sort_by:"level"})'>
-                                    Sort by level
-                                </div>
-                                <div id="skill_sort_by_progress" class="skill_sorting_button" onclick='sortSkills({sort_by:"progress"})'>
-                                    Sort by progress
-                                </div>
+                                <div id="skill_sort_by_name" class="skill_sorting_button active_selection_button" onclick='sortSkills({sort_by:"name"})' . data-translation="ui sort name"></div>
+                                <div id="skill_sort_by_level" class="skill_sorting_button" onclick='sortSkills({sort_by:"level"})' data-translation="ui sort level"></div>
+                                <div id="skill_sort_by_progress" class="skill_sorting_button" onclick='sortSkills({sort_by:"progress"})' data-translation="ui sort progress"></div>
                             </div>
                         </div>
                         <div id = "stance_list_div">
@@ -756,15 +738,9 @@
                         </div>
                     </div>
                     <div id = "skill_and_stance_control_div" class="activable_buttons flex_wrap">
-                        <div id="show_skills" class="skill_stance_control_button active_selection_button" onclick="showSkills()">
-                            Skills
-                        </div>
-                        <div id="show_stances" class="skill_stance_control_button" onclick="showStances()">
-                            Stances
-                        </div>
-                        <div id="show_magic" class="skill_stance_control_button" onclick="showMagic()">
-                            Magic
-                        </div>
+                        <div id="show_skills" class="skill_stance_control_button active_selection_button" onclick="showSkills()" data-translation="ui tab skills"></div>
+                        <div id="show_stances" class="skill_stance_control_button" onclick="showStances()" data-translation="ui tab stances"></div>
+                        <div id="show_magic" class="skill_stance_control_button" onclick="showMagic()" data-translation="ui tab magic"></div>
                     </div>
                 </div>
 
@@ -777,9 +753,7 @@
                     </div>
                     <div id = "journal_content_div">
                         <div id = "quests_box_div">
-                            <div id = "quests_header">
-                                = Quests =
-                            </div>
+                            <div id = "quests_header" data-translation="ui quests header"></div>
                             <div id = "quest_list">
 
                             </div>
@@ -1004,24 +978,12 @@
                 </div>
                 <div id = "message_controls">
 
-                    <div id = "message_show_unlocks" class = "message_control_button active_selection_button" onclick = "showUnlocksMessages()">
-                        Levels / unlocks
-                    </div>
-                    <div id = "message_show_events" class = "message_control_button active_selection_button" onclick = "showEventsMessages()">
-                        Events
-                    </div>
-                    <div id = "message_show_crafting" class = "message_control_button active_selection_button" onclick = "showCraftingMessages()">
-                        Crafting
-                    </div>
-                    <div id = "message_show_combat" class = "message_control_button active_selection_button" onclick = "showCombatMessages()">
-                        Combat
-                    </div>
-                    <div id = "message_show_loot" class = "message_control_button active_selection_button" onclick = "showLootMessages()">
-                        Loot
-                    </div>
-                    <div id = "message_show_background" class = "message_control_button active_selection_button" onclick = "showBackgroundMessages()">
-                        BGM
-                    </div>
+                    <div id = "message_show_unlocks" class = "message_control_button active_selection_button" onclick = "showUnlocksMessages()" data-translation="ui log filter unlocks"></div>
+                    <div id = "message_show_events" class = "message_control_button active_selection_button" onclick = "showEventsMessages()" data-translation="ui log filter events"></div>
+                    <div id = "message_show_crafting" class = "message_control_button active_selection_button" onclick = "showCraftingMessages()" data-translation="ui log filter crafting"></div>
+                    <div id = "message_show_combat" class = "message_control_button active_selection_button" onclick = "showCombatMessages()" data-translation="Combat"></div>
+                    <div id = "message_show_loot" class = "message_control_button active_selection_button" onclick = "showLootMessages()" data-translation="ui log filter loot"></div>
+                    <div id = "message_show_background" class = "message_control_button active_selection_button" onclick = "showBackgroundMessages()" data-translation="ui log filter bgm"></div>
                     
                 </div>
             </div>
