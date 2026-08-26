@@ -3167,6 +3167,37 @@ const descriptions = {
     "quest Way Too Strong for You desc 3": "Sana hiç öğretmediği iki teknik ve vermediği bir cevap.",
     "quest Way Too Strong for You task 1": "Köy muhafızından gerçek bir dövüş iste",
     "quest Way Too Strong for You task 2": "Kolların durana kadar dayan",
+
+    //QUEST 1 - "The Merchant's Word". The guild factor outside the wall, and
+    //the second of the two keys the gate has always named.
+    "name guild factor": "lonca mubayaacısı",
+    "factor description": "Kapının dışında portatif bir masada bir adam; yanında bir yazı tahtası, bir terazi ve kendisine ait olmayan bir araba. Hiçbir şey satmıyor. Yoldan ne geldiğini ve buraya vardığında ne ettiğini yazıyor.",
+    "factor hello": "Kapıyla birlikte değil misin?",
+    "factor hello answ": "*[Yazmayı bırakmıyor]* Ben loncadanım; lonca şu duvarın öbür tarafında, ben de bu tarafındayım — bu da loncanın bir odaya ne kadar para vermek istediğini tam olarak anlatır.\n\nBugün terazi taşıyan bir adamı muhafız sanan dördüncü kişisin. Üzerinde bir şey var mı, yoksa sohbet mi ediyorsun? İkisi de serbest. Sadece birinin ücreti var.",
+    "factor buying": "Lonca ne alıyor?",
+    "factor buying answ": "Her şeyi, hem de kötü fiyata. *[Tahtayı çeviriyor]* Çiftliklerden tahıl, tepelerden yün, mağaradan demir. Hepsi geliyor, hepsi ucuz, hepsi geçen yılın aynısı.\n\nAlamadığımız şey, şelalelerin ötesinden gelen hiçbir şey. Oradan kimse dönmüyor, yani arz yok, yani fiyat yok — ve bir şeyin fiyatı olmayan bir lonca, biri sonunda o şeyi getirdiğinde onunla ne yapacağını bilmiyor.\n\n*[İlk kez başını kaldırıyor]* Bataklık kokuyorsun. Üç şey o zaman. Keten, timsah derisi, kurutulmuş et. Her birinden bir miktar getir — gerçek bir miktar, numune değil — ben de üçü için birer fiyat yazayım; bu loncanın bugüne dek saydığı tek şey de fiyattır.",
+    "factor linen": "[20 Keten kumaş ver]",
+    "factor linen answ": "*[Bir parçayı tartıyor — bu tiyatro — sonra kalanını sayıyor; bu değil]* Yirmi. Kabile dokuması; kenar örgüsü bir kasaba tezgâhı için yanlış, başka bir şey için doğru.\n\n*[Tahtaya bir sayı yazıyor ve sana göstermiyor]* Bu bir fiyat. Kötü bir fiyat; çünkü bunu satabileceğin tek kişi benim ve getirebilecek tek kişi de sensin. İkimiz de bunun tesadüf olduğunu varsayacağız.",
+    "factor linen not": "*[Başını kaldırmıyor]* Yirmi. Miktar dediğim yirmi. Kendin sayıp geldiğinde konuşuruz.",
+    "factor leather": "[20 Timsah derisi parçası ver]",
+    "factor leather answ": "*[Bu kez hiçbir şey tartmıyor. Bir parçayı gıcırdayana kadar büküyor ve gıcırtıyı dinliyor.]*\n\nBu ne inek ne keçi, tabaklaması da bizim değil. *[Yazıyor]* Lonca bunu, bir yerlere gitmiş görünmek isteyen birine, seni utandıracak bir fiyata satacak; bunu sana açık açık söylüyorum, çünkü hiçbir şeyi değiştirmiyor.",
+    "factor leather not": "*[Tahtaya vuruyor]* Yirmi parça. On dokuz artı bir söz değil.",
+    "factor jerky": "[30 Kurutulmuş timsah eti ver]",
+    "factor jerky answ": "*[Bir tane yiyor. Ne soruyor ne ikram ediyor.]*\n\nTuz, duman ve kabilenin kattığı, senin önünde tahmin etmeye kalkışmayacağım bir şey. Dayanıyor. Bütün mesele bu — dayanıyor; bu yoldan gelen başka hiçbir şey dayanmıyor.\n\n*[Tahtayı düz koyup bir süre ona bakıyor]* Üç fiyat. Peki. Bu konuda yapabileceğim bir şey var ve ne kadar küçük olduğu hoşuna gitmeyecek.",
+    "factor jerky not": "*[Elini kaldırıyor]* Otuz. Üçünün içinde sayının önemli olduğu tek şey bu; çünkü yolu atlatması gereken tek şey bu.",
+    "factor note": "Ne yapabilirsin?",
+    "factor note answ": "*[Bir kâğıt şeridine bir şeyler yazıp bir kez katlıyor ve henüz uzatmıyor]*\n\nBurada, loncanın bir tedarikçiyle cari hesabı olduğu yazılı; tedarikçinin adı da yazılı ve altında portatif masada oturan bir adamın imzası var. Lonca binasının içinde hiçbir değeri yok. *[Uzatıyor]* Kapıdaki adam için ise her şeyi ifade ediyor; çünkü ona vatandaş ya da üye olmayan herkesi geri çevirmesi söylendi ve bu, loncanın bugüne dek verdiği en ucuz üyelik.\n\nHadi git. İçeri girdiğinde de: lonca mahallesi çeşmenin ötesinde ve hiçbiri beni duyduğunu kabul etmeyecek.",
+    "g guard supplier": "Loncada hesabım var.",
+    "g guard supplier answ": "*[İki kez okuyor; ikincisi daha yavaş.]*\n\nPortatif masa. *[Neredeyse gülüyor]* Peki. Bunu kimin yazdığını tam olarak biliyorum, loncanın ona ne ödediğini de biliyorum; yine de seni içeri alacağım, çünkü anahtar iki tane ve sen birini getirdin.\n\n*[Kenara çekiliyor]* Meydan dosdoğru ileride, lonca mahallesi çeşmenin ötesinde. Güvercinleri beslemeyin. Örgütlüler.",
+    "quest The Merchant's Word": "Tüccarın Sözü",
+    "quest The Merchant's Word desc 1": "Kapı iki anahtar sayıyor: vatandaşlık ya da tüccar loncası üyeliği. Duvarın dışında, lonca için çalışan, terazili bir adam var.",
+    "quest The Merchant's Word desc 2": "Kimsenin ona getiremeyeceği üç şeyden gerçek bir miktar istiyor: keten, timsah derisi ve kurutulmuş et — hepsi şelalelerin ötesinden.",
+    "quest The Merchant's Word desc 3": "Tahtasında üç fiyat ve loncanın bugüne dek verdiği en ucuz üyelik.",
+    "quest The Merchant's Word task 1": "Lonca mubayaacısına loncanın ne aldığını sor",
+    "quest The Merchant's Word task 2": "20 Keten kumaş teslim et",
+    "quest The Merchant's Word task 3": "20 Timsah derisi parçası teslim et",
+    "quest The Merchant's Word task 4": "30 Kurutulmuş timsah eti teslim et",
+    "quest The Merchant's Word task 5": "Ondan hesabı iste",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

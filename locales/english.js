@@ -3127,6 +3127,37 @@ const descriptions = {
     "quest Way Too Strong for You desc 3": "Two techniques she never taught you, and one answer she did not give.",
     "quest Way Too Strong for You task 1": "Ask the village guard for a real bout",
     "quest Way Too Strong for You task 2": "Last until your arms stop",
+
+    //QUEST 1 - "The Merchant's Word". The guild factor outside the wall, and
+    //the second of the two keys the gate has always named.
+    "name guild factor": "guild factor",
+    "factor description": "A man at a folding table outside the gate, with a slate, a set of scales and a cart that is not his. He is not selling anything. He is writing down what comes up the road and what it was worth when it got here.",
+    "factor hello": "You are not with the gate?",
+    "factor hello answ": "*[He does not stop writing]* I am with the guild, and the guild is on the other side of that wall, and I am on this side of it, which tells you exactly how much the guild wants to pay for a room.\n\nYou are the fourth person today to think a man with scales is a guard. Do you have something on you or are you making conversation? Both are allowed. Only one is paid.",
+    "factor buying": "What is the guild buying?",
+    "factor buying answ": "Everything, badly. *[He turns the slate round]* Grain from the farms, wool from the hills, iron up from the cave. All of it arrives, all of it is cheap, all of it is the same as last year.\n\nWhat we do not get is anything from past the falls. Nobody comes back from there, so there is no supply, so there is no price - and a guild that has no price for a thing does not know what to do with it when somebody finally brings one.\n\n*[He looks up for the first time]* You smell like the swamp. Three things, then. Linen, alligator leather, jerky. Bring me a quantity of each - a real quantity, not a sample - and I will write down a price for all three, and a price is the only thing this guild has ever respected.",
+    "factor linen": "[Hand over 20 Linen cloth]",
+    "factor linen answ": "*[He weighs one piece, which is theatre, and then counts the rest, which is not]* Twenty. Tribe weave - the selvedge is wrong for a town loom and right for something else.\n\n*[He writes a number on the slate and does not show it to you]* That is a price. It is a bad one, because I am the only person you can sell this to, and you are the only person who can bring it. We will both pretend that is a coincidence.",
+    "factor linen not": "*[He does not look up]* Twenty. A quantity is twenty. Come back when you have counted them yourself.",
+    "factor leather": "[Hand over 20 Pieces of alligator leather]",
+    "factor leather answ": "*[This time he does not weigh anything. He bends a piece until it creaks and listens to the creak.]*\n\nThat is not cow and it is not goat and the tanning is not ours. *[He writes]* The guild will sell this to somebody who wants to look like they have been somewhere, at a price that would embarrass you, and I will be entirely honest with you about that, because it changes nothing.",
+    "factor leather not": "*[He taps the slate]* Twenty pieces. Not nineteen and a promise.",
+    "factor jerky": "[Hand over 30 Alligator jerky]",
+    "factor jerky answ": "*[He eats one. He does not ask, and he does not offer.]*\n\nSalt, smoke, and something the tribe puts in that I am not going to guess at in front of you. It keeps. That is the whole of it - it keeps, and nothing else that comes up this road keeps.\n\n*[He sets the slate flat and looks at it for a while]* Three prices. Right. There is a thing I can do about that, and you are not going to like how small it is.",
+    "factor jerky not": "*[He holds up a hand]* Thirty. It is the only one of the three where the number matters, because it is the only one that has to last the road.",
+    "factor note": "What can you do about it?",
+    "factor note answ": "*[He writes on a strip of slate-paper, folds it once, and does not hand it over yet]*\n\nThis says that the guild has a standing account with a supplier, and it names the supplier, and it is signed by a man at a folding table. It is worth nothing inside the guild hall. *[He holds it out]* It is worth everything to the man on the gate, because he was told to turn away anybody who is not a citizen or a member, and this is the cheapest membership the guild has ever issued.\n\nGo on. And when you are inside - the guild quarter is past the fountain, and none of them will admit they have heard of me.",
+    "g guard supplier": "I have a guild account.",
+    "g guard supplier answ": "*[He reads it twice, and the second time is slower.]*\n\nFolding table. *[He almost laughs]* Right. I know exactly who wrote this and I know what the guild pays him, and I am still going to let you through, because those are the two keys and you brought one of them.\n\n*[He steps aside]* Square's straight on, guild quarter past the fountain. Don't feed the pigeons. They're organised.",
+    "quest The Merchant's Word": "The Merchant's Word",
+    "quest The Merchant's Word desc 1": "The gate names two keys: citizenship, or membership of the merchant guild. There is a man with scales outside the wall who works for the guild.",
+    "quest The Merchant's Word desc 2": "He wants a real quantity of three things nobody else can bring him: linen, alligator leather and jerky, all of it from past the falls.",
+    "quest The Merchant's Word desc 3": "Three prices on his slate, and the cheapest membership the guild has ever issued.",
+    "quest The Merchant's Word task 1": "Ask the guild factor what the guild buys",
+    "quest The Merchant's Word task 2": "Deliver 20 Linen cloth",
+    "quest The Merchant's Word task 3": "Deliver 20 Pieces of alligator leather",
+    "quest The Merchant's Word task 4": "Deliver 30 Alligator jerky",
+    "quest The Merchant's Word task 5": "Ask him for the account",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

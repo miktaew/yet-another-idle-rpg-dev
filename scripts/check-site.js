@@ -916,6 +916,49 @@ function check_reward_keys() {
     console.log(`[check] reward objects: ${blocks} checked`);
 }
 
+/**
+ * Every item id named by a requirement has to be a real template.
+ *
+ * `items_by_id` is how actions charge the player in goods, and a typo there is
+ * silent in the worst way: process_conditions looks for an id nothing has, finds
+ * nothing, and the action can never be begun. The player sees a delivery they can
+ * never satisfy while holding a full inventory of the thing.
+ *
+ * Generated templates count, so this asks the generator rather than only grepping.
+ */
+async function check_required_items() {
+    const source_items = fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8");
+    const known = new Set([...strip_comments(source_items)
+        .matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(match => match[1]));
+
+    const { generated, problem } = await load_generated_item_templates(repo_root);
+    if (problem) {
+        error(`${problem} - this check is out of date.`);
+    }
+    for (const key of Object.keys(generated ?? {})) { known.add(key); }
+
+    let checked = 0;
+    for (const file of ["src/locations.js", "src/dialogues.js"]) {
+        const full_path = path.join(repo_root, file);
+        if (!fs.existsSync(full_path)) {
+            error(`${file} is missing - this check is out of date.`);
+            continue;
+        }
+        const source = strip_comments(fs.readFileSync(full_path, "utf8"));
+
+        for (const block of source.matchAll(/items_by_id:\s*\{([^}]*(?:\{[^}]*\}[^}]*)*)\}/g)) {
+            for (const entry of block[1].matchAll(/"([^"]+)"\s*:/g)) {
+                checked++;
+                if (!known.has(entry[1])) {
+                    error(`${file} requires item "${entry[1]}", which is not a template.`
+                        + " The requirement can never be satisfied, so the action can never begin.");
+                }
+            }
+        }
+    }
+    console.log(`[check] required items: ${checked} checked`);
+}
+
 check_site();
 check_interpolated_pairs();
 check_reward_keys();
@@ -926,6 +969,7 @@ await check_locales();
 await check_dialogue_display_names();
 await check_trader_display_names();
 await check_item_display_names();
+await check_required_items();
 await check_content_text_ids();
 await check_generated_items();
 

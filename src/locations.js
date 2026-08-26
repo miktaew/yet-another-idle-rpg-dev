@@ -1521,7 +1521,7 @@ function get_location_type_penalty(type, stage, stat, category) {
         description: "desc location Town outskirts",
         name: "Town outskirts",
         is_unlocked: true,
-        dialogues: ["gate guard"],
+        dialogues: ["gate guard", "guild factor"],
     });
     locations["Forest road"].connected_locations.push({location: locations["Town outskirts"], custom_text: "travel Go towards the [Town outskirts]", travel_time: 240});
 

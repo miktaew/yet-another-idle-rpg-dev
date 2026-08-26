@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 16 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 17 -->
 
 # Proposals
 
@@ -255,7 +255,7 @@ registry. Run against a real v0.5.5.30 save from before the localisation work, a
 131 recipes and 90 item ids resolve. The rule that registry keys are save data had
 never been checked against an actual save.
 
-### P-9 — Continue the story `active`
+### P-9 — Continue the story `done`
 
 Canon, the frontier, the orphan inventory and the planned arc are now written up
 in [STORY.md](STORY.md). Q-1 is decided in favour of full divergence, so new
@@ -343,13 +343,29 @@ Execution order, highest leverage first:
    the question in as many words, and corrects only the craftsman's verdict:
    *"it was not talent."*
 
-**The ordered work above is finished. Q1 is not, and was never in the order.**
-*The Merchant's Word* - the quest that gives the merchant guild a body by
-supplying it with tribe goods - remains unbuilt, so the gate opened by the
-citizen path only: the farm supervisor vouching for the hero, not the supplier
-path the premise is named after. The guild quarter the gate guard points at,
-*"past the fountain"*, is still a direction rather than a place. That is the
-next piece of this proposal.
+6. **DONE, and it was the missing first one.** *The Merchant's Word* gives the
+   merchant guild a body, and the gate its second key. The factor sits at a
+   folding table OUTSIDE the wall, which is the point: a supplier does not need
+   to be let in to sell, only to be worth letting in.
+
+   He buys the three things nobody else can bring him - linen from tribe flax,
+   alligator leather from the tanner's recipe, jerky from the cook's - and the
+   reason is a supply argument rather than a favour: *"Nobody comes back from
+   there, so there is no supply, so there is no price - and a guild that has no
+   price for a thing does not know what to do with it when somebody finally
+   brings one."* Three deliveries, three prices on his slate, and then the
+   cheapest membership the guild has ever issued.
+
+   The gate's `supplier` line mirrors `known` exactly, because it is the same
+   gate; the difference is which of the two keys the player brought. Each locks
+   the other, so a player who walked in on reputation is not offered a note they
+   no longer need.
+
+**All six quests of the arc are built.** The gate has both of its keys, the town
+interiors have people in them, the robbery has a client nobody can name, the
+second gate opens with mind, and the guard finally spars. Silver, the rat, the
+deep dive, the ingot recipe and the last two stances are all reclaimed - the
+"authored but unreachable" list in [STORY.md](STORY.md) is empty.
 
 What must stay open: who paid for the robbery, how the hero came to have the
 object, whether the guard is the retired adventurer, the four unbuilt regions,

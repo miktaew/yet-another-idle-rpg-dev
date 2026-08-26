@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 6 -->
+<!-- doc-source: docs/STORY.md  doc-version: 7 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -189,7 +189,7 @@ Bunları geri kazanmak yeni içerik uydurmaya göre önceliklidir.
 | **`Silver ingot` tarifi** | Yorum içinde, bir kullanım noktası bekliyor. Seviye aralığı zaten canlı demir ve çelik tarifleri arasında doğru yerde. |
 | **İki combat stance** | `berserk` ve `flowing water`, skill'leriyle birlikte; bugün hiçbir şey vermiyor. |
 
-**Durum: kapı açık; 3. ve 4. quest yayında.** Adventurer's guild ile Town square artık
+**Durum: arkın altı quest'i de kuruldu ve bu liste boş.** Adventurer's guild ile Town square artık
 NPC tutuyor — lonca kâtibi ve yeşil tentenin altındaki komisyoncu — ki bu, iki
 odanın da bugüne dek sahip olduğu ilk içerik. 2. quest onlardan önce tamamlandı;
 Town square, Cat cafe, Antique

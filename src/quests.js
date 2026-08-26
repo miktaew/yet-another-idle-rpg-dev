@@ -608,6 +608,34 @@ const questManager = {
             new QuestTask({task_description: "quest Way Too Strong for You task 2"}),
         ]
     });
+    /*
+        Quest 1 of the arc, built last. The gate names two keys and only the
+        citizen one existed; this is the other, and it is the premise the arc is
+        named for - the hero enters the town as a supplier, not as a hero.
+
+        Five tasks: get him talking, three deliveries, and the note.
+    */
+    quests["The Merchant's Word"] = new Quest({
+        quest_name: "quest The Merchant's Word",
+        display_priority: 8,
+        getQuestDescription: ()=>{
+            if(quests["The Merchant's Word"].quest_tasks[3].is_finished) {
+                return "quest The Merchant's Word desc 3";
+            } else if(quests["The Merchant's Word"].quest_tasks[0].is_finished) {
+                return "quest The Merchant's Word desc 2";
+            } else {
+                return "quest The Merchant's Word desc 1";
+            }
+        },
+        questline: "The Merchant's Word",
+        quest_tasks: [
+            new QuestTask({task_description: "quest The Merchant's Word task 1"}),
+            new QuestTask({task_description: "quest The Merchant's Word task 2"}),
+            new QuestTask({task_description: "quest The Merchant's Word task 3"}),
+            new QuestTask({task_description: "quest The Merchant's Word task 4"}),
+            new QuestTask({task_description: "quest The Merchant's Word task 5"}),
+        ]
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

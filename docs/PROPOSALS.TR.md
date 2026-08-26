@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 16 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 17 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -269,7 +269,7 @@ denetlenmemişti.
 
 ---
 
-### P-9 — Hikâyeyi devam ettir `active`
+### P-9 — Hikâyeyi devam ettir `done`
 
 Kanon, frontier, orphan envanteri ve planlanan ark artık
 [STORY.TR.md](STORY.TR.md) içinde yazılı. Q-1 tam ayrışma yönünde karara
@@ -353,12 +353,28 @@ Uygulama sırası, en yüksek kaldıraç önce:
    hemen önce emekli olan o en iyi on maceracıdan biri olup olmadığı. Soruyu açık
    açık reddediyor ve yalnızca zanaatkârın hükmünü düzeltiyor: *"yetenek değildi."*
 
-**Yukarıdaki sıralı iş bitti. Q1 bitmedi ve hiç sıraya girmemişti.**
-*The Merchant's Word* — tüccar loncasına, ona kabile malı tedarik ederek gövde
-kazandıran görev — hâlâ kurulmadı; dolayısıyla kapı yalnızca vatandaş yolundan
-açıldı: çiftlik sorumlusunun kahramana kefil olmasıyla, premisin adını aldığı
-tedarikçi yolundan değil. Kapı muhafızının işaret ettiği *"çeşmenin ötesindeki"*
-lonca mahallesi hâlâ bir yer değil, bir yön. Bu önerinin sıradaki parçası bu.
+6. **BİTTİ — ve eksik olan ilk görev buydu.** *The Merchant's Word* tüccar
+   loncasına gövde, kapıya da ikinci anahtarını veriyor. Mubayaacı, duvarın
+   DIŞINDA portatif bir masada oturuyor; asıl nokta da bu: bir tedarikçinin
+   satmak için içeri alınmasına gerek yok, içeri alınmaya değer olması gerekiyor.
+
+   Kimsenin ona getiremeyeceği üç şeyi alıyor — kabile ketenden keten kumaş,
+   tabakçının tarifinden timsah derisi, aşçının tarifinden kurutulmuş et — ve
+   gerekçesi bir iyilik değil, bir arz meselesi: *"Oradan kimse dönmüyor, yani arz
+   yok, yani fiyat yok — ve bir şeyin fiyatı olmayan bir lonca, biri sonunda o şeyi
+   getirdiğinde onunla ne yapacağını bilmiyor."* Üç teslimat, tahtasında üç fiyat
+   ve ardından loncanın bugüne dek verdiği en ucuz üyelik.
+
+   Kapının `supplier` satırı `known`'ı birebir yansıtıyor, çünkü aynı kapı; fark,
+   oyuncunun iki anahtardan hangisini getirdiği. Her biri diğerini kilitliyor;
+   böylece itibarla içeri girmiş bir oyuncuya artık ihtiyacı olmayan bir kâğıt
+   önerilmiyor.
+
+**Arkın altı görevinin tamamı kuruldu.** Kapının iki anahtarı da var, kasaba
+içlerinde insanlar var, soygunun kimsenin adını bilmediği bir müşterisi var, ikinci
+kapı akılla açılıyor ve muhafız sonunda dövüşüyor. Gümüş, sıçan, derin dalış,
+külçe tarifi ve son iki duruş geri kazanıldı — [STORY.TR.md](STORY.TR.md) içindeki
+"yazılmış ama erişilemez" listesi boş.
 
 Açık kalması gerekenler: soygunun parasını kimin ödediği, kahramanın o nesneye
 nasıl sahip olduğu, inşa edilmemiş dört bölge, sürgün kabile ve Rat God.

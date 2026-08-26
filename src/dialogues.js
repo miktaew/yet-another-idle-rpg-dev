@@ -1012,8 +1012,28 @@ class DialogueAction extends GameAction {
                 },
                 //"enter" is locked too: its answer says the town is closed, which
                 //stops being true the moment this line resolves.
-                locks_lines: ["enter", "known"],
+                locks_lines: ["enter", "known", "supplier"],
             }), 
+            /*
+                The supplier path. "known" is the citizen half, gated on Town
+                reputation; this is the membership half, and it is unlocked rather
+                than condition-gated because the factor's note IS the condition.
+
+                Same rewards, because it is the same gate.
+            */
+            "supplier": new Textline({
+                name: "g guard supplier",
+                is_unlocked: false,
+                text: "g guard supplier answ",
+                rewards: {
+                    locations: [{location: "Town square"}],
+                    quest_progress: [
+                        {quest_id: "Lost memory", task_index: 4},
+                    ],
+                    textlines: [{dialogue: "gate guard", lines: ["passed"]}],
+                },
+                locks_lines: ["enter", "known", "supplier"],
+            }),
             "passed": new Textline({
                 name: "g guard passed",
                 text: "g guard passed answ",
@@ -2385,6 +2405,130 @@ class DialogueAction extends GameAction {
                 return "swampscout description 1";
             }}
         });
+
+    /*
+        QUEST 1 - "The Merchant's Word", and the supplier half of the gate.
+
+        He stands outside the wall on purpose. A supplier does not need to be let
+        in to sell; he needs to be worth letting in, which is the difference the
+        gate guard's own line is about - citizenship or membership, and nothing
+        else.
+
+        Three deliveries, and all three are goods only the swamp can produce:
+        linen from tribe flax, alligator leather from the tanner's recipe, jerky
+        from the cook's. Nobody who has not been past the falls can bring him any
+        of it, which is why the membership is worth writing.
+    */
+    dialogues["guild factor"] = new Dialogue({
+        name: "guild factor",
+        is_unlocked: true,
+        description: "factor description",
+        textlines: {
+            "hello": new Textline({
+                name: "factor hello",
+                text: "factor hello answ",
+                rewards: {
+                    textlines: [{dialogue: "guild factor", lines: ["buying"]}],
+                },
+                locks_lines: ["hello"],
+            }),
+            "buying": new Textline({
+                name: "factor buying",
+                is_unlocked: false,
+                text: "factor buying answ",
+                rewards: {
+                    quests: ["The Merchant's Word"],
+                    quest_progress: [{quest_id: "The Merchant's Word", task_index: 0}],
+                    actions: [{dialogue: "guild factor", action: "deliver linen"}],
+                },
+                locks_lines: ["buying"],
+            }),
+            //Asked after the third delivery. The note is the second key the gate
+            //guard names, and the only one the hero can earn from outside.
+            "note": new Textline({
+                name: "factor note",
+                is_unlocked: false,
+                text: "factor note answ",
+                rewards: {
+                    reputation: {Town: 30},
+                    quest_progress: [{quest_id: "The Merchant's Word", task_index: 4}],
+                    textlines: [{dialogue: "gate guard", lines: ["supplier"]}],
+                },
+                locks_lines: ["note"],
+            }),
+        },
+        actions: {
+            "deliver linen": new DialogueAction({
+                action_id: "deliver linen",
+                is_unlocked: false,
+                starting_text: "factor linen",
+                description: "",
+                action_text: "",
+                success_text: "factor linen answ",
+                repeatable: false,
+                failure_texts: {
+                    unable_to_begin: ["factor linen not"],
+                },
+                required: {
+                    items_by_id: {"Linen cloth": {count: 20, remove_on_success: true}},
+                },
+                attempt_duration: 0,
+                success_chances: [1],
+                rewards: {
+                    money: 6000,
+                    quest_progress: [{quest_id: "The Merchant's Word", task_index: 1}],
+                    actions: [{dialogue: "guild factor", action: "deliver leather"}],
+                },
+                locks_lines: ["deliver linen"],
+            }),
+            "deliver leather": new DialogueAction({
+                action_id: "deliver leather",
+                is_unlocked: false,
+                starting_text: "factor leather",
+                description: "",
+                action_text: "",
+                success_text: "factor leather answ",
+                repeatable: false,
+                failure_texts: {
+                    unable_to_begin: ["factor leather not"],
+                },
+                required: {
+                    items_by_id: {"Piece of alligator leather": {count: 20, remove_on_success: true}},
+                },
+                attempt_duration: 0,
+                success_chances: [1],
+                rewards: {
+                    money: 9000,
+                    quest_progress: [{quest_id: "The Merchant's Word", task_index: 2}],
+                    actions: [{dialogue: "guild factor", action: "deliver jerky"}],
+                },
+                locks_lines: ["deliver leather"],
+            }),
+            "deliver jerky": new DialogueAction({
+                action_id: "deliver jerky",
+                is_unlocked: false,
+                starting_text: "factor jerky",
+                description: "",
+                action_text: "",
+                success_text: "factor jerky answ",
+                repeatable: false,
+                failure_texts: {
+                    unable_to_begin: ["factor jerky not"],
+                },
+                required: {
+                    items_by_id: {"Alligator jerky": {count: 30, remove_on_success: true}},
+                },
+                attempt_duration: 0,
+                success_chances: [1],
+                rewards: {
+                    money: 12000,
+                    quest_progress: [{quest_id: "The Merchant's Word", task_index: 3}],
+                    textlines: [{dialogue: "guild factor", lines: ["note"]}],
+                },
+                locks_lines: ["deliver jerky"],
+            }),
+        },
+    });
 
     /*
         QUEST 3 - "Somewhere in the Town".

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 31 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 32 -->
 
 # Changelog
 
@@ -20,6 +20,79 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### Quest 1: "The Merchant's Word", and the gate's second key
+
+Built last, and it is the first quest of the arc. The gate has always named two
+keys - *"The town is currently closed to everyone who isn't a citizen or a
+merchant guild's member. No exceptions."* - and only the citizen one existed. The
+merchant guild was a noun in one sentence.
+
+**The factor sits outside the wall**, at a folding table with a slate, a set of
+scales and a cart that is not his, and that is the whole design: a supplier does
+not need to be let in to sell, only to be worth letting in. *"I am with the guild,
+and the guild is on the other side of that wall, and I am on this side of it, which
+tells you exactly how much the guild wants to pay for a room."*
+
+What he wants is a supply argument, not a favour. The farms send grain, the hills
+send wool, the cave sends iron, *"all of it the same as last year"*. What never
+arrives is anything from past the falls: *"Nobody comes back from there, so there is
+no supply, so there is no price - and a guild that has no price for a thing does not
+know what to do with it when somebody finally brings one."*
+
+So: linen, alligator leather, jerky. All three from tribe recipes, all three
+impossible for anyone who has not been past the falls, which is the premise the arc
+is named for - the hero enters the town **as a supplier, not as a hero**. Twenty
+linen, twenty leather, thirty jerky, and he is honest about the price each time
+because honesty costs him nothing: *"I am the only person you can sell this to, and
+you are the only person who can bring it. We will both pretend that is a
+coincidence."*
+
+Then the note. It is worth nothing inside the guild hall and everything at the
+gate, *"because he was told to turn away anybody who is not a citizen or a member,
+and this is the cheapest membership the guild has ever issued."*
+
+**The gate's `supplier` line mirrors `known` exactly**, because it is the same gate
+- same location unlock, same Lost memory task, same follow-up. The only difference
+is which key was brought. Each locks the other, so a player who walked in on Town
+reputation is never offered a note they no longer need. The guard reads it twice:
+*"Folding table. Right. I know exactly who wrote this and I know what the guild pays
+him, and I am still going to let you through, because those are the two keys and you
+brought one of them."*
+
+### One more check, from the same family as the last two
+
+`items_by_id` is how an action charges the player in goods, and a typo there fails
+in the worst possible way: `process_conditions` looks for an id nothing has, finds
+nothing, and the action can never be begun - so the player sees a delivery they
+cannot satisfy while holding a full stack of the thing. `npm run check` now resolves
+every required item id against the templates, generated ones included, by asking the
+generator rather than only grepping. 18 references. Negative-tested with a doubled
+letter.
+
+That is the third check in two days aimed at the same class: content that looks
+like it does something and does nothing. The other two were the reward-key
+validation and the money-requirement shape.
+
+### The arc is built
+
+All six quests of *The Merchant's Word* exist. The gate has both of its keys, the
+five town interiors have people in them, the robbery has a client nobody can name,
+the second gate opens with mind rather than strength, and the village guard finally
+spars.
+
+And the "authored but unreachable" list in [STORY.md](STORY.md) is empty. Town
+square, the Adventurer's guild, the Antique store, the Cat cafe, the Nekomimi cafe
+and the Mages guild are all reachable; the `cute little rat` dialogue, the forest
+lake's deep dive, the `Silver ingot` recipe and the two orphaned combat stances are
+all reclaimed. Nine high-value orphans, none left.
+
+What stays open stays open: who paid for the robbery, how the hero came to have the
+object, whether the guard is the retired adventurer, the four unbuilt regions, the
+banished tribe, and the Rat God.
+
+2739 keys per language; `check` at 1783 content ids, 272 reward objects, 18 required
+items, 21 dialogue names, 247 item names; `npm test` at 91.
 
 ### Quest 6: "Way Too Strong for You"
 

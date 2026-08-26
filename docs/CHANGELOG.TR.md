@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 31 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 32 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,77 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### 1. görev: "Tüccarın Sözü" ve kapının ikinci anahtarı
+
+En son kuruldu ve arkın ilk görevi. Kapı baştan beri iki anahtar sayıyordu —
+*"Kasaba şu anda vatandaş ya da tüccar loncası üyesi olmayan herkese kapalı.
+İstisnası yok."* — ve yalnızca vatandaş olanı vardı. Tüccar loncası tek bir cümlede
+geçen bir isimdi.
+
+**Mubayaacı duvarın dışında oturuyor**; portatif bir masada, bir yazı tahtası, bir
+terazi ve kendisine ait olmayan bir arabayla. Bütün tasarım da bu: bir tedarikçinin
+satmak için içeri alınmasına gerek yok, içeri alınmaya değer olması gerekiyor. *"Ben
+loncadanım; lonca şu duvarın öbür tarafında, ben de bu tarafındayım — bu da loncanın
+bir odaya ne kadar para vermek istediğini tam olarak anlatır."*
+
+İstediği şey bir iyilik değil, bir arz meselesi. Çiftlikler tahıl, tepeler yün,
+mağara demir gönderiyor; *"hepsi geçen yılın aynısı"*. Hiç gelmeyen şey ise
+şelalelerin ötesinden gelen her şey: *"Oradan kimse dönmüyor, yani arz yok, yani
+fiyat yok — ve bir şeyin fiyatı olmayan bir lonca, biri sonunda o şeyi getirdiğinde
+onunla ne yapacağını bilmiyor."*
+
+Yani: keten, timsah derisi, kurutulmuş et. Üçü de kabile tariflerinden, üçü de
+şelalelerin ötesine gitmemiş biri için imkânsız — arkın adını aldığı premis de bu:
+kahraman kasabaya **kahraman olarak değil, tedarikçi olarak** giriyor. Yirmi keten,
+yirmi deri, otuz kurutulmuş et; ve her seferinde fiyat konusunda dürüst, çünkü
+dürüstlük ona hiçbir şeye mal olmuyor: *"Bunu satabileceğin tek kişi benim ve
+getirebilecek tek kişi de sensin. İkimiz de bunun tesadüf olduğunu varsayacağız."*
+
+Sonra kâğıt. Lonca binasının içinde hiçbir değeri yok, kapıda ise her şeyi ifade
+ediyor: *"çünkü ona vatandaş ya da üye olmayan herkesi geri çevirmesi söylendi ve
+bu, loncanın bugüne dek verdiği en ucuz üyelik."*
+
+**Kapının `supplier` satırı `known`'ı birebir yansıtıyor**, çünkü aynı kapı — aynı
+lokasyon açılışı, aynı Lost memory adımı, aynı devam satırı. Tek fark hangi
+anahtarın getirildiği. Her biri diğerini kilitliyor; böylece Town itibarıyla içeri
+girmiş bir oyuncuya artık ihtiyacı olmayan bir kâğıt hiç önerilmiyor. Muhafız onu
+iki kez okuyor: *"Portatif masa. Peki. Bunu kimin yazdığını tam olarak biliyorum,
+loncanın ona ne ödediğini de biliyorum; yine de seni içeri alacağım, çünkü anahtar
+iki tane ve sen birini getirdin."*
+
+### Son iki kontrolle aynı aileden bir kontrol daha
+
+`items_by_id`, bir eylemin oyuncudan mal olarak tahsil etme yolu; oradaki bir yazım
+hatası da mümkün olan en kötü biçimde başarısız oluyor: `process_conditions` hiçbir
+şeyin taşımadığı bir id arıyor, bulamıyor ve eylem hiç başlatılamıyor — yani oyuncu,
+elinde o şeyden dolu bir yığın varken karşılayamadığı bir teslimat görüyor.
+`npm run check` artık her gerekli eşya id'sini şablonlara karşı çözüyor; üretilenler
+dahil, sadece grep'leyerek değil generator'a sorarak. 18 referans. Harfi ikizleyerek
+negatif test edildi.
+
+Bu, iki gün içinde aynı sınıfa yönelen üçüncü kontrol: bir şey yapıyor gibi görünüp
+hiçbir şey yapmayan içerik. Diğer ikisi ödül anahtarı doğrulaması ve para koşulu
+şekliydi.
+
+### Ark kuruldu
+
+*The Merchant's Word*'ün altı görevinin hepsi var. Kapının iki anahtarı da var, beş
+kasaba içinde insanlar var, soygunun kimsenin adını bilmediği bir müşterisi var,
+ikinci kapı güçle değil akılla açılıyor ve köy muhafızı sonunda dövüşüyor.
+
+Ve [STORY.TR.md](STORY.TR.md) içindeki "yazılmış ama erişilemez" listesi boş. Town
+square, Adventurer's guild, Antique store, Cat cafe, Nekomimi cafe ve Mages guild'in
+hepsine ulaşılabiliyor; `cute little rat` diyaloğu, orman gölünün derin dalışı,
+`Silver ingot` tarifi ve sahipsiz iki savaş duruşu geri kazanıldı. Dokuz yüksek
+değerli yetim, hiçbiri kalmadı.
+
+Açık kalan açık kalıyor: soygunun parasını kimin ödediği, kahramanın o nesneye nasıl
+sahip olduğu, muhafızın emekli maceracı olup olmadığı, dört inşa edilmemiş bölge,
+sürgün edilmiş kabile ve Sıçan Tanrı.
+
+Dil başına 2739 anahtar; `check` 1783 içerik id'si, 272 ödül nesnesi, 18 gerekli
+eşya, 21 dialogue adı, 247 eşya adında; `npm test` 91'de.
 
 ### 6. görev: "Senin İçin Fazla Ağır Sıklet"
 
