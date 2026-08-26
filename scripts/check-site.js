@@ -961,6 +961,90 @@ function strip_interpolations(body) {
 }
 
 /**
+ * No locale row may be a placeholder.
+ *
+ * `"action gaze success": "[TBD]"` shipped in both locales for as long as the action
+ * existed. It was unreachable, which is why nobody saw it, but "unreachable" is a
+ * property of today's success_chances and not a promise - the row was one edit away
+ * from being the text a player read.
+ *
+ * The Nekomimi cafe's nine `lorem ipsum` strings were the same class of thing and
+ * were caught by reading the file. This is that read, every build.
+ */
+async function check_no_placeholder_text() {
+    const placeholder = /\[TBD\]|\[tbd\]|lorem ipsum|LOREM IPSUM|\bTODO\b|\bFIXME\b|XXXX/;
+
+    const names = fs.readdirSync(locales_dir)
+        .filter(file => file.endsWith(".js"))
+        .map(file => file.slice(0, -3));
+
+    for (const name of names) {
+        const source = fs.readFileSync(path.join(locales_dir, `${name}.js`), "utf8");
+
+        source.split(/\r?\n/).forEach((line, index) => {
+            const row = line.match(/^\s+"((?:[^"\\]|\\.)*)"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+            if (!row) return;
+            //"[tbc]" at the end of the four-legged bird line is the author's tease and
+            //the player is meant to read it - it is the only intentional one, and it is
+            //intentional because the action can never resolve past it.
+            if (row[1] === "action gaze fail random_loss 1") return;
+            if (placeholder.test(row[2])) {
+                error(`locales/${name}.js:${index + 1} "${row[1]}" is still placeholder text:`
+                    + ` "${row[2].slice(0, 40)}". Write it or delete the row.`);
+            }
+        });
+    }
+    console.log("[check] no placeholder text in the locales");
+}
+
+/**
+ * An action must not declare a branch it can never take.
+ *
+ * Two shapes, both found on the `gaze` action:
+ *
+ *   - `conditional_loss` with no `conditions`. process_conditions returns 1 when the
+ *     condition list is empty (conditions.js: "no conditions mean nothing to fail"),
+ *     so conditions_status is never 0 and that text cannot be reached. Gaze's copy
+ *     was pasted from the deep dive and talked about lung capacity.
+ *   - a success text with `success_chances` all zero. `action_result > Math.random()`
+ *     is never true at 0, so the success branch cannot fire. Gaze's pointed at a row
+ *     whose content was "[TBD]".
+ *
+ * Neither is a crash. Both are text that looks written and is not reachable, which is
+ * the most expensive kind of dead content because it reads as finished.
+ */
+function check_action_branches() {
+    let checked = 0;
+    for (const relative of ["src/locations.js", "src/dialogues.js"]) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const match of source.matchAll(/new (?:GameAction|DialogueAction)\(\{([\s\S]*?)\n\s{8,12}\}\)/g)) {
+            const body = match[1];
+            const id = body.match(/action_id:\s*"([^"]+)"/);
+            const name = id ? id[1] : "(action with no id)";
+            checked++;
+
+            const has_conditions = /\n\s+conditions:\s*\[\s*\{/.test(body);
+            if (/conditional_loss:/.test(body) && !has_conditions) {
+                error(`action "${name}" in ${relative} declares a conditional_loss text but has no`
+                    + " conditions. process_conditions returns 1 for an empty list, so that text"
+                    + " can never be shown.");
+            }
+
+            const chances = body.match(/success_chances:\s*\[([^\]]*)\]/);
+            const all_zero = chances
+                && chances[1].split(",").filter(part => part.trim()).every(part => Number(part) === 0);
+            if (all_zero && /\n\s+success_text(s)?:|getSuccessText/.test(body)) {
+                error(`action "${name}" in ${relative} has success_chances of zero but declares a`
+                    + " success text, which no player can reach. Either give it a chance of"
+                    + " succeeding or drop the text.");
+            }
+        }
+    }
+    console.log(`[check] action branches: ${checked} actions`);
+}
+
+/**
  * Every global_flags name referenced outside main.js has to exist in main.js.
  *
  * The flags are a string-keyed object, so a rename or a typo is silent in both
@@ -1500,6 +1584,8 @@ await check_no_english_in_dom();
 await check_registry_value_names();
 await check_trader_market_regions();
 await check_global_flags();
+await check_no_placeholder_text();
+check_action_branches();
 await check_required_items();
 await check_content_text_ids();
 await check_generated_items();

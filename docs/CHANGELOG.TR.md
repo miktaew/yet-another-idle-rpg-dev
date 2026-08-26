@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 42 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 43 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,50 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Gaze eyleminin ulaşılamayan iki sonu
+
+Orman gölündeki *"Nehrin gittiği yeri takip et"*, yazarın orman kalbi için bıraktığı
+bir kışkırtma ve hiç başarılı olmayacak şekilde kurulmuş: `success_chances: [0,0]`,
+yani oyuncunun ulaşabileceği tek dal, şöyle biten `random_loss` metni: *"Uzakta uçan
+bir kuşa benzeyen şeyin ayrıntılarını çıkarmaya çalışıyorsun. Dört bacağı var...
+[tbc]"*.
+
+**Bu olduğu gibi kalıyor.** STORY.md dört bacaklı kuşu bilerek açık bırakılanlar
+arasında sayıyor ve PROPOSALS, onun hiçbir bölgeye ait olmadığını ve bir bölgeye
+katılmaması gerektiğini söylüyor. Eylemi başarılı kılmak, belgelerin ayakta
+bırakılmasını söylediği bir soruyu cevaplamak olurdu; o yüzden yapılmadı.
+
+Giden şey, kimsenin ulaşamadığı iki dal:
+
+- **`success_text`, içeriğinin tamamı `"[TBD]"` olan bir satırı** gösteriyordu; iki
+  dilde de. Ulaşılamaz, kimsenin görmemesinin sebebi de bu — ama "ulaşılamaz",
+  bugünkü `success_chances`'in bir özelliği, bir taahhüt değil. O satır, bir oyuncunun
+  okuduğu metin olmaya bir düzenleme uzaklıktaydı.
+- **`conditional_loss` hiç tetiklenemez.** `process_conditions`, boş bir koşul listesi
+  için 1 döndürüyor — kendi yorumu *"koşul yoksa başarısız olacak bir şey de yok"*
+  diyor — ve gaze'in koşulu yok. Metni de Orman gölü derin dalışından kopyalanmıştı ve
+  akciğer kapasitesinden bahsediyordu; nehrin aşağısına bakmakla hiçbir ilgisi yok.
+
+Ve ulaşılabilir olan satırdaki bir tekrar: *"make make out"*. Yazarın sesine bir
+müdahale değil, bir yazım hatası olarak düzeltildi.
+
+**İki kontrol; çünkü bunların ikisi de bitmiş iş gibi okunuyor.** Bu sınıfı pahalı
+yapan şey de bu: hiçbir şey çökmüyor, hiçbir şey eksik değil ve dosya yazılmış
+görünüyor.
+
+- `npm run check` artık yer tutucu bir yerel satırını reddediyor: `[TBD]`,
+  `lorem ipsum`, `TODO`, `FIXME`. Nekomimi cafe'nin dokuz `lorem ipsum` metni de aynı
+  sınıftandı ve dosya okunarak bulunmuştu; bu, o okumanın her derlemede yapılması. Tek
+  kasıtlı `[tbc]`, sebebi yazılarak kimliğiyle muaf tutuluyor.
+- Ve alamayacağı bir dalı bildiren bir eylemi de reddediyor: koşulu olmayan bir
+  `conditional_loss` metni ya da `success_chances`'i sıfır olan bir başarı metni. Elli
+  üç eylem kontrol edildi; gaze tek olanıydı.
+
+İkisi de kusur ekilerek negatif test edildi.
+
+`quests.js` ayrıca Village expansion 7. maddesinde `//tbc, duh` taşıyordu; bir commit
+önce doğru olmaktan çıktı.
 
 ### Kenar mahalle bir alıcıya kavuşuyor, ve P-11 tamamlandı
 

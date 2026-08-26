@@ -2472,7 +2472,6 @@ const descriptions = {
     "action gaze starting": "Follow where the river leads",
     "action gaze desc": "...into the darker forest...",
     "action gaze during": "Exploring",
-    "action gaze success": "[TBD]",
     "action learn forage starting": "Ask the scout to teach you about local herbs and vegetables",
     "action learn forage desc": "The scout had mentioned interesting local plants, maybe she can teach you about them",
     "action learn forage during": "Learning how to forage from the scout",
@@ -2506,9 +2505,8 @@ const descriptions = {
     "action create lake weightlifting fail conditional_loss 1": "You're going to need some rope before you wrap anything!",
     "action search1 fail conditional_loss 1": "You need to get more used to water and have lung capacity to go that deep",
     "action search2 fail conditional_loss 1": "You need to get more used to water and have lung capacity to go that deep",
-    "action gaze fail conditional_loss 1": "You need to get more used to water and have lung capacity to go that deep",
     "action learn forage fail conditional_loss 1": "The scout tries to explain the look and uses of local flora, but you're having a hard time understanding what she's talking about. Maybe if you were a better herbalist, it would be easier",
-    "action gaze fail random_loss 1": "You may have felt like you can already brave anything this forest can throw at you. But the part stretching before you is more imposing than anything you've seen so far.\\n\\n\\nThe river coming from the lake vanishes in darkness as the foliage is too dense to let in light. The trees there are growing larger, denser... More ancient.\\n\\n\\nYou try to make make out the details of what looks like a bird flying in the distance. It has four legs... [tbc]",
+    "action gaze fail random_loss 1": "You may have felt like you can already brave anything this forest can throw at you. But the part stretching before you is more imposing than anything you've seen so far.\\n\\n\\nThe river coming from the lake vanishes in darkness as the foliage is too dense to let in light. The trees there are growing larger, denser... More ancient.\\n\\n\\nYou try to make out the details of what looks like a bird flying in the distance. It has four legs... [tbc]",
 
     //LOCATIONS - the crafting station button, per location.
     "ui craft use Swampland tribe": "Use the tribe's workhuts to craft something",

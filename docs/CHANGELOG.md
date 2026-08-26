@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 42 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 43 -->
 
 # Changelog
 
@@ -20,6 +20,49 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The gaze action's two unreachable endings
+
+*"Follow where the river leads"* at the Forest lake is the author's tease for the
+forest's heart, and it is built to never succeed: `success_chances: [0,0]`, so the
+only branch a player can reach is the `random_loss` text that ends *"You try to make
+out the details of what looks like a bird flying in the distance. It has four
+legs... [tbc]"*.
+
+**That stays untouched.** STORY.md lists the four-legged bird under what is open on
+purpose and PROPOSALS says it belongs to no region and should not be folded into one.
+Making the action succeed would be answering a question the documents say to leave
+standing, so it was not done.
+
+What went are the two branches nobody could reach:
+
+- **`success_text` pointed at a row whose entire content was `"[TBD]"`**, in both
+  locales. Unreachable, which is why nobody saw it - but "unreachable" is a property
+  of today's `success_chances`, not a promise. That row was one edit away from being
+  the text a player read.
+- **`conditional_loss` cannot fire at all.** `process_conditions` returns 1 for an
+  empty condition list - its own comment says *"no conditions mean nothing to fail"* -
+  and gaze has no conditions. Its text was also pasted from the Forest lake deep dive
+  and talked about lung capacity, which has nothing to do with looking downriver.
+
+And one repeated word in the line that *is* reachable: *"You try to make make out"*.
+Fixed as a typo, not as an edit to the author's voice.
+
+**Two checks, because both of these read as finished work.** That is what makes this
+class expensive: nothing crashes, nothing is missing, and the file looks written.
+
+- `npm run check` now refuses a locale row that is placeholder text - `[TBD]`,
+  `lorem ipsum`, `TODO`, `FIXME`. The Nekomimi cafe's nine `lorem ipsum` strings were
+  the same class of thing and were found by reading the file; this is that read, every
+  build. The one intentional `[tbc]` is exempted by id, with the reason.
+- And it refuses an action that declares a branch it cannot take: a
+  `conditional_loss` text with no conditions, or a success text with
+  `success_chances` of zero. Fifty-three actions checked; gaze was the only one.
+
+Both negative-tested by planting the defect.
+
+`quests.js` also carried `//tbc, duh` on Village expansion task 7, which stopped
+being true one commit ago.
 
 ### The slums get a buyer, and P-11 is finished
 

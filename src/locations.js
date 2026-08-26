@@ -4303,15 +4303,26 @@ function get_location_type_penalty(type, stage, stat, category) {
                 skill_xp: { Swimming: 800, Breathing: 800, Perception: 800, },
             },
         }),
+        /*
+            The author's tease for the forest's heart, and it is meant to be one:
+            success_chances is [0,0], so the only branch a player can reach is the
+            random_loss text, which ends "It has four legs... [tbc]".
+
+            That stays. STORY.md lists the four-legged bird under what is open on
+            purpose and PROPOSALS says it belongs to no region.
+
+            What is gone is the two branches nobody could reach. success_text pointed at
+            a locale row whose whole content was "[TBD]", and conditional_loss cannot
+            fire at all - with no conditions, process_conditions returns 1 - while its
+            text was copy-pasted from the deep dive and talked about lung capacity.
+        */
         "gaze": new GameAction({
             action_id: "gaze",
             action_name: "action gaze name",
             starting_text: "action gaze starting",
             description: "action gaze desc",
             action_text: "action gaze during",
-            success_text: "action gaze success",
             failure_texts: {
-                conditional_loss: ["action gaze fail conditional_loss 1"],
                 random_loss: ["action gaze fail random_loss 1"],
             },
             is_unlocked: true,

@@ -391,7 +391,7 @@ const questManager = {
             new QuestTask({is_hidden: true, task_rewards: {reputation: {Village: 120}}, skip_message: true}), //finished by reporting afterwards
             new QuestTask({is_hidden: true, skip_message: true}), //finished by asking for further work
             new QuestTask({task_description: "quest Village expansion task 6", task_rewards: {reputation: {Village: 20}}}), //finished by reporting afterwards
-            new QuestTask({task_description: "quest Village expansion task 7"}), //tbc, duh
+            new QuestTask({task_description: "quest Village expansion task 7"}), //the hearth, P-11
         ],
         quest_rewards: {
         }

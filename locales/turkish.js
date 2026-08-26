@@ -2538,7 +2538,6 @@ const descriptions = {
     "action gaze starting": "Nehrin götürdüğü yeri takip et",
     "action gaze desc": "...daha karanlık ormana doğru...",
     "action gaze during": "Keşfediliyor",
-    "action gaze success": "[TBD]",
     "action learn forage starting": "İzciye buranın otları ve sebzeleri hakkında sana öğretmesini söyle",
     "action learn forage desc": "İzci ilginç yerel bitkilerden söz etmişti, belki onları sana öğretebilir",
     "action learn forage during": "İzciden toplayıcılık öğreniliyor",
@@ -2570,7 +2569,6 @@ const descriptions = {
     "action create lake weightlifting fail conditional_loss 1": "Bir şey sarmadan önce halata ihtiyacın olacak!",
     "action search1 fail conditional_loss 1": "O kadar derine inmek için suya daha çok alışman ve akciğer kapasitene sahip olman gerekiyor",
     "action search2 fail conditional_loss 1": "O kadar derine inmek için suya daha çok alışman ve akciğer kapasitene sahip olman gerekiyor",
-    "action gaze fail conditional_loss 1": "O kadar derine inmek için suya daha çok alışman ve akciğer kapasitene sahip olman gerekiyor",
     "action learn forage fail conditional_loss 1": "İzci buranın bitkilerinin görünüşünü ve kullanımını anlatmaya çalışıyor, ama neden bahsettiğini anlamakta zorlanıyorsun. Belki daha iyi bir otacı olsan daha kolay olurdu",
     "action gaze fail random_loss 1": "Bu ormanın karşına çıkarabileceği her şeyi çoktan göğüsleyebileceğini düşünmüş olabilirsin. Ama önünde uzanan kısım şimdiye dek gördüğün her şeyden daha heybetli.\n\n\nGölden gelen nehir, örtü ışığı geçirmeyecek kadar yoğun olduğu için karanlıkta kayboluyor. Oradaki ağaçlar daha büyük, daha sık... Daha kadim.\n\n\nUzakta uçan bir kuşa benzeyen şeyin ayrıntılarını seçmeye çalışıyorsun. Dört bacağı var... [devamı gelecek]",
 
