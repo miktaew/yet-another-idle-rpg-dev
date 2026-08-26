@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 13 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 14 -->
 
 # Proposals
 
@@ -282,7 +282,7 @@ Execution order, highest leverage first:
    there are zero `lorem ipsum` strings left anywhere in `src/` or `locales/`; and
    `Location` stores `display_conditions` and `display.js` evaluates it at render
    time, so mofu gating no longer has to happen at the push site.
-3. **Q3 DONE, Q4 next.** *Somewhere in the Town* ships: the guild clerk finds the
+3. **DONE, both halves.** *Somewhere in the Town* ships: the guild clerk finds the
    name, and the broker under the green awning is the ex-boss the robber names.
    He gives up that the job was paid, that the contract described exactly one
    object, and that everything else went to the collector across the square. He
@@ -291,9 +291,21 @@ Execution order, highest leverage first:
    started"* - is the physical link to the cave, and it left his hands the night
    it arrived, so it is not what Q4 buys back.
 
-   Q4, *Nothing but Pants*, is the buy-back: the collector has the rest of what
-   was taken and does not sell, which the store's own description already said
-   before any of this was written.
+   Q4, *Nothing but Pants*, ships too. The collector does not sell, and that is
+   not a puzzle a bigger number solves - the way in is provenance. An object with
+   no story is furniture, and the hero is the story of this one. Money is what it
+   costs once he knows that: 30000, the game's first thing that takes money
+   rather than giving it.
+
+   That required building the mechanism. The `money` requirement was documented
+   three different ways and implemented as a bare comparison with no spending at
+   all, so a price written as documented gated on an object and silently cost
+   nothing. See [CHANGELOG.md](CHANGELOG.md).
+
+   His last line is the payoff: one other piece came in that lot and left the
+   same night, flat and cut through with squares that turn back to their own
+   beginning, and forty years of cataloguing this town told him it was made
+   before there was anybody here to make it.
 4. Q5 closes the rat questline, opens the second cave gate with mind rather than
    strength as the room itself insists, and finally gives the parked silver chain
    a sink.

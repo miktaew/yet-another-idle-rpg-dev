@@ -1753,6 +1753,7 @@ function get_location_type_penalty(type, stage, stat, category) {
     locations["Antique store"] = new Location({
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: "desc location Antique store",
+        dialogues: ["antique collector"],
         name: "Antique store",
         is_unlocked: true,
         getBackgroundNoises: function() {

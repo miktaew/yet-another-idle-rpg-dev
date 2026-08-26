@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 28 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 29 -->
 
 # Changelog
 
@@ -20,6 +20,88 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### Quest 4: "Nothing but Pants", and the money the game could not spend
+
+**The door was already closed.** The Antique store has described its collection as
+*"most of them apparently not for sale as this place also functions as a private
+museum"* since before this fork. So the collector not selling is not an obstacle
+invented for a quest - it is a fact the quest had to be built around, and a bigger
+number is not the answer to it.
+
+The way in is **provenance**. He trades in stories, not objects: *"An object with no
+story is furniture."* He bought a lot off the broker, sold the clothes because
+clothes are worth what cloth is worth, and kept one thing worth a card - a cord and
+a bone tally with seven notches. The hero is the provenance of it, and that is the
+one thing that makes him open a drawer.
+
+Then money is what it costs, and he is completely unembarrassed about why:
+*"Yesterday it was a tally. Today it is the tally that was taken off a man on the
+forest road who walked back out of the swamp to ask for it. That is a better object
+than the one I bought, and I did nothing to improve it. You did."* Thirty thousand.
+
+**His last line is the point of the quest.** One other piece came in that lot and
+did not stay the night: flat, palm-sized, cut through with squares that turn and
+come back to their own beginning. Forty years of cataloguing this town - the stone
+in the church, the guild's charter, the well - and *"that was not old the way those
+are old. That was made before there was anybody here to make it, and whoever came
+for it that night did not haggle."* A second witness to the cave's shape who has
+never been down there, and still no name.
+
+### The money requirement did not work
+
+This is the first thing in the game that takes money rather than giving it, and the
+mechanism for it was documented three different ways and implemented as neither.
+
+`src/conditions.js` documented `money: {number, remove}`. `src/actions.js`
+documented it twice more, once as `{number, remove?}` and once as
+`{Number, remove_on_success?, remove_on_fail?}`. The implementation compared
+`character.money < conditions[0].money` - the raw value. A price written the
+documented way therefore compared a number against an **object**, which is never
+less than it, so the gate passed on an empty purse. And nothing anywhere subtracted
+money outside trading, so even a gate that worked would have charged nothing.
+
+Nothing in the content used it, which is why none of that had ever surfaced: every
+`money:` in the content is a reward.
+
+Now: `money_required` reads the amount out of either accepted shape - a bare number
+requires and takes nothing, an object can also be spent - and is **exported**,
+because main.js has to charge exactly what the gate asked for. Two readings of the
+shape would let an action start on one number and bill another. The spending sits
+where item removal already sits, going through `add_money_to_character` so the
+displayed purse follows it, and it honours the same split items already had:
+`remove` on a `conditions` entry, `remove_on_success` / `remove_on_fail` on an
+action's `required`.
+
+Guarded three ways. `npm test` pins both shapes, the exact shape quest 4 uses, and
+a check that the old comparison really did pass on an empty purse so the new ones
+are not vacuous. `npm run check` asserts that any money *requirement* in the
+content uses the spendable object form with a positive amount and a removal flag -
+a bare number there would gate correctly and cost nothing, which is the same class
+of silent pass. Both negative-tested, and the check found a real bug in itself: the
+first version captured `money:` up to the first comma, so it never saw the removal
+flag and reported my own price as unflagged.
+
+### Six items had no name of their own
+
+Found while adding the tally: hand-written items need a `name <key>` row, and
+without one the shown name falls back to the English registry key. Measured on the
+raw source this looked like **124 items**. Measured with comments blanked - which is
+what the existing checks do, and what I should have done first - it was **six**: the
+other 118 are hand-written components the runtime generator superseded, sitting
+inside commented-out blocks.
+
+Six is small enough to write rather than warn about, so `Goat meat`,
+`Cooking herbs`, `Silica Sand`, `Cooked potato`, `Cooked clam` and the tally have
+names in both languages, and the check errors instead of warning. 246/246.
+
+**Not verified in a browser this time.** The Playwright connection that caught the
+second cause of the language bug dropped, so the money path is verified by its
+tests and by the shape check rather than by running the purchase. The chain's wiring
+is the same shape as quest 3's, which was driven end to end.
+
+2661 keys per language; `check` at 1728 content ids, 19 dialogue names and 246 item
+names; `npm test` at 91.
 
 ### Quest 3 of the arc: "Somewhere in the Town"
 

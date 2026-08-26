@@ -2412,8 +2412,92 @@ class DialogueAction extends GameAction {
                     xp: 1200,
                     reputation: {Town: 40},
                     quest_progress: [{quest_id: "Somewhere in the Town", task_index: 2}],
+                    textlines: [{dialogue: "antique collector", lines: ["mine"]}],
                 },
                 locks_lines: ["rest"],
+            }),
+        },
+    });
+
+    /*
+        QUEST 4 - "Nothing but Pants".
+
+        He does not sell. That is not a puzzle to be solved with a bigger number:
+        the Antique store's description has called the collection "apparently not
+        for sale" since long before this fork, so the way in has to be something
+        other than money. It is provenance. An object with no story is furniture,
+        and the hero IS the story of this one.
+
+        Money is what it costs once he knows that, and it is the first thing in the
+        game that takes money rather than giving it - see the money requirement in
+        src/conditions.js, which had never been used and did not work.
+    */
+    dialogues["antique collector"] = new Dialogue({
+        name: "antique collector",
+        is_unlocked: true,
+        description: "collector description",
+        textlines: {
+            "hello": new Textline({
+                name: "collector hello",
+                text: "collector hello answ",
+                locks_lines: ["hello"],
+            }),
+            //Unlocked by the broker naming him, at the end of quest 3.
+            "mine": new Textline({
+                name: "collector mine",
+                is_unlocked: false,
+                text: "collector mine answ",
+                rewards: {
+                    quests: ["Nothing but Pants"],
+                    quest_progress: [{quest_id: "Nothing but Pants", task_index: 0}],
+                    textlines: [{dialogue: "antique collector", lines: ["price"]}],
+                    actions: [{dialogue: "antique collector", action: "buy back the tally"}],
+                },
+                locks_lines: ["mine"],
+            }),
+            "price": new Textline({
+                name: "collector price",
+                is_unlocked: false,
+                text: "collector price answ",
+                locks_lines: ["price"],
+            }),
+            "other": new Textline({
+                name: "collector other",
+                is_unlocked: false,
+                text: "collector other answ",
+                rewards: {
+                    xp: 1500,
+                    reputation: {Town: 60},
+                    quest_progress: [{quest_id: "Nothing but Pants", task_index: 2}],
+                },
+                locks_lines: ["other"],
+            }),
+        },
+        actions: {
+            "buy back the tally": new DialogueAction({
+                action_id: "buy back the tally",
+                is_unlocked: false,
+                starting_text: "collector buy",
+                description: "",
+                action_text: "",
+                success_text: "collector buy answ",
+                repeatable: false,
+                failure_texts: {
+                    unable_to_begin: ["collector buy not"],
+                },
+                //The game's first money sink. remove_on_success rather than
+                //`remove`, because that is the flag `required` uses.
+                required: {
+                    money: {number: 30000, remove_on_success: true},
+                },
+                attempt_duration: 0,
+                success_chances: [1],
+                rewards: {
+                    items: ["Traveller's tally"],
+                    quest_progress: [{quest_id: "Nothing but Pants", task_index: 1}],
+                    textlines: [{dialogue: "antique collector", lines: ["other"]}],
+                },
+                locks_lines: ["buy back the tally"],
             }),
         },
     });

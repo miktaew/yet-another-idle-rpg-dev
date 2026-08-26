@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 28 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 29 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,88 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### 4. görev: "Üstünde Sadece Pantolon" ve oyunun harcayamadığı para
+
+**Kapı çoktan kapalıydı.** Antique store, koleksiyonunu bu fork'tan da önce
+*"çoğu satılık değil, çünkü burası aynı zamanda özel bir müze işlevi görüyor"*
+diye tanımlıyordu. Yani antikacının satmaması, bir görev için uydurulmuş bir engel
+değil — görevin etrafında kurulmak zorunda olduğu bir olgu; ve daha büyük bir sayı
+onun cevabı değil.
+
+İçeri giden yol **menşe**. O nesne değil hikâye alıp satıyor: *"Hikâyesi olmayan bir
+nesne mobilyadır."* Komisyoncudan bir parti almış, kıyafetleri satmış — çünkü
+kıyafetler ancak kumaş kadar ediyor — ve bir fişe değer tek şeyi saklamış: bir sicim
+ve yedi çentikli bir kemik plaka. Onun menşesi kahramanın kendisi ve bu, adamı bir
+çekmece açmaya iten tek şey.
+
+Sonrası bedel ve sebebinden hiç utanmıyor: *"Dün bu bir plakaydı. Bugün bu, orman
+yolunda bir adamdan alınan ve o adamın bataklıktan yürüyerek dönüp geri istediği
+plaka. Bu, satın aldığımdan daha iyi bir nesne ve onu iyileştirmek için ben hiçbir
+şey yapmadım. Sen yaptın."* Otuz bin.
+
+**Görevin asıl noktası son repliği.** O partide bir parça daha vardı ve geceyi
+çıkarmadı: yassı, avuç kadar, üzerinde dönüp kendi başlangıcına gelen kareler
+oyulmuş. Bu kasabayı kırk yıl kataloglamış biri — kilisedeki taş, loncanın beratı,
+kuyu — diyor ki *"o, onların eski olduğu gibi eski değildi. O, burada onu yapacak
+kimse yokken yapılmıştı ve o gece onu almaya gelen kişi pazarlık etmedi."* Mağaranın
+biçimine oraya hiç inmemiş ikinci bir tanık; ve hâlâ isim yok.
+
+### Para koşulu çalışmıyordu
+
+Bu, oyunda para veren değil **alan** ilk şey; ve mekanizması üç ayrı biçimde
+belgelenip hiçbiri olarak yazılmıştı.
+
+`src/conditions.js` `money: {number, remove}` diye belgeliyordu. `src/actions.js` iki
+kez daha belgeliyordu; biri `{number, remove?}`, öteki
+`{Number, remove_on_success?, remove_on_fail?}`. Uygulama ise
+`character.money < conditions[0].money` ile çıplak değeri karşılaştırıyordu.
+Dolayısıyla belgelendiği gibi yazılan bir fiyat, bir sayıyı bir **nesneyle**
+karşılaştırıyordu; bu da asla ondan küçük olmadığı için kapı boş keseyle açılıyordu.
+Üstelik ticaret dışında parayı eksilten hiçbir kod yoktu; yani çalışan bir kapı bile
+hiçbir şeye mal olmayacaktı.
+
+İçerikte bunu kullanan bir şey yoktu, bu yüzden hiçbiri yüzeye çıkmamıştı:
+içerikteki her `money:` bir ödül.
+
+Artık `money_required` tutarı kabul edilen iki biçimden hangisi yazılmışsa ondan
+okuyor — çıplak sayı isteyip almıyor, nesne biçimi harcanabiliyor — ve **export
+ediliyor**; çünkü main.js, kapının istediğinin tam olarak aynısını tahsil etmek
+zorunda. Şeklin iki farklı okuması, bir eylemin bir sayıyla başlayıp başka bir sayı
+faturalamasına izin verirdi. Harcama, eşya çıkarmanın zaten durduğu yerde duruyor ve
+`add_money_to_character` üzerinden geçiyor ki görünen kese onu izlesin; ayrıca
+eşyaların hâlihazırdaki ayrımına uyuyor: `conditions` girdisinde `remove`, bir
+eylemin `required`'ında `remove_on_success` / `remove_on_fail`.
+
+Üç yönlü koruma. `npm test` iki şekli, 4. görevin kullandığı tam şekli ve eski
+karşılaştırmanın gerçekten boş keseyle geçtiğini doğrulayan bir kontrolü sabitliyor —
+yani yenileri boş değil. `npm run check` içerikteki her para *koşulunun*
+harcanabilir nesne biçimini, pozitif bir tutarı ve bir çıkarma bayrağını taşıdığını
+doğruluyor; oradaki çıplak bir sayı kapıyı doğru tutup hiçbir şeye mal olmazdı, yani
+aynı sessiz-geçiş sınıfı. İkisi de negatif test edildi ve kontrol kendi içinde gerçek
+bir hata buldu: ilk sürümü `money:`'i ilk virgüle kadar yakalıyordu, dolayısıyla
+çıkarma bayrağını hiç görmüyor ve benim kendi fiyatımı bayraksız bildiriyordu.
+
+### Altı eşyanın kendine ait adı yoktu
+
+Plakayı eklerken bulundu: elle yazılan eşyalar bir `name <key>` satırı gerektiriyor
+ve o olmadan gösterilen ad İngilizce registry anahtarına düşüyor. Ham kaynak üzerinde
+ölçülünce bu **124 eşya** gibi göründü. Yorumlar boşaltılarak ölçülünce — ki mevcut
+kontroller bunu yapıyor ve ilk olarak benim de yapmam gerekirdi — sayı **altı**:
+diğer 118'i, çalışma anındaki generator'ın yerini aldığı ve yorumlanmış bloklarda
+duran elle yazılmış bileşenler.
+
+Altı, uyarmak yerine yazılacak kadar küçük; bu yüzden `Goat meat`, `Cooking herbs`,
+`Silica Sand`, `Cooked potato`, `Cooked clam` ve plaka iki dilde de ad sahibi oldu ve
+kontrol uyarmak yerine hata veriyor. 246/246.
+
+**Bu kez tarayıcıda doğrulanmadı.** Dil hatasının ikinci nedenini yakalayan Playwright
+bağlantısı düştü; dolayısıyla para yolu, satın almayı çalıştırarak değil testleriyle
+ve şekil kontrolüyle doğrulandı. Zincirin bağlantı düzeni, uçtan uca sürülmüş olan 3.
+görevle aynı şekilde.
+
+Dil başına 2661 anahtar; `check` 1728 içerik id'si, 19 dialogue adı ve 246 eşya
+adında; `npm test` 91'de.
 
 ### Arkın 3. görevi: "Kasabada Bir Yerde"
 

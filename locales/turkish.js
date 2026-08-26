@@ -3076,6 +3076,39 @@ const descriptions = {
     "quest Somewhere in the Town task 1": "Çeteyi yönetmiş adamı bul",
     "quest Somewhere in the Town task 2": "Ona orman yolunu sor",
     "quest Somewhere in the Town task 3": "Alınanların nereye gittiğini öğren",
+
+    //QUEST 4 - "Nothing but Pants". The collector, the price of provenance,
+    //and the one other thing that was in the lot.
+    "name antique collector": "antikacı",
+    "collector description": "Vitrinlerin arasına yerleştirilmiş bir yazı masasında yaşlı bir adam; hiç ihtiyacı olmadığı besbelli bir büyüteçle bir tomar fiş üzerinde çalışıyor. Başını kaldırmıyor. Arkasındaki saat, odadaki en gürültülü şey.",
+    "desc item Traveller's tally": "Kısa bir sicim ve kenarına yedi çentik atılmış yassı bir kemik plaka; iki yüzü de aşınıp parlamış. Bir arabacının yük saymak için taktığı türden bir şey. Kimse dönüp ikinci kez bakmaz — muhtemelen iki kez satılmayı bu yüzden atlattı.",
+    "collector hello": "Burada bir şey satıyor musunuz?",
+    "collector hello answ": "Hayır. *[Bir satır yazıyor, kurutuyor ve fişi kenara koyuyor]* İnsanlar soruyor, sonra kendi durumlarının neden farklı olduğunu anlatıyor, sonra gidiyor. İstediğin kadar bakabilirsin. Cam göründüğünden kalın ve bütün öğleden sonram var.",
+    "collector mine": "Meydandaki komisyoncudan aldığınız parti. O, orman yolunda benden alındı.",
+    "collector mine answ": "*[Kalem duruyor. İlk kez size bakıyor — hem de vitrinlere baktığı gibi.]*\n\nSenden alınmış. *[Aramadan bir çekmeceyi açıyor; hangisi olduğunu tam olarak biliyor]* O hâlde sen menşesin; menşe de benim işimin tamamı. Hikâyesi olmayan bir nesne mobilyadır.\n\n*[Masaya bir fiş koyuyor]* Sicim, kemik plaka, yedi çentik, yapımcı damgası yok. Onu sakladım, kıyafetleri sattım; çünkü kıyafetler ancak kumaş kadar ediyordu. Onu sana geri satacağım. Ucuza satmayacağım ve sebebi hoşuna gitmeyecek.",
+    "collector price": "Fiyatı söyleyin.",
+    "collector price answ": "Dün bu bir plakaydı. *[Fişi çevirip kendi tarifinizi okumanızı sağlıyor]* Bugün bu, orman yolunda bir adamdan alınan ve o adamın bataklıktan yürüyerek dönüp geri istediği plaka. Bu, satın aldığımdan daha iyi bir nesne ve onu iyileştirmek için ben hiçbir şey yapmadım. Sen yaptın.\n\nOtuz bin. *[Kalemi bırakıyor]* Bunun nasıl duyulduğunun farkındayım. Sayının kemikle ilgili olduğunu iddia edecek de değilim.",
+    "collector buy": "[30.000 öde ve geri al]",
+    "collector buy answ": "*[Parayı saymıyor. Plakayı fişinin üzerinde masadan kaydırıyor, sonra fişi geri alıp yeni bir başlık altına kaldırıyor.]*\n\nAl. Tak ya da takma; her hâlükârda senin. *[Çoktan yazmaya başlamış]* Bir de şu var — plakayla birlikte dikkatimin parasını da ödedin.",
+    "collector buy not": "*[Başını çevirmeden kesenize bir göz atıyor]* Bugün olmaz. Taksit almam ve kimse için bir şey ayırmam. Otuz bin olunca gel.",
+    "collector other": "Bir şey diyecektiniz.",
+    "collector other answ": "O partide bir parça daha vardı ve geceyi çıkarmadı. *[Başını kaldırmıyor]* Yassı, avuç kadar, üzerinde dönüp kendi başlangıcına geri gelen kareler oyulmuş. Elimde, su kaynayana kadar geçen süre kadar kaldı.\n\nKırk yıldır bu kasabanın en eski şeylerini kataloglarım. Kilisedeki taş, loncanın beratı, kuyu. *[Şimdi başını kaldırıyor]* O, onların eski olduğu gibi eski değildi. O, burada onu yapacak kimse yokken yapılmıştı — ve o gece onu almaya gelen kişi pazarlık etmedi.",
+    "quest Nothing but Pants": "Üstünde Sadece Pantolon",
+    "quest Nothing but Pants desc 1": "Meydanın karşısındaki antikacıda çetenin aldıkları var. Satmıyor — en azından satıcılara.",
+    "quest Nothing but Pants desc 2": "Geri satacak; otuz bine. Çünkü ona göre nesne, geri almaya gelen birinden çalınmış olduğu için artık daha değerli.",
+    "quest Nothing but Pants desc 3": "Plaka yeniden sizin. Onunla birlikte başka bir şey de gelmiş ve geceyi çıkarmamış.",
+    "quest Nothing but Pants task 1": "Antikacıya partinin sizin olduğunu söyle",
+    "quest Nothing but Pants task 2": "Alınanı geri satın al",
+    "quest Nothing but Pants task 3": "Partide başka ne olduğunu dinle",
+
+    //The last hand-written items with no shown name of their own; without
+    //these rows a Turkish game printed the English registry key.
+    "name Goat meat": "Keçi eti",
+    "name Cooking herbs": "Yemeklik otlar",
+    "name Silica Sand": "Silis kumu",
+    "name Cooked potato": "Pişmiş patates",
+    "name Cooked clam": "Pişmiş midye",
+    "name Traveller's tally": "Yolcu plakası",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

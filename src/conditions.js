@@ -14,10 +14,14 @@ import { playable_races } from "./races.js";
     for dialogues, removing anything on visibility check is a terrible idea as it would remove item every time the dialogue is opened
 
     {
+        money: Number //how much to require, taking nothing
+        //  ...or, when it should also be SPENT:
         money: {
-            number: Number, //how much money to require
-            remove: Boolean //if should be removed from inventory (false -> its kept)
+            number: Number,  //how much to require
+            remove: Boolean, //spend it (only read off conditions[0], like items)
         }
+        //On an action's `required` instead of its `conditions`, the spending flags
+        //are remove_on_success / remove_on_fail, matching items_by_id there.
         stats: [
             "stat_id": Number //required stat
         ],
@@ -70,6 +74,23 @@ import { playable_races } from "./races.js";
 
 
 /**
+ * The amount a condition names, from either accepted shape.
+ *
+ * Exported because main.js has to spend exactly what this checked: two readings of
+ * the shape would let a gate pass on one number and charge another.
+ *
+ * @param {Object} condition one entry of a conditions array, or an action's `required`
+ * @returns {Number|null} the amount, or null when no money is named
+ */
+function money_required(condition) {
+    const money = condition?.money;
+    if(money == null) {
+        return null;
+    }
+    return typeof money === "object" ? money.number : money;
+}
+
+/**
      * Analyzes passed conditions, returns their status (0 or 1 if single element array, fuzzy value if two element array)
      * @param {*} character 
      * @param {*} condition 
@@ -83,11 +104,24 @@ const process_conditions = (conditions, character) => {
     }
 
     //check money
-    if(conditions[0].money && character.money < conditions[0].money) {
+    //
+    //The schema above documents money as an OBJECT, and this used to compare
+    //`character.money < conditions[0].money` against it directly. A condition
+    //written the documented way therefore compared a number against an object,
+    //which is never less than it, so the gate silently passed and nothing was ever
+    //spent. No content used it, which is why it went unnoticed - Q4 of the town arc
+    //is the first thing that needs money to actually leave the purse.
+    //
+    //Both forms are accepted: a bare number requires that much and takes nothing,
+    //an object can also spend it. Spending happens where items are removed, in
+    //main.js, on the same terms.
+    const required_money = money_required(conditions[0]);
+    const upper_money = money_required(conditions[1]);
+    if(required_money && character.money < required_money) {
         met = 0;
         return met;
-    } else if(conditions[1]?.money && conditions[1].money > conditions[0].money && character.money < conditions[1].money) {
-        met *= (1 + character.money - conditions[0].money)/(conditions[1].money - conditions[0].money);
+    } else if(upper_money && upper_money > required_money && character.money < upper_money) {
+        met *= (1 + character.money - required_money)/(upper_money - required_money);
     }
 
     if(!met) {
@@ -275,4 +309,4 @@ const process_conditions = (conditions, character) => {
 
 
 
-export {process_conditions};
+export {process_conditions, money_required};

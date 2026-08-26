@@ -556,6 +556,32 @@ const questManager = {
             new QuestTask({task_description: "quest Somewhere in the Town task 3"}),
         ]
     });
+    /*
+        Quest 4. The name is the state the hero woke up in, and the collector
+        confirms why: he sold the clothes and kept the one piece worth a card.
+
+        Tasks: establish that the lot was yours, pay for it, and hear what else
+        was in it. The third is the one that matters.
+    */
+    quests["Nothing but Pants"] = new Quest({
+        quest_name: "quest Nothing but Pants",
+        display_priority: 11,
+        getQuestDescription: ()=>{
+            if(quests["Nothing but Pants"].quest_tasks[2].is_finished) {
+                return "quest Nothing but Pants desc 3";
+            } else if(quests["Nothing but Pants"].quest_tasks[0].is_finished) {
+                return "quest Nothing but Pants desc 2";
+            } else {
+                return "quest Nothing but Pants desc 1";
+            }
+        },
+        questline: "The Merchant's Word",
+        quest_tasks: [
+            new QuestTask({task_description: "quest Nothing but Pants task 1"}),
+            new QuestTask({task_description: "quest Nothing but Pants task 2"}),
+            new QuestTask({task_description: "quest Nothing but Pants task 3"}),
+        ]
+    });
     quests["In Times of Need"] = new Quest({
         quest_name: "quest In Times of Need",
         display_priority: 9,

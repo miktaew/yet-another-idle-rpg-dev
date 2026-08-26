@@ -3036,6 +3036,39 @@ const descriptions = {
     "quest Somewhere in the Town task 1": "Find the man who ran the gang",
     "quest Somewhere in the Town task 2": "Ask him about the forest road",
     "quest Somewhere in the Town task 3": "Find out where what was taken went",
+
+    //QUEST 4 - "Nothing but Pants". The collector, the price of provenance,
+    //and the one other thing that was in the lot.
+    "name antique collector": "antique collector",
+    "collector description": "An old man at a writing desk set among the cases, working through a stack of index cards with a magnifying glass he plainly does not need. He does not look up. The clock behind him is the loudest thing in the room.",
+    "desc item Traveller's tally": "A short length of cord and a flat bone tag with seven notches cut into its edge, worn smooth on both faces. The kind of thing a carter wears to keep count of loads. Nobody would look at it twice, which is presumably why it survived being sold twice.",
+    "collector hello": "Do you sell anything here?",
+    "collector hello answ": "No. *[He writes a line, blots it, and sets the card aside]* People ask, and then they explain why their case is different, and then they leave. You may look as long as you like. The glass is thicker than it appears and I have all afternoon.",
+    "collector mine": "The lot you bought off the broker on the square. It was taken from me on the forest road.",
+    "collector mine answ": "*[The pen stops. For the first time he looks at you, and he looks at you the way he looks at the cases.]*\n\nTaken from you. *[He pulls a drawer open without searching it - he knows exactly which one]* Then you are provenance, and provenance is the whole of my trade. An object with no story is furniture.\n\n*[He lays one card on the desk]* Cord, bone tally, seven notches, no maker's mark. I kept it and sold the clothes, because the clothes were worth what cloth is worth. I will sell it back to you. I will not sell it cheaply, and you will not like the reason.",
+    "collector price": "Name the price.",
+    "collector price answ": "Yesterday it was a tally. *[He turns the card round so you can read your own description on it]* Today it is the tally that was taken off a man on the forest road who walked back out of the swamp to ask for it. That is a better object than the one I bought, and I did nothing to improve it. You did.\n\nThirty thousand. *[He sets the pen down]* I am aware of how that sounds. I am not going to pretend the number is about the bone.",
+    "collector buy": "[Pay 30,000 and take it back]",
+    "collector buy answ": "*[He does not count the coin. He slides the tally across the desk on its card, then takes the card back and files it under a new heading.]*\n\nThere. Wear it or do not; it is yours either way. *[He is already writing]* A word, since you have paid for my attention along with the tally.",
+    "collector buy not": "*[He glances at your purse without moving his head]* Not today. I do not take instalments and I do not hold things back for people. Come when it is thirty thousand.",
+    "collector other": "You said a word.",
+    "collector other answ": "There was one other piece in that lot and it did not stay the night. *[He does not look up]* Flat, palm-sized, cut through with squares that turn and come back to their own beginning. I had it in my hand for about the time it takes to boil water.\n\nI have catalogued this town's oldest things for forty years. The stone in the church, the guild's charter, the well. *[Now he looks up]* That was not old the way those are old. That was made before there was anybody here to make it, and whoever came for it that night did not haggle.",
+    "quest Nothing but Pants": "Nothing but Pants",
+    "quest Nothing but Pants desc 1": "The collector across the square has what the gang took. He does not sell - to dealers, at least.",
+    "quest Nothing but Pants desc 2": "He will sell it back, for thirty thousand, because it is worth more to him now that it was stolen from somebody who came back for it.",
+    "quest Nothing but Pants desc 3": "The tally is yours again. Something else came in with it, and it did not stay the night.",
+    "quest Nothing but Pants task 1": "Tell the collector the lot was yours",
+    "quest Nothing but Pants task 2": "Buy back what was taken",
+    "quest Nothing but Pants task 3": "Hear what else was in the lot",
+
+    //The last hand-written items with no shown name of their own; without
+    //these rows a Turkish game printed the English registry key.
+    "name Goat meat": "Goat meat",
+    "name Cooking herbs": "Cooking herbs",
+    "name Silica Sand": "Silica Sand",
+    "name Cooked potato": "Cooked potato",
+    "name Cooked clam": "Cooked clam",
+    "name Traveller's tally": "Traveller's tally",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

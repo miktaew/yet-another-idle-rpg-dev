@@ -4354,6 +4354,28 @@ function add_gear() {
                 }
             }
         });
+        /*
+            The one thing the collector kept out of the lot the gang sold him. He
+            sold the clothes, which is the joke the quest is named for.
+
+            Deliberately weak: it is a keepsake, not a reward for combat, and the
+            existing uniques sit at x1.1 to x1.15. cold_tolerance is used rather
+            than invented - stamina_efficiency is documented as a stat that should
+            never be a buff, and max_stamina is honoured by no other item.
+
+            unsellable matters mechanically as well as thematically: without it,
+            buying it back for 30000 and selling it on would be a money loop.
+        */
+        item_templates["Traveller's tally"] = new Amulet({
+            value: 1000,
+            tags: {unique: true, unsellable: true},
+            description: "desc item Traveller's tally",
+            stats: {
+                cold_tolerance: {
+                    flat: 5,
+                }
+            }
+        });
         item_templates["Warrior's necklace"] = new Amulet({
             value: 1000,
             tags: {unique: true, unsellable: true},

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 13 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 14 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -296,18 +296,27 @@ Uygulama sırası, en yüksek kaldıraç önce:
    `src/` veya `locales/` içinde hiçbir yerde `lorem ipsum` kalmadı; ve `Location`
    `display_conditions`'ı saklıyor, `display.js` da onu çizim anında
    değerlendiriyor; yani mofu kapılaması artık push yerinde yapılmak zorunda değil.
-3. **Q3 BİTTİ, sırada Q4.** *Kasabada Bir Yerde* yayında: lonca kâtibi adı buluyor
+3. **İki yarısı da BİTTİ.** *Kasabada Bir Yerde* yayında: lonca kâtibi adı buluyor
    ve yeşil tentenin altındaki komisyoncu, soyguncunun andığı eski patron. İşin
-   ödendiğini, sözleşmede tam olarak tek bir nesnenin tarif edildiğini ve geri kalan
-   her şeyin meydanın karşısındaki koleksiyoncuya gittiğini veriyor. Kimin ödediğini
-   vermiyor; kanon onu açık tutuyor. Tarif ettiği nesne — avuç büyüklüğünde, yassı,
-   *"üzerine oyulmuş kareler dönüp başladıkları yere geliyor"* — mağaraya giden
-   fiziksel bağ; ve geldiği gece elinden çıktığı için Q4'ün geri satın aldığı şey o
-   değil.
+   ödendiğini, sözleşmede tek bir nesnenin tarif edildiğini ve geri kalanın meydanın
+   karşısındaki koleksiyoncuya gittiğini veriyor. Kimin ödediğini vermiyor; kanon onu
+   açık tutuyor. Tarif ettiği nesne — avuç kadar, yassı, *"kareler dönüp
+   başladıkları yere geliyor"* — mağaraya giden fiziksel bağ.
 
-   Q4, *Nothing but Pants*, geri satın alma: alınanların geri kalanı koleksiyoncuda
-   ve o adam satmıyor — bunu dükkânın kendi açıklaması, bunların hiçbiri yazılmadan
-   önce zaten söylüyordu.
+   *Nothing but Pants* de yayında. Antikacı satmıyor ve bu, daha büyük bir sayının
+   çözeceği bir bilmece değil: içeri giden yol menşe. Hikâyesi olmayan nesne
+   mobilyadır ve bu nesnenin hikâyesi kahramanın kendisi. Para, o bunu öğrendikten
+   sonraki bedel: 30000 — oyunda para veren değil **alan** ilk şey.
+
+   Bu, mekanizmayı kurmayı gerektirdi. `money` koşulu üç ayrı biçimde belgelenmiş ve
+   hiç harcama yapmayan çıplak bir karşılaştırma olarak yazılmıştı; yani belgelendiği
+   gibi yazılan bir fiyat bir nesneye karşı kapı tutuyor ve sessizce hiçbir şeye mal
+   olmuyordu. Bkz. [CHANGELOG.TR.md](CHANGELOG.TR.md).
+
+   Son repliği ödülü veriyor: o partide bir parça daha vardı ve aynı gece çıktı;
+   yassı, üzerinde dönüp kendi başlangıcına gelen kareler oyulmuş — ve bu kasabayı
+   kırk yıl kataloglamış biri, onun burada onu yapacak kimse yokken yapıldığını
+   söylüyor.
 4. Q5 fare questline'ını kapatıyor, ikinci mağara kapısını odanın kendisinin ısrar
    ettiği gibi kuvvetle değil zihinle açıyor ve park edilmiş gümüş zincirine
    nihayet bir kullanım noktası veriyor.

@@ -582,6 +582,64 @@ const game_options = {};
         Number.isNaN(old_form([0, 10], 0.5)));
 }
 
+// ---------------------------------------------------------------------------
+// The money condition. Its documented shape was an object while the check
+// compared the raw value, so a condition written as documented compared a number
+// against an object - never less than it - and the gate silently passed. Nothing
+// in the content used it, so nothing caught it until quest 4 needed money to
+// actually leave the purse.
+// ---------------------------------------------------------------------------
+{
+    const { process_conditions, money_required } = await load_with_stubs(
+        "src/conditions.js",
+        ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js"],
+        `
+const get_total_skill_level = () => 0;
+const current_game_time = { getSeason: () => "summer" };
+const global_flags = {};
+const height_values = {};
+const playable_races = {};
+`);
+
+    const purse = amount => ({ money: amount, inventory: {}, equipment: {}, stats: {full: {}},
+                               xp: {current_level: 1}, reputation: {} });
+
+    check("money_required reads a bare number", money_required({money: 500}) === 500);
+    check("money_required reads the object form", money_required({money: {number: 500}}) === 500);
+    check("money_required returns null when no money is named",
+        money_required({}) === null && money_required(undefined) === null);
+    check("money_required does not confuse zero with absent",
+        money_required({money: 0}) === 0);
+
+    // The object form is the one that used to pass unconditionally.
+    check("the object form blocks a purse that is short",
+        process_conditions([{money: {number: 500, remove: true}}], purse(499)) === 0,
+        `got=${process_conditions([{money: {number: 500, remove: true}}], purse(499))}`);
+    check("the object form allows a purse that is exactly enough",
+        process_conditions([{money: {number: 500, remove: true}}], purse(500)) === 1);
+    check("the bare form still blocks a purse that is short",
+        process_conditions([{money: 500}], purse(499)) === 0);
+    check("no money named means the purse is irrelevant",
+        process_conditions([{}], purse(0)) === 1);
+
+    // The old expression, kept as the thing being guarded against: comparing a
+    // number against an object is false, so the gate opened on an empty purse.
+    check("the old comparison really did pass on an empty purse, so these are not vacuous",
+        !(0 < {number: 500}));
+
+    // The exact shape quest 4 uses, with the flag name `required` takes rather than
+    // the one `conditions` takes. The gate must not care which flag is present -
+    // only the charge does - so both spellings have to pass the check at the same
+    // amount.
+    const q4 = {money: {number: 30000, remove_on_success: true}};
+    check("the required-side flag does not change what the gate asks for",
+        money_required(q4) === 30000);
+    check("quest 4's price blocks a purse one coin short",
+        process_conditions([q4], purse(29999)) === 0);
+    check("quest 4's price allows a purse that covers it",
+        process_conditions([q4], purse(30000)) === 1);
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

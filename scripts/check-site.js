@@ -644,6 +644,38 @@ async function check_dialogue_display_names() {
  * A missing row leaves getDisplayName falling back to the English name, so the
  * shop button in a Turkish game would read half in English.
  */
+/**
+ * Hand-written items need a "name <key>" row, or their shown name falls back to
+ * the English registry key.
+ *
+ * Comments are blanked first, and that is the whole difference between a small
+ * problem and an imaginary one: measured on the raw source this reported 124
+ * missing rows, because 118 of them are hand-written components that the runtime
+ * generator superseded and that sit inside commented-out blocks. The real number
+ * was six, so they were written rather than warned about, and this errors.
+ *
+ * Generated items are not included: their names are assembled, and
+ * check_generated_items already verifies the assembly against the registry key.
+ */
+async function check_item_display_names() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
+    const keys = [...source.matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(match => match[1]);
+    if (keys.length === 0) {
+        error("src/items.js declares no items - this check is out of date.");
+        return;
+    }
+
+    const missing = keys.filter(key => !(`name ${key}` in reference));
+    console.log(`[check] item display names: ${keys.length - missing.length}/${keys.length} have a name row`);
+    for (const key of missing) {
+        error(`locales/${default_language}.js has no "name ${key}" row for item "${key}";`
+            + " its shown name would fall back to the English registry key.");
+    }
+}
+
 async function check_trader_display_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -733,13 +765,69 @@ function check_interpolated_pairs() {
     console.log(`[check] interpolated pairs: ${checked} checked`);
 }
 
+/**
+ * Every money requirement in the content must use the spendable object form.
+ *
+ * The gate accepts a bare number too, but a bare number can never be charged - the
+ * removal in main.js only fires for the object form, and it reads
+ * remove_on_success / remove_on_fail on an action's `required` and `remove` on its
+ * `conditions`. A price written as a bare number would therefore gate correctly and
+ * silently cost nothing, which is the same class of failure as the bug this
+ * mechanism was fixed for: a check that passes while nothing happens.
+ *
+ * Nothing required money before quest 4, so this starts with one site to protect.
+ */
+const money_removal_flags = ["remove", "remove_on_success", "remove_on_fail"];
+
+function check_money_requirements() {
+    let checked = 0;
+    for (const file of ["src/dialogues.js", "src/locations.js"]) {
+        const full_path = path.join(repo_root, file);
+        if (!fs.existsSync(full_path)) {
+            error(`${file} is missing - this check is out of date.`);
+            continue;
+        }
+        const source = strip_comments(fs.readFileSync(full_path, "utf8"));
+
+        // Only inside a requirement: a bare `money:` elsewhere is a REWARD, which is
+        // a plain number by design and must not be caught here.
+        for (const block of source.matchAll(/(?:required|conditions):\s*\[?\s*\{([\s\S]*?)\n\s{16}\}/g)) {
+            // The braced alternative comes first, or the bare one truncates the
+            // object at its first comma and loses the removal flag.
+            const money = block[1].match(/(?<![A-Za-z0-9_])money:\s*(\{[^}]*\}|[^,\n]+)/);
+            if (!money) continue;
+            checked++;
+
+            const value = money[1].trim();
+            if (!value.startsWith("{")) {
+                error(`${file} requires money as a bare value (${value}); a requirement that`
+                    + " should be paid needs the object form, or it gates correctly and costs"
+                    + " nothing.");
+                continue;
+            }
+            const amount = value.match(/number:\s*(-?[\d.]+)/);
+            if (!amount || !(Number(amount[1]) > 0)) {
+                error(`${file} has a money requirement whose number is ${amount?.[1]};`
+                    + " it must be a positive amount.");
+            }
+            if (!money_removal_flags.some(flag => value.includes(flag + ":"))) {
+                error(`${file} has a money requirement with no removal flag; add one of`
+                    + ` ${money_removal_flags.join(", ")}, or the price is never charged.`);
+            }
+        }
+    }
+    console.log(`[check] money requirements: ${checked} checked`);
+}
+
 check_site();
 check_interpolated_pairs();
+check_money_requirements();
 check_changelogs_cover_version();
 check_language_switch_repaints();
 await check_locales();
 await check_dialogue_display_names();
 await check_trader_display_names();
+await check_item_display_names();
 await check_content_text_ids();
 await check_generated_items();
 

@@ -6,6 +6,9 @@ import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_ma
 import { locations, favourite_locations, location_types } from "./locations.js";
 import { crafting_skill_xp_gains_cap, skill_categories, skill_xp_gains_cap, skills, weapon_type_to_skill, which_skills_affect_skill } from "./skills.js";
 import { dialogues } from "./dialogues.js";
+//money_required reads the amount out of whichever shape a condition used, so
+//the charge below cannot disagree with the gate that let the action start.
+import { money_required } from "./conditions.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates, tags_for_droprate_modifier_skills } from "./enemies.js";
 import { traders } from "./traders.js";
 import { is_in_trade, start_trade, cancel_trade, accept_trade, exit_trade, add_to_trader_inventory,
@@ -950,6 +953,22 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
                 remove_from_character_inventory([{item_key: item_templates[item_id].getInventoryKey(), item_count: action.required.items_by_id[item_id].count}]);
             }
         });
+
+        //Money, on the same terms as items and through the same helper the reward
+        //path uses, so the displayed purse follows it. The amount comes from
+        //money_required rather than being read off the object here: the gate and the
+        //charge have to agree on the shape, and until now nothing spent money at all.
+        //conditions[0] uses `remove`, `required` uses remove_on_success/on_fail -
+        //the same split items_by_id already has in these two places.
+        const condition_money = action.conditions[0]?.money;
+        if(typeof condition_money === "object" && condition_money.remove) {
+            add_money_to_character(-money_required(action.conditions[0]));
+        }
+        const required_money = action.required.money;
+        if(typeof required_money === "object"
+            && (required_money.remove_on_success && is_won || required_money.remove_on_fail && !is_won)) {
+            add_money_to_character(-money_required(action.required));
+        }
     }
 
     update_game_action_finish_button();
