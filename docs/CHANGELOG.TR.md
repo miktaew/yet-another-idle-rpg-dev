@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 41 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 42 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,51 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Kenar mahalle bir alıcıya kavuşuyor, ve P-11 tamamlandı
+
+`Light in the darkness`, kenar mahallenin *"en azından biraz"* iyileştirilebilir mi
+diye soruyor ve tek maddesi *"Çeteyle ilgilen"*di. Kabadayıları kaldırmak bir zararın
+kaldırılması, iyileştirme değil; oyun da farkı zaten biliyordu: çete gittikten sonra
+odanın açıklaması değişip *"bölgeye biraz güvenlik döndüğü için daha çok kişi
+sokakta"* diyor. Güvenlik döndü. Başka bir şey dönmedi.
+
+3. görev bunu çözmek yerine çoktan keskinleştirmişti — o çeteyi yönetmiş adam artık
+kasaba meydanında yeşil bir tentenin altında bir komisyoncu; meşru ve iyi durumda,
+oysa yönettiği mahalle olduğu gibi. Bu karşıtlığın bu maddeden sağ çıkması
+gerekiyordu ve çıkıyor: buradaki hiçbir şey ona dokunmuyor.
+
+**Yaşlı kadının kendi repliği brief'in tamamıydı.** *"Etrafta öyle biten bitkilerden
+bahsediyorum. Çoğu insan ne kadar işe yarayabileceklerini fark etmeden yanlarından
+geçip gidiyor."* Onları satabilir mi diye sorulduğunda gülüyor — gerçek bir gülüş —
+ve kimsenin tahmin edemeyeceği sebebi söylüyor. Sebep fiyat değil, bilgisizlik de
+değil; sıradaki kadınların yarısı da onun saydığı aynı üç bitkiyi sayar. Sebep
+menşe:
+
+> *"Tezgâhı olan bir adam, kenar mahalleden çıkmış bir sepet istemez; onu neden
+> aldığını kimseye açıklamak da istemez."*
+
+**Bu da mubayaacıyı oyundaki tek olası alıcı yapıyor.** İyi kalpli olduğu için değil —
+hiçbir şey satmadığı için. Ne geldiğini ve ne ettiğini yazıyor; lonca da ona bir
+çuvalın hangi kapıdan çıktığını hiç sormadı. Tek cümlede kabul ediyor, sonra da
+yaptığı şeyi yapıyor: fiyatı aşağılayıcı diye adlandırıyor, ketenden de kötü olduğunu
+söylüyor ve başka alıcı olmadığını bilip yine de adil bir fiyat söyleyen adamın o
+masada kalamayacağını açıklıyor. *"Sonradan kendin hesaplayıp cömert davrandığımı
+sanmandansa, tamamını benden duymanı yeğlerim."*
+
+**Ölçü de görevin kendi ölçüsü.** *"En azından biraz"* diye vaat etmişti. Gelen şey
+bir sürekli sipariş, dış mahalledekinden daha kısır bir boş arazide bitki toplama ve
+odanın açıklaması için üçüncü bir durum: sıranın sonunda içinde terazi olan bir
+kulübe ve arabanın geldiği günler önünde bir kuyruk. Kurtarma değil. Yaşlı kadın
+sayıyı okuyor, *"bu berbat bir fiyat"* diyor, kâğıdı adamın koyduğu kırım yerinden
+katlıyor ve Marta'nın kızlarının kökleri bırakıp bırakmayacağını düşünmeye başlıyor.
+
+Ona iki kez de teşekkür ettirilmiyor: *"Bir şey yaptın, ben de bir kez söyledim; bir
+kez de, bir şeyin kaç kez söylenmesi gerekiyorsa o kadar."*
+
+**Bununla, açıklaması birebir `[To be continued]` metni olan iki madde de gitti** ve
+P-11 kapandı. Artık `global_flags` üzerinde üç getter ve üç bayrak var; hepsi 4.
+bölgeyle gelen kontrolün kapsamında.
 
 ### Köy ocağı, ve `Village expansion` artık bitirilebilir
 

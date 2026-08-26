@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 41 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 42 -->
 
 # Changelog
 
@@ -20,6 +20,51 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The slums get a buyer, and P-11 is finished
+
+`Light in the darkness` asks whether the slums can be improved *"at least a bit"* and
+its only task was *"Deal with the gang"*. Removing thugs is the removal of a harm,
+not an improvement, and the game already knew the difference: the room's description
+changes once the gang is gone to say *"with some safety returned to the area, more
+folk are now out on the streets"*. Safety returned. Nothing else did.
+
+Quest 3 had already sharpened that rather than resolving it - the man who ran that
+gang is a broker under a green awning on the town square now, legitimate and doing
+well, while the district he ran is unchanged. That contrast had to survive this task
+and it does: nothing here touches him.
+
+**The old woman's own line was the whole brief.** *"I'm talking about the plants that
+grow all around. Most people pass them by, without realizing how useful they can
+be."* Asked whether she could sell them, she laughs - a real laugh - and gives the
+reason nobody would guess. It is not the price and it is not ignorance; half the
+women on the row know the same three plants she does. It is provenance:
+
+> *"A man with a stall does not want a basket that came out of the slums, and he does
+> not want to explain to anybody why he took it."*
+
+**Which makes the factor the only possible buyer in the game.** Not because he is
+kind - because he does not sell anything. He writes down what arrives and what it was
+worth, and the guild has never asked him which door a sack came out of. He agrees
+inside one sentence, and then does the thing he does: names the price as insulting,
+worse than the linen, and explains that a man who knows there is no other buyer and
+quotes a fair price anyway does not last at that table. *"I would rather you heard the
+whole of it from me than worked it out later and thought I had been generous."*
+
+**And the scale is the quest's own.** *"At least a bit"* is what it promised. What
+arrives is a standing order, a herbalism patch on waste ground poorer than the
+outskirts one, and a third state for the room's description - a shed at the end of the
+row with a set of scales in it, and a queue outside on the days the cart comes. Not a
+rescue. The old woman reads the number, says *"that is a terrible price"*, folds the
+paper along the crease he put in it, and starts worrying about whether Marta's girls
+will leave the roots.
+
+She is also not thanked twice: *"You have done a thing and I have said so once, and
+once is how many times a thing needs saying."*
+
+**With this, both tasks whose description was the literal string `[To be continued]`
+are gone**, and P-11 is closed. Three getters and three flags now hang off
+`global_flags`, all covered by the check that came in with region 4.
 
 ### The village hearth, and `Village expansion` is finishable
 

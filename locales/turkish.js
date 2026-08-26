@@ -954,7 +954,7 @@ const quests = {
     "quest Light in the darkness": "Karanlıkta bir ışık",
     "quest Light in the darkness desc 1": "Slum'ların insanları acı ve korku içinde yaşıyor. Belki durumlarını bir nebze iyileştirebilirsin?",
     "quest Light in the darkness task 1": "Çeteyi hallet",
-    "quest Light in the darkness task 2": "[Devam edecek]",
+    "quest Light in the darkness task 2": "Kenar mahalleye bir alıcı bul",
 
     //PLOUGHS TO SWORDS
     "quest Ploughs to swords": "Sabanlardan kılıç",
@@ -3493,6 +3493,18 @@ const descriptions = {
     "action build a hearth fail unable_to_begin 1": "Yüz yirmi tuğla, altı külçe demir ve yakmak için kömür. Değirmen çocukları çoktan etrafta umutla dikiliyor; bu, dikilmemelerinden daha kötü.",
     "craftsman hearth": "Kuyunun arkasında artık bir ocak var.",
     "craftsman hearth answ": "Ahh. *[Duyup duymadığını merak edecek kadar sessiz kalıyor.]*\n\nSana o dağda yaptığın bir şeyi getirmeni söylemiştim. Sen bana onun yerine durabileceğim bir yer getirdin; istediğimden fazlası ve bu konuda tam olarak bir cümle daha nazik olacağım.\n\n*[Çoktan kalkıyor]* Pekâlâ. Çocuk yanlış üfürüyordur. Hep yanlış üfürürler — sert, sonra hiç; körük dövülecek bir şeymiş gibi. Meselenin tamamı düzenli olmak. Düzenli ve sıkıcı, sonsuza kadar.\n\nKırk yıllık bunu insanlara anlatma birikimim var ve anlatacak bir yerim yoktu. *[Kapıda]* Beni bekleme, kuyunun nerede olduğunu biliyorum.",
+
+    //P-11. Light in the darkness task 2: the slums get a buyer rather than a
+    //rescue. Nobody had ever put a number on anything that came out of that street.
+    "old sell": "Topladığınız şeyi satabilir misiniz? Birilerinin işine yarıyor olmalı.",
+    "old sell answ": "*[Gülüyor; gerçek bir gülüş, acı bir gülüş değil.]*\n\nAh evladım. Kime satacağım? Şu sokağa bak ve bana bu kapılardan hangisinin arkasında bir akçe var, söyle. Arkada ne bittiğini hepimiz biliriz — ben icat etmedim, anam gösterdi ve bu sıradaki kadınların yarısı da sana benim sayacağım aynı üç bitkiyi sayar.\n\nKasaba buradan almaz. Fiyattan değil. *[Sonraki kısmı hiç öfke katmadan söylüyor; bu daha kötü]* Nereden aldığını söylemek zorunda kalacağın yerden. Tezgâhı olan bir adam, kenar mahalleden çıkmış bir sepet istemez; onu neden aldığını kimseye açıklamak da istemez.\n\nBu yüzden kendi tencerelerimize giriyor ve bu iyi bir şey, şikâyet de etmiyorum. *[Sana bakıyor]* Sen bu sokaktaki herkesten çok yer gördün. Bir şeyin nereden geldiğine takılmayan bir adam tanıyorsan, o başka bir konuşma olur.",
+    "old account": "Lonca, toplayabildiğiniz her şeyi alacak.",
+    "old account answ": "*[Kâğıt şeridi iki kez okuyor. Tamamını okuyamıyor ve okuyormuş gibi de yapmıyor; sayıyı buluyor ve orada duruyor.]*\n\nBu berbat bir fiyat.\n\n*[Sonra onu, adamın koyduğu kırım yerinden dikkatle katlıyor.]*\n\nAma bir fiyat. Bugüne kadar buradan çıkan hiçbir şeye kimse bir sayı koymamıştı — kirayı koyuyorlar ve bu sokağın bugüne kadar yaptığı aritmetiğin tamamı o. Şimdi ikinci bir sayı var ve defterin bizim tarafında.\n\nMarta'nın kızları perşembeye kadar bütün boş araziyi soyar; kökleri bırakmaları konusunda onlarla konuşmam gerekecek. *[Şimdiden onu düşünüyor]* Kökler. Bütün hafta vereceğim ders o olacak.\n\nHadi git bakalım. Bir şey yaptın, ben de bir kez söyledim; bir kez de, bir şeyin kaç kez söylenmesi gerekiyorsa o kadar.",
+    "factor slums": "Arkanda ot tedarik edebilecek bir mahalle var. Kimse ondan almıyor.",
+    "factor slums answ": "*[Bir süre daha yazıyor, sonra altına bir çizgi çekip levhayı ters çeviriyor.]*\n\nKenar mahalle. *[Soru değil]* Elbette kimse ondan almaz. Tezgâhtar, maydanozla birlikte menşei de satıyor ve orada satılacak menşe yok.\n\nKi bu benim derdim değil, çünkü ben hiçbir şey satmıyorum. Ne geldiğini ve buraya vardığında ne ettiğini yazıyorum; lonca da bana bir çuvalın hangi kapıdan çıktığını bir kez bile sormadı. *[Şimdiden yeni bir sütun çiziyor]* Mutfak otları. Sürekli sipariş, senin hesabına; çünkü karşısına yazabileceğim tek hesap senin.\n\nŞimdi hoşuna gitmeyecek kısım. Fiyat aşağılayıcı. Keten için verdiğimden de kötü ve keten için sana kötü bir fiyat vermiştim. Başka alıcı yok, malı başka bir yere taşıyamazlar; bu ikisini de bilip yine de adil bir fiyat söyleyen adam da bu masada uzun süre kalamaz.\n\n*[Kalemi bırakıyor; bunu senin önünde ikinci kez yapıyor]* Yine de sürekli bir sipariş. O sokaktaki hiçbir şeyin bugüne kadar böyle bir şeyi olmadı. Sonradan kendin hesaplayıp cömert davrandığımı sanmandansa, tamamını benden duymanı yeğlerim.",
+    "desc location Slums dyn 3": "Şehir surlarının yanında, çürüyen yapılar ve yoksullukla dolu bir başıboş yerleşim. Sıranın sonunda artık içinde bir terazi olan bir kulübe var; arabanın geldiği günler de önünde bir kuyruk.",
+    "activity Slums herbalism starting": "Boş araziyi işle",
+    "activity Slums herbalism unlock": "Gidecek bir yeri olduğu için, kiralık evlerin arkasındaki boş arazi artık işlemeye değer.",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

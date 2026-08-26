@@ -140,6 +140,9 @@ const global_flags = {
     //P-11. Same shape as the mountain flue, one tier lower, for the same reason the
     //old craftsman gave: down here the draught is a boy and a boy gets tired.
     is_village_hearth_built: false,
+    //P-11. The slums have a buyer. Read by the room's own description, which already
+    //changes once for the gang - this is the second thing that ever changed there.
+    is_slums_account_open: false,
 };
 //TEXT IDS, resolved where the message is logged.
 const flag_unlock_texts = {

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 24 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 25 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -468,7 +468,7 @@ emekli maceracı olup olmadığı.
 İki `[To be continued]` görev adımı da bağlanmamış durumda ve bu listeye değil
 bölgelere ait: `Village expansion` adım 7 ve `Light in the darkness` adım 2.
 
-### P-11 — İki `[To be continued]` görevini bitir `active`
+### P-11 — İki `[To be continued]` görevini bitir `done`
 
 Oyunda iki görev maddesi, açıklaması olarak birebir **"[To be continued]"** metnini
 taşıyor: `Village expansion` 7. madde ve `Light in the darkness` 2. madde. Bunlar
@@ -501,7 +501,7 @@ değil - zanaatkârın kendi açıklamasının sayıya dönüşmüş hâli.
 Sıra: yaşlının `further work` repliği artık *"henüz yok"*ta durmuyor; oyuncu kuruyor;
 yaşlı zanaatkâr da tutan bir ateşin karşısında durabiliyor.
 
-#### 2. `Light in the darkness` 2. madde — kurtarma değil, alıcı
+#### 2. `Light in the darkness` 2. madde — kurtarma değil, alıcı — **TAMAM**
 
 Görev doğru soruyu soruyor ve 1. maddesi onu cevaplamıyor:
 

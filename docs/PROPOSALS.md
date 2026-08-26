@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 24 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 25 -->
 
 # Proposals
 
@@ -460,7 +460,7 @@ village guard is the retired adventurer.
 Two `[To be continued]` quest tasks also sit unwired and belong to regions rather
 than to this list: `Village expansion` task 7 and `Light in the darkness` task 2.
 
-### P-11 — Finish the two `[To be continued]` tasks `active`
+### P-11 — Finish the two `[To be continued]` tasks `done`
 
 Two quest tasks in the game carry the literal description **"[To be continued]"**:
 `Village expansion` task 7 and `Light in the darkness` task 2. They are the last
@@ -494,7 +494,7 @@ turned into a number.
 Sequence: the elder's `further work` line stops resting on *"not yet"*; the player
 builds it; the old craftsman gets to stand in front of a fire that holds.
 
-#### 2. `Light in the darkness` task 2 — a buyer, not a rescue
+#### 2. `Light in the darkness` task 2 — a buyer, not a rescue — **DONE**
 
 The quest asks the right question and its task 1 does not answer it:
 

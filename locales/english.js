@@ -904,7 +904,7 @@ const quests = {
     "quest Light in the darkness": "Light in the darkness",
     "quest Light in the darkness desc 1": "People of the slums live in suffering and fear. Maybe you could improve their situation at least a bit?",
     "quest Light in the darkness task 1": "Deal with the gang",
-    "quest Light in the darkness task 2": "[To be continued]",
+    "quest Light in the darkness task 2": "Find the slums a buyer",
 
     //PLOUGHS TO SWORDS
     "quest Ploughs to swords": "Ploughs to swords",
@@ -3453,6 +3453,18 @@ const descriptions = {
     "action build a hearth fail unable_to_begin 1": "A hundred and twenty bricks, six bars of iron, and charcoal to light it with. The mill boys are already standing about looking hopeful, which is worse than if they were not.",
     "craftsman hearth": "There's a hearth behind the well now.",
     "craftsman hearth answ": "Ahh. *[He is quiet for long enough that you wonder whether he heard.]*\n\nI asked you to bring me something you made up on that mountain. You have brought me somewhere to stand instead, which is more than I asked for and I am going to be gracious about it for exactly one more sentence.\n\n*[He is already getting up]* Right. The boy will be blowing it wrong. They always blow it wrong - hard and then nothing, like a bellows is a thing you beat. Steady is the whole of it. Steady and boring, forever.\n\nI have forty years of telling people that and nowhere to tell them it. *[At the door]* Do not wait for me, I know where the well is.",
+
+    //P-11. Light in the darkness task 2: the slums get a buyer rather than a
+    //rescue. Nobody had ever put a number on anything that came out of that street.
+    "old sell": "Could you sell what you gather? Somebody must want it.",
+    "old sell answ": "*[She laughs, and it is a real laugh, not a bitter one.]*\n\nOh, child. Sell it to whom? Look up this street and tell me which of these doors has a coin behind it. We all know what grows out the back - I did not invent it, my mother showed me, and half the women on this row could tell you the same three plants I could.\n\nThe town will not buy from here. Not because of the price. *[She says the next part without any heat at all, which is worse]* Because of where you would have to say you got it. A man with a stall does not want a basket that came out of the slums, and he does not want to explain to anybody why he took it.\n\nSo it goes in our own pots and that is a good thing and I am not complaining about it. *[She looks at you]* You have been to more places than anybody on this street. If you know a man who does not care where a thing came from, that is a different conversation.",
+    "old account": "The guild will take everything you can gather.",
+    "old account answ": "*[She reads the strip of slate-paper twice. She cannot read all of it and she does not pretend otherwise; she finds the number and stops there.]*\n\nThat is a terrible price.\n\n*[Then she folds it, carefully, along the crease he put in it.]*\n\nIt is a price. Nobody has ever put a number on anything that came out of here before - they put a number on the rent and that is the whole of the arithmetic this street has ever done. Now there is a second number and it is on our side of the ledger.\n\nMarta's girls will have the whole waste ground stripped by Thursday and I will have to have words with them about leaving the roots. *[She is already thinking about it]* Roots. That is the lesson I will be giving all week.\n\nGo on with you. You have done a thing and I have said so once, and once is how many times a thing needs saying.",
+    "factor slums": "There is a district behind you that can supply herbs. Nobody will buy from it.",
+    "factor slums answ": "*[He writes for a moment longer, then draws a line under it and turns the slate over.]*\n\nThe slums. *[Not a question]* Of course nobody will buy from it. A stallholder sells provenance along with the parsley and there is no provenance to be had there.\n\nWhich is not my problem, because I do not sell anything. I write down what arrives and what it was worth when it got here, and the guild has never once asked me which door a sack came out of. *[He is already ruling a new column]* Cooking herbs. Standing order, on your account, since your account is the only one I can put it against.\n\nAnd now the part you will not like. The price is insulting. It is worse than what I gave you for the linen, and I gave you a bad price for the linen. There is no other buyer, they cannot carry it anywhere else, and a man who knows both of those things and quotes a fair price anyway is a man who does not last at this table.\n\n*[He sets the pen down, which he has done twice now in front of you]* It is still a standing order. Nothing on that street has ever had one. I would rather you heard the whole of it from me than worked it out later and thought I had been generous.",
+    "desc location Slums dyn 3": "A wild settlement next to city walls, filled with decaying buildings and poverty. There is a shed at the end of the row now with a set of scales in it, and a queue outside it on the days the cart comes.",
+    "activity Slums herbalism starting": "Work the waste ground",
+    "activity Slums herbalism unlock": "The waste ground behind the tenements is worth working now that there is somewhere for it to go.",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

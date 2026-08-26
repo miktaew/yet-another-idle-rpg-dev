@@ -1265,7 +1265,31 @@ class DialogueAction extends GameAction {
                 locks_lines: ["ingredients"],
                 rewards: {
                     activities: [{location: "Town outskirts", activity: "herbalism"}],
-                }
+                    textlines: [{dialogue: "old woman of the slums", lines: ["sell"]}],
+                },
+            }),
+            /*
+                P-11. Light in the darkness task 2.
+
+                She taught the player to find the plants. The question she has never been
+                asked is who would buy them, and the answer is not in the slums and never
+                has been - which is the actual shape of the poverty here, and it is a
+                supply problem with no demand attached rather than a lack of anything.
+            */
+            "sell": new Textline({
+                name: "old sell",
+                is_unlocked: false,
+                text: "old sell answ",
+                locks_lines: ["sell"],
+                rewards: {
+                    textlines: [{dialogue: "guild factor", lines: ["slums"]}],
+                },
+            }),
+            "account": new Textline({
+                name: "old account",
+                is_unlocked: false,
+                text: "old account answ",
+                locks_lines: ["account"],
             }),
         },
         getDescription: ()=>{
@@ -2611,6 +2635,28 @@ class DialogueAction extends GameAction {
                 He gives the road, not the destination. The road is a Combat_zone and
                 clearing it is what puts the bay on the map.
             */
+            /*
+                P-11. He is the buyer because he is the only buyer in the game who has
+                said out loud that he will take anything: "Everything, badly."
+
+                He agrees, and the price is insulting, and he explains exactly why he is
+                doing it, which is the same thing he did about the linen. He is not being
+                kind. He is being consistent, and consistency is worth more to the slums
+                than kindness would be.
+            */
+            "slums": new Textline({
+                name: "factor slums",
+                text: "factor slums answ",
+                is_unlocked: false,
+                rewards: {
+                    flags: ["is_slums_account_open"],
+                    activities: [{location: "Slums", activity: "herbalism"}],
+                    reputation: {Slums: 150},
+                    quest_progress: [{quest_id: "Light in the darkness", task_index: 2}],
+                    textlines: [{dialogue: "old woman of the slums", lines: ["account"]}],
+                },
+                locks_lines: ["slums"],
+            }),
             "road north": new Textline({
                 name: "factor road north",
                 text: "factor road north answ",

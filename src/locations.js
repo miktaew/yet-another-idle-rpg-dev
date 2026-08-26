@@ -1541,6 +1541,13 @@ function get_location_type_penalty(type, stage, stat, category) {
     locations["Slums"] = new Location({ 
         connected_locations: [{location: locations["Town outskirts"], travel_time: 60}],
         getDescription: function() {
+            //Three states now. The original two are the gang: dyn 2 is while it runs the
+            //district, dyn 1 is after. dyn 3 is the only other thing that has ever
+            //changed here, and it is deliberately small - one shed with a set of scales
+            //in it, not a rescue.
+            if(global_flags.is_slums_account_open) {
+                return translationManager.getText(language, "desc location Slums dyn 3");
+            }
             if(locations["Gang hideout"].is_finished) {
                 return translationManager.getText(language, "desc location Slums dyn 1");
             }
@@ -3075,6 +3082,35 @@ function get_location_type_penalty(type, stage, stat, category) {
     };
     locations["Mysterious depths"].actions["read the tiles"].rewards.actions =
         [{location: "Mysterious depths", action: "trace the pattern"}];
+
+    /*
+        P-11. The waste ground behind the tenements.
+
+        The old woman's own line is the whole justification: "the plants that grow all
+        around. Most people pass them by, without realizing how useful they can be."
+        Nobody in the slums passed them by for lack of knowledge - she has known all
+        along - they passed them by because there was nobody to sell them to.
+
+        Poorer than the outskirts patch on purpose: this is waste ground between
+        buildings, not open country.
+    */
+    locations["Slums"].activities = {
+        "herbalism": new LocationGatheringActivity({
+            activity_name: "herbalism",
+            starting_text: "activity Slums herbalism starting",
+            skill_xp_per_tick: 4,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [
+                    {name: "Cooking herbs", ammount: [[1,1], [1,3]], chance: [0.1, 0.8]},
+                ],
+                time_period: [140, 30],
+                skill_required: [5, 20]
+            },
+            require_tool: true,
+            unlock_text: "activity Slums herbalism unlock"
+        }),
+    };
 
     locations["Town outskirts"].activities = {
         "herbalism": new LocationGatheringActivity({
