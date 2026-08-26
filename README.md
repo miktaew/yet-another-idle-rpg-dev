@@ -50,8 +50,11 @@ this project is esbuild itself.
 
 ```sh
 npm run build        # bundle -> dist/, deployable site -> _site/
-npm run check        # validate the built site and locale key parity
+npm run check        # validate the built site, the locales, and the content graph
+npm test             # regression tests
 npm run serve:site   # http://127.0.0.1:8081 - preview the built site
+
+npm run check:save "<exported save>.txt"   # audit a savegame against the registries
 ```
 
 `npm run build` does two things: it bundles `src/main.js` into `dist/bundle.js`,
@@ -70,10 +73,28 @@ Two consequences worth knowing:
   rebuild. CI rebuilds on every push, so this only affects local bundle-mode
   testing.
 
-`npm run check` is also the guard for translations: keys that do not exist in the
-default locale fail the build, and missing translations are reported as a
-coverage percentage. Run it with `LOCALE_STRICT=1` to make missing translations
-fatal.
+`npm run check` is the main guard, and it grew as the content did. It validates
+the built site, then the locales - a key that does not exist in the default locale
+always fails - and then the content itself:
+
+- every declared text id resolves, including the runtime-generated equipment names
+- every reward key is one the game actually reads, and every reward reference
+  names something that exists
+- every locked textline and action is reachable from somewhere
+- every required item is a real template, and every price can actually be charged
+- both in-game changelogs carry an entry for the shipped version
+
+Most of those exist because the opposite had already happened: content that looks
+like it does something, and does nothing.
+
+`LOCALE_STRICT=1` makes a missing translation fatal rather than a warning. **CI
+sets it**, because Turkish is complete; adding a language that is not means
+turning it off deliberately.
+
+`npm run check:save` is separate because it needs a file: point it at an exported
+savegame and it checks every registry key the save holds against the current code.
+Registry keys are save data, so this is the only check that can tell you whether a
+rename broke real players rather than only the code's view of itself.
 
 Requires Node **22 or newer**.
 
@@ -97,7 +118,7 @@ pushes are skipped. There is nothing to do by hand.
 | `resources/` | Fonts, images, and vendored HackTimer. |
 | `help.html` | In-game help. |
 | `changelog.html` | In-game, player-facing version history. |
-| `scripts/` | Build and validation scripts. |
+| `scripts/` | Build, validation and save-audit scripts. `lib/` holds what more than one of them needs. |
 | `docs/` | Developer and agent documentation. |
 
 ## Modding and reusing this as an engine

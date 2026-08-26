@@ -52,8 +52,11 @@ bağımlılık esbuild'in kendisidir.
 
 ```sh
 npm run build        # bundle -> dist/, deploy edilebilir site -> _site/
-npm run check        # derlenen siteyi ve locale anahtar eşliğini doğrula
+npm run check        # derlenen siteyi, locale'leri ve içerik grafiğini doğrula
+npm test             # regresyon testleri
 npm run serve:site   # http://127.0.0.1:8081 - derlenen siteyi önizle
+
+npm run check:save "<dışa aktarılmış save>.txt"   # save'i registry'lere karşı denetle
 ```
 
 `npm run build` iki iş yapar: `src/main.js`'i `dist/bundle.js` içine paketler ve
@@ -73,10 +76,29 @@ Bilinmesi gereken iki sonuç:
   gerektirmez. CI her push'ta yeniden derlediği için bu yalnızca yerel bundle
   modu testlerini etkiler.
 
-`npm run check` aynı zamanda çevirilerin bekçisidir: varsayılan dilde bulunmayan
-anahtarlar derlemeyi başarısız kılar, eksik çeviriler ise kapsam yüzdesi olarak
-raporlanır. Eksik çevirileri ölümcül hâle getirmek için `LOCALE_STRICT=1` ile
-çalıştırın.
+`npm run check` ana bekçi ve içerikle birlikte büyüdü. Önce derlenen siteyi, sonra
+locale'leri — varsayılan dilde bulunmayan bir anahtar her zaman düşer — sonra da
+içeriğin kendisini doğruluyor:
+
+- bildirilen her metin id'si çözülüyor; çalışma anında üretilen ekipman adları dahil
+- her ödül anahtarı oyunun gerçekten okuduklarından biri ve her ödül referansı var
+  olan bir şeyi gösteriyor
+- kilitli her textline ve action bir yerden erişilebilir
+- gerekli her eşya gerçek bir şablon ve her fiyat gerçekten tahsil edilebiliyor
+- iki oyun içi changelog da yayımlanan sürüm için girdi taşıyor
+
+Bunların çoğu, tersi çoktan yaşandığı için var: bir şey yapıyor gibi görünüp
+hiçbir şey yapmayan içerik.
+
+`LOCALE_STRICT=1` eksik bir çeviriyi uyarı değil ölümcül yapıyor. **CI bunu
+açıyor**, çünkü Türkçe tamamlandı; tamamlanmamış bir dil eklemek, bunu bilerek
+kapatmak demek.
+
+`npm run check:save` ayrı, çünkü bir dosyaya ihtiyacı var: onu dışa aktarılmış bir
+savegame'e yöneltin, save'in tuttuğu her registry anahtarını güncel koda karşı
+denetler. Registry anahtarları save verisidir; dolayısıyla bir yeniden adlandırmanın
+kodun kendine bakışını değil gerçek oyuncuları bozup bozmadığını söyleyebilen tek
+kontrol bu.
 
 Node **22 veya üzeri** gerektirir.
 
@@ -101,7 +123,7 @@ Pages'e yayınlar. Yalnızca doküman değişen push'lar atlanır. Elle yapılac
 | `resources/` | Fontlar, görseller ve devralınan HackTimer. |
 | `help.html` | Oyun içi yardım. |
 | `changelog.html` | Oyun içi, oyuncuya yönelik sürüm geçmişi. |
-| `scripts/` | Derleme ve doğrulama script'leri. |
+| `scripts/` | Derleme, doğrulama ve save denetimi script'leri. `lib/`, birden fazlasının ihtiyaç duyduğu şeyi tutuyor. |
 | `docs/` | Geliştirici ve agent dokümantasyonu. |
 
 ## Mod yapımı ve bunu motor olarak kullanma
