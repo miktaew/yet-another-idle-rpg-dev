@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 44 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 45 -->
 
 # Changelog
 
@@ -20,6 +20,72 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The item reachability audit, and one wrong turn recorded
+
+An item arrives through a loot list, a trader, a recipe, a gathering activity or an
+explicit reward. Auditing the 272 hand-declared non-component items against all of
+those found 21 that nothing anywhere asks for.
+
+**The first attempt at that audit was wrong and is worth recording.** It enumerated
+the *shapes* an item can arrive through - `item_name:`, `result_id:`, `material_id:`,
+`resources:` - and missed `{ name: "Carp", chance: [...] }` in a fishing activity,
+because that shape has a space after the brace and no `ammount` key. It duly reported
+a fish anybody can catch. The second version counts references instead: every
+occurrence of the item's quoted name across `src/`, minus the two that belong to its
+own declaration. That direction cannot be fooled by an arrival shape nobody thought
+of.
+
+**The cat café.** Asked what the place serves, the proprietress has always answered:
+
+> *"Coffee, cider, cake, and whatever the kitchen managed not to drop today."*
+
+`Black coffee`, `Cider`, `Apple pie` and `Carrot cake` all existed - descriptions in
+both languages, working effects, 100 value each - and the `Cat cafe` inventory
+template held bread, kwas, clam, bisque, frog legs and fish steak. Three of the four
+things she names were not on the shelf. They are now. Cake is two items because the
+game has two.
+
+**The vegetables.** `Carrot`, `Potato` and both cooked forms were complete and
+unobtainable. The village shop sells the raw two, and two cooking recipes at level 1-4
+turn them into the cooked ones - below roasted rat meat, because boiling a potato is
+the easiest thing anybody in this game does. The raw potato gives *Slight food
+poisoning* and its own description ends *"Just remember to cook it first!"*, so
+selling it raw is the joke working.
+
+**And a display bug the vegetables would have shipped.**
+`item_templates["Cooked potato"]` carried `name: "Potato"`. `getDisplayName` resolves
+`name ${this.getName()}`, so a cooked potato looked up the *raw* potato's row and
+displayed as "Potato" - while `"name Cooked potato": "Pişmiş patates"` sat in both
+locales, written by somebody who meant it to be its own item and never read once.
+Safe to fix: `setup_ids` assigns `item_templates[id].id = id` from the key and
+`createInventoryKey` uses `this.id`, so the name field is display only.
+
+That class is checked now: **an item's name must not be another item's key.** A name
+that merely differs is normal and deliberate - `Goat meat` shows as "Mountain goat
+meat", `Cooked clam` as "Boiled clam" - and there are five of those. A name that *is*
+another key means two items resolve to one row and the second one's translation can
+never be reached.
+
+**The wrong turn.** Along the way this looked like a broken crafting chain: the
+`Shield base` recipe produces `Hickory shield base`, `items.js` declares
+`Hickory wood shield base` whose `shield_name` is `Hickory wood shield`, and the
+assembled template is called `Hickory shield` - three names, none matching. It is not
+broken. `crafting_component_filling.js` generates a `Hickory shield base` whose
+`shield_name` is `Hickory shield`, which is exactly the assembled template, and
+`shield_name` is a display string rather than a template reference - the comment above
+`getDisplayName` says so. The hand-declared component is a duplicate the generator
+supersedes.
+
+Reading the consumption site is what settled it, and it is the reason no check came
+out of that: a name-link check across the crafting chain would be 42 findings and 42
+false positives.
+
+**What is left, deliberately.** Ten items form a coherent tier above steel - white and
+black iron ore, ingots and chainmail - and `crafting_component_filling.js` already
+generates `White iron shield base` and `Black iron shield base` from them. The tier is
+scaffolding waiting for an ore to mine, not a defect. Plus two leftovers,
+`Scraps of wolf rat meat` and `Basic spare parts`.
 
 ### Three audits, and the bug the third one found
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 44 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 45 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,73 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Eşya ulaşılabilirliği denetimi, ve kayda geçen bir yanlış dönüş
+
+Bir eşya, ganimet listesi, tüccar, tarif, toplama faaliyeti ya da açık bir ödül
+üzerinden gelir. Elle bildirilmiş 272 bileşen-olmayan eşyayı bunların tamamına karşı
+denetlemek, hiçbir yerde hiçbir şeyin istemediği 21 tanesini buldu.
+
+**O denetimin ilk denemesi yanlıştı ve kayda değer.** Bir eşyanın gelebileceği
+*biçimleri* sayıyordu — `item_name:`, `result_id:`, `material_id:`, `resources:` — ve
+bir balık tutma faaliyetindeki `{ name: "Carp", chance: [...] }` biçimini kaçırdı;
+çünkü o biçimde süslü parantezden sonra boşluk var ve `ammount` anahtarı yok. Herkesin
+tutabildiği bir balığı usulünce bildirdi. İkinci sürüm onun yerine referansları
+sayıyor: eşyanın tırnaklı adının `src/` boyunca her geçişi, kendi bildirimine ait olan
+ikisi çıkarılarak. Bu yön, kimsenin akletmediği bir geliş biçimiyle aldatılamaz.
+
+**Kedi kafe.** Mekânın ne sattığı sorulduğunda işletmeci hep şöyle cevap veriyordu:
+
+> *"Kahve, elma şarabı, kek ve mutfağın bugün yere düşürmemeyi başardığı her ne
+> varsa."*
+
+`Black coffee`, `Cider`, `Apple pie` ve `Carrot cake` hepsi vardı — iki dilde
+açıklama, çalışan etkiler, her biri 100 değerinde — ve `Cat cafe` envanter şablonu
+ekmek, kvas, midye, çorba, kurbağa bacağı ve balık bifteği tutuyordu. Onun saydığı
+dört şeyden üçü rafta yoktu. Artık var. Kek iki eşya, çünkü oyunda iki tane var.
+
+**Sebzeler.** `Carrot`, `Potato` ve iki pişmiş biçimi tamamlanmış ve elde
+edilemezdi. Köy dükkânı çiğ olan ikisini satıyor; 1-4 seviyesindeki iki yemek tarifi
+de onları pişmiş hâllerine çeviriyor — kızarmış sıçan etinin altında, çünkü patates
+haşlamak bu oyunda kimsenin yaptığı en kolay şey. Çiğ patates *Hafif gıda
+zehirlenmesi* veriyor ve kendi açıklaması *"Yalnız önce pişirmeyi unutma!"* diye
+bitiyor; yani onu çiğ satmak, şakanın çalışması.
+
+**Ve sebzelerin beraberinde götüreceği bir görüntü hatası.**
+`item_templates["Cooked potato"]`, `name: "Potato"` taşıyordu. `getDisplayName`,
+`name ${this.getName()}` çözüyor; yani pişmiş patates *çiğ* patatesin satırını arayıp
+"Patates" diye görünüyordu — oysa `"name Cooked potato": "Pişmiş patates"` iki yerelde
+de duruyordu; onu kendi eşyası olarak düşünen biri yazmış ve bir kez bile
+okunmamıştı. Düzeltmesi güvenli: `setup_ids`, `item_templates[id].id = id` atamasını
+anahtardan yapıyor ve `createInventoryKey` `this.id` kullanıyor; yani `name` alanı
+yalnızca görüntü.
+
+O sınıf artık kontrol ediliyor: **bir eşyanın adı, başka bir eşyanın anahtarı
+olmamalı.** Anahtarından yalnızca farklı olan bir ad normal ve bilinçli — `Goat meat`
+"Mountain goat meat" görünüyor, `Cooked clam` "Boiled clam" — ve bunlardan beş tane
+var. Başka bir anahtarın *kendisi* olan bir ad ise iki eşyanın tek bir satıra
+çözülmesi demek; ikincinin çevirisine hiç ulaşılamaz.
+
+**Yanlış dönüş.** Yol boyunca bu, kırık bir üretim zinciri gibi göründü: `Shield base`
+tarifi `Hickory shield base` üretiyor, `items.js` `shield_name`'i
+`Hickory wood shield` olan `Hickory wood shield base`'i bildiriyor ve birleştirilmiş
+şablonun adı `Hickory shield` — üç ad, hiçbiri eşleşmiyor. Kırık değil.
+`crafting_component_filling.js`, `shield_name`'i `Hickory shield` olan bir
+`Hickory shield base` üretiyor ki bu da tam olarak birleştirilmiş şablon; ve
+`shield_name` bir şablon referansı değil, bir görüntü dizgesi — `getDisplayName`'in
+üstündeki yorum bunu söylüyor. Elle bildirilmiş bileşen, üreticinin yerine geçtiği bir
+kopya.
+
+Meseleyi çözen şey, tüketim noktasını okumak oldu; oradan bir kontrol çıkmamasının
+sebebi de bu: üretim zinciri boyunca bir ad-bağı kontrolü, 42 bulgu ve 42 yanlış
+pozitif olurdu.
+
+**Bilerek kalan.** On eşya, çeliğin üstünde tutarlı bir kademe oluşturuyor — beyaz ve
+siyah demir cevheri, külçeleri ve zincir zırhları — ve
+`crafting_component_filling.js` onlardan `White iron shield base` ile
+`Black iron shield base`'i çoktan üretiyor. Kademe bir kusur değil, kazılacak bir
+cevheri bekleyen iskele. Bir de iki artık: `Scraps of wolf rat meat` ve
+`Basic spare parts`.
 
 ### Üç denetim, ve üçüncüsünün bulduğu hata
 

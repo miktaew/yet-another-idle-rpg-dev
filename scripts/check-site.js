@@ -961,6 +961,67 @@ function strip_interpolations(body) {
 }
 
 /**
+ * An item's display name must not be another item's registry key.
+ *
+ * `item_templates["Cooked potato"]` carried `name: "Potato"`. `getDisplayName`
+ * resolves `name ${this.getName()}`, so a cooked potato looked up the RAW potato's
+ * row and displayed as "Potato" - while `"name Cooked potato"` sat in both locales,
+ * written by somebody who meant it to be its own item and never read.
+ *
+ * A name that differs from the key is normal and deliberate here: `Goat meat` shows
+ * as "Mountain goat meat", `Cooked clam` as "Boiled clam", `Cooking herbs` as
+ * "Parsley, sage, rosemary and thyme". That is the display-name indirection the
+ * whole project is built on. What is never right is a name that IS another key,
+ * because then two items resolve to one row and the second one's translation can
+ * never be reached.
+ *
+ * Not a save-data concern: setup_ids assigns `item_templates[id].id = id` from the
+ * key and createInventoryKey uses this.id, so the name field is display only.
+ */
+function check_item_name_collisions() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
+
+    //Each declaration runs to the start of the next one, rather than being matched
+    //with a lazy `[\s\S]*?` up to the first `\n\s+});` - that stops at whichever
+    //nested object closes first, a stats block or a component list, and a name field
+    //below it would be invisible.
+    //
+    //The count this reports is smaller than the number of `name:` fields in the file
+    //that differ from their key, and that is correct: 118 of items.js's declarations
+    //sit inside block comments, superseded by the components
+    //crafting_component_filling.js generates, and strip_comments removes them. A
+    //collision planted inside one of those is dead code and is right not to be
+    //reported.
+    const starts = [...source.matchAll(/item_templates\["([^"]+)"\]\s*=\s*new \w+\(\{/g)];
+    if (starts.length === 0) {
+        error("could not read any item_templates declarations out of src/items.js"
+            + " - this check is out of date.");
+        return;
+    }
+
+    const keys = new Set(starts.map(match => match[1]));
+    let differing = 0;
+
+    for (let i = 0; i < starts.length; i++) {
+        const key = starts[i][1];
+        const from = starts[i].index + starts[i][0].length;
+        const to = i + 1 < starts.length ? starts[i + 1].index : source.length;
+        const body = source.slice(from, to);
+
+        const name = body.match(/\n\s+name:\s*"([^"]+)"/);
+        if (!name || name[1] === key) continue;
+        differing++;
+
+        if (keys.has(name[1])) {
+            error(`item_templates["${key}"] has name: "${name[1]}", which is another item's key.`
+                + " getDisplayName resolves `name ${getName()}`, so this item would show the other"
+                + ` one's name and its own "name ${key}" row could never be reached.`);
+        }
+    }
+    console.log(`[check] item name collisions: ${differing} names differ from their key, none collide`);
+}
+
+/**
  * Every choice on the hero creation panel needs a locale row for its VALUE.
  *
  * The panel's buttons carry two different strings and only one of them was ever
@@ -1277,8 +1338,13 @@ async function check_global_flags() {
                     + " gates would silently never appear.");
             }
         }
-        //`flags: ["is_x"]` in a rewards object, and `required_flags: {yes: [...]}`.
-        for (const list of source.matchAll(/(?:^|[^_])\bflags\s*:\s*(\{[^}]*\}|\[[^\]]*\])/g)) {
+        //Three shapes, all of which name a flag as a string: `flags: ["is_x"]` in a
+        //rewards object, `required_flags: {yes: [...], no: [...]}` on a textline, and
+        //`display_conditions: {flags: [...]}`. The first version of this pattern
+        //excluded a preceding underscore to avoid matching a property called
+        //something_flags, which also excluded required_flags - the one of the three
+        //that gates whether a line can be seen at all.
+        for (const list of source.matchAll(/\b(?:required_)?flags\s*:\s*(\{[^}]*\}|\[[^\]]*\])/g)) {
             for (const name of list[1].matchAll(/"([A-Za-z_][A-Za-z0-9_]*)"/g)) {
                 references++;
                 if (!declared.has(name[1])) {
@@ -1776,6 +1842,7 @@ await check_no_placeholder_text();
 await check_translations_have_no_english();
 await check_no_unused_locale_rows();
 await check_creation_panel_values();
+check_item_name_collisions();
 check_action_branches();
 await check_required_items();
 await check_content_text_ids();

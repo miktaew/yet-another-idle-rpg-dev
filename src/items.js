@@ -4874,7 +4874,10 @@ function add_gear() {
     });
 
     item_templates["Cooked potato"] = new UsableItem({
-        name: "Potato",
+        //Was "Potato". getDisplayName resolves `name ${getName()}`, so this item
+        //looked up the RAW potato's row and displayed as "Potato" - while
+        //"name Cooked potato" sat in both locales, written and never read.
+        name: "Cooked potato",
         description: "desc item Cooked potato",
         value: 40,
         effects: [{effect: "Basic meal", duration: 150}],

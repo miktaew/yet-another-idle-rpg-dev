@@ -289,6 +289,13 @@ class TradeItem {
             new TradeItem({item_name: "Stale bread", count: [7,14]}),
             new TradeItem({item_name: "Bread kwas", count: [3,5], chance: 0.6}),
             new TradeItem({item_name: "Fresh bread", count: [4,7]}),
+
+            //A carrot and a potato, which the village had no way to sell anybody
+            //despite both being fully authored. The raw potato gives Slight food
+            //poisoning and its own description says "just remember to cook it
+            //first!", so selling it raw is the joke working as intended.
+            new TradeItem({item_name: "Carrot", count: [4,9]}),
+            new TradeItem({item_name: "Potato", count: [4,9]}),
             new TradeItem({item_name: "Weak healing powder", count: [2,5]}),
             new TradeItem({item_name: "Cooking herbs", count: [2,4], chance: 0.5}),
 
@@ -561,7 +568,21 @@ class TradeItem {
         new TradeItem({item_name: "Crab bisque", count: [4,6]}),
         new TradeItem({item_name: "Kingsized frog legs", count: [4,6]}),
         new TradeItem({item_name: "Fish steak", count: [4,6]}),
-        
+
+        /*
+            The menu the proprietress actually reads out. Asked what the place
+            serves, she answers "Coffee, cider, cake, and whatever the kitchen
+            managed not to drop today" - and none of the first three were on the
+            shelf. All four items were fully authored, with descriptions in both
+            languages and working effects, and no player could get one.
+
+            Cake is two items because the game has two: an apple pie and a carrot
+            cake, both "Sweet dessert". Listing both is what "cake" means here.
+        */
+        new TradeItem({item_name: "Black coffee", count: [4,8]}),
+        new TradeItem({item_name: "Cider", count: [3,6]}),
+        new TradeItem({item_name: "Apple pie", count: [2,4]}),
+        new TradeItem({item_name: "Carrot cake", count: [2,4]}),
     ]
 
 })();

@@ -1462,6 +1462,33 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
 
 //consumables
 (function(){
+    /*
+        The two cooked vegetables. Both items existed with descriptions in two
+        languages and a Basic meal effect, and nothing turned a raw one into a cooked
+        one - so neither form could be obtained at all.
+
+        Level 1 to 4, below roasted rat meat: boiling a potato is the easiest thing
+        anybody in this game does. is_unlocked because the recipe list has to hold
+        something before the player has read a book.
+    */
+    cooking_recipes.items["Cooked carrot"] = new ItemRecipe({
+        name: "Cooked carrot",
+        recipe_type: "usable",
+        materials: [{material_id: "Carrot", count: 2}],
+        result: {result_id: "Cooked carrot", count: 1},
+        success_chance: [0.8,1],
+        recipe_level: [1,4],
+        recipe_skill: "Cooking",
+    });
+    cooking_recipes.items["Cooked potato"] = new ItemRecipe({
+        name: "Cooked potato",
+        recipe_type: "usable",
+        materials: [{material_id: "Potato", count: 2}],
+        result: {result_id: "Cooked potato", count: 1},
+        success_chance: [0.8,1],
+        recipe_level: [1,4],
+        recipe_skill: "Cooking",
+    });
     cooking_recipes.items["Roasted rat meat"] = new ItemRecipe({
         name: "Roasted rat meat",
         recipe_type: "usable",
