@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 8 -->
+<!-- doc-source: docs/STORY.md  doc-version: 9 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -207,9 +207,15 @@ yazıldı. Nekomimi cafe yalnızca beastkin flag'i açıkken erişilebilir — y
 amaçladığı şey buydu ve artık gerçekten çalışıyor. Mages guild 4. quest için kilitli
 kalıyor ama artık Nekomimi cafe'nin açıklamasını taşımıyor.
 
-Bu listeden geri kazanılmayan kalmadı. `cute little rat` dialogue'u, Forest lake
-derin dalışı ve gümüşü, `Silver ingot` tarifi ve iki combat stance. Bunlar 3-6.
-quest'lere ait.
+**Bu listede geri kazanılmayan hiçbir şey yok.** Son dördü 3-6. quest'lerle gitti:
+`cute little rat` dialogue'u Mysterious depths'te canlı, Forest lake'in gümüş
+kaynağı açık ve `Silver ingot` tarifi yorumdan çıktı, `berserk` ile `flowing water`
+da *Way Too Strong for You*'nun sonunda köy muhafızı tarafından veriliyor.
+
+Bu bölüm boşaltılmak için var ve boş. Yerine geçen şey, yetim içerik için başka bir
+denetim değil - öyle bir şey kalmadı - açıklaması hâlâ birebir `[To be continued]`
+metni olan iki görev maddesi; [PROPOSALS.md](PROPOSALS.md) içinde P-11 olarak
+izleniyor.
 
 ## 9. Devam arkı — "The Merchant's Word"
 

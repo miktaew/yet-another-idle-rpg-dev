@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 22 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 23 -->
 
 # Proposals
 
@@ -459,6 +459,81 @@ village guard is the retired adventurer.
 
 Two `[To be continued]` quest tasks also sit unwired and belong to regions rather
 than to this list: `Village expansion` task 7 and `Light in the darkness` task 2.
+
+### P-11 — Finish the two `[To be continued]` tasks `active`
+
+Two quest tasks in the game carry the literal description **"[To be continued]"**:
+`Village expansion` task 7 and `Light in the darkness` task 2. They are the last
+dead ends in the game's own quest data - a player who has done everything else can
+see both of them sitting on the panel with nothing behind them.
+
+Neither had an answer when they were written. Both have one now, and in both cases
+the answer came out of something built since rather than something invented for the
+occasion.
+
+#### 1. `Village expansion` task 7 — the elder's fourth work
+
+His three works are water, access and safety: the melioration channel, the bridge,
+and clearing the huge dragonflies. Then:
+
+> *"Are there more projects now that dragonflies are gone?"*
+> *"Not yet, but hopefully soon."*
+
+**What makes "soon" arrive is region 4.** The old craftsman has just told the player
+why everything they forge comes out short - *"this village sits in a hollow, lovely
+for sleeping, hopeless for burning"* - and said in the same breath that he cannot fix
+it himself: *"I am eighty-one and the wind is not in this valley."* The player has
+since built the thing he described, on a mountain, out of two hundred bricks.
+
+So the fourth work is a hearth for the village, and the village never catches the
+mountain. Up there the wind does the work of a boy on the bellows; down in the hollow
+there has to be an actual boy, so the village station goes to **2 and stays there**.
+That is not a limitation to apologise for - it is the craftsman's own explanation
+turned into a number.
+
+Sequence: the elder's `further work` line stops resting on *"not yet"*; the player
+builds it; the old craftsman gets to stand in front of a fire that holds.
+
+#### 2. `Light in the darkness` task 2 — a buyer, not a rescue
+
+The quest asks the right question and its task 1 does not answer it:
+
+> *"People of the slums live in suffering and fear. Maybe you could improve their
+> situation at least a bit?"*
+
+Task 1 is *"Deal with the gang"*. Removing thugs is not improvement - it is the
+removal of an active harm, and the slums are exactly as poor afterwards. The game
+already knows this: `desc location Slums` changes on `Gang hideout.is_finished` to
+*"with some safety returned to the area, more folk are now out on the streets"*.
+Safety returned. Nothing else did.
+
+And quest 3 sharpened it rather than resolving it: the man who ran that gang is now a
+**broker under a green awning on the town square**, legitimate and doing well, while
+the district he ran is unchanged. That contrast must survive this task.
+
+**What the slums lack is a buyer.** Three pieces already in the game make one:
+
+- the old woman knows herbs well enough to have taught the player herbalism, which
+  is the only skill anybody in the slums has ever given away;
+- the guild factor buys anything, badly, and says so to your face - *"Everything,
+  badly"*;
+- the player holds a standing account with the guild, in writing, signed by a man at
+  a folding table.
+
+So the improvement is an account, not a gift: the slums get the first thing they have
+ever sold rather than begged for, at a price the factor will cheerfully admit is
+insulting. *"At least a bit"* is the quest's own promise and it is the right size.
+
+**What this must not do:** fix poverty, redeem the broker, or make the hero a patron.
+The old woman is not to be thanked twice.
+
+#### Order
+
+1. The village hearth. It follows directly from region 4 and its mechanism is
+   already built and checked.
+2. The slums account. It needs the factor's dialogue opened one more time, which is
+   the same door region 3 used, so it should come second to avoid two things
+   competing for the same conversation.
 
 ---
 ## Open decisions

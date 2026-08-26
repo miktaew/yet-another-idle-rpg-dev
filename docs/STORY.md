@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 8 -->
+<!-- doc-source: docs/STORY.md  doc-version: 9 -->
 
 # Story canon
 
@@ -202,10 +202,16 @@ only with the beastkin flag set, which is what its author intended and which now
 actually works. The Mages guild stays locked for quest 4, but no longer carries the
 Nekomimi cafe's description.
 
-Still unreclaimed: nothing from this list. The `cute little rat` dialogue, the Forest
-lake deep
-dive and its silver, the `Silver ingot` recipe, and the two combat stances. Those
-belong to quests 3 through 6.
+**Nothing on this list is unreclaimed.** The last four went with quests 3 through 6:
+the `cute little rat` dialogue is live in the Mysterious depths, the Forest lake's
+silver tap is unlocked and its `Silver ingot` recipe is out of its comment, and
+`berserk` and `flowing water` are granted by the village guard at the end of *Way
+Too Strong for You*.
+
+This section exists to be emptied, and it is empty. What replaces it is not another
+audit of orphans - there are none - but the two quest tasks whose description is
+still the literal string `[To be continued]`, tracked as P-11 in
+[PROPOSALS.md](PROPOSALS.md).
 
 ## 9. The continuation arc — "The Merchant's Word"
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 22 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 23 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -467,6 +467,81 @@ emekli maceracı olup olmadığı.
 
 İki `[To be continued]` görev adımı da bağlanmamış durumda ve bu listeye değil
 bölgelere ait: `Village expansion` adım 7 ve `Light in the darkness` adım 2.
+
+### P-11 — İki `[To be continued]` görevini bitir `active`
+
+Oyunda iki görev maddesi, açıklaması olarak birebir **"[To be continued]"** metnini
+taşıyor: `Village expansion` 7. madde ve `Light in the darkness` 2. madde. Bunlar
+oyunun kendi görev verisindeki son çıkmazlar - geri kalan her şeyi bitirmiş bir
+oyuncu, ikisini de arkalarında hiçbir şey olmadan panelde duruyor görüyor.
+
+Yazıldıklarında ikisinin de bir cevabı yoktu. Şimdi ikisinin de var ve iki durumda da
+cevap, bu iş için uydurulmuş bir şeyden değil, o zamandan beri kurulmuş bir şeyden
+çıktı.
+
+#### 1. `Village expansion` 7. madde — yaşlının dördüncü işi
+
+Üç işi su, erişim ve güvenlik: ıslah kanalı, köprü ve dev yusufçukların temizlenmesi.
+Sonra:
+
+> *"Yusufçuklar gittiğine göre yeni projeler var mı?"*
+> *"Henüz yok, ama umarım yakında."*
+
+**"Yakında"yı getiren şey 4. bölge.** Yaşlı zanaatkâr oyuncuya dövdüğü her şeyin neden
+eksik çıktığını yeni söyledi - *"bu köy bir çukurda kurulu; uyumak için harika, yakmak
+için umutsuz"* - ve aynı nefeste bunu kendisinin düzeltemeyeceğini de söyledi: *"Ben
+seksen bir yaşındayım ve rüzgâr bu vadide değil."* Oyuncu o tarihten beri, onun
+anlattığı şeyi bir dağın üstünde, iki yüz tuğlayla kurdu.
+
+Yani dördüncü iş köy için bir ocak ve köy dağı asla yakalamıyor. Yukarıda rüzgâr,
+körüğü çeken çocuğun işini yapıyor; çukurun içinde gerçek bir çocuk gerekiyor, o
+yüzden köy istasyonu **2'ye çıkıyor ve 2'de kalıyor**. Bu, özür dilenecek bir kısıt
+değil - zanaatkârın kendi açıklamasının sayıya dönüşmüş hâli.
+
+Sıra: yaşlının `further work` repliği artık *"henüz yok"*ta durmuyor; oyuncu kuruyor;
+yaşlı zanaatkâr da tutan bir ateşin karşısında durabiliyor.
+
+#### 2. `Light in the darkness` 2. madde — kurtarma değil, alıcı
+
+Görev doğru soruyu soruyor ve 1. maddesi onu cevaplamıyor:
+
+> *"Kenar mahalle halkı acı ve korku içinde yaşıyor. Belki durumlarını en azından
+> biraz iyileştirebilirsin?"*
+
+1. madde *"Çeteyle ilgilen"*. Kabadayıları kaldırmak iyileştirme değil - etkin bir
+zararın kaldırılması ve kenar mahalle sonrasında tam olarak eskisi kadar yoksul.
+Oyun bunu zaten biliyor: `desc location Slums`, `Gang hideout.is_finished` ile
+değişip *"bölgeye biraz güvenlik döndüğü için daha çok kişi sokakta"* diyor. Güvenlik
+döndü. Başka bir şey dönmedi.
+
+Ve 3. görev bunu çözmek yerine keskinleştirdi: o çeteyi yönetmiş adam artık kasaba
+meydanında, **yeşil bir tentenin altında bir komisyoncu**; meşru ve iyi durumda,
+oysa yönettiği mahalle olduğu gibi. Bu karşıtlık bu maddeden sağ çıkmalı.
+
+**Kenar mahallenin eksiği bir alıcı.** Oyunda hâlihazırda duran üç parça bir alıcı
+kuruyor:
+
+- yaşlı kadın, oyuncuya bitki bilgisi öğretecek kadar otları biliyor; kenar
+  mahalleden birinin bugüne kadar karşılıksız verdiği tek beceri bu;
+- lonca mubayaacısı her şeyi alıyor, kötü fiyata, ve bunu yüzüne söylüyor - *"Her
+  şeyi, kötü fiyata"*;
+- oyuncunun elinde loncayla yazılı, portatif masada oturan bir adamın imzaladığı bir
+  cari hesap var.
+
+Yani iyileştirme bir bağış değil, bir hesap: kenar mahalle, dilenmek yerine sattığı
+ilk şeye kavuşuyor - hem de mubayaacının aşağılayıcı olduğunu neşeyle kabul edeceği
+bir fiyattan. *"En azından biraz"* görevin kendi vaadi ve doğru ölçü de bu.
+
+**Bunun yapmaması gerekenler:** yoksulluğu çözmek, komisyoncuyu aklamak ya da
+kahramanı bir hami yapmak. Yaşlı kadına iki kez teşekkür ettirilmeyecek.
+
+#### Sıra
+
+1. Köy ocağı. Doğrudan 4. bölgeden geliyor ve mekanizması çoktan kurulmuş ve kontrol
+   edilmiş durumda.
+2. Kenar mahalle hesabı. Mubayaacının diyaloğunun bir kez daha açılmasını gerektiriyor
+   ve bu, 3. bölgenin kullandığı kapının aynısı; o yüzden iki şeyin aynı konuşma için
+   yarışmaması adına ikinci sırada olmalı.
 
 ---
 ## Bekleyen kararlar
