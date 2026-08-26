@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 8 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 9 -->
 
 # Agent and contributor guide
 
@@ -42,11 +42,14 @@ Standing project direction, including what may and may not change, is in
 
 Requires Node 22 or newer. `file://` will not work — ES modules need a server.
 
-**Do not run `node build.js`.** It is the inherited upstream builder and it is a
-trap: it rewrites the tracked root `index.html` in place, and its bundle-version
-regex matches the *commented-out* script tag, so it stamps a dead tag and never
-switches the live script. It is deliberately not exposed as an npm script. Use
-`npm run build`.
+**`build.js` no longer does anything.** It was the inherited upstream builder and
+a trap on two counts: it rewrote the tracked root `index.html` in place, and its
+bundle-version regex has its only match inside the *commented-out* script tag, so
+it stamped a dead tag and left the live script alone while reporting success.
+
+Rather than delete it, it now prints why it is superseded and exits non-zero, so
+older instructions and muscle memory land on a message instead of a damaged
+working tree. Use `npm run build`.
 
 ## 3. Dev mode versus bundle mode
 

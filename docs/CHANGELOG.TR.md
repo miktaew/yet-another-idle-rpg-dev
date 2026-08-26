@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 33 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 34 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,32 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-23
+
+### build.js sessizce bozmak yerine reddediyor
+
+Fork öncesi derleyici, bu dokümanlar var olduğundan beri bir tuzak olarak
+belgeleniyordu — *"node build.js çalıştırmayın"* — ve bir dosyadaki uyarı, ancak
+birinin yıllardır yazdığı komutu yazmadan önce onu okuma olasılığı kadar iyidir.
+
+Tuzağın iki yarısı da güvene dayanarak tekrarlanmak yerine doğrulandı. **Takip
+edilen** kök `index.html`'i yerinde yeniden yazıyordu; o dosya geliştirme giriş
+noktası ve bilinçli olarak eski bir `style.css` sürümü taşıyor. Bundle sürüm
+regex'i olan `/dist\/bundle\.js\?version=[^&"]+/` ise o dosyada tam olarak bir
+kez eşleşiyor: canlı etiketin yanında duran *yorum içine alınmış* etiketin
+içinde. Yani ölü bir yorumu damgalıyor, oyunun gerçekten yüklediği script'e
+dokunmuyor ve üstüne *"Bundle and style versions in .html have been updated!"*
+yazdırıyordu.
+
+Silinmedi. Adını ve geçmişini koruyor; gövdesi ise artık bir açıklama ve
+`process.exit(1)` — böylece eski talimatları ya da kendi alışkanlığını izleyen biri,
+kirlenmiş bir çalışma ağacı yerine gerekçeyi ve çalışan bir alternatifi buluyor.
+Dosya, özgün iki kusurunu da kendi başlığında belgeliyor; çünkü ona uzanan birinin
+bakacağı tek yer orası.
+
+Sonrasında kontrol edildi: yazdırıyor, 1 ile çıkıyor ve `index.html`'e dokunmuyor;
+`npm run build` etkilenmiyor.
+
+Oyuncuya yönelik girdi yok — oyunda hiçbir şey değişmiyor.
 
 ### Hiçbir oyuncunun ulaşamadığı içeriği yakalayan bir kontrol
 

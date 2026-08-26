@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 33 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 34 -->
 
 # Changelog
 
@@ -20,6 +20,31 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-23
+
+### build.js refuses instead of quietly breaking things
+
+The pre-fork builder has been documented as a trap for as long as these docs have
+existed - *"Do not run node build.js"* - and a warning in a file is only as good as
+the odds of someone reading it before typing the command they have typed for years.
+
+Both halves of the trap were verified rather than repeated on trust. It rewrote the
+**tracked** root `index.html` in place, which is the dev entry point and carries a
+deliberately stale `style.css` version. And its bundle-version regex,
+`/dist\/bundle\.js\?version=[^&"]+/`, has exactly one match in that file: the one
+inside the *commented-out* script tag sitting next to the live one. So it stamped a
+dead comment, left the script the game actually loads untouched, and printed
+*"Bundle and style versions in .html have been updated!"*
+
+It is not deleted. It keeps its name and its history, and its body is now an
+explanation and `process.exit(1)` - so anyone following older instructions, or their
+own habit, gets the reason and a working alternative instead of a dirty working
+tree. The file documents both original faults in its header, because that is the
+only place someone reaching for it will look.
+
+Checked after: it prints, exits 1, and leaves `index.html` untouched;
+`npm run build` is unaffected.
+
+No player-facing entry - nothing in the game changes.
 
 ### A check that no player can reach dead content
 

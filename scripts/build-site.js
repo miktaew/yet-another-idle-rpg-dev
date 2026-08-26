@@ -14,8 +14,9 @@
  *     site copy would mix generated and hand-written files in one directory.
  *   - The repo root is the DEV entry point: index.html deliberately points at
  *     src/main.js so the game runs off a plain static server with no build step.
- *     Rewriting that file in place (as build.js does) dirties a tracked file on
- *     every CI run, so the rewrite is applied to the _site/ copy only.
+ *     Rewriting that file in place - which is what build.js used to do, before it
+ *     was reduced to a refusal - dirties a tracked file on every CI run, so the
+ *     rewrite is applied to the _site/ copy only.
  *
  * IMPORTANT for translations: esbuild resolves the dynamic import in
  * src/translation.js (`import(`../locales/${language}.js`)`) by globbing the

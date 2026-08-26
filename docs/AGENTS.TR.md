@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 8 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 9 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -47,11 +47,15 @@ Tam tablo: [AGENTS.md § 2](AGENTS.md#2-commands).
 
 Node 22 veya üzeri gerekir. `file://` çalışmaz — ES modülleri sunucu ister.
 
-**`node build.js` çalıştırmayın.** Upstream'den devralınan derleyicidir ve bir
-tuzaktır: takip edilen kök `index.html` dosyasını yerinde yeniden yazar ve
-bundle sürüm regex'i *yorum içine alınmış* script etiketiyle eşleşir; yani ölü bir
-etiketi damgalar ve canlı script'i hiç değiştirmez. Bilinçli olarak npm script'i
-olarak sunulmuyor. `npm run build` kullanın.
+**`build.js` artık hiçbir şey yapmıyor.** Upstream'den devralınan derleyiciydi ve
+iki bakımdan tuzaktı: takip edilen kök `index.html` dosyasını yerinde yeniden
+yazıyordu ve bundle sürüm regex'inin tek eşleşmesi *yorum içine alınmış* script
+etiketinin içindeydi; yani ölü bir etiketi damgalayıp canlı script'e dokunmuyor,
+üstüne de başarı bildiriyordu.
+
+Silmek yerine artık neden geçersiz olduğunu yazdırıp sıfırdan farklı kodla
+çıkıyor; böylece eski talimatlar ve kas hafızası, bozulmuş bir çalışma ağacına
+değil bir mesaja varıyor. `npm run build` kullanın.
 
 ## 3. Dev modu ile bundle modu
 

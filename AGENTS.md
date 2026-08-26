@@ -32,8 +32,9 @@ Requires Node 22+.
    saves. This includes translating them.
 2. **Never hardcode player-facing text in `src/`.** It belongs in
    `locales/<language>.js` behind a string id. Code comments are English.
-3. **Never run `node build.js`.** It rewrites the tracked root `index.html` in
-   place and stamps a commented-out script tag. Use `npm run build`.
+3. **Use `npm run build`, never `node build.js`.** The latter is the superseded
+   pre-fork builder; it now refuses and explains itself rather than rewriting the
+   tracked root `index.html` the way it used to.
 
 ## Also
 

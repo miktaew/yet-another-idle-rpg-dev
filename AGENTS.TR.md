@@ -33,9 +33,9 @@ Node 22+ gerekir.
    kapsar.
 2. **Oyuncuya görünen metni asla `src/` içine gömmeyin.** Yeri, bir string id
    arkasında `locales/<dil>.js` dosyasıdır. Kod yorumları İngilizcedir.
-3. **`node build.js` asla çalıştırmayın.** Takip edilen kök `index.html` dosyasını
-   yerinde yeniden yazar ve yorum içine alınmış bir script etiketini damgalar.
-   `npm run build` kullanın.
+3. **`npm run build` kullanın, `node build.js` değil.** İkincisi fork öncesi
+   geçersiz derleyici; artık takip edilen kök `index.html`'i eskiden yaptığı gibi
+   yeniden yazmak yerine reddediyor ve gerekçesini açıklıyor.
 
 ## Ayrıca
 

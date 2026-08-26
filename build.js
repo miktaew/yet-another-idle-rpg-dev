@@ -1,51 +1,35 @@
+"use strict";
 
-import * as esbuild from 'esbuild';
-import * as fs from 'fs';
-import { styleText } from 'node:util';
-import { get_game_version } from './src/game_version.js';
+/**
+ * Superseded. Use `npm run build`, which runs scripts/build-site.js.
+ *
+ * This was the pre-fork builder. It is kept under its original name so that
+ * anyone following older instructions, or their own muscle memory, gets this
+ * message instead of a silently damaged working tree - because that is what it
+ * used to do:
+ *
+ *   1. It rewrote the TRACKED root index.html in place. That file is the dev
+ *      entry point and deliberately loads src/main.js with a deliberately stale
+ *      style.css version; scripts/build-site.js rewrites the _site/ copy instead
+ *      and never touches the original. Running this dirtied a tracked file on
+ *      every build.
+ *
+ *   2. Its bundle-version regex, /dist\/bundle\.js\?version=[^&"]+/, has exactly
+ *      one match in index.html - and it is inside the COMMENTED-OUT script tag
+ *      that sits next to the live one. So it stamped a dead comment and left the
+ *      script the game actually loads untouched, while reporting success.
+ *
+ * Neither is a hypothetical. Both are why this was never wired to an npm script.
+ * The replacement does the same bundling and then assembles _site/ from it, which
+ * is what the deploy uploads.
+ */
 
-const bundle_regex = /dist\/bundle\.js\?version=[^&"]+/;
-
-const style_regex = /style\.css\?version=[^&"]+/;
-
-esbuild
-    .build({
-        entryPoints: ["src/main.js"],
-        bundle: true,
-        sourcemap: true,
-        minify: true,
-        outfile: `dist/bundle.js`,
-        platform: "browser",
-        target: "es2022",
-        format: 'esm',
-        logLevel: "debug",
-    }).then(() => {
-        console.log("Javascript build complete!");
-        const htmlPath = 'index.html';
-        let htmlContent = fs.readFileSync(htmlPath, 'utf8');
-
-        if(htmlContent.search(bundle_regex) == -1) {
-            console.log(styleText("red", 'Failed to update the bundle version in .html!'));
-            return;
-        }
-        if(htmlContent.search(style_regex) == -1) {
-            console.log(styleText("red", 'Failed to update the style version in .html!'));
-            return;
-        }
-
-        htmlContent = htmlContent.replace(
-            bundle_regex,
-            `dist/bundle.js?version=${get_game_version()}`
-        ).replace(
-            style_regex,
-            `style.css?version=${get_game_version()}`
-        );
-        try {
-            fs.writeFileSync(htmlPath, htmlContent);
-            console.log("Bundle and style versions in .html have been updated!");
-        } catch (err) {
-            console.error(err);
-        }
-        
-    }).catch(() => process.exit(1));
-
+console.error("build.js is superseded and does nothing.");
+console.error("");
+console.error("Use:  npm run build");
+console.error("");
+console.error("It bundles src/main.js into dist/bundle.js exactly as this did, then");
+console.error("assembles the deployable site into _site/ - rewriting the COPY of");
+console.error("index.html rather than the tracked original, which is what this used to");
+console.error("do wrong. See scripts/build-site.js and docs/AGENTS.md section 3.");
+process.exit(1);
