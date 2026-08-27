@@ -425,8 +425,22 @@ input[type=checkbox], input[type=radio] {
         background-color: var(--active_button_color);
     }
 
+/*
+	The three full-window layers are `fixed`, not `absolute`, so they cover the window
+	rather than one viewport anchored at the document origin.
+
+	Upstream fixed the first two for a horizontal scroll. Ours is vertical and deliberate:
+	fit_ui_to_window allows the layout to run past the bottom, and anything scrolled in
+	past one viewport used to be uncovered. #foreground_canvas gets it too - upstream left
+	that one absolute, and it is the layer players actually see, since rain and snow draw
+	there while only the stars use the background canvas.
+
+	They are children of <body>, not of the zoomed #main_content, so `fixed` resolves
+	against the viewport and --ui_scale never touches them. Moving one inside #main_content
+	would scale it and bring the coverage gap back.
+*/
 #background_canvas {
-	position: absolute;
+	position: fixed;
 	pointer-events: none;
 	top: 0px;
 	left: 0px;
@@ -436,7 +450,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 #light_based_background_div {
-	position: absolute;
+	position: fixed;
 	pointer-events: none;
 	top: 0px;
 	left: 0px;
@@ -448,7 +462,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 #foreground_canvas {
-	position: absolute;
+	position: fixed;
 	pointer-events: none;
 	top: 0px;
 	left: 0px;

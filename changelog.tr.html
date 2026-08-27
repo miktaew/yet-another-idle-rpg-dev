@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.27</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Upstream'den iki yeni koşul biçimi alındı: bir kapı artık bir bölgenin belli sayıda temizlenmiş olmasını (en az, en çok veya aralık) ve bir görevin bitmiş ya da bitmemiş olmasını isteyebiliyor. İçerik artık ilerlemeyi, o ilerlemenin verdiği bir bayrak üzerinden değil doğrudan koşul yapabiliyor.</li>
+            <li>Upstream'in her ikisinin de kendi uygulaması olduğu gibi alınabilir değil; üç hatası bizimkinde düzeltildi. Bölge kontrolleri düşman sayısına korumasız bölüyor - ve dövüş bölgesi olmayan her konumun düşman sayısı yok, yani bölme NaN oluyor; NaN ile yapılan her karşılaştırma yanlış olduğu için "en az bir temizlik" kapısı kapanmak yerine sessizce AÇILIYORDU. Bitmemiş görev dalları kendi dosyalarının import etmediği bir kaydı okuyor, yani içerik ilk kullandığında hata veriyor. Bitmiş görev dalı ise yeniden yapılandırılmış görevlerinde artık bulunmayan bir alanı okuyor, yani her zaman "bitmedi" diyor.</li>
+            <li>Üç arka plan katmanı sayfa kaydırıldığında pencereyi kaplıyor. Upstream ikisini yatay kaydırma için düzeltmiş; bizim düzenimiz artık yatay kaydırma üretemiyor, bizimki dikey ve kasıtlı, yani düzeltme burada daha çok işe yarıyor - ve onların atladığı, yağmur ile karın çizildiği katmanı da kapsıyor.</li>
+            <li>On altı yeni test; mutlu yola değil iki korumaya nişan alıyor, çünkü yakalanmaya değer hata sessiz izin vermek.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.26</button>
     <div class="content">
         <ul class="entries">

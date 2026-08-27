@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.27</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Two new condition shapes taken from upstream: a gate can now require a location to have been cleared a number of times (at least, at most, or a range), and can require a quest to be finished or to not be finished. Content can gate on progress directly instead of on a flag granted by that progress.</li>
+            <li>Upstream's own implementation of both is not takeable as written, and the three faults are fixed in ours. Their location check divides by a zone's enemy count without guarding it - and every location that is not a combat zone has no enemy count, so the division is NaN, and since every comparison against NaN is false, an "at least one clear" gate would have silently OPENED. Their unfinished-quest branch reads a registry its own file does not import, so it throws the first time content uses it. And their finished-quest branch reads a field their restructured quest no longer has, so it always answers "not finished".</li>
+            <li>The three background layers cover the window when the page is scrolled. Upstream fixed two of them for a horizontal scroll, which our layout can no longer produce; ours is vertical and deliberate, so the fix matters more here - and it also covers the layer they left out, which is the one rain and snow draw on.</li>
+            <li>Sixteen new tests, aimed at the two guards rather than the happy path, because silent permissiveness is the failure worth catching.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.26</button>
     <div class="content">
         <ul class="entries">

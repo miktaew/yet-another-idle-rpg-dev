@@ -291,13 +291,18 @@ globalThis.__test_flags = { is_mofu_mofu_enabled: true };
 
 const { process_conditions } = await load_with_stubs(
     "src/conditions.js",
-    ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js"],
+    ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js",
+     "./locations.js", "./quests.js"],
     `
 const get_total_skill_level = (id) => __levels[id] || 0;
 const current_game_time = { season: "Summer", hour: 12, day: 1, month: 1, year: 1 };
 const global_flags = __flags;
 const height_values = { "very short": 145, short: 155, average: 170, tall: 180, "very tall": 190 };
 const playable_races = {};
+//The two registries the ported location_clears / quests_* conditions read. Set by
+//the tests through __test_locations / __test_quests, like the levels and flags above.
+const locations = globalThis.__test_locations ??= {};
+const quests = globalThis.__test_quests ??= {};
 `.replace("__levels", "globalThis.__test_levels").replace("__flags", "globalThis.__test_flags"));
 
 {
@@ -326,6 +331,69 @@ const playable_races = {};
     globalThis.__test_flags.is_mofu_mofu_enabled = false;
     check("a flag gate shuts when the flag is cleared", !process_conditions(mofu_gate, hero(0)));
     globalThis.__test_flags.is_mofu_mofu_enabled = true;
+}
+
+{
+    /*
+        The two condition shapes ported from upstream 19011a0. The tests that matter
+        most are the guards: upstream divides by enemy_count unguarded, and every
+        comparison against the resulting NaN is false - so an at_least gate written
+        against a non-combat location OPENS instead of closing. Silent permissiveness
+        is the failure mode worth a test.
+    */
+    const hero = () => ({ reputation: {}, money: 0, personal: {} });
+    const wrap = (declared) => [declared];
+
+    globalThis.__test_locations["Infested field"] = { enemy_count: 10, enemy_groups_killed: 0 };
+    globalThis.__test_locations["Village"] = {};   //a Location: no enemy_count at all
+
+    const one_clear = wrap({ location_clears: { "Infested field": { at_least: 1 } } });
+    check("a clear gate is shut before the zone is cleared", !process_conditions(one_clear, hero()));
+
+    globalThis.__test_locations["Infested field"].enemy_groups_killed = 9;
+    check("a clear gate is shut one group short", !process_conditions(one_clear, hero()));
+
+    globalThis.__test_locations["Infested field"].enemy_groups_killed = 10;
+    check("a clear gate opens on the first full clear", Boolean(process_conditions(one_clear, hero())));
+
+    globalThis.__test_locations["Infested field"].enemy_groups_killed = 25;
+    check("a clear gate stays open above the threshold", Boolean(process_conditions(one_clear, hero())));
+
+    const at_most_none = wrap({ location_clears: { "Infested field": { at_most: 0 } } });
+    check("an at_most gate shuts once the zone is cleared", !process_conditions(at_most_none, hero()));
+    globalThis.__test_locations["Infested field"].enemy_groups_killed = 0;
+    check("an at_most gate is open while the zone is uncleared", Boolean(process_conditions(at_most_none, hero())));
+
+    globalThis.__test_locations["Infested field"].enemy_groups_killed = 20;
+    const between = wrap({ location_clears: { "Infested field": { at_least: 1, at_most: 3 } } });
+    check("a range gate is open inside the range", Boolean(process_conditions(between, hero())));
+    globalThis.__test_locations["Infested field"].enemy_groups_killed = 40;
+    check("a range gate shuts above the range", !process_conditions(between, hero()));
+
+    //The NaN trap: a location with no enemy_count counts as zero clears, not as unknown.
+    const village_clear = wrap({ location_clears: { "Village": { at_least: 1 } } });
+    check("a non-combat location reads as zero clears rather than passing",
+        !process_conditions(village_clear, hero()));
+
+    const nowhere = wrap({ location_clears: { "Nowhere at all": { at_least: 1 } } });
+    check("an unknown location key shuts the gate rather than throwing",
+        !process_conditions(nowhere, hero()));
+
+    globalThis.__test_quests["Lost memory"] = { is_finished: false };
+    const done = wrap({ quests_completed: ["Lost memory"] });
+    const not_done = wrap({ quests_not_completed: ["Lost memory"] });
+
+    check("quests_completed is shut while the quest is unfinished", !process_conditions(done, hero()));
+    check("quests_not_completed is open while the quest is unfinished", Boolean(process_conditions(not_done, hero())));
+
+    globalThis.__test_quests["Lost memory"].is_finished = true;
+    check("quests_completed opens once the quest is finished", Boolean(process_conditions(done, hero())));
+    check("quests_not_completed shuts once the quest is finished", !process_conditions(not_done, hero()));
+
+    check("an unknown quest key shuts a completed gate",
+        !process_conditions(wrap({ quests_completed: ["No such quest"] }), hero()));
+    check("an unknown quest key shuts an unfinished gate too",
+        !process_conditions(wrap({ quests_not_completed: ["No such quest"] }), hero()));
 }
 
 // ===========================================================================
@@ -596,13 +664,18 @@ const game_options = {};
 {
     const { process_conditions, money_required, money_spent } = await load_with_stubs(
         "src/conditions.js",
-        ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js"],
+        ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js",
+     "./locations.js", "./quests.js"],
         `
 const get_total_skill_level = () => 0;
 const current_game_time = { getSeason: () => "summer" };
 const global_flags = {};
 const height_values = {};
 const playable_races = {};
+//The two registries the ported location_clears / quests_* conditions read. Set by
+//the tests through __test_locations / __test_quests, like the levels and flags above.
+const locations = globalThis.__test_locations ??= {};
+const quests = globalThis.__test_quests ??= {};
 `);
 
     const purse = amount => ({ money: amount, inventory: {}, equipment: {}, stats: {full: {}},

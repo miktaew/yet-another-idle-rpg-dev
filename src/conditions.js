@@ -5,6 +5,8 @@ import { current_game_time } from "./game_time.js";
 import { global_flags } from "./main.js";
 import { height_values } from "./person.js";
 import { playable_races } from "./races.js";
+import { locations } from "./locations.js";
+import { quests } from "./quests.js";
 
 /*
     either single set of values or two sets, one for minimum chance provided and one for maximum
@@ -45,6 +47,15 @@ import { playable_races } from "./races.js";
             
         ]
 
+        location_clears: { //how many times a zone has been cleared
+            location_key: {
+                at_least: Number,
+                at_most: Number
+            }
+        }
+
+        quests_completed: [String] //quest keys that must be finished
+        quests_not_completed: [String] //quest keys that must NOT be finished
         season: { //either season that needs to be active or season that CAN'T be active
             not: String,
             yes: String,
@@ -216,6 +227,66 @@ const process_conditions = (conditions, character) => {
         });
     }
 
+
+    /*
+        Clears of a location. Binary, like items and flags: only conditions[0] is read,
+        because a partial clear count has no sensible fuzzy meaning.
+
+        Both guards matter. An unknown key closes the gate and says so, instead of
+        throwing on the next property read; and a location with no enemy_count - every
+        non-combat Location - counts as zero clears rather than dividing to NaN. That
+        second one is not defensive padding: every comparison against NaN is false, so
+        an at_least gate written against a non-combat location would have OPENED.
+    */
+    if(conditions[0].location_clears) {
+        Object.keys(conditions[0].location_clears).forEach(location_key => {
+            const location = locations[location_key];
+            if(!location) {
+                console.error(`A condition asks for clears of "${location_key}", which is not a location.`);
+                met = 0;
+                return;
+            }
+            const clears = location.enemy_count
+                ? Math.floor(location.enemy_groups_killed / location.enemy_count)
+                : 0;
+            const wanted = conditions[0].location_clears[location_key];
+            if("at_least" in wanted && clears < wanted.at_least) {
+                met = 0;
+            }
+            if("at_most" in wanted && clears > wanted.at_most) {
+                met = 0;
+            }
+        });
+    }
+
+    /*
+        Finished quests. `is_finished` is the same field questManager.isQuestFinished
+        reads, so the gate and the manager cannot disagree. An unknown quest key closes
+        the gate in both directions - a typo must be visible, not permissive.
+    */
+    if(conditions[0].quests_completed) {
+        for(let i = 0; i < conditions[0].quests_completed.length; i++) {
+            const quest = quests[conditions[0].quests_completed[i]];
+            if(!quest) {
+                console.error(`A condition requires quest "${conditions[0].quests_completed[i]}" to be finished, but no such quest exists.`);
+                met = 0;
+            } else if(!quest.is_finished) {
+                met = 0;
+            }
+        }
+    }
+
+    if(conditions[0].quests_not_completed) {
+        for(let i = 0; i < conditions[0].quests_not_completed.length; i++) {
+            const quest = quests[conditions[0].quests_not_completed[i]];
+            if(!quest) {
+                console.error(`A condition requires quest "${conditions[0].quests_not_completed[i]}" to be unfinished, but no such quest exists.`);
+                met = 0;
+            } else if(quest.is_finished) {
+                met = 0;
+            }
+        }
+    }
     //checks season
     if(conditions[0].season) {
         if(conditions[0].season.yes) {
