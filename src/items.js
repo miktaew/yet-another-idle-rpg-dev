@@ -376,6 +376,16 @@ class ItemComponent extends Item {
         this.tags["component"] = true;
         this.use_quality = item_data.use_quality ?? true;
         this.quality = Math.round(item_data.quality) || 100;
+
+        /*
+            The material a shown name is assembled from. The component generator has always
+            passed this and nothing here stored it, so `material_id` was undefined on every
+            component instance - which is why the assembleName branch of Armor and Shield
+            getDisplayName could never run, and eighty equippable names reached the player
+            in English. The build check missed it because it reads the generator's raw
+            output with the classes stubbed, not the instances these constructors make.
+        */
+        this.material_id = item_data.material_id;
     }
 
     getRarity(quality){
@@ -468,6 +478,8 @@ class ArmorComponent extends ItemComponent {
         }
         this.component_type = item_data.component_type;
         this.defense_value = item_data.defense_value;
+        //The piece word a full armor name ends in; passed by the generator, never stored.
+        this.armor_piece = item_data.armor_piece;
 
         this.stats = item_data.stats || {};
 
@@ -502,6 +514,59 @@ class UsableItem extends Item {
     }
 }
 
+/*
+    The piece word a full armor name ends in, per exterior component type. The
+    component generator has the same table; hand-written exteriors in this file carry
+    neither it nor a material_id, which is why their shown names had nothing to
+    assemble from.
+*/
+const armor_piece_for_component_type = {
+    "helmet exterior": "helmet",
+    "chestplate exterior": "armor",
+    "leg armor exterior": "armored pants",
+    "glove exterior": "gloves",
+    "shoes exterior": "shoes",
+};
+
+/**
+ * The material key and piece word to assemble a shown name from, for an exterior
+ * component that may or may not have been generated.
+ *
+ * A generated component states both. A hand-written one states a name_prefix and a
+ * component_type, which say the same thing: the prefix lowercased is the material key
+ * the locale rows are keyed by, and the type names the piece.
+ *
+ * Returns null unless BOTH rows exist, so a prefix that is not a material - the wooden
+ * and coloured shield bases - falls through to the caller's own fallback rather than
+ * assembling half a translation.
+ */
+function assembly_parts_for(component, needs_piece = true) {
+    if(!component) {
+        return null;
+    }
+    const material_id = component.material_id ?? component.name_prefix?.toLowerCase();
+    /*
+        `material name X` and not `material X`. The locales keep both because they differ:
+        the first is what goes into a NAME, the second what a description says an item is
+        made of. Turkish "demir zincir zırh" is the description form and already contains
+        the word armour, so building a name from it said armour twice - "Demir zincir zırh
+        zırhlı pantolon".
+    */
+    if(!material_id
+    || translationManager.getOptionalText(language, `material name ${material_id}`) === undefined) {
+        return null;
+    }
+    if(!needs_piece) {
+        return {material_id, piece: null};
+    }
+    const piece = component.armor_piece
+        ?? armor_piece_for_component_type[component.component_type];
+    if(!piece
+    || translationManager.getOptionalText(language, `armor piece ${piece}`) === undefined) {
+        return null;
+    }
+    return {material_id, piece};
+}
 class Equippable extends Item {
     constructor(item_data) {
         super(item_data);
@@ -817,11 +882,13 @@ class Shield extends Equippable {
             return explicit;
         }
         const base = item_templates[this.components.shield_base];
-        if(!base?.material_id) {
+        const parts = assembly_parts_for(base, false)
+            ?? assembly_parts_for({name_prefix: base?.shield_name?.replace(/ shield$/i, "")}, false);
+        if(!parts) {
             return english;
         }
         return translationManager.assembleName(language, "pattern name shield",
-            {material: `material ${base.material_id}`}, {capitalise: true});
+            {material: `material name ${parts.material_id}`}, {capitalise: true});
     }
 }
 
@@ -971,10 +1038,11 @@ class Armor extends Equippable {
             return explicit;
         }
         const external = this.components?.external ? item_templates[this.components.external] : null;
-        if(external?.material_id && external?.armor_piece) {
+        const parts = assembly_parts_for(external);
+        if(parts) {
             return translationManager.assembleName(language, "pattern name armor", {
-                material: `material ${external.material_id}`,
-                piece: `armor piece ${external.armor_piece}`,
+                material: `material name ${parts.material_id}`,
+                piece: `armor piece ${parts.piece}`,
             }, {capitalise: true});
         }
         return super.getDisplayName();

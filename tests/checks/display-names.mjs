@@ -13,6 +13,7 @@ import { default_language, repo_root } from "../lib/context.mjs";
 import { error } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 import { braced_body, strip_comments, top_level_keys } from "../lib/source.mjs";
+import { load_browser_free } from "../lib/browser-free-src.mjs";
 
 /**
  * Every dialogue needs a "name <key>" row for its display name.
@@ -254,6 +255,96 @@ async function check_creation_panel_values() {
  * location header "narrow" and "dark II" in a Turkish interface, with every other check
  * passing. Add a family here whenever a new registry's keys start being shown.
  */
+/**
+ * Every assembled equippable resolves its shown name out of English.
+ *
+ * This is the check that was missing when eighty of them did not. check_generated_items
+ * validated the assembly - that `full_armor_name` equals what the locale rows build -
+ * but it reads the generator's raw output with the item classes stubbed, so it could not
+ * see the actual fault: no class stored `material_id`, so `external.material_id` was
+ * undefined on every instance and the assembleName branch of getDisplayName never ran.
+ *
+ * So this one builds real items and asks them. A name that comes back identical to its
+ * English is either missing a `name <english>` row or missing the fields to assemble
+ * from - and either way a player reads English.
+ *
+ * It costs a copy of src/ and locales/ into a temp directory, which is what it takes to
+ * import src/ in Node at all: the imports are circular by design and only resolve in a
+ * browser. See tests/lib/browser-free-src.mjs.
+ */
+async function check_equippable_names_resolve() {
+    const items = await load_browser_free(repo_root, "src/items.js");
+    const {item_templates, getItemFromKey} = items;
+    if (!item_templates || !getItemFromKey) {
+        error("src/items.js no longer exports item_templates and getItemFromKey - this check is out of date.");
+        return;
+    }
+
+    const of_type = (type) => Object.keys(item_templates)
+        .filter(key => item_templates[key].component_type === type);
+    const first_of = (type) => of_type(type)[0];
+
+    const combinations = [];
+
+    //Armour: every exterior against one interior of the matching slot.
+    for (const [exterior, interior] of [
+        ["helmet exterior", "helmet interior"],
+        ["chestplate exterior", "chestplate interior"],
+        ["leg armor exterior", "leg armor interior"],
+        ["glove exterior", "glove interior"],
+        ["shoes exterior", "shoes interior"],
+    ]) {
+        const internal = first_of(interior);
+        if (!internal) continue;
+        for (const external of of_type(exterior)) {
+            combinations.push({components: {internal, external}, quality: 100});
+        }
+    }
+
+    //Shields and weapons: every base or head against one handle.
+    const shield_handle = first_of("shield handle");
+    for (const shield_base of of_type("shield base")) {
+        combinations.push({components: {shield_base, handle: shield_handle}, quality: 100});
+    }
+    const weapon_handle = first_of("short handle");
+    for (const type of ["short blade", "long blade", "axe head", "hammer head"]) {
+        for (const head of of_type(type)) {
+            combinations.push({components: {head, handle: weapon_handle}, quality: 100});
+        }
+    }
+
+    if (combinations.length < 50) {
+        error(`only ${combinations.length} equippable combinations could be built`
+            + ` - this check is out of date.`);
+        return;
+    }
+
+    let unresolved = 0;
+    for (const components of combinations) {
+        let built;
+        try {
+            built = getItemFromKey(JSON.stringify(components));
+        } catch (problem) {
+            continue;
+        }
+        if (!built?.getDisplayName || !built?.getName) continue;
+
+        const english = built.getName();
+        if (built.getDisplayName() !== english) continue;
+
+        unresolved++;
+        if (unresolved <= 8) {
+            error(`the equippable "${english}" shows its English name: no "name ${english}" row,`
+                + ` and not enough on its components to assemble one.`);
+        }
+    }
+    if (unresolved > 8) {
+        error(`...and ${unresolved - 8} more equippables showing their English names.`);
+    }
+
+    console.log(`[check] equippable names resolve: ${combinations.length} combinations built`);
+}
+
 async function check_enumerable_id_families() {
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -497,6 +588,7 @@ async function check_equipment_slot_names() {
 
 export {
     check_creation_panel_values,
+    check_equippable_names_resolve,
     check_dialogue_display_names,
     check_enumerable_id_families,
     check_equipment_slot_names,

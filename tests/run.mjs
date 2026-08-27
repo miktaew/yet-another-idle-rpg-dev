@@ -22,6 +22,7 @@ import {
     check_creation_panel_values,
     check_dialogue_display_names,
     check_enumerable_id_families,
+    check_equippable_names_resolve,
     check_equipment_slot_names,
     check_item_display_names,
     check_item_name_collisions,
@@ -73,6 +74,7 @@ await check_seasons_go_through_the_accessor();
 await check_registry_value_names();
 await check_skill_category_names();
 await check_enumerable_id_families();
+await check_equippable_names_resolve();
 await check_trader_market_regions();
 await check_global_flags();
 await check_no_placeholder_text();

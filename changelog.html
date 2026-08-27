@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.26</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Eighty equippable names showed in English - every crafted helmet, armour, pair of gloves, shoes, trousers, shield and weapon whose name is assembled from a material and a piece. The cause was one missing line: the component classes never stored `material_id`, so although the generator has always supplied it, it was undefined on every component instance and the branch of getDisplayName that assembles a name from locale rows could never run. Both fields are stored now, and hand-written components that carry a name prefix instead can derive them.</li>
+            <li>A stance tooltip ended in an English word: "En fazla 4 düşmana vurur" was a translated label with " enemies" appended as a literal. It survived the English-in-the-DOM check because that check subtracts single tokens - a lone word in markup is usually a CSS class or an icon name.</li>
+            <li>Dev mode gets 200x and 500x.</li>
+            <li>A new build check builds real items and asks them their names. The existing one validated the assembly but read the generator's raw output with the item classes stubbed, so it could not see that the classes dropped the field the assembly needs. This one loads src/ for real - which needs the import cycle cut at both ends, since the cycle only resolves in a browser - and fails if any assembled equippable's shown name comes back identical to its English.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.25</button>
     <div class="content">
         <ul class="entries">

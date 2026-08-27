@@ -5241,7 +5241,7 @@ function create_stance_tooltip(stance) {
 
     if(target_count > 1) {
         html_content += `
-            <br><div class='stance_tooltip_hitcount'>${stance.randomize_target_count?translationManager.getText(language, "ui randomly hits up to"):translationManager.getText(language, "ui hits up to")} ${target_count} enemies</div>`;
+            <br><div class='stance_tooltip_hitcount'>${translationManager.getText(language, stance.randomize_target_count ? "ui randomly hits up to" : "ui hits up to", {v1: target_count})}</div>`;
     }
 
     insert_HTML(tooltip_div, html_content);
@@ -5266,7 +5266,7 @@ function update_stance_tooltip(stance) {
         if(stance.related_skill) {
             target_count = target_count + Math.round(target_count * get_total_skill_level(stance.related_skill)/skills[stance.related_skill].max_level);
         }
-        set_HTML(stance_bar_divs[stance.id].querySelector(".stance_tooltip_hitcount"), `${stance.randomize_target_count?translationManager.getText(language, "ui randomly hits up to"):translationManager.getText(language, "ui hits up to")} ${target_count} enemies</div>`);
+        set_HTML(stance_bar_divs[stance.id].querySelector(".stance_tooltip_hitcount"), `${translationManager.getText(language, stance.randomize_target_count ? "ui randomly hits up to" : "ui hits up to", {v1: target_count})}</div>`);
     } 
 }
 

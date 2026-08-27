@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.26</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Seksen kuşanılabilir eşya adı İngilizce görünüyordu - adı bir malzeme ile bir parçadan kurulan her üretilmiş kask, zırh, eldiven, ayakkabı, pantolon, kalkan ve silah. Sebep tek bir eksik satırdı: bileşen sınıfları `material_id`'yi hiç saklamıyordu; üreteç onu her zaman veriyor olmasına rağmen her bileşen örneğinde tanımsızdı ve getDisplayName'in adı locale satırlarından kuran dalı hiç çalışamıyordu. Artık iki alan da saklanıyor, ad öneki taşıyan elle yazılmış bileşenler de onları türetebiliyor.</li>
+            <li>Bir duruş tooltip'i İngilizce bir kelimeyle bitiyordu: "En fazla 4 düşmana vurur" çevrilmiş bir etiketti ama sonuna " enemies" düz metin olarak ekleniyordu. DOM'daki İngilizceyi arayan kontrolden kaçmasının sebebi, o kontrolün tek kelimelik parçaları elemesi - markup içindeki yalnız bir kelime genelde bir CSS sınıfı ya da ikon adıdır.</li>
+            <li>Geliştirici moduna 200x ve 500x eklendi.</li>
+            <li>Yeni bir derleme kontrolü gerçek eşyaları kurup adlarını soruyor. Mevcut kontrol birleştirmeyi doğruluyordu ama üreteç çıktısını eşya sınıfları sahtelenmiş hâlde okuyordu; yani sınıfların, birleştirmenin ihtiyaç duyduğu alanı düşürdüğünü göremiyordu. Bu kontrol `src/`'yi gerçekten yüklüyor - bunun için import döngüsünü iki ucundan kesmek gerekiyor, çünkü döngü yalnızca tarayıcıda çözülüyor - ve birleştirilmiş herhangi bir kuşanılabilirin gösterilen adı İngilizcesiyle aynı çıkarsa düşüyor.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.25</button>
     <div class="content">
         <ul class="entries">
