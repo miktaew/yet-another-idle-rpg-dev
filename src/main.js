@@ -124,6 +124,7 @@ import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
 import { translationManager } from "./translation.js";
 import { characterCreator } from "./character_creation.js";
 import { config } from "./config.js";
+import { fill_availability_methods } from "./component_management.js";
 
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -6005,6 +6006,14 @@ function update() {
 }
 
 function run() {
+    /*
+        Grafts the shared availability methods onto every class that registered a
+        component. Done here rather than at module scope because it has to happen after
+        the modules that declare those classes have evaluated, and main.js is the entry
+        point - its body runs last.
+    */
+    fill_availability_methods();
+
     if(typeof current_location === "undefined") {
         change_location({location_id: "Village", skip_travel_time: true});
     } 

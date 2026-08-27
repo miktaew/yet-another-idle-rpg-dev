@@ -104,7 +104,7 @@ export async function load_browser_free(repo_root, module_path) {
         fs.writeFileSync(path.join(temp_dir, "src", `${basename}.js`), stub_source(names));
     }
 
-    const target = path.join(temp_dir, path.basename(path.dirname(module_path)),
-                             path.basename(module_path));
+    //The relative path as given, so a module in a sub-folder of src/ resolves too.
+    const target = path.join(temp_dir, ...module_path.split("/"));
     return import(pathToFileURL(target).href);
 }

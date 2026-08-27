@@ -2,8 +2,14 @@
 import { process_conditions } from "../conditions.js";
 import { language } from "../main.js";
 import { translationManager } from "../translation.js";
+import AvailabilityComponent from "../components/availability_component.js";
+import { availabilities, availability_havers } from "../data/component_references.js";
+
+availabilities["action"] = {};
 
 class GameAction{
+
+    #availability;
     /**
      * 
      * @param {Object} data
@@ -81,17 +87,32 @@ class GameAction{
 
         /** One failure line, resolved. The stored value is an id. */
         this.resolveText = (id) => translationManager.getText(language, id);
-        this.required = required; 
-        //things needed to be able to make an attempt
-        //uses similar format as conditions, but is a single object instead of an array of up to two
-        //{stats, skills, items_by_id: {'item_id': {count, remove_on_success?, remove_on_fail?}}, money: {Number, remove_on_success?, remove_on_fail?}}
+        /*
+            Availability lives in the component now, and the fields below are accessors
+            onto it. Everything that reads or writes action.is_unlocked, .is_finished,
+            .required, .conditions and so on keeps working unchanged - which is the
+            point: the architecture moves without the save format or twenty call sites
+            moving with it.
+
+            `required` is the component's start_conditions and `conditions` its
+            success_conditions; the names differ because upstream renamed them and our
+            content has not.
+        */
         if(conditions.length > 2) {
             throw new Error('LocationAction cannot have more than 2 sets of conditions!');
         }
-        this.conditions = conditions; 
-        //things needed to succeed, breakdown in conditions.js
-
-        this.display_conditions = display_conditions;
+        this.#availability = new AvailabilityComponent({
+            is_unlocked,
+            is_finished: false,
+            display_conditions,
+            start_conditions: required,
+            success_conditions: conditions,
+            //Stated rather than defaulted: the component's own default is upstream's
+            //`true`, and ours has always been false.
+            repeatable,
+            unlock_message: unlock_text,
+        });
+        availabilities["action"][this.action_id] = this.#availability;
         
         this.check_conditions_on_finish = check_conditions_on_finish; 
         //means an action with duration can be attempted even if conditions are not met;
@@ -104,13 +125,33 @@ class GameAction{
         //will make progress persist through leaving the action and through save/load; 
         //should be used only for actions that guarantee success if conditions are met, to not encourage save scumming
         this.accumulated_progress = 0;
-
-        this.is_unlocked = is_unlocked;
-        this.is_finished = false; //really same as is_locked but with a more fitting name
-        this.repeatable = repeatable;
         this.completion_count = 0; //only used for repeatables
-        this.unlock_text = unlock_text;
     }
+
+    getAvailabilityComponent() {
+        return this.#availability;
+    }
+
+    /*
+        The old field names, kept as accessors onto the component. Save and load in
+        main.js write and read these by name, as does lock_action; nothing had to
+        change for the component to arrive.
+    */
+    get is_unlocked() { return this.#availability.is_unlocked; }
+    set is_unlocked(value) { this.#availability.is_unlocked = value; }
+
+    get is_finished() { return this.#availability.is_finished; }
+    set is_finished(value) { this.#availability.is_finished = value; }
+
+    get is_locked() { return this.#availability.is_locked; }
+    set is_locked(value) { this.#availability.is_locked = value; }
+
+    get repeatable() { return this.#availability.repeatable; }
+
+    get required() { return this.#availability.start_conditions[0]; }
+    get conditions() { return this.#availability.success_conditions; }
+    get display_conditions() { return this.#availability.display_conditions[0]; }
+    get unlock_text() { return this.#availability.unlock_message; }
 
     /**
      * @returns {Number} the degree at which conditions are met. 0 means failure (some requirement is not met at all),
@@ -118,13 +159,20 @@ class GameAction{
      * Items do not get fuzzy treatment, they are either all met or not.
      */
     get_conditions_status(character) {
-        return process_conditions(this.conditions, character);
+        return this.#availability.get_conditions_status(character);
     }
 
     /**
      * @returns {Boolean} if start conditions are met
      */
     can_be_started(character) {
+        /*
+            Conditions only, deliberately. The component's canBeStarted also requires the
+            action to be unlocked and unfinished; every caller of this one has already
+            established that by displaying the action, and folding the flags in here
+            would be a silent behaviour change rather than a refactor. The stricter
+            version is available as canBeStarted().
+        */
         return process_conditions([this.required], character);
     }
 
@@ -133,8 +181,12 @@ class GameAction{
      * @returns  {Boolean} if display conditions are met
      */
     can_be_displayed(character) {
-        return process_conditions([this.display_conditions], character);
+        //Flags included. All three callers were checking is_unlocked && !is_finished by
+        //hand before calling this; they no longer have to.
+        return this.#availability.canBeDisplayed(character);
     }
 }
+
+availability_havers.push(GameAction);
 
 export {GameAction};

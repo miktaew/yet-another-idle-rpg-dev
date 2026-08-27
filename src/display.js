@@ -2525,7 +2525,8 @@ function update_displayed_normal_location(location) {
         
     }
 
-    const available_actions = Object.values(location.actions).filter(action => action.is_unlocked && !action.is_finished && action.can_be_displayed(character));
+    //can_be_displayed folds in unlocked/finished now; it used to be checked here by hand.
+    const available_actions = Object.values(location.actions).filter(action => action.can_be_displayed(character));
     if(available_actions.length > 0) {
         location_choice_divs["actions"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice action"), icon: "circle", class_name: "choice_action"});
 
@@ -2847,7 +2848,7 @@ function create_location_choices({location, category, is_combat = false}) {
         }
     } else if (category === "action") {
         Object.keys(location.actions).forEach(key => {
-            if(location.actions[key].is_finished || !location.actions[key].is_unlocked || !location.actions[key].can_be_displayed(character)) {
+            if(!location.actions[key].can_be_displayed(character)) {
                 return;
             }
 
@@ -4491,7 +4492,7 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
         });
 
         Object.keys(dialogue.actions).forEach(key => { //add buttons for actions
-            if(dialogue.actions[key].is_unlocked && !dialogue.actions[key].is_finished && dialogue.actions[key].can_be_displayed(character)) { 
+            if(dialogue.actions[key].can_be_displayed(character)) { 
                 const dialogue_action_div = document.createElement("div");
                 insert_HTML(dialogue_action_div, `${translationManager.getText(language,dialogue.actions[key].starting_text)}`);
                 dialogue_action_div.classList.add("dialogue_textline");
