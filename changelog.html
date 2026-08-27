@@ -257,6 +257,24 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.22</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Buttons at the bottom of a panel no longer fall off it. Favoriler, BGM and Dükkândan çık sat below their boxes, because five panels gave their list a fixed height and let the button rows below take whatever was left - which is nothing, once a Turkish label needs a second line. The list shrinks to fit the rows now, in the message log, the inventory, the shop, the storage and the crafting window.</li>
+            <li>Leaving the skill tabs and coming back no longer loses the skill list's scroll. Showing the panel wrote an inline display, which beat the stylesheet's flex column and left the list free to grow down over the tabs.</li>
+            <li>Tooltips appear under the pointer again. The interface carries a zoom, which multiplies every length inside it - a fixed tooltip's top and left included - while the mouse reports plain viewport pixels; mixing the two moved the tooltip further away the further down the screen it was, and made it flip above the pointer.</li>
+            <li>The crafting log spoke English, and named what it made in English. One path built its message by concatenation with no text id at all; the other passed the canonical name, which doubles as the translation key.</li>
+            <li>The skill list's crafting heading read as a missing text id. It is the only category written through a constant rather than as a literal, so it never got a row.</li>
+            <li>An item's rarity was printed raw next to its quality: "Kalite: 118% [uncommon]".</li>
+            <li>The bestiary named its animals by registry key, so the book said "Wolf rat" about the animal the combat panel calls a wolf rat. Its tooltip printed the tags raw too, and the location header printed its types the same way.</li>
+            <li>A dialogue answer that followed an action showed "text not found" and the sentence it should have shown. The message arrives already resolved and was being looked up a second time, as though the sentence were an id.</li>
+            <li>The rat easter egg replaced the whole answer instead of one word of it. It split a text id on spaces, which made an id that resolves to nothing.</li>
+            <li>Changing the game speed now reaches an action already under way. Its timer kept the period it was created with, so the speed took effect only once the action was over.</li>
+            <li>Three more build checks: every skill category has a name row, every enemy tag and location type has one, and every rarity. All three families reach the screen as interpolations, which is the one shape the English-in-the-DOM check has to ignore.</li>
+            <li>The anthology titled its books by registry key, so a book the tooltip calls "Eski dövüş kılavuzu" was listed as "Old combat manual".</li>
+            <li>Neither the anthology nor the bestiary sorted the way it says it does. The anthology subtracted one title from another, which is NaN for any two strings, so its order was whatever order the books were read in; the bestiary compared names with a greater-than, which orders by code unit and puts every Turkish letter with a diacritic after Z.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.21</button>
     <div class="content">
         <ul class="entries">

@@ -11,7 +11,7 @@
 	--faved_consumables_display: inline-block;
 	--faved_other_display: inline-block;
 
-	--inventory_div_display: block;
+	--inventory_div_display: flex;
 	--character_combat_div_display: none;
 
 	--trader_equipment_display: inline-block;
@@ -1022,10 +1022,6 @@ input[type=checkbox], input[type=radio] {
 			font-style: italic;
 		}
 
-#skill_list_div {
-	display: block;
-}
-
 .skill_div {
 	display: none;
 }
@@ -1388,6 +1384,7 @@ input[type=checkbox], input[type=radio] {
 #crafting_window {
 	display: none;
 	height: 400px;
+	flex-direction: column;
 }
 
 	#crafting_mainpage_buttons {
@@ -1419,10 +1416,25 @@ input[type=checkbox], input[type=radio] {
 			border: 1px solid white;
 		}
 
+/*
+	The window is a flex column, so the recipe list takes whatever height the button
+	rows above it leave - which is the point: seven category buttons wrap to a second
+	line in Turkish, and the list used to keep its fixed 300px and push the exit
+	button off the bottom.
+
+	`top: 60px` was already dead: nothing here is positioned.
+*/
+#recipe_categories {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 0;
+	min-height: 0;
+}
+
 .crafting_recipe_list {
-	height: 300px;
+	flex: 1 1 0;
+	min-height: 0;
 	width:100%;
-	top: 60px;
 	overflow-y: scroll;
 	border-top: 2px solid gray;
 }
@@ -2155,9 +2167,6 @@ i {
 }
 
 #exit_crafting_button {
-	position: absolute;
-	float: left;
-	top: 393px;
 	width: 398px;
 	text-align: center;
 	border: 1px solid white;
@@ -2165,6 +2174,7 @@ i {
 	font-size: 20px;
 	padding: 3px 0px 0px 0px;
 	background-color: rgba(255, 241, 117, 0.2);
+	flex: 0 0 auto;
 }
 
 #exit_crafting_button:hover {
@@ -2320,15 +2330,15 @@ i {
 }
 
 #inventory_content_div {
-	height: 309px;
 	overflow-y: scroll;
 	overflow-x: visible;
+	flex: 1 1 0;
+	min-height: 0;
 }
 
 #inventory_control_div {
 	font-size: 20px;
-	position: absolute;
-	top: 351px;
+	flex: 0 0 auto;
 }
 
 #inventory_div {
@@ -2336,6 +2346,7 @@ i {
 	height: 381px;
 	top: 379px;
 	display: var(--inventory_div_display);
+	flex-direction: column;
 }
 
 #journal_div {
@@ -2529,6 +2540,11 @@ i {
 	A column, so a wrapped sorting row shortens the scroll area instead of falling out
 	of the box onto the tabs below it. The row wraps whenever the three labels are
 	longer than 400px - which English never manages and Turkish does.
+
+	showSkills in index.html has to pass "flex" to changeTab, because changeTab writes
+	an inline display and an inline style wins. This element used to carry a second
+	`display: block` declaration further up the file as well, so which of the two
+	applied came down to source order.
 */
 #skill_list_div {
 	display: flex;
@@ -2797,18 +2813,21 @@ html, body {
 	left: 1230px;
 	padding-right: 15px;
 	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
 }
 
 	#message_box_div {
 		width: 415px;
-		height: 734px;
 		overflow-y: scroll;
 		overflow-x: hidden;
+		flex: 1 1 0;
+		min-height: 0;
 	}
 
 	#message_controls {
 		width: 415px;
-		position: absolute;
+		flex: 0 0 auto;
 	}
 		.message_control_button {
 			float: left;
@@ -2861,12 +2880,16 @@ html, body {
 
 #trade_div {
     display: none;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
 }
 
 #trader_inventory_div {
-    height: 311px;
 	width: 100%;
 	overflow-y: scroll;
+	flex: 1 1 0;
+	min-height: 0;
 }
 
 #trade_price_div {
@@ -2917,12 +2940,16 @@ html, body {
 
 #storage_div {
 	display: none;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
 }
 
 #storage_inventory_div {
-    height: 350px;
 	width: 100%;
 	overflow-y: scroll;
+	flex: 1 1 0;
+	min-height: 0;
 }
 
 /* scrollbar */

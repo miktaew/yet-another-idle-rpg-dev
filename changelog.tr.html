@@ -257,6 +257,24 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.22</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Panellerin altındaki düğmeler artık dışına düşmüyor. Favoriler, BGM ve Dükkândan çık kutularının altında kalıyordu; çünkü beş panel listesine sabit bir yükseklik verip altındaki düğme satırlarına artanı bırakıyordu - Türkçe bir etiket ikinci satıra sardığında artan diye bir şey kalmıyor. Artık liste satırlara yer açmak için kısalıyor: mesaj günlüğü, envanter, mağaza, depo ve zanaat penceresi.</li>
+            <li>Beceri sekmelerinden çıkıp geri dönmek artık beceri listesinin kaydırmasını kaybetmiyor. Paneli göstermek satır içi bir display yazıyordu; bu da stil dosyasının flex kolonunu eziyor ve listeyi sekmelerin üzerine doğru büyümekte serbest bırakıyordu.</li>
+            <li>Tooltipler yeniden farenin altında çıkıyor. Arayüzde bir zoom var ve bu, içindeki her uzunluğu - sabit konumlu bir tooltip'in top ve left değerleri dâhil - çarpıyor; fare ise sade görüntü penceresi pikseli bildiriyor. İkisini karıştırmak, tooltip'i ekranın aşağısına doğru gittikçe daha çok kaydırıyor ve farenin üstüne atlatıyordu.</li>
+            <li>Zanaat günlüğü İngilizce konuşuyor ve ürettiğini İngilizce adlandırıyordu. Bir yol mesajını hiç metin kimliği kullanmadan birleştirerek kuruyordu; öteki yol ise çeviri anahtarı olarak da kullanılan asıl adı geçiriyordu.</li>
+            <li>Beceri listesindeki zanaat başlığı eksik metin kimliği olarak görünüyordu. Sekiz kategoriden yalnızca o, düz metin yerine bir sabit üzerinden yazılmış - bu yüzden satırı hiç yazılmamıştı.</li>
+            <li>Bir eşyanın nadirliği kalitesinin yanında olduğu gibi yazılıyordu: "Kalite: 118% [uncommon]".</li>
+            <li>Hayvanlar kitabı canlıları kayıt anahtarıyla adlandırıyordu; dövüş paneli kurt sıçanı derken kitap aynı hayvana "Wolf rat" diyordu. Tooltipi etiketleri de olduğu gibi yazıyordu, konum başlığı da türlerini aynı şekilde.</li>
+            <li>Bir eylemin ardından gelen diyalog cevabı "text not found" ve göstermesi gereken cümleyi birlikte gösteriyordu. Mesaj zaten çözülmüş hâlde geliyor ve ikinci kez, sanki cümlenin kendisi bir kimlikmiş gibi aranıyordu.</li>
+            <li>Sıçan şakası cevabın bir kelimesi yerine tamamını değiştiriyordu. Bir metin kimliğini boşluklardan bölüyordu ve bu, hiçbir şeye çözülmeyen bir kimlik üretiyordu.</li>
+            <li>Oyun hızını değiştirmek artık başlamış bir eyleme de ulaşıyor. Eylemin zamanlayıcısı kurulduğu andaki periyodu koruyordu; yani hız ancak eylem bittikten sonra etkili oluyordu.</li>
+            <li>Üç yeni derleme kontrolü: her beceri kategorisinin bir ad satırı var, her düşman etiketi ve konum türünün var, her nadirliğin var. Üç ailenin hepsi ekrana ara değer olarak ulaşıyor - bu da DOM'daki İngilizceyi arayan kontrolün görmezden gelmek zorunda olduğu tek biçim.</li>
+            <li>Antoloji kitaplarını kayıt anahtarıyla adlandırıyordu; tooltipin "Eski dövüş kılavuzu" dediği kitap listede "Old combat manual" olarak duruyordu.</li>
+            <li>Ne antoloji ne de hayvanlar kitabı söylediği gibi sıralıyordu. Antoloji bir başlığı diğerinden çıkarıyordu - iki metin için bu NaN eder - yani sıralama kitapların okunma sırasıydı; hayvanlar kitabı ise adları büyüktür ile karşılaştırıyordu, bu da kod birimine göre sıralar ve şapkalı her Türkçe harfi Z'den sonraya atar.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.21</button>
     <div class="content">
         <ul class="entries">

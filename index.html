@@ -1261,7 +1261,11 @@
             }
 
             function showSkills() {
-                changeTab(document.getElementById("skill_list_div"), "block");
+                //flex, not block: changeTab writes this inline, and an inline display beats
+                //the stylesheet - so asking for block turned the panel's flex column back
+                //into a block one and the skill list lost the constraint that makes it
+                //scroll. See #skill_list_div in style.css.
+                changeTab(document.getElementById("skill_list_div"), "flex");
             }
 
             function showStances() {
@@ -1277,7 +1281,7 @@
                 document.documentElement.style.setProperty('--character_combat_div_display', 'block');
             }
             function switchToInventory() {
-                document.documentElement.style.setProperty('--inventory_div_display', 'block');
+                document.documentElement.style.setProperty('--inventory_div_display', 'flex');
                 document.documentElement.style.setProperty('--character_combat_div_display', 'none');
             }
 
@@ -1517,6 +1521,41 @@
                     width_scale,
                     (available_height * height_allowance) / ui_layout_height));
                 document.documentElement.style.setProperty("--ui_scale", ui_scale);
+                measure_fixed_offset_zoom();
+            }
+
+            /*
+                How much a length written inside #main_content grows before it reaches
+                the screen, for an element taken out of the flow by `position: fixed`.
+
+                #main_content carries `zoom`, and zoom multiplies lengths in the subtree
+                - a fixed element's `top` and `left` included - while mouse coordinates
+                arrive in plain viewport pixels. Tooltips are placed by writing mouse
+                coordinates into a custom property that is read down there, so the two
+                have to be converted before they can be compared or combined.
+
+                Measured rather than taken from --ui_scale, because whether an engine
+                scales a fixed element's offsets is exactly the sort of thing that
+                differs between engines. One that leaves them alone measures 1, and
+                every calculation that uses this reduces to what it was.
+            */
+            let fixed_offset_zoom = 1;
+
+            function measure_fixed_offset_zoom() {
+                const host = document.getElementById("main_content");
+                if(!host) {
+                    return;
+                }
+                const probe = document.createElement("div");
+                probe.style.cssText = "position: fixed; top: 1000px; left: 0px;"
+                                    + "width: 1px; height: 1px;"
+                                    + "visibility: hidden; pointer-events: none;";
+                host.appendChild(probe);
+                const landed = probe.getBoundingClientRect().top;
+                probe.remove();
+
+                //A sane reading or nothing: a detached or display:none host reports 0.
+                fixed_offset_zoom = landed > 100 ? landed / 1000 : 1;
             }
 
             fit_ui_to_window();
@@ -1661,8 +1700,9 @@
                 const move_unrestricted_tooltip = ({event, top_variable, left_variable}) => {
                     
                     if(Date.now() >= tooltip_wait) {
-                        document.documentElement.style.setProperty(top_variable, `${event.clientY + tooltip_shift}px`);
-                        document.documentElement.style.setProperty(left_variable, `${event.clientX + tooltip_shift}px`);
+                        //Viewport pixels in, subtree pixels out - see fixed_offset_zoom.
+                        document.documentElement.style.setProperty(top_variable, `${(event.clientY + tooltip_shift) / fixed_offset_zoom}px`);
+                        document.documentElement.style.setProperty(left_variable, `${(event.clientX + tooltip_shift) / fixed_offset_zoom}px`);
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }
                 }
@@ -1683,22 +1723,33 @@
                             return;
                         }
 
-                        const tooltip_height = tooltip.scrollHeight;
-                        const tooltip_width = tooltip.scrollWidth;
+                        /*
+                            The whole calculation happens in viewport pixels, because
+                            that is what the mouse and window.inner* speak. The tooltip
+                            reports its size in subtree pixels, so it is scaled up here,
+                            and the answer is scaled back down on the way into the
+                            custom property. See fixed_offset_zoom.
+                        */
+                        const tooltip_height = tooltip.scrollHeight * fixed_offset_zoom;
+                        const tooltip_width = tooltip.scrollWidth * fixed_offset_zoom;
 
                         const bottom_edge_position = get_bottom_edge_position(tooltip_height);
                         const right_edge_position = get_right_edge_position(tooltip_width);
 
+                        const place = (variable, viewport_position) => {
+                            document.documentElement.style.setProperty(variable, `${viewport_position / fixed_offset_zoom}px`);
+                        };
+
                         if(event.clientY > bottom_edge_position) {
-                            document.documentElement.style.setProperty(top_variable, `${bottom_edge_position}px`);
+                            place(top_variable, bottom_edge_position);
                         } else {
-                            document.documentElement.style.setProperty(top_variable, `${event.clientY + tooltip_shift}px`);
+                            place(top_variable, event.clientY + tooltip_shift);
                         }
 
                         if(event.clientX > right_edge_position && !left_side) {
-                            document.documentElement.style.setProperty(left_variable, `${right_edge_position}px`);
+                            place(left_variable, right_edge_position);
                         } else {
-                            document.documentElement.style.setProperty(left_variable, `${event.clientX + (left_side?-(tooltip.scrollWidth+tooltip_shift):tooltip_shift)}px`);
+                            place(left_variable, event.clientX + (left_side ? -(tooltip_width + tooltip_shift) : tooltip_shift));
                         }
                         tooltip_wait = Date.now() + 1000 / tooltip_move_ticks;
                     }

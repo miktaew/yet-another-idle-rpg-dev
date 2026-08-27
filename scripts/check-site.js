@@ -1310,7 +1310,7 @@ async function check_no_unused_locale_rows() {
         "ui skill category ", "season ", "weekday ", "time of day ",
         "skill effect ", "skill milestone ", "book ", "effect ",
         "loc ", "noise ", "travel ", "activity ", "action ", "quest ", "recipe ",
-        "age ", "height ", "race ",
+        "age ", "height ", "race ", "ui rarity ", "ui enemy tag ", "loctype ",
     ];
 
     //Stat keys are looked up bare and with a " long" suffix, off a runtime key.
@@ -1570,6 +1570,139 @@ async function check_trader_market_regions() {
  * value instead, which is quiet and is how "Material type: bread" survived a full
  * Turkish pass.
  */
+/**
+ * Every skill category a skill declares needs a name row.
+ *
+ * The skill list headings and the milestone reward lines both build their id as
+ * `ui skill category <category>` straight from the skill's own field, so a category
+ * with no row shows the player `text not found, id: ...` where its heading belongs -
+ * which is what the Crafting heading did for as long as the panel existed.
+ *
+ * Crafting is the only category written through a constant rather than a literal, and
+ * that is precisely why writing these rows by reading the file missed it. So the
+ * constants get resolved here rather than matched as text.
+ */
+/**
+ * A computed id family whose values can be enumerated needs a row for every value.
+ *
+ * Neither of the two checks that guard translated text can see these:
+ *
+ *   - check_no_english_in_dom looks for string literals, and these arrive as `${tag}`
+ *     - an interpolation, which is exactly what that check subtracts;
+ *   - check_registry_value_names reads `field: "value"` declarations, and these are
+ *     array members and registry keys instead.
+ *
+ * Which is how the bestiary came to print "[living] [beast] [wolf rat] [small]" and the
+ * location header "narrow" and "dark II" in a Turkish interface, with every other check
+ * passing. Add a family here whenever a new registry's keys start being shown.
+ */
+async function check_enumerable_id_families() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const read = (relative) => strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+    const collect = (source, pattern) => {
+        const found = new Set();
+        for (const match of source.matchAll(pattern)) {
+            found.add(match[1]);
+        }
+        return found;
+    };
+
+    const enemies = read("src/enemies.js");
+
+    //tags: ["living", "beast", "wolf rat"] - the members, not the field.
+    const enemy_tags = new Set();
+    for (const match of enemies.matchAll(/tags:\s*\[([^\]]*)\]/g)) {
+        for (const member of match[1].matchAll(/"([^"]+)"/g)) {
+            enemy_tags.add(member[1]);
+        }
+    }
+    //Every enemy also carries its size as a tag, from the enemy_sizes enum.
+    for (const size of collect(enemies, /^\s*(?:SMALL|MEDIUM|LARGE):\s*"([^"]+)"/gm)) {
+        enemy_tags.add(size);
+    }
+
+    const families = [
+        {
+            what: "enemy tag",
+            prefix: "ui enemy tag",
+            values: enemy_tags,
+            shown_by: "the bestiary tooltip",
+        },
+        {
+            what: "location type",
+            prefix: "loctype",
+            values: collect(read("src/locations.js"), /location_types\["([^"]+)"\]\s*=/g),
+            shown_by: "the location header",
+        },
+    ];
+
+    let total = 0;
+    for (const { what, prefix, values, shown_by } of families) {
+        if (values.size === 0) {
+            error(`no ${what} values found - this check is out of date.`);
+            continue;
+        }
+        for (const value of values) {
+            if (!(`${prefix} ${value}` in reference)) {
+                error(`locales/${default_language}.js has no "${prefix} ${value}" row, so`
+                    + ` ${shown_by} would show the ${what} "${value}" untranslated.`);
+            }
+        }
+        total += values.size;
+    }
+
+    console.log(`[check] enumerable id families: ${total} values resolved`);
+}
+
+async function check_skill_category_names() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/skills.js"), "utf8"));
+
+    //const skill_category_crafting = "Crafting";
+    const constants = new Map();
+    for (const match of source.matchAll(/const\s+(skill_category_\w+)\s*=\s*"([^"]+)"/g)) {
+        constants.set(match[1], match[2]);
+    }
+
+    /*
+        A skill's own category, and not the `{category, subcategory, recipe_id}` triples
+        that milestones use to unlock recipes - those name a recipe page, which is a
+        different registry and carries no heading.
+    */
+    const categories = new Set();
+    const pattern = /(?<!\w)category\s*:\s*(?:"([^"]+)"|([A-Za-z_]\w*))(?!\s*,\s*subcategory)/g;
+    for (const match of source.matchAll(pattern)) {
+        const [, literal, identifier] = match;
+        if (literal) {
+            categories.add(literal);
+        } else if (constants.has(identifier)) {
+            categories.add(constants.get(identifier));
+        } else {
+            error(`src/skills.js sets a skill category to ${identifier}, which this check`
+                + ` cannot resolve to a value - so it cannot tell whether it has a name row.`);
+        }
+    }
+
+    if (categories.size === 0) {
+        error("no skill categories found in src/skills.js - this check is out of date.");
+        return;
+    }
+
+    for (const category of categories) {
+        if (!(`ui skill category ${category}` in reference)) {
+            error(`locales/${default_language}.js has no "ui skill category ${category}" row,`
+                + ` so the ${category} heading in the skill list reads as a missing text id.`);
+        }
+    }
+
+    console.log(`[check] skill category names: ${categories.size} resolved`);
+}
+
 async function check_registry_value_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -1579,6 +1712,9 @@ async function check_registry_value_names() {
     const shown_values = [
         { field: "material_type", files: ["src/items.js", "src/crafting_recipes.js"], prefix: "material type" },
         { field: "weapon_type", files: ["src/items.js"], prefix: "weapon type" },
+        //getItemRarity assigns these rather than declaring them as a field, and the
+        //quality line of every item tooltip prints one.
+        { field: "rarity", files: ["src/items.js"], prefix: "ui rarity" },
     ];
 
     let total = 0;
@@ -1968,6 +2104,8 @@ await check_item_display_names();
 await check_equipment_slot_names();
 await check_no_english_in_dom();
 await check_registry_value_names();
+await check_skill_category_names();
+await check_enumerable_id_families();
 await check_trader_market_regions();
 await check_global_flags();
 await check_no_placeholder_text();

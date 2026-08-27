@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 30 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 31 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -700,6 +700,59 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     Bunlardan hangisinin gönderileceği ve hiçbir şeyin gönderilip gönderilmeyeceği
     varsayılmak yerine soruluyor.
 
+
+20. **Panel düğmeleri panelin altına düşüyordu** — `tamam`. Favoriler, BGM ve
+    Dükkândan çık kutularının alt kenarının altında kalıyordu. Beş panel, kayan
+    listesine sabit bir yükseklik verip altındaki düğme satırlarına artanı
+    bırakıyordu - Türkçe bir etiket ikinci satıra sardığında artan diye bir şey
+    kalmıyor. Mesaj günlüğü, envanter, mağaza, depo ve zanaat penceresi artık flex
+    kolon: liste kısalıyor, satırlar her zaman içeride kalıyor.
+21. **Tooltipler farenin üstünde ve solunda çıkıyordu** — `tamam`.
+    `#main_content` bir `zoom` taşıyor; bu, içine yazılan her uzunluğu -
+    `position: fixed` bir tooltip'in `top` ve `left` değerleri dâhil - çarpıyor,
+    `event.clientX/Y` ise ölçeklenmemiş görüntü penceresi pikseli olarak geliyor.
+    Kenar sınırlaması ikisini doğrudan karşılaştırıyordu; tooltip'i farenin üstüne
+    atlatan da buydu. Çarpan artık `--ui_scale`'den okunmuyor, bir sonda ile
+    ölçülüyor: sabit konumlu ofsetlere dokunmayan bir tarayıcıda 1 ölçülür ve her
+    satır eski hâline indirgenir.
+22. **Beceri sekmeleri arasında gezip dönmek kaydırmayı kaybediyordu** — `tamam`.
+    `changeTab` satır içi bir `display` yazıyor ve `showSkills` `block` istiyordu -
+    bu da stil dosyasının flex kolonunu eziyordu, liste içerik yüksekliğine kadar
+    büyüyüp sekme satırının üzerine iniyordu. Elemanın ayrıca birbiriyle yarışan iki
+    `display` bildirimi vardı ve aralarında yalnızca kaynak sırası karar veriyordu;
+    artık tek bildirim var.
+23. **Zanaat günlüğü İngilizce konuşuyordu** — `tamam`. Üst üste iki hata: eşya
+    tarifi yolu mesajını hiç metin kimliği kullanmadan birleştiriyordu, bileşen yolu
+    ise kimlikleri kullanıp `getName()` geçiyordu - o da asıl İngilizce ad ve aynı
+    zamanda çeviri anahtarı. Dört yeni satır, beş çağrı yerinde değişen bir erişimci.
+24. **Kalite satırı nadirliği İngilizce gösteriyordu** — `tamam`.
+    `Kalite: 118% [uncommon]`. `getItemRarity` bir kalite sayısını yedi İngilizce
+    kelimeden birine çeviriyor, yani bu hesaplanan bir kayıt değeri; yedi satır ve
+    bir etiket yardımcısı.
+25. **Hayvanlar kitabı ve antoloji her şeyi kayıt anahtarıyla adlandırıyordu** —
+    `tamam`, ve yanında dahası bulundu. Hayvanlar kitabı canlıları anahtarla
+    listeliyordu; dövüş paneli kurt sıçanı derken kitap `Wolf rat` diyordu.
+    Tooltipi etiketleri olduğu gibi yazıyordu, konum başlığı türlerini aynı şekilde,
+    antoloji de kitaplarını anahtarla adlandırıyordu. İki liste sıralamayı da
+    yapmıyordu: antoloji bir başlığı diğerinden çıkarıyordu - iki metin için bu
+    `NaN` eder - hayvanlar kitabı ise `>` ile karşılaştırıyordu, bu da kod birimine
+    göre sıralar ve şapkalı her Türkçe harfi Z'den sonraya atar.
+26. **Diyalog cevabında `text not found`** — `tamam`. Bir eylemden sonra gösterilen
+    cevap içerik yığınına ulaştığında zaten çözülmüş oluyor; üç tür cevabı da
+    gösteren tek fonksiyon onu ikinci kez çözüyor, yani bitmiş cümleyi bir kimlik
+    olarak arıyordu. Yanında bulundu: sıçan şakası bir kelimeyi değiştirmek için
+    metin kimliğini boşluklardan bölüyordu, bu da hiçbir şeye çözülmeyen bir kimlik
+    üretiyordu - yani %1'lik şaka cevabın bir kelimesi yerine tamamını değiştiriyordu.
+27. **Hız ayarı başlamış bir eyleme ulaşmıyordu** — `tamam`. Oyun eylemini ilerleten
+    zamanlayıcı periyodunu `tickrate`'ten türetiyor, ama `setInterval` kurulduğu
+    andaki periyodu koruyor; yani başlamış bir eylem başladığı hızda kalıyordu.
+    `set_game_speed` onu yeniden kuruyor; ilerleme tick'in kapanışında yaşadığı için
+    hiçbir şey kaybolmuyor.
+28. **`check-site.js` fazla büyüdü; kontroller `tests/` klasörüne ayrılsın** —
+    `yapılacak`. Yirmi dört kontrolü barındıran, iki bin satıra yakın tek bir dosya;
+    yalnızca bu turda üç kontrol daha eklendi.
+29. **`Kuroiteiken/Echoes-Beneath` reposuna bakıp alınabilecek fikirleri çıkar** —
+    `yapılacak`. Başka bir oyun; soru, hangi fikirlerinin buraya uyduğu.
 
 ---
 ## Bekleyen kararlar

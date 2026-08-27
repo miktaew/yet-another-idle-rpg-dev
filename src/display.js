@@ -226,6 +226,32 @@ const rarity_colors = {
     mythical: "#ffa500"
 }
 
+/**
+ * A rarity's name, for the quality line of an item tooltip.
+ *
+ * getItemRarity turns a quality number into one of seven English words, so a rarity is
+ * a computed registry value rather than written text - and like the other registry
+ * values it needs a row of its own to be readable in another language.
+ */
+/**
+ * An enemy tag's name, for the bestiary tooltip.
+ *
+ * Tags are registry keys - "living", "beast", "wolf rat", plus the size - and the
+ * bestiary is the one place a player reads them.
+ */
+function enemy_tag_label(tag) {
+    return translationManager.getText(language, `ui enemy tag ${tag}`);
+}
+
+/** A location type's name, for the header beside the location's own name. */
+function location_type_label(type) {
+    return translationManager.getText(language, `loctype ${type}`);
+}
+
+function rarity_label(rarity) {
+    return translationManager.getText(language, `ui rarity ${rarity}`);
+}
+
 const rarity_outlines = {};
 Object.keys(rarity_colors).forEach(rarity => {
     rarity_outlines[rarity] = select_outline_class(rarity_colors[rarity]);
@@ -370,6 +396,16 @@ function capitalize_first_letter(some_string, is_translated = false) {
     return some_string.charAt(0).toLocaleUpperCase(tag) + some_string.slice(1);
 }
 
+/**
+ * Orders two display names the way a reader of this interface would.
+ *
+ * `>` on strings compares UTF-16 code units, which puts every Turkish letter carrying
+ * a diacritic after Z - so a bestiary sorted that way listed Çakal below Zebra.
+ */
+function compare_display_names(first, second) {
+    return String(first).localeCompare(String(second), language_tags[language]);
+}
+
 /** Mirror of capitalize_first_letter; the same locale caveat applies. */
 function uncapitalize_first_letter(some_string, is_translated = false) {
     const tag = is_translated ? language_tags[language] : undefined;
@@ -487,11 +523,11 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
             const outline_class_2 = rarity_outlines[item.getRarity(options.quality[1])];
                 
             item_tooltip += `<br><br><b>${translationManager.getText(language, "ui label quality")}: <span class="${outline_class_1}" style="color: ${rarity_colors[item.getRarity(options.quality[0])]}"> ${options.quality[0]}% </span> - <span class="${outline_class_2}" style="color: ${rarity_colors[item.getRarity(options.quality[1])]}"> ${options.quality[1]}% </span>`;
-            item_tooltip += `<br>[<span class="${outline_class_1}" style="color: ${rarity_colors[item.getRarity(options.quality[0])]}">${item.getRarity(options.quality[0])}</span>-<span class="${outline_class_2}" style="color: ${rarity_colors[item.getRarity(options.quality[1])]}">${item.getRarity(options.quality[1])}</span>] </b>`;
+            item_tooltip += `<br>[<span class="${outline_class_1}" style="color: ${rarity_colors[item.getRarity(options.quality[0])]}">${rarity_label(item.getRarity(options.quality[0]))}</span>-<span class="${outline_class_2}" style="color: ${rarity_colors[item.getRarity(options.quality[1])]}">${rarity_label(item.getRarity(options.quality[1]))}</span>] </b>`;
         } else {
             const outline_class = rarity_outlines[item.getRarity(quality)];
                 
-            item_tooltip += `<br><br><b class="${outline_class}" style="color: ${rarity_colors[item.getRarity(quality)]}">${translationManager.getText(language, "ui label quality")}: ${quality}% [${item.getRarity(quality)}]</b>`;
+            item_tooltip += `<br><br><b class="${outline_class}" style="color: ${rarity_colors[item.getRarity(quality)]}">${translationManager.getText(language, "ui label quality")}: ${quality}% [${rarity_label(item.getRarity(quality))}]</b>`;
         }
     }
     if(item.tags.unique) {
@@ -1171,14 +1207,14 @@ function start_activity_animation(settings) {
 
 function update_displayed_trader() {
     action_div.style.display = "none";
-    trade_div.style.display = "inherit";
+    trade_div.style.display = "flex";
     document.getElementById("trader_cost_mult_value").textContent = `${Math.round(100 * (traders[current_trader].getProfitMargin(current_location.market_region)))}%`
     update_displayed_trader_inventory();
 }
 
 function update_displayed_storage() {
     action_div.style.display = "none";
-    storage_div.style.display = "inherit";
+    storage_div.style.display = "flex";
     update_displayed_storage_inventory();
 }
 
@@ -2904,7 +2940,8 @@ function create_location_types_display(current_location){
     for(let i = 0; i < current_location.types?.length; i++) {
         const type_div = document.createElement("div");
 
-        insert_HTML(type_div, current_location.types[i].type + (current_location.types[i].stage>1?` ${"I".repeat(current_location.types[i].stage)}`:""));
+        insert_HTML(type_div, location_type_label(current_location.types[i].type)
+            + (current_location.types[i].stage>1?` ${"I".repeat(current_location.types[i].stage)}`:""));
         type_div.classList.add("location_type_div");
 
         const type_tooltip = document.createElement("div");
@@ -2954,7 +2991,7 @@ function update_displayed_location_types(current_location) {
 
 function open_crafting_window() {
     action_div.style.display = "none";
-    document.getElementById("crafting_window").style.display = "block";
+    document.getElementById("crafting_window").style.display = "flex";
 
     //only show available categories
     let first_available_category = null;
@@ -4443,8 +4480,18 @@ function update_displayed_dialogue({dialogue_key, textlines, origin}) {
     }
 }
 
-function update_displayed_textline_answer({text, is_description}) {
-    text = translationManager.getText(language, text);
+/**
+ * Writes the line the other party says.
+ *
+ * `text` is a text id, unless text_is_resolved says otherwise - which one caller needs,
+ * because an action's result message is built and resolved by the action before it is
+ * passed down the content stack. Resolving that again looked the finished sentence up
+ * as an id and printed "text not found" where the answer belonged.
+ */
+function update_displayed_textline_answer({text, is_description, text_is_resolved = false}) {
+    if(!text_is_resolved) {
+        text = translationManager.getText(language, text);
+    }
     
     if(is_description) {
         document.getElementById("dialogue_answer_div").innerText =  "*"+text+"*";
@@ -4679,9 +4726,16 @@ function update_game_action_finish_button() {
  */
 function fill_action_box({content_type, data}) {
 
+    /*
+        An action's result message arrives resolved; a dialogue's description and a
+        textline's answer arrive as ids. Which is which has to travel with the text,
+        because the one function that displays all three cannot tell them apart.
+    */
     let text = '';
+    let text_is_resolved = Boolean(data.text_is_resolved);
     if(data.special?.upstack_result_message) {
         text = data.special.upstack_result_message;
+        text_is_resolved = true;
     }
 
     if(content_type === "dialogue") {
@@ -4690,20 +4744,20 @@ function fill_action_box({content_type, data}) {
             text = dialogues[data.dialogue_key].getDescription();
         }
         //if(!document.getElementById("dialogue_answer_div").innerText) { //probably pointless to check?
-        update_displayed_textline_answer({text, is_description: true});
+        update_displayed_textline_answer({text, is_description: true, text_is_resolved});
         //}
     } else if(content_type === "dialogue_answer") {
         update_displayed_dialogue({dialogue_key: data.dialogue_key});
         if(!text) {
             text = data.text;
         }
-        update_displayed_textline_answer({text});
+        update_displayed_textline_answer({text, text_is_resolved});
     } else if(content_type === "dialogue_branch") {
         update_displayed_dialogue({dialogue_key: data.dialogue_key, textlines: data.textlines});
         if(!text) {
             text = data.text;
         }
-        update_displayed_textline_answer({text});
+        update_displayed_textline_answer({text, text_is_resolved});
     } else if(content_type === "action") {
         start_game_action_display(data.dialogue_key, data.action_key);
     } else if(content_type === "activity") {
@@ -5300,13 +5354,9 @@ function create_new_bestiary_entry(enemy_name) {
         if(rank_a != rank_b) {
             return rank_a - rank_b;
         } else {
-            const name_a = a.querySelector(".bestiary_entry_name").innerText;
-            const name_b = b.querySelector(".bestiary_entry_name").innerText;
-            if(name_a > name_b) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return compare_display_names(
+                a.querySelector(".bestiary_entry_name").innerText,
+                b.querySelector(".bestiary_entry_name").innerText);
         }
     }).forEach(node=>bestiary_list.appendChild(node));
 }
@@ -5315,7 +5365,8 @@ function create_bestiary_entry_content(enemy_name) {
     const entry_div = document.createElement("div");
 
     const name_div = document.createElement("div");
-    name_div.innerText = enemy_name;
+    //The key names the entry; the enemy names itself.
+    name_div.innerText = enemy_templates[enemy_name].getName();
     name_div.classList.add("bestiary_entry_name");
     const kill_counter = document.createElement("div");
     kill_counter.innerText = enemy_killcount[enemy_name];
@@ -5340,7 +5391,7 @@ function create_bestiary_entry_tooltip(enemy_name) {
     const tooltip_tags = document.createElement("div"); //enemy description
 
     Object.keys(enemy.tags).forEach(tag => {
-        tooltip_tags.innerText += `[${tag}] `
+        tooltip_tags.innerText += `[${enemy_tag_label(tag)}] `
     });
 
     insert_HTML(tooltip_tags, "<br><br>");
@@ -5502,7 +5553,8 @@ function create_new_booklist_entry(book_name) {
     let book = item_templates[book_name];
 
     let name_div = document.createElement("div");
-    name_div.innerText = book_name;
+    //The key identifies the book; the book titles itself.
+    name_div.innerText = book.getDisplayName();
     name_div.classList.add("anthology_entry_name");
 
     let tooltip = create_item_tooltip(book);//document.createElement("div");
@@ -5516,8 +5568,14 @@ function create_new_booklist_entry(book_name) {
 
     booklist_list.appendChild(booklist_entry_divs[book_name]);
 
-    //sorts booklist_list div by book title
-    [...booklist_list.children].sort((a,b)=>a.getAttribute("data-book") - b.getAttribute("data-book"))
+    /*
+        Sorts by the title as shown. Subtracting one title from another - which is
+        what this did - is NaN for every pair of strings, so the list stayed in the
+        order the books happened to be read in.
+    */
+    [...booklist_list.children].sort((a, b) => compare_display_names(
+                                    a.querySelector(".anthology_entry_name").innerText,
+                                    b.querySelector(".anthology_entry_name").innerText))
                                 .forEach(node=>booklist_list.appendChild(node));
 }
 

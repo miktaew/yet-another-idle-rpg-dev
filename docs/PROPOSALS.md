@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 30 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 31 -->
 
 # Proposals
 
@@ -693,6 +693,56 @@ not after. Each item is the request as it was given, and the state it is in.
     Which of those to send, and whether to send anything at all, is asked rather than
     assumed.
 
+20. **Panel buttons fell below their panel** — `done`. Favoriler, BGM and
+    Dükkândan çık sat under the bottom edge of their boxes. Five panels gave their
+    scrolling list a fixed height and left the button rows below it whatever space
+    remained, which is none once a Turkish label needs a second line. The message
+    log, the inventory, the shop, the storage and the crafting window are flex
+    columns now: the list shrinks, the rows always land inside.
+21. **Tooltips appeared above and left of the pointer** — `done`. `#main_content`
+    carries a `zoom`, which multiplies every length written inside it - a
+    `position: fixed` tooltip's `top` and `left` included - while `event.clientX/Y`
+    arrive in unzoomed viewport pixels. The edge clamping compared the two directly,
+    which is what flipped the tooltip above the pointer. The factor is now measured
+    with a probe rather than read from `--ui_scale`, so a browser that leaves fixed
+    offsets alone measures 1 and every line reduces to what it was.
+22. **Switching skill tabs and returning lost the scroll** — `done`. `changeTab`
+    writes an inline `display`, and `showSkills` asked for `block` - which beat the
+    stylesheet's flex column, so the list grew to its content height and ran down
+    over the tab row. The element also carried two competing `display` declarations
+    and only source order decided between them; there is one now.
+23. **The crafting log spoke English** — `done`. Two faults stacked: the
+    item-recipe path built its message by concatenation with no text id at all, and
+    the component path used ids but passed `getName()`, which is the canonical
+    English name and doubles as the translation key. Four new rows, one accessor
+    changed at five call sites.
+24. **Quality showed its rarity in English** — `done`. `Kalite: 118% [uncommon]`.
+    `getItemRarity` turns a quality number into one of seven English words, so it is
+    a computed registry value; seven rows and a label helper.
+25. **The bestiary and the anthology named things by registry key** — `done`, and
+    more was found alongside it. The bestiary listed animals by key, so the book
+    said `Wolf rat` about the animal the combat panel calls a kurt sıçanı; its
+    tooltip printed the tags raw; the location header printed its types the same
+    way; and the anthology titled its books by key. Both lists also failed to sort -
+    the anthology subtracted one title from another, which is `NaN` for any two
+    strings, and the bestiary compared with `>`, which orders by code unit and puts
+    every Turkish letter carrying a diacritic after Z.
+26. **`text not found` in a dialogue answer** — `done`. The answer shown after an
+    action is already resolved when it reaches the content stack, and the one
+    function that displays all three kinds of answer resolved it again, looking the
+    finished sentence up as an id. Found with it: the rat easter egg split a text id
+    on spaces to swap a word, which produced an id that resolves to nothing - so the
+    1% joke replaced the whole answer rather than one word of it.
+27. **The speed setting did not reach a running action** — `done`. The interval
+    that advances a game action derives its period from `tickrate`, but
+    `setInterval` keeps the period it was created with, so an action already under
+    way ran at the speed it started at. `set_game_speed` re-arms it; progress lives
+    in the tick's closure, so nothing is lost.
+28. **`check-site.js` has grown too large; split the checks into a `tests/`
+    folder** — `todo`. It is one file of about two thousand lines holding
+    twenty-four checks, and it grew by three this round alone.
+29. **Look at `Kuroiteiken/Echoes-Beneath` for ideas worth taking** — `todo`. A
+    different game; the question is which of its ideas fit this one.
 
 ---
 ## Open decisions

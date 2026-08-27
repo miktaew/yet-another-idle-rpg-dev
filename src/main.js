@@ -226,6 +226,8 @@ let current_location;
 let current_activity;
 
 let game_action_interval;
+//The running action's tick, kept so a speed change can re-arm its interval.
+let game_action_tick;
 let current_game_action;
 
 //loot from currently active source (combat location or specific activity), used for display if dynamic loot logging option is enabled
@@ -897,9 +899,9 @@ function start_game_action(action_key, event) {
         let current_iterations = game_action.keep_progress?game_action.accumulated_progress:0;
         const total_iterations = game_action.attempt_duration/0.1;
 
-        game_action_interval = setInterval(()=>{
+        game_action_tick = () => {
             if(current_iterations >= total_iterations - 1) {
-                clearInterval(game_action_interval);
+                stop_game_action_interval();
                 finish_game_action({action_key, conditions_status, dialogue_key: current_dialogue});
             }
 
@@ -908,11 +910,39 @@ function start_game_action(action_key, event) {
                 game_action.accumulated_progress = current_iterations;
             }
             update_game_action_progress_bar(current_iterations/total_iterations);
-        }, 1000*0.1/tickrate);
+        };
+        game_action_interval = setInterval(game_action_tick, game_action_period());
     } else {
         update_game_action_progress_bar(1);
         finish_game_action({action_key, conditions_status,dialogue_key: current_dialogue});
     }
+}
+
+/** How long one tenth of an action-second lasts at the current speed. */
+function game_action_period() {
+    return 1000 * 0.1 / tickrate;
+}
+
+function stop_game_action_interval() {
+    clearInterval(game_action_interval);
+    game_action_interval = undefined;
+    game_action_tick = undefined;
+}
+
+/**
+ * Re-arms the running game action at the current speed.
+ *
+ * setInterval keeps the period it was created with, so raising the speed while an
+ * action was under way used to change nothing until the action was over - which is the
+ * one moment the speed was no longer wanted. Progress lives in the tick's closure, so
+ * swapping the interval out from under it loses nothing.
+ */
+function rearm_game_action_interval() {
+    if(!game_action_tick) {
+        return;
+    }
+    clearInterval(game_action_interval);
+    game_action_interval = setInterval(game_action_tick, game_action_period());
 }
 
 /**
@@ -1008,7 +1038,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
  */
 function end_game_action() {
     end_activity_animation();
-    clearInterval(game_action_interval);
+    stop_game_action_interval();
     current_game_action = null;
     remove_from_content_stack(content_stack_removal_options.TOP);
 }
@@ -1398,20 +1428,28 @@ function start_textline(textline_key){
     //start_dialogue(current_dialogue);
     let text = get_textline_answer(textline);
 
-    //a very stupid easter egg that totally won't be annoying - 1% chance to have a random word in dialogue replaced with "rat" if your hero's name contains that word
-    if(is_rat()) {
-        if(Math.random() <= 0.01) {
-            const words = text.split(" ");
-            const index = Math.floor(words.length * Math.random());
-            words[index] = "rat";
-            text = words.join(" ");
-        }
+    /*
+        A very stupid easter egg that totally won't be annoying: a 1% chance for one word
+        of the answer to come out as "rat", if the hero's name says as much.
+
+        It has to work on the sentence, not on the id above it - splitting an id on
+        spaces and swapping a word made an id that resolves to nothing, so the egg used
+        to replace the whole answer with "text not found" rather than one word with a
+        rodent.
+    */
+    let text_is_resolved = false;
+    if(is_rat() && Math.random() <= 0.01) {
+        const words = translationManager.getText(language, text).split(" ");
+        const index = Math.floor(words.length * Math.random());
+        words[index] = translationManager.getText(language, "ui easter egg rat");
+        text = words.join(" ");
+        text_is_resolved = true;
     }
 
     if(textline.branches_into?.length) {
-        fill_action_box({content_type: "dialogue_branch", data: {text: text, dialogue_key: current_dialogue, textlines: textline.branches_into}});
+        fill_action_box({content_type: "dialogue_branch", data: {text, text_is_resolved, dialogue_key: current_dialogue, textlines: textline.branches_into}});
     } else {
-        fill_action_box({content_type: "dialogue_answer", data: {text: text, dialogue_key: current_dialogue}});
+        fill_action_box({content_type: "dialogue_answer", data: {text, text_is_resolved, dialogue_key: current_dialogue}});
     }
 }
 
@@ -2936,21 +2974,19 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
 
                 if(final_count) {
                     add_to_character_inventory([{item_key: item_templates[result_id].getInventoryKey(), count: final_count}]);
-                    let msg = `Created ${item_templates[result_id].getName()}`;
-                    if(attempted_crafting_ammount > 1 || scale_results) {
-                        msg+=` [${final_count} out of ${count*attempted_crafting_ammount}]`;
-                    } else {
-                        msg+= ` x${final_count}`;
-                    }
-                    log_message(msg, "crafting");
+                    const made = item_templates[result_id].getDisplayName();
+                    const tried = count * attempted_crafting_ammount;
+                    log_message((attempted_crafting_ammount > 1 || scale_results)
+                        ? translationManager.getText(language, "log crafting made out of", {v1: made, v2: final_count, v3: tried})
+                        : translationManager.getText(language, "log crafting made", {v1: made, v2: final_count}),
+                        "crafting");
                 } else {
-                    let msg = `Failed to create ${item_templates[result_id].getName()}`;
-                    if(attempted_crafting_ammount > 1 || scale_results) {
-                        msg+=` [0 out of ${count*attempted_crafting_ammount}]`;
-                    } else {
-                        msg+= ` x${count*attempted_crafting_ammount}`;
-                    }
-                    log_message(msg, "crafting");
+                    const missed = item_templates[result_id].getDisplayName();
+                    const tried = count * attempted_crafting_ammount;
+                    log_message((attempted_crafting_ammount > 1 || scale_results)
+                        ? translationManager.getText(language, "log crafting failed out of", {v1: missed, v2: tried})
+                        : translationManager.getText(language, "log crafting failed", {v1: missed, v2: tried}),
+                        "crafting");
                 }
 
                 leveled = add_xp_to_skill({skill: recipe_skill, xp_to_add: xp_to_add, cap_gained_xp: false, use_bonus: false});
@@ -3030,9 +3066,9 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                             const highest_qual = qualities[0];
 
                             if(crafted_count > 1) {
-                                log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
+                                log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getDisplayName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
                             } else {
-                                log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
+                                log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getDisplayName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                             }
 
                             add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, cap_gained_xp: false, use_bonus: false});
@@ -3051,10 +3087,10 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                         const highest_qual = qualities[0];
 
                         if(crafted_count > 1) {
-                            log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
+                            log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getDisplayName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
 
                         } else {
-                            log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
+                            log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getDisplayName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                         }
                         add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, cap_gained_xp: false, use_bonus: false});
                     }
@@ -3145,9 +3181,9 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     const highest_qual = qualities[0];
 
                     if(crafted_count > 1) {
-                        log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
+                        log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getDisplayName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
                     } else {
-                        log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
+                        log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getDisplayName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                     }
 
                     add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, use_bonus: false, cap_gained_xp: false});
@@ -3167,10 +3203,10 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 const highest_qual = qualities[0];
 
                 if(crafted_count > 1) {
-                    log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
+                    log_message(translationManager.getText(language, "log created v1 x v2 highest", {v1: result.getDisplayName(), v2: crafted_count, v3: highest_qual, v4: crafted_items[highest_qual], v5: Math.floor(accumulated_xp)}), "crafting");
 
                 } else {
-                    log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
+                    log_message(translationManager.getText(language, "log created v1 v2 quality x1", {v1: result.getDisplayName(), v2: highest_qual, v3: Math.floor(accumulated_xp)}), "crafting");
                 }
                 add_xp_to_skill({skill: recipe_skill, xp_to_add: accumulated_xp, use_bonus: false, cap_gained_xp: false});
             }
@@ -3236,7 +3272,7 @@ function switch_action_box_content() {
     } else if(current_game_action) {
         current_game_action = null;
         end_activity_animation();
-        clearInterval(game_action_interval);
+        stop_game_action_interval();
     }
 
     if(content_stack.length) {
@@ -6095,6 +6131,10 @@ function set_game_speed(multiplier) {
     }
     game_speed = multiplier;
     tickrate = config.tickrate * game_speed;
+
+    //An action already running holds its own interval, which has to be re-armed to
+    //notice this at all.
+    rearm_game_action_interval();
 
     //The buttons only exist once the dev console has revealed them.
     const buttons = document.getElementsByClassName("game_speed_button");
