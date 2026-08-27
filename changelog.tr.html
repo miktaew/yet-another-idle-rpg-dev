@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.24</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Kalkan artık kendini savunmakta seni daha kötü yapmıyor. Savuşturma zarı kalkan-var dalının içinde, kaçınma zarı da onun else'inde duruyordu; yani kalkan taşımak kaçınmayı tamamen kaldırıyordu. Temel savuşturma şansı 0.75; bu da başlangıç kalkanının saldırıların dörtte üçünü "kalkanın gücü kadar azaltıldı"ya çevirmesi - ucuz ahşap kalkan için 1.6 hasar - ve kalan dörtte biri, aksi hâlde çoğunu savuşturacak bir karaktere bedava tam vuruş olarak vermesi demekti. Artık savuşturulamayan saldırı kaçınma zarına düşüyor; savuşturulan düşmüyor, çünkü kalkana çarpmış oldu.</li>
+            <li>Dışa aktar düğmesi yeniden çalışıyor. `btoa`, U+00FF üstündeki her karakterde istisna atıyor ve dört Türkçe harf orada yaşıyor: ş, ğ, ı ve İ. Kayıt dosyası, günlük yenilemeden sağ çıkmaya başladığından beri mesaj günlüğünü taşıyor; yani oyuncuya gösterilen ilk Türkçe cümle her dışa aktarmayı patlatıyordu - bir onclick içindeki istisna da sessizdir. Kayıtlar artık önce UTF-8 bayta çevriliyor; eski bir aktarma yine yükleniyor, çünkü biri ancak saf ASCII'den üretilebilirdi.</li>
+            <li>Bunun geri dönmemesi için bir derleme kontrolü: hiçbir yer `btoa` veya `atob`'u doğrudan çağıramaz.</li>
+            <li>Lonca mubayaacısının selamı iki yerde çeviri gibi okunuyordu. "You are not with the gate?" "kapıyla beraber değil misin" olmuştu - Türkçe orada ayrılma hâli kullanır, adamın kendi cevabı da zaten kullanıyordu. Bir de "a man with scales", tek ismin üzerine iki sıfat-fiil yığmıştı: dilbilgisinin izin verdiği, yazının kullanmadığı bir şey.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.23</button>
     <div class="content">
         <ul class="entries">

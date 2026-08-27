@@ -86,6 +86,64 @@ async function check_no_english_in_dom() {
     }
 }
 
+/**
+ * Nothing may call btoa or atob directly.
+ *
+ * btoa throws on any character above U+00FF, and four Turkish letters live above it:
+ * s-cedilla, g-breve, dotless i and dotted I. The savefile has carried the message
+ * log since the log started surviving a reload, so the first Turkish sentence a player
+ * was shown made every export throw - and because the throw happened inside an onclick,
+ * the Export button simply did nothing.
+ *
+ * to_base64 and from_base64 encode to UTF-8 bytes first. This keeps the next caller
+ * from reaching for the raw pair again.
+ */
+async function check_base64_is_utf8_safe() {
+    const allowed = new Set([
+        "function to_base64(text) {",
+        "function from_base64(encoded) {",
+    ]);
+
+    let checked = 0;
+    for (const relative of fs.readdirSync(path.join(repo_root, "src"))
+            .filter(name => name.endsWith(".js")).map(name => `src/${name}`)
+            .concat(["index.html"])) {
+        const source = fs.readFileSync(path.join(repo_root, relative), "utf8");
+        const lines = strip_comments(source).split(/\r?\n/);
+
+        //Which helper, if any, each line sits inside. The helpers are the only callers.
+        let inside = null;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            for (const opener of allowed) {
+                if (line.includes(opener.slice(0, -2))) {
+                    inside = opener;
+                }
+            }
+            if (inside && line === "}") {
+                inside = null;
+                continue;
+            }
+            if (!/(?<![\w.])(?:btoa|atob)\s*\(/.test(line)) {
+                continue;
+            }
+            checked++;
+            if (!inside) {
+                error(`${relative}:${i + 1} calls btoa or atob directly. Use to_base64 /`
+                    + ` from_base64: btoa throws on the four Turkish letters above U+00FF,`
+                    + ` and the savefile carries the message log.`);
+            }
+        }
+    }
+
+    if (checked === 0) {
+        error("no btoa or atob calls found at all - the base64 helpers have moved and this check is out of date.");
+    }
+
+    console.log(`[check] base64 is utf8-safe: ${checked} call sites`);
+}
+
 export {
+    check_base64_is_utf8_safe,
     check_no_english_in_dom,
 };

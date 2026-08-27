@@ -3201,8 +3201,8 @@ const descriptions = {
     //the second of the two keys the gate has always named.
     "name guild factor": "lonca mubayaacısı",
     "factor description": "Kapının dışında portatif bir masada bir adam; yanında bir yazı tahtası, bir terazi ve kendisine ait olmayan bir araba. Hiçbir şey satmıyor. Yoldan ne geldiğini ve buraya vardığında ne ettiğini yazıyor.",
-    "factor hello": "Kapıyla birlikte değil misin?",
-    "factor hello answ": "*[Yazmayı bırakmıyor]* Ben loncadanım; lonca şu duvarın öbür tarafında, ben de bu tarafındayım — bu da loncanın bir odaya ne kadar para vermek istediğini tam olarak anlatır.\n\nBugün terazi taşıyan bir adamı muhafız sanan dördüncü kişisin. Üzerinde bir şey var mı, yoksa sohbet mi ediyorsun? İkisi de serbest. Sadece birinin ücreti var.",
+    "factor hello": "Kapıdan değil misin?",
+    "factor hello answ": "*[Yazmayı bırakmıyor]* Ben loncadanım. Lonca şu duvarın öbür tarafında, ben bu tarafında. Loncanın bir odaya ne kadar para vermek istediğini buradan anla.\n\nMasamda terazi var, sen muhafız sanıyorsun. Bugün dördüncüsün. Üzerinde bir şey var mı, yoksa sohbet mi ediyorsun? İkisi de serbest. Sadece birinin ücreti var.",
     "factor buying": "Lonca ne alıyor?",
     "factor buying answ": "Her şeyi, hem de kötü fiyata. *[Tahtayı çeviriyor]* Çiftliklerden tahıl, tepelerden yün, mağaradan demir. Hepsi geliyor, hepsi ucuz, hepsi geçen yılın aynısı.\n\nAlamadığımız şey, şelalelerin ötesinden gelen hiçbir şey. Oradan kimse dönmüyor, yani arz yok, yani fiyat yok — ve bir şeyin fiyatı olmayan bir lonca, biri sonunda o şeyi getirdiğinde onunla ne yapacağını bilmiyor.\n\n*[İlk kez başını kaldırıyor]* Bataklık kokuyorsun. Üç şey o zaman. Keten, timsah derisi, kurutulmuş et. Her birinden bir miktar getir — gerçek bir miktar, numune değil — ben de üçü için birer fiyat yazayım; bu loncanın bugüne dek saydığı tek şey de fiyattır.",
     "factor linen": "[20 Keten kumaş ver]",

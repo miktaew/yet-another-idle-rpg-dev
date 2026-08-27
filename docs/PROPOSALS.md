@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 32 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 33 -->
 
 # Proposals
 
@@ -753,8 +753,76 @@ not after. Each item is the request as it was given, and the state it is in.
     actually references. What makes it trustworthy is the comparison at the end:
     `npm run check` prints the same 29 lines in the same order as before, and a
     removed locale row still fails it with exit code 1.
-29. **Look at `Kuroiteiken/Echoes-Beneath` for ideas worth taking** — `todo`. A
-    different game; the question is which of its ideas fit this one.
+29. **Look at `Kuroiteiken/Echoes-Beneath` for ideas worth taking** — `done`. It is a
+    browser game built the same way this one is, and it keeps the same doc convention
+    (`AGENTS`, `PROPOSALS`, `CHANGELOG`, each with a `.TR` half). Seven things there
+    that are not here, in the order I would take them:
+
+    1. **`tests/probes/` and `browser-smoke-test.js`** — checks that load the page in a
+       browser. Every one of this repo's checks reads source text, which is exactly why
+       the panel overflow, the tooltip drift and the lost skill scroll all shipped: no
+       amount of reading `style.css` sees an element sitting below its own box. A probe
+       asserting *no element extends past its panel* and *a tooltip lands below the
+       pointer* would have caught three of the faults in v0.6.22 alone. This is the
+       biggest hole in the current gate.
+    2. **`docs/status.md`** — a handoff file: the version now, what is uncommitted, the
+       rules that must not be broken, the record-format traps, the errors that keep
+       recurring, the tool hazards, and a decision queue with status glyphs. This repo
+       has a backlog (`PROPOSALS`) and rules (`AGENTS`) but nothing that says *here is
+       the state right now and here is what will bite you*. Their file already records
+       the same hazard this one keeps hitting: a Bash heredoc mangles backslash escapes
+       and Turkish diacritics.
+    3. **`tests/fingerprint.js`** — a behaviour snapshot, so a refactor can be shown to
+       have changed nothing. Item 28 needed exactly this and it was hand-rolled.
+    4. **A `js/systems/` split** — theirs is abilities, actions, combat, containers,
+       crafting, effectors, planner, simulation. Here `main.js` is about six thousand
+       lines and `display.js` about six thousand three hundred.
+    5. **`docs/REGIONS.md`, `docs/STORY.md`, `docs/STORYPROGRESS.md`** — content design
+       kept out of the backlog, which is past eight hundred lines.
+    6. **`translation-expectations.tr.json`** — a data file pinning specific phrasings.
+       The guard here is a blocklist of English function words, which catches an
+       untranslated row but cannot pin a wording that was argued over.
+    7. **ESLint and a format check.** There is neither here.
+
+    Not worth taking: their bundler, their version scheme, their locale manifest.
+30. **Dying quickly in combat** — `done, and my first two answers were wrong`.
+
+    The cause is the **shield**. `damage_dealt_to_character` rolled the block chance
+    inside `if(has shield)` and put the evasion roll in the `else`, so carrying a
+    shield removed the dodge outright. `base_block_chance` is 0.75, so a starter
+    shield turned three quarters of the attacks into "reduced by the shield's
+    strength" - 1.6 damage, for `Ucuz ahşap kalkan` - and handed the remaining
+    quarter a free full hit against a character who would otherwise have dodged much
+    of it. A shield weaker than the damage it faces was therefore strictly worse than
+    carrying nothing, which is what taking it off proved. An unblocked attack now
+    falls through to the evasion roll; a blocked one still does not, because it
+    connected with the shield.
+
+    Recording the two wrong turns, because both were confident and neither was true.
+    First I said nothing in the round touched combat and left it there - correct about
+    the diff and useless as an answer, because the fault was older than the diff.
+    Then I read `Savunma: 0.0` and argued that `Math.ceil` makes any worn piece give
+    at least 1, so the slots must be empty. The arithmetic was right and the
+    conclusion was wrong: the next screenshot showed six pieces on. What settled it
+    was the owner isolating the variable by unequipping one item at a time, which is
+    what I should have asked for two answers earlier instead of reasoning from
+    templates.
+31. **The Export button did nothing** — `done`. `btoa` throws on any character above
+    U+00FF and four Turkish letters live above it: ş, ğ, ı, İ. The savefile has
+    carried the message log since the log started surviving a reload, so the first
+    Turkish sentence a player was shown made every export throw - and inside an
+    onclick a throw is silent. This one is mine and it arrived with the log
+    persistence. `to_base64` / `from_base64` encode to UTF-8 bytes first, older
+    exports still load because one could only have been produced from pure ASCII, and
+    a check now fails the build if anything calls the raw pair again.
+32. **`factor hello` and its answer read as translation** — `done`. Two tells. "You
+    are not with the gate?" became "Kapıyla birlikte değil misin?" - are you not
+    together with the door; Turkish uses the ablative here, and the factor's own reply
+    already does ("Ben loncadanım"), so the question now mirrors it: "Kapıdan değil
+    misin?". And "a man with scales" became "terazi taşıyan bir adamı muhafız sanan
+    dördüncü kişisin", two participles stacked on one noun - permitted by the grammar,
+    absent from the prose. Short clauses with the point last: "Masamda terazi var, sen
+    muhafız sanıyorsun. Bugün dördüncüsün."
 
 ---
 ## Open decisions

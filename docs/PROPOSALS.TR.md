@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 32 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 33 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -764,7 +764,75 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     `npm run check` eskisiyle aynı 29 satırı aynı sırada yazıyor ve kaldırılan bir
     locale satırı onu hâlâ 1 çıkış koduyla düşürüyor.
 29. **`Kuroiteiken/Echoes-Beneath` reposuna bakıp alınabilecek fikirleri çıkar** —
-    `yapılacak`. Başka bir oyun; soru, hangi fikirlerinin buraya uyduğu.
+    `tamam`. Bu repoyla aynı şekilde kurulmuş bir tarayıcı oyunu ve aynı doküman
+    düzenini koruyor (`AGENTS`, `PROPOSALS`, `CHANGELOG`, her biri `.TR` yarısıyla).
+    Orada olup burada olmayan yedi şey, alma sırasıyla:
+
+    1. **`tests/probes/` ve `browser-smoke-test.js`** — sayfayı bir tarayıcıda açan
+       kontroller. Bu reponun kontrollerinin hepsi kaynak metni okuyor; panel taşması,
+       tooltip kayması ve kaybolan beceri kaydırmasının hepsinin sürüme girmesinin
+       sebebi tam olarak bu: `style.css`'i ne kadar okursan oku, kendi kutusunun
+       altında duran bir elemanı göremezsin. *Hiçbir eleman panelinin dışına taşmıyor*
+       ve *tooltip farenin altına düşüyor* diyen bir prob, tek başına v0.6.22'deki üç
+       hatayı yakalardı. Mevcut kontrol setindeki en büyük boşluk bu.
+    2. **`docs/status.md`** — bir devir dosyası: şu andaki sürüm, commit'lenmemiş olan,
+       çiğnenmemesi gereken kurallar, kayıt biçimi tuzakları, tekrarlayan hatalar, araç
+       tehlikeleri ve durum simgeleriyle bir karar kuyruğu. Bu reponun bir backlog'u
+       (`PROPOSALS`) ve kuralları (`AGENTS`) var, ama *durum şu anda şu ve seni şu
+       ısırır* diyen bir şeyi yok. Onların dosyası bu reponun sürekli çarptığı
+       tehlikeyi zaten kaydetmiş: Bash heredoc'u ters bölü kaçışlarını ve Türkçe
+       şapkalı harfleri bozuyor.
+    3. **`tests/fingerprint.js`** — davranış anlık görüntüsü; bir refactor'ün hiçbir
+       şeyi değiştirmediğini gösterebilmek için. 28. madde tam olarak buna ihtiyaç
+       duydu ve elde kuruldu.
+    4. **Bir `js/systems/` bölmesi** — onlarda abilities, actions, combat, containers,
+       crafting, effectors, planner, simulation var. Burada `main.js` yaklaşık altı bin
+       satır, `display.js` altı bin üç yüz.
+    5. **`docs/REGIONS.md`, `docs/STORY.md`, `docs/STORYPROGRESS.md`** — içerik
+       tasarımı backlog'un dışında; backlog sekiz yüz satırı geçti.
+    6. **`translation-expectations.tr.json`** — belirli ifadeleri sabitleyen bir veri
+       dosyası. Buradaki koruma İngilizce işlev kelimelerinden oluşan bir kara liste;
+       çevrilmemiş satırı yakalar ama üzerinde tartışılmış bir ifadeyi sabitleyemez.
+    7. **ESLint ve bir biçim kontrolü.** Burada ikisi de yok.
+
+    Almaya değmeyenler: kendi bundler'ları, sürüm şemaları, locale manifest'i.
+30. **Dövüşte çabuk ölmek** — `tamam, ve ilk iki cevabım yanlıştı`.
+
+    Sebep **kalkan**. `damage_dealt_to_character`, savuşturma zarını
+    `if(kalkan var)` içinde atıyor ve kaçınma zarını `else`'e koyuyordu; yani kalkan
+    taşımak kaçınmayı tamamen kaldırıyordu. `base_block_chance` 0.75 olduğu için
+    başlangıç kalkanı saldırıların dörtte üçünü "kalkanın gücü kadar azaltıldı"ya
+    çeviriyor - `Ucuz ahşap kalkan` için 1.6 hasar - kalan dörtte biri de, aksi hâlde
+    çoğunu savuşturacak bir karaktere bedava tam vuruş olarak veriyordu. Karşılaştığı
+    hasardan zayıf bir kalkan böylece hiç taşımamaktan kesinlikle daha kötüydü;
+    kalkanı çıkarmak da bunu kanıtladı. Artık savuşturulamayan bir saldırı kaçınma
+    zarına düşüyor; savuşturulan düşmüyor, çünkü o kalkana çarpmış oldu.
+
+    İki yanlış dönüşü de kaydediyorum; ikisi de kendinden emindi ve ikisi de doğru
+    değildi. İlk olarak bu turda dövüşe dokunan bir şey olmadığını söyleyip orada
+    bıraktım - diff hakkında doğru, cevap olarak işe yaramaz, çünkü hata diff'ten
+    eskiydi. Sonra `Savunma: 0.0`'ı okuyup `Math.ceil` yüzünden takılı her parçanın en
+    az 1 vermesi gerektiğini, dolayısıyla yuvaların boş olması gerektiğini savundum.
+    Aritmetik doğruydu, sonuç yanlıştı: bir sonraki ekran görüntüsünde altı parça
+    takılıydı. İşi çözen şey, sahibin parçaları tek tek çıkarıp değişkeni
+    yalıtmasıydı - şablonlardan akıl yürütmek yerine iki cevap önce istemem gereken
+    şey buydu.
+31. **Dışa aktar düğmesi hiçbir şey yapmıyordu** — `tamam`. `btoa`, U+00FF üstündeki
+    her karakterde istisna atıyor ve dört Türkçe harf orada yaşıyor: ş, ğ, ı, İ. Kayıt
+    dosyası, günlük yenilemeden sağ çıkmaya başladığından beri mesaj günlüğünü
+    taşıyor; yani oyuncuya gösterilen ilk Türkçe cümle her dışa aktarmayı patlatıyordu
+    - bir onclick içindeki istisna da sessizdir. Bu hata benim ve günlük kalıcılığıyla
+    birlikte geldi. `to_base64` / `from_base64` önce UTF-8 bayta çeviriyor, eski
+    aktarmalar yine yükleniyor (çünkü biri ancak saf ASCII'den üretilebilirdi) ve
+    ham çifti yeniden çağıran olursa derleme artık düşüyor.
+32. **`factor hello` ve cevabı çeviri gibi okunuyor** — `tamam`. İki ipucu. "You are
+    not with the gate?" "Kapıyla birlikte değil misin?" olmuş - kapıyla beraber
+    değil misin. Türkçe burada ayrılma hâli kullanır ve mubayaacının cevabı zaten
+    kullanıyor ("Ben loncadanım"), o yüzden soru artık onu yansıtıyor: "Kapıdan
+    değil misin?". Bir de "a man with scales", "terazi taşıyan bir adamı muhafız
+    sanan dördüncü kişisin" olmuş: tek isim üzerine yığılmış iki sıfat-fiil -
+    dilbilgisinin izin verdiği, yazının kullanmadığı bir şey. Kısa cümleler, sonda
+    vurgu: "Masamda terazi var, sen muhafız sanıyorsun. Bugün dördüncüsün."
 
 ---
 ## Bekleyen kararlar

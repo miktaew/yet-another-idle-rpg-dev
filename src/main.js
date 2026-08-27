@@ -1843,6 +1843,8 @@ function do_enemy_combat_action(enemy_id) {
 
     damages_dealt = damages_dealt.sort((a,b)=>b-a);
     
+    let blocked_by_shield = false;
+
     if(character.equipment["off-hand"]?.offhand_type === "shield") { //HAS SHIELD
         if(character.stats.full.block_chance > Math.random()) {//BLOCKED THE ATTACK
 
@@ -1859,15 +1861,30 @@ function do_enemy_combat_action(enemy_id) {
             } else {
                 damages_dealt = damages_dealt.map(val => Math.max(0,val-blocked));
                 partially_blocked = true;
+                blocked_by_shield = true;
             }
          } else {
             add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: attacker.xp_value/(2*enemy_count_xp_mod)});
          }
-    } else { // HAS NO SHIELD
+    }
+
+    /*
+        An attack the shield did not stop still gets dodged, if the character is quick
+        enough. This used to be the else-branch of the shield check, so carrying a
+        shield removed the dodge outright - and base_block_chance is 0.75, which means a
+        starter shield turned three quarters of the attacks into "reduced by the shield's
+        strength" and handed the remaining quarter a free full hit. A shield whose
+        strength is smaller than the damage it faces was therefore strictly worse than
+        carrying nothing at all.
+
+        An attack that WAS blocked skips this: it connected with the shield, so there is
+        nothing left to dodge.
+    */
+    if(!blocked_by_shield) {
         const hit_chance = get_hit_chance(attacker.stats.dexterity * Math.sqrt(attacker.stats.intuition ?? 1), character.stats.full.evasion_points*evasion_chance_modifier);
 
         if(hit_chance < Math.random()) { //EVADED ATTACK
-            const xp_to_add = character.wears_armor() ? attacker.xp_value : attacker.xp_value * 1.5; 
+            const xp_to_add = character.wears_armor() ? attacker.xp_value : attacker.xp_value * 1.5;
             //50% more evasion xp if going without armor
             add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add/enemy_count_xp_mod});
             log_message(translationManager.getText(language, "log heroname evaded an attack"), "enemy_missed");
@@ -3896,6 +3913,37 @@ function create_save() {
  * called from index.html
  * @returns save string encoded to base64
  */
+/**
+ * Base64 for text that is not Latin-1.
+ *
+ * btoa refuses any character above U+00FF, which in Turkish means the four letters
+ * outside Latin-1: s-cedilla, g-breve, dotless i, dotted I. The save has carried the
+ * message log since the log started surviving a reload, so the first Turkish sentence
+ * logged made every export throw and the button appeared to do nothing.
+ *
+ * Older exports still load. One could only ever have been produced from pure ASCII -
+ * btoa would have thrown otherwise - and decoding ASCII as UTF-8 gives ASCII back.
+ *
+ * The loops are deliberate: String.fromCharCode(...bytes) and its inverse spread a
+ * whole savefile across the argument list and overflow the stack on a long one.
+ */
+function to_base64(text) {
+    const bytes = new TextEncoder().encode(text);
+    let latin1 = "";
+    for(let i = 0; i < bytes.length; i++) {
+        latin1 += String.fromCharCode(bytes[i]);
+    }
+    return btoa(latin1);
+}
+
+function from_base64(encoded) {
+    const latin1 = atob(encoded);
+    const bytes = new Uint8Array(latin1.length);
+    for(let i = 0; i < latin1.length; i++) {
+        bytes[i] = latin1.charCodeAt(i);
+    }
+    return new TextDecoder().decode(bytes);
+}
 function save_to_file() {
     if(Date.now() - last_rewarded_export > config.time_between_export_rewards) {
         last_rewarded_export = Date.now();
@@ -3904,7 +3952,7 @@ function save_to_file() {
 
     //will create save twice...
     save_progress();
-    return btoa(create_save());
+    return to_base64(create_save());
 }
 
 /**
@@ -5369,9 +5417,9 @@ function load(save_data) {
 function load_from_file(save_string) {
     try{
         if(is_on_dev()) {
-            localStorage.setItem(dev_save_key, atob(save_string));
+            localStorage.setItem(dev_save_key, from_base64(save_string));
         } else {
-            localStorage.setItem(save_key, atob(save_string));
+            localStorage.setItem(save_key, from_base64(save_string));
         }        
         window.location.reload(false);
     } catch (error) {

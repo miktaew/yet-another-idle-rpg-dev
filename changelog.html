@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.24</button>
+    <div class="content">
+        <ul class="entries">
+            <li>A shield no longer makes you worse at defending yourself. The block roll sat inside the has-a-shield branch and the dodge roll sat in its else, so carrying a shield removed the dodge outright. The base block chance is 0.75, which meant a starter shield turned three quarters of the attacks into "reduced by the shield's strength" - 1.6 damage, for a cheap wooden shield - and handed the remaining quarter a free full hit against a character who would otherwise have dodged much of it. An unblocked attack falls through to the dodge now; a blocked one does not, because it connected with the shield.</li>
+            <li>The Export button works again. `btoa` throws on any character above U+00FF, and four Turkish letters live above it: ş, ğ, ı and İ. The savefile has carried the message log since the log started surviving a reload, so the first Turkish sentence a player was shown made every export throw - and a throw inside an onclick is silent. Saves are encoded as UTF-8 bytes first now; an older export still loads, because one could only ever have been produced from pure ASCII.</li>
+            <li>A build check so that cannot come back: nothing may call `btoa` or `atob` directly.</li>
+            <li>The guild factor's greeting read as a translation, twice. "You are not with the gate?" had become "are you not together with the door" - Turkish uses the ablative there, and his own reply already did. And "a man with scales" had stacked two participles on one noun, which the grammar permits and the prose does not.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.23</button>
     <div class="content">
         <ul class="entries">
