@@ -3488,6 +3488,14 @@ const descriptions = {
     "skill flavour Sleeping": "One rat, two rats, three rats...",
     "skill flavour Persistence": "Believe in me that believes in you!",
     "skill flavour Breathing": "You are now breathing manually",
+
+    //The skill level-up and milestone messages. Finishing two skill families made
+    //these appear far more often, which is how they were noticed.
+    "log skill reached level": "{v1} has reached level {v2}",
+    "log skill milestone gained": "Thanks to {v1} reaching a new milestone, %HeroName% gained:",
+    "log milestone flat": "+{v1} {v2}",
+    "log milestone multiplier": "x{v1} {v2}",
+    "log milestone xp gain": "x{v1} {v2} xp gain",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

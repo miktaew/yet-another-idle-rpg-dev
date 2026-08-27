@@ -702,9 +702,9 @@ const ui = {
     "ui race_default_label": "Varsayılan ırk",
     "ui race_furless_label": "İnsansı ırklar",
     "ui race_kemonomimi_label": "Hayvan kulaklı ırklar",
-    "ui sort name": "İsme göre sırala",
-    "ui sort value": "Değere göre sırala",
-    "ui sort type": "Türe göre sırala",
+    "ui sort name": "Ada göre",
+    "ui sort value": "Değere göre",
+    "ui sort type": "Türe göre",
     "ui show all": "Tümü",
     "ui show equipment": "Ekipman",
     "ui show usable": "Kullanılabilir",
@@ -3255,8 +3255,8 @@ const descriptions = {
     "ui btn accept trade": "Kabul et",
     "ui btn cancel trade": "Seçimi temizle",
     "ui btn exit": "Dükkândan çık",
-    "ui sort level": "Seviyeye göre sırala",
-    "ui sort progress": "İlerlemeye göre sırala",
+    "ui sort level": "Seviyeye göre",
+    "ui sort progress": "İlerlemeye göre",
     "ui tab skills": "Beceriler",
     "ui tab stances": "Duruşlar",
     "ui tab magic": "Büyü",
@@ -3528,6 +3528,14 @@ const descriptions = {
     "skill flavour Sleeping": "Bir sıçan, iki sıçan, üç sıçan...",
     "skill flavour Persistence": "Sana inanan bana inan!",
     "skill flavour Breathing": "Artık nefesini elle alıyorsun",
+
+    //The skill level-up and milestone messages. Finishing two skill families made
+    //these appear far more often, which is how they were noticed.
+    "log skill reached level": "{v1} {v2}. seviyeye ulaştı",
+    "log skill milestone gained": "{v1} yeni bir kilometre taşına ulaştığı için %HeroName% şunları kazandı:",
+    "log milestone flat": "+{v1} {v2}",
+    "log milestone multiplier": "x{v1} {v2}",
+    "log milestone xp gain": "{v2} için x{v1} tecrübe",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

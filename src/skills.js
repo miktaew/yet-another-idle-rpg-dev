@@ -234,18 +234,22 @@ class Skill {
 
                 skill_name = skill_name===unknown_skill_name?this.name():skill_name;
                 //swap name if it was unknown, otherwise leave it as it was (for properly messaging skill name change)
-                let message = `${skill_name} has reached level ${this.current_level}`;
+                //Text ids, like every other line the player reads. Finishing two skill
+                //families made these appear far more often, which is how they were noticed.
+                let message = translationManager.getText(language, "log skill reached level",
+                    {v1: skill_name, v2: this.current_level});
 
                 if (Object.keys(gains.stats).length > 0 || Object.keys(gains.xp_multipliers).length > 0) { 
-                    message += `\n\n Thanks to ${skill_name} reaching new milestone, %HeroName% gained: `;
+                    message += "\n\n " + translationManager.getText(language,
+                        "log skill milestone gained", {v1: skill_name});
 
                     if (gains.stats) {
                         Object.keys(gains.stats).forEach(stat => {
                             if(gains.stats[stat].flat) {
-                                message += `\n +${gains.stats[stat].flat} ${stat_label_short(stat)}`;
+                                message += `\n ${translationManager.getText(language, "log milestone flat", {v1: gains.stats[stat].flat, v2: stat_label_short(stat)})}`;
                             }
                             if(gains.stats[stat].multiplier) {
-                                message += `\n x${Math.round(100*gains.stats[stat].multiplier)/100} ${stat_label_short(stat)}`;
+                                message += `\n ${translationManager.getText(language, "log milestone multiplier", {v1: Math.round(100*gains.stats[stat].multiplier)/100, v2: stat_label_short(stat)})}`;
                             }   
                         });
                     }
@@ -261,13 +265,14 @@ class Skill {
                             } else {
                                 
                                 if(xp_multiplier.includes("category_")) {
-                                    name = xp_multiplier.replace("category_", "") + " skills";
+                                    name = translationManager.getText(language, "ui skill category heading",
+                                        {v1: translationManager.getText(language, `ui skill category ${xp_multiplier.replace("category_", "")}`)});
                                 } else {
-                                    name = xp_multiplier.replace("_"," ");
+                                    name = translationManager.getText(language, `ui xp target ${xp_multiplier}`);
                                 }
                             }
 
-                            message += `\n x${Math.round(100*gains.xp_multipliers[xp_multiplier])/100} ${name} xp gain`;
+                            message += `\n ${translationManager.getText(language, "log milestone xp gain", {v1: Math.round(100*gains.xp_multipliers[xp_multiplier])/100, v2: name})}`;
                             
                         });
                     }
@@ -447,9 +452,9 @@ function format_skill_rewards(milestone){
             name = xp_multipliers[0].replace("_"," ");
         }
         if(formatted) {
-            formatted += `, x${milestone.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
+            formatted += ", " + translationManager.getText(language, "log milestone xp gain", {v1: milestone.xp_multipliers[xp_multipliers[0]], v2: name});
         } else {
-            formatted = `x${milestone.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
+            formatted = translationManager.getText(language, "log milestone xp gain", {v1: milestone.xp_multipliers[xp_multipliers[0]], v2: name});
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
             let name;
@@ -462,7 +467,7 @@ function format_skill_rewards(milestone){
             } else {
                 name = xp_multipliers[i].replace("_"," ");
             }
-            formatted += `, x${milestone.xp_multipliers[xp_multipliers[i]]} ${name} xp gain`;
+            formatted += ", " + translationManager.getText(language, "log milestone xp gain", {v1: milestone.xp_multipliers[xp_multipliers[i]], v2: name});
         }
     }
     if(milestone.unlocks) {

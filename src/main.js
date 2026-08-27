@@ -6077,7 +6077,8 @@ window.run = run;
 let game_speed = 1;
 
 function set_game_speed(multiplier) {
-    const allowed = [1, 2, 5, 10];
+    //10x was not enough for a book that takes 420 in-game minutes.
+    const allowed = [1, 2, 5, 10, 20, 50, 100];
     if(!allowed.includes(multiplier)) {
         console.error(`Speed must be one of ${allowed.join(", ")}.`);
         return game_speed;

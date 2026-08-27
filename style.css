@@ -2524,9 +2524,22 @@ i {
 #skill_list_div, #stance_list_div, #magic_list_div {
 	height: 389px;
 }
+
+/*
+	A column, so a wrapped sorting row shortens the scroll area instead of falling out
+	of the box onto the tabs below it. The row wraps whenever the three labels are
+	longer than 400px - which English never manages and Turkish does.
+*/
+#skill_list_div {
+	display: flex;
+	flex-direction: column;
+}
 		#skill_list {
 			overflow-y: scroll;
-			height: 346px;
+			/* flex-basis 0 with min-height 0 is what lets a scrolling child actually
+			   shrink; without the min-height it refuses to go below its content. */
+			flex: 1 1 0;
+			min-height: 0;
 			padding-bottom:3px;
 		}
 
@@ -2758,8 +2771,14 @@ i {
 	in index.html sets --ui_scale to at most 1, so a window that was already big
 	enough is completely unaffected.
 	*/
-	transform: scale(var(--ui_scale, 1));
-	transform-origin: top left;
+	/*
+	zoom rather than transform: a transform would make this the containing block for
+	every `position: fixed` tooltip inside it, which moved them all off the pointer -
+	and it did that even at scale 1, because the containing block changes whether or
+	not anything is actually scaled. zoom scales the layout instead and leaves fixed
+	positioning alone.
+	*/
+	zoom: var(--ui_scale, 1);
 }
 
 /*
