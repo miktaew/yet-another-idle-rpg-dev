@@ -1474,6 +1474,34 @@
                 return clicked_element;
             }
 
+            /*
+                Fits the fixed layout to the window.
+
+                The interface is ~1660x850 of absolutely positioned panels, so it
+                cannot reflow - but it can scale, and scaling keeps every offset
+                relationship exactly as it was drawn. Never above 1: a window that was
+                already large enough sees no change at all.
+
+                The 40px is the fixed bottom panel, which sits outside #main_content
+                and stays full size on purpose - the save and export buttons should
+                not shrink with the rest.
+            */
+            const ui_layout_width = 1660;
+            const ui_layout_height = 850;
+            let ui_scale = 1;
+
+            function fit_ui_to_window() {
+                const available_width = window.innerWidth - 12;
+                const available_height = window.innerHeight - 40 - 12;
+                ui_scale = Math.min(1,
+                    available_width / ui_layout_width,
+                    available_height / ui_layout_height);
+                document.documentElement.style.setProperty("--ui_scale", ui_scale);
+            }
+
+            fit_ui_to_window();
+            window.addEventListener("resize", fit_ui_to_window);
+
             const displayHeight = () => Math.max(
                                 document.body.offsetHeight,
                                 document.documentElement.clientHeight,
@@ -1858,8 +1886,10 @@
 
                             const max_height = bottom_edge_position - event.clientY;
 
-                            effects_tooltip.style.left = event.pageX - 100 + "px";
-                            effects_tooltip.style.top = event.pageY - 300 + "px";
+                            //Divided by the scale: pageX/pageY are page coordinates and this
+                            //tooltip now lives inside a scaled containing block.
+                            effects_tooltip.style.left = (event.pageX / ui_scale) - 100 + "px";
+                            effects_tooltip.style.top = (event.pageY / ui_scale) - 300 + "px";
                             effects_tooltip.style.maxHeight = Math.max(20,max_height) + "px";
 
                             const gap = 11; //4px of gap + 1px of margin + ...something?

@@ -2748,6 +2748,27 @@ i {
 	*/
 	width: 1241px;
 	height: 806px;
+
+	/*
+	Every panel in here is absolutely positioned at a hard-coded offset, so the
+	layout is a fixed ~1660x850 no matter how wide the window is - and a narrower
+	window used to cut the message log off and add a horizontal scrollbar.
+
+	Scaling is what makes that fit without touching a single offset. fit_ui_to_window
+	in index.html sets --ui_scale to at most 1, so a window that was already big
+	enough is completely unaffected.
+	*/
+	transform: scale(var(--ui_scale, 1));
+	transform-origin: top left;
+}
+
+/*
+The scaled layout no longer fills the space its unscaled box claims, and the box is
+what the document would otherwise size itself to. Hiding the overflow stops the
+scrollbars that box would produce on its own.
+*/
+html, body {
+	overflow-x: hidden;
 }
 
 #message_log_div {

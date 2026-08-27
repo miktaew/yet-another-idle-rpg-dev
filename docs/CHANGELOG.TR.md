@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 47 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 48 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,65 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Arayüz pencereye sığıyor, ve iki beceri ailesi tamamlandı
+
+**P-13, 4. madde: yerleşim.** Her panel sabit bir konumda `position: absolute` — left
+0, 410 ve 820'de dört 400px'lik sütun ve 1230'da kendi 415px'iyle mesaj günlüğü — yani
+arayüz pencere ne olursa olsun sabit ~1660x850. Daha dar bir görüntü alanı günlüğün sağ
+kenarını kesiyor ve yatay bir kaydırma çubuğu ekliyordu.
+
+Bunu düzeltmenin üç yolu var ve ilginç kısım da seçim:
+
+- flex ya da grid'e geçirmek doğru cevap ve her konumun yük taşıdığı 3000 satırlık bir
+  stil sayfasında büyük, riskli bir değişiklik;
+- günlüğü diğerlerinin altına indiren bir medya sorgusu yazı boyutunu koruyor ve
+  sayfayı pencereden geniş değil uzun yapıyor; yani bir kaydırma çubuğunu bir başkasıyla
+  değiştiriyor;
+- bütün sabit yerleşimi ölçeklemek her piksel ilişkisini birebir koruyor, yirmi satır
+  kadar ve geri alınabilir.
+
+Yani: ölçekleme. `--ui_scale`,
+`min(1, kullanılabilir_genişlik / 1660, kullanılabilir_yükseklik / 850)`; yeniden
+boyutlandırmada tekrar hesaplanıyor ve `#main_content` üzerinde, kaynağı sol üstte olan
+bir `transform` olarak uygulanıyor. 1'de sınırlı; yani zaten yeterince büyük bir pencere
+hiç etkilenmiyor. Alt panel bir kardeş ve bilerek tam boyutta kalıyor — kaydet ve dışa
+aktar düğmeleri geri kalanla birlikte küçülmemeli.
+
+Ölçeklemenin bozduğu tek şey `event.pageX/pageY` ile konumlanan bir tooltip; çünkü onlar
+sayfa koordinatı, oysa öğenin kapsayıcı bloğu artık ölçekli. Bütün projede tam olarak
+iki tane var ve `#main_content` içinde olanı artık ölçeğe bölüyor.
+
+**P-13, 2. madde: kilometre taşları.** "Perk" beceri kilometre taşları demekti ve
+boşluklar dağınık değildi — bir kardeşin tamamlanıp diğerlerinin bırakıldığı bütün
+ailelerdi:
+
+| aile | tamamlanmış | boş |
+| --- | --- | --- |
+| Toplama | Balıkçılık, on taşla | Odun kesme, madencilik, kazma, bitki bilgisi, hayvan idaresi, toplama ustalığı |
+| Zanaat | Zanaat ustalığı altı, Forging bir taşla | Zanaat, eritme, yemek, simya, kasaplık, ahşap işçiliği, tıp |
+
+Yani bu bir sistem uydurmak değil iki aileyi bitirmek; her sayının tamamlanmış
+kardeşten kopyalanmasının sebebi de bu: altta sabit 1, ortada sabit 2, yuvarlak
+seviyelerde 1.05 çarpan ve ara sıra bir ilgili beceriye 1.1 tecrübe çarpanı. Buraya
+eklenen hiçbir şey balıkçılığın zaten olduğundan güçlü değil.
+
+Her beceri, işinin kullandığı özelliği ödüllendiriyor; böylece neyi geliştireceğini
+seçmek bir seçim olarak kalıyor: balta kuvvetle, kazma kuvvet ve el becerisiyle, kürek
+kuvvet ve dayanıklılıkla, ot sezgi ve el becerisiyle, hayvan sezgiyle, tencere sezgiyle
+ödüyor. İki ustalık becerisi, zanaat ustalığının zaten sahip olduğu el becerisi
+merdiveninin aynısını alıyor; çünkü aynı türden beceriler.
+
+Forging'in mevcut 10. seviye tarif açılışına dokunulmadı; beş stat taşı onu
+değiştirmek yerine o nesneye katıldı.
+
+**On beş beceri bilerek hâlâ taşsız.** Yedi duruş becerisi kendi duruşunun etkisini
+ölçekliyor, ki bu bir kilometre taşının işi değil. Asalar ve değneklerin oyunda onları
+kullanacak bir silahı yok. Weapon mastery ile Combat, taşları çocuklarının taşıdığı
+ebeveynler. Üç direnç de bırakıldı; çünkü Heat resistance'ın statı `character.js`
+içinde *"şu anda işe yaramaz"* diye işaretli ve Cold resistance tahmin edilmek yerine
+kararlaştırılmış bir sıcaklık ölçeği istiyor — iyi ölçeklenmiş taşlarla 64 beceriden
+49'u, uydurma üç taneyle 52'den iyidir.
 
 ### Bildirilen boşluklar, bir dev konsolu ve changelog'un elle kırılmaktan kurtulması
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 28 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 29 -->
 
 # Proposals
 
@@ -582,7 +582,7 @@ not after. Each item is the request as it was given, and the state it is in.
    anthology, data) and a fifth belongs there rather than in a new panel. What it
    should hold: what the player has been told, by whom, kept after the dialogue has
    closed. Nothing in the game currently records that.
-2. **Expand the perks** — `answered, todo`. Confirmed as **skill milestones**: a skill giving +1 strength at level 1, something else at level 3. There is no perk system in
+2. **Expand the perks** — `done`. Confirmed as **skill milestones**: a skill giving +1 strength at level 1, something else at level 3. There is no perk system in
    this repository: no `perk` appears anywhere in `src/`, the locales, `index.html`
    or `style.css`. The nearest existing systems are **skill milestones** (a skill
    granting flat or multiplied stats at set levels), **combat stances**, and the
@@ -592,7 +592,7 @@ not after. Each item is the request as it was given, and the state it is in.
 
 #### Interface
 
-4. **The UI does not fit the screen** — `todo`. `#main_content` is a fixed
+4. **The UI does not fit the screen** — `done`. `#main_content` is a fixed
    1241x806 with the message log placed at `left: 1230px` and 415px wide, so the
    page is about 1660px wide whatever the window is, and the log's right edge is cut
    off with a horizontal scrollbar at the bottom. Needs restructuring rather than a

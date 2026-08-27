@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 28 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 29 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -589,7 +589,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
    veri) ve beşincisi yeni bir panelden çok oraya ait. Ne tutmalı: oyuncuya ne
    söylendiği, kim tarafından; diyalog kapandıktan sonra da kalacak şekilde. Oyunda
    şu anda bunu kaydeden hiçbir şey yok.
-2. **Perkleri genişlet** — `cevaplandı, yapılacak`. **Beceri kilometre taşları** olarak doğrulandı: bir becerinin 1. seviyede +1 kuvvet, 3. seviyede başka bir şey vermesi. Bu depoda bir perk sistemi
+2. **Perkleri genişlet** — `tamam`. **Beceri kilometre taşları** olarak doğrulandı: bir becerinin 1. seviyede +1 kuvvet, 3. seviyede başka bir şey vermesi. Bu depoda bir perk sistemi
    yok: `src/`, yereller, `index.html` ve `style.css` içinde hiçbir yerde `perk`
    geçmiyor. En yakın mevcut sistemler **beceri kilometre taşları** (bir becerinin
    belirli seviyelerde sabit ya da çarpan stat vermesi), **savaş duruşları** ve
@@ -599,7 +599,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
 
 #### Arayüz
 
-4. **UI tam ekrana sığmıyor** — `yapılacak`. `#main_content` sabit 1241x806 ve mesaj
+4. **UI tam ekrana sığmıyor** — `tamam`. `#main_content` sabit 1241x806 ve mesaj
    günlüğü `left: 1230px`'te, 415px genişlikte; yani sayfa pencere ne olursa olsun
    yaklaşık 1660px genişliğinde ve günlüğün sağ kenarı kesiliyor, altta da yatay
    kaydırma çubuğu çıkıyor. Daha küçük yazı tipi değil, yeniden yapılandırma

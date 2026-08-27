@@ -2401,6 +2401,38 @@ function format_skill_rewards(milestone){
     skills["Gathering mastery"] = new Skill({
         names: {0: "Beginner gatherer", 10: "Apprentice gatherer", 25: "Adept gatherer", 35: "Expert gatherer", 50: "Master gatherer"}, 
         description: "desc skill Gathering mastery",
+        milestones: {
+            5: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            10: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            15: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            25: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            30: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+        },
         base_xp_cost: 10,
         xp_scaling: 1.6,
         visibility_treshold: 4,
@@ -2414,6 +2446,50 @@ function format_skill_rewards(milestone){
         names: {0: "Woodcutting"},
         parent_skill: "Gathering mastery",
         description: "desc skill Woodcutting",
+        milestones: {
+            1: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            3: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Weightlifting": 1.1,
+                },
+            },
+            5: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    strength: {flat: 2},
+                },
+            },
+            10: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    "Weightlifting": 1.1,
+                },
+            },
+            15: {
+                stats: {
+                    strength: {flat: 2},
+                },
+            },
+            20: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+        },
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,
@@ -2424,6 +2500,49 @@ function format_skill_rewards(milestone){
         names: {0: "Mining"},
         parent_skill: "Gathering mastery",
         description: "desc skill Mining",
+        milestones: {
+            1: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            3: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Weightlifting": 1.1,
+                },
+            },
+            5: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+            7: {
+                stats: {
+                    strength: {flat: 2},
+                },
+            },
+            10: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+                xp_multipliers: {
+                    "Perception": 1.1,
+                },
+            },
+            15: {
+                stats: {
+                    strength: {flat: 2},
+                },
+            },
+            20: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+        },
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,
@@ -2434,6 +2553,49 @@ function format_skill_rewards(milestone){
         names: {0: "Digging"},
         parent_skill: "Gathering mastery",
         description: "desc skill Digging",
+        milestones: {
+            1: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            3: {
+                stats: {
+                    max_stamina: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    "Running": 1.1,
+                },
+            },
+            5: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    max_stamina: {multiplier: 1.05},
+                },
+            },
+            10: {
+                stats: {
+                    strength: {flat: 2},
+                },
+                xp_multipliers: {
+                    "Weightlifting": 1.1,
+                },
+            },
+            15: {
+                stats: {
+                    strength: {flat: 2},
+                },
+            },
+            20: {
+                stats: {
+                    max_stamina: {multiplier: 1.05},
+                },
+            },
+        },
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,
@@ -2444,6 +2606,50 @@ function format_skill_rewards(milestone){
         names: {0: "Herbalism"},
         parent_skill: "Gathering mastery",
         description: "desc skill Herbalism",
+        milestones: {
+            1: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            3: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Perception": 1.1,
+                },
+            },
+            5: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            10: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+                xp_multipliers: {
+                    "Perception": 1.1,
+                },
+            },
+            15: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            20: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+        },
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,
@@ -2454,6 +2660,49 @@ function format_skill_rewards(milestone){
         names: {0: "Animal handling"},
         parent_skill: "Gathering mastery",
         description: "desc skill Animal handling",
+        milestones: {
+            1: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            3: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Presence sensing": 1.1,
+                },
+            },
+            5: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            7: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            10: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    "Persistence": 1.1,
+                },
+            },
+            15: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            20: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+        },
         category: "Gathering",
         base_xp_cost: 10,
         visibility_treshold: 4,
@@ -2613,6 +2862,33 @@ function format_skill_rewards(milestone){
     skills["Crafting"] = new Skill({
         names: {0: "Tinkering"}, 
         description: "desc skill Crafting",
+        milestones: {
+            3: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            12: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+        },
         category: skill_category_crafting,
         parent_skill: "Crafting mastery",
         base_xp_cost: 40,
@@ -2625,6 +2901,33 @@ function format_skill_rewards(milestone){
     skills["Smelting"] = new Skill({
         names: {0: "Smelting"}, 
         description: "desc skill Smelting",
+        milestones: {
+            3: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            12: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    strength: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+        },
         category: skill_category_crafting,
         base_xp_cost: 40,
         xp_scaling: 1.5,
@@ -2640,19 +2943,76 @@ function format_skill_rewards(milestone){
         get_effect_description: () => {
             return translationManager.getText(language, "skill effect Forging", {v1: get_crafting_quality_caps("Forging").components});
         },
+        //The level-10 recipe unlock was here already; the stat milestones join it
+        //rather than replacing it.
         milestones: {
+            3: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
             10: {
                 unlocks: {
                     recipes: [
                         {category: "smelting", subcategory: "items", recipe_id: "Steel ingot (inefficient)"},
                     ]
                 }
-            }
+            },
+            15: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
         }
     });
     skills["Cooking"] = new Skill({
         names: {0: "Cooking"}, 
         description: "desc skill Cooking",
+        milestones: {
+            3: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Gluttony": 1.1,
+                },
+            },
+            12: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+        },
         category: skill_category_crafting,
         base_xp_cost: 40,
         xp_scaling: 1.5,
@@ -2661,6 +3021,36 @@ function format_skill_rewards(milestone){
     skills["Alchemy"] = new Skill({
         names: {0: "Alchemy"}, 
         description: "desc skill Alchemy",
+        milestones: {
+            3: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Medicine": 1.1,
+                },
+            },
+            12: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+        },
         category: skill_category_crafting,
         base_xp_cost: 40,
         xp_scaling: 1.5,
@@ -2670,6 +3060,33 @@ function format_skill_rewards(milestone){
         skill_id: "Butchering", 
         names: {0: "Butchering"}, 
         description: "desc skill Butchering",
+        milestones: {
+            3: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            12: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+        },
         category: skill_category_crafting,
         parent_skill: "Crafting mastery",
         base_xp_cost: 40,
@@ -2686,6 +3103,33 @@ function format_skill_rewards(milestone){
         skill_id: "Woodworking", 
         names: {0: "Woodworking"}, 
         description: "desc skill Woodworking",
+        milestones: {
+            3: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            12: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+            },
+            30: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+        },
         category: skill_category_crafting,
         parent_skill: "Crafting mastery",
         base_xp_cost: 40,
@@ -3013,6 +3457,31 @@ function format_skill_rewards(milestone){
     skills["Medicine"] = new Skill({
         names: {0: "Medicine"}, 
         description: "desc skill Medicine",
+        milestones: {
+            3: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            7: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Regeneration": 1.1,
+                },
+            },
+            12: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            20: {
+                stats: {
+                    intuition: {flat: 2},
+                },
+            },
+        },
         category: "Character",
         max_level: 30,
         visibility_treshold: 5,

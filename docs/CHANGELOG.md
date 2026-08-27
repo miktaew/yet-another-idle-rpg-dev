@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 47 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 48 -->
 
 # Changelog
 
@@ -20,6 +20,65 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The interface fits the window, and two skill families are finished
+
+**P-13 item 4: the layout.** Every panel is `position: absolute` at a hard-coded
+offset - four 400px columns at left 0, 410 and 820, and the message log at 1230 with
+415px of its own - so the interface is a fixed ~1660x850 whatever the window is. A
+narrower viewport cut the log's right edge off and added a horizontal scrollbar.
+
+Three ways to fix that, and the choice is the interesting part:
+
+- rewriting to flex or grid is the correct answer and a large, risky change to a
+  3000-line stylesheet where every offset is load-bearing;
+- a media query dropping the log below the rest keeps the text size and makes the
+  page taller than the window instead of wider, which trades one scrollbar for
+  another;
+- scaling the whole fixed layout preserves every pixel relationship exactly, is about
+  twenty lines, and is reversible.
+
+So: scale. `--ui_scale` is `min(1, available_width / 1660, available_height / 850)`,
+recomputed on resize, applied as a `transform` on `#main_content` with the origin at
+its top left. Capped at 1, so a window that was already big enough is completely
+unaffected. The bottom panel is a sibling and stays full size on purpose - the save
+and export buttons should not shrink with the rest.
+
+The one thing scaling breaks is a tooltip positioned from `event.pageX/pageY`, because
+those are page coordinates while the element's containing block is now scaled. There
+are exactly two in the whole project and the one inside `#main_content` divides by the
+scale now.
+
+**P-13 item 2: the milestones.** "Perks" turned out to mean skill milestones, and the
+gaps were not scattered - they were whole families where one sibling had been finished
+and the rest had not:
+
+| family | finished | empty |
+| --- | --- | --- |
+| Gathering | Fishing, with ten milestones | Woodcutting, Mining, Digging, Herbalism, Animal handling, Gathering mastery |
+| Crafting | Crafting mastery with six, Forging with one | Crafting, Smelting, Cooking, Alchemy, Butchering, Woodworking, Medicine |
+
+So this is finishing two families rather than inventing a system, which is why every
+number is copied from the sibling that was finished: flat 1 low down, flat 2 in the
+middle, a 1.05 multiplier at the round levels, and an occasional 1.1 xp multiplier
+toward one related skill. Nothing added here is stronger than Fishing already was.
+
+Each skill rewards the attribute its work uses, so choosing what to train stays a
+choice: an axe pays in strength, a pick in strength and dexterity, a shovel in
+strength and stamina, a herb in intuition and dexterity, an animal in intuition, a
+pot in intuition. The two mastery skills get the same dexterity ladder Crafting
+mastery already had, because they are the same kind of skill.
+
+Forging's existing level-10 recipe unlock is untouched; its five stat milestones join
+that object rather than replacing it.
+
+**Fifteen skills are still without, deliberately.** The seven stance skills scale a
+stance's own effect, which is not what a milestone is for. Wands and Staffs have no
+weapon in the game to use them with. Weapon mastery and Combat are parents whose
+children carry the milestones. And the three resistances were left because Heat
+resistance's stat is marked *"currently useless"* in `character.js` and Cold
+resistance wants a temperature scale decided rather than guessed at - 49 of 64 skills
+with well-scaled milestones is better than 52 with three invented ones.
 
 ### The reported gaps, a dev console, and the changelog stops being hand-wrapped
 
