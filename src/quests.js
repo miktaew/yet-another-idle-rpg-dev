@@ -3,8 +3,11 @@
 import { add_quest_to_display, log_message, update_displayed_quest, update_displayed_quest_task } from "./display.js";
 import { language, process_rewards } from "./main.js";
 import { translationManager } from "./translation.js";
+import { registries } from "./registries.js";
 
 const quests = {};
+//Published for conditions.js - see src/registries.js.
+registries.quests = quests;
 const active_quests = {};
 
 /**

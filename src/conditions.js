@@ -5,8 +5,7 @@ import { current_game_time } from "./game_time.js";
 import { global_flags } from "./main.js";
 import { height_values } from "./person.js";
 import { playable_races } from "./races.js";
-import { locations } from "./locations.js";
-import { quests } from "./quests.js";
+import { registries } from "./registries.js";
 
 /*
     either single set of values or two sets, one for minimum chance provided and one for maximum
@@ -240,7 +239,7 @@ const process_conditions = (conditions, character) => {
     */
     if(conditions[0].location_clears) {
         Object.keys(conditions[0].location_clears).forEach(location_key => {
-            const location = locations[location_key];
+            const location = registries.locations[location_key];
             if(!location) {
                 console.error(`A condition asks for clears of "${location_key}", which is not a location.`);
                 met = 0;
@@ -266,7 +265,7 @@ const process_conditions = (conditions, character) => {
     */
     if(conditions[0].quests_completed) {
         for(let i = 0; i < conditions[0].quests_completed.length; i++) {
-            const quest = quests[conditions[0].quests_completed[i]];
+            const quest = registries.quests[conditions[0].quests_completed[i]];
             if(!quest) {
                 console.error(`A condition requires quest "${conditions[0].quests_completed[i]}" to be finished, but no such quest exists.`);
                 met = 0;
@@ -278,7 +277,7 @@ const process_conditions = (conditions, character) => {
 
     if(conditions[0].quests_not_completed) {
         for(let i = 0; i < conditions[0].quests_not_completed.length; i++) {
-            const quest = quests[conditions[0].quests_not_completed[i]];
+            const quest = registries.quests[conditions[0].quests_not_completed[i]];
             if(!quest) {
                 console.error(`A condition requires quest "${conditions[0].quests_not_completed[i]}" to be unfinished, but no such quest exists.`);
                 met = 0;

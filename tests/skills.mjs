@@ -292,17 +292,20 @@ globalThis.__test_flags = { is_mofu_mofu_enabled: true };
 const { process_conditions } = await load_with_stubs(
     "src/conditions.js",
     ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js",
-     "./locations.js", "./quests.js"],
+     "./registries.js"],
     `
 const get_total_skill_level = (id) => __levels[id] || 0;
 const current_game_time = { season: "Summer", hour: 12, day: 1, month: 1, year: 1 };
 const global_flags = __flags;
 const height_values = { "very short": 145, short: 155, average: 170, tall: 180, "very tall": 190 };
 const playable_races = {};
-//The two registries the ported location_clears / quests_* conditions read. Set by
-//the tests through __test_locations / __test_quests, like the levels and flags above.
-const locations = globalThis.__test_locations ??= {};
-const quests = globalThis.__test_quests ??= {};
+//conditions.js reads the two registries through src/registries.js, which imports
+//nothing - that indirection is what keeps the module graph acyclic. The tests fill
+//them through __test_locations / __test_quests, like the levels and flags above.
+const registries = {
+    locations: globalThis.__test_locations ??= {},
+    quests: globalThis.__test_quests ??= {},
+};
 `.replace("__levels", "globalThis.__test_levels").replace("__flags", "globalThis.__test_flags"));
 
 {
@@ -665,17 +668,20 @@ const game_options = {};
     const { process_conditions, money_required, money_spent } = await load_with_stubs(
         "src/conditions.js",
         ["./character.js", "./game_time.js", "./main.js", "./person.js", "./races.js",
-     "./locations.js", "./quests.js"],
+     "./registries.js"],
         `
 const get_total_skill_level = () => 0;
 const current_game_time = { getSeason: () => "summer" };
 const global_flags = {};
 const height_values = {};
 const playable_races = {};
-//The two registries the ported location_clears / quests_* conditions read. Set by
-//the tests through __test_locations / __test_quests, like the levels and flags above.
-const locations = globalThis.__test_locations ??= {};
-const quests = globalThis.__test_quests ??= {};
+//conditions.js reads the two registries through src/registries.js, which imports
+//nothing - that indirection is what keeps the module graph acyclic. The tests fill
+//them through __test_locations / __test_quests, like the levels and flags above.
+const registries = {
+    locations: globalThis.__test_locations ??= {},
+    quests: globalThis.__test_quests ??= {},
+};
 `);
 
     const purse = amount => ({ money: amount, inventory: {}, equipment: {}, stats: {full: {}},

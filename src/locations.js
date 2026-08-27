@@ -10,7 +10,11 @@ import { fill_market_regions, market_regions } from "./market_saturation.js";
 import { global_flags, language } from "./main.js";
 import { translationManager } from "./translation.js";
 import { clamp, slerp } from "./misc.js";
+import { registries } from "./registries.js";
 const locations = {}; //contains all the created locations
+//Published for conditions.js, which must not import this module: the extra edge
+//reorders module evaluation and breaks the bundle. See src/registries.js.
+registries.locations = locations;
 const location_types = {};
 
 const favourite_locations = {};
