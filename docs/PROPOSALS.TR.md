@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 29 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 30 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -609,7 +609,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
    kırıyordu; yani her girdi iki kez bölünüyordu. Artık gerçek bir liste: kaynakta bir
    girdi bir satır ve sarmalamayı tarayıcı yapıyor, hem de bir `<pre>`'nin yapamadığı
    asılı girintiyle.
-6. **Mağazada İptal geri getirmeli** — `yapılacak`. Üç düğme var: Kabul et, İptal ve
+6. **Mağazada İptal geri getirmeli** — `tamam; davranış değil etiket olarak`. Davranış yazarın tasarımı ve doğru: bir düğme kurduğun sepeti temizliyor, öteki ayrılıyor. Yanlış olan şey "İptal" ile "Çık"ın hangisinin hangisi olduğunu söylememesi - ve yerleşim 1660px'te kesildiği için ikisinden yalnızca biri ekranda duruyordu. Artık "Seçimi temizle" ve "Dükkândan çık" yazıyorlar; 4. madde de üçüncü düğmeyi görünür hâle getirdi. Üç düğme var: Kabul et, İptal ve
    Çık. İptal sepeti temizleyip kalıyor, Çık ayrılıyor. Bildirilen ekran
    görüntüsünde yalnızca ikisi görünüyor; bu da büyük olasılıkla 4. maddedeki yerleşim
    sorunu. Etiketler de Türkçede iki eylemi yeterince ayırmıyor.

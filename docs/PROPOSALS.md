@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 29 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 30 -->
 
 # Proposals
 
@@ -602,7 +602,7 @@ not after. Each item is the request as it was given, and the state it is in.
    container width, so every entry broke twice. They are a real list now: one entry
    is one line in the source and the browser wraps it, with the hanging indent a
    `<pre>` cannot do.
-6. **The shop's Cancel should take you back** — `todo`. There are three buttons:
+6. **The shop's Cancel should take you back** — `done, as labels rather than behaviour`. The behaviour is the author's design and is right: one button clears the basket you have built, the other leaves. What was wrong is that "İptal" and "Çık" do not say which is which - and with the layout cut off at 1660px, only one of them was on screen at all. They read "Clear selection" and "Leave the shop" now, and item 4 put the third button back in view. There are three buttons:
    Accept, Cancel and Exit. Cancel clears the basket and stays, Exit leaves. Only
    two are visible in the reported screenshot, which is likely the layout problem in
    item 4. The labels also do not distinguish the two actions well enough in Turkish.

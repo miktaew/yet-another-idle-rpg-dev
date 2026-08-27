@@ -3213,8 +3213,8 @@ const descriptions = {
     //tag, which the first wiring pass could not see.
     "ui tab inventory": "Inventory",
     "ui btn accept trade": "Accept",
-    "ui btn cancel trade": "Cancel",
-    "ui btn exit": "Exit",
+    "ui btn cancel trade": "Clear selection",
+    "ui btn exit": "Leave the shop",
     "ui sort level": "Sort by level",
     "ui sort progress": "Sort by progress",
     "ui tab skills": "Skills",

@@ -3253,8 +3253,8 @@ const descriptions = {
     //tag, which the first wiring pass could not see.
     "ui tab inventory": "Envanter",
     "ui btn accept trade": "Kabul et",
-    "ui btn cancel trade": "İptal",
-    "ui btn exit": "Çık",
+    "ui btn cancel trade": "Seçimi temizle",
+    "ui btn exit": "Dükkândan çık",
     "ui sort level": "Seviyeye göre sırala",
     "ui sort progress": "İlerlemeye göre sırala",
     "ui tab skills": "Beceriler",
