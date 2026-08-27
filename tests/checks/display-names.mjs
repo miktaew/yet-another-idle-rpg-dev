@@ -12,7 +12,7 @@ import * as path from "node:path";
 import { default_language, repo_root } from "../lib/context.mjs";
 import { error } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
-import { strip_comments } from "../lib/source.mjs";
+import { braced_body, strip_comments, top_level_keys } from "../lib/source.mjs";
 
 /**
  * Every dialogue needs a "name <key>" row for its display name.
@@ -260,14 +260,40 @@ async function check_enumerable_id_families() {
 
     const read = (relative) => strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
 
-    const collect = (source, pattern) => {
+    const collect = (source, pattern, extract) => {
         const found = new Set();
         for (const match of source.matchAll(pattern)) {
-            found.add(match[1]);
+            if (extract) {
+                for (const value of extract(match[1])) {
+                    found.add(value);
+                }
+            } else {
+                found.add(match[1]);
+            }
         }
         return found;
     };
 
+    const character_source = read("src/character.js");
+
+    /*
+        The stat-source pieces. Two ways in, because neither alone is complete: the
+        constructor declares most of them as empty objects, and the rest are created by
+        assignment later on.
+    */
+    const stat_sources = new Set();
+    //The lookbehind matters: total_multiplier holds xp TARGETS - hero, all, all_skill
+    //- which have `ui xp target` rows of their own and are not stat sources.
+    for (const match of character_source.matchAll(/(?<!\w)(?:flat|multiplier):\s*\{/g)) {
+        const open = character_source.indexOf("{", match.index);
+        for (const key of top_level_keys(braced_body(character_source, open))) {
+            stat_sources.add(key);
+        }
+    }
+    for (const match of character_source.matchAll(
+            /(?:stats|xp_bonuses)\.(?:flat|multiplier)\.(\w+)/g)) {
+        stat_sources.add(match[1]);
+    }
     const enemies = read("src/enemies.js");
 
     //tags: ["living", "beast", "wolf rat"] - the members, not the field.
@@ -288,6 +314,32 @@ async function check_enumerable_id_families() {
             prefix: "ui enemy tag",
             values: enemy_tags,
             shown_by: "the bestiary tooltip",
+        },
+        {
+            what: "season",
+            prefix: "season",
+            /*
+                game_time.js must keep returning English here - conditions.js compares
+                getSeason() against `season: {yes: "Summer"}` written in content, and the
+                save's saved_at goes through toString(). So the four names are registry
+                values and the rows are what a player reads.
+            */
+            values: collect(read("src/game_time.js"),
+                /const seasons\s*=\s*\[([^\]]*)\]/g, (body) => body.match(/"([^"]+)"/g)
+                    ?.map(q => q.slice(1, -1)) ?? []),
+            shown_by: "the job availability line",
+        },
+        {
+            what: "stat source",
+            prefix: "ui stat source",
+            /*
+                Where a stat or an xp bonus came from: the keys of character.stats.flat,
+                character.stats.multiplier and character.xp_bonuses.multiplier. Collected
+                from the literals in the constructor AND from every dotted reference,
+                because some pieces are created after construction.
+            */
+            values: stat_sources,
+            shown_by: "the stat tooltips",
         },
         {
             what: "location type",
