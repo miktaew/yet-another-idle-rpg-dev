@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 46 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 47 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,87 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### Bildirilen boşluklar, bir dev konsolu ve changelog'un elle kırılmaktan kurtulması
+
+Tek oturumda on dört talep; geldikleri sırada P-13'e kaydedildi. Çeviri raporları
+ekran görüntüsüne göre değil sebebe göre gruplandı, çünkü içlerinden yalnızca biri
+"biri bir satırı unutmuş".
+
+**Ad yerine değer basılması.** Dövülmüş bir eşyanın altındaki bileşen listesi
+`item_templates[...].name`, yani ham kayıt adını kullanıyordu; bir kılıç
+`[Cheap iron long blade] + [Simple wooden short handle]` diye okunuyordu. Envanterin
+yuva etiketi `equip_slot` basıyordu; kuşanılmış bir eşya `[weapon]` ya da `[torso]`
+diye okunuyordu. Bir kitap `target_item.name` basıyordu ve on kitabın hepsinin, hiçbir
+şeyin okumadığı çevrilmiş bir adı zaten vardı. Her biri tek bir site ve her birinin
+satırları bekliyordu.
+
+**Yazılan değil döndürülen İngilizce.** `format_money(0)` doğrudan `'nothing'`
+döndürüyordu ve iki zaman biçimlendirici `"2 hours"` ile `"25 minutes"`i İngilizce
+kelimelerden kuruyordu. Bu oturumda daha önce eklenen DOM kontrolü hiçbirini
+göremezdi: DOM'a yazan ifadelere bakıyor, bunlar ise bir çağıranın sonradan bastığı
+dönüş değerleri. Bu kontrolün bir eksiği değil, bir sınırı olarak adlandırmaya değer.
+
+O biçimlendiricileri yereli okuyacak hâle getirmek gerçek bir tasarım sorununu ortaya
+çıkardı. `misc.js` bir yaprak yardımcı modül ve oraya `translation.js` almak
+`main.js`'i, o da `display.js`'i çekiyor; yani yalnızca aritmetik yapan bir modül bir
+`document`'a ihtiyaç duymaya başladı ve `misc.js`'i tek başına yükleyen koşum takımı
+anında kırıldı. Artık `format_money`'nin yanında, `display.js` içinde yaşıyorlar; zaten
+tek çağıranı da oydu.
+
+**Hiç çevrilmemiş olanlar.** Tüccar ve depo panellerinin üstündeki sekiz kategori
+filtresinde `data-translation` niteliği yoktu. Dört becerinin altındaki mizah satırı
+`skills.js` içinde düz bir İngilizce dizgeydi — ve o dördü gönderme: Warhammer
+40.000'e, bu oyunun hayvanıyla koyun saymaya, Gurren Lagann'a ve nefes şakasına; o
+yüzden Türkçe kelimeleri değil kaydı taşıyor.
+
+**Çeviriden sağ çıkmayan bir kuruluş.** `Bitir: {v1}` etiket ile değer gibi okunuyor.
+Türkçe burada faaliyet adına göre değişen bir belirtme eki isterdi — koşu koşuyu, iş
+işi olur — ve bu genel olarak kurulamaz; o yüzden ad öne geçti, fiil arkaya.
+
+**Changelog artık bir liste.** Girdileri geniş bir pencere için elle kırılmıştı ve
+`white-space: pre-wrap` onları kapsayıcı genişliğinde bir kez daha kırıyordu; yani her
+madde iki kez bölünüp ragged çıkıyordu. Bir `<pre>` bunu düzeltemez: sarılan bir satır
+sıfırıncı kolondan yeniden başlar, çünkü maddenin nerede başladığını bilmez. O yüzden
+her dosyadaki 885 girdi `<li>` oldu; kaynakta her biri tek satır ve asılı girinti
+`::before` ile çiziliyor.
+
+Ve artık cümleler: İngilizcede 857 büyütme ve 863 nokta, Türkçede 800 ve 866. Türkçe
+büyütme ASCII değil — `i`, `I` değil `İ` olur — o yüzden o ikisi `upper()` üzerinden
+değil açıkça eşlendi. Otuz üç girdi bir `<b>` ya da `<span>` içinde bitiyor ve
+noktaları etiketin içine girdi.
+
+**Mesaj günlüğü yeniden yüklemeden sağ çıkıyor.** Saklanan şey bitmiş div'ler değil
+`log_message`'ın aldığı argümanlar; yani geri yüklenen bir günlük canlı olanla tam
+olarak aynı kodla kuruluyor — sınıflandırma, grup başı üst sınırlar ve budama canlı
+yoldan sapamaz. 300 ile sınırlı, çünkü kayıt oyuncunun elle dışa aktardığı bir metin
+dosyası. Satırlar hâlâ düştükleri dilde kalıyor; bu, `log_message`'ın kimlik ve
+parametre değil kurulmuş metin alması ve değişmedi, zaten kayıtlı.
+
+**Bir geliştirme konsolu; istenmedikçe kapalı.** Tarayıcıda `enable_dev_console()`
+yazmak yardımcıları yalın global olarak bağlıyor: istenen
+`add_active_effect("Coffee", 1800)`, ayrıca `give()` — `process_rewards` üzerinden bir
+ödül nesnesi, yani bir görevin kullandığı yolun aynısı; böylece bu yolla verilen
+hiçbir şey içeriğin vermesinden farklı davranmıyor — `goto()`, `add_money`, `add_xp`,
+`add_skill_xp`, `set_flag` ve `list_*` fonksiyonları.
+
+Ayrıca alt paneldeki hız düğmelerini ortaya çıkarıyor: 1x, 2x, 5x, 10x. `tickrate`,
+`main.js` içindeki her duvar-saati gecikmesinin **ve** her tik-başı muhasebe teriminin
+böleni (`total_playtime += 1/tickrate`, `save_period * tickrate`); bu da onu çarpmayı
+her şeyi tutarlı hızlandıran ve muhasebeyi doğru bırakan tek değişiklik yapıyor:
+saniyede daha çok tik, her biri eskisi kadar değerli. `const`, `let` oldu ve hiçbir
+zamanlama kodu değişmedi.
+
+Ne konsol ne hız varsayılan olarak açık ve ikisi de kaydedilmiyor. Yeniden yükleme 1x'e
+dönüyor. `is_on_dev()` de kapı değil — dev sürümü de birinin oynadığı bir sürüm ve bir
+hız çarpanı her faaliyeti, kitabı ve yolculuğu önemsiz kılıyor.
+
+**Ve upstream ilerlememiş.** Fork'un güncellemesini almak istendi; `upstream` eklendi
+ve çekildi. İki dalı var: `master`, `e335643`'te (v0.5.5.30, 23 Haziran) — ki bu bizim
+kendi çatallanma noktamız — ve `ghpages`, `fc04780`'de (26 Haziran); ağacı master'ınkiyle
+bayt bayt aynı, sonraki commit'ler hiçbir dosyayı değiştirmeyen birleştirmeler.
+`upstream/master..master` 67 commit, `master..upstream/master` sıfır. Alınacak bir şey
+yoktu ve bunu söylemek tek dürüst sonuç.
 
 ### 4. kademe: beyaz demir ve siyah demir
 

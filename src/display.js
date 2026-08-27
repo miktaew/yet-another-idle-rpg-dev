@@ -24,7 +24,7 @@ import { format_time, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, get_location_type_penalty, location_types, locations } from "./locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
-import { expo, format_reading_time, get_hit_chance, round_item_price, format_working_time, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
+import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { effect_templates } from "./active_effects.js";
@@ -306,6 +306,19 @@ function quest_target_label(task_type, target_id) {
     return translationManager.getDisplayName(language, target_id);
 }
 /**
+ * A comma-separated season list, translated.
+ *
+ * game_time.js returns seasons as English strings and has to keep doing so -
+ * conditions.js compares getSeason() against a `season: {yes: "Summer"}` written in
+ * content. The job availability tooltip was interpolating that list directly, so it
+ * read "Winter boyunca müsait değil".
+ */
+function season_list(season_names) {
+    return season_names
+        .map(season => translationManager.getText(language, `season ${season}`))
+        .join(", ");
+}
+/**
  * Display name for a stat key, e.g. "max_health" -> "health" / "sağlık".
  *
  * The `<stat> long` rows have existed since the race tooltip was translated; six
@@ -502,14 +515,31 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
             let component_description = `<br><br><span class="item_component_list">`;
             const components = Object.keys(item.components);
 
-            if (item.components) {
-                //TODO future proof by looping through all components, not just static 2
-                component_description += `[${item_templates[item.components[components[0]]].name}]`;
-                if(!item.components[components[1]]) {
-                    component_description += `<br>+<br>no [${components[1]}]`;
-                } else {
-                    component_description += `<br>+<br>[${item_templates[item.components[components[1]]].name}]`;
-                }
+            /*
+                getDisplayName rather than .name. This listed the raw registry name, so
+                a crafted sword read "[Cheap iron long blade] + [Simple wooden short
+                handle]" under a tooltip that was otherwise fully translated. Every
+                component has a display name and the `material <x>` / `component <y>`
+                rows it resolves were written for exactly this.
+
+                The empty branch printed the SLOT key - "no [handle]" - and those five
+                keys had no rows at all.
+
+                Still two components rather than a loop: that is the shape of the data,
+                and the author's note about future-proofing is left where it was.
+            */
+            const component_name = (slot) => {
+                const component = item_templates[item.components[slot]];
+                return component ? component.getDisplayName() : undefined;
+            };
+
+            component_description += `[${component_name(components[0])}]`;
+            const second = component_name(components[1]);
+            if(!second) {
+                component_description += `<br>+<br>${translationManager.getText(language, "ui no component",
+                    {v1: translationManager.getText(language, `ui component slot ${components[1]}`)})}`;
+            } else {
+                component_description += `<br>+<br>[${second}]`;
             }
 
             component_description += `</span>`;
@@ -779,9 +809,52 @@ function end_activity_animation(remove) {
  * @param {String} message_to_add text to display
  * @param {String} message_type used for adding proper class to html element
  */
- function log_message(message_to_add, message_type) {
+/*
+    What has been logged, so the log can be saved and put back.
+
+    The arguments rather than the divs: a restored log then goes through log_message
+    like any other message, so the classification, the per-group caps and the pruning
+    are the same code and cannot drift from the live path.
+
+    Capped because a save is a text file a player exports by hand. 300 is comfortably
+    more than the per-group caps add up to, so nothing visible is lost.
+*/
+const message_log_history = [];
+const message_log_history_cap = 300;
+
+function get_message_log_history() {
+    return message_log_history;
+}
+
+/**
+ * Replays a saved log.
+ *
+ * `is_restoring` stops each replayed line being pushed back onto the history, which
+ * would double it on every save-load cycle.
+ */
+function restore_message_log(history) {
+    if(!Array.isArray(history)) {
+        return;
+    }
+    clear_message_log();
+    for(const entry of history) {
+        log_message(entry.text, entry.type, true);
+    }
+    message_log_history.length = 0;
+    message_log_history.push(...history.slice(-message_log_history_cap));
+}
+
+ function log_message(message_to_add, message_type, is_restoring = false) {
     if(typeof message_to_add === 'undefined') {
         return;
+    }
+
+    //Recorded before the substitutions, so a replay produces the same line again.
+    if(!is_restoring) {
+        message_log_history.push({text: message_to_add, type: message_type});
+        if(message_log_history.length > message_log_history_cap) {
+            message_log_history.shift();
+        }
     }
 
     message_to_add = message_to_add.replaceAll("%HeroName%", character.name).replaceAll("\n","<br>");
@@ -1006,6 +1079,8 @@ function format_book_bonuses(bonuses) {
 
 function clear_message_log() {
     clear_HTML_content(message_log);
+    //The history goes with it, or a save right after clearing would put it back.
+    message_log_history.length = 0;
 }
 
 /**
@@ -1844,7 +1919,11 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         if(target_item.tags.tool) {
             item_name_div_content = `<span class = "item_slot" >[${translationManager.getText(language, "ui slot tool")}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         } else {
-            item_name_div_content = `<span class = "item_slot" >[${target_item.equip_slot}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
+            //The equip_slot is a registry key and was printed raw, so an equipped item
+            //read "[weapon]" or "[legs]" in an otherwise translated inventory. The
+            //"ui slot <key>" rows cover all sixteen slots and already did.
+            const equipped_slot_text_id = `ui slot ${target_item.equip_slot}`;
+            item_name_div_content = `<span class = "item_slot" >[${translationManager.getText(language, equipped_slot_text_id)}]</span> <span class="item_name">${target_item.getDisplayName()}</span>`;
         }
         item_name_div.classList.add(`${item_class}_name`);
         item_div.appendChild(item_name_div);
@@ -1872,7 +1951,9 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         //
     } else if(target_item.tags.book) {
         //
-        item_name_div_content = `<span class = "item_category">[${translationManager.getText(language, "ui slot book")}]</span> <span class = "book_name item_name">"${target_item.name}"</span>`;
+        //getDisplayName, not .name: every book has a "name <title>" row and none of
+        //them were being read, so the inventory showed the English titles.
+        item_name_div_content = `<span class = "item_category">[${translationManager.getText(language, "ui slot book")}]</span> <span class = "book_name item_name">"${target_item.getDisplayName()}"</span>`;
         item_name_div.classList.add(`${item_class}`);
 
         if(book_stats[target_item.name].is_finished) {
@@ -2462,9 +2543,9 @@ function create_location_choices({location, category, is_combat = false}) {
                 if(location.activities[key].availability_seasons) {
                     if(location.activities[key].availability_seasons.length === 3) {
                         const unavailable_seasons = seasons.filter(x => !location.activities[key].availability_seasons.includes(x));
-                        job_tooltip_content += `${translationManager.getText(language, "ui not available during", {v1: unavailable_seasons.toString().replaceAll(",",", ")})} <br>`;
+                        job_tooltip_content += `${translationManager.getText(language, "ui not available during", {v1: season_list(unavailable_seasons)})} <br>`;
                     } else {
-                        job_tooltip_content += `${translationManager.getText(language, "ui available during", {v1: location.activities[key].availability_seasons.toString().replaceAll(",",", ")})} <br>`;
+                        job_tooltip_content += `${translationManager.getText(language, "ui available during", {v1: season_list(location.activities[key].availability_seasons)})} <br>`;
                     }
                 }
             }
@@ -4058,6 +4139,52 @@ function create_temperature_tooltip() {
  * @param {Number} num value to be formatted
  * @param {Boolean} round if the value should be rounded a bit
  */
+/*
+    Moved here from misc.js, which is a leaf utility module: making it read the
+    locale meant importing translation.js, and translation.js imports main.js,
+    which imports display.js - so a module that only did arithmetic ended up
+    pulling the whole game in, and the test harness that loads misc.js on its own
+    broke on `document is not defined`.
+
+    display.js is where the other formatter that composes player-facing words
+    already lives, and it was the only caller of these two.
+*/
+/*
+    Both time formatters built their units in English, so a Turkish tooltip read
+    "Sonraki seviyeye kalan 25 minutes".
+
+    Turkish does not pluralise a noun after a number - "2 saat", "25 dakika" - so the
+    singular rows exist for English's sake and both languages read correctly.
+*/
+function format_reading_time(time) {
+    if(time >= 120) {
+        return translationManager.getText(language, "ui time hours", {v1: Math.floor(time/60)});
+    } else if(time >= 60) {
+        return translationManager.getText(language, "ui time hour", {v1: 1});
+    } else {
+        return translationManager.getText(language, "ui time minutes", {v1: Math.round(time)});
+    }
+}
+
+function format_working_time(time) {
+    let formatted = "";
+    const hours = Math.floor(time/60);
+    const minutes = time%60;
+
+    if(hours > 0) {
+        formatted += translationManager.getText(language,
+            hours > 1 ? "ui time hours" : "ui time hour", {v1: hours});
+    }
+    if(minutes > 0) {
+        if(hours > 0) {
+            formatted += " ";
+        }
+        formatted += translationManager.getText(language,
+            minutes > 1 ? "ui time minutes" : "ui time minute", {v1: minutes});
+    }
+    return formatted;
+}
+
 function format_money(num) {
     let value;
     const sign = num >= 0 ? '' : '-';
@@ -4080,7 +4207,10 @@ function format_money(num) {
         return sign + value;
 
     } else {
-        return 'nothing';
+        //Was the literal 'nothing'. A return value rather than a DOM write, which is
+        //why check_no_english_in_dom could not see it - it showed up as the trade
+        //window's total price.
+        return translationManager.getText(language, "ui money nothing");
     }
 }
 
@@ -4733,7 +4863,9 @@ function create_new_skill_bar(skill) {
 
     let html_content = `<span class="skill_id">id: "${skill.skill_id}"</span><br><br>${skill.getDescription()}<br>`;
     if(skill.flavour_text) {
-        html_content += `<br><span class="skill_flavour_text">"${skill.flavour_text}"</span>`;
+        //A text id now, like every other line of content. Four skills carry one and
+        //all four were English.
+        html_content += `<br><span class="skill_flavour_text">"${translationManager.getText(language, skill.flavour_text)}"</span>`;
     }
 
     if(skill.parent_skill) {
@@ -4837,7 +4969,8 @@ function update_displayed_skill_level(skill) {
         return;
     }
 
-    let html_content = `${skill.name()} : level ${skill.current_level}/${skill.max_level}`;
+    let html_content = translationManager.getText(language, "ui skill bar level",
+        {v1: skill.name(), v2: skill.current_level, v3: skill.max_level});
     const bonus = character.bonus_skill_levels.full[skill.skill_id];
     if(bonus != 0) {
         html_content += ` <b>[${bonus>0?"+":""}${bonus}]</b>`;
@@ -6088,6 +6221,7 @@ export {
     update_displayed_equipment, update_displayed_health, update_displayed_stamina, update_displayed_stats, update_displayed_effects, update_displayed_effect_durations,
     capitalize_first_letter,
     format_money,
+    get_message_log_history, restore_message_log,
     update_displayed_time, update_displayed_temperature,
     update_displayed_character_xp,
     update_displayed_dialogue, update_displayed_textline_answer,

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 26 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 28 -->
 
 # Proposals
 
@@ -569,6 +569,130 @@ descriptions in both languages.
 **What this must not do:** invent a fifth tier. Four materials past steel is already
 more than the authored content past the swamp, and the ceiling should move with the
 story rather than ahead of it.
+
+### P-13 — The session's requests, one at a time `active`
+
+Recorded here because every instruction belongs in this file before it is finished,
+not after. Each item is the request as it was given, and the state it is in.
+
+#### Content and features
+
+1. **A lore section** — a place holding the story's history and the conversations
+   already had. `todo`. The journal already has four tabs (quests, bestiary,
+   anthology, data) and a fifth belongs there rather than in a new panel. What it
+   should hold: what the player has been told, by whom, kept after the dialogue has
+   closed. Nothing in the game currently records that.
+2. **Expand the perks** — `answered, todo`. Confirmed as **skill milestones**: a skill giving +1 strength at level 1, something else at level 3. There is no perk system in
+   this repository: no `perk` appears anywhere in `src/`, the locales, `index.html`
+   or `style.css`. The nearest existing systems are **skill milestones** (a skill
+   granting flat or multiplied stats at set levels), **combat stances**, and the
+   **race and height bonuses**. Which of those "perks" means changes what gets
+   built, so it is asked rather than guessed.
+3. **Tier 4: the metals above steel** — `done`, tracked as P-12.
+
+#### Interface
+
+4. **The UI does not fit the screen** — `todo`. `#main_content` is a fixed
+   1241x806 with the message log placed at `left: 1230px` and 415px wide, so the
+   page is about 1660px wide whatever the window is, and the log's right edge is cut
+   off with a horizontal scrollbar at the bottom. Needs restructuring rather than a
+   smaller font.
+5. **The changelog should not be hand-wrapped** — `done`. Its `<pre>` blocks were
+   wrapped by hand for a wide window and `pre-wrap` then wrapped them again at the
+   container width, so every entry broke twice. They are a real list now: one entry
+   is one line in the source and the browser wraps it, with the hanging indent a
+   `<pre>` cannot do.
+6. **The shop's Cancel should take you back** — `todo`. There are three buttons:
+   Accept, Cancel and Exit. Cancel clears the basket and stays, Exit leaves. Only
+   two are visible in the reported screenshot, which is likely the layout problem in
+   item 4. The labels also do not distinguish the two actions well enough in Turkish.
+7. **"Bitir: koşu" reads wrong** — `done`. `ui finish activity` is `Bitir: {v1}`,
+   which reads as a label and a value rather than an instruction. Turkish cannot take
+   the English word order here without an accusative suffix that varies with the
+   activity name.
+
+#### Translation gaps reported from screenshots
+
+8. **The component list in an item tooltip** — `done`. It printed
+   `item_templates[...].name`, the raw registry name, so a crafted sword read
+   `[Cheap iron long blade] + [Simple wooden short handle]`. It uses
+   `getDisplayName()` now, and the five component slot keys got rows.
+9. **`[weapon]`, `[legs]`, `[torso]`, `[cape]` slot tags** — `done`. The inventory
+   row printed `equip_slot` raw. One site, shared by the character inventory, the
+   trader and storage.
+10. **The category filter buttons** — `done`. `all` / `equipment` / `usable` /
+    `other`, eight of them across the trader and storage panels, with no
+    `data-translation` at all.
+11. **Book titles** — `done`. The inventory prints `target_item.name` for a book, so
+    they show as `"A Glint On The Sand"`. Every book already has a `name <title>`
+    row.
+12. **`nothing` in the trade total** — `done`. `format_money(0)` returns the literal
+    string. It is a return value rather than a DOM write, which is why the check
+    added earlier this session did not see it.
+13. **`Winter`, `2 hours`, `25 minutes` in tooltips** — `done`, and two more found with them: the flavour line under four skills and the word `level` in every skill bar. Two causes: the job
+    availability line interpolates the season list straight from `game_time.js`,
+    which must keep returning English; and `format_working_time` /
+    `format_reading_time` in `misc.js` build their units in English.
+
+#### Development
+
+14. **A console switch for development** — `done`. `enable_dev_console()` typed in
+    the browser console attaches helpers as bare globals, including the
+    `add_active_effect("Coffee", 1800)` that was asked for, plus `give()` (a rewards
+    object through the same path a quest uses), `goto()`, `add_money`, `add_xp`,
+    `add_skill_xp`, `set_flag` and the `list_*` functions. Not on by default and not
+    saved: a reload turns it off.
+15. **Record every request here** — `standing`. This section is that rule being
+    followed.
+16. **A speed multiplier for development** — `done`. 1x / 2x / 5x / 10x in the bottom
+    panel next to Save and Export, hidden until `enable_dev_console()` reveals them,
+    plus `set_speed(n)` from the console. `tickrate` is the divisor of every
+    wall-clock delay in `main.js` and of every per-tick accounting term, so
+    multiplying it is the one change that speeds everything up consistently and
+    leaves the bookkeeping correct. Not saved.
+17. **The message log survives a reload** — `done`. What is stored is the arguments
+    `log_message` received, not the finished divs, so a restored log is built by the
+    same code as a live one and the per-group caps behave identically. Capped at 300
+    entries because a save is a text file a player exports by hand. Lines still keep
+    the language they were logged in - that limitation is `log_message` taking
+    composed text rather than an id, and it is unchanged.
+18. **Changelog entries are sentences** — `done`. Every entry in both files starts
+    with a capital and ends with a full stop: 857 capitalised and 863 terminated in
+    English, 800 and 866 in Turkish. Turkish capitalisation is not ASCII, so i maps
+    to İ explicitly rather than through `upper()`. Thirty-three entries end inside a
+    `<b>` or `<span>`, and their full stop went inside the tag rather than after it.
+19. **Take upstream's update, then open a PR there** — `nothing to take; the PR needs
+    a decision`. Upstream was fetched and has exactly two branches:
+
+    | ref | head | date |
+    | --- | --- | --- |
+    | `master` | `e335643` v0.5.5.30 | 2026-06-23 |
+    | `ghpages` | `fc04780` | 2026-06-26 |
+
+    `ghpages` is the deploy branch and its **tree is byte-identical to master's** -
+    the later commits are merges that changed no file. `master`'s head is our own
+    fork point, so `upstream/master..master` is 67 commits and `master..upstream/master`
+    is zero. There is no update to bring in.
+
+    The PR is a separate question and a real one: those 67 commits are the full
+    divergence Q-1 decided on - every string moved into locale files, a second
+    language, four regions, a build and 99 checks - and offering all of it is not a
+    reviewable pull request. What could be offered is the handful of fixes that are
+    upstream's bugs rather than ours, each of which is small and language-neutral:
+
+    - `item_templates["Cooked potato"]` carries `name: "Potato"`, so a cooked potato
+      displays as the raw one.
+    - the `gaze` action declares a success text and a `conditional_loss` text that
+      `success_chances: [0,0]` and an empty condition list make unreachable, and the
+      success text's content is `[TBD]`.
+    - `crafting_component_filling.js` generates 72 components for four materials that
+      no recipe produces, which its own header warns about.
+    - the `Alchemical Wood` chain and the `Silver ingot` recipe are commented out
+      with no sink, and the deep dive that taps silver is locked.
+
+    Which of those to send, and whether to send anything at all, is asked rather than
+    assumed.
+
 
 ---
 ## Open decisions

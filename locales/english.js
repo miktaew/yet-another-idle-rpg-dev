@@ -3458,6 +3458,36 @@ const descriptions = {
     "desc location Slums dyn 3": "A wild settlement next to city walls, filled with decaying buildings and poverty. There is a shed at the end of the row now with a set of scales in it, and a queue outside it on the days the cart comes.",
     "activity Slums herbalism starting": "Work the waste ground",
     "activity Slums herbalism unlock": "The waste ground behind the tenements is worth working now that there is somewhere for it to go.",
+
+    //The component list under a crafted item's tooltip. The five slot keys had no
+    //rows, so the empty branch printed the key itself.
+    "ui no component": "no [{v1}]",
+    "ui component slot head": "head",
+    "ui component slot handle": "handle",
+    "ui component slot shield_base": "shield base",
+    "ui component slot internal": "inner layer",
+    "ui component slot external": "outer layer",
+
+    //The category filters, the zero-money word and the time units. The last two
+    //were return values rather than DOM writes, which is how they got this far.
+    "ui category all": "all",
+    "ui category equipment": "equipment",
+    "ui category usable": "usable",
+    "ui category other": "other",
+    "ui money nothing": "nothing",
+    "ui time hour": "{v1} hour",
+    "ui time hours": "{v1} hours",
+    "ui time minute": "{v1} minute",
+    "ui time minutes": "{v1} minutes",
+
+    //The skill bar's level line, and the flavour text under four skills. The
+    //flavour lines are references - 40k, Gurren Lagann and the breathing joke - so
+    //the Turkish carries the register rather than the words.
+    "ui skill bar level": "{v1} : level {v2}/{v3}",
+    "skill flavour Strength of mind": "Blessed is the mind too small for doubt.",
+    "skill flavour Sleeping": "One rat, two rats, three rats...",
+    "skill flavour Persistence": "Believe in me that believes in you!",
+    "skill flavour Breathing": "You are now breathing manually",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

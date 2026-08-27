@@ -625,18 +625,10 @@
                             <div id = "trader_sort_by_type" class = "trader_sorting_button" onclick='sortTraderInventory("type")' data-translation="ui sort type"></div>
                         </div>
                         <div id = "trader_category_buttons" class="activable_buttons flex_wrap">
-                            <div id = "trader_category_all" class = "trader_category_button active_selection_button" onclick='showAllTraderItems()'>
-                                all
-                            </div>
-                            <div id = "trader_category_equipment" class = "trader_category_button" onclick="showOnlyTraderEquipment()">
-                                equipment
-                            </div>
-                            <div id = "trader_category_usable" class = "trader_category_button" onclick="showOnlyTraderConsumables()">
-                                usable
-                            </div>
-                            <div id = "trader_category_other" class = "trader_category_button" onclick="showOnlyTraderOther()">
-                                other
-                            </div>
+                            <div id = "trader_category_all" class = "trader_category_button active_selection_button" onclick='showAllTraderItems()' data-translation="ui category all"></div>
+                            <div id = "trader_category_equipment" class = "trader_category_button" onclick="showOnlyTraderEquipment()" data-translation="ui category equipment"></div>
+                            <div id = "trader_category_usable" class = "trader_category_button" onclick="showOnlyTraderConsumables()" data-translation="ui category usable"></div>
+                            <div id = "trader_category_other" class = "trader_category_button" onclick="showOnlyTraderOther()" data-translation="ui category other"></div>
                         </div>
 
 
@@ -668,18 +660,10 @@
                             <div id = "storage_sort_by_type" class = "storage_sorting_button" onclick='sortStorageInventory("type")' data-translation="ui sort type"></div>
                         </div>
                         <div id = "storage_category_buttons" class="activable_buttons flex_wrap">
-                            <div id = "storage_category_all" class = "storage_category_button active_selection_button" onclick='switchStorageItemVisibility()'>
-                                all
-                            </div>
-                            <div id = "storage_category_equipment" class = "storage_category_button" onclick="switchStorageItemVisibility('equipment')">
-                                equipment
-                            </div>
-                            <div id = "storage_category_usable" class = "storage_category_button" onclick="switchStorageItemVisibility('consumables')">
-                                usable
-                            </div>
-                            <div id = "storage_category_other" class = "storage_category_button" onclick="switchStorageItemVisibility('other')">
-                                other
-                            </div>
+                            <div id = "storage_category_all" class = "storage_category_button active_selection_button" onclick='switchStorageItemVisibility()' data-translation="ui category all"></div>
+                            <div id = "storage_category_equipment" class = "storage_category_button" onclick="switchStorageItemVisibility('equipment')" data-translation="ui category equipment"></div>
+                            <div id = "storage_category_usable" class = "storage_category_button" onclick="switchStorageItemVisibility('consumables')" data-translation="ui category usable"></div>
+                            <div id = "storage_category_other" class = "storage_category_button" onclick="switchStorageItemVisibility('other')" data-translation="ui category other"></div>
                         </div>
 
 
@@ -992,6 +976,15 @@
             <div id = "save_to_file_button" class = "sl_button" onclick = "saveToFile()"><span data-translation="ui btn export"></span><div id= "export_button_tooltip">Reward not available</div></div>
             <label id = "load_from_file_button" class = "sl_button" for = "saved_file_input" data-translation="ui btn import"></label> 
             <input id = "saved_file_input" type='file' accept = 'text/plain' onchange = 'loadProgress(event)'>	
+
+            <!-- Development speed control. Hidden until enable_dev_console() adds
+                 game_speed_visible, so the panel looks the same to a player. -->
+            <div id = "game_speed_controls">
+                <div class = "game_speed_button active_selection_button" data-game_speed="1" onclick = "setGameSpeed(1)">1x</div>
+                <div class = "game_speed_button" data-game_speed="2" onclick = "setGameSpeed(2)">2x</div>
+                <div class = "game_speed_button" data-game_speed="5" onclick = "setGameSpeed(5)">5x</div>
+                <div class = "game_speed_button" data-game_speed="10" onclick = "setGameSpeed(10)">10x</div>
+            </div>
 
             <div id = "options_button" class = "game_info" onclick="openOptions()"><span><i class="material-icons">settings</i></span></div>
             <div id = "changelog_button" class = "game_info"><a id="changelog_link" data-page="changelog" href="changelog.html" target="_blank"></a></div>
@@ -1322,6 +1315,10 @@
 
                 start_trade(trader_key);
             }
+            function setGameSpeed(multiplier) {
+                set_game_speed(multiplier);
+            }
+
             function exitTrade() {
                 in_trade = false;
                 total_price = 0;

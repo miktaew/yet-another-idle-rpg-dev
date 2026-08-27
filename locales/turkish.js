@@ -3326,7 +3326,7 @@ const descriptions = {
     "ui xp per game minute": "{v2} için oyun içi her dakikada {v1} temel tecrübe",
     "ui xp per gathering cycle": "{v2} için her toplama turunda {v1} temel tecrübe",
     "ui realtime": "gerçek zamanda",
-    "ui finish activity": "Bitir: {v1}",
+    "ui finish activity": "{v1} — bitir",
     "ui finish": "Bitir",
     "ui earnings": "(kazanç: {v1})",
     "ui sleeping": "Uyuyor...",
@@ -3498,6 +3498,36 @@ const descriptions = {
     "desc location Slums dyn 3": "Şehir surlarının yanında, çürüyen yapılar ve yoksullukla dolu bir başıboş yerleşim. Sıranın sonunda artık içinde bir terazi olan bir kulübe var; arabanın geldiği günler de önünde bir kuyruk.",
     "activity Slums herbalism starting": "Boş araziyi işle",
     "activity Slums herbalism unlock": "Gidecek bir yeri olduğu için, kiralık evlerin arkasındaki boş arazi artık işlemeye değer.",
+
+    //The component list under a crafted item's tooltip. The five slot keys had no
+    //rows, so the empty branch printed the key itself.
+    "ui no component": "[{v1}] yok",
+    "ui component slot head": "başlık",
+    "ui component slot handle": "sap",
+    "ui component slot shield_base": "kalkan tabanı",
+    "ui component slot internal": "iç katman",
+    "ui component slot external": "dış katman",
+
+    //The category filters, the zero-money word and the time units. The last two
+    //were return values rather than DOM writes, which is how they got this far.
+    "ui category all": "tümü",
+    "ui category equipment": "kuşam",
+    "ui category usable": "kullanılır",
+    "ui category other": "diğer",
+    "ui money nothing": "hiç",
+    "ui time hour": "{v1} saat",
+    "ui time hours": "{v1} saat",
+    "ui time minute": "{v1} dakika",
+    "ui time minutes": "{v1} dakika",
+
+    //The skill bar's level line, and the flavour text under four skills. The
+    //flavour lines are references - 40k, Gurren Lagann and the breathing joke - so
+    //the Turkish carries the register rather than the words.
+    "ui skill bar level": "{v1} : sv. {v2}/{v3}",
+    "skill flavour Strength of mind": "Kuşku duyamayacak kadar küçük olan zihin kutsanmıştır.",
+    "skill flavour Sleeping": "Bir sıçan, iki sıçan, üç sıçan...",
+    "skill flavour Persistence": "Sana inanan bana inan!",
+    "skill flavour Breathing": "Artık nefesini elle alıyorsun",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

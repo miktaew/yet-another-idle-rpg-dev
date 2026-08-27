@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 26 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 28 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -576,6 +576,130 @@ adları ile açıklamaları.
 **Bunun yapmaması gereken:** beşinci bir kademe uydurmak. Çeliğin ötesinde dört
 malzeme, bataklığın ötesindeki yazılı içerikten çoktan fazla; ve tavan hikâyenin
 önünde değil, onunla birlikte hareket etmeli.
+
+### P-13 — Oturumun talepleri, tek tek `active`
+
+Buraya kaydedildi; çünkü her talimat bu dosyaya işin bitmesinden sonra değil, önce
+ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum.
+
+#### İçerik ve özellikler
+
+1. **Bir lore alanı** — hikâyenin geçmişini ve yapılmış konuşmaları tutan bir yer.
+   `yapılacak`. Günlükte zaten dört sekme var (görevler, hayvanlar kitabı, antoloji,
+   veri) ve beşincisi yeni bir panelden çok oraya ait. Ne tutmalı: oyuncuya ne
+   söylendiği, kim tarafından; diyalog kapandıktan sonra da kalacak şekilde. Oyunda
+   şu anda bunu kaydeden hiçbir şey yok.
+2. **Perkleri genişlet** — `cevaplandı, yapılacak`. **Beceri kilometre taşları** olarak doğrulandı: bir becerinin 1. seviyede +1 kuvvet, 3. seviyede başka bir şey vermesi. Bu depoda bir perk sistemi
+   yok: `src/`, yereller, `index.html` ve `style.css` içinde hiçbir yerde `perk`
+   geçmiyor. En yakın mevcut sistemler **beceri kilometre taşları** (bir becerinin
+   belirli seviyelerde sabit ya da çarpan stat vermesi), **savaş duruşları** ve
+   **ırk ile boy bonusları**. "Perk"in hangisi olduğu ne kurulacağını değiştirdiği
+   için tahmin edilmek yerine soruluyor.
+3. **4. kademe: çeliğin üstündeki metaller** — `tamam`, P-12 olarak izleniyor.
+
+#### Arayüz
+
+4. **UI tam ekrana sığmıyor** — `yapılacak`. `#main_content` sabit 1241x806 ve mesaj
+   günlüğü `left: 1230px`'te, 415px genişlikte; yani sayfa pencere ne olursa olsun
+   yaklaşık 1660px genişliğinde ve günlüğün sağ kenarı kesiliyor, altta da yatay
+   kaydırma çubuğu çıkıyor. Daha küçük yazı tipi değil, yeniden yapılandırma
+   gerekiyor.
+5. **Changelog elle satır kırılmamalı** — `tamam`. `<pre>` blokları geniş bir pencere
+   için elle kırılmıştı ve `pre-wrap` onları kapsayıcı genişliğinde bir kez daha
+   kırıyordu; yani her girdi iki kez bölünüyordu. Artık gerçek bir liste: kaynakta bir
+   girdi bir satır ve sarmalamayı tarayıcı yapıyor, hem de bir `<pre>`'nin yapamadığı
+   asılı girintiyle.
+6. **Mağazada İptal geri getirmeli** — `yapılacak`. Üç düğme var: Kabul et, İptal ve
+   Çık. İptal sepeti temizleyip kalıyor, Çık ayrılıyor. Bildirilen ekran
+   görüntüsünde yalnızca ikisi görünüyor; bu da büyük olasılıkla 4. maddedeki yerleşim
+   sorunu. Etiketler de Türkçede iki eylemi yeterince ayırmıyor.
+7. **"Bitir: koşu" yanlış okunuyor** — `tamam`. `ui finish activity` değeri
+   `Bitir: {v1}`; bu bir talimattan çok etiket-değer çifti gibi okunuyor. Türkçe,
+   faaliyet adına göre değişen bir belirtme eki olmadan İngilizce sözcük sırasını
+   buraya alamıyor.
+
+#### Ekran görüntülerinden bildirilen çeviri boşlukları
+
+8. **Eşya baloncuğundaki bileşen listesi** — `tamam`. `item_templates[...].name`,
+   yani ham kayıt adını basıyordu; dövülmüş bir kılıç
+   `[Cheap iron long blade] + [Simple wooden short handle]` diye okunuyordu. Artık
+   `getDisplayName()` kullanıyor ve beş bileşen yuvası anahtarı satır kazandı.
+9. **`[weapon]`, `[legs]`, `[torso]`, `[cape]` yuva etiketleri** — `tamam`. Envanter
+   satırı `equip_slot`'u ham basıyordu. Tek site; karakter envanteri, tüccar ve depo
+   onu paylaşıyor.
+10. **Kategori filtre düğmeleri** — `tamam`. `all` / `equipment` / `usable` /
+    `other`; tüccar ve depo panellerinde sekiz tane ve hiçbirinde `data-translation`
+    yok.
+11. **Kitap adları** — `tamam`. Envanter bir kitap için `target_item.name`
+    basıyor, o yüzden `"A Glint On The Sand"` diye görünüyorlar. Her kitabın zaten bir
+    `name <başlık>` satırı var.
+12. **Alışveriş toplamındaki `nothing`** — `tamam`. `format_money(0)` bu dizgeyi
+    doğrudan döndürüyor. Bir DOM yazması değil bir dönüş değeri olduğu için bu oturumda
+    eklenen kontrol onu görmedi.
+13. **Tooltiplerde `Winter`, `2 hours`, `25 minutes`** — `tamam`; ve onlarla birlikte iki tane daha bulundu: dört becerinin altındaki mizah satırı ve her beceri çubuğundaki `level` kelimesi. İki sebep: iş
+    müsaitlik satırı sezon listesini doğrudan `game_time.js`'ten alıyor ve o dosya
+    İngilizce döndürmeye devam etmek zorunda; ve `misc.js` içindeki
+    `format_working_time` / `format_reading_time` birimlerini İngilizce kuruyor.
+
+#### Geliştirme
+
+14. **Geliştirme için bir konsol anahtarı** — `tamam`. Tarayıcı konsolunda
+    `enable_dev_console()` yazmak yardımcıları yalın global olarak bağlıyor; istenen
+    `add_active_effect("Coffee", 1800)` dahil, ayrıca `give()` (bir görevin kullandığı
+    yolun aynısından geçen bir ödül nesnesi), `goto()`, `add_money`, `add_xp`,
+    `add_skill_xp`, `set_flag` ve `list_*` fonksiyonları. Varsayılan olarak kapalı ve
+    kaydedilmiyor: yeniden yükleme onu kapatıyor.
+15. **Her talebi buraya kaydet** — `sürekli`. Bu bölümün kendisi o kuralın
+    uygulanması.
+16. **Geliştirme için hız çarpanı** — `tamam`. Alt panelde Kaydet ve Dışa aktar'ın
+    yanında 1x / 2x / 5x / 10x; `enable_dev_console()` onları ortaya çıkarana kadar
+    gizli, ayrıca konsoldan `set_speed(n)`. `tickrate`, `main.js` içindeki her
+    duvar-saati gecikmesinin ve her tik-başı muhasebe teriminin böleni; yani onu
+    çarpmak her şeyi tutarlı biçimde hızlandıran ve muhasebeyi doğru bırakan tek
+    değişiklik. Kaydedilmiyor.
+17. **Mesaj günlüğü yeniden yüklemeden sağ çıkıyor** — `tamam`. Saklanan şey
+    `log_message`'ın aldığı argümanlar, bitmiş div'ler değil; yani geri yüklenen bir
+    günlük canlı olanla aynı kodla kuruluyor ve grup başı üst sınırlar birebir aynı
+    davranıyor. 300 girdiyle sınırlı, çünkü kayıt oyuncunun elle dışa aktardığı bir
+    metin dosyası. Satırlar hâlâ düştükleri dilde kalıyor — bu kısıt `log_message`'ın
+    kimlik değil kurulmuş metin alması ve değişmedi.
+18. **Changelog girdileri cümle** — `tamam`. İki dosyadaki her girdi büyük harfle
+    başlıyor ve noktayla bitiyor: İngilizcede 857 büyütme ve 863 nokta, Türkçede 800
+    ve 866. Türkçe büyütme ASCII değil, o yüzden i, `upper()` üzerinden değil açıkça
+    İ'ye eşleniyor. Otuz üç girdi bir `<b>` ya da `<span>` içinde bitiyor ve noktaları
+    etiketten sonra değil içine girdi.
+19. **Upstream'in güncellemesini al, sonra oraya PR aç** — `alınacak bir şey yok; PR
+    karar bekliyor`. Upstream çekildi ve tam olarak iki dalı var:
+
+    | ref | baş | tarih |
+    | --- | --- | --- |
+    | `master` | `e335643` v0.5.5.30 | 2026-06-23 |
+    | `ghpages` | `fc04780` | 2026-06-26 |
+
+    `ghpages` dağıtım dalı ve **ağacı master'ınkiyle bayt bayt aynı** — sonraki
+    commit'ler hiçbir dosyayı değiştirmeyen birleştirmeler. `master`'ın başı bizim
+    çatallanma noktamız; yani `upstream/master..master` 67 commit,
+    `master..upstream/master` sıfır. Alınacak bir güncelleme yok.
+
+    PR ayrı ve gerçek bir soru: o 67 commit, Q-1'in karar verdiği tam ayrışma — her
+    dizgenin yerel dosyalara taşınması, ikinci bir dil, dört bölge, bir derleme ve 99
+    kontrol — ve bunun tamamını sunmak incelenebilir bir pull request değil. Sunulabilir
+    olan şey, bizim değil upstream'in hatası olan bir avuç düzeltme; her biri küçük ve
+    dilden bağımsız:
+
+    - `item_templates["Cooked potato"]`, `name: "Potato"` taşıyor; yani pişmiş patates
+      çiğ olanı gibi görünüyor.
+    - `gaze` eylemi, `success_chances: [0,0]` ve boş bir koşul listesinin ulaşılamaz
+      kıldığı bir başarı metni ve bir `conditional_loss` metni bildiriyor; başarı
+      metninin içeriği de `[TBD]`.
+    - `crafting_component_filling.js`, hiçbir tarifin üretmediği dört malzeme için 72
+      bileşen üretiyor; kendi başlığı da bu konuda uyarıyor.
+    - `Alchemical Wood` zinciri ve `Silver ingot` tarifi kullanım noktası olmadan
+      yorumda duruyor, gümüşü veren derin dalış da kilitli.
+
+    Bunlardan hangisinin gönderileceği ve hiçbir şeyin gönderilip gönderilmeyeceği
+    varsayılmak yerine soruluyor.
+
 
 ---
 ## Bekleyen kararlar

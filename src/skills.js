@@ -1158,7 +1158,7 @@ function format_skill_rewards(milestone){
         names: {0: "Strength of mind", 15: "Iron will", 30: "Heart of steel"}, 
         description: "desc skill Strength of mind",
         category: "Environmental",
-        flavour_text: "Blessed is the mind too small for doubt.", //40k ref
+        flavour_text: "skill flavour Strength of mind", //40k ref
         base_xp_cost: 400,
         max_level: 40,
         xp_scaling: 1.7,
@@ -1732,7 +1732,7 @@ function format_skill_rewards(milestone){
                                         return translationManager.getText(language, "skill effect Sleeping", {v1: Math.round(100*(1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level))/100});
                                     },
                                     base_xp_cost: 1000,
-                                    flavour_text: "One rat, two rats, three rats...",
+                                    flavour_text: "skill flavour Sleeping",
                                     visibility_treshold: 300,
                                     xp_scaling: 2,
                                     category: "Activity",
@@ -2824,7 +2824,7 @@ function format_skill_rewards(milestone){
     skills["Persistence"] = new Skill({
         names: {0: "Persistence"},
         description: "desc skill Persistence",
-        flavour_text: "Believe in me that believes in you!",
+        flavour_text: "skill flavour Persistence",
         base_xp_cost: 60,
         category: "Character",
         max_level: 30,
@@ -3181,7 +3181,7 @@ function format_skill_rewards(milestone){
     skills["Breathing"] = new Skill({
         names: {0: "Breathing"},
         description: "desc skill Breathing",
-        flavour_text: "You are now breathing manually",
+        flavour_text: "skill flavour Breathing",
         base_xp_cost: 400,
         visibility_treshold: 390,
         xp_scaling: 1.6,

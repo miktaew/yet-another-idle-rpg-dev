@@ -1873,6 +1873,36 @@ i {
     z-index: 1;
 }
 
+/*
+    Development speed control in the bottom panel. Display none until the dev console
+    reveals it, so a player's panel is unchanged - a speed multiplier makes every
+    activity and book trivial and should not be one stray click away.
+*/
+#game_speed_controls {
+	display: none;
+	align-items: center;
+	margin-left: 8px;
+}
+
+#game_speed_controls.game_speed_visible {
+	display: flex;
+}
+
+	.game_speed_button {
+		padding: 3px 7px;
+		margin: 1px;
+		min-width: 30px;
+		text-align: center;
+		outline: 1px solid white;
+		cursor: pointer;
+		font-size: 15px;
+	}
+
+	.game_speed_button:hover:not(.active_selection_button) {
+		background-color: var(--hovered_button_color);
+		outline: 1px solid gray;
+	}
+
 #bottom_panel_div {
 	display: flex;
 	position: fixed;

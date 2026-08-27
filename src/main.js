@@ -258,7 +258,8 @@ let save_counter = 0;
 const backup_period = 3600;
 let backup_counter = 0;
 
-const tickrate = config.tickrate;
+//let, not const: set_game_speed multiplies it. See the speed control below.
+let tickrate = config.tickrate;
 
 //accumulates deviations
 let time_variance_accumulator = 0;
@@ -3567,6 +3568,8 @@ function create_save() {
         save_data["language"] = language;
         save_data.saved_at = get_date();
         save_data.total_playtime = total_playtime;
+        //The message log, so a reload does not wipe what the player was just told.
+        save_data.message_log = get_message_log_history();
         save_data.total_deaths = total_deaths;
         save_data.total_crafting_attempts = total_crafting_attempts;
         save_data.total_crafting_successes = total_crafting_successes;
@@ -3923,6 +3926,9 @@ function load(save_data) {
         last_rewarded_export = save_data.last_rewarded_export || last_rewarded_export;
 
         total_playtime = save_data.total_playtime || 0;
+        //Older saves have no log; restore_message_log ignores anything that is not
+        //an array, so there is nothing to guard here.
+        restore_message_log(save_data.message_log);
         total_deaths = save_data.total_deaths || 0;
         total_crafting_attempts = save_data.total_crafting_attempts || 0;
         total_crafting_successes = save_data.total_crafting_successes || 0;
@@ -6029,7 +6035,162 @@ window.get_game_version = get_game_version;
 window.run = run;
 
 //Verify_Game_Objects();
+/**
+ * Development console, off until it is asked for.
+ *
+ * Typed once in the browser console:
+ *
+ *     enable_dev_console()
+ *
+ * After that a handful of functions exist as bare globals, so a change can be
+ * exercised without playing up to it:
+ *
+ *     add_active_effect("Coffee", 1800)
+ *     give({items: ["White iron ore"], money: 50000})
+ *     goto("The bay")
+ *
+ * Deliberately NOT on by default and deliberately NOT saved. A reload turns it off
+ * again. It can hand out every item in the game and walk to any room, which is
+ * exactly what makes it useful and exactly why it should not be one typo away from a
+ * player who opened devtools to look at something else. is_on_dev() is not the gate
+ * either: the dev release is still a release somebody plays.
+ *
+ * The functions are the game's own. Nothing here is a second implementation of a
+ * reward or an unlock - `give` is process_rewards, which is the same path a quest
+ * takes, so anything granted here behaves the way the content would have granted it.
+ */
+/*
+    The development speed multiplier.
+
+    tickrate is the divisor of every wall-clock delay in this file - the main loop,
+    the enemy timers, the character timer, the action timers - and it is also the
+    divisor of every per-tick accounting term, so raising it means more ticks per
+    second with each tick still worth exactly what it was. That makes it the only
+    place a speed control belongs: nothing else has to know about it.
+
+    Not saved. A reload is back to 1x, which is the right default for something that
+    makes every activity, book and journey trivial.
+*/
+let game_speed = 1;
+
+function set_game_speed(multiplier) {
+    const allowed = [1, 2, 5, 10];
+    if(!allowed.includes(multiplier)) {
+        console.error(`Speed must be one of ${allowed.join(", ")}.`);
+        return game_speed;
+    }
+    game_speed = multiplier;
+    tickrate = config.tickrate * game_speed;
+
+    //The buttons only exist once the dev console has revealed them.
+    const buttons = document.getElementsByClassName("game_speed_button");
+    for(let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.toggle("active_selection_button",
+            Number(buttons[i].dataset.game_speed) === game_speed);
+    }
+    return game_speed;
+}
+
+/**
+ * Reveals the speed buttons in the bottom panel.
+ *
+ * Called by enable_dev_console. They are in the markup from the start so the panel's
+ * layout is the same either way, and hidden with a class rather than built on demand.
+ */
+function show_game_speed_controls() {
+    document.getElementById("game_speed_controls")?.classList.add("game_speed_visible");
+    set_game_speed(game_speed);
+}
+
+function enable_dev_console() {
+    const list = (registry) => Object.keys(registry).sort();
+
+    //Captured before the globals are attached. Module scope would win over window
+    //anyway, so `add_active_effect` inside the wrapper is already the real function -
+    //but a reader should not have to know that to be sure the wrapper is not calling
+    //itself.
+    const real_add_active_effect = add_active_effect;
+
+    const helpers = {
+        //The one this was added for. Duration is in in-game minutes, like every
+        //duration in content: {effect: "Coffee", duration: 150} is what an item says.
+        add_active_effect: (effect_key, duration = 600) => {
+            if(!effect_templates[effect_key]) {
+                console.error(`No such effect as "${effect_key}". Try list_effects().`);
+                return;
+            }
+            real_add_active_effect(effect_key, duration);
+            return `${effect_key} for ${duration} minutes`;
+        },
+
+        //Everything the content can grant, through the path the content grants it by.
+        //The shape is a rewards object exactly as written in quests.js or dialogues.js.
+        give: (rewards) => {
+            process_rewards({rewards, source_type: "dev console", source_name: "dev console"});
+            return Object.keys(rewards);
+        },
+
+        add_money: (amount) => { add_money_to_character(amount); return character.money; },
+        add_xp: (amount) => { add_xp_to_character(amount); return character.xp.current_level; },
+        add_skill_xp: (skill, amount) => {
+            if(!skills[skill]) {
+                console.error(`No such skill as "${skill}". Try list_skills().`);
+                return;
+            }
+            add_xp_to_skill({skill: skills[skill], xp_to_add: amount});
+            return skills[skill].current_level;
+        },
+
+        //Unlocks the room first, because walking somewhere locked is the usual reason
+        //this is being typed at all.
+        goto: (location_name) => {
+            if(!locations[location_name]) {
+                console.error(`No such location as "${location_name}". Try list_locations().`);
+                return;
+            }
+            unlock_location({location: locations[location_name], skip_message: true});
+            change_location({location_id: location_name});
+            return location_name;
+        },
+
+        set_flag: (flag, value = true) => {
+            if(!(flag in global_flags)) {
+                console.error(`No such flag as "${flag}". Known: ${list(global_flags).join(", ")}`);
+                return;
+            }
+            global_flags[flag] = value;
+            return `${flag} = ${value}`;
+        },
+
+        list_effects: () => list(effect_templates),
+        list_items: () => list(item_templates),
+        list_locations: () => list(locations),
+        list_skills: () => list(skills),
+        list_quests: () => list(quests),
+        list_dialogues: () => list(dialogues),
+        list_flags: () => list(global_flags),
+
+        //Same control as the buttons, for when the console is where your hands are.
+        set_speed: (multiplier) => set_game_speed(multiplier),
+    };
+
+    Object.keys(helpers).forEach(name => { window[name] = helpers[name]; });
+    show_game_speed_controls();
+
+    console.log("dev console on. Not saved - a reload turns it off.");
+    console.log("game speed buttons are now in the bottom panel; set_speed(1|2|5|10) also works.");
+    console.log(Object.keys(helpers).join("(), ") + "()");
+    return Object.keys(helpers);
+}
+
 window.Verify_Game_Objects = Verify_Game_Objects;
+
+//The only thing the dev console exposes by itself. Everything else it hands out
+//appears when this is called.
+window.enable_dev_console = enable_dev_console;
+//Reachable from the markup's onclick, but the buttons stay hidden until the dev
+//console reveals them.
+window.set_game_speed = set_game_speed;
 
 //Stays English, and this comment used to say it was because no locale was loaded
 //yet. That is no longer the reason - translation.js imports the locales

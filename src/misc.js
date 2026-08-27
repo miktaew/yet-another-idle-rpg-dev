@@ -111,41 +111,6 @@ function round_item_price(price) {
     }
 }
 
-function format_reading_time(time) {
-    if(time >= 120) {
-        return `${Math.floor(time/60)} hours`;
-    } else if(time >= 60) {
-        return '1 hour';
-    } else {
-        return `${Math.round(time)} minutes`;
-    }
-}
-
-function format_working_time(time) {
-    let formatted = "";
-    const hours = Math.floor(time/60);
-    const minutes = time%60;
-
-    if(hours > 0) {
-        if(hours > 1) {
-            formatted += hours + " hours";
-        } else {
-            formatted += hours + " hour";
-        }
-    }
-    if(minutes > 0) {
-        if(hours > 0) {
-            formatted += " ";
-        }
-        if(minutes > 1) {
-            formatted += minutes + " minutes";
-        } else {
-            formatted += minutes + " minute";
-        }
-    }
-    return formatted;
-}
-
 function get_hit_chance(attack_points, evasion_points) {
     let result = attack_points/(attack_points+evasion_points);
 
@@ -351,7 +316,7 @@ function get_item_mapping(item_id) {
 }
 
 export {
-    expo, random_range, clamp, slerp, format_reading_time, format_working_time, 
+    expo, random_range, clamp, slerp, 
         get_hit_chance, round_item_price,
         compare_game_version, is_a_older_than_b,
         skill_consumable_tags, crafting_tags_to_skills,

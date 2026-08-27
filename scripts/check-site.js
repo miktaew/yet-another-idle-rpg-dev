@@ -1221,7 +1221,7 @@ async function check_no_unused_locale_rows() {
     const computed = [
         "name ", "desc item ", "desc enemy ", "desc location ", "desc skill ",
         "material ", "material name ", "component ", "armor piece ",
-        "ui slot ", "material type ", "weapon type ",
+        "ui slot ", "material type ", "weapon type ", "ui component slot ",
         "ui stat source ", "ui xp target ", "ui task type ", "ui task group ",
         "ui skill category ", "season ", "weekday ", "time of day ",
         "skill effect ", "skill milestone ", "book ", "effect ",

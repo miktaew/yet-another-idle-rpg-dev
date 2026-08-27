@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 46 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 47 -->
 
 # Changelog
 
@@ -20,6 +20,87 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### The reported gaps, a dev console, and the changelog stops being hand-wrapped
+
+Fourteen requests in one sitting, recorded in P-13 as they arrived. The translation
+reports are grouped by cause rather than by screenshot, because only one of them is
+"somebody forgot a row".
+
+**Values printed instead of names.** The component list under a crafted item used
+`item_templates[...].name`, the raw registry name, so a sword read
+`[Cheap iron long blade] + [Simple wooden short handle]`. The inventory's slot tag
+printed `equip_slot`, so an equipped item read `[weapon]` or `[torso]`. A book printed
+`target_item.name`, and all ten books already had a translated title that nothing was
+reading. Each is one site and each had its rows waiting.
+
+**English returned rather than written.** `format_money(0)` returned the literal
+`'nothing'`, and the two time formatters built `"2 hours"` and `"25 minutes"` out of
+English words. The DOM check added earlier this session could not see any of them: it
+looks at statements that write to the DOM, and these are return values that a caller
+prints later. Worth naming as a limitation of that check rather than a gap in it.
+
+Moving those formatters to read the locale turned up a real design problem. `misc.js`
+is a leaf utility module, and importing `translation.js` there pulls in `main.js`,
+which pulls in `display.js` - so a module that only did arithmetic ended up needing a
+`document`, and the harness that loads `misc.js` on its own broke immediately. They
+live in `display.js` now, next to `format_money`, which was their only caller anyway.
+
+**Never translated at all.** The eight category filters over the trader and storage
+panels had no `data-translation` attribute. The flavour line under four skills was a
+plain English string in `skills.js` - and those four are references, to Warhammer
+40,000, to counting sheep with this game's animal, to Gurren Lagann and to the
+breathing joke, so the Turkish carries the register rather than the words.
+
+**A phrasing that does not survive translation.** `Bitir: {v1}` reads as a label and a
+value. Turkish would want an accusative suffix that varies with the activity name -
+koşu becomes koşuyu, iş becomes işi - which cannot be built generically, so the name
+goes first and the verb follows.
+
+**The changelog is a list now.** Its entries were hand-wrapped for a wide window and
+`white-space: pre-wrap` then wrapped them again at the container width, so every
+bullet broke twice and came out ragged. A `<pre>` cannot fix that: a wrapped line
+restarts at column zero because it has no idea where the bullet began. So the 885
+entries in each file became `<li>` elements, one line each in the source, with the
+hanging indent drawn by `::before`.
+
+And they are sentences: 857 capitalised and 863 given a full stop in English, 800 and
+866 in Turkish. Turkish capitalisation is not ASCII - `i` maps to `İ`, not `I` - so
+those two are mapped explicitly rather than through `upper()`. Thirty-three entries
+end inside a `<b>` or `<span>`, and their full stop went inside the tag.
+
+**The message log survives a reload.** What is stored is the arguments `log_message`
+received rather than the finished divs, so a restored log is built by exactly the same
+code as a live one - the classification, the per-group caps and the pruning cannot
+drift from the live path. Capped at 300, because a save is a text file a player
+exports by hand. Lines still keep the language they were logged in; that is
+`log_message` taking composed text rather than an id and its params, which is
+unchanged and already recorded.
+
+**A development console, off unless asked for.** `enable_dev_console()` typed in the
+browser attaches helpers as bare globals: `add_active_effect("Coffee", 1800)`, which
+is what was asked for, plus `give()` - a rewards object through `process_rewards`, the
+same path a quest takes, so nothing granted this way behaves differently from content
+granting it - `goto()`, `add_money`, `add_xp`, `add_skill_xp`, `set_flag` and the
+`list_*` functions.
+
+It also reveals the speed buttons in the bottom panel: 1x, 2x, 5x, 10x. `tickrate` is
+the divisor of every wall-clock delay in `main.js` **and** of every per-tick
+accounting term (`total_playtime += 1/tickrate`, `save_period * tickrate`), which
+makes multiplying it the only change that speeds everything up consistently and leaves
+the bookkeeping correct: more ticks per second, each worth what it was. `const` became
+`let` and no timing code changed.
+
+Neither the console nor the speed is on by default and neither is saved. A reload is
+back to 1x. `is_on_dev()` is not the gate either - the dev release is still a release
+somebody plays, and a speed multiplier makes every activity, book and journey trivial.
+
+**And upstream has not moved.** Asked to take the fork's update, so `upstream` was
+added and fetched. It has two branches: `master` at `e335643` (v0.5.5.30, 23 June),
+which is our own fork point, and `ghpages` at `fc04780` (26 June), whose tree is
+byte-identical to master's - the later commits are merges that changed no file.
+`upstream/master..master` is 67 commits and `master..upstream/master` is zero. There
+was nothing to bring in, and saying so is the only honest outcome.
 
 ### Tier 4: white iron and black iron
 
