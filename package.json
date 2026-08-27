@@ -11,6 +11,7 @@
   "scripts": {
     "build": "node scripts/build-site.js",
     "check": "node tests/run.mjs",
+    "check:bundle": "node tests/bundle-loads.mjs",
     "check:save": "node tests/save.mjs",
     "test": "node tests/skills.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8080",

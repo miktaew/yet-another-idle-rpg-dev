@@ -73,6 +73,13 @@ jobs:
         # out - see tests/skills.mjs for why it has to load it that way.
         run: npm test
 
+      - name: Check the bundle actually loads
+        # The one step that evaluates the artefact instead of reading the source.
+        # v0.6.27 shipped a bundle that threw "ee is not a constructor" on load
+        # while the build, every check and every test passed - because all of them
+        # either read text or stub the import cycle away. This catches that.
+        run: npm run check:bundle
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 
