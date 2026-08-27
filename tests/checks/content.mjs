@@ -141,6 +141,50 @@ async function check_content_text_ids() {
  * destructures. A misspelled key, a key borrowed from another class, or one invented
  * on the spot is silent at runtime and loud here.
  */
+/**
+ * Every quest task's `items_from` names a real action that really requires items.
+ *
+ * A gathering task shows how many of each material the player has by reading the
+ * requirement off the action that consumes them, rather than repeating the numbers in
+ * the task. That keeps one source of truth and costs one pointer - and a pointer that
+ * does not resolve produces a console error in a browser nobody is watching, and a
+ * journal entry that quietly shows no progress at all.
+ */
+function check_quest_task_item_sources() {
+    const quests_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/quests.js"), "utf8"));
+    const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
+
+    let checked = 0;
+    const pattern = /items_from:\s*\{\s*location:\s*"([^"]+)"\s*,\s*action:\s*"([^"]+)"\s*\}/g;
+    for (const match of quests_source.matchAll(pattern)) {
+        const [, location, action] = match;
+        checked++;
+
+        //The action's declaration, then its own braces, so a `required` belonging to a
+        //neighbouring action cannot be mistaken for this one's.
+        const at = locations_source.indexOf(`action_id: "${action}"`);
+        if (at < 0) {
+            error(`a quest task reads its item counts from the action "${action}", which`
+                + ` does not exist.`);
+            continue;
+        }
+        const opens = locations_source.lastIndexOf("new GameAction({", at);
+        const body = braced_body(locations_source, locations_source.indexOf("{", opens + "new GameAction(".length));
+        if (!body || !body.includes("items_by_id")) {
+            error(`a quest task reads its item counts from the action "${action}", which`
+                + ` requires no items - so the counter it feeds would show nothing.`);
+            continue;
+        }
+
+        if (!locations_source.includes(`locations["${location}"]`)) {
+            error(`a quest task names the location "${location}" for its item counts,`
+                + ` which is not a location.`);
+        }
+    }
+
+    console.log(`[check] quest task item sources: ${checked} resolved`);
+}
+
 function check_content_object_keys() {
     //Where each class is declared, and which files construct it.
     const classes = [
@@ -547,6 +591,7 @@ function check_content_is_reachable() {
 
 export {
     check_action_branches,
+    check_quest_task_item_sources,
     check_content_object_keys,
     check_content_is_reachable,
     check_content_text_ids,

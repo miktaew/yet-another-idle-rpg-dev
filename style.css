@@ -943,6 +943,19 @@ input[type=checkbox], input[type=radio] {
 	in its slot. Green for better, red for worse, and the colours are the ones the log
 	already uses for a gain and a loss so the meaning carries over.
 */
+/*
+	The per-item counter under a gathering task. Green once that item is covered, so a
+	glance says which line still needs work.
+*/
+.task_item_count {
+	font-size: 13px;
+	color: var(--secondary_text_color, #b9b4a7);
+	padding-left: 18px;
+}
+
+.task_item_done {
+	color: #6ddf6d;
+}
 .comparison_heading {
 	font-style: italic;
 	color: #b9b4a7;

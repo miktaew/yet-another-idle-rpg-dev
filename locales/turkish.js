@@ -3396,6 +3396,7 @@ const descriptions = {
 
     //Quest task conditions: the group, the type and the target were all being
     //printed as the raw key.
+    "ui task item progress": "{v1}: {v2}/{v3}",
     "ui task type kill": "öldür",
     "ui task type kill_any": "öldür",
     "ui task type clear": "temizle",

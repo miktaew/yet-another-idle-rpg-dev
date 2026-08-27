@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.31</button>
+    <div class="content">
+        <ul class="entries">
+            <li>A gathering task in the journal now shows how far along it is. The village expansion's material task listed what to collect and never how much you had; each material is a line of its own now, green once it is covered.</li>
+            <li>The counts are not written into the task. The requirement already lives on the action that consumes the materials, so the task points at that action and the journal reads it - one place to change a number, and a build check that fails if the pointer stops resolving.</li>
+            <li>Upstream's AvailabilityComponent is adopted, starting with game actions. Taking the architecture and taking their save format are separate jobs: their compact three-bit form is a compaction our per-entity save does not need, so the component arrives with no save migration at all.</li>
+            <li>Actions delegate their availability to it while keeping every field name as an accessor, so nothing else had to move in the same change. One visible consequence: whether an action is shown now asks a single question instead of checking three fields by hand at each of three call sites.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.30</button>
     <div class="content">
         <ul class="entries">

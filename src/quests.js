@@ -36,6 +36,11 @@ class QuestTask {
         is_hidden = false, //keep it false most of the time, but can be used as a way of making quests with no visible requirement for progress
         is_finished = false,
         skip_message = false, //mostly for hidden tasks to be fully hidden instead of mentioning some vague progress
+        //{location, action}: the action whose required items this task is about. The
+        //journal reads the requirement off that action and shows how many the player has,
+        //so the counts live in one place instead of being written into the description
+        //and again into the task.
+        items_from,
     })
     {
         this.task_description = task_description;
@@ -44,6 +49,7 @@ class QuestTask {
         this.is_hidden = is_hidden;
         this.is_finished = is_finished;
         this.skip_message = skip_message;
+        this.items_from = items_from;
 
         Object.keys(this.task_condition).forEach(task_group => {
             Object.keys(this.task_condition[task_group]).forEach(task_type => {
@@ -390,7 +396,10 @@ const questManager = {
             new QuestTask({task_description: "quest Village expansion task 0"}), //finished by completing the dig
             new QuestTask({is_hidden: true, task_rewards: {reputation: {Village: 20}}, skip_message: true}), //finished by talking after finishing digging
             new QuestTask({is_hidden: true, skip_message: true}), //finished by asking for next work after digging
-            new QuestTask({task_description: "quest Village expansion task 3"}), //finished by constructing the bridge
+            //The materials are required by "bridge mat delivery"; the journal reads the
+            //count from there rather than from the sentence.
+            new QuestTask({task_description: "quest Village expansion task 3",
+                items_from: {location: "Village", action: "bridge mat delivery"}}), //finished by constructing the bridge
             new QuestTask({is_hidden: true, task_rewards: {reputation: {Village: 120}}, skip_message: true}), //finished by reporting afterwards
             new QuestTask({is_hidden: true, skip_message: true}), //finished by asking for further work
             new QuestTask({task_description: "quest Village expansion task 6", task_rewards: {reputation: {Village: 20}}}), //finished by reporting afterwards

@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.31</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Günlükteki toplama görevi artık ne kadar ilerlediğini gösteriyor. Köyün genişlemesindeki malzeme görevi neyi toplayacağını söylüyor ama ne kadarının elinde olduğunu hiç söylemiyordu; artık her malzeme kendi satırında ve tamamlandığında yeşile dönüyor.</li>
+            <li>Sayılar göreve yazılmıyor. Gereksinim zaten malzemeleri tüketen eylemin üzerinde duruyor; görev o eylemi işaret ediyor ve günlük oradan okuyor - bir sayıyı değiştirmek için tek bir yer, ve işaretçi çözülmez olursa düşen bir derleme kontrolü.</li>
+            <li>Upstream'in AvailabilityComponent'i alındı, oyun eylemlerinden başlayarak. Mimariyi almakla kayıt biçimini almak ayrı işler: onların üç bitlik derli toplu biçimi, bizim varlık başına kaydımızın ihtiyaç duymadığı bir sıkıştırma - yani bileşen hiçbir kayıt göçü olmadan geldi.</li>
+            <li>Eylemler uygunluklarını ona devrediyor ama bütün alan adları erişimci olarak kaldığı için aynı değişiklikte başka hiçbir şeyin taşınması gerekmedi. Görünür bir sonucu: bir eylemin gösterilip gösterilmeyeceği artık üç çağrı yerinde elle üç alan kontrol etmek yerine tek bir soru.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.30</button>
     <div class="content">
         <ul class="entries">

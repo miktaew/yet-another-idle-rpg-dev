@@ -5887,6 +5887,38 @@ function create_displayed_quest_task(quest_id, task_index) {
         : "";
 
     const task_conditions_div = document.createElement("div");
+    /*
+        A task that is about gathering shows how far along it is. The requirement is
+        read off the action that consumes the materials rather than copied into the
+        task, so there is one place to change a number.
+    */
+    if(task.items_from && !task.is_finished) {
+        const source = locations[task.items_from.location]?.actions?.[task.items_from.action];
+        const needed = source?.required?.items_by_id;
+        if(!needed) {
+            console.error(`Quest task points at the action "${task.items_from.action}" in`
+                + ` "${task.items_from.location}" for its item counts, but that action has none.`);
+        } else {
+            for(const item_id of Object.keys(needed)) {
+                const template = item_templates[item_id];
+                if(!template) {
+                    console.error(`Quest task counts "${item_id}", which is not an item.`);
+                    continue;
+                }
+                const have = character.inventory[template.getInventoryKey()]?.count ?? 0;
+                const want = needed[item_id].count;
+
+                const line = document.createElement("div");
+                line.classList.add("task_item_count");
+                if(have >= want) {
+                    line.classList.add("task_item_done");
+                }
+                line.innerText = translationManager.getText(language, "ui task item progress",
+                    {v1: template.getDisplayName(), v2: Math.min(have, want), v3: want});
+                task_conditions_div.appendChild(line);
+            }
+        }
+    }
 
     /*
     task_group (any/all): {

@@ -13,6 +13,7 @@ import { errors, warnings } from "./lib/report.mjs";
 import {
     check_action_branches,
     check_content_object_keys,
+    check_quest_task_item_sources,
     check_content_is_reachable,
     check_content_text_ids,
     check_global_flags,
@@ -89,6 +90,7 @@ await check_recipe_item_names();
 await check_modules_import_what_they_call();
 check_action_branches();
 check_content_object_keys();
+check_quest_task_item_sources();
 await check_required_items();
 await check_content_text_ids();
 await check_generated_items();
