@@ -3256,7 +3256,12 @@ function update_displayed_crafting_recipes() {
         Object.keys(recipes[recipe_category]).forEach(recipe_subcategory => {
             Object.keys(recipes[recipe_category][recipe_subcategory]).forEach(recipe => {
                 if(recipes[recipe_category][recipe_subcategory][recipe].is_unlocked){
-                    if(crafting_pages[recipe_category][recipe_subcategory].querySelector(`[data-recipe_id="${recipe}"]`)) {
+                    //get_recipe_page rather than crafting_pages directly: the map is filled
+                    //lazily by create_displayed_crafting_recipes, so if that has not run for
+                    //a category this used to throw "Cannot read properties of undefined
+                    //(reading 'items')" - which is how one failure earlier in startup turned
+                    //into two errors in the console.
+                    if(get_recipe_page(recipe_category, recipe_subcategory).querySelector(`[data-recipe_id="${recipe}"]`)) {
                         update_displayed_crafting_recipe({category: recipe_category, subcategory: recipe_subcategory, recipe_id: recipe});
                     } else {
                         add_crafting_recipe_to_display({category: recipe_category, subcategory: recipe_subcategory, recipe_id: recipe});

@@ -31,6 +31,9 @@ import { activities } from "./activities.js";
 import { end_activity_animation, 
          update_displayed_character_inventory, update_displayed_trader_inventory, sort_displayed_inventory, sort_displayed_skills,
          update_displayed_money, log_message,
+         //The message log's save and restore. Exported from display.js because that
+         //is where the log and its history live.
+         get_message_log_history, restore_message_log,
          update_displayed_enemies, update_displayed_health_of_enemies,
          update_displayed_combat_location, update_displayed_normal_location,
          log_loot, update_displayed_equipment,

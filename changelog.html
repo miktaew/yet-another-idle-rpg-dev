@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.18</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Fixed v0.6.17, which was broken: saving the message log added two functions to one file and forgot to import them into the other, so loading threw and everything after it in startup never ran. If you saw an empty village with enemy bars in it, that was this.</li>
+            <li>The build now refuses a module that calls something another module exports without importing it, which is exactly the mistake above.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.17</button>
     <div class="content">
         <ul class="entries">
