@@ -14,7 +14,7 @@ English: [README.md](README.md) — çelişki hâlinde İngilizce dosya geçerli
 
 Bu bir **devam fork'udur**. Oyunun özgün hâli
 [Miktaew](https://github.com/miktaew/yet-another-idle-rpg) tarafından yapıldı;
-upstream geliştirme durdu ve bu repo işi oradan devralıyor.
+yazarın işin asıl yürüdüğü bir `-dev` reposu da var.
 
 Amaç mevcut hikâyeyi değiştirmek değil devam ettirmek — özgün yazarın açık
 bıraktığı bağları karşılığa bağlamak, repoda var olup oyun içinde erişilemeyen

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 33 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 34 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -840,12 +840,30 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
 Bunların her biri neyin inşa edileceğini değiştirir. Tahmin edilmek yerine burada
 kayda geçiriliyorlar.
 
-### Q-1 — Bu fork içerik olarak ayrışacak mı? **KARAR: tam ayrışma**
+### Q-1 — Bu fork içerik olarak ayrışacak mı? **GÜNCELLENDİ: içerikte ayrış, kodda yakınlaş**
 
-Yeni bölgeler, item'lar ve dialogue kapsam dahilinde. Upstream senkronizasyonu
-artık bir hedef değil. Refactor'ların upstream ile merge-dostu kalması gerekmiyor
-ve Q-5 (`dist/` takipten çıkarma) o zamandan beri takipten çıkarma yönünde
-karara bağlandı.
+Yeni bölgeler, item'lar ve dialogue eskisi gibi kapsam dahilinde. Değişen şey
+ikinci yarısı: **upstream terk edilmiyor.** Ondan alınmaya değer olanı al, kodu
+iki yönde de merge edilebilir tut ve bu yolda hiçbir şeyi bozma. Biten sonuç
+upstream'e pull request olarak geri gidecek.
+
+İlk karar merge-dostluğunun artık bir hedef olmadığını söylüyordu. Yeniden hedef.
+Pratik sonuçları:
+
+- Bizim yapacağımız bir refactor, upstream'in bir düzeni olduğu yerde ona *doğru*
+  gitmeli, ondan uzağa değil. Upstream'in `19011a0` commit'i `src/models/`,
+  `src/components/` ve `src/data/` diye bölmüş; bizim `main.js` bölmemiz de üçüncü
+  bir düzen icat etmek yerine aynı şekle oturmalı.
+- Upstream'den gelen bir değişiklik, artık senkron olmadığımız için atlanmak
+  yerine değerine göre değerlendirilip alınmaya değerse alınır. Upstream'in
+  `19011a0` için kendi changelog'u, refactor'ün yanında altı ayrı iyileştirme
+  sayıyor ve bunlar refactor'den bağımsız olarak taşınabilir.
+- Merge edilebilirliğe ulaşmak için vazgeçilemeyecek tek şey çeviri katmanımız.
+  Kayıt anahtarları İngilizce kalıyor, çünkü kayıt verisi (Q-2) ve hiçbir taşıma,
+  artık bir metin kimliğinin durduğu yere oyuncunun göreceği sabit bir metni geri
+  koyamaz. İkisi çatıştığında çeviri katmanı kazanır, taşıma uyarlanır.
+- Q-5 (`dist/` takipten çıkarma) geçerliliğini koruyor. Hiçbir yanı ayrışmaya
+  bağlı değildi: deploy iş akışı her hâlükârda kendi paketini derliyor.
 
 ### Q-2 — Türkçe nereye kadar? **KARAR: her şey**
 

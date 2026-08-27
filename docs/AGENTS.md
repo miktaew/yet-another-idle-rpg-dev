@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 9 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 10 -->
 
 # Agent and contributor guide
 
@@ -18,12 +18,13 @@ A browser-based text idle RPG, "Yet Another Idle RPG", focused on progression
 through skill levelling. Vanilla ES modules bundled with esbuild. No framework,
 no runtime dependencies.
 
-It is a **continuation fork** of `miktaew/yet-another-idle-rpg` (upstream also
-had a `-dev` repository). Upstream development stopped. Fork base commit:
-`e5fba67`.
+It is a **continuation fork** of `miktaew/yet-another-idle-rpg`, whose real
+development happens in its `-dev` repository. Upstream is **still active**: fork
+base commit `e5fba67`, and `upstream-dev/master` has moved on since. Content
+diverges, code converges - see Q-1 in [PROPOSALS.md](PROPOSALS.md).
 
-`HEAD` is the released line: `v0.6.0` through `v0.6.5` all shipped, and the
-minor number moves with story content rather than with tooling.
+`HEAD` is the released line, and the minor number moves with story content
+rather than with tooling.
 
 Standing project direction, including what may and may not change, is in
 [PROPOSALS.md](PROPOSALS.md). Narrative canon is in [STORY.md](STORY.md).

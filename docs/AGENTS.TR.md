@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 9 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 10 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -21,11 +21,13 @@ Skill seviyelendirme üzerinden ilerlemeye odaklı, tarayıcı tabanlı metin id
 "Yet Another Idle RPG". esbuild ile paketlenen saf ES modülleri. Framework yok,
 çalışma zamanı bağımlılığı yok.
 
-`miktaew/yet-another-idle-rpg` projesinin bir **devam fork'udur** (upstream'in bir
-de `-dev` reposu vardı). Upstream geliştirme durdu. Fork temel commit'i: `e5fba67`.
+`miktaew/yet-another-idle-rpg` projesinin bir **devam fork'udur**; asıl geliştirme
+onun `-dev` reposunda yürüyor. Upstream **hâlâ etkin**: fork temel commit'i
+`e5fba67` ve `upstream-dev/master` o zamandan beri ilerledi. İçerik ayrışıyor, kod
+yakınlaşıyor - bkz. [PROPOSALS.TR.md](PROPOSALS.TR.md) içindeki Q-1.
 
-`HEAD` yayınlanan hattır: `v0.6.0`'dan `v0.6.5`'e kadar hepsi yayına çıktı ve
-minor numara araç zinciriyle değil hikâye içeriğiyle ilerliyor.
+`HEAD` yayınlanan hattır ve minor numara araç zinciriyle değil hikâye içeriğiyle
+ilerliyor.
 
 Neyin değişebileceği ve değişemeyeceği dahil kalıcı proje yönü
 [PROPOSALS.TR.md](PROPOSALS.TR.md) içinde. Anlatı kanonu [STORY.TR.md](STORY.TR.md)

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 33 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 34 -->
 
 # Proposals
 
@@ -830,11 +830,30 @@ not after. Each item is the request as it was given, and the state it is in.
 Each of these changes what gets built. They are recorded here rather than guessed
 at.
 
-### Q-1 — Does this fork diverge in content? **DECIDED: full divergence**
+### Q-1 — Does this fork diverge in content? **REVISED: diverge in content, converge in code**
 
-New areas, items and dialogue are in scope. Upstream syncing is not a goal any
-more. Refactors no longer need to stay merge-friendly with upstream, and Q-5
-(untracking `dist/`) has since been decided in favour of untracking.
+New areas, items and dialogue are in scope, as before. What has changed is the
+second half: **upstream is not abandoned.** Take what is worth taking from it,
+keep the code mergeable in both directions, and break nothing on the way. The
+finished result goes back to upstream as a pull request.
+
+The original answer said merge-friendliness was no longer a goal. It is again. The
+practical consequences:
+
+- A refactor of our own should move *toward* upstream's layout where upstream has
+  one, not away from it. Upstream's `19011a0` split into `src/models/`,
+  `src/components/` and `src/data/`; a split of our `main.js` should land in the
+  same shape rather than invent a third.
+- An upstream change is assessed on its merits and ported when it is worth it,
+  rather than skipped because we no longer sync. Upstream's own changelog for
+  `19011a0` lists six discrete improvements beside the restructure, and those are
+  portable independently of it.
+- Our translation layer is the one thing that cannot be given up to reach
+  mergeability. Registry keys stay English because they are save data (Q-2), and
+  no port may reintroduce a hard-coded player-visible string where a text id now
+  stands. Where the two collide, the translation layer wins and the port adapts.
+- Q-5 (untracking `dist/`) stands. Nothing about it depended on divergence: the
+  deploy workflow builds its own bundle either way.
 
 ### Q-2 — How far does Turkish go? **DECIDED: everything**
 

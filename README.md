@@ -12,8 +12,8 @@ Türkçe: [README.TR.md](README.TR.md)
 ## About this repository
 
 This is a **continuation fork**. The original game is by
-[Miktaew](https://github.com/miktaew/yet-another-idle-rpg); upstream development
-has stopped, and this repository picks it up from there.
+[Miktaew](https://github.com/miktaew/yet-another-idle-rpg), who also keeps a
+`-dev` repository where the work actually happens.
 
 The goal is to continue the existing story rather than replace it — paying off
 hooks the original author left open, bringing content that exists in the
@@ -21,8 +21,11 @@ repository but is unreachable in-game into reach, and adding a Turkish language
 option. Existing characters, lore, quests and item descriptions are treated as
 canon.
 
-Whether to sync any remaining upstream work is still undecided; see
-[docs/PROPOSALS.md](docs/PROPOSALS.md).
+Upstream is still active, and this fork stays mergeable with it: content
+diverges, code converges. Upstream changes worth having are ported, a refactor
+here moves toward upstream's layout rather than away from it, and the finished
+result is meant to go back as a pull request. The one thing not up for trade is
+the translation layer. See [docs/PROPOSALS.md](docs/PROPOSALS.md), Q-1.
 
 > **Still in development, and the balance is a work in progress.** Use the
 > in-game **export** feature regularly. There is always a risk that a
