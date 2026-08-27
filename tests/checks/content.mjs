@@ -2,7 +2,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { braced_body, strip_comments } from "../lib/source.mjs";
+import { braced_body, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { default_language, repo_root } from "../lib/context.mjs";
 import { error, errors } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
@@ -123,6 +123,119 @@ async function check_content_text_ids() {
  * Neither is a crash. Both are text that looks written and is not reachable, which is
  * the most expensive kind of dead content because it reads as finished.
  */
+/**
+ * A content object may not use a key its class does not accept.
+ *
+ * This is the check that was missing when two Textlines carried
+ * `unlocks: { textlines: [...] }`. Textline has no such parameter and process_rewards
+ * reads only `rewards`, so both blocks did nothing - and the harbour tallyman chain
+ * stopped at its first line, taking the salt house, the bay trader, two more lines and
+ * a four-task quest with it.
+ *
+ * Neither existing check could see it. check_reward_keys only opens blocks named
+ * rewards / first_reward / repeatable_reward; check_content_is_reachable scans for the
+ * {dialogue, lines} shape anywhere in the file, so the dead block counted as a real
+ * unlock and the content read as reachable.
+ *
+ * So this compares each literal against the parameter list its constructor actually
+ * destructures. A misspelled key, a key borrowed from another class, or one invented
+ * on the spot is silent at runtime and loud here.
+ */
+function check_content_object_keys() {
+    //Where each class is declared, and which files construct it.
+    const classes = [
+        {name: "Dialogue", declared_in: "src/dialogues.js", used_in: ["src/dialogues.js"]},
+        {name: "Textline", declared_in: "src/dialogues.js", used_in: ["src/dialogues.js"]},
+        {name: "Location", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
+        {name: "Combat_zone", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
+        {name: "LocationActivity", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
+        {name: "LocationType", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
+    ];
+
+    const read = (relative) =>
+        strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+    let checked = 0;
+    for (const {name, declared_in, used_in} of classes) {
+        const declaration = read(declared_in);
+
+        //The destructured parameter list of `class X { constructor({ ... })`.
+        const at = declaration.indexOf(`class ${name}`);
+        if (at < 0) {
+            error(`class ${name} is not declared in ${declared_in} any more`
+                + ` - this check is out of date.`);
+            continue;
+        }
+        const ctor = declaration.indexOf("constructor({", at);
+        if (ctor < 0) {
+            error(`${name} no longer takes a destructured object - this check is out of date.`);
+            continue;
+        }
+        /*
+            A destructured parameter list is `{name, text, is_unlocked = true, ...}` -
+            bare identifiers with optional defaults, not the `key: value` pairs
+            top_level_keys reads. So the names are taken at depth zero, each one being
+            whatever precedes an `=` or a `,`.
+        */
+        const parameter_body = braced_body(declaration,
+            declaration.indexOf("{", ctor + "constructor(".length));
+        const accepted = new Set();
+        let depth = 0;
+        let token = "";
+        for (const character of parameter_body) {
+            if ("{[(".includes(character)) depth++;
+            else if ("}])".includes(character)) depth--;
+
+            if (depth === 0 && (character === "," || character === "=")) {
+                const name = token.trim();
+                if (/^[A-Za-z_]\w*$/.test(name)) {
+                    accepted.add(name);
+                }
+                //Everything up to the next top-level comma is a default value.
+                token = character === "=" ? " " : "";
+                continue;
+            }
+            if (depth === 0 && token !== " ") {
+                token += character;
+            }
+        }
+        const tail = token.trim();
+        if (/^[A-Za-z_]\w*$/.test(tail)) {
+            accepted.add(tail);
+        }
+        if (accepted.size === 0) {
+            error(`${name}'s parameter list came out empty - this check is out of date.`);
+            continue;
+        }
+
+        for (const relative of used_in) {
+            const source = read(relative);
+            const pattern = new RegExp(`new\\s+${name}\\(\\{`, "g");
+            for (const match of source.matchAll(pattern)) {
+                const open = source.indexOf("{", match.index + match[0].length - 1);
+                const keys = top_level_keys(braced_body(source, open));
+                checked++;
+                for (const key of keys) {
+                    if (accepted.has(key)) {
+                        continue;
+                    }
+                    const line = source.slice(0, match.index).split("\n").length;
+                    error(`${relative}:${line} builds a ${name} with "${key}", which is not`
+                        + ` one of its constructor parameters. Nothing reads it, so whatever it`
+                        + ` was meant to do does not happen.`);
+                }
+            }
+        }
+    }
+
+    if (checked < 100) {
+        error(`only ${checked} content objects were inspected - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] content object keys: ${checked} objects against their constructors`);
+}
+
 function check_action_branches() {
     let checked = 0;
     for (const relative of ["src/locations.js", "src/dialogues.js"]) {
@@ -434,6 +547,7 @@ function check_content_is_reachable() {
 
 export {
     check_action_branches,
+    check_content_object_keys,
     check_content_is_reachable,
     check_content_text_ids,
     check_global_flags,

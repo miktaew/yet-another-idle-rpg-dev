@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.30</button>
+    <div class="content">
+        <ul class="entries">
+            <li>The harbour tallyman's conversation was dead after its first line, and a whole corner of the bay went with it. Two of his lines carried an `unlocks:` block; Textline has no such parameter and the reward handler reads only `rewards`, so both blocks did nothing. The consequence: the salt house could never be found, the bay trader could never be met, the last two things the tallyman says were unreachable, and the four-task quest "A Good Place to Leave" could never be finished, because its third task was behind that first dead block.</li>
+            <li>His trader reward would also have thrown the moment the line became reachable - it named the trader as a bare string where the reward handler expects an object.</li>
+            <li>Nine places had an unlock message written for them that nobody ever saw. Combat zones have always accepted an unlock line and ordinary places never did, so the message was dropped and the generic "unlocked X" shown instead - for the mysterious depths, the throne room, the mountain path, the flat area, the lake beach, the wet woods, the swampland fields, the plains and the bay. All nine already had their text written in both languages.</li>
+            <li>A new build check compares every content object against the constructor of its class, and fails on a key that class does not accept. That is what found all of the above: 345 objects checked. The two older checks could not see any of it, one because it only opens blocks named "rewards", the other because it counted the dead block as a real unlock.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.29</button>
     <div class="content">
         <ul class="entries">

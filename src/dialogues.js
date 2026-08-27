@@ -2561,7 +2561,10 @@ class DialogueAction extends GameAction {
                 name: "tallyman hello",
                 text: "tallyman hello answ",
                 is_unlocked: true,
-                unlocks: {
+                //`rewards`, not `unlocks`: Textline has no `unlocks` parameter and
+                //process_rewards only reads `rewards`, so this line unlocked nothing and
+                //the whole tallyman chain stopped here.
+                rewards: {
                     textlines: [{dialogue: "harbour tallyman", lines: ["tallyman what leaves"]}],
                 },
                 locks_lines: ["tallyman hello"],
@@ -2572,10 +2575,11 @@ class DialogueAction extends GameAction {
                 is_unlocked: false,
                 rewards: {
                     locations: [{location: "The salt house"}],
-                    traders: ["bay trader"],
+                    //{trader: ...}, not a bare string: process_rewards reads
+                    //rewards.traders[i].trader, so the string form resolved to
+                    //traders[undefined] and threw the moment this line became reachable.
+                    traders: [{trader: "bay trader"}],
                     quest_progress: [{quest_id: "A Good Place to Leave", task_index: 2}],
-                },
-                unlocks: {
                     textlines: [{dialogue: "harbour tallyman", lines: ["tallyman that night"]}],
                 },
                 locks_lines: ["tallyman what leaves"],

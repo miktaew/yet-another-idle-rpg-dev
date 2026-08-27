@@ -46,10 +46,16 @@ class Location {
                 is_under_roof = false,
                 entrance_rewards, //rewards gained on entering it, to be used for unlocks
                 display_conditions = [], //same shape as on a Textline; checked at render time, so a runtime flag works
+                //The message shown when this place is unlocked. Combat_zone has always
+                //taken it and Location never did, so nine places carried an authored
+                //unlock line that was dropped on the floor and replaced by the generic
+                //one. unlock_location already reads location.unlock_text.
+                unlock_text,
             }) {
         // always a safe zone
 
         this.name = name;
+        this.unlock_text = unlock_text;
         this.id = id;
         this.description = description;
         //A static description is a TEXT ID; a getDescription passed in resolves its

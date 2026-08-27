@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.30</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Liman kâtibinin konuşması ilk repliğinden sonra ölüydü ve körfezin bütün bir köşesi onunla birlikte gitti. İki repliği `unlocks:` bloğu taşıyordu; Textline'ın böyle bir parametresi yok ve ödül işleyicisi yalnızca `rewards` okuyor, yani iki blok da hiçbir şey yapmıyordu. Sonucu: tuz evi hiç bulunamıyordu, körfez tüccarıyla hiç tanışılamıyordu, kâtibin söylediği son iki şey erişilemezdi ve dört adımlı "Gidilecek İyi Bir Yer" görevi hiç bitemiyordu, çünkü üçüncü adımı o ilk ölü bloğun arkasındaydı.</li>
+            <li>Tüccar ödülü de replik erişilebilir olur olmaz hata verecekti - ödül işleyicisinin nesne beklediği yerde tüccarı düz metin olarak yazıyordu.</li>
+            <li>Dokuz yerin, kimsenin görmediği bir açılış mesajı vardı. Dövüş bölgeleri açılış metnini hep kabul etti, sıradan yerler hiç etmedi; yani mesaj düşürülüp yerine genel "X açıldı" gösteriliyordu - gizemli derinlikler, taht odası, dağ yolu, düzlük, göl kıyısı, ıslak orman, bataklık tarlaları, ova ve körfez için. Dokuzunun da metni iki dilde zaten yazılmıştı.</li>
+            <li>Yeni bir derleme kontrolü her içerik nesnesini sınıfının constructor'ıyla karşılaştırıyor ve o sınıfın kabul etmediği bir anahtarda düşüyor. Yukarıdakilerin hepsini bulan bu oldu: 345 nesne kontrol edildi. Eski iki kontrol hiçbirini göremiyordu; biri yalnızca "rewards" adlı blokları açtığı için, öteki ölü bloğu gerçek bir açılış saydığı için.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.29</button>
     <div class="content">
         <ul class="entries">
