@@ -1,6 +1,6 @@
 "use strict";
 
-import { GameAction } from "./actions.js";
+import DialogueAction from "./models/dialogue_action.js";
 import { language } from "./main.js";
 import { translationManager } from "./translation.js";
 
@@ -107,14 +107,6 @@ class Textline {
         //e.g. line finishing quest would also lock line like "remind me what I was supposed to do"
         //should be alright if it's limited only to lines in same Dialogue
         //just make sure there won't be Dialogues with ALL lines unavailable
-    }
-}
-
-class DialogueAction extends GameAction {
-    constructor(data) {
-        super(data);
-        this.giveup_text = data.giveup_text;
-        this.floating_click_effects = data.floating_click_effects;
     }
 }
 

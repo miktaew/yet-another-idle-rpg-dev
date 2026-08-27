@@ -463,7 +463,7 @@ function check_content_is_reachable() {
     const dialogues_src = read("src/dialogues.js");
     const locations_src = read("src/locations.js");
     const reward_sources = [dialogues_src, locations_src,
-        ...["src/quests.js", "src/enemies.js", "src/actions.js"].map(read)];
+        ...["src/quests.js", "src/enemies.js", "src/models/game_action.js"].map(read)];
 
     /** key -> is it declared locked */
     const declared = new Map();

@@ -5,7 +5,7 @@ import * as path from "node:path";
 import { base_key, load_locale } from "../lib/locale-files.mjs";
 import { default_language, locales_dir, repo_root, strict_locales, variant_prefix } from "../lib/context.mjs";
 import { error, warn } from "../lib/report.mjs";
-import { strip_comments } from "../lib/source.mjs";
+import { source_files, strip_comments } from "../lib/source.mjs";
 
 /**
  * Reports ids declared more than once in a locale FILE.
@@ -320,8 +320,8 @@ async function check_no_unused_locale_rows() {
     if (!reference) return;
 
     let source = "";
-    for (const file of fs.readdirSync(path.join(repo_root, "src")).filter(f => f.endsWith(".js"))) {
-        source += strip_comments(fs.readFileSync(path.join(repo_root, "src", file), "utf8"));
+    for (const relative of source_files(repo_root)) {
+        source += strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
     }
     source += fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
 

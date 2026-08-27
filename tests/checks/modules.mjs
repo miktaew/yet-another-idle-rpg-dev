@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { error } from "../lib/report.mjs";
 import { repo_root } from "../lib/context.mjs";
-import { strip_comments } from "../lib/source.mjs";
+import { source_files, strip_comments } from "../lib/source.mjs";
 
 /**
  * A module must import every name it calls from another module.
@@ -22,12 +22,12 @@ import { strip_comments } from "../lib/source.mjs";
  * this file cannot see - which is the one that ships.
  */
 async function check_modules_import_what_they_call() {
-    const dir = path.join(repo_root, "src");
-    const files = fs.readdirSync(dir).filter(file => file.endsWith(".js"));
+    //Relative to the repository root, and recursive: src/models/ has to be covered too.
+    const files = source_files(repo_root);
 
     const sources = new Map();
     for (const file of files) {
-        sources.set(file, strip_comments(fs.readFileSync(path.join(dir, file), "utf8")));
+        sources.set(file, strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8")));
     }
 
     //What each module exports, from its `export { ... }` list and inline `export function`.
@@ -80,7 +80,7 @@ async function check_modules_import_what_they_call() {
             if (!owner) continue;
 
             checked++;
-            error(`src/${file} calls ${name}(), which src/${owner[0]} exports and this file does`
+            error(`${file} calls ${name}(), which ${owner[0]} exports and this file does`
                 + " not import. esbuild treats an unresolved identifier as a runtime global, so this"
                 + " builds and then throws ReferenceError in the browser.");
         }

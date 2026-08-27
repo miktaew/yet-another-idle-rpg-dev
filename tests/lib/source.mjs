@@ -8,6 +8,9 @@
  * count, finding the body of an object literal, listing its top-level keys.
  */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
+
 /**
  * Blanks out comments, keeping every other byte at its original offset so line
  * numbers in an error still point at the right place.
@@ -144,9 +147,39 @@ function read_string_literals(source) {
     return found;
 }
 
+/**
+ * Every .js file under src/, at any depth, as paths relative to the repository root.
+ *
+ * Five checks used to call readdirSync on src/ directly, which is not recursive - so the
+ * moment src/models/ appeared, every one of them silently stopped covering the files
+ * inside it. A check that quietly shrinks its own scope is worse than no check, so the
+ * walk lives here and they all share it.
+ *
+ * Sorted, so a failure lists files in the same order every run.
+ */
+function source_files(repo_root, sub_directory = "src") {
+    const root = path.join(repo_root, sub_directory);
+    const found = [];
+
+    const walk = (directory, prefix) => {
+        for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+            const relative = `${prefix}/${entry.name}`;
+            if (entry.isDirectory()) {
+                walk(path.join(directory, entry.name), relative);
+            } else if (entry.name.endsWith(".js")) {
+                found.push(relative);
+            }
+        }
+    };
+
+    walk(root, sub_directory);
+    return found.sort();
+}
+
 export {
     braced_body,
     read_string_literals,
+    source_files,
     strip_comments,
     strip_interpolations,
     top_level_keys,

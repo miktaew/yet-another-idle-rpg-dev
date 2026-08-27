@@ -5,7 +5,7 @@ import * as path from "node:path";
 import { default_language, repo_root } from "../lib/context.mjs";
 import { error, warn } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
-import { read_string_literals, strip_comments, strip_interpolations } from "../lib/source.mjs";
+import { read_string_literals, source_files, strip_comments, strip_interpolations } from "../lib/source.mjs";
 
 /**
  * No English may be written straight into the DOM.
@@ -143,9 +143,7 @@ async function check_base64_is_utf8_safe() {
     ]);
 
     let checked = 0;
-    for (const relative of fs.readdirSync(path.join(repo_root, "src"))
-            .filter(name => name.endsWith(".js")).map(name => `src/${name}`)
-            .concat(["index.html"])) {
+    for (const relative of source_files(repo_root).concat(["index.html"])) {
         const source = fs.readFileSync(path.join(repo_root, relative), "utf8");
         const lines = strip_comments(source).split(/\r?\n/);
 

@@ -1,7 +1,7 @@
 "use strict";
-import { process_conditions } from "./conditions.js";
-import { language } from "./main.js";
-import { translationManager } from "./translation.js";
+import { process_conditions } from "../conditions.js";
+import { language } from "../main.js";
+import { translationManager } from "../translation.js";
 
 class GameAction{
     /**
