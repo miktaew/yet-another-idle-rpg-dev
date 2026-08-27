@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 10 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 11 -->
 
 > **Kanonik dosya: [AGENTS.md](AGENTS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,6 +59,14 @@ Silmek yerine artık neden geçersiz olduğunu yazdırıp sıfırdan farklı kod
 çıkıyor; böylece eski talimatlar ve kas hafızası, bozulmuş bir çalışma ağacına
 değil bir mesaja varıyor. `npm run build` kullanın.
 
+**`src/mods/glassmaking.js` upstream'in ve dokunulmadan kalıyor.** Hiçbir yerin
+import etmediği örnek bir mod ve metinleri İngilizce. Hata olmamasının üç sebebi:
+upstream'in kopyasıyla birebir aynı, yani ona dokunmak Q-1 uyarınca boşuna bir
+ayrışma olur; hiçbir şey onu yüklemiyor, yani o metinleri hiçbir oyuncu okuyamaz;
+ve kontroller onu taramıyor, çünkü `src/` üzerindeki `readdirSync` özyinelemeli
+değil. Erişilebilir olan canlı karşılığı - cam yapımı içeriği - `locations.js` ve
+`items.js` içinde ve çevrilmiş durumda.
+
 ## 3. Dev modu ile bundle modu
 
 Burada en çok karışıklık yaratan ayrım budur.
@@ -90,7 +98,9 @@ Göründüğü gibi olmayan iki dosya:
 - **`src/rewards.js` koddur değil, dokümandır.** Hiç import edilmez ve hiçbir şey
   export etmez. Textline'lar, lokasyonlar, action'lar ve quest'ler tarafından
   kullanılan `rewards` nesnesinin yetkili şemasıdır. Bir ödül yazmadan önce okuyun.
-- **`src/mods/glassmaking.js` ölüdür** ve oyuna bağlı değildir.
+- **`src/mods/glassmaking.js` ölüdür**, oyuna bağlı değildir ve upstream'in
+  kopyasıyla birebir aynı kalıyor - neden ne bir hata ne de çevrilecek bir şey
+  olduğu için yukarıdaki nota bakın.
 
 İçerik yazmadan önce okunmaya değer kapsamlı kod içi doküman blokları da var:
 `src/items.js` başındaki kalite-nadirlik tablosu ve silah tasarım felsefesi,

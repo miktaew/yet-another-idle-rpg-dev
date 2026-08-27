@@ -1,4 +1,4 @@
-<!-- doc-source: docs/AGENTS.md  doc-version: 10 -->
+<!-- doc-source: docs/AGENTS.md  doc-version: 11 -->
 
 # Agent and contributor guide
 
@@ -52,6 +52,14 @@ Rather than delete it, it now prints why it is superseded and exits non-zero, so
 older instructions and muscle memory land on a message instead of a damaged
 working tree. Use `npm run build`.
 
+**`src/mods/glassmaking.js` is upstream's, and stays untouched.** It is a sample
+mod that nothing imports, and its strings are English. Three reasons it is not a
+bug: it is byte-identical to upstream's copy, so touching it would be a
+divergence under Q-1 for no gain; nothing loads it, so no player can read those
+strings; and the checks do not scan it, because `readdirSync` on `src/` is not
+recursive. Its live counterpart - the glassmaking content that IS reachable -
+lives in `locations.js` and `items.js` and is translated.
+
 ## 3. Dev mode versus bundle mode
 
 This distinction causes more confusion than anything else here.
@@ -95,7 +103,9 @@ Two files are not what they look like:
 - **`src/rewards.js` is documentation, not code.** It is never imported and
   exports nothing. It is the authoritative schema for the `rewards` object used
   by textlines, locations, actions and quests. Read it before writing a reward.
-- **`src/mods/glassmaking.js` is dead** and is not wired into the game.
+- **`src/mods/glassmaking.js` is dead**, is not wired into the game, and stays
+  byte-identical to upstream's copy - see the note above for why it is neither a
+  bug nor something to translate.
 
 There are also substantial in-code documentation blocks worth reading before
 authoring content: the quality-to-rarity table and weapon design philosophy at

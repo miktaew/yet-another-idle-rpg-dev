@@ -106,6 +106,9 @@ class TranslationManager {
      * @returns {String|undefined}
      */
     getOptionalText = (language, text_id) => {
+        if(text_id === "") {
+            return undefined;
+        }
         return this.lookup(language, text_id);
     };
 
@@ -171,6 +174,19 @@ class TranslationManager {
     };
 
     getText = (language, text_id, params) => {
+        /*
+            An EMPTY id is content saying there is nothing here. Twenty entries set
+            `description: ""` or `action_text: ""` on purpose, and Dialogue and
+            CombatStance both default to it, so this is a convention rather than a gap -
+            and reporting it filled the console with `Text "" does not exist`.
+
+            undefined and null are not the same thing: nothing writes one deliberately,
+            so they still fall through to the error below.
+        */
+        if(text_id === "") {
+            return "";
+        }
+
         const text = this.lookup(language, text_id);
         if(text !== undefined) {
             return this.fill(text, params);
