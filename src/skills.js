@@ -406,6 +406,33 @@ function get_next_skill_milestone(skill_id){
 }
 
 /**
+ * What an xp multiplier applies to, as a display name.
+ *
+ * Three kinds of key end up here and each needed its own answer, which is why the
+ * branching had been copied four times in this file:
+ *
+ *   a skill id       - the skill knows its own name, and it changes with level
+ *   "category_<x>"   - a whole category, shown as "<category> skills"
+ *   "all" / "hero" / "all_skill" - the aggregates, which were printed raw
+ *
+ * The last kind is the one that showed as "all için x1.05 tecrübe".
+ */
+function xp_target_label(key) {
+    if(key === "all" || key === "hero" || key === "all_skill") {
+        return translationManager.getText(language, `ui xp target ${key}`);
+    }
+    if(key.includes("category_")) {
+        const category = key.replace("category_", "");
+        return translationManager.getText(language, "ui skill category heading",
+            {v1: translationManager.getText(language, `ui skill category ${category}`)});
+    }
+    if(!skills[key]) {
+        console.warn(`An xp multiplier names "${key}", which is not a skill, a category or an aggregate.`);
+        return key;
+    }
+    return skills[key].name();
+}
+/**
  * @param milestone milestone from object rewards - {stats: {stat1, stat2... }} 
  * @returns rewards formatted to a nice string
  */
@@ -441,32 +468,14 @@ function format_skill_rewards(milestone){
 
     if(milestone.xp_multipliers) {
         const xp_multipliers = Object.keys(milestone.xp_multipliers);
-        let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            if(xp_multipliers[0].includes("category_")) {
-                name = xp_multipliers[0].replace("category_", "") + " skills";
-            } else {
-                name = skills[xp_multipliers[0]].name();
-            }
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
+        const name = xp_target_label(xp_multipliers[0]);
         if(formatted) {
             formatted += ", " + translationManager.getText(language, "log milestone xp gain", {v1: milestone.xp_multipliers[xp_multipliers[0]], v2: name});
         } else {
             formatted = translationManager.getText(language, "log milestone xp gain", {v1: milestone.xp_multipliers[xp_multipliers[0]], v2: name});
         }
         for(let i = 1; i < xp_multipliers.length; i++) {
-            let name;
-            if(xp_multipliers[i] !== "all" && xp_multipliers[i] !== "hero" && xp_multipliers[i] !== "all_skill") {
-                if(xp_multipliers[i].includes("category_")) {
-                    name = xp_multipliers[i].replace("category_", "") + " skills";
-                } else {
-                    name = skills[xp_multipliers[i]].name();
-                }
-            } else {
-                name = xp_multipliers[i].replace("_"," ");
-            }
+            const name = xp_target_label(xp_multipliers[i]);
             formatted += ", " + translationManager.getText(language, "log milestone xp gain", {v1: milestone.xp_multipliers[xp_multipliers[i]], v2: name});
         }
     }

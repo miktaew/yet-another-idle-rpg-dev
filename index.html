@@ -1496,12 +1496,26 @@
             function fit_ui_to_window() {
                 const available_width = window.innerWidth - 12;
                 const available_height = window.innerHeight - 40 - 12;
-                //No cap at 1: whichever dimension binds decides, so the layout fills the
-                //window instead of sitting in the middle of it with black on two sides. A
-                //floor keeps it usable if the window is made very small.
+
+                /*
+                    Width, not both. The layout is 1660x850 - an aspect of 1.95 - and a
+                    maximised browser on a 16:9 screen leaves about 2.03, so fitting both
+                    dimensions makes HEIGHT the binding one, the scale lands near 1.04, and
+                    the black band on the right survives.
+
+                    Filling a wider window means either distorting the layout or letting it
+                    run past the bottom. It runs past the bottom: about forty pixels on these
+                    numbers, which scrolls, and the bottom panel is position: fixed so it
+                    stays where it is.
+
+                    The ceiling stops a tall narrow window producing an absurd zoom; the
+                    floor keeps a small one usable.
+                */
+                const width_scale = available_width / ui_layout_width;
+                const height_allowance = 1.25;
                 ui_scale = Math.max(0.4, Math.min(
-                    available_width / ui_layout_width,
-                    available_height / ui_layout_height));
+                    width_scale,
+                    (available_height * height_allowance) / ui_layout_height));
                 document.documentElement.style.setProperty("--ui_scale", ui_scale);
             }
 
