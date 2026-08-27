@@ -938,6 +938,23 @@ input[type=checkbox], input[type=radio] {
 	left: var(--item_tooltip_left);
 } 
 
+/*
+	The comparison block in an equippable's tooltip: how it differs from what is already
+	in its slot. Green for better, red for worse, and the colours are the ones the log
+	already uses for a gain and a loss so the meaning carries over.
+*/
+.comparison_heading {
+	font-style: italic;
+	color: #b9b4a7;
+}
+
+.comparison_better {
+	color: #6ddf6d;
+}
+
+.comparison_worse {
+	color: #e06666;
+}
 .outline_white {
 	text-shadow: var(--outline_white);
 }

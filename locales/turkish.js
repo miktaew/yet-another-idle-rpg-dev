@@ -2854,6 +2854,7 @@ const descriptions = {
     "ui label basic stats": "Temel statlar",
     "ui label block": "Savuşturma",
     "ui label component tier": "Parça kademesi",
+    "ui compared to equipped": "Üzerindekine göre:",
     "ui label defense": "Savunma",
     "ui label material type": "Malzeme türü",
     //Rarity names, from getItemRarity: a quality number becomes one of seven words.

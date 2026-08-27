@@ -41,6 +41,14 @@ const config = {
     //when changing either, make sure to remove text in hero creation panel that says they are purely cosmetic
     use_racial_bonuses: false, //check detailed bonuses in race.js; current values were not tested and might be terribly unbalanced
     use_height_bonuses: false, //based on relative height (short/average/tall), not on universal height
+
+    /*
+        The grids crafted quality is rounded to. A roll is clamped to the cap and then
+        rounded, so the cap has to be rounded the same way before it is shown -
+        otherwise the number printed is one the player cannot actually reach.
+    */
+    equipment_crafting_quality_precision: 2,
+    item_crafting_quality_precision: 4,
 };
 
 

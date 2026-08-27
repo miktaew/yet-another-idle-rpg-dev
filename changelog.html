@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.28</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Hovering an equippable now says how it compares with what is already in that slot. Attack, defence or block first, then every stat that differs, with a plain difference for flat values and a percentage for multipliers - the gap between x1.02 and x0.99 is not 0.03 of anything you can act on, it is three per cent more agility. Stats that are the same on both are left out, because they are not a decision. Nothing is shown when the slot is empty, or for a trader's stock listed as a quality range, which has no single item to compare.</li>
+            <li>The crafting quality cap the skill panel prints is now a number you can actually reach, taken from upstream. A roll is clamped to the cap and then rounded to the recipe's grid, so the raw cap was never rollable: at Crafting 1 the panel said 102% while 104% was craftable. It understated by 2% at 25 of 71 levels for components and by 1% at 21 of 71 for equipment, and the recipe tooltip already showed the true number - so the tooltip could promise a quality the skill panel called impossible. Verified across every level and quality pair: the ranges themselves do not change, only the number printed.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.27</button>
     <div class="content">
         <ul class="entries">

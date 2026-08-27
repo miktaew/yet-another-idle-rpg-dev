@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.28</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Kuşanılabilir bir eşyanın üzerine gelince artık o yuvada takılı olanla farkını söylüyor. Önce saldırı, savunma veya savuşturma, sonra farklı olan her stat: düz değerlerde sade fark, çarpanlarda yüzde - x1.02 ile x0.99 arasındaki fark, üzerine iş yapabileceğin 0.03 değil, yüzde üç daha fazla çeviklik. İkisinde de aynı olan statlar yazılmıyor, çünkü onlar bir karar değil. Yuva boşsa ya da tüccar stoğu kalite aralığı olarak listeleniyorsa gösterilmiyor; kıyaslanacak tek bir eşya yok.</li>
+            <li>Beceri panelinin yazdığı zanaat kalite tavanı artık gerçekten ulaşabileceğin bir sayı - upstream'den alındı. Atış önce tavana kırpılıp sonra tarifin ızgarasına yuvarlanıyor, yani ham tavan hiç atılamıyordu: Zanaat 1'de panel %102 diyordu ama %104 üretilebiliyordu. Bileşenlerde 71 seviyenin 25'inde %2, ekipmanda 71'in 21'inde %1 eksik söylüyordu - ve tarif tooltip'i zaten doğru sayıyı gösteriyordu, yani tooltip, beceri panelinin imkânsız dediği bir kaliteyi vaat edebiliyordu. Her seviye ve kalite çifti üzerinde doğrulandı: aralıkların kendisi değişmiyor, yalnızca yazılan sayı.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.27</button>
     <div class="content">
         <ul class="entries">

@@ -4,6 +4,7 @@ import { character, get_total_skill_level } from "./character.js";
 import { Armor, ArmorComponent, Cape, Shield, ShieldComponent, Weapon, WeaponComponent, Amulet, item_templates } from "./items.js";
 import { skills } from "./skills.js";
 import { clamp, random_range, slerp } from "./misc.js";
+import { config } from "./config.js";
 import { game_options } from "./main.js";
 
 const crafting_recipes = {items: {}, components: {}, equipment: {}};
@@ -25,15 +26,23 @@ const woodworking_recipes = {items: {}, components: {}};
     overal max quality achievable scales with related skills
 */
 
-function get_crafting_quality_caps(skill_name) {
-    return {
-        components: Math.min(Math.round(100+2*get_total_skill_level(skill_name)),200),
-        equipment: Math.min(Math.round(100+2.8*get_total_skill_level(skill_name)),250),
-    }
-}
-
 function round_quality(quality, precision) {
     return Math.round(quality/precision)*precision;
+}
+
+/*
+    The caps as a player can actually reach them. get_quality_range clamps the roll to
+    the cap and then rounds it to the recipe's grid, so an unrounded cap is a number that
+    is never rolled: at Crafting 1 the raw components cap is 102, and the reachable
+    ceiling is 104.
+*/
+function get_crafting_quality_caps(skill_name) {
+    return {
+        components: round_quality(Math.min(Math.round(100+2*get_total_skill_level(skill_name)),200),
+            config.item_crafting_quality_precision),
+        equipment: round_quality(Math.min(Math.round(100+2.8*get_total_skill_level(skill_name)),250),
+            config.equipment_crafting_quality_precision),
+    }
 }
 
 class Recipe {
@@ -58,7 +67,7 @@ class Recipe {
         this.getResult = getResult || function(){return this.result};
         this.recipe_level = recipe_level;
         this.recipe_skill = recipe_skill;
-        this.quality_precision = 4;
+        this.quality_precision = config.item_crafting_quality_precision;
     }
 
     get_success_chance(station_tier=1) {
@@ -222,7 +231,7 @@ class EquipmentRecipe extends Recipe {
         super({name, id, is_unlocked, recipe_type: "equipment", result, getResult: null, recipe_level: [1,1], recipe_skill, success_rate: [1,1]})
         this.components = components;
         this.item_type = item_type;
-        this.quality_precision = 2;
+        this.quality_precision = config.equipment_crafting_quality_precision;
         this.getResult = function (components, station_tier = 1) {
             const component_stats = get_component_stats(components);
             let quality = this.roll_quality(component_stats.weighted_quality, station_tier - component_stats.max_tier);

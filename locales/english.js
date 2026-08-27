@@ -2810,6 +2810,7 @@ const descriptions = {
     "ui label basic stats": "Basic stats",
     "ui label block": "Block",
     "ui label component tier": "Component tier",
+    "ui compared to equipped": "Compared to equipped:",
     "ui label defense": "Defense",
     "ui label material type": "Material type",
     //Rarity names, from getItemRarity: a quality number becomes one of seven words.

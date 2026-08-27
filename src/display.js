@@ -500,6 +500,80 @@ function round(number) {
  * @param {Boolean} params.options.skip_quality
  * @param {Array} params.options.quality array with 1 or 2 values (1 - show only it, instead of item's; 2 - show start comparison between the two)
  */
+/**
+ * How an equippable compares with whatever is already in its slot.
+ *
+ * Shown in the shop and in the inventory alike, because that is where the question gets
+ * asked. Nothing is shown when the slot is empty - anything beats nothing, and a list in
+ * which every line is a gain is noise - nor when the hovered item IS the equipped one.
+ *
+ * Flat values are a plain difference. Multipliers are a percentage: the gap between
+ * x1.02 and x0.99 is not 0.03 of anything a player can act on, it is three per cent more
+ * agility, which is what the line says instead.
+ *
+ * Only differences are listed. A stat that is the same on both is not a decision.
+ */
+function equipment_comparison(item, quality) {
+    if(!item?.equip_slot || !character.equipment) {
+        return "";
+    }
+    const worn = character.equipment[item.equip_slot];
+    if(!worn || worn === item) {
+        return "";
+    }
+
+    const lines = [];
+    const round2 = (value) => Math.round(value * 100) / 100;
+
+    const flat_line = (label, mine, theirs) => {
+        const delta = round2((mine || 0) - (theirs || 0));
+        if(!delta) {
+            return;
+        }
+        const better = delta > 0 ? "comparison_better" : "comparison_worse";
+        lines.push(`<br><span class="${better}">${label}: ${delta > 0 ? "+" : ""}${delta}</span>`);
+    };
+
+    const multiplier_line = (label, mine, theirs) => {
+        const percent = Math.round(((mine || 1) / (theirs || 1) - 1) * 1000) / 10;
+        if(!percent) {
+            return;
+        }
+        const better = percent > 0 ? "comparison_better" : "comparison_worse";
+        lines.push(`<br><span class="${better}">${label}: ${percent > 0 ? "+" : ""}${percent}%</span>`);
+    };
+
+    //The headline number for the slot, whichever one this kind of item has.
+    if(item.getAttack && worn.getAttack) {
+        flat_line(translationManager.getText(language, "ui label attack"),
+            item.getAttack(quality), worn.getAttack());
+    } else if(item.getDefense && worn.getDefense) {
+        flat_line(translationManager.getText(language, "ui label defense"),
+            item.getDefense(quality), worn.getDefense());
+    } else if(item.getShieldStrength && worn.getShieldStrength) {
+        flat_line(translationManager.getText(language, "ui label block"),
+            item.getShieldStrength(quality), worn.getShieldStrength());
+    }
+
+    const mine = item.getStats(quality);
+    const theirs = worn.getStats();
+    for(const stat_key of new Set([...Object.keys(mine), ...Object.keys(theirs)])) {
+        const label = stat_label(stat_key);
+        if(mine[stat_key]?.flat != null || theirs[stat_key]?.flat != null) {
+            flat_line(label, mine[stat_key]?.flat, theirs[stat_key]?.flat);
+        }
+        if(mine[stat_key]?.multiplier != null || theirs[stat_key]?.multiplier != null) {
+            multiplier_line(label, mine[stat_key]?.multiplier, theirs[stat_key]?.multiplier);
+        }
+    }
+
+    if(lines.length === 0) {
+        return "";
+    }
+    const heading = translationManager.getText(language, "ui compared to equipped");
+    return `<br><br><span class="comparison_heading">${heading}</span>` + lines.join("");
+}
+
 function create_item_tooltip_content({item, options={}, is_trade = false}) {
     let item_tooltip = "";
 
@@ -655,6 +729,15 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
                 item_tooltip += `<br>${translationManager.getText(language, "ui bonus skill level", {v1: skills[skill_key].name(), v2: equip_bonus_skill_levels[skill_key]})}`;
             }
         });
+
+        /*
+            A quality RANGE - a trader's stock shown as "92% - 116%" - has no single item
+            to compare against, so the comparison is skipped there rather than silently
+            picking one end of the range.
+        */
+        if(!(show_quality && options?.quality?.length == 2)) {
+            item_tooltip += equipment_comparison(item, options?.quality?.[0]);
+        }
     }
 
     if (item.component_stats) {
