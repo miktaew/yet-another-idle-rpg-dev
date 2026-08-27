@@ -115,6 +115,60 @@ function check_language_switch_repaints() {
  * build-site.js stamps it - the repository copies deliberately hold a readable
  * literal instead.
  */
+/**
+ * The help page's map names every location, in both languages.
+ *
+ * Which region a place belongs to is a narrative fact - the order the story walks
+ * them - so the grouping is authored by hand. Which places EXIST is not: they are in
+ * src/locations.js, and a new one that no region claims would simply be absent from
+ * the map with nothing to say so.
+ *
+ * The map marks each place with data-location="<registry key>", which is also what
+ * lets it read the save, so the keys are checkable directly.
+ */
+function check_help_map_covers_the_world() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
+    const declared = new Set();
+    for (const match of source.matchAll(/locations\["([^"]+)"\]\s*=\s*new\s+\w+\(\{/g)) {
+        declared.add(match[1]);
+    }
+
+    if (declared.size === 0) {
+        error("no locations found in src/locations.js - this check is out of date.");
+        return;
+    }
+
+    let checked = 0;
+    for (const page of ["help.html", "help.tr.html"]) {
+        const full = path.join(repo_root, page);
+        if (!fs.existsSync(full)) {
+            error(`${page} is missing.`);
+            continue;
+        }
+        const markup = fs.readFileSync(full, "utf8");
+        const mapped = new Set();
+        for (const match of markup.matchAll(/data-location="([^"]+)"/g)) {
+            mapped.add(match[1]);
+        }
+
+        for (const key of declared) {
+            if (!mapped.has(key)) {
+                error(`${page}: the map does not name the location "${key}". Add it to a`
+                    + ` region, or the players who read the map will not know it exists.`);
+            }
+        }
+        for (const key of mapped) {
+            if (!declared.has(key)) {
+                error(`${page}: the map names "${key}", which is not a location any more.`);
+            }
+        }
+        checked += mapped.size;
+    }
+
+    console.log(`[check] help map covers the world: ${declared.size} locations,`
+        + ` ${checked} entries across both pages`);
+}
+
 function check_changelogs_cover_version() {
     for (const file of ["changelog.html", "changelog.tr.html"]) {
         const html = fs.readFileSync(path.join(repo_root, file), "utf8");
@@ -141,6 +195,7 @@ function check_changelogs_cover_version() {
 
 export {
     check_changelogs_cover_version,
+    check_help_map_covers_the_world,
     check_language_switch_repaints,
     check_site,
 };

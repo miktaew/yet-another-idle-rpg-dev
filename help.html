@@ -1,73 +1,530 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .collapsible {
-            background-color: #eee;
-            color: #444;
-            cursor: pointer;
-            padding: 18px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-weight: bold;
-            font-size: 16px;
-            border-top: 1px solid gray;
-        }
-        .collapsible:hover, .collapsible.active {
-            background-color: #ccc;
-        }
-        .content {
-            padding: 0 18px;
-            display: none;
-            overflow: hidden;
-            background-color: #f1f1f1;
-        }
+    <title>Yet Another Idle RPG - Help</title>
+<style>
+            /* Both changelogs share this sheet. Keep the two files' <style> blocks
+               identical: the only differences between them are the entry text and
+               the interface strings. */
+            :root {
+                color-scheme: light dark;
 
-        #content_blocks {
-            overflow-y: scroll;
-            border: 4px solid black;
-        }
+                --bg: #f4f2ee;
+                --panel: #fffefb;
+                --panel_alt: #ebe7df;
+                --ink: #23201b;
+                --ink_soft: #6d665b;
+                --line: #d8d2c6;
+                --accent: #8a5622;
+                --accent_ink: #ffffff;
+                --shadow: 0 1px 2px rgba(35, 32, 27, 0.06), 0 4px 16px rgba(35, 32, 27, 0.05);
+            }
 
-        #header {
-            background-color: #eee;
-            color: #444;
-            font-size: 20px;
-            padding: 18px;
-            width: fit-content;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-weight: bold;
-            margin-bottom: 20px;
-            font-family: sans-serif;
-        }
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #15141a;
+                    --panel: #1d1c23;
+                    --panel_alt: #26242e;
+                    --ink: #e9e6e0;
+                    --ink_soft: #a29b91;
+                    --line: #322f3b;
+                    --accent: #dca35c;
+                    --accent_ink: #1a1611;
+                    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.35);
+                }
+            }
 
-        .separated { 
-            border-top: 4px solid gray;
-        }
-    </style>
+            * { box-sizing: border-box; }
+
+            body {
+                margin: 0;
+                padding: 0 20px 80px;
+                background: var(--bg);
+                color: var(--ink);
+                font-family: "Segoe UI", system-ui, -apple-system, Arial, Helvetica, sans-serif;
+                font-size: 16px;
+                line-height: 1.55;
+                -webkit-text-size-adjust: 100%;
+            }
+
+            .page_header,
+            .versions {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .page_header {
+                padding: 44px 0 28px;
+            }
+
+            .page_header h1 {
+                margin: 0;
+                font-size: 30px;
+                line-height: 1.2;
+                letter-spacing: -0.01em;
+            }
+
+            .subtitle {
+                margin: 8px 0 0;
+                color: var(--ink_soft);
+            }
+
+            .header_row {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .version_badge {
+                display: inline-flex;
+                align-items: baseline;
+                gap: 6px;
+                padding: 5px 12px;
+                border-radius: 999px;
+                background: var(--accent);
+                color: var(--accent_ink);
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+            }
+
+            .text_button {
+                padding: 5px 12px;
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                background: var(--panel);
+                color: var(--ink_soft);
+                font: inherit;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .text_button:hover {
+                color: var(--ink);
+                border-color: var(--ink_soft);
+            }
+
+            /* One card per version. The button is the header, the .content div is
+               the panel it discloses; they are siblings, which is what the script
+               relies on. */
+            .collapsible {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                width: 100%;
+                margin-top: 10px;
+                padding: 15px 18px;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                background: var(--panel);
+                box-shadow: var(--shadow);
+                color: var(--ink);
+                font: inherit;
+                font-weight: 600;
+                text-align: left;
+                cursor: pointer;
+            }
+
+            .collapsible:hover {
+                border-color: var(--accent);
+            }
+
+            .collapsible:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
+            }
+
+            /* The chevron is drawn rather than lettered, so it needs no icon font
+               and cannot arrive as a missing glyph. */
+            .collapsible::before {
+                content: "";
+                flex: none;
+                width: 8px;
+                height: 8px;
+                margin: 6px 2px 0 2px;
+                border-right: 2px solid var(--accent);
+                border-bottom: 2px solid var(--accent);
+                transform: rotate(-45deg);
+                transition: transform 0.15s ease;
+            }
+
+            .collapsible.active::before {
+                transform: rotate(45deg);
+            }
+
+            .collapsible.active {
+                border-color: var(--accent);
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                margin-bottom: 0;
+            }
+
+            .content {
+                display: none;
+                padding: 4px 18px 18px;
+                border: 1px solid var(--accent);
+                border-top: none;
+                border-radius: 0 0 12px 12px;
+                background: var(--panel_alt);
+            }
+
+            .content.open {
+                display: block;
+            }
+
+            /* A real list, not a <pre>.
+               The entries used to be hand-wrapped for a wide window, and pre-wrap then
+               wrapped them AGAIN at the container width - so every bullet broke twice
+               and came out ragged. Wrapping is the browser's job: one entry is one line
+               in the source and the list item indents its own continuation, which a
+               <pre> cannot do because it has no idea where the bullet began. */
+            .content .entries {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                font-family: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+                font-size: 13.5px;
+                line-height: 1.65;
+            }
+
+            .content .entries li {
+                /* The dash is drawn by ::before so the hanging indent lines the wrapped
+                   text up under the first word rather than under the dash. */
+                padding-left: 1.6em;
+                text-indent: -1.6em;
+                margin-bottom: 0.35em;
+                overflow-wrap: break-word;
+            }
+
+            .content .entries li::before {
+                content: "- ";
+                color: var(--accent);
+            }
+
+            .content .entries li:last-child {
+                margin-bottom: 0;
+            }
+
+            /* The older entries repeat their version number inside the card, and it is
+               not always the string on the button above it (v0.2 against v0.2.0), so it
+               is kept rather than dropped. */
+            .content .version_note {
+                margin: 0 0 0.6em;
+                font-family: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+                font-size: 12.5px;
+                opacity: 0.55;
+            }
+
+            .content a {
+                color: var(--accent);
+            }
+
+            /* Blacked-out spoiler text. Hover reveals it on a mouse; the script adds
+               click, because hover does not exist on a touchscreen. */
+            .spoiler {
+                border-radius: 3px;
+                background-color: currentColor;
+                cursor: pointer;
+                transition: color 0.1s ease;
+            }
+
+            .spoiler:hover,
+            .spoiler.revealed {
+                background-color: transparent;
+            }
+
+            @media (max-width: 640px) {
+                body { padding: 0 12px 60px; }
+                .page_header { padding: 28px 0 20px; }
+                .page_header h1 { font-size: 24px; }
+                .collapsible { padding: 13px 14px; }
+                .content { padding: 4px 14px 14px; }
+            }
+
+            /* ---- the world map ---------------------------------------------- */
+
+            .map_intro {
+                margin: 0 0 6px;
+                color: var(--ink_soft);
+            }
+
+            .map_legend {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px 14px;
+                margin: 14px 0 22px;
+                font-size: 13px;
+                color: var(--ink_soft);
+            }
+
+            .map_legend span {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .legend_swatch {
+                width: 11px;
+                height: 11px;
+                border-radius: 3px;
+                border: 1px solid var(--line);
+            }
+
+            /* The regions are a single column: the order IS the information. */
+            .region {
+                position: relative;
+                padding: 0 0 26px 30px;
+                border-left: 2px solid var(--line);
+            }
+
+            .region:last-child {
+                border-left-color: transparent;
+            }
+
+            .region::before {
+                content: attr(data-step);
+                position: absolute;
+                left: -14px;
+                top: 0;
+                width: 26px;
+                height: 26px;
+                border-radius: 999px;
+                background: var(--accent);
+                color: var(--accent_ink);
+                font-size: 13px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .region h3 {
+                margin: 2px 0 4px;
+                font-size: 18px;
+            }
+
+            .region p {
+                margin: 0 0 12px;
+                color: var(--ink_soft);
+                font-size: 14px;
+            }
+
+            .places {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .place {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 10px;
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                background: var(--panel);
+                font-size: 13px;
+            }
+
+            /* A place the save says has been unlocked. */
+            .place.reached {
+                border-color: var(--accent);
+                color: var(--ink);
+            }
+
+            /* Not in the save, or no save at all. */
+            .place.unreached {
+                color: var(--ink_soft);
+                opacity: 0.75;
+            }
+
+            .place .kind {
+                width: 8px;
+                height: 8px;
+                border-radius: 2px;
+                background: var(--ink_soft);
+                flex: none;
+            }
+
+            .place.combat .kind { background: #c1543f; }
+            .place.challenge .kind { background: #b8892b; }
+
+            .place .clears {
+                color: var(--ink_soft);
+                font-variant-numeric: tabular-nums;
+            }
+
+            .place.frontier {
+                border-style: dashed;
+                border-color: var(--accent);
+            }
+
+            /* Three of the question buttons carry this from the old sheet: it marks
+               where the how-it-works questions end and the about-the-project ones
+               begin. Kept, quietly. */
+            .collapsible.separated {
+                margin-top: 26px;
+            }
+
+            .map_note {
+                margin: 4px 0 26px;
+                padding: 12px 16px;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                background: var(--panel_alt);
+                color: var(--ink_soft);
+                font-size: 14px;
+            }
+        </style>
 </head>
-<body onload = "resize_blocks()">
-    
+<body>
+    <header class="page_header">
+        <h1>Help</h1>
+        <p class="subtitle">How the game works, and where in the world you are. Pick a question to unfold it.</p>
+        <div class="header_row">
+            <span class="version_badge">Remember to export your save.</span>
+            <button type="button" id="toggle_all" class="text_button">Expand all</button>
+        </div>
+        <p class="subtitle">Feedback or a suggestion? The game has a corner on <a href="https://discord.gg/G4jCtEch7A">Arcanum's Discord server</a>.</p>
+    </header>
 
-<h2>Remember to export!</h2>
-<br>
-<h4>Got a feedback or suggestion? Game has a corner on <a href="https://discord.gg/G4jCtEch7A">Arcanum's discord server</a> (near the bottom, right below Proto23's channel)</h4>
-<br>
+    <main class="versions">
+        <h2>The world</h2>
+        <p class="map_intro">Every region, in the order the story walks them. If you have played in this browser, the places you have reached are marked.</p>
+        <p class="map_intro" id="map_progress"></p>
+        <div class="map_legend">
+            <span><i class="legend_swatch" style="background: var(--ink_soft)"></i>place</span>
+            <span><i class="legend_swatch" style="background: #c1543f"></i>combat zone</span>
+            <span><i class="legend_swatch" style="background: #b8892b"></i>challenge</span>
+            <span><i class="legend_swatch" style="border-style: dashed; border-color: var(--accent); background: transparent"></i>the frontier of what is written</span>
+        </div>
+        <p class="map_note" id="map_note" hidden>No save found in this browser, so nothing is marked. Play a little and come back - the map reads your save locally and nothing is sent anywhere.</p>
 
-<div id="header">Click on blocks to unfold their content</div>
+            <section class="region" data-step="1">
+                <h3>The village</h3>
+                <p>Where it starts. A village at the foot of the mountains, its fields full of rats.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Village"><i class="kind"></i><b class="place_name">Village</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Shack"><i class="kind"></i><b class="place_name">Shack</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Eastern mill"><i class="kind"></i><b class="place_name">Eastern mill</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Infested field"><i class="kind"></i><b class="place_name">Infested field</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Infested woods"><i class="kind"></i><b class="place_name">Infested woods</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Sparring with the village guard (heavy)"><i class="kind"></i><b class="place_name">Sparring with the village guard (heavy)</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Sparring with the village guard (quick)"><i class="kind"></i><b class="place_name">Sparring with the village guard (quick)</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Eastern storehouse"><i class="kind"></i><b class="place_name">Eastern storehouse</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="2">
+                <h3>The cave</h3>
+                <p>Under the village, and it goes further down than anyone has been.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Nearby cave"><i class="kind"></i><b class="place_name">Nearby cave</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Cave room"><i class="kind"></i><b class="place_name">Cave room</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Cave depths"><i class="kind"></i><b class="place_name">Cave depths</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Suspicious wall"><i class="kind"></i><b class="place_name">Suspicious wall</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Hidden tunnel"><i class="kind"></i><b class="place_name">Hidden tunnel</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Pitch black tunnel"><i class="kind"></i><b class="place_name">Pitch black tunnel</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Writhing tunnel"><i class="kind"></i><b class="place_name">Writhing tunnel</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Mysterious gate"><i class="kind"></i><b class="place_name">Mysterious gate</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Mysterious depths"><i class="kind"></i><b class="place_name">Mysterious depths</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Throne room"><i class="kind"></i><b class="place_name">Throne room</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="3">
+                <h3>The forest road</h3>
+                <p>East, towards the town. A canyon, a lake, and woods that get deeper.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Forest road"><i class="kind"></i><b class="place_name">Forest road</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Forest"><i class="kind"></i><b class="place_name">Forest</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Deep forest"><i class="kind"></i><b class="place_name">Deep forest</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Forest clearing"><i class="kind"></i><b class="place_name">Forest clearing</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Forest den"><i class="kind"></i><b class="place_name">Forest den</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Forest den traversal"><i class="kind"></i><b class="place_name">Forest den traversal</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Bears' den"><i class="kind"></i><b class="place_name">Bears' den</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Forest ant nest"><i class="kind"></i><b class="place_name">Forest ant nest</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Carya Canyon"><i class="kind"></i><b class="place_name">Carya Canyon</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Precarious tree bridge"><i class="kind"></i><b class="place_name">Precarious tree bridge</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Forest lake"><i class="kind"></i><b class="place_name">Forest lake</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Frogs"><i class="kind"></i><b class="place_name">Frogs</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="4">
+                <h3>The town</h3>
+                <p>Guilds, a square, two cafes, and a quarter nobody keeps.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Town outskirts"><i class="kind"></i><b class="place_name">Town outskirts</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Slums"><i class="kind"></i><b class="place_name">Slums</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Gang hideout"><i class="kind"></i><b class="place_name">Gang hideout</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Fight off the assailant"><i class="kind"></i><b class="place_name">Fight off the assailant</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Town farms"><i class="kind"></i><b class="place_name">Town farms</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Red ant nest 1"><i class="kind"></i><b class="place_name">Red ant nest 1</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Red ant nest 2"><i class="kind"></i><b class="place_name">Red ant nest 2</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Red ant nest 3"><i class="kind"></i><b class="place_name">Red ant nest 3</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Town square"><i class="kind"></i><b class="place_name">Town square</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Cat cafe"><i class="kind"></i><b class="place_name">Cat cafe</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Nekomimi cafe"><i class="kind"></i><b class="place_name">Nekomimi cafe</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Antique store"><i class="kind"></i><b class="place_name">Antique store</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Adventurer's guild"><i class="kind"></i><b class="place_name">Adventurer's guild</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Mages guild"><i class="kind"></i><b class="place_name">Mages guild</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="5">
+                <h3>The mountain</h3>
+                <p>Up. The camp's flue is the first forge in the game above the lowest tier.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Mountain path"><i class="kind"></i><b class="place_name">Mountain path</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Fight the angry mountain goat"><i class="kind"></i><b class="place_name">Fight the angry mountain goat</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Small flat area in mountains"><i class="kind"></i><b class="place_name">Small flat area in mountains</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Mountain camp"><i class="kind"></i><b class="place_name">Mountain camp</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Gentle mountain slope"><i class="kind"></i><b class="place_name">Gentle mountain slope</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="6">
+                <h3>The river</h3>
+                <p>Downstream, and then further. Crabs, a waterfall, and woods standing in water.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Downstream from the village"><i class="kind"></i><b class="place_name">Downstream from the village</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Fight the giant crab"><i class="kind"></i><b class="place_name">Fight the giant crab</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Riverbank"><i class="kind"></i><b class="place_name">Riverbank</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Riverbank shore"><i class="kind"></i><b class="place_name">Riverbank shore</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Further downstream"><i class="kind"></i><b class="place_name">Further downstream</b><span class="clears"></span></span>
+                    <span class="place unreached challenge" data-location="Fight the giant crab again"><i class="kind"></i><b class="place_name">Fight the giant crab again</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Lake beach"><i class="kind"></i><b class="place_name">Lake beach</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Waterfall basin"><i class="kind"></i><b class="place_name">Waterfall basin</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Crab spawning grounds"><i class="kind"></i><b class="place_name">Crab spawning grounds</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Wet woods"><i class="kind"></i><b class="place_name">Wet woods</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Drowned grove"><i class="kind"></i><b class="place_name">Drowned grove</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="7">
+                <h3>The swamplands</h3>
+                <p>A tribe that took the land nobody else wanted, and kept it.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="Swampland fields"><i class="kind"></i><b class="place_name">Swampland fields</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="The swamplands"><i class="kind"></i><b class="place_name">The swamplands</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Swampland tribe"><i class="kind"></i><b class="place_name">Swampland tribe</b><span class="clears"></span></span>
+                </div>
+            </section>
+            <section class="region" data-step="8">
+                <h3>The plains and the bay</h3>
+                <p>The far edge of what is written. White and black iron ore is sold here and nowhere else.</p>
+                <div class="places">
+                    <span class="place unreached" data-location="The plains"><i class="kind"></i><b class="place_name">The plains</b><span class="clears"></span></span>
+                    <span class="place unreached combat" data-location="Old hunting ground"><i class="kind"></i><b class="place_name">Old hunting ground</b><span class="clears"></span></span>
+                    <span class="place unreached combat frontier" data-location="Coast road"><i class="kind"></i><b class="place_name">Coast road</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="The bay"><i class="kind"></i><b class="place_name">The bay</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="The salt house"><i class="kind"></i><b class="place_name">The salt house</b><span class="clears"></span></span>
+                    <span class="place unreached" data-location="Longhouse"><i class="kind"></i><b class="place_name">Longhouse</b><span class="clears"></span></span>
+                </div>
+            </section>
 
-<h3> Before reading the content below, please keep in mind that the less mysteries there are, the less fun it might become (or maybe not, depends entirely on you!)</h3>
+        <h2>Questions</h2>
+        <p class="map_intro">The less mystery there is, the less fun it might be. Or not - that is entirely up to you.</p>
 
-
-<div id="content_blocks">
     <button type="button" class="collapsible">Where does current game content end?</button>
     <div class="content">
         As of current game version, the final combat areas are as follows:
@@ -372,46 +829,99 @@
         If you want to throw some actual money at someone, send it to Miktaew, who created the game this version continues. Their Ko-fi is at <a href="https://ko-fi.com/miktaew" target="_blank" rel="noopener"> https://ko-fi.com/miktaew</a>
         <br><br>
     </div>
-</div>
+    </main>
 
-<script>
-    const btns = document.getElementsByClassName("collapsible");
-    //const content = document.getElementById("content");
+    <script>
+        const PROGRESS_TEXT = "{v1} of {v2} places reached";
+        const EXPAND = "Expand all";
+        const COLLAPSE = "Collapse all";
+    </script>
+    <script>
+        /*
+            The map marks what this player has reached.
 
-    for(let i = 0; i < btns.length; i++) {
-        btns[i].addEventListener("click", () => {
-            btns[i].classList.toggle("active");
-            const content = btns[i].nextElementSibling;
-            if (content.style.display !== "block"){
-                content.style.display = "block";
-            } else {
-                content.style.display = "none";
+            help.html is served from the same origin as the game, so the save is simply
+            there in localStorage - no export, no upload, nothing leaves the browser. A
+            visitor with no save sees the map unmarked, which is the honest default.
+
+            Only three fields are read, and all three are the ones the save already
+            keeps per location: is_unlocked, is_finished and enemy_groups_killed.
+        */
+        const SAVE_KEYS = ["save data", "dev save data"];
+
+        function load_locations() {
+            for(const key of SAVE_KEYS) {
+                let raw;
+                try {
+                    raw = localStorage.getItem(key);
+                } catch (no_storage) {
+                    return null;   //a private window, or storage switched off
+                }
+                if(!raw) {
+                    continue;
+                }
+                try {
+                    const save = JSON.parse(raw);
+                    if(save && save.locations) {
+                        return save.locations;
+                    }
+                } catch (not_a_save) {
+                    //A key that is not ours, or a half-written one. Try the next.
+                }
             }
-        });
-    }
-
-    const blocks = document.getElementById("content_blocks");
-    blocks.addEventListener("click", (event) => {
-        if(event.target.classList.contains("collapsible")) {
-            const rect = event.target.nextElementSibling.getBoundingClientRect();
-            const windowHeight = document.documentElement.clientHeight;
-
-            if (rect.top < 0 || rect.bottom > windowHeight) {
-                event.target.nextElementSibling.scrollIntoView({ behavior: 'smooth', block: 'end'});
-            }
+            return null;
         }
-    });
 
-    window.addEventListener("resize", resize_blocks);
+        const reached = load_locations();
+        const note = document.getElementById('map_note');
 
-    function resize_blocks() {
-        let target_height = window.innerHeight - document.getElementById("content_blocks").offsetTop - 16;
+        if(!reached) {
+            note.hidden = false;
+        } else {
+            let count = 0;
+            for(const place of document.querySelectorAll(".place")) {
+                const entry = reached[place.dataset.location];
+                if(!entry || !entry.is_unlocked) {
+                    continue;
+                }
+                place.classList.remove("unreached");
+                place.classList.add("reached");
+                count++;
+                const clears = entry.enemy_groups_killed;
+                if(clears) {
+                    place.querySelector(".clears").textContent = clears;
+                }
+            }
+            const total = document.querySelectorAll(".place").length;
+            document.getElementById("map_progress").textContent =
+                PROGRESS_TEXT.replace("{v1}", count).replace("{v2}", total);
+        }
+    </script>
 
-        console.log(target_height);
-        document.getElementById("content_blocks").style.height = target_height + "px";
-    }
-    
-</script>
+    <script>
+        const buttons = Array.from(document.querySelectorAll('.collapsible'));
+        const toggle_all = document.getElementById('toggle_all');
 
+        function set_open(button, open) {
+            button.classList.toggle('active', open);
+            button.setAttribute('aria-expanded', String(open));
+            button.nextElementSibling.classList.toggle('open', open);
+        }
+
+        buttons.forEach((button, index) => {
+            const panel = button.nextElementSibling;
+            panel.id = 'question_' + index;
+            button.setAttribute('aria-controls', panel.id);
+            button.setAttribute('aria-expanded', 'false');
+            button.addEventListener('click', () => set_open(button, !button.classList.contains('active')));
+        });
+
+        //Unlike the changelog, nothing here is 'the newest', so everything starts closed.
+        toggle_all.addEventListener('click', () => {
+            const opening = toggle_all.textContent === EXPAND;
+            buttons.forEach(button => set_open(button, opening));
+            toggle_all.textContent = opening ? COLLAPSE : EXPAND;
+        });
+    </script>
 </body>
 </html>

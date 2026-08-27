@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.29</button>
+    <div class="content">
+        <ul class="entries">
+            <li>The help pages are rebuilt on the changelog's stylesheet: a proper title, a light and dark theme, the same collapsible cards, and a header that says what the page is. They were still the inherited ones - bare headings, grey boxes, and a script whose job was to resize a scrolling box to the window.</li>
+            <li>And they now open with a map of the world. Every region in the order the story walks them, every place inside it, with combat zones and challenges marked apart from ordinary places and a dashed outline on the frontier - the edge of what is written.</li>
+            <li>The map knows where you have been. The help page is served from the same origin as the game, so it reads your save straight out of the browser's own storage and marks the places you have reached, with a clear count on the zones you have fought through. Nothing is uploaded and nothing leaves the browser; with no save it is simply an unmarked map.</li>
+            <li>A build check keeps the map honest: every location in the game has to appear on both pages, and a name on the map that is no longer a location fails too.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.28</button>
     <div class="content">
         <ul class="entries">

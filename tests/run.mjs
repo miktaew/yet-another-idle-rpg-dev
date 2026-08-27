@@ -51,6 +51,7 @@ import {
 } from "./checks/rewards.mjs";
 import {
     check_changelogs_cover_version,
+    check_help_map_covers_the_world,
     check_language_switch_repaints,
     check_site,
 } from "./checks/site.mjs";
@@ -62,6 +63,7 @@ check_location_types();
 check_content_is_reachable();
 check_money_requirements();
 check_changelogs_cover_version();
+check_help_map_covers_the_world();
 check_language_switch_repaints();
 await check_locales();
 await check_dialogue_display_names();
