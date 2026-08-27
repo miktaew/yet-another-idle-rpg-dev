@@ -257,6 +257,12 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.32</button>
+    <div class="content">
+        <ul class="entries">
+            <li>A gathering task's counter follows the inventory. It said 92 of 100 while the player was carrying 133, because the task was only redrawn when the quest itself moved - never when an item was picked up. Each counter line now carries what it needs to redraw itself, and every change to the inventory redraws them.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.31</button>
     <div class="content">
         <ul class="entries">

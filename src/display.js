@@ -1719,6 +1719,9 @@ function update_displayed_trader_inventory({item_key, trader_sorting="name", sor
  * @param {Boolean} data.is_trade whethere player is in trade, affecting whether displayed price be basic or trade-specific
  */
 function update_displayed_character_inventory({item_key, equip_slot, character_sorting, sorting_direction="asc", was_anything_new_added=false, is_trade=false, skip_sorting=false, rebuild=false} = {}) {    
+    //A gathering task counts what is in the inventory, so it follows every change to it.
+    update_displayed_quest_item_counts();
+
     //removal of unneeded divs
     if(!item_key){
         Object.keys(item_divs).forEach(div_key => {
@@ -5910,12 +5913,12 @@ function create_displayed_quest_task(quest_id, task_index) {
 
                 const line = document.createElement("div");
                 line.classList.add("task_item_count");
-                if(have >= want) {
-                    line.classList.add("task_item_done");
-                }
-                line.innerText = translationManager.getText(language, "ui task item progress",
-                    {v1: template.getDisplayName(), v2: Math.min(have, want), v3: want});
+                //Enough to redraw this line on its own when the inventory changes,
+                //without walking back to the quest it belongs to.
+                line.dataset.item_id = item_id;
+                line.dataset.item_needed = want;
                 task_conditions_div.appendChild(line);
+                fill_quest_item_count(line);
             }
         }
     }
@@ -5973,6 +5976,32 @@ function create_displayed_quest_task(quest_id, task_index) {
     return task_div;
 }
 
+/**
+ * Writes one gathering counter from the inventory as it is right now.
+ *
+ * Split out because the line has to be redrawn whenever the inventory moves, not only
+ * when the quest does: the journal showed 92/100 while the player was carrying 133,
+ * because the task div is only rebuilt on quest progress.
+ */
+function fill_quest_item_count(line) {
+    const template = item_templates[line.dataset.item_id];
+    if(!template) {
+        return;
+    }
+    const needed = Number(line.dataset.item_needed);
+    const have = character.inventory[template.getInventoryKey()]?.count ?? 0;
+
+    line.classList.toggle("task_item_done", have >= needed);
+    line.innerText = translationManager.getText(language, "ui task item progress",
+        {v1: template.getDisplayName(), v2: Math.min(have, needed), v3: needed});
+}
+
+/** Every visible gathering counter, after the inventory has changed. */
+function update_displayed_quest_item_counts() {
+    for(const line of document.querySelectorAll(".task_item_count")) {
+        fill_quest_item_count(line);
+    }
+}
 function update_displayed_quest_task(quest_id, task_index) {
     const quest = quests[quest_id];
     if(quest.quest_tasks[task_index].is_hidden || quest.is_hidden) {
