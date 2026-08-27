@@ -961,6 +961,54 @@ function strip_interpolations(body) {
 }
 
 /**
+ * Every item a recipe names has to exist.
+ *
+ * `crafting_component_filling.js` opens with the instruction that makes this
+ * necessary:
+ *
+ *   DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE NAMES MATCH
+ *
+ * The generator builds component templates from a material and a component type, and
+ * the recipes that produce them are written by hand against those names. A typo on
+ * either side is silent: the recipe is listed, the player has the materials, and the
+ * result is undefined.
+ *
+ * The item's name may be declared in items.js or built by the generator, so both
+ * sets count. Recipes only - `shield_name` and `armor_name` on a component are
+ * display strings rather than template references, which is why they are not checked
+ * here: the comment above Shield.getDisplayName says so, and treating them as
+ * references produces forty false positives.
+ */
+async function check_recipe_item_names() {
+    const { generated, problem } = await load_generated_item_templates(repo_root);
+    if (problem) {
+        error(`${problem} - this check is out of date.`);
+        return;
+    }
+
+    const items = strip_comments(fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
+    const known = new Set([
+        ...Object.keys(generated),
+        ...[...items.matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(match => match[1]),
+    ]);
+
+    const recipes = strip_comments(fs.readFileSync(path.join(repo_root, "src/crafting_recipes.js"), "utf8"));
+
+    let checked = 0;
+    const reported = new Set();
+    for (const match of recipes.matchAll(/\b(material_id|result_id):\s*"([^"]+)"/g)) {
+        const [, field, name] = match;
+        checked++;
+        if (known.has(name) || reported.has(`${field}:${name}`)) continue;
+        reported.add(`${field}:${name}`);
+        error(`src/crafting_recipes.js names ${field} "${name}", which is neither declared in`
+            + " items.js nor built by crafting_component_filling.js. The recipe would list and"
+            + " produce nothing.");
+    }
+    console.log(`[check] recipe item names: ${checked} resolved against ${known.size} templates`);
+}
+
+/**
  * An item's display name must not be another item's registry key.
  *
  * `item_templates["Cooked potato"]` carried `name: "Potato"`. `getDisplayName`
@@ -1843,6 +1891,7 @@ await check_translations_have_no_english();
 await check_no_unused_locale_rows();
 await check_creation_panel_values();
 check_item_name_collisions();
+await check_recipe_item_names();
 check_action_branches();
 await check_required_items();
 await check_content_text_ids();

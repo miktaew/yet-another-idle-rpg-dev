@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 9 -->
+<!-- doc-source: docs/STORY.md  doc-version: 10 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -163,6 +163,12 @@ oysa parçalar 5. kademeye çıkıyor; yani `roll_quality`, `station_tier -
 component_tier` alıyordu ve oyuncunun dövdüğü her şey cezalı atıyordu. Dağ
 kampındaki baca, 3. kademe bir dövme ve eritme istasyonu — oyunda 1'in üstündeki
 ilk istasyon.
+
+**Ve malzemeler de onunla birlikte yer değiştirdi.** Beyaz demir ile siyah demir 4.
+kademe ve tarifleri yazılana kadar ulaşılamazdı — bu fork'tan önce beri var olan,
+tamamlanmış 36 bileşen. Cevherleri yalnızca körfezde satılıyor; aşçının *"oradan çok
+metal gelir, çok uzaktan"* repliğinin ilk kez doğru olması da bu. 5. kademe hâlâ
+iskele; bkz. P-12.
 
 **Her NPC tükenmiş durumda.** Yaşlı *"Not yet, but hopefully soon"* üzerinde
 duruyor. Muhafız *"that will have to be enough… I'm generally a terrible teacher"*

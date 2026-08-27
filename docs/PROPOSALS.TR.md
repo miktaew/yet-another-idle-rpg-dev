@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 25 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 26 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -542,6 +542,40 @@ kahramanı bir hami yapmak. Yaşlı kadına iki kez teşekkür ettirilmeyecek.
 2. Kenar mahalle hesabı. Mubayaacının diyaloğunun bir kez daha açılmasını gerektiriyor
    ve bu, 3. bölgenin kullandığı kapının aynısı; o yüzden iki şeyin aynı konuşma için
    yarışmaması adına ikinci sırada olmalı.
+
+### P-12 — Çeliğin üstündeki metalleri bağla `kısmen tamam`
+
+`crafting_component_filling.js`, hiçbir tarifin bugüne kadar üretmediği dört malzeme
+için 72 bileşen üretiyor: 4. kademede **beyaz demir** ve **siyah demir**, 5. kademede
+**beyaz çelik** ve **siyah çelik**. Silah başlıkları, saplar, kalkan tabanları ve beş
+zırh yuvasının tamamı için hem zincir zırh hem plaka dış katmanları. Başlığı boşluğu
+tek satırda açıklıyor: *"DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE
+SURE NAMES MATCH"*.
+
+**4. kademe tamam.** Cevher körfezdeki tuz evinde satılıyor, eritme tarifleri 15-25
+bandında ve on üç dövme bileşen tarifinin her birine iki satır eklendi. İhtiyaç
+duyduğu her şey zaten mevcuttu — cevherler, külçeler, zincir zırh ve iki dildeki
+adları ile açıklamaları.
+
+**Kalanlar, ve sırası:**
+
+1. **4. kademe plaka.** Üretici `White iron plate helmet armor` ve dokuz kardeşini
+   yapıyor, ama onları dövecek bir `White iron plate` malzemesi yok — demir/çelik
+   hattında da plaka yok, yani bu iki yeni tarif satırı değil, iki yeni malzeme eşyası
+   istiyor. `material white iron plate` adlandırma satırları iki yerelde de zaten var.
+2. **5. kademe: beyaz çelik ve siyah çelik.** Külçeler ve zincir zırh eşya olarak
+   mevcut. Olmayan şey bir görünen ad: `material white` ve `material black`'in iki
+   yerelde de satırı yok; özgün çalışma da orada durmuş. 4. kademenin üstündeki bir
+   kademe, 3'ün üstünde bir istasyon da ister ve öyle bir şey yok — dağdaki baca
+   oyunun en iyi ateşi.
+3. **Satın alınan değil, kazılan bir cevher.** Körfezde satın almak, "çok uzaktan"
+   gelen bir metal için doğru; ama oyuncunun yalnızca alışverişle edinebildiği bir
+   kademe zayıf. Nerede kazıldığı bir hikâye sorusu ve bir sonraki açılacak bölgeye
+   ait, bu öneriye değil.
+
+**Bunun yapmaması gereken:** beşinci bir kademe uydurmak. Çeliğin ötesinde dört
+malzeme, bataklığın ötesindeki yazılı içerikten çoktan fazla; ve tavan hikâyenin
+önünde değil, onunla birlikte hareket etmeli.
 
 ---
 ## Bekleyen kararlar

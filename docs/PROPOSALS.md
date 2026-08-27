@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 25 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 26 -->
 
 # Proposals
 
@@ -534,6 +534,41 @@ The old woman is not to be thanked twice.
 2. The slums account. It needs the factor's dialogue opened one more time, which is
    the same door region 3 used, so it should come second to avoid two things
    competing for the same conversation.
+
+### P-12 — Wire the metals above steel `partly done`
+
+`crafting_component_filling.js` generates 72 components for four materials that no
+recipe has ever produced: **white iron** and **black iron** at tier 4, **white
+steel** and **black steel** at tier 5. Weapon heads, handles, shield bases, and both
+chainmail and plate exteriors for all five armour slots. Its header explains the gap
+in one line: *"DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE
+NAMES MATCH"*.
+
+**Tier 4 is done.** Ore sold at the bay's salt house, smelting recipes at 15-25, and
+two rows added to each of the thirteen forging component recipes. Everything it
+needed already existed - the ores, the ingots, the chainmail, and their names and
+descriptions in both languages.
+
+**What is left, and in what order:**
+
+1. **Tier-4 plate.** The generator makes `White iron plate helmet armor` and its nine
+   siblings, and there is no `White iron plate` material to forge them from - the
+   iron/steel line has no plate either, so this needs two new material items rather
+   than two new recipe rows. Their `material white iron plate` naming rows already
+   exist in both locales.
+2. **Tier 5: white steel and black steel.** The ingots and chainmail exist as items.
+   What does not exist is a display name: `material white` and `material black` have
+   no row in either locale, which is where the original work stopped. A tier above
+   tier 4 also wants a station above 3, and there is none - the mountain flue is the
+   game's best fire.
+3. **An ore that is mined rather than bought.** Buying at the bay is correct for a
+   metal that comes "from very far away", but a tier the player can only shop for is
+   thin. Where it is mined is a story question and belongs to whatever region opens
+   next, not to this proposal.
+
+**What this must not do:** invent a fifth tier. Four materials past steel is already
+more than the authored content past the swamp, and the ceiling should move with the
+story rather than ahead of it.
 
 ---
 ## Open decisions

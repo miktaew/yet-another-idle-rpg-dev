@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 45 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 46 -->
 
 # Changelog
 
@@ -20,6 +20,60 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-26
+
+### Tier 4: white iron and black iron
+
+`crafting_component_filling.js` has been generating **72 components** for white iron,
+black iron, white steel and black steel since before this fork - the whole top two
+tiers of weapons, armour and shields, with tiers and stats - and no player could
+reach one of them. The generator's own header says why:
+
+> `DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE NAMES MATCH`
+
+Nobody did. The chain was broken in three separate places: nothing produced the ore,
+no smelting recipe turned ore into ingot, and none of the thirteen forging component
+recipes listed the materials.
+
+**Everything else was already there**, which is what made this worth doing rather
+than inventing: the ores, the ingots and the chainmail all exist as items, with
+`name` and `desc item` rows in **both** languages, and `material white iron` /
+`material name white iron` and their black counterparts were written too. Somebody
+built the whole tier and stopped one file short.
+
+**Tier 4 only.** White steel and black steel wait, for two reasons: a game should not
+gain two tiers in one afternoon, and the tier-5 materials are the only ones whose
+display-name rows are still missing - `material white` and `material black` have no
+row in either locale, which is a fair marker of how far the original work got.
+
+**They are not two colours of one metal.** The generator gives white iron weight 130
+and strength 100, black iron weight 80 and strength 110 - heavy and durable against
+light and sharp. Weight lowers attack speed and raises weapon damage and shield
+block, so these are genuinely different weapons, and the choice was designed long
+before anybody could make it.
+
+**The ore comes from the bay, and that is the cook's line coming true.** *"Ahh~! Far
+to the north! Many spice and meat and metal and leather come from there! From very
+far away!"* Nothing in this country mines white or black iron and nothing else sells
+it, so the salt house is the entire supply - small counts at a 35% chance, because
+the shed has what the last hull brought. The tier needed no new room, which is the
+right outcome for a region built two commits ago.
+
+**And it lands on the forge.** `roll_quality` takes `station_tier - component_tier`,
+so a tier-4 component at a tier-1 fire rolls three bands short. The mountain flue is
+what makes this tier worth working, which means the two pieces built this week feed
+each other: the flue raised the ceiling, and the metal is what the ceiling was
+holding back.
+
+**A check, for the failure the generator's header warns about.** `npm run check` now
+requires every `material_id` and `result_id` in `crafting_recipes.js` to name an item
+that either items.js declares or the generator builds - 549 names against 450
+templates. A typo on either side of that boundary is otherwise silent: the recipe
+lists, the player has the materials, and the result is `undefined`.
+
+Recipes only. `shield_name` and `armor_name` on a component are display strings
+rather than template references - the comment above `Shield.getDisplayName` says so -
+and treating them as references produces forty false positives, which is the mistake
+recorded in the entry above this one.
 
 ### The item reachability audit, and one wrong turn recorded
 

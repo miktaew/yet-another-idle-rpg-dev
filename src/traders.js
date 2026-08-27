@@ -525,6 +525,18 @@ class TradeItem {
             new TradeItem({item_name: "Piece of leather", count: [4,9], chance: 0.7}),
             new TradeItem({item_name: "Piece of rough leather", count: [4,9], chance: 0.7}),
 
+            /*
+                And the metal the cook actually promised: "Many spice and meat and
+                metal and leather come from there! From very far away!"
+
+                White and black iron ore. Nothing in this country mines either and
+                nothing else sells them, so the bay is the whole supply - which is
+                what "from very far away" has to mean if it means anything. Small
+                counts and a low chance: the shed has what the last hull brought.
+            */
+            new TradeItem({item_name: "White iron ore", count: [3,7], chance: 0.35}),
+            new TradeItem({item_name: "Black iron ore", count: [3,7], chance: 0.35}),
+
             new TradeItem({item_name: "Healing balm", count: [1,3], chance: 0.3}),
             new TradeItem({item_name: "Healing powder", count: [1,3], chance: 0.3}),
     ];

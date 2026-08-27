@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 9 -->
+<!-- doc-source: docs/STORY.md  doc-version: 10 -->
 
 # Story canon
 
@@ -157,6 +157,12 @@ smelting at 1** while components go to tier 5, so `roll_quality` was taking
 `station_tier - component_tier` and everything the player forged rolled at a penalty.
 The flue at the Mountain camp is a tier-3 forging and smelting station, which is the
 first one in the game above 1.
+
+**And the materials moved with it.** White iron and black iron are tier 4 and were
+unreachable until their recipes were written - 36 components that had existed,
+finished, since before this fork. Their ore is sold at the bay and nowhere else,
+which is the cook's *"many metal come from there, from very far away"* being true
+for the first time. Tier 5 is still scaffolding; see P-12.
 
 **Every NPC is exhausted.** The elder rests on *"Not yet, but hopefully soon"*.
 The guard rests on *"that will have to be enough… I'm generally a terrible

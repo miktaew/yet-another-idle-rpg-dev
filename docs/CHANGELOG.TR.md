@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 45 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 46 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,60 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-26
+
+### 4. kademe: beyaz demir ve siyah demir
+
+`crafting_component_filling.js`, bu fork'tan önce beri beyaz demir, siyah demir,
+beyaz çelik ve siyah çelik için **72 bileşen** üretiyor — silah, zırh ve kalkanın en
+üst iki kademesinin tamamı, kademeleri ve istatistikleriyle — ve hiçbir oyuncu
+bunlardan birine ulaşamıyordu. Üreticinin kendi başlığı nedenini söylüyor:
+
+> `DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE NAMES MATCH`
+
+Kimse yapmamış. Zincir üç ayrı yerden kopuktu: cevheri hiçbir şey üretmiyordu, hiçbir
+eritme tarifi cevheri külçeye çevirmiyordu ve on üç dövme bileşen tarifinin hiçbiri
+malzemeleri listelemiyordu.
+
+**Geri kalan her şey zaten oradaydı** — bunu uydurmak yerine yapmaya değer kılan da
+bu: cevherler, külçeler ve zincir zırh eşya olarak mevcut, **iki** dilde de `name` ve
+`desc item` satırlarıyla; ve `material white iron` / `material name white iron` ile
+siyah karşılıkları da yazılmıştı. Biri bütün kademeyi kurmuş ve bir dosya kala
+durmuş.
+
+**Yalnızca 4. kademe.** Beyaz çelik ve siyah çelik bekliyor; iki sebeple: bir oyun bir
+öğleden sonrada iki kademe kazanmamalı, ve görünen-ad satırları hâlâ eksik olan tek
+malzemeler 5. kademenin malzemeleri — `material white` ve `material black`'in iki
+yerelde de satırı yok, ki bu da özgün çalışmanın nereye kadar geldiğinin adil bir
+işareti.
+
+**Bunlar tek bir metalin iki rengi değil.** Üretici beyaz demire ağırlık 130 ve güç
+100, siyah demire ağırlık 80 ve güç 110 veriyor — ağır ve dayanıklıya karşı hafif ve
+keskin. Ağırlık saldırı hızını düşürüp silah hasarını ve kalkan bloğunu yükseltiyor;
+yani bunlar gerçekten farklı silahlar ve seçim, kimse yapamazken çok önce
+tasarlanmış.
+
+**Cevher körfezden geliyor ve bu, aşçının repliğinin gerçekleşmesi.** *"A-ha~! Ta
+kuzeyde! Oradan çok baharat, et, metal ve deri gelir! Çok uzaktan!"* Bu ülkede beyaz
+ya da siyah demiri kimse kazmıyor ve başka hiçbir yer satmıyor; yani tuz evi tedarikin
+tamamı — küçük miktarlar ve %35 şans, çünkü kulübede son teknenin getirdiği ne varsa o
+var. Kademe yeni bir odaya ihtiyaç duymadı; iki commit önce kurulmuş bir bölge için
+doğru sonuç da bu.
+
+**Ve ocağa oturuyor.** `roll_quality`, `station_tier - component_tier` alıyor; yani 4.
+kademe bir parça 1. kademe bir ateşte üç bant eksik atıyor. Bu kademeyi işlemeye değer
+kılan şey dağdaki baca — yani bu hafta kurulan iki parça birbirini besliyor: baca
+tavanı yükseltti, metal de tavanın tuttuğu şeydi.
+
+**Ve üreticinin başlığının uyardığı hata için bir kontrol.** `npm run check` artık
+`crafting_recipes.js` içindeki her `material_id` ve `result_id`'nin, ya items.js'in
+bildirdiği ya da üreticinin kurduğu bir eşyayı adlandırmasını istiyor — 450 şablona
+karşı 549 ad. O sınırın iki tarafındaki bir yazım hatası aksi hâlde sessiz: tarif
+listeleniyor, oyuncunun malzemesi var ve sonuç `undefined`.
+
+Yalnızca tarifler. Bir bileşendeki `shield_name` ve `armor_name`, şablon referansı
+değil görünen-ad dizgesi — `Shield.getDisplayName`'in üstündeki yorum bunu söylüyor —
+ve onları referans saymak kırk yanlış pozitif üretiyor; bu da bundan önceki maddede
+kayda geçen hata.
 
 ### Eşya ulaşılabilirliği denetimi, ve kayda geçen bir yanlış dönüş
 
