@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.25</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Bir toplama eyleminin tooltip'i Türkçe arayüzde "Winter" diyordu. Mevsimin ekrana ulaştığı dört yer var; iş tooltip'indeki ikisi her adı satırına eşleyen erişimciden geçiyordu, faaliyet tooltip'indeki ikisi ise listeyi doğrudan saatten gelen diziyi stringe çevirerek kuruyordu - saat İngilizce döndürmeye devam etmek zorunda, çünkü içerik onunla karşılaştırıyor.</li>
+            <li>Eylem ve faaliyet tooltipleri artık sayfanın altından taşmıyor. Tooltip taşıyıcı listesindeki girdileri hiçbir satır sınıfı adlandırmıyordu; yani üzerinde durulan eleman, farenin denk geldiği alt eleman oluyordu - bir ikon, bir etiket - ve onun içinde tooltip aranınca bulunamıyor, taşıyıcı hiçbir şeyi konumlandırmadan geri dönüyor, tooltip de daha önceki bir gezinmenin koordinatlarını koruyordu. Sınırlanmadığı için de uzun olanı sayfadan düşüyordu.</li>
+            <li>Boş bir metin kimliği artık eksik çeviri olarak bildirilmiyor. Yirmi içerik girdisi bilerek boş açıklama veya eylem metni koyuyor, iki constructor da ona varsayıyor; yani `Text "" does not exist in any loaded language` konsolun bir geleneği şikâyet etmesiydi. Tanımsız kimlik hâlâ uyarıyor, çünkü onu kimse bilerek yazmıyor.</li>
+            <li>İki derleme kontrolü daha. Çalışma anında kurulan her metin kimliği ailesinin artık ürettiği her değerin bir satırı olduğunu doğrulayan bir kontrolü var - mevsimler ve stat kaynakları bunu olmayan son ikisiydi. Bir de mevsim hiç stringe çevrilip markup'a konamaz: ara değer, DOM'daki İngilizceyi arayan kontrolün göremediği tek biçim, o yüzden bu kontrol metni değil biçimi arıyor.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.24</button>
     <div class="content">
         <ul class="entries">

@@ -98,6 +98,44 @@ async function check_no_english_in_dom() {
  * to_base64 and from_base64 encode to UTF-8 bytes first. This keeps the next caller
  * from reaching for the raw pair again.
  */
+/**
+ * A season name may not be stringified straight into markup.
+ *
+ * game_time.js returns seasons in English and must keep doing so: conditions.js
+ * compares getSeason() against `season: {yes: "Summer"}` written in content, and the
+ * save's saved_at goes through toString(). So a season on screen has to pass through
+ * season_list(), which maps each name through its `season <name>` row.
+ *
+ * Two of the four call sites did not. The job tooltip used season_list; the activity
+ * tooltip built its list with .toString().replaceAll(",", ", ") and printed "Winter
+ * boyunca müsait değil" in a Turkish interface. An interpolation is the one shape
+ * check_no_english_in_dom cannot see, so this looks for the shape instead of the text.
+ */
+async function check_seasons_go_through_the_accessor() {
+    const relative = "src/display.js";
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+    const lines = source.split(/\r?\n/);
+
+    let checked = 0;
+    for (let i = 0; i < lines.length; i++) {
+        if (!/season/i.test(lines[i])) {
+            continue;
+        }
+        checked++;
+        if (/seasons?\b[^;]*\.toString\s*\(/.test(lines[i])) {
+            error(`${relative}:${i + 1} turns a season into a string directly. Use`
+                + ` season_list(), which maps each name through its "season <name>" row -`
+                + ` game_time.js has to keep returning English.`);
+        }
+    }
+
+    if (checked === 0) {
+        error(`${relative} mentions no seasons at all - this check is out of date.`);
+    }
+
+    console.log(`[check] seasons go through the accessor: ${checked} lines mention one`);
+}
+
 async function check_base64_is_utf8_safe() {
     const allowed = new Set([
         "function to_base64(text) {",
@@ -145,5 +183,6 @@ async function check_base64_is_utf8_safe() {
 
 export {
     check_base64_is_utf8_safe,
+    check_seasons_go_through_the_accessor,
     check_no_english_in_dom,
 };

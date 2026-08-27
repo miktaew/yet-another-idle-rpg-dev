@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.25</button>
+    <div class="content">
+        <ul class="entries">
+            <li>A gathering action's tooltip said "Winter" in a Turkish interface. There are four places a season reaches the screen; the two on the job tooltip went through the accessor that maps each name to its row, and the two on the activity tooltip built the list by stringifying the array straight off the clock, which has to keep returning English because the content compares against it.</li>
+            <li>Action and activity tooltips no longer run off the bottom of the page. Their entry in the tooltip mover list named no row classes, so the hovered element was whichever child the pointer happened to be over - an icon, a label - and the search for a tooltip inside it found nothing, so the mover returned before positioning anything and the tooltip kept coordinates from an earlier hover. Unclamped, a tall one fell off the page.</li>
+            <li>An empty text id is no longer reported as a missing translation. Twenty content entries set an empty description or action text on purpose, and two constructors default to it, so `Text "" does not exist in any loaded language` was the console complaining about a convention. An undefined id still warns, because nothing writes one deliberately.</li>
+            <li>Two more build checks. Every runtime-built text id family now has one verifying that every value it can produce has a row - seasons and stat sources were the last two without. And a season may not be stringified into markup at all: an interpolation is the one shape the English-in-the-DOM check cannot see, so this one looks for the shape instead of the text.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.24</button>
     <div class="content">
         <ul class="entries">

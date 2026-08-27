@@ -1885,6 +1885,16 @@
                         element: location_actions_div,
                         top_variable: '--job_tooltip_top',
                         left_variable: '--job_tooltip_left',
+                        /*
+                            Without these, the hovered element is whatever child the
+                            pointer is over - an icon, a label - and the search for a
+                            tooltip inside it finds nothing, so the mover returned before
+                            positioning and the tooltip kept coordinates from an earlier
+                            hover. Unclamped, a tall one then ran off the bottom of the
+                            page. These are the two row classes that own a tooltip.
+                        */
+                        target_classes: ["activity_div", "location_action_div"],
+                        break_classes: ["location_actions_div"],
                     },
                     {
                         element: location_name_div,

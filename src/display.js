@@ -2614,9 +2614,9 @@ function create_location_choices({location, category, is_combat = false}) {
                 activity_tooltip.classList.add("job_tooltip");
                 if(location.activities[key].availability_seasons.length === 3) {
                     const unavailable_seasons = seasons.filter(x => !location.activities[key].availability_seasons.includes(x));
-                    insert_HTML(activity_tooltip, `${translationManager.getText(language, "ui not available during", {v1: unavailable_seasons.toString().replaceAll(",",", ")})} <br>`);
+                    insert_HTML(activity_tooltip, `${translationManager.getText(language, "ui not available during", {v1: season_list(unavailable_seasons)})} <br>`);
                 } else {
-                    insert_HTML(activity_tooltip, `${translationManager.getText(language, "ui available during", {v1: location.activities[key].availability_seasons.toString().replaceAll(",",", ")})} <br>`);
+                    insert_HTML(activity_tooltip, `${translationManager.getText(language, "ui available during", {v1: season_list(location.activities[key].availability_seasons)})} <br>`);
                 }
                 activity_div.appendChild(activity_tooltip);
             }
