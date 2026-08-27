@@ -3431,9 +3431,9 @@ const descriptions = {
     "factor road north answ": "*[Bir sayfa geri, sonra bir tane daha çeviriyor, sonra bakmayı bırakıyor; çünkü bakmasına gerek yok.]*\n\nHiçbir şey. Loncanın istediği cevap bu ve levhadaki cevap da bu. Tahıl kuzeye gitmez. Demir kuzeye gitmez. Yazdığım her şey buraya gelir.\n\n*[Masaya iki kez vuruyor; onda gördüğün ilk boş hareket]* Bir yol için tuhaf bir şey, değil mi. Bu masada on bir yıl; kuzeye boş giden arabaları seyrettim ve içlerinde ne olduğunu yazmam için bir kez bile para almadım.\n\nTakip et. Kıyıyı yukarı çıkıyor ve hiç ayrılmıyor; ucunda bir körfez var ve körfezde benimkinin aynısı bir defter tutan, ama ters yöne bakan bir adam var. Seni görmekten memnun olmayacak. *[Kalemi tekrar eline alıyor]* Ben de olmamıştım.",
     "tallyman description": "Bir vincin rüzgâr almayan tarafında, defteri koluna dayamış, sayfaya bakmadan yazan bir adam. Suya bakıyor. Gerçekten saydığı şey her neyse, defterde değil, orada.",
     "tallyman hello": "Kasaba kapısındaki adam, onunkine benzer bir defter tuttuğunu söyledi.",
-    "tallyman hello answ": "*[Suya bakmayı bırakmıyor.]*\n\nO, şeylerin ne ettiğine dair bir defter tutuyor. Ben, ne gittiğine dair bir defter tutuyorum. Aynı defter değiller ve bunu biliyor; bilmese sana kendisi cevap verir, seni onca yolu bana sormaya göndermezdi.\n\nSor bakalım. Orada dikilmek ikimize de aynıya geliyor.",
+    "tallyman hello answ": "*[Suya bakmayı bırakmıyor.]*\n\nO, şeylerin ne ettiğine dair bir defter tutuyor. Ben, ne gittiğine dair bir defter tutuyorum. Aynı defter değiller ve bunu biliyor; bilmese sana kendisi cevap verir, seni onca yolu bana sormaya göndermezdi.\n\nSor bakalım. Orada dikilmek ikimize de aynı şeye mal oluyor.",
     "tallyman what leaves": "Buradan ne gidiyor?",
-    "tallyman what leaves answ": "Her şey. *[Şimdi sana bakıyor; düşmanca değil, sadece yorgun]* Şaka değil, zekâ gösterisi de değil. Bu körfeze giren her tek şey buradan çıkıyor. Hiçbir şey buralı değil. Bura diye bir yer yok — on bir yapı ve dokuzu, gelgit uygun olana kadar bir şeyi kuru tutmak için var.\n\nTuz, baharat, demir, post. Sezonda on iki tekne ve hepsinin hesabı elimde.\n\n*[Suya dönüyor]* Tuz evi arkanda. Bunca yolu yürüdüysen bir şey al.",
+    "tallyman what leaves answ": "Her şey. *[Şimdi sana bakıyor; düşmanca değil, sadece yorgun]* Şaka değil, zekâ gösterisi de değil. Bu körfeze giren her şey, istisnasız, buradan çıkıyor. Hiçbir şey buralı değil. Bura diye bir yer yok — on bir yapı ve dokuzu, gelgit uygun olana kadar bir şeyi kuru tutmak için var.\n\nTuz, baharat, demir, post. Sezonda on iki tekne ve hepsinin hesabı elimde.\n\n*[Suya dönüyor]* Tuz evi arkanda. Bunca yolu yürüdüysen bir şey al.",
     "tallyman that night": "Buradan küçük bir şey gitti. Yassı, avuç kadar, üzeri karelerle oyulmuş.",
     "tallyman that night answ": "*[Kalem duruyor. Olan tek şey bu ve fark etmen için yeterli.]*\n\nİçinde ne olduğunu bilmiyorum. Bunun önce söylenmesini, her şeyden önce söylenmesini istiyorum; çünkü bu işte emin olduğum tek kısım o. Sandıklar bana kapalı geliyor. Ben tekneyi, gelgiti ve hesabı yazarım; bugüne kadar bir tanesini bile açmadım.\n\n*[Defteri sana çeviriyor ve bastırmadan sayfaya bir parmağını koyuyor]* Hesap sütununu kendin oku. Yüksek sesle söylemeyeceğim; gördüğünde nedenini anlarsın.",
     "tallyman after": "Marrowmoth geri geliyor mu?",
@@ -3477,7 +3477,7 @@ const descriptions = {
     //P-11. Village expansion task 7: the elder's fourth work, which was waiting
     //for the mountain flue to exist before it had an answer.
     "elder hollow": "Dağın üstünde bir ocak kurdum. Aynı şey burada da işe yarar, daha küçüğü.",
-    "elder hollow answ": "*[Elindeki şeyi bırakıyor; köprü için bunu yapmamıştı.]*\n\nDaha küçüğü. Evet. Neden daha küçüğü, biliyorum — yetmiş yıldır bu çukurda yaşıyorum ve içinde adı rüzgâr olmaya değer bir esinti bir kez bile duymadım.\n\nZanaatkâr söylemiş demek. Bana da anlatmıştı, uzun zaman önce; anlattığında senden gençti ve ben de bir şey yapamadım. Köyün hiçbir zaman iki yüz tuğlası artmadı ve onlarla ne yapacağını bilen biri de hiç olmadı.\n\nAma eli var. Eli her zaman vardı. Tuğlayı ve demiri getirirsen değirmendeki çocuklar taşır, birinin oğlu da ömrünün her günü körüğün başında durur — ve senin yukarıdaki kadar iyi olmaz.\n\n*[Kuyunun arkasındaki boşluğa bakıyor; olacağı yer orası ve yetmiş yıldır olacağı yer orası]*\n\nOlmak zorunda da değil. Bir külçeyi bitirecek kadar tutması yeterli.",
+    "elder hollow answ": "*[Elindeki şeyi bırakıyor; köprü için bunu yapmamıştı.]*\n\nDaha küçüğü. Evet. Neden daha küçüğü, biliyorum — yetmiş yıldır bu çukurda yaşıyorum ve içinde adı rüzgâr olmaya değer bir esinti bir kez bile duymadım.\n\nZanaatkâr söylemiş demek. Bana da anlatmıştı, uzun zaman önce; anlattığında senden gençti ve ben de bir şey yapamadım. Köyde hiçbir zaman iki yüz tuğla artmadı; onlarla ne yapacağını bilen biri de hiç çıkmadı.\n\nAma insanı var. İnsanı her zaman vardı. Tuğlayı ve demiri getirirsen değirmendeki çocuklar taşır, birinin oğlu da ömrünün her günü körüğün başında durur — ve senin yukarıdaki kadar iyi olmaz.\n\n*[Kuyunun arkasındaki boşluğa bakıyor; olacağı yer orası ve yetmiş yıldır olacağı yer orası]*\n\nOlmak zorunda da değil. Bir külçeyi bitirecek kadar tutması yeterli.",
     "action build a hearth name": "Köy ocağını kur",
     "action build a hearth desc": "Kuyunun arkasında, yaşlının yetmiş yıldır baktığı yerde. Tuğla, bir ızgara ve körüğün başında bir çocuk.",
     "action build a hearth starting": "Kuyunun arkasında yerini işaretliyorsun. Bir saat içinde tuğla taşıyan, istediğinden fazla insan oluyor.",
@@ -3485,12 +3485,12 @@ const descriptions = {
     "action build a hearth success": "Son tuğlayı ikindi vakti örüyorsun ve körüğü ilk kimin çekeceği üstüne bir tartışma çıkıyor; tartışmayı yaşlı, kötü bir şekilde, küçüğün lehine kapatıyor.\n\nYanıyor. Dağınkinin yaptığı renkte değil, turuncu yanıyor; çocuk el değiştirmek için durduğunda düşüyor ve geri geliyor. Bütün fark bu; küçük bir fark değil ve asıl mesele de değil.\n\n*[Yaşlı nutuk çekmiyor. Bir süre ona bakıyor, sonra şunu diyor:]* \"Yetmiş yıl o toprak parçasına baktım.\" *[Ve sonra, o olduğu için:]* \"Kuyu, benim koyacağımdan yakın olmuş. İdare ederiz.\"",
     "action build a hearth fail unable_to_begin 1": "Yüz yirmi tuğla, altı külçe demir ve yakmak için kömür. Değirmen çocukları çoktan etrafta umutla dikiliyor; bu, dikilmemelerinden daha kötü.",
     "craftsman hearth": "Kuyunun arkasında artık bir ocak var.",
-    "craftsman hearth answ": "Ahh. *[Duyup duymadığını merak edecek kadar sessiz kalıyor.]*\n\nSana o dağda yaptığın bir şeyi getirmeni söylemiştim. Sen bana onun yerine durabileceğim bir yer getirdin; istediğimden fazlası ve bu konuda tam olarak bir cümle daha nazik olacağım.\n\n*[Çoktan kalkıyor]* Pekâlâ. Çocuk yanlış üfürüyordur. Hep yanlış üfürürler — sert, sonra hiç; körük dövülecek bir şeymiş gibi. Meselenin tamamı düzenli olmak. Düzenli ve sıkıcı, sonsuza kadar.\n\nKırk yıllık bunu insanlara anlatma birikimim var ve anlatacak bir yerim yoktu. *[Kapıda]* Beni bekleme, kuyunun nerede olduğunu biliyorum.",
+    "craftsman hearth answ": "Ahh. *[Duyup duymadığını merak edecek kadar sessiz kalıyor.]*\n\nSana o dağda yaptığın bir şeyi getirmeni söylemiştim. Sen bana onun yerine durabileceğim bir yer getirdin; istediğimden fazlası; bunun kıymetini tam bir cümle boyunca bileceğim, sonrasını bekleme.\n\n*[Çoktan kalkıyor]* Pekâlâ. Çocuk yanlış üfürüyordur. Hep yanlış üfürürler — sert, sonra hiç; körük dövülecek bir şeymiş gibi. Meselenin tamamı düzenli olmak. Düzenli ve sıkıcı, sonsuza kadar.\n\nKırk yıldır bunu insanlara anlatıyorum ve anlatacak bir yerim hiç olmadı. *[Kapıda]* Beni bekleme, kuyunun nerede olduğunu biliyorum.",
 
     //P-11. Light in the darkness task 2: the slums get a buyer rather than a
     //rescue. Nobody had ever put a number on anything that came out of that street.
     "old sell": "Topladığınız şeyi satabilir misiniz? Birilerinin işine yarıyor olmalı.",
-    "old sell answ": "*[Gülüyor; gerçek bir gülüş, acı bir gülüş değil.]*\n\nAh evladım. Kime satacağım? Şu sokağa bak ve bana bu kapılardan hangisinin arkasında bir akçe var, söyle. Arkada ne bittiğini hepimiz biliriz — ben icat etmedim, anam gösterdi ve bu sıradaki kadınların yarısı da sana benim sayacağım aynı üç bitkiyi sayar.\n\nKasaba buradan almaz. Fiyattan değil. *[Sonraki kısmı hiç öfke katmadan söylüyor; bu daha kötü]* Nereden aldığını söylemek zorunda kalacağın yerden. Tezgâhı olan bir adam, kenar mahalleden çıkmış bir sepet istemez; onu neden aldığını kimseye açıklamak da istemez.\n\nBu yüzden kendi tencerelerimize giriyor ve bu iyi bir şey, şikâyet de etmiyorum. *[Sana bakıyor]* Sen bu sokaktaki herkesten çok yer gördün. Bir şeyin nereden geldiğine takılmayan bir adam tanıyorsan, o başka bir konuşma olur.",
+    "old sell answ": "*[Gülüyor; gerçek bir gülüş, acı bir gülüş değil.]*\n\nAh evladım. Kime satacağım? Şu sokağa bak ve bana bu kapılardan hangisinin arkasında bir akçe var, söyle. Arkada ne bittiğini hepimiz biliriz — ben icat etmedim, anam gösterdi ve bu sıradaki kadınların yarısı da sana benim sayacağım aynı üç bitkiyi sayar.\n\nKasaba buradan almaz. Fiyattan değil. *[Sonraki kısmı hiç öfke katmadan söylüyor; bu daha kötü]* Nereden aldığını söylemek zorunda kalacağın yerden. Tezgâhı olan bir adam, kenar mahalleden çıkmış bir sepet istemez; onu neden aldığını kimseye açıklamak da istemez.\n\nBu yüzden kendi tencerelerimize giriyor ve bu iyi bir şey, şikâyet de etmiyorum. *[Sana bakıyor]* Sen bu sokaktaki herkesten çok yer gördün. Bir şeyin nereden geldiğine takılmayan bir adam tanıyorsan, o zaman konu değişir.",
     "old account": "Lonca, toplayabildiğiniz her şeyi alacak.",
     "old account answ": "*[Kâğıt şeridi iki kez okuyor. Tamamını okuyamıyor ve okuyormuş gibi de yapmıyor; sayıyı buluyor ve orada duruyor.]*\n\nBu berbat bir fiyat.\n\n*[Sonra onu, adamın koyduğu kırım yerinden dikkatle katlıyor.]*\n\nAma bir fiyat. Bugüne kadar buradan çıkan hiçbir şeye kimse bir sayı koymamıştı — kirayı koyuyorlar ve bu sokağın bugüne kadar yaptığı aritmetiğin tamamı o. Şimdi ikinci bir sayı var ve defterin bizim tarafında.\n\nMarta'nın kızları perşembeye kadar bütün boş araziyi soyar; kökleri bırakmaları konusunda onlarla konuşmam gerekecek. *[Şimdiden onu düşünüyor]* Kökler. Bütün hafta vereceğim ders o olacak.\n\nHadi git bakalım. Bir şey yaptın, ben de bir kez söyledim; bir kez de, bir şeyin kaç kez söylenmesi gerekiyorsa o kadar.",
     "factor slums": "Arkanda ot tedarik edebilecek bir mahalle var. Kimse ondan almıyor.",
@@ -3526,8 +3526,8 @@ const descriptions = {
     "ui skill bar level": "{v1} : sv. {v2}/{v3}",
     "skill flavour Strength of mind": "Kuşku duyamayacak kadar küçük olan zihin kutsanmıştır.",
     "skill flavour Sleeping": "Bir sıçan, iki sıçan, üç sıçan...",
-    "skill flavour Persistence": "Sana inanan bana inan!",
-    "skill flavour Breathing": "Artık nefesini elle alıyorsun",
+    "skill flavour Persistence": "Kendine inanma; sana inanan bana inan!",
+    "skill flavour Breathing": "Artık nefesini manuel alıyorsun",
 
     //The skill level-up and milestone messages. Finishing two skill families made
     //these appear far more often, which is how they were noticed.
@@ -3536,6 +3536,20 @@ const descriptions = {
     "log milestone flat": "+{v1} {v2}",
     "log milestone multiplier": "x{v1} {v2}",
     "log milestone xp gain": "{v2} için x{v1} tecrübe",
+
+    //The character level-up message. It was English end to end, and it is the first
+    //line of its kind every player sees.
+    "log character level up": "{v1} güçleniyor. {v2}. seviyeye ulaştı",
+    "log level gain hp": "Can {v1} arttı",
+    "log level gain stamina": "Dayanıklılık {v1} arttı",
+    "log level gain strength": "Kuvvet {v1} arttı",
+    "log level gain agility": "Çeviklik {v1} arttı",
+    "log level gain dexterity": "El becerisi {v1} arttı",
+    "log level gain intuition": "Sezgi {v1} arttı",
+    "log level gain skill xp": "Beceri tecrübe kazancı %{v1} arttı",
+
+    //The milestone list's level prefix, in the skill tooltip.
+    "ui milestone at level": "sv. {v1}:",
 };
 
 const turkish = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

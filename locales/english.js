@@ -3496,6 +3496,20 @@ const descriptions = {
     "log milestone flat": "+{v1} {v2}",
     "log milestone multiplier": "x{v1} {v2}",
     "log milestone xp gain": "x{v1} {v2} xp gain",
+
+    //The character level-up message. It was English end to end, and it is the first
+    //line of its kind every player sees.
+    "log character level up": "{v1} is getting stronger. Reached level {v2}",
+    "log level gain hp": "HP increased by {v1}",
+    "log level gain stamina": "Stamina increased by {v1}",
+    "log level gain strength": "Strength increased by {v1}",
+    "log level gain agility": "Agility increased by {v1}",
+    "log level gain dexterity": "Dexterity increased by {v1}",
+    "log level gain intuition": "Intuition increased by {v1}",
+    "log level gain skill xp": "Skill xp gains increased by {v1}%",
+
+    //The milestone list's level prefix, in the skill tooltip.
+    "ui milestone at level": "lvl {v1}:",
 };
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...quests, ...reward_messages, ...names, ...descriptions};

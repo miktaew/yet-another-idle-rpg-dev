@@ -725,7 +725,9 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
 
     if(typeof current_location !== "undefined" && current_location.id !== location.id){
         //so it's not called when initializing the location on page load or on reloading current location due to new unlocks
-        log_message(translationManager.getText(language, "log entering v1", {v1: location.name}), "message_travel");
+        //getName, not name: the second is the registry key, so this line read
+        //"[ Village bölgesine giriliyor ]".
+        log_message(translationManager.getText(language, "log entering v1", {v1: location.getName()}), "message_travel");
     }
 
     if(location.crafting) {
@@ -2337,10 +2339,10 @@ function get_location_rewards(location) {
         should_return = true;
         
         if(location.first_reward) {
-            process_rewards({rewards: location.first_reward, source_type: "location", source_name: location.name, is_first_clear: true, source_id: location.id});
+            process_rewards({rewards: location.first_reward, source_type: "location", source_name: location.getName(), is_first_clear: true, source_id: location.id});
         }
     } else if(location.repeatable_reward.xp && typeof location.repeatable_reward.xp === "number") {
-        process_rewards({rewards: {xp: location.repeatable_reward.xp}, source_type: "location", source_name: location.name, is_first_clear: false, source_id: location.id});
+        process_rewards({rewards: {xp: location.repeatable_reward.xp}, source_type: "location", source_name: location.getName(), is_first_clear: false, source_id: location.id});
     }
 
     if(location.rewards_with_clear_requirement) {
@@ -2348,14 +2350,14 @@ function get_location_rewards(location) {
             if(location.enemy_groups_killed == location.enemy_count * location.rewards_with_clear_requirement[i].required_clear_count)
             {
                 //only once, on N-th clear
-                process_rewards({rewards: location.rewards_with_clear_requirement[i], source_type: "location", source_name: location.name, is_first_clear: false, source_id: location.id});
+                process_rewards({rewards: location.rewards_with_clear_requirement[i], source_type: "location", source_name: location.getName(), is_first_clear: false, source_id: location.id});
             }
         }
     }
 
     //calls in first clear give xp, this call omits xp to avoid repeating it
     //repeatable rewards are indeed intended to be called on first clear as well (with the exception of xp, duh)
-    process_rewards({rewards: {...location.repeatable_reward, xp: null}, source_type: "location", source_name: location.name, is_first_clear: false, source_id: location.id});
+    process_rewards({rewards: {...location.repeatable_reward, xp: null}, source_type: "location", source_name: location.getName(), is_first_clear: false, source_id: location.id});
 
     location.otherUnlocks();
 
@@ -2470,7 +2472,10 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             const dialogue = dialogues[rewards.dialogues[i]]
             if(!dialogue.is_unlocked) {
                 dialogue.is_unlocked = true;
-                log_message(translationManager.getText(language, "log you can now talk with", {v1: dialogue.name}), "activity_unlocked");
+                //getDisplayName over getName, as display.js does it: getName returns the
+                //English name, so this line read "Artık old craftsman ile konuşabilirsin".
+                log_message(translationManager.getText(language, "log you can now talk with",
+                    {v1: translationManager.getDisplayName(language, dialogue.getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled}))}), "activity_unlocked");
             }
         }
     }
@@ -2505,7 +2510,8 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
     if(rewards.crafting) {
         for(let i = 0; i < rewards.crafting.length; i++) {
             locations[rewards.crafting[i]].crafting.is_unlocked = true;
-            log_message(translationManager.getText(language, "log you can now use a", {v1: locations[rewards.crafting[i]].name}), "activity_unlocked");
+            log_message(translationManager.getText(language, "log you can now use a",
+                {v1: locations[rewards.crafting[i]].getName()}), "activity_unlocked");
         }
     }
 
@@ -2589,7 +2595,11 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             if(!recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].is_unlocked) {
                 recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].is_unlocked = true;
                 if(inform_overall) {
-                    log_message(translationManager.getText(language, "log unlocked new recipe v1", {v1: recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].name}));
+                    //getDisplayName, as the crafting window does it: most recipe names are
+                    //the name of the item they produce, so they resolve through `name <x>`.
+                    log_message(translationManager.getText(language, "log unlocked new recipe v1",
+                        {v1: translationManager.getDisplayName(language,
+                            recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].name)}));
                 }
             }
         }

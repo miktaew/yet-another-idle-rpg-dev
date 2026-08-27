@@ -1496,9 +1496,12 @@
             function fit_ui_to_window() {
                 const available_width = window.innerWidth - 12;
                 const available_height = window.innerHeight - 40 - 12;
-                ui_scale = Math.min(1,
+                //No cap at 1: whichever dimension binds decides, so the layout fills the
+                //window instead of sitting in the middle of it with black on two sides. A
+                //floor keeps it usable if the window is made very small.
+                ui_scale = Math.max(0.4, Math.min(
                     available_width / ui_layout_width,
-                    available_height / ui_layout_height);
+                    available_height / ui_layout_height));
                 document.documentElement.style.setProperty("--ui_scale", ui_scale);
             }
 

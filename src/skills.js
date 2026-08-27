@@ -383,9 +383,9 @@ function get_unlocked_skill_rewards(skill_id) {
     
         const milestones = Object.keys(skill.milestones).filter(level => level <= skill.current_level);
         if(milestones.length > 0) {
-            unlocked_rewards = `lvl ${milestones[0]}: ${format_skill_rewards(skill.milestones[milestones[0]])}`;
+            unlocked_rewards = `${translationManager.getText(language, "ui milestone at level", {v1: milestones[0]})} ${format_skill_rewards(skill.milestones[milestones[0]])}`;
             for(let i = 1; i < milestones.length; i++) {
-                unlocked_rewards += `<br>\n\nlvl ${milestones[i]}: ${format_skill_rewards(skill.milestones[milestones[i]])}`;
+                unlocked_rewards += `<br>\n\n${translationManager.getText(language, "ui milestone at level", {v1: milestones[i]})} ${format_skill_rewards(skill.milestones[milestones[i]])}`;
             }
         } else { //no rewards
             return '';

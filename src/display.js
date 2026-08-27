@@ -3172,7 +3172,7 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
         for (var i = 0; i < recipe.components.length; i++) {
             const component_selection = document.createElement("div");
 
-            set_HTML(component_selection, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>${translationManager.getText(language, "ui select a component", {v1: translationManager.getDisplayName(language, recipe.components[i])})}</span>`);
+            set_HTML(component_selection, `<span class="crafting_selection"><i class="material-icons icon subcrafting_dropdown_icon"> keyboard_double_arrow_down </i>${translationManager.getText(language, "ui select a component", {v1: translationManager.getText(language, `component ${recipe.components[i]}`)})}</span>`);
         
             const component_list = document.createElement("div");
             component_selection.appendChild(component_list);
@@ -4874,7 +4874,9 @@ function create_new_skill_bar(skill) {
     }
 
     if(skill.parent_skill) {
-        html_content += `<br>${translationManager.getText(language, "ui parent skill")}: ${translationManager.getDisplayName(language, skill.parent_skill)}<br><br>`; 
+        //name(), not getDisplayName on the key: a skill's shown name depends on its
+        //level, so the key resolves to nothing and the English key was printed.
+        html_content += `<br>${translationManager.getText(language, "ui parent skill")}: ${skills[skill.parent_skill]?.name() ?? skill.parent_skill}<br><br>`; 
     }
     
     insert_HTML(tooltip_desc, html_content);

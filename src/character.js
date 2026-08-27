@@ -10,8 +10,11 @@ import { update_displayed_character_inventory, update_displayed_equipment,
          update_displayed_stamina_efficiency,
          update_displayed_item_log,
          update_displayed_location_types} from "./display.js";
-import { active_effects, current_location, current_stance, favourite_consumables, favourite_items, remove_consumable_from_favourites, remove_item_from_favourites } from "./main.js";
+import { active_effects, current_location, current_stance, favourite_consumables, favourite_items, language, remove_consumable_from_favourites, remove_item_from_favourites } from "./main.js";
 import { current_game_time, is_night } from "./game_time.js";
+//The level-up message is player-facing text, so this file needs the locale. It
+//already depends on main.js, and translation.js only adds global_flags on top.
+import { translationManager } from "./translation.js";
 import { getItemFromKey, item_templates, item_log } from "./items.js";
 import { skill_consumable_tags } from "./misc.js";
 import { height_stats, Person } from "./person.js";
@@ -199,7 +202,8 @@ class Hero extends Person {
                         character.xp.current_level = level_after_xp;
                         character.xp.current_xp = character.xp.total_xp - total_xp_to_previous_lvl;		
                         
-                        return `${character.name} is getting stronger. Reached level ${character.xp.current_level} ${gains}`;
+                        return translationManager.getText(language, "log character level up",
+                                {v1: character.name, v2: character.xp.current_level}) + gains;
                 }
         }
 
@@ -245,21 +249,26 @@ class Hero extends Person {
         
                 character.xp_bonuses.multiplier.levels.all_skill = (character.xp_bonuses.multiplier.levels.all_skill || 1) * total_skill_xp_multiplier;
 
-                let gains = `\nHP increased by ${gained_hp}\nStamina increased by ${gained_stamina}`;
+                //One row per gained stat rather than one sentence: Turkish and English put
+                //the number on opposite sides of the noun.
+                const gain_line = (id, value) => "\n" + translationManager.getText(language, id, {v1: value});
+                let gains = gain_line("log level gain hp", gained_hp)
+                        + gain_line("log level gain stamina", gained_stamina);
                 if(gained_str > 0) {
-                        gains += `\nStrength increased by ${gained_str}`;
+                        gains += gain_line("log level gain strength", gained_str);
                 }
                 if(gained_agi > 0) {
-                        gains += `\nAgility increased by ${gained_agi}`;
+                        gains += gain_line("log level gain agility", gained_agi);
                 }
                 if(gained_dex > 0) {
-                        gains += `\nDexterity increased by ${gained_dex}`;
+                        gains += gain_line("log level gain dexterity", gained_dex);
                 }
                 if(gained_int > 0) {
-                        gains += `\nIntuition increased by ${gained_int}`;
+                        gains += gain_line("log level gain intuition", gained_int);
                 }
         
-                gains += `\nSkill xp gains increased by ${Math.round((gained_skill_xp_multiplier-1)*100)}%`;
+                gains += gain_line("log level gain skill xp",
+                        Math.round((gained_skill_xp_multiplier-1)*100));
                 
                 return gains;
         }
