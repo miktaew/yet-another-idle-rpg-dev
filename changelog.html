@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.23</button>
+    <div class="content">
+        <ul class="entries">
+            <li>The favourites filter is a star rather than a word, and Kullanılabilir shortens to Kull. Five labels do not fit on one line in Turkish, and Favoriler was the one that fell out of the panel.</li>
+            <li>The clock line no longer disappears behind the location box. "24/08/999 10:24, Sonbahar, Per, Gündüz" is 38 characters and its cell was a fixed 305px, so it wrapped - and the box below it is pinned at a hard-coded offset that assumes one line. The header is a row now, the clock takes whatever width the temperature does not need, and it is told not to wrap.</li>
+            <li>The checks are no longer one file. `scripts/check-site.js` was 2134 lines holding twenty-seven of them, and it grew by three in a single round. `tests/run.mjs` calls them now, `tests/checks/` holds them in eight modules by subject - the site, the locale files, display names, DOM text, content, rewards, items, imports - and `tests/lib/` holds the five things more than one of them needs. The skill tests and the save audit moved in beside them; `scripts/` is the build and nothing else.</li>
+            <li>Every check body moved verbatim, and the move was made checkable rather than trusted: the file was sliced into top-level units, re-joining them was asserted to give the original file back, and the output was compared afterwards. `npm run check` prints the same 29 lines in the same order, and a removed locale row still fails it.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.22</button>
     <div class="content">
         <ul class="entries">

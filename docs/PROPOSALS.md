@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 31 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 32 -->
 
 # Proposals
 
@@ -739,8 +739,20 @@ not after. Each item is the request as it was given, and the state it is in.
     way ran at the speed it started at. `set_game_speed` re-arms it; progress lives
     in the tick's closure, so nothing is lost.
 28. **`check-site.js` has grown too large; split the checks into a `tests/`
-    folder** — `todo`. It is one file of about two thousand lines holding
-    twenty-four checks, and it grew by three this round alone.
+    folder** — `done`. It was one file of 2134 lines holding twenty-seven checks, and
+    it grew by three in one round. Now `tests/run.mjs` calls them, `tests/checks/`
+    holds them in eight modules by subject, and `tests/lib/` holds the five things
+    more than one of them needs - the reporter, the paths, the locale loader, the
+    source-reading primitives and the item generator. `test-skills.mjs` and
+    `check-save.js` moved in beside them as `skills.mjs` and `save.mjs`; `scripts/`
+    is the build and nothing else.
+
+    Every check body moved verbatim. The refactor was done by slicing the file into
+    top-level units, asserting that re-joining them gave the original file back,
+    assigning each unit to a module and deriving the imports from what each module
+    actually references. What makes it trustworthy is the comparison at the end:
+    `npm run check` prints the same 29 lines in the same order as before, and a
+    removed locale row still fails it with exit code 1.
 29. **Look at `Kuroiteiken/Echoes-Beneath` for ideas worth taking** — `todo`. A
     different game; the question is which of its ideas fit this one.
 

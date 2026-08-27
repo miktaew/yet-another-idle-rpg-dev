@@ -123,7 +123,8 @@ Pages'e yayınlar. Yalnızca doküman değişen push'lar atlanır. Elle yapılac
 | `resources/` | Fontlar, görseller ve devralınan HackTimer. |
 | `help.html` | Oyun içi yardım. |
 | `changelog.html` | Oyun içi, oyuncuya yönelik sürüm geçmişi. |
-| `scripts/` | Derleme, doğrulama ve save denetimi script'leri. `lib/`, birden fazlasının ihtiyaç duyduğu şeyi tutuyor. |
+| `scripts/` | Derleme. |
+| `tests/` | Bütün kontroller. `run.mjs` onları çağırır, `checks/` konuya göre barındırır, `lib/` birden fazlasının ihtiyaç duyduğunu tutar; `skills.mjs` ve `save.mjs` diğer iki koşum takımı. |
 | `docs/` | Geliştirici ve agent dokümantasyonu. |
 
 ## Mod yapımı ve bunu motor olarak kullanma

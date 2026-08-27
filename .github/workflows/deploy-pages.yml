@@ -70,7 +70,7 @@ jobs:
 
       - name: Run regression tests
         # Exercises the real Skill class source with the circular imports stubbed
-        # out - see scripts/test-skills.mjs for why it has to load it that way.
+        # out - see tests/skills.mjs for why it has to load it that way.
         run: npm test
 
       - name: Configure GitHub Pages

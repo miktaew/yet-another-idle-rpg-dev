@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 31 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 32 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -749,8 +749,20 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     `set_game_speed` onu yeniden kuruyor; ilerleme tick'in kapanışında yaşadığı için
     hiçbir şey kaybolmuyor.
 28. **`check-site.js` fazla büyüdü; kontroller `tests/` klasörüne ayrılsın** —
-    `yapılacak`. Yirmi dört kontrolü barındıran, iki bin satıra yakın tek bir dosya;
-    yalnızca bu turda üç kontrol daha eklendi.
+    `tamam`. Yirmi yedi kontrolü barındıran 2134 satırlık tek bir dosyaydı ve tek bir
+    turda üç kontrol daha eklendi. Artık `tests/run.mjs` onları çağırıyor,
+    `tests/checks/` konuya göre sekiz modülde barındırıyor, `tests/lib/` de birden
+    fazlasının ihtiyaç duyduğu beş şeyi tutuyor: raporlayıcı, yollar, locale
+    yükleyici, kaynak okuma ilkelleri ve eşya üreteci. `test-skills.mjs` ve
+    `check-save.js` yanlarına `skills.mjs` ve `save.mjs` olarak taşındı; `scripts/`
+    artık yalnızca derleme.
+
+    Her kontrolün gövdesi olduğu gibi taşındı. Bölme şöyle yapıldı: dosya üst düzey
+    birimlere kesildi, birimleri yeniden birleştirmenin özgün dosyayı geri verdiği
+    doğrulandı, her birim bir modüle atandı ve import'lar her modülün gerçekten
+    başvurduğu adlardan türetildi. Güvenilir kılan da sondaki karşılaştırma:
+    `npm run check` eskisiyle aynı 29 satırı aynı sırada yazıyor ve kaldırılan bir
+    locale satırı onu hâlâ 1 çıkış koduyla düşürüyor.
 29. **`Kuroiteiken/Echoes-Beneath` reposuna bakıp alınabilecek fikirleri çıkar** —
     `yapılacak`. Başka bir oyun; soru, hangi fikirlerinin buraya uyduğu.
 

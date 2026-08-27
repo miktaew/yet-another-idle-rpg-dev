@@ -741,7 +741,7 @@ const ui = {
     "ui show equipment": "Equipment",
     "ui show usable": "Usable",
     "ui show other": "Other",
-    "ui show favs": "Favs",
+    "ui show favs": "★",
     "ui show stats": "Stats",
     "ui show bio": "Bio",
     "ui show tools": "Tools",

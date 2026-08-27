@@ -20,7 +20,7 @@ import turkish from "../locales/turkish.js";
 //carrying [data-translation].
 //
 //Every locale in locales/ has to be listed here, and every language offered in
-//main.js's `languages` too; scripts/check-site.js enforces both, because a locale
+//main.js's `languages` too; tests/checks/locales.mjs enforces both, because a locale
 //that only arrives through load()'s dynamic import is a locale that does not
 //exist for the first render.
 const bundled_locales = {

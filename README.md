@@ -118,7 +118,8 @@ pushes are skipped. There is nothing to do by hand.
 | `resources/` | Fonts, images, and vendored HackTimer. |
 | `help.html` | In-game help. |
 | `changelog.html` | In-game, player-facing version history. |
-| `scripts/` | Build, validation and save-audit scripts. `lib/` holds what more than one of them needs. |
+| `scripts/` | The build. |
+| `tests/` | Every check. `run.mjs` calls them, `checks/` holds them by subject, `lib/` holds what more than one needs; `skills.mjs` and `save.mjs` are the other two harnesses. |
 | `docs/` | Developer and agent documentation. |
 
 ## Modding and reusing this as an engine

@@ -1,0 +1,95 @@
+/**
+ * Runs every check and reports what they found.
+ *
+ * These were one file of two thousand lines. The split is by subject - the site, the
+ * locale files, display names, content, rewards, items - and the call order below is
+ * the order that file used, so the output is unchanged.
+ *
+ * A check reports through error() and warn() rather than throwing, so one failure
+ * does not hide the rest; the exit code comes from whether anything was reported.
+ */
+
+import { errors, warnings } from "./lib/report.mjs";
+import {
+    check_action_branches,
+    check_content_is_reachable,
+    check_content_text_ids,
+    check_global_flags,
+    check_location_types,
+    check_trader_market_regions,
+} from "./checks/content.mjs";
+import {
+    check_creation_panel_values,
+    check_dialogue_display_names,
+    check_enumerable_id_families,
+    check_equipment_slot_names,
+    check_item_display_names,
+    check_item_name_collisions,
+    check_registry_value_names,
+    check_skill_category_names,
+    check_trader_display_names,
+} from "./checks/display-names.mjs";
+import { check_no_english_in_dom } from "./checks/dom-text.mjs";
+import { check_generated_items, check_recipe_item_names } from "./checks/items.mjs";
+import {
+    check_interpolated_pairs,
+    check_locales,
+    check_no_placeholder_text,
+    check_no_unused_locale_rows,
+    check_translations_have_no_english,
+} from "./checks/locales.mjs";
+import { check_modules_import_what_they_call } from "./checks/modules.mjs";
+import {
+    check_money_requirements,
+    check_required_items,
+    check_reward_keys,
+} from "./checks/rewards.mjs";
+import {
+    check_changelogs_cover_version,
+    check_language_switch_repaints,
+    check_site,
+} from "./checks/site.mjs";
+
+check_site();
+check_interpolated_pairs();
+check_reward_keys();
+check_location_types();
+check_content_is_reachable();
+check_money_requirements();
+check_changelogs_cover_version();
+check_language_switch_repaints();
+await check_locales();
+await check_dialogue_display_names();
+await check_trader_display_names();
+await check_item_display_names();
+await check_equipment_slot_names();
+await check_no_english_in_dom();
+await check_registry_value_names();
+await check_skill_category_names();
+await check_enumerable_id_families();
+await check_trader_market_regions();
+await check_global_flags();
+await check_no_placeholder_text();
+await check_translations_have_no_english();
+await check_no_unused_locale_rows();
+await check_creation_panel_values();
+check_item_name_collisions();
+await check_recipe_item_names();
+await check_modules_import_what_they_call();
+check_action_branches();
+await check_required_items();
+await check_content_text_ids();
+await check_generated_items();
+
+for (const message of warnings) {
+    console.warn(`[check] WARN  ${message}`);
+}
+for (const message of errors) {
+    console.error(`[check] ERROR ${message}`);
+}
+
+if (errors.length > 0) {
+    console.error(`[check] failed with ${errors.length} error(s).`);
+    process.exit(1);
+}
+console.log(`[check] passed${warnings.length > 0 ? ` with ${warnings.length} warning(s)` : ""}.`);

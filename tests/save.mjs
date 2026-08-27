@@ -11,7 +11,7 @@
  * verifies the code against a real player's file.
  *
  * Usage:
- *     node scripts/check-save.js "<exported save>.txt"
+ *     node tests/save.mjs "<exported save>.txt"
  *
  * The export is base64-encoded JSON. It is NOT committed - it is real character
  * data - and .gitignore holds a pattern for the export's default filename.
@@ -29,15 +29,12 @@ import * as path from "node:path";
 import { load_generated_item_templates } from "./lib/generated-items.mjs";
 
 const repo_root = path.resolve(import.meta.dirname, "..");
-
 const errors = [];
 const notes = [];
-
 function error(message) { errors.push(message); }
-
 const save_path = process.argv[2];
 if (!save_path) {
-    console.error("[check-save] usage: node scripts/check-save.js \"<exported save>.txt\"");
+    console.error("[check-save] usage: node tests/save.mjs \"<exported save>.txt\"");
     process.exit(2);
 }
 if (!fs.existsSync(save_path)) {

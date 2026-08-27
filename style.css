@@ -1160,6 +1160,19 @@ input[type=checkbox], input[type=radio] {
 	float: right;
 }
 
+/*
+	The favourites filter is a star rather than a word. Five labels do not fit on one
+	line in Turkish and this was the one that fell out of the panel; a symbol costs no
+	width and needs no translation. It matches the star on each favourited item row.
+*/
+#inventory_show_favs {
+	min-width: 0;
+	padding-left: 9px;
+	padding-right: 9px;
+	font-size: 18px;
+	line-height: 1.05;
+}
+
 .inventory_control_button {
 	float:left;
 	padding: 3px;
@@ -2694,14 +2707,23 @@ i {
 	width: 400px;
 	font-size: 17px;
 }
+	/*
+		A row, so the clock takes whatever width the temperature leaves rather than a
+		fixed 305px. It must not wrap: #location_div below is pinned at top: 36px,
+		which assumes this box is one line tall, so a second line disappears behind it.
+	*/
 	#time_and_weather_div {
 		border-bottom: 1px solid white;
 		padding: 3px 0px 2px 0px;
+		display: flex;
+		align-items: baseline;
 	}
 		#time_div {
 			text-align: left;
-			width: 305px;
-			display: inline-block;
+			flex: 1 1 auto;
+			min-width: 0;
+			white-space: nowrap;
+			font-size: 15px;
 			padding: 2px;
 		}
 			.icon {
@@ -2709,8 +2731,8 @@ i {
 				top: 3px;
 			}
 		#weather_div {
-			width: 80px;
-			display: inline-block;
+			flex: 0 0 auto;
+			min-width: 80px;
 			padding: 2px;
 			text-align: right;
 		}

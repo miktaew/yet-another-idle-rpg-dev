@@ -14,7 +14,7 @@
  * result is written to a temporary module, and that is imported. The code being
  * exercised is the shipped code; only its two dependencies are fake.
  *
- * Both `npm run check` and `scripts/check-save.js` use this, so the stubbing lives
+ * Both `npm run check` and `tests/save.mjs` use this, so the stubbing lives
  * in one place: two copies would drift, and a drifted copy of this reports a clean
  * result while checking nothing.
  */

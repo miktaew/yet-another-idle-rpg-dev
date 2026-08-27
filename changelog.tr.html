@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.23</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Favoriler filtresi kelime yerine bir yıldız oldu, Kullanılabilir de Kull. olarak kısaldı. Türkçede beş etiket tek satıra sığmıyor ve panelden düşen Favoriler'di.</li>
+            <li>Saat satırı artık konum kutusunun arkasında kaybolmuyor. "24/08/999 10:24, Sonbahar, Per, Gündüz" 38 karakter ve hücresi sabit 305px'ti, yani alt satıra sarıyordu - altındaki kutu ise tek satır varsayan sabit bir konuma sabitlenmiş. Başlık artık bir satır: saat, sıcaklığın ihtiyaç duymadığı genişliği alıyor ve sarmaması söylendi.</li>
+            <li>Kontroller artık tek dosya değil. `scripts/check-site.js` yirmi yedi kontrolü barındıran 2134 satırdı ve tek bir turda üçü daha eklendi. Artık `tests/run.mjs` onları çağırıyor, `tests/checks/` konuya göre sekiz modülde barındırıyor - site, locale dosyaları, görünen adlar, DOM metni, içerik, ödüller, eşyalar, import'lar - `tests/lib/` de birden fazlasının ihtiyaç duyduğu beş şeyi tutuyor. Beceri testleri ve save denetimi yanlarına taşındı; `scripts/` artık yalnızca derleme.</li>
+            <li>Her kontrolün gövdesi olduğu gibi taşındı ve taşıma güvenilmek yerine denetlenebilir kılındı: dosya üst düzey birimlere kesildi, birimleri yeniden birleştirmenin özgün dosyayı geri verdiği doğrulandı, sonra çıktı karşılaştırıldı. `npm run check` aynı 29 satırı aynı sırada yazıyor ve kaldırılan bir locale satırı onu hâlâ düşürüyor.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.22</button>
     <div class="content">
         <ul class="entries">

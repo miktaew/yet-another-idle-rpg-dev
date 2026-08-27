@@ -1,6 +1,6 @@
 {
   "name": "yairp",
-  "version": "0.6.22",
+  "version": "0.6.23",
   "private": true,
   "description": "Yet Another Idle RPG - a text-based idle RPG (fork of miktaew/yet-another-idle-rpg)",
   "license": "MIT",
@@ -10,9 +10,9 @@
   },
   "scripts": {
     "build": "node scripts/build-site.js",
-    "check": "node scripts/check-site.js",
-    "check:save": "node scripts/check-save.js",
-    "test": "node scripts/test-skills.mjs",
+    "check": "node tests/run.mjs",
+    "check:save": "node tests/save.mjs",
+    "test": "node tests/skills.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8080",
     "serve:site": "esbuild --servedir=_site --serve=127.0.0.1:8081"
   },
