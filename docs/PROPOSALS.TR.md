@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 36 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 37 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -888,6 +888,30 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     kilometre taşı listesinde iki sabit İngilizce cümle vardı ve birinin içindeki beceri
     registry anahtarıydı; o yüzden Uyku tooltip'i, hemen yanında "Meditasyon" yazan bir
     satırın altında `Unlocked skill "Meditation"` diyordu.
+42. **Aktarılabilecek olanların bir kısmı değil tamamı** — `saptanabilir olan için
+    bitti`. `contribute/upstream-fixes` artık 14 commit taşıyor; her biri upstream'in
+    kendi koduna ve üslubuna göre yazılmış, her biri kuşkulanılan değil ölçülen bir
+    kusur, ve her biri tek başına atılabilir: `src/` içinde on iki hata düzeltmesi, bir
+    derleme düzeltmesi (`build.js` sürüm damgasını basamadığında 0 ile çıkıyor, yani
+    hiçbir tarayıcının çekmeyeceği bir paket başarılı derleme olarak raporlanıyor - ve
+    orada `dist/` commit ediliyor) ve isteğe bağlı, bağımsız bir paket-yükleme kontrolü.
+
+    Küme nasıl tahminle değil kapanışla belirlendi: kontrol takımımız onların ağacına
+    yöneltildi - kontrollerimiz zaten bunun için, her biri bulduğumuz bir hata sınıfını
+    kodluyor. Kaynak düzeyindeki kontroller onların kodunda artık başka bir şey
+    bulmuyor. İki bulgu düzeltme değil yazar kararı gerektirdiği için rapor olarak
+    bırakıldı: gaze aksiyonunun sıfır şanslı başarı metni, ve düzeltilmesi kendi
+    yorumlarının beklemede olduğunu söylediği gümüş hattını açacak olan yanlış yazılmış
+    `action:` ödül anahtarı. Gerçek gibi görünen bir bulgu ise değildi: 21 tanelik
+    "koşulsuz conditional_loss" isabeti yanlış alarm sınıfı, çünkü kontrolümüz
+    `conditions` arıyor, onların alanı `success_conditions`.
+
+    Aktarılamayanlar ve nedeni: çeviri katmanı (onlar İngilizce-only, ve bu bir düzeltme
+    değil mimari), kendi içeriğimiz ve kanonumuz, ve kendi işaretlememize ile onlarda
+    olmayan `zoom` özelliğine bağlı arayüz işi.
+
+    PR metni yazıldı ve dal push edildi. PR'ı açmak sahibe kalıyor, çünkü burada `gh`
+    kurulu değil.
 
 ---
 ## Bekleyen kararlar

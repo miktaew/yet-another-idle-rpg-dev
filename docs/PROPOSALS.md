@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 36 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 37 -->
 
 # Proposals
 
@@ -880,6 +880,30 @@ not after. Each item is the request as it was given, and the state it is in.
     had two hardcoded English sentences, and the skill inside one of them was the
     registry key, so the Sleeping tooltip read `Unlocked skill "Meditation"` next to a
     line that already said "Meditasyon".
+42. **Contribute everything transferable, not a subset** — `done for what is
+    detectable`. `contribute/upstream-fixes` now carries 14 commits, each written
+    against upstream's own code and style, each a fault that was measured rather than
+    suspected, and each droppable on its own: twelve bug fixes in `src/`, one build fix
+    (`build.js` exits 0 when it cannot stamp the version, so a bundle no browser will
+    fetch reports as a successful build - and `dist/` is committed there), and one
+    optional standalone bundle-load check.
+
+    How the set was closed rather than guessed at: our check suite was pointed at their
+    tree, which is what our checks are for - each one encodes a bug class we found. The
+    source-level checks now find nothing further in their code. Two findings were left
+    as reports because they need an authorial decision, not a fix: the gaze action's
+    zero-chance success text, and a misspelled `action:` reward key whose correction
+    would open a silver chain their own comments say is parked. One finding that looked
+    real was not - 21 "conditional_loss with no conditions" hits are a false-positive
+    class, because our check looks for `conditions` and their field is
+    `success_conditions`.
+
+    Not transferable, and why: the translation layer (they are English-only, and it is
+    an architecture rather than a fix), our content and canon, and the UI work that is
+    tied to our own markup and to the `zoom` feature they do not have.
+
+    The PR body is written and the branch is pushed. Opening the PR is the owner's, since
+    `gh` is not installed here.
 
 ---
 ## Open decisions
