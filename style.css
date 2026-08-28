@@ -3094,3 +3094,9 @@ html, body {
 	 height: 258px;
 	 overflow-y: scroll;
  }
+
+ .discovery_heading {
+	 text-align: center;
+	 padding: 4px 0;
+	 opacity: 0.8;
+ }

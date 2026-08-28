@@ -27,7 +27,7 @@ import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./
 import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
-import { enemy_zones, item_sources } from "./world_index.js";
+import { enemy_zones, item_sources, training_places } from "./world_index.js";
 import { effect_templates } from "./active_effects.js";
 import { player_storage } from "./data/storage.js";
 import { quests } from "./quests.js";
@@ -5574,6 +5574,7 @@ function create_discovery_source_line(source) {
         drop: "ui discovery dropped by",
         trade: "ui discovery sold by",
         craft: "ui discovery crafted",
+        train: "ui discovery trained at",
     }[source.kind];
 
     //Crafting has no place attached to it, so it is a line and never a button.
@@ -5633,6 +5634,48 @@ function create_discovery_source_line(source) {
  * inventory: what is on it changes with every pickup and every unlock, and it is only
  * ever on screen while a player is looking at it.
  */
+/**
+ * The "where to train" section: fifteen skills and the places that feed them.
+ *
+ * Above the items rather than below, because it is fifteen rows against several hundred
+ * and a section behind all of those is a section nobody reads.
+ */
+function append_training_section(list) {
+    const places = training_places();
+    const skill_ids = Object.keys(places)
+        .filter(skill_id => skills[skill_id])
+        .sort((first, second) => compare_display_names(
+            skills[first].name(), skills[second].name()));
+
+    if(skill_ids.length === 0) {
+        return;
+    }
+
+    const heading = document.createElement("div");
+    heading.classList.add("discovery_heading");
+    heading.innerText = translationManager.getText(language, "ui discovery training header");
+    list.appendChild(heading);
+
+    skill_ids.forEach(skill_id => {
+        const entry = document.createElement("div");
+        entry.classList.add("discovery_entry");
+
+        const name = document.createElement("div");
+        name.classList.add("discovery_entry_name");
+        name.innerText = skills[skill_id].name();
+        entry.appendChild(name);
+
+        places[skill_id]
+            .slice()
+            .sort((first, second) => compare_display_names(first.getName(), second.getName()))
+            .forEach(place => {
+                entry.appendChild(create_discovery_source_line({kind: "train", location_key: place.id}));
+            });
+
+        list.appendChild(entry);
+    });
+}
+
 function update_displayed_discoveries() {
     const list = document.getElementById("discoveries_list");
     if(!list) {
@@ -5640,10 +5683,15 @@ function update_displayed_discoveries() {
     }
     clear_HTML_content(list);
 
+    //Fifteen rows before several hundred: a section behind all the items is a
+    //section nobody reads.
+    append_training_section(list);
+
     //getDisplayName, not getName: getName is the canonical English and the translation
     //key, so the whole list came out in English whatever the language was.
     const hide_sourceless = document.getElementById("discoveries_hide_sourceless")?.checked;
     const hide_crafted = document.getElementById("discoveries_hide_crafted")?.checked;
+    const hide_traded = document.getElementById("discoveries_hide_traded")?.checked;
 
     const found = Object.keys(item_log.items)
         .filter(item_id => item_templates[item_id])
@@ -5655,6 +5703,9 @@ function update_displayed_discoveries() {
             //Only what is nothing BUT crafted: an item you can also gather still has a
             //place to go, which is what the page is for.
             if(hide_crafted && sources.length > 0 && sources.every(s => s.kind === "craft")) {
+                return false;
+            }
+            if(hide_traded && sources.length > 0 && sources.every(s => s.kind === "trade")) {
                 return false;
             }
             return true;
@@ -5669,6 +5720,11 @@ function update_displayed_discoveries() {
         list.appendChild(empty);
         return;
     }
+
+    const items_heading = document.createElement("div");
+    items_heading.classList.add("discovery_heading");
+    items_heading.innerText = translationManager.getText(language, "ui discovery items header");
+    list.appendChild(items_heading);
 
     found.forEach(item_id => {
         const entry = document.createElement("div");

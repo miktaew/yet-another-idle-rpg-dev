@@ -963,6 +963,19 @@ const translationManager = globalThis.__real_tm;
     }
     check("every source points at a location that exists",
         dangling.length === 0, dangling.slice(0, 3).join("; "));
+
+    //The training index: skills to the places that feed them, read out of the same
+    //forward declarations - a location lists its activities, an activity lists its skills.
+    const training = world.training_places();
+    const trainable = Object.keys(training);
+    check("skills resolve to places that train them", trainable.length >= 12,
+        `${trainable.length} skills`);
+
+    const bad_places = trainable.flatMap(skill_id =>
+        training[skill_id].filter(place => typeof place?.getName !== "function")
+            .map(() => skill_id));
+    check("a training place comes back as the location object itself",
+        bad_places.length === 0, bad_places.slice(0, 3).join(", "));
 }
 console.log("");
 if (failures.length > 0) {

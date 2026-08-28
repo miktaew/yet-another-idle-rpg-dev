@@ -17,6 +17,7 @@ import { locations } from "./data/locations.js";
 import { enemy_templates } from "./enemies.js";
 import { traders, inventory_templates } from "./traders.js";
 import { recipes } from "./crafting_recipes.js";
+import { activities } from "./activities.js";
 /**
  * A list, or an empty one - and a word about it when the value was neither.
  *
@@ -190,4 +191,42 @@ function enemy_zones(enemy_name) {
     return enemy_locations_index[enemy_name] || [];
 }
 
-export { enemy_zones, item_sources };
+/*
+    Which places train which skill.
+
+    Declared forwards, like everything else here: a location lists its activities, and an
+    activity lists the skills it feeds. Fifteen skills can be trained somewhere.
+*/
+let training_index;
+
+function build_training_index() {
+    const index = {};
+    Object.keys(locations).forEach(location_key => {
+        Object.values(locations[location_key].activities || {}).forEach(local => {
+            const activity = activities[local.activity_name];
+            as_list(activity?.base_skills_names).forEach(skill_id => {
+                if(!index[skill_id]) {
+                    index[skill_id] = [];
+                }
+                if(!index[skill_id].includes(locations[location_key])) {
+                    index[skill_id].push(locations[location_key]);
+                }
+            });
+        });
+    });
+    return index;
+}
+
+/**
+ * Every skill that can be trained somewhere, with the places that train it.
+ *
+ * @returns {Object} skill id -> live location objects
+ */
+function training_places() {
+    if(!training_index) {
+        training_index = build_training_index();
+    }
+    return training_index;
+}
+
+export { enemy_zones, item_sources, training_places };
