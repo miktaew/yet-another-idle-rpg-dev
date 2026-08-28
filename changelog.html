@@ -257,6 +257,14 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.36</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Rewards now arrive at the quality they were promised at. The five starter weapons the smith hands out are written to be worn-out ones - quality 50 - and every player received them at 100 instead, worth double. The quality was being written onto the item&#39;s master copy, which had already cached the address the inventory files it under, so it never arrived; the reward now builds its own copy. Anything else granted with a quality was in the same boat.</li>
+            <li>A skill milestone no longer says <em>Unlocked skill "Meditation"</em> in the middle of a Turkish tooltip. Two of those sentences were written into the code rather than the language files, and the skill named in one of them was its internal name - so the Sleeping tooltip said "Meditasyon" on one line and "Meditation" on the next.</li>
+            <li>A mistyped item in a reward now says which one and grants the rest, instead of stopping there.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.35</button>
     <div class="content">
         <ul class="entries">

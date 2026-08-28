@@ -29,6 +29,8 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 
+import { load_browser_free } from "./lib/browser-free-src.mjs";
+
 const repo_root = path.resolve(import.meta.dirname, "..");
 
 /**
@@ -759,6 +761,62 @@ const registries = {
         money_spent(q4, true) === money_required(q4));
 }
 
+// --- a reward's quality has to reach the inventory key ---------------------
+/*
+    process_rewards used to stamp the quality onto the shared template:
+
+        item = item_templates[entry.item];
+        item.quality = entry.quality;
+
+    getInventoryKey() caches into this.inventory_key, and a template's key is cached
+    long before any reward is granted, so the stamp never reached the key - the five
+    starter weapons that ask for quality 50 arrived at 100 - while still landing on the
+    shared template, where getBaseValue's `quality || this.quality || 100` reads it.
+
+    These call the shipped accessors through the browser-free loader, so what is
+    asserted is what the game does.
+*/
+{
+    const items = await load_browser_free(repo_root, "src/items.js");
+    const { item_templates, getItem } = items;
+
+    const template = item_templates["Iron sword"];
+    //Cached first, on purpose: this is the state every template is in by the time a
+    //reward is granted, and it is what hid the bug.
+    const key_before = template.getInventoryKey();
+
+    const granted = getItem({...template, quality: 120});
+    check("a reward's quality reaches the inventory key",
+        JSON.parse(granted.getInventoryKey()).quality === 120,
+        `got ${granted.getInventoryKey()}`);
+
+    check("granting a quality does not touch the shared template",
+        template.getInventoryKey() === key_before && template.quality === 100,
+        `key ${template.getInventoryKey()}, quality ${template.quality}`);
+
+    //The old code's actual effect, kept as a test so it cannot come back: stamping the
+    //quality on a template is invisible to the key.
+    const ore = item_templates["Iron ore"];
+    const ore_key = ore.getInventoryKey();
+    ore.quality = 77;
+    check("stamping a quality on a template does not change its key",
+        ore.getInventoryKey() === ore_key,
+        `${ore_key} became ${ore.getInventoryKey()}`);
+    delete ore.quality;
+
+    //An item with no quality of its own still gets one when a reward asks.
+    const fresh_ore = getItem({...item_templates["Iron ore"], quality: 88});
+    check("a quality-less item can still be granted with a quality",
+        JSON.parse(fresh_ore.getInventoryKey()).quality === 88,
+        `got ${fresh_ore.getInventoryKey()}`);
+
+    //And the five the content actually asks for, at the quality it asks for.
+    const starters = ["Cheap iron dagger", "Cheap iron sword", "Cheap iron spear",
+        "Cheap iron axe", "Cheap iron battle hammer"];
+    const at_fifty = starters.every(name =>
+        JSON.parse(getItem({...item_templates[name], quality: 50}).getInventoryKey()).quality === 50);
+    check("the smith's five starter weapons can be granted at quality 50", at_fifty);
+}
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

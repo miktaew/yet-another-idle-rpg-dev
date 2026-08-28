@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 35 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 36 -->
 
 # Proposals
 
@@ -849,6 +849,37 @@ not after. Each item is the request as it was given, and the state it is in.
     followed rather than remembered; and it guides - it should leave a player who comes
     back after a week knowing what they were in the middle of. Not a transcript: the
     parts that carry the thread.
+37. **The stance tooltip's missing stat name** — `done`, v0.6.34. Berserker's Stride
+    printed "x1.2 text not found, id: hit_chance". One of the four rows seen upstream
+    and skipped during the merge on the assumption that we had equivalents; we did not.
+    Closed as a family rather than a row: check_enumerable_id_families now derives the
+    stat labels from the five places display.js actually reads a stat key from, and
+    deliberately not from character.base_stats, which names five stats the game never
+    shows and did not name this one.
+38. **Favouriting a stance threw** — `done`, v0.6.35. "getName is not a function": the
+    quick-select bar was handed the map of which stances are starred where it needed the
+    registry. The parameter was removed rather than corrected, so there is nothing left
+    to pass wrongly.
+39. **The dev console must be able to set quality and count** — `done`. `give` took
+    both already in shape, and neither worked as documented: the quality was stamped
+    onto the shared template, and getInventoryKey() caches, so it never reached the key.
+    Measured: the smith's five starter weapons ask for quality 50 and arrived at 100 -
+    worth 157/200/290 against the 79/100/144 the content priced them at. A live content
+    bug, not only a console gap. Fixed through the path InventoryHaver already uses,
+    with five tests and a check that nothing writes a quality onto a template.
+40. **A doc with worked dev-console examples** — `done`, [DEV_CONSOLE.md](DEV_CONSOLE.md)
+    and its Turkish pair. All 23 reward keys with the shape each wants, the quality
+    table, and the rest of the functions. Every name in it was verified against the
+    registries rather than written from memory.
+41. **"Gathering mastery" reads as "Çırak toplayıcı"** — `answered`, and not a
+    translation fault. A skill carries a `names` map keyed by level, so its displayed
+    name changes as it ranks up - an English player at level 10 reads "Apprentice
+    gatherer" too, and the Turkish is that title's correct rendering. Worth noting for
+    P-13/35: this rank system is already most of the title mechanic that was wanted from
+    Echoes-Beneath. What the report did surface is real and is fixed: the milestone list
+    had two hardcoded English sentences, and the skill inside one of them was the
+    registry key, so the Sleeping tooltip read `Unlocked skill "Meditation"` next to a
+    line that already said "Meditasyon".
 
 ---
 ## Open decisions

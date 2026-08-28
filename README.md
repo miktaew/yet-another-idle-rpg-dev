@@ -156,6 +156,7 @@ Turkish translation.
 | [docs/PROPOSALS.md](docs/PROPOSALS.md) · [TR](docs/PROPOSALS.TR.md) | Working backlog, standing directives and open decisions. |
 | [docs/I18N.md](docs/I18N.md) · [TR](docs/I18N.TR.md) | Translation handbook: how localisation works, the rules, and the glossary. |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) · [TR](docs/CHANGELOG.TR.md) | Development history with reasoning. |
+| [docs/DEV_CONSOLE.md](docs/DEV_CONSOLE.md) · [TR](docs/DEV_CONSOLE.TR.md) | The dev console: every function it exposes, with worked examples. |
 
 ## Contributing
 

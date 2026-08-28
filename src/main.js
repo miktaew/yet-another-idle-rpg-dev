@@ -2748,19 +2748,33 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.items && !only_unlocks) {
         for(let i = 0; i < rewards.items.length; i++) {
-            let item;
-            let count;
-            let quality;
-            if(typeof rewards.items[i] === "string") {
-                item = item_templates[rewards.items[i]];
-                count = 1;
-            } else {
-                item = item_templates[rewards.items[i].item];
-                count = rewards.items[i].count || 1;
-                item.quality = rewards.items[i].quality;
+            const entry = rewards.items[i];
+            const is_bare_name = typeof entry === "string";
+            const item_id = is_bare_name ? entry : entry.item;
+            const template = item_templates[item_id];
+
+            if(!template) {
+                console.error(`No such item as "${item_id}" - reward skipped.`);
+                continue;
             }
-            
-            log_message(translationManager.getText(language, "log heroname obtained v1 x v2", {v1: item.getName(), v2: count}));
+
+            const count = is_bare_name ? 1 : (entry.count || 1);
+            const quality = is_bare_name ? undefined : entry.quality;
+
+            /*
+                A fresh item rather than the template with a quality stamped on it.
+                getInventoryKey() caches, and a template's key is cached long before any
+                reward is granted, so the stamp never reached the key - the five starter
+                weapons asking for quality 50 arrived at 100 - while still landing on the
+                shared template for getBaseValue's fallback to read. This is the path
+                InventoryHaver.add_to_inventory already uses: the constructor recomputes
+                the key, so the quality is in it and the template is untouched.
+            */
+            const item = quality ? getItem({...template, quality}) : template;
+
+            //getDisplayName, not getName: getName is the canonical English and the
+            //translation key, so the log read English in every language.
+            log_message(translationManager.getText(language, "log heroname obtained v1 x v2", {v1: item.getDisplayName(), v2: count}));
             add_to_character_inventory([{item_key: item.getInventoryKey(), count}]);
         }
     }
@@ -6168,6 +6182,8 @@ window.run = run;
  *
  *     add_active_effect("Coffee", 1800)
  *     give({items: ["White iron ore"], money: 50000})
+ *     give({items: [{item: "Iron ore", count: 50}]})
+ *     give({items: [{item: "Iron sword", quality: 120}]})
  *     goto("The bay")
  *
  * Deliberately NOT on by default and deliberately NOT saved. A reload turns it off

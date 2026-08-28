@@ -2,7 +2,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { braced_body, strip_comments, top_level_keys } from "../lib/source.mjs";
+import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { error } from "../lib/report.mjs";
 import { load_generated_item_templates } from "../lib/generated-items.mjs";
 import { repo_root } from "../lib/context.mjs";
@@ -171,8 +171,61 @@ async function check_required_items() {
     console.log(`[check] required items: ${checked} checked`);
 }
 
+/**
+ * Nothing may write a quality onto an item template.
+ *
+ * Templates in item_templates are shared singletons, and getInventoryKey() caches into
+ * this.inventory_key. So a stamped quality is invisible to the key - which is what an
+ * inventory is addressed by - and permanent for every later reader of the template.
+ * process_rewards did exactly this, and the five starter weapons the smith hands out
+ * asked for quality 50 and arrived at 100.
+ *
+ * The way to grant a quality is a fresh item: getItem({...template, quality}), whose
+ * constructor recomputes the key. That is what InventoryHaver.add_to_inventory does.
+ *
+ * Only variables the same file takes out of item_templates are considered, so a plain
+ * key object or a constructor's own `this.quality` is not a finding.
+ */
+function check_nothing_stamps_a_template_quality() {
+    let scanned = 0;
+
+    for (const relative of source_files(repo_root, "src")) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        //Names this file takes out of the registry: `const x = item_templates[...]`,
+        //`x = item_templates[...]`, destructuring is not used for this anywhere.
+        const from_registry = new Set();
+        for (const match of source.matchAll(
+                /(?:const|let|var)?\s*(\w+)\s*=\s*item_templates\s*\[/g)) {
+            from_registry.add(match[1]);
+        }
+        if (from_registry.size === 0) {
+            continue;
+        }
+        scanned++;
+
+        for (const match of source.matchAll(/(\w+)\.quality\s*=(?!=)/g)) {
+            if (!from_registry.has(match[1])) {
+                continue;
+            }
+            const line = source.slice(0, match.index).split("\n").length;
+            error(`${relative}:${line} writes a quality onto "${match[1]}", which is an`
+                + ` item template. The key is already cached, so the quality would not reach`
+                + ` it, and the template is shared. Build a fresh item instead:`
+                + ` getItem({...template, quality}).`);
+        }
+    }
+
+    if (scanned < 4) {
+        error(`only ${scanned} files read item_templates - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] no template qualities stamped: ${scanned} files read the registry`);
+}
 export {
     check_money_requirements,
+    check_nothing_stamps_a_template_quality,
     check_required_items,
     check_reward_keys,
 };

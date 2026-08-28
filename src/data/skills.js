@@ -480,26 +480,33 @@ function format_skill_rewards(milestone){
         }
     }
     if(milestone.unlocks) {
+        //Each line is one translated sentence rather than a stitched-together one:
+        //Turkish puts the verb last, so a hardcoded "Unlocked" in front of a name
+        //cannot be translated by translating the name.
+        const append = (line) => {
+            formatted = formatted ? `${formatted}, <br> ${line}` : line;
+        };
+
         if(milestone.unlocks.skills) {
-            const unlocked_skills = milestone.unlocks.skills;
-            if(formatted) {
-                formatted += `, <br> Unlocked skill "${milestone.unlocks.skills[0]}"`;
-            } else {
-                formatted = `Unlocked skill "${milestone.unlocks.skills[0]}"`;
-            }
-            for(let i = 1; i < unlocked_skills.length; i++) {
-                formatted += `, "${milestone.unlocks.skills[i]}"`;
-            }
+            //getDisplayName, not the raw key: the key is the id AND the level-0 name for
+            //every skill a milestone unlocks, so the `name <X>` row applies. Asking the
+            //skill instance would not work - a skill that is still locked answers with
+            //the unknown-skill placeholder, which is what this line exists to replace.
+            const names = milestone.unlocks.skills
+                .map(key => translationManager.getDisplayName(language, key))
+                .join(", ");
+            append(translationManager.getText(language,
+                milestone.unlocks.skills.length > 1
+                    ? "ui milestone unlocked skills v1"
+                    : "ui milestone unlocked skill v1",
+                {v1: names}));
         }
         if(milestone.unlocks.recipes) {
-            const phrasing = milestone.unlocks.recipes.length > 1?"new recipes":"a new recipe";
-            if(formatted) {
-                formatted += `, <br> Unlocked ${phrasing}`;
-            } else {
-                formatted = `Unlocked ${phrasing}`;
-            }
+            append(translationManager.getText(language,
+                milestone.unlocks.recipes.length > 1
+                    ? "ui milestone unlocked recipes"
+                    : "ui milestone unlocked recipe"));
         }
-        
     }
     return formatted;
 }

@@ -3582,6 +3582,10 @@ const descriptions = {
     "log milestone flat": "+{v1} {v2}",
     "log milestone multiplier": "x{v1} {v2}",
     "log milestone xp gain": "{v2} için x{v1} tecrübe",
+    "ui milestone unlocked skill v1": "{v1} becerisinin kilidi açıldı",
+    "ui milestone unlocked skills v1": "{v1} becerilerinin kilidi açıldı",
+    "ui milestone unlocked recipe": "Yeni bir tarifin kilidi açıldı",
+    "ui milestone unlocked recipes": "Yeni tariflerin kilidi açıldı",
 
     //The character level-up message. It was English end to end, and it is the first
     //line of its kind every player sees.

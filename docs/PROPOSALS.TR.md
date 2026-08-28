@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 35 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 36 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -856,6 +856,38 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     Oyuncunun sorduğu soruları ve aldığı cevapları tutacak, böylece hikâye
     hatırlanmak yerine takip edilebilecek; ve yönlendirecek - bir hafta sonra dönen
     oyuncu neyin ortasında kaldığını bilerek dönmeli. Döküm değil: ipi taşıyan kısımlar.
+37. **Duruş tooltip'indeki eksik stat adı** — `bitti`, v0.6.34. Cinnet yürüyüşü "x1.2
+    text not found, id: hit_chance" yazıyordu. Merge sırasında upstream'de görülüp
+    "bizde karşılığı var" varsayımıyla atlanan dört satırdan biri; yoktu. Satır olarak
+    değil aile olarak kapatıldı: check_enumerable_id_families stat etiketlerini artık
+    display.js'in bir stat anahtarını gerçekten okuduğu beş yerden türetiyor;
+    character.base_stats'tan bilerek türetmiyor, çünkü orada oyunun hiç göstermediği beş
+    stat adlandırılmış, bu ise adlandırılmamıştı.
+38. **Duruşu favorilemek hata veriyordu** — `bitti`, v0.6.35. "getName is not a
+    function": hızlı seçim çubuğuna registry gerekirken hangi duruşların yıldızlı olduğu
+    haritası veriliyordu. Parametre düzeltilmek yerine kaldırıldı; artık yanlış
+    geçirilecek bir şey yok.
+39. **Geliştirici konsolu kalite ve adet verebilmeli** — `bitti`. `give` ikisini de şekil
+    olarak zaten alıyordu ve ikisi de belgelendiği gibi çalışmıyordu: kalite paylaşılan
+    şablona yazılıyordu, getInventoryKey() ise önbelleğe aldığı için anahtara hiç
+    ulaşmıyordu. Ölçüldü: demircinin verdiği beş başlangıç silahı kalite 50 istiyor ve
+    100 olarak geliyordu - içeriğin 79/100/144 diye fiyatladığı yerde 157/200/290. Yani
+    yalnızca konsol eksiği değil, canlı bir içerik hatası. InventoryHaver'ın hâlihazırda
+    kullandığı yolla düzeltildi; beş test ve hiçbir yerin şablona kalite yazmamasını
+    denetleyen bir kontrol eklendi.
+40. **İşlenmiş dev konsolu örnekleriyle bir doküman** — `bitti`,
+    [DEV_CONSOLE.TR.md](DEV_CONSOLE.TR.md) ve İngilizce eşi. 23 ödül anahtarının tamamı,
+    her birinin istediği şekille, kalite tablosu ve diğer fonksiyonlar. İçindeki her ad
+    hafızadan yazılmak yerine registry'lere karşı doğrulandı.
+41. **"Gathering mastery" "Çırak toplayıcı" olarak okunuyor** — `cevaplandı`, ve bu bir
+    çeviri hatası değil. Bir becerinin seviyeye göre anahtarlanmış `names` haritası var,
+    yani gösterilen adı rütbe atladıkça değişiyor - İngilizce oyuncu da 10. seviyede
+    "Apprentice gatherer" okuyor, Türkçesi de o unvanın doğru karşılığı. P-13/35 için not
+    edilmeye değer: bu rütbe sistemi, Echoes-Beneath'ten istenen unvan mekaniğinin
+    büyük kısmı zaten. Raporun gerçekten ortaya çıkardığı şey ise gerçek ve düzeltildi:
+    kilometre taşı listesinde iki sabit İngilizce cümle vardı ve birinin içindeki beceri
+    registry anahtarıydı; o yüzden Uyku tooltip'i, hemen yanında "Meditasyon" yazan bir
+    satırın altında `Unlocked skill "Meditation"` diyordu.
 
 ---
 ## Bekleyen kararlar

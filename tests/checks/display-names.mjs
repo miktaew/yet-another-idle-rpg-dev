@@ -461,6 +461,21 @@ async function check_enumerable_id_families() {
             shown_by: "the stat tooltips",
         },
         {
+            what: "milestone-unlocked skill",
+            prefix: "name",
+            /*
+                A milestone lists what it unlocks by registry key, and the tooltip line
+                translates that key through the `name <X>` family. Sound only while the key
+                is also the level-0 name: skills["Gathering mastery"] is named "Beginner
+                gatherer" at level 0 and has no row of its own, so a milestone unlocking a
+                renaming skill would print its key. One skill is unlocked this way today.
+            */
+            values: collect(read("src/data/skills.js"),
+                /unlocks:\s*\{[^}]*skills:\s*\[([^\]]*)\]/g,
+                (body) => body.match(/"([^"]+)"/g)?.map(q => q.slice(1, -1)) ?? []),
+            shown_by: "the skill milestone list",
+        },
+        {
             what: "stat label",
             prefix: "",
             /*

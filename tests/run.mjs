@@ -49,6 +49,7 @@ import {
 import { check_modules_import_what_they_call } from "./checks/modules.mjs";
 import {
     check_money_requirements,
+    check_nothing_stamps_a_template_quality,
     check_required_items,
     check_reward_keys,
 } from "./checks/rewards.mjs";
@@ -65,6 +66,7 @@ check_reward_keys();
 check_location_types();
 check_content_is_reachable();
 check_money_requirements();
+check_nothing_stamps_a_template_quality();
 check_changelogs_cover_version();
 check_help_map_covers_the_world();
 check_language_switch_repaints();

@@ -160,6 +160,7 @@ Her doküman bir çifttir: İngilizce dosya kanoniktir, `.TR.md` dosyası onun T
 | [docs/PROPOSALS.TR.md](docs/PROPOSALS.TR.md) · [EN](docs/PROPOSALS.md) | Çalışma listesi, kalıcı direktifler ve bekleyen kararlar. |
 | [docs/I18N.TR.md](docs/I18N.TR.md) · [EN](docs/I18N.md) | Çeviri el kitabı: yerelleştirme nasıl çalışıyor, kurallar ve sözlük. |
 | [docs/CHANGELOG.TR.md](docs/CHANGELOG.TR.md) · [EN](docs/CHANGELOG.md) | Gerekçeleriyle geliştirme geçmişi. |
+| [docs/DEV_CONSOLE.TR.md](docs/DEV_CONSOLE.TR.md) · [EN](docs/DEV_CONSOLE.md) | Geliştirici konsolu: sunduğu her fonksiyon, işlenmiş örneklerle. |
 
 ## Katkı
 
