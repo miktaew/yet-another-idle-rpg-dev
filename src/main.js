@@ -1360,7 +1360,7 @@ function unlock_combat_stance(stance_id) {
         log_message(`You have learned a new stance: "${stances[stance_id].name}"`, "location_unlocked");
     }
     stances[stance_id].setUnlocked();
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
 }
 
 function change_stance({stance_id, is_temporary = false}) {
@@ -4023,7 +4023,7 @@ function load(save_data) {
             });
         }
 
-        update_displayed_stance_list(stances, current_stance, faved_stances);
+        update_displayed_stance_list(stances, current_stance);
 
         if(save_data.faved_stances) {
             Object.keys(save_data.faved_stances).forEach(stance_id=> {
@@ -6293,7 +6293,7 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
     update_displayed_money();
     character.updateStatsAndDisplay();
 
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
     change_stance({stance_id: "normal"});
     create_displayed_crafting_recipes();
     change_location({location_id: "Village", skip_travel_time: true});
