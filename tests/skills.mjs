@@ -890,6 +890,80 @@ const translationManager = globalThis.__real_tm;
     check("the milestone render covered the whole skill list",
         rendered >= 90 && printed >= 550, `${rendered} blocks, ${printed} milestones`);
 }
+// ===========================================================================
+// src/world_index.js — the reverse indexes, against the real registries
+// ===========================================================================
+/*
+    This is the test that could not exist before. The Discoveries index read a trader's
+    inventory_template - which holds the NAME of a stock list - as if it were the list,
+    and threw the first time the page was opened. It could not be caught: the index was
+    in display.js, which touches `document` at module scope, and the loader could not
+    construct traders.js, enemies.js or data/locations.js either.
+
+    Both indexes are built here from the real objects, so a field that is not the shape
+    the index assumes fails here rather than in front of a player.
+*/
+{
+    const world = await load_browser_free(repo_root, "src/world_index.js");
+    const { enemy_templates } = await load_browser_free(repo_root, "src/enemies.js");
+    const { item_templates } = await load_browser_free(repo_root, "src/items.js");
+
+    //Every creature the bestiary can show has somewhere to be met.
+    const placed = Object.keys(enemy_templates)
+        .filter(name => world.enemy_zones(name).length > 0);
+    check("every enemy resolves to at least one zone",
+        placed.length === Object.keys(enemy_templates).length,
+        `${placed.length}/${Object.keys(enemy_templates).length}`);
+
+    //And what comes back are locations, not names or ids.
+    const a_zone = world.enemy_zones("Wolf rat")[0];
+    check("a zone comes back as the location object itself",
+        typeof a_zone?.getName === "function" && typeof a_zone?.id === "string",
+        `got ${typeof a_zone}`);
+
+    //The item index: every kind of source has to actually appear, because each one is a
+    //separate walk over a separate registry and any of them could silently yield nothing.
+    const kinds = {};
+    let with_sources = 0;
+    for (const item_id of Object.keys(item_templates)) {
+        const sources = world.item_sources(item_id);
+        if (sources.length) with_sources++;
+        for (const source of sources) {
+            kinds[source.kind] = (kinds[source.kind] || 0) + 1;
+        }
+    }
+
+    for (const kind of ["gather", "drop", "trade", "craft"]) {
+        check(`the item index finds ${kind} sources`, (kinds[kind] || 0) > 0,
+            `found ${kinds[kind] || 0}`);
+    }
+
+    //trade is the one that broke: a trader carries the NAME of its stock list, and
+    //reading the name as a list yielded zero trade sources and threw on the way.
+    check("trade sources are found through the stock list a trader names",
+        (kinds["trade"] || 0) >= 100, `found ${kinds["trade"] || 0}`);
+
+    //372 of 450 at the time of writing. The rest genuinely have neither a recipe nor a
+    //drop yet - the tier 4 and 5 plate pieces mostly - and the page says so rather than
+    //guessing. The floor is here to catch a walk that stops finding things, not to pretend
+    //the content is finished.
+    check("most items have somewhere to come from",
+        with_sources >= 350, `${with_sources} of ${Object.keys(item_templates).length}`);
+
+    //Every source either points at a real location or is a craft, which has none.
+    const { locations } = await load_browser_free(repo_root, "src/data/locations.js");
+    const dangling = [];
+    for (const item_id of Object.keys(item_templates)) {
+        for (const source of world.item_sources(item_id)) {
+            if (source.kind === "craft") continue;
+            if (!locations[source.location_key]) {
+                dangling.push(`${item_id} -> ${source.location_key}`);
+            }
+        }
+    }
+    check("every source points at a location that exists",
+        dangling.length === 0, dangling.slice(0, 3).join("; "));
+}
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

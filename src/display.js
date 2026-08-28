@@ -27,6 +27,7 @@ import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./
 import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
+import { enemy_zones, item_sources } from "./world_index.js";
 import { effect_templates } from "./active_effects.js";
 import { player_storage } from "./data/storage.js";
 import { quests } from "./quests.js";
@@ -5473,47 +5474,6 @@ function create_bestiary_entry_content(enemy_name) {
     return entry_div;
 }
 
-/*
-    Which zones each enemy can be met in - the reverse of what the zones declare.
-
-    Built once on first use and cached. The values are the live location objects rather
-    than their names, so anything read off them here is read fresh.
-*/
-let enemy_locations_index;
-
-function build_enemy_locations_index() {
-    const index = {};
-    Object.values(locations).forEach(zone => {
-        //Two shapes, and a zone can carry both: a flat list of possible enemies, and
-        //predefined groups holding their own lists.
-        const names = new Set(zone.enemies_list || []);
-        (zone.enemy_groups_list || []).forEach(group => {
-            (group.enemies || []).forEach(name => names.add(name));
-        });
-
-        names.forEach(name => {
-            if(!index[name]) {
-                index[name] = [];
-            }
-            index[name].push(zone);
-        });
-    });
-    return index;
-}
-
-/**
- * The zones a creature can be met in, named and sorted for reading.
- *
- * @param {String} enemy_name the registry key, which is what the zones list
- * @returns {String[]} display names, or an empty array
- */
-function enemy_zones(enemy_name) {
-    if(!enemy_locations_index) {
-        enemy_locations_index = build_enemy_locations_index();
-    }
-    return enemy_locations_index[enemy_name] || [];
-}
-
 function enemy_location_names(enemy_name) {
     return enemy_zones(enemy_name).map(zone => zone.getName()).sort(compare_display_names);
 }
@@ -5605,123 +5565,6 @@ function update_bestiary_entry_killcount(enemy_name) {
     bestiary_entry_divs[enemy_name].children[1].innerText = enemy_killcount[enemy_name];
 }
 
-/**
- * A list, or an empty one - and a word about it when the value was neither.
- *
- * The index reads four fields it does not own, and the first version of it assumed all
- * four were arrays. One was not, and a panel threw while drawing instead of saying which
- * field had surprised it.
- */
-function as_list(value, what) {
-    if(Array.isArray(value)) {
-        return value;
-    }
-    if(value !== undefined && value !== null) {
-        console.warn(`Expected a list${what ? ` for ${what}` : ""}, got ${typeof value}.`);
-    }
-    return [];
-}
-/*
-    Where each item can be found, built once from the content itself.
-
-    Three sources, all of them already declared somewhere: a location's gathering
-    activities name what they yield, a trader's stock names what it sells, and an enemy's
-    loot_list names what it drops - and the enemy index above says where that enemy lives.
-
-    Crafted items are left out on purpose. The crafting panel answers "how is this made",
-    and a recipe is not somewhere a player can walk to.
-*/
-let item_sources_index;
-
-function build_item_sources_index() {
-    const index = {};
-
-    const note = (item_id, entry) => {
-        if(!index[item_id]) {
-            index[item_id] = [];
-        }
-        //Two activities at one place, or one trader stocking an item twice, is one line.
-        const already = index[item_id].some(other => other.kind === entry.kind
-            && other.location_key === entry.location_key && other.via === entry.via);
-        if(!already) {
-            index[item_id].push(entry);
-        }
-    };
-
-    Object.keys(locations).forEach(location_key => {
-        const location = locations[location_key];
-
-        Object.values(location.activities || {}).forEach(activity => {
-            as_list(activity.gained_resources?.resources, "gained_resources.resources")
-                .forEach(resource => {
-                note(resource.name, {kind: "gather", location_key});
-            });
-        });
-
-        as_list(location.traders).forEach(trader_key => {
-            //inventory_template holds the NAME of a stock list, not the list - the lists
-            //live in inventory_templates. Calling forEach on the name is what threw when
-            //this panel was first opened.
-            const stock = inventory_templates[traders[trader_key]?.inventory_template];
-            as_list(stock).forEach(stocked => {
-                if(stocked.item_name) {
-                    note(stocked.item_name, {kind: "trade", location_key, via: trader_key});
-                }
-            });
-        });
-    });
-
-    Object.keys(enemy_templates).forEach(enemy_key => {
-        as_list(enemy_templates[enemy_key].loot_list, "loot_list").forEach(loot => {
-            if(!loot.item_name) {
-                return;
-            }
-            enemy_zones(enemy_key).forEach(zone => {
-                note(loot.item_name, {kind: "drop", location_key: zone.id, via: enemy_key});
-            });
-        });
-    });
-
-
-    /*
-        Made rather than found. A recipe is not a place, so these lines carry no travel
-        button - but "you can craft this" is still the answer to where an item comes
-        from, and leaving it out made every craftable read as having no source at all.
-    */
-    Object.keys(recipes).forEach(category => {
-        Object.values(recipes[category] || {}).forEach(subcategory => {
-            Object.values(subcategory || {}).forEach(recipe => {
-                let result;
-                try {
-                    result = recipe.getResult?.();
-                } catch {
-                    //Component and equipment recipes answer per material, so a bare call
-                    //can throw. Those results are generated equippables, which the page
-                    //covers through their components anyway.
-                    return;
-                }
-                if(result?.result_id) {
-                    note(result.result_id, {kind: "craft", via: category});
-                }
-            });
-        });
-    });
-    return index;
-}
-
-function item_sources(item_id) {
-    if(!item_sources_index) {
-        item_sources_index = build_item_sources_index();
-    }
-    return item_sources_index[item_id] || [];
-}
-
-/**
- * One source line: where it is, what makes it available there, and a way to go.
- *
- * The travel button is only offered for a place the player has already unlocked - the
- * whole list is rebuilt each time the tab is opened, so that stays current.
- */
 function create_discovery_source_line(source) {
     const line = document.createElement("div");
     line.classList.add("discovery_source_line");
