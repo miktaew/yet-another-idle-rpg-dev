@@ -4767,7 +4767,9 @@ function add_gear() {
     });
 
     item_templates["Cooked potato"] = new UsableItem({
-        name: "Potato", description: "A common tuber with versatile culinary usage, though this one was simply cooked",
+        //"Cooked potato", not "Potato": the name is what the player reads, and this one
+        //made a cooked potato indistinguishable from the raw one in the inventory.
+        name: "Cooked potato", description: "A common tuber with versatile culinary usage, though this one was simply cooked",
         value: 40,
         effects: [{effect: "Basic meal", duration: 150}],
         tags: {"food": true},
