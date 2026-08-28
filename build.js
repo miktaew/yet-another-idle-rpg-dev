@@ -24,13 +24,20 @@ esbuild
         const htmlPath = 'index.html';
         let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
+        /*
+            Exit non-zero rather than return. The bundle is already written at this point,
+            so returning leaves a new dist/bundle.js on disk with index.html still asking
+            for the old ?version= - and dist/ is committed, so that is a bundle no
+            browser will fetch, reported as a successful build. Anything chaining off this
+            (`node build.js && ...`) could not tell.
+        */
         if(htmlContent.search(bundle_regex) == -1) {
-            console.log(styleText("red", 'Failed to update the bundle version in .html!'));
-            return;
+            console.error(styleText("red", 'Failed to update the bundle version in .html!'));
+            process.exit(1);
         }
         if(htmlContent.search(style_regex) == -1) {
-            console.log(styleText("red", 'Failed to update the style version in .html!'));
-            return;
+            console.error(styleText("red", 'Failed to update the style version in .html!'));
+            process.exit(1);
         }
 
         htmlContent = htmlContent.replace(
@@ -44,7 +51,9 @@ esbuild
             fs.writeFileSync(htmlPath, htmlContent);
             console.log("Bundle and style versions in .html have been updated!");
         } catch (err) {
+            //Also non-zero: the bundle is on disk and index.html was not updated.
             console.error(err);
+            process.exit(1);
         }
         
     }).catch(() => process.exit(1));
