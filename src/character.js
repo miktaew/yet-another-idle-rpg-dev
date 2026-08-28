@@ -1,6 +1,6 @@
 "use strict";
 
-import { skill_categories, skills, weapon_type_to_skill } from "./skills.js";
+import { skill_categories, skills, weapon_type_to_skill } from "./data/skills.js";
 import { update_displayed_character_inventory, update_displayed_equipment, 
          update_displayed_stats,
          update_displayed_health, update_displayed_stamina, 

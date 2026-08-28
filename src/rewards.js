@@ -95,6 +95,8 @@
             traders: [String] //an array with trader keys
             actions: [String] //an array with action keys
             quests: [String] //an array with quest ids
+            //Upstream renamed traders to npcs when it merged traders and dialogue NPCs
+            //into one registry. We have not, so the key here is still `traders`.
         }
 
         //`npm run check` holds this list too, taken from what main.js reads rather

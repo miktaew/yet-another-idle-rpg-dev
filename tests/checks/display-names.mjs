@@ -33,7 +33,7 @@ async function check_dialogue_display_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
 
-    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/dialogues.js"), "utf8"));
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/dialogues.js"), "utf8"));
 
     // The lookup key is the Dialogue's `name` FIELD, not its registry key: getName
     // returns this.name, and one dialogue's name ("proprietress") differs from its
@@ -435,7 +435,7 @@ async function check_enumerable_id_families() {
         {
             what: "location type",
             prefix: "loctype",
-            values: collect(read("src/locations.js"), /location_types\["([^"]+)"\]\s*=/g),
+            values: collect(read("src/data/locations.js"), /location_types\["([^"]+)"\]\s*=/g),
             shown_by: "the location header",
         },
     ];
@@ -462,7 +462,7 @@ async function check_skill_category_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
 
-    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/skills.js"), "utf8"));
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/skills.js"), "utf8"));
 
     //const skill_category_crafting = "Crafting";
     const constants = new Map();

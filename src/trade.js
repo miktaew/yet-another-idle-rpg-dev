@@ -4,7 +4,7 @@ import { traders } from "./traders.js";
 import { update_displayed_trader, update_displayed_trader_inventory, 
          update_displayed_character_inventory, exit_displayed_trade, update_displayed_money } from "./display.js";
 import { add_to_character_inventory, remove_from_character_inventory } from "./character.js";
-import { skills } from "./skills.js";
+import { skills } from "./data/skills.js";
 import { getItemFromKey } from "./items.js";
 import { add_to_sold, calculate_total_saturation, capped_at, equipment_capped_at, group_key_prefix, remove_from_sold } from "./market_saturation.js";
 import { character } from "./character.js";

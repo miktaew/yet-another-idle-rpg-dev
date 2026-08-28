@@ -1,8 +1,8 @@
 "use strict";
 
-import DialogueAction from "./models/dialogue_action.js";
-import { language } from "./main.js";
-import { translationManager } from "./translation.js";
+import DialogueAction from "../models/dialogue_action.js";
+import { language } from "../main.js";
+import { translationManager } from "../translation.js";
 
 const dialogues = {};
 

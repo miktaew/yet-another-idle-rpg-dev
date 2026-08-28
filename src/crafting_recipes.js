@@ -2,7 +2,7 @@
 
 import { character, get_total_skill_level } from "./character.js";
 import { Armor, ArmorComponent, Cape, Shield, ShieldComponent, Weapon, WeaponComponent, Amulet, item_templates } from "./items.js";
-import { skills } from "./skills.js";
+import { skills } from "./data/skills.js";
 import { clamp, random_range, slerp } from "./misc.js";
 import { config } from "./config.js";
 import { game_options } from "./main.js";

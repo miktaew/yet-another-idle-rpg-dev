@@ -1,16 +1,16 @@
 "use strict";
 
-import { enemy_templates, Enemy } from "./enemies.js";
+import { enemy_templates, Enemy } from "../enemies.js";
 import { skills } from "./skills.js";
-import { current_game_time } from "./game_time.js";
-import { activities } from "./activities.js";
-import { get_total_skill_level, get_skill_modifier, is_rat } from "./character.js";
-import { GameAction } from "./models/game_action.js";
-import { fill_market_regions, market_regions } from "./market_saturation.js";
-import { global_flags, language } from "./main.js";
-import { translationManager } from "./translation.js";
-import { clamp, slerp } from "./misc.js";
-import { registries } from "./registries.js";
+import { current_game_time } from "../game_time.js";
+import { activities } from "../activities.js";
+import { get_total_skill_level, get_skill_modifier, is_rat } from "../character.js";
+import { GameAction } from "../models/game_action.js";
+import { fill_market_regions, market_regions } from "../market_saturation.js";
+import { global_flags, language } from "../main.js";
+import { translationManager } from "../translation.js";
+import { clamp, slerp } from "../misc.js";
+import { registries } from "../registries.js";
 const locations = {}; //contains all the created locations
 //Published for conditions.js, which must not import this module: the extra edge
 //reorders module evaluation and breaks the bundle. See src/registries.js.

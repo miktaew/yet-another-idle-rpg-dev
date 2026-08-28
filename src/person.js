@@ -1,6 +1,6 @@
 "use strict";
 
-import { InventoryHaver } from "./inventory.js";
+import { InventoryHaver } from "./components/inventory_component.js";
 import { racial_height_modifiers } from "./races.js";
 
 const height_values = {

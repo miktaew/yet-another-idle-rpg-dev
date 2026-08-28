@@ -133,6 +133,31 @@ class GameAction{
     }
 
     /*
+        Upstream's accessors for the two mutable counters. Our own call sites still touch
+        accumulated_progress and completion_count directly - main.js increments the count
+        and the save reads it - so these exist for their API rather than replacing ours,
+        and they keep the two files closer than they would otherwise be.
+
+        `|| this` on both setters is upstream's: passing 0 or undefined leaves the value
+        alone rather than clearing it.
+    */
+    getCurrentProgress() {
+        return this.accumulated_progress;
+    }
+
+    setCurrentProgress(progress) {
+        this.accumulated_progress = progress || this.accumulated_progress;
+    }
+
+    getCompletionCount() {
+        return this.completion_count;
+    }
+
+    setCompletionCount(count) {
+        this.completion_count = count || this.completion_count;
+    }
+
+    /*
         The old field names, kept as accessors onto the component. Save and load in
         main.js write and read these by name, as does lock_action; nothing had to
         change for the component to arrive.

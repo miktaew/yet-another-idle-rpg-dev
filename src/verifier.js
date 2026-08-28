@@ -1,11 +1,11 @@
 import { effect_templates } from "./active_effects.js";
 import { activities } from "./activities.js";
 import { character } from "./character.js";
-import { dialogues } from "./dialogues.js";
+import { dialogues } from "./data/dialogues.js";
 import { enemy_templates } from "./enemies.js";
 import { item_templates } from "./items.js";
-import { locations } from "./locations.js";
-import { skills, skill_categories } from "./skills.js";
+import { locations } from "./data/locations.js";
+import { skills, skill_categories } from "./data/skills.js";
 import { traders } from "./traders.js";
 import { quests } from "./quests.js";
 import { market_region_mapping } from "./market_saturation.js";

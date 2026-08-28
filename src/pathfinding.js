@@ -1,6 +1,6 @@
 "use strict";
 
-import { skills } from "./skills.js";
+import { skills } from "./data/skills.js";
 
 
 const speed_modifiers_from_skills = {};

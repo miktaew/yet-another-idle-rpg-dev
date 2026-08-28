@@ -188,7 +188,7 @@ async function check_locales() {
  */
 function check_interpolated_pairs() {
     const scanned = [
-        { file: "src/locations.js", patterns: [
+        { file: "src/data/locations.js", patterns: [
             [/(?<![A-Za-z0-9_])(time_period|chance):\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g,
              match => [[match[1], match[2], match[3]]]],
             // ammount is [[min_low, max_low], [min_high, max_high]] and slerp is

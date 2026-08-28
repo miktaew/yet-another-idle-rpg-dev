@@ -1,6 +1,6 @@
 "use strict";
 import { get_total_skill_level } from "./character.js";
-import { skills } from "./skills.js";
+import { skills } from "./data/skills.js";
 import { translationManager } from "./translation.js";
 import { language } from "./main.js";
 const stances = {};

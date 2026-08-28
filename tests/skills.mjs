@@ -35,7 +35,7 @@ const repo_root = path.resolve(import.meta.dirname, "..");
  * Loads a module from src/, replacing the imports named in `strip` with the given
  * stub source. Imports not named in `strip` are left in place.
  *
- * @param {String} relative_path e.g. "src/skills.js"
+ * @param {String} relative_path e.g. "src/data/skills.js"
  * @param {String[]} strip module specifiers whose import lines are removed
  * @param {String} stub_source declarations replacing what those imports provided
  */
@@ -99,7 +99,7 @@ function capture_errors(run) {
 // ===========================================================================
 
 const { skills } = await load_with_stubs(
-    "src/skills.js",
+    "src/data/skills.js",
     ["./character.js", "./crafting_recipes.js", "./translation.js", "./main.js"],
     `
 const get_total_level_bonus = () => 0;
@@ -229,7 +229,8 @@ console.log(`skills loaded: ${Object.keys(skills).length}`);
 
 const { Person } = await load_with_stubs(
     "src/person.js",
-    ["./inventory.js"],
+    //Upstream moved this file; our content, their path.
+    ["./components/inventory_component.js"],
     `
 class InventoryHaver {
     constructor() {}

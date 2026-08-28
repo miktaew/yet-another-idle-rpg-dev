@@ -68,9 +68,9 @@ function declared(file, pattern) {
 }
 
 const registries = {
-    locations: declared("src/locations.js", /locations\["([^"]+)"\]\s*=\s*new /g),
-    dialogues: declared("src/dialogues.js", /dialogues\["([^"]+)"\]\s*=\s*new /g),
-    skills: declared("src/skills.js", /skills\["([^"]+)"\]\s*=\s*new /g),
+    locations: declared("src/data/locations.js", /locations\["([^"]+)"\]\s*=\s*new /g),
+    dialogues: declared("src/data/dialogues.js", /dialogues\["([^"]+)"\]\s*=\s*new /g),
+    skills: declared("src/data/skills.js", /skills\["([^"]+)"\]\s*=\s*new /g),
     activities: declared("src/activities.js", /activities\["([^"]+)"\]\s*=\s*new /g),
     traders: declared("src/traders.js", /traders\["([^"]+)"\]\s*=\s*new /g),
     quests: declared("src/quests.js", /quests\["([^"]+)"\]\s*=\s*new /g),

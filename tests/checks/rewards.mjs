@@ -23,7 +23,7 @@ const money_removal_flags = ["remove", "remove_on_success", "remove_on_fail"];
 
 function check_money_requirements() {
     let checked = 0;
-    for (const file of ["src/dialogues.js", "src/locations.js"]) {
+    for (const file of ["src/data/dialogues.js", "src/data/locations.js"]) {
         const full_path = path.join(repo_root, file);
         if (!fs.existsSync(full_path)) {
             error(`${file} is missing - this check is out of date.`);
@@ -86,7 +86,7 @@ const lock_keys = ["actions", "dialogues", "locations", "quests", "textlines", "
 
 function check_reward_keys() {
     let blocks = 0;
-    for (const file of ["src/locations.js", "src/dialogues.js", "src/quests.js", "src/enemies.js"]) {
+    for (const file of ["src/data/locations.js", "src/data/dialogues.js", "src/quests.js", "src/enemies.js"]) {
         const full_path = path.join(repo_root, file);
         if (!fs.existsSync(full_path)) {
             error(`${file} is missing - this check is out of date.`);
@@ -150,7 +150,7 @@ async function check_required_items() {
     for (const key of Object.keys(generated ?? {})) { known.add(key); }
 
     let checked = 0;
-    for (const file of ["src/locations.js", "src/dialogues.js"]) {
+    for (const file of ["src/data/locations.js", "src/data/dialogues.js"]) {
         const full_path = path.join(repo_root, file);
         if (!fs.existsSync(full_path)) {
             error(`${file} is missing - this check is out of date.`);

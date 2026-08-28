@@ -16,4 +16,13 @@
 const availabilities = {};
 const availability_havers = [];
 
-export { availabilities, availability_havers };
+/*
+    The registries for the components we have NOT adopted yet - the levelling, dialogue
+    and bio components. Declared here because upstream declares them here, so this file
+    stays byte-compatible with theirs and a later merge has nothing to reconcile.
+*/
+const levels = {};
+const talkables = {};
+const bios = {};
+
+export { availabilities, availability_havers, levels, talkables, bios };

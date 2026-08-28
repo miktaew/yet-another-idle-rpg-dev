@@ -3,10 +3,10 @@
 const skills = {};
 const skill_categories = {};
 
-import { get_total_level_bonus, get_total_skill_coefficient, get_total_skill_level } from "./character.js";
-import { get_crafting_quality_caps } from "./crafting_recipes.js";
-import { translationManager } from "./translation.js";
-import { language } from "./main.js";
+import { get_total_level_bonus, get_total_skill_coefficient, get_total_skill_level } from "../character.js";
+import { get_crafting_quality_caps } from "../crafting_recipes.js";
+import { translationManager } from "../translation.js";
+import { language } from "../main.js";
 
 /**
  * Abbreviated display name for a stat key: "max_health" -> "hp".

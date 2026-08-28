@@ -2,7 +2,7 @@
 
 import { traders } from "./traders.js";
 import { current_trader, to_buy, to_sell } from "./trade.js";
-import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "./skills.js";
+import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "./data/skills.js";
 import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "./character.js";
 import { current_enemies, game_options, 
     can_work, current_location, 
@@ -18,17 +18,17 @@ import { current_enemies, game_options,
     language_tags,
     favourite_items,
     get_effective_skill_xp_gain} from "./main.js";
-import { dialogues } from "./dialogues.js";
+import { dialogues } from "./data/dialogues.js";
 import { activities } from "./activities.js";
 import { format_time, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
-import { favourite_locations, get_location_type_penalty, location_types, locations } from "./locations.js";
+import { favourite_locations, get_location_type_penalty, location_types, locations } from "./data/locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
 import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { effect_templates } from "./active_effects.js";
-import { player_storage } from "./storage.js";
+import { player_storage } from "./data/storage.js";
 import { quests } from "./quests.js";
 import { get_current_light_level, get_current_light_level_for_roofed_location, get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { PointyStarParticle, RainParticle, SnowParticle } from "./particles.js";

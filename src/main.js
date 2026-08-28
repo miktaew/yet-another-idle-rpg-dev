@@ -3,9 +3,9 @@
 import { current_game_time, is_night } from "./game_time.js";
 import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity, Weapon} from "./items.js";
 import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_market_saturations, set_loot_sold_count, capped_at } from "./market_saturation.js";
-import { locations, favourite_locations, location_types } from "./locations.js";
-import { crafting_skill_xp_gains_cap, skill_categories, skill_xp_gains_cap, skills, weapon_type_to_skill, which_skills_affect_skill } from "./skills.js";
-import { dialogues } from "./dialogues.js";
+import { locations, favourite_locations, location_types } from "./data/locations.js";
+import { crafting_skill_xp_gains_cap, skill_categories, skill_xp_gains_cap, skills, weapon_type_to_skill, which_skills_affect_skill } from "./data/skills.js";
+import { dialogues } from "./data/dialogues.js";
 //money_spent decides both whether and how much an attempt takes, and it lives
 //beside the gate that let the action start so the two cannot read the shape
 //differently. It is pure and covered by npm test; the code here is not.
@@ -115,7 +115,7 @@ import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, get_component_stats, recipes } from "./crafting_recipes.js";
 import { game_version, get_game_version } from "./game_version.js";
 import { ActiveEffect, effect_templates } from "./active_effects.js";
-import { open_storage, close_storage, move_item_to_storage, remove_item_from_storage, player_storage, is_storage_open } from "./storage.js";
+import { open_storage, close_storage, move_item_to_storage, remove_item_from_storage, player_storage, is_storage_open } from "./data/storage.js";
 import { Verify_Game_Objects } from "./verifier.js";
 import { ReputationManager } from "./reputation.js";
 import { quests, questManager, active_quests } from "./quests.js";

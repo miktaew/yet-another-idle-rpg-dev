@@ -127,7 +127,7 @@ function check_language_switch_repaints() {
  * lets it read the save, so the keys are checkable directly.
  */
 function check_help_map_covers_the_world() {
-    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
     const declared = new Set();
     for (const match of source.matchAll(/locations\["([^"]+)"\]\s*=\s*new\s+\w+\(\{/g)) {
         declared.add(match[1]);

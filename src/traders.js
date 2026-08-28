@@ -4,7 +4,7 @@ import { translationManager } from "./translation.js";
 
 import { character, get_total_level_bonus } from "./character.js";
 import { current_game_time } from "./game_time.js";
-import { InventoryHaver } from "./inventory.js";
+import { InventoryHaver } from "./components/inventory_component.js";
 import { item_templates, getItem} from "./items.js";
 
 const traders = {};

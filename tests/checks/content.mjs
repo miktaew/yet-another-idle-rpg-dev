@@ -21,13 +21,13 @@ async function check_content_text_ids() {
             //hard-coded English sentences survived a whole localisation pass.
             /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
         ]},
-        { file: "src/skills.js", patterns: [
+        { file: "src/data/skills.js", patterns: [
             /(?<![A-Za-z0-9_])description:\s*"([^"]+)"/g,
             //The effect readouts are parameterised, so they are getText calls rather
             //than a field.
             /translationManager\.getText\(language,\s*"((?:skill effect) [^"]+)"/g,
         ]},
-        { file: "src/locations.js", patterns: [
+        { file: "src/data/locations.js", patterns: [
             /(?<![A-Za-z0-9_])messages:\s*\[\s*"([^"]+)"\s*\]/g,
             //Every text field in a location, an activity or a game action now holds
             //an id. The dynamic getDescription and getBackgroundNoises bodies call
@@ -44,7 +44,7 @@ async function check_content_text_ids() {
             //The on_hit / on_damaged combat messages.
             /translationManager\.getText\(language,\s*"((?:log) [^"]+)"/g,
         ]},
-        { file: "src/dialogues.js", patterns: [
+        { file: "src/data/dialogues.js", patterns: [
             //Textline fields sit at sixteen spaces; the Dialogue's own `name` sits at
             //eight and is a registry key, not an id, so the indentation is what keeps
             //the two apart. Comments are blanked before this runs, which matters here:
@@ -166,7 +166,7 @@ async function check_content_text_ids() {
  */
 function check_actions_can_explain_failure() {
     let checked = 0;
-    for (const relative of ["src/locations.js", "src/dialogues.js"]) {
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js"]) {
         const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
 
         for (const match of source.matchAll(/new (?:Dialogue)?(?:Game)?Action\(\{/g)) {
@@ -211,7 +211,7 @@ function check_actions_can_explain_failure() {
 
 function check_quest_task_item_sources() {
     const quests_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/quests.js"), "utf8"));
-    const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
+    const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
 
     let checked = 0;
     const pattern = /items_from:\s*\{\s*location:\s*"([^"]+)"\s*,\s*action:\s*"([^"]+)"\s*\}/g;
@@ -247,12 +247,12 @@ function check_quest_task_item_sources() {
 function check_content_object_keys() {
     //Where each class is declared, and which files construct it.
     const classes = [
-        {name: "Dialogue", declared_in: "src/dialogues.js", used_in: ["src/dialogues.js"]},
-        {name: "Textline", declared_in: "src/dialogues.js", used_in: ["src/dialogues.js"]},
-        {name: "Location", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
-        {name: "Combat_zone", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
-        {name: "LocationActivity", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
-        {name: "LocationType", declared_in: "src/locations.js", used_in: ["src/locations.js"]},
+        {name: "Dialogue", declared_in: "src/data/dialogues.js", used_in: ["src/data/dialogues.js"]},
+        {name: "Textline", declared_in: "src/data/dialogues.js", used_in: ["src/data/dialogues.js"]},
+        {name: "Location", declared_in: "src/data/locations.js", used_in: ["src/data/locations.js"]},
+        {name: "Combat_zone", declared_in: "src/data/locations.js", used_in: ["src/data/locations.js"]},
+        {name: "LocationActivity", declared_in: "src/data/locations.js", used_in: ["src/data/locations.js"]},
+        {name: "LocationType", declared_in: "src/data/locations.js", used_in: ["src/data/locations.js"]},
     ];
 
     const read = (relative) =>
@@ -341,7 +341,7 @@ function check_content_object_keys() {
 
 function check_action_branches() {
     let checked = 0;
-    for (const relative of ["src/locations.js", "src/dialogues.js"]) {
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js"]) {
         const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
 
         for (const match of source.matchAll(/new (?:GameAction|DialogueAction)\(\{([\s\S]*?)\n\s{8,12}\}\)/g)) {
@@ -402,7 +402,7 @@ async function check_global_flags() {
     }
 
     //Two ways a flag is named: read as a property, or granted as a reward string.
-    const scanned = ["src/locations.js", "src/dialogues.js", "src/quests.js", "src/enemies.js"];
+    const scanned = ["src/data/locations.js", "src/data/dialogues.js", "src/quests.js", "src/enemies.js"];
     let references = 0;
     for (const relative of scanned) {
         const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
@@ -447,7 +447,7 @@ async function check_global_flags() {
  * quotes are not the prices it charges.
  */
 async function check_trader_market_regions() {
-    const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
+    const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
     const market_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/market_saturation.js"), "utf8"));
 
     const mapping = market_source.match(/const market_region_mapping = \{([\s\S]*?)\n\};/);
@@ -514,7 +514,7 @@ async function check_trader_market_regions() {
  * hard-coded, so adding a stage to a type does not need a change here.
  */
 function check_location_types() {
-    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"))
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"))
         .split("\r\n").join("\n");
 
     const defined = new Map();
@@ -563,8 +563,8 @@ function check_content_is_reachable() {
     const read = file => strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"))
         .split("\r\n").join("\n");
 
-    const dialogues_src = read("src/dialogues.js");
-    const locations_src = read("src/locations.js");
+    const dialogues_src = read("src/data/dialogues.js");
+    const locations_src = read("src/data/locations.js");
     const reward_sources = [dialogues_src, locations_src,
         ...["src/quests.js", "src/enemies.js", "src/models/game_action.js"].map(read)];
 
