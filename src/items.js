@@ -358,6 +358,16 @@ class ItemComponent extends Item {
         this.tags["component"] = true;
         this.use_quality = item_data.use_quality ?? true;
         this.quality = Math.round(item_data.quality) || 100;
+
+        /*
+            The material a shown name is assembled from. crafting_component_filling.js has
+            always passed this and no class stored it, so `material_id` was undefined on
+            every component instance - which means the assembleName branch of
+            Armor.getDisplayName and Shield.getDisplayName can never run, and every
+            generated helmet, armour, glove, shoe, trouser, shield and weapon falls through
+            to its raw English name.
+        */
+        this.material_id = item_data.material_id;
     }
 
     getRarity(quality){
@@ -450,6 +460,8 @@ class ArmorComponent extends ItemComponent {
         }
         this.component_type = item_data.component_type;
         this.defense_value = item_data.defense_value;
+        //The piece word a full armor name ends in; passed by the generator, never stored.
+        this.armor_piece = item_data.armor_piece;
 
         this.stats = item_data.stats || {};
 
