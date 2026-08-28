@@ -12,6 +12,7 @@
 import { errors, warnings } from "./lib/report.mjs";
 import {
     check_action_branches,
+    check_actions_can_explain_failure,
     check_content_object_keys,
     check_quest_task_item_sources,
     check_content_is_reachable,
@@ -89,6 +90,7 @@ check_item_name_collisions();
 await check_recipe_item_names();
 await check_modules_import_what_they_call();
 check_action_branches();
+check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();
 await check_required_items();

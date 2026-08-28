@@ -860,6 +860,7 @@ class Textline {
                 ],
                 failure_texts: {
                     conditional_loss: ["guard spar fail conditional_loss 1"],
+                    random_loss: ["guard spar fail random_loss 1"],
                 },
                 attempt_duration: 90,
                 success_chances: [0.25, 1],

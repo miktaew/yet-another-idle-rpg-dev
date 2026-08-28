@@ -947,6 +947,21 @@ function rearm_game_action_interval() {
 }
 
 /**
+ * One line out of a failure list, or nothing when the list is empty.
+ *
+ * An empty array indexed at Math.floor(0 * random) is undefined, and getText prints
+ * "text not found, id: undefined" where the story should be - which is what five
+ * actions did on a failed roll. A missing line is a content gap and the check now
+ * fails the build over it; this keeps the gap from reaching the player as a marker.
+ */
+function pick_failure_text(action, which) {
+    const lines = action.failure_texts?.[which];
+    if(!lines?.length) {
+        return translationManager.getText(language, "ui action fell through");
+    }
+    return action.resolveText(lines[Math.floor(lines.length * Math.random())]);
+}
+/**
  * Handles the finish, successful or not, of a game action. Not to be mistaken for end_game_action
  * @param {String} action_key 
  * @param {Number} conditions_status
@@ -974,10 +989,10 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
 
     if(conditions_status == -1) {
         //not meeting requirements to begin
-        result_message = action.resolveText(action.failure_texts.unable_to_begin[Math.floor(action.failure_texts.unable_to_begin.length * Math.random())]);
+        result_message = pick_failure_text(action, "unable_to_begin");
     } else if(conditions_status == 0) {
         //lost by failing to meet conditions, nothing to check, deal with it
-        result_message = action.resolveText(action.failure_texts.conditional_loss[Math.floor(action.failure_texts.conditional_loss.length * Math.random())]);
+        result_message = pick_failure_text(action, "conditional_loss");
     } else {
         const action_result = get_game_action_result({action_key, conditions_status, dialogue_key});
         let is_won = false;
@@ -995,7 +1010,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         } else {
             //random loss
 
-            result_message = action.resolveText(action.failure_texts.random_loss[Math.floor(action.failure_texts.random_loss.length * Math.random())]);
+            result_message = pick_failure_text(action, "random_loss");
         }
 
         Object.keys(action.conditions[0]?.items_by_id || {}).forEach(item_id => {

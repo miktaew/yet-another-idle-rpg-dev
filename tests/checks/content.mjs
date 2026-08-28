@@ -150,6 +150,65 @@ async function check_content_text_ids() {
  * does not resolve produces a console error in a browser nobody is watching, and a
  * journal entry that quietly shows no progress at all.
  */
+/**
+ * An action that can fail declares the line it fails with.
+ *
+ * The failure line is picked as `list[Math.floor(list.length * Math.random())]`, and
+ * for an empty list that is undefined - so the player was shown
+ * "text not found, id: undefined" where the story should be. Five actions were in that
+ * state: four of the region 3 and 4 actions and sparring with the guard, all of them
+ * with a success chance below 1 and no random_loss line.
+ *
+ * Two shapes are checked, because they fail for different reasons and the player is
+ * owed a different sentence for each: random_loss is needed when any success chance is
+ * below 1 (you were good enough and the attempt did not land), conditional_loss when
+ * the action has success conditions at all (you were not good enough).
+ */
+function check_actions_can_explain_failure() {
+    let checked = 0;
+    for (const relative of ["src/locations.js", "src/dialogues.js"]) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const match of source.matchAll(/new (?:Dialogue)?(?:Game)?Action\(\{/g)) {
+            const open = source.indexOf("{", match.index + match[0].length - 1);
+            const body = braced_body(source, open);
+            if (body === null) {
+                continue;
+            }
+            checked++;
+
+            const id = body.match(/action_id:\s*"([^"]+)"/);
+            const name = id ? id[1] : "an unnamed action";
+            const line = source.slice(0, match.index).split("\n").length;
+
+            const chances = body.match(/success_chances:\s*\[([^\]]*)\]/);
+            const values = chances
+                ? (chances[1].match(/[\d.]+/g) ?? []).map(Number)
+                : [1];
+            const can_fail_the_roll = values.some(value => value < 1);
+
+            //`conditions:` and not `display_conditions:`, which is a different gate.
+            const has_conditions = /(?<!display_)conditions:\s*\[/.test(body);
+
+            if (can_fail_the_roll && !body.includes("random_loss")) {
+                error(`${relative}:${line} the action "${name}" can fail its roll and has no`
+                    + ` random_loss line, so a failure would print a missing-text marker.`);
+            }
+            if (has_conditions && !body.includes("conditional_loss")) {
+                error(`${relative}:${line} the action "${name}" has success conditions and no`
+                    + ` conditional_loss line, so failing them would print a missing-text marker.`);
+            }
+        }
+    }
+
+    if (checked < 40) {
+        error(`only ${checked} actions were inspected - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] actions can explain failure: ${checked} actions`);
+}
+
 function check_quest_task_item_sources() {
     const quests_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/quests.js"), "utf8"));
     const locations_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/locations.js"), "utf8"));
@@ -591,6 +650,7 @@ function check_content_is_reachable() {
 
 export {
     check_action_branches,
+    check_actions_can_explain_failure,
     check_quest_task_item_sources,
     check_content_object_keys,
     check_content_is_reachable,

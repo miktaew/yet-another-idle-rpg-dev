@@ -1992,6 +1992,7 @@ function get_location_type_penalty(type, stage, stat, category) {
             failure_texts: {
                 unable_to_begin: ["action cut a flue fail unable_to_begin 1"],
                 conditional_loss: ["action cut a flue fail conditional_loss 1"],
+                random_loss: ["action cut a flue fail random_loss 1"],
             },
             conditions: [
                 {skills: {Smelting: 12}},
@@ -2438,6 +2439,7 @@ function get_location_type_penalty(type, stage, stat, category) {
             ],
             failure_texts: {
                 conditional_loss: ["action read the ground fail conditional_loss 1"],
+                random_loss: ["action read the ground fail random_loss 1"],
             },
             attempt_duration: 240,
             success_chances: [0.3, 1],
@@ -2580,6 +2582,7 @@ function get_location_type_penalty(type, stage, stat, category) {
             ],
             failure_texts: {
                 conditional_loss: ["action read the departures fail conditional_loss 1"],
+                random_loss: ["action read the departures fail random_loss 1"],
             },
             attempt_duration: 300,
             success_chances: [0.3, 1],
@@ -3059,6 +3062,7 @@ function get_location_type_penalty(type, stage, stat, category) {
             ],
             failure_texts: {
                 conditional_loss: ["action read the tiles fail conditional_loss 1"],
+                random_loss: ["action read the tiles fail random_loss 1"],
             },
             attempt_duration: 120,
             success_chances: [0.3, 1],
