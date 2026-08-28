@@ -368,6 +368,76 @@ function round(number) {
  * @param {Boolean} params.options.skip_quality
  * @param {Array} params.options.quality array with 1 or 2 values (1 - show only it, instead of item's; 2 - show start comparison between the two)
  */
+/**
+ * How this item would change things if it replaced what is worn in its slot.
+ *
+ * Flat values as a difference, multipliers as a percentage - those are the two
+ * questions a player has about a piece of gear. A stat that comes out identical is left
+ * out, because the point of the block is what would change.
+ *
+ * Returns "" when there is nothing to say: an empty slot, the worn item itself, or a
+ * quality range rather than one quality.
+ *
+ * @param {Object} item the item being hovered
+ * @param {Number} quality optional, the quality the tooltip is showing
+ */
+function equipment_comparison(item, quality) {
+    if(!item?.equip_slot) {
+        return "";
+    }
+    const worn = character.getEquipment()[item.equip_slot];
+    if(!worn || worn === item) {
+        return "";
+    }
+
+    const lines = [];
+    const round2 = (value) => Math.round(value * 100) / 100;
+
+    const flat_line = (label, mine, theirs) => {
+        const delta = round2((mine || 0) - (theirs || 0));
+        if(!delta) {
+            return;
+        }
+        const better = delta > 0 ? "comparison_better" : "comparison_worse";
+        lines.push(`<br><span class="${better}">${label}: ${delta > 0 ? "+" : ""}${delta}</span>`);
+    };
+
+    const multiplier_line = (label, mine, theirs) => {
+        const percent = Math.round(((mine || 1) / (theirs || 1) - 1) * 1000) / 10;
+        if(!percent) {
+            return;
+        }
+        const better = percent > 0 ? "comparison_better" : "comparison_worse";
+        lines.push(`<br><span class="${better}">${label}: ${percent > 0 ? "+" : ""}${percent}%</span>`);
+    };
+
+    //The headline number for the slot, whichever one this kind of item has. The worn
+    //item is asked without a quality so it answers with its own.
+    if(item.getAttack && worn.getAttack) {
+        flat_line("Attack", item.getAttack(quality), worn.getAttack());
+    } else if(item.getDefense && worn.getDefense) {
+        flat_line("Defense", item.getDefense(quality), worn.getDefense());
+    } else if(item.getShieldStrength && worn.getShieldStrength) {
+        flat_line("Block", item.getShieldStrength(quality), worn.getShieldStrength());
+    }
+
+    const mine = item.getStats(quality);
+    const theirs = worn.getStats();
+    for(const stat_key of new Set([...Object.keys(mine), ...Object.keys(theirs)])) {
+        const label = capitalize_first_letter(stat_names[stat_key] ?? stat_key.replace("_", " "));
+        if(mine[stat_key]?.flat != null || theirs[stat_key]?.flat != null) {
+            flat_line(label, mine[stat_key]?.flat, theirs[stat_key]?.flat);
+        }
+        if(mine[stat_key]?.multiplier != null || theirs[stat_key]?.multiplier != null) {
+            multiplier_line(label, mine[stat_key]?.multiplier, theirs[stat_key]?.multiplier);
+        }
+    }
+
+    if(lines.length === 0) {
+        return "";
+    }
+    return `<br><br>Compared to equipped:${lines.join("")}`;
+}
 function create_item_tooltip_content({item, options={}, is_trade = false}) {
     let item_tooltip = "";
 
@@ -530,6 +600,11 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
                 `<br>${capitalize_first_letter(effect_key).replace("_"," ")}: x${item.component_stats[effect_key].multiplier}`;
             }
         });
+    }
+
+    //Only for a single quality: a range has no one value to subtract.
+    if(!(options?.quality?.length > 1)) {
+        item_tooltip += equipment_comparison(item, quality);
     }
 
     if(item?.base_size) {
