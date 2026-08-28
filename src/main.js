@@ -1709,7 +1709,11 @@ function do_enemy_combat_action(enemy_id) {
                 add_xp_to_skill({skill, xp_to_add: attacker.xp_value/enemy_count_xp_mod});
                 const {modifier_to_evasion, modifier_to_defense} = skill.get_stat_modifiers();
                 evasion_chance_modifier *= modifier_to_evasion || 1;
-                defense_modifier += modifier_to_defense || 1;
+                //`|| 0`, not `|| 1`: this one is a SUM, and 1 is the identity for the
+                //multiplication on the line above, not for addition. Most skills return no
+                //modifier_to_defense at all, so every matched tag-skill was handing out a
+                //free point of defence that no skill declares.
+                defense_modifier += modifier_to_defense || 0;
             }
         }
     });
