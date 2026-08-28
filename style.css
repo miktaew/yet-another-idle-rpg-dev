@@ -2867,3 +2867,11 @@ i {
 ::-webkit-scrollbar-thumb:hover {
 	background: white; 
   }
+
+ /* An item tooltip's comparison with what is worn: better in green, worse in red. */
+ .comparison_better {
+	 color: green;
+ }
+ .comparison_worse {
+	 color: red;
+ }
