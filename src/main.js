@@ -3650,6 +3650,37 @@ function create_save() {
  * called from index.html
  * @returns save string encoded to base64
  */
+/**
+ * Base64 for text that is not Latin-1.
+ *
+ * btoa throws InvalidCharacterError on any character above U+00FF, and the savefile
+ * carries the hero's name - which the player types. A hero called Ayşe, José or Müller
+ * makes every export throw, and because the throw happens inside the Export button's
+ * onclick it is silent: the button simply does nothing.
+ *
+ * Older exports still load. One could only ever have been produced from pure Latin-1,
+ * and decoding ASCII as UTF-8 gives ASCII back.
+ *
+ * The loops are deliberate: String.fromCharCode(...bytes) spreads a whole savefile
+ * across the argument list and overflows the stack on a long one.
+ */
+function to_base64(text) {
+    const bytes = new TextEncoder().encode(text);
+    let latin1 = "";
+    for(let i = 0; i < bytes.length; i++) {
+        latin1 += String.fromCharCode(bytes[i]);
+    }
+    return btoa(latin1);
+}
+
+function from_base64(encoded) {
+    const latin1 = atob(encoded);
+    const bytes = new Uint8Array(latin1.length);
+    for(let i = 0; i < latin1.length; i++) {
+        bytes[i] = latin1.charCodeAt(i);
+    }
+    return new TextDecoder().decode(bytes);
+}
 function save_to_file() {
     if(Date.now() - last_rewarded_export > config.time_between_export_rewards) {
         last_rewarded_export = Date.now();
@@ -3658,7 +3689,7 @@ function save_to_file() {
 
     //will create save twice...
     save_progress();
-    return btoa(create_save());
+    return to_base64(create_save());
 }
 
 /**
@@ -5378,9 +5409,9 @@ function load(save_data) {
 function load_from_file(save_string) {
     try{
         if(is_on_dev()) {
-            localStorage.setItem(dev_save_key, atob(save_string));
+            localStorage.setItem(dev_save_key, from_base64(save_string));
         } else {
-            localStorage.setItem(save_key, atob(save_string));
+            localStorage.setItem(save_key, from_base64(save_string));
         }        
         window.location.reload(false);
     } catch (error) {
