@@ -2503,11 +2503,16 @@ i {
 				overflow-y: scroll;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div{
+			/* Its controls sit above the list, so the list scrolls and the box does not. */
+			#discoveries_box_div {
+				width: 100%;
+			}
+
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div{
 				height: 284px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div{
 				display: none;
 			}
 
@@ -3038,7 +3043,10 @@ html, body {
 
  /* The Discoveries tab: one entry per item found, with where it comes from. */
  .discovery_entry {
-	 border-bottom: 1px solid var(--border_color, #444);
+	 /* 380 like the bestiary and anthology rows: the panel scrolls, and a full-width
+	    row would run under the scrollbar. */
+	 width: 380px;
+	 box-shadow: 0 1px 0 gray;
 	 padding: 4px 2px;
  }
  .discovery_entry_name {
@@ -3074,3 +3082,15 @@ html, body {
 	 padding: 6px 2px;
  }
 
+ /* The controls stay put while the list underneath them moves. */
+ #discoveries_controls_div {
+	 display: flex;
+	 align-items: center;
+	 gap: 4px;
+	 font-size: 0.85em;
+	 padding: 2px;
+ }
+ #discoveries_list {
+	 height: 258px;
+	 overflow-y: scroll;
+ }

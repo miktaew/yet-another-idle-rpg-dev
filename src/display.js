@@ -5682,6 +5682,30 @@ function build_item_sources_index() {
         });
     });
 
+
+    /*
+        Made rather than found. A recipe is not a place, so these lines carry no travel
+        button - but "you can craft this" is still the answer to where an item comes
+        from, and leaving it out made every craftable read as having no source at all.
+    */
+    Object.keys(recipes).forEach(category => {
+        Object.values(recipes[category] || {}).forEach(subcategory => {
+            Object.values(subcategory || {}).forEach(recipe => {
+                let result;
+                try {
+                    result = recipe.getResult?.();
+                } catch {
+                    //Component and equipment recipes answer per material, so a bare call
+                    //can throw. Those results are generated equippables, which the page
+                    //covers through their components anyway.
+                    return;
+                }
+                if(result?.result_id) {
+                    note(result.result_id, {kind: "craft", via: category});
+                }
+            });
+        });
+    });
     return index;
 }
 
@@ -5702,16 +5726,33 @@ function create_discovery_source_line(source) {
     const line = document.createElement("div");
     line.classList.add("discovery_source_line");
 
-    const location = locations[source.location_key];
-    if(!location) {
-        return line;
-    }
-
     const label = {
         gather: "ui discovery gathered at",
         drop: "ui discovery dropped by",
         trade: "ui discovery sold by",
+        craft: "ui discovery crafted",
     }[source.kind];
+
+    //Crafting has no place attached to it, so it is a line and never a button.
+    if(source.kind === "craft") {
+        const made = document.createElement("div");
+        made.classList.add("discovery_source_text");
+        //A recipe category IS a skill - cooking, smelting, forging - so it is named by
+        //that skill's level-0 name. Not name(), which is the player's current rank in it
+        //and would have this line change as they level.
+        const discipline = skills[capitalize_first_letter(source.via)];
+        made.innerText = `${translationManager.getText(language, label)}: `
+            + (discipline
+                ? translationManager.getDisplayName(language, discipline.names[0])
+                : source.via);
+        line.appendChild(made);
+        return line;
+    }
+
+    const location = locations[source.location_key];
+    if(!location) {
+        return line;
+    }
 
     //`drop` and `trade` name the creature or the trader as well as the place, because
     //"in the Deep forest" is not an answer on its own when a zone holds several.
@@ -5756,10 +5797,27 @@ function update_displayed_discoveries() {
     }
     clear_HTML_content(list);
 
+    //getDisplayName, not getName: getName is the canonical English and the translation
+    //key, so the whole list came out in English whatever the language was.
+    const hide_sourceless = document.getElementById("discoveries_hide_sourceless")?.checked;
+    const hide_crafted = document.getElementById("discoveries_hide_crafted")?.checked;
+
     const found = Object.keys(item_log.items)
         .filter(item_id => item_templates[item_id])
+        .filter(item_id => {
+            const sources = item_sources(item_id);
+            if(hide_sourceless && sources.length === 0) {
+                return false;
+            }
+            //Only what is nothing BUT crafted: an item you can also gather still has a
+            //place to go, which is what the page is for.
+            if(hide_crafted && sources.length > 0 && sources.every(s => s.kind === "craft")) {
+                return false;
+            }
+            return true;
+        })
         .sort((first, second) => compare_display_names(
-            item_templates[first].getName(), item_templates[second].getName()));
+            item_templates[first].getDisplayName(), item_templates[second].getDisplayName()));
 
     if(found.length === 0) {
         const empty = document.createElement("div");
@@ -5775,7 +5833,7 @@ function update_displayed_discoveries() {
 
         const name = document.createElement("div");
         name.classList.add("discovery_entry_name");
-        name.innerText = item_templates[item_id].getName();
+        name.innerText = item_templates[item_id].getDisplayName();
         entry.appendChild(name);
 
         const count = document.createElement("div");
