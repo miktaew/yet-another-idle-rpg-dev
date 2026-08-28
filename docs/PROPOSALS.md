@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 38 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 39 -->
 
 # Proposals
 
@@ -823,7 +823,11 @@ not after. Each item is the request as it was given, and the state it is in.
     dördüncü kişisin", two participles stacked on one noun - permitted by the grammar,
     absent from the prose. Short clauses with the point last: "Masamda terazi var, sen
     muhafız sanıyorsun. Bugün dördüncüsün."
-33. **Milestones for the skills that run out of them** — `todo`. Literacy caps at
+33. **Milestones for the skills that run out of them** — `done`, v0.6.37. Widened by
+    a later directive from the low-max skills to every skill above 20, five levels
+    at a time: 45 skills, 275 milestones, generated from each skill's own
+    vocabulary, units, pace and ceilings. The 15 with no milestones at all stay out
+    of scope. Originally: Literacy caps at
     level 10 and its milestones stop at 5, so the second half of the bar grants
     nothing. Find every skill in that shape - a low max_level whose milestone list
     ends well before it - and write the missing ones. 49 of 64 skills have milestones
@@ -907,6 +911,31 @@ not after. Each item is the request as it was given, and the state it is in.
     reverses a standing assumption: upstream is **not** dead. Their `master` and
     `refactoring` both sit at `19011a0`, pushed 2026-08-27, which our master already
     contains - so there is nothing new to take, but there is somebody to send to.
+43. **The bestiary should say where a creature is found** — `todo`. It lists what a
+    creature is and what it drops, and not the one thing a player is usually looking it
+    up for. The data is there: every combat zone declares its enemy groups, so the
+    reverse index can be built rather than written.
+44. **A discovered-items page, alongside the lore panel** — `todo`. A new mini page at
+    the top of the game, in the same family as lore: everything the player has actually
+    found - gathered from a map, dropped by a creature, bought - with where it comes
+    from, and a button that travels to the region it comes from. Discovered, not
+    catalogued: it fills in as the player plays, which is what makes it worth opening.
+45. **Rank names for the skills that have none** — `todo`. Nine skills already rename
+    themselves as they level - Unarmed > Brawling > Martial arts, Tough skin > Wooden
+    skin > Stone skin > Iron skin, Beginner > Apprentice > Adept > Expert > Master
+    gatherer - and 55 do not. Add that progression wherever it can be added, which means
+    wherever both languages have a real ladder to climb and not just a synonym. Each
+    rank needs a `name X` row in both locales, and the Turkish has to read as a title
+    someone would actually use.
+46. **A second PR, for the improvements rather than the fixes** — `done`. PR
+    [#242](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/242): the dev console
+    and its speed multiplier, a milestone every five levels to the top of every bar, and
+    the equipped-item comparison. Kept apart from
+    [#241](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/241) on purpose -
+    that one is faults, this one is additions, and they deserve separate answers. Each
+    commit stands alone. Their Forging is deliberately left out of the milestone work:
+    its only reward is a recipe unlock, so there is no vocabulary to extend and
+    inventing one would be inventing balance.
 
 ---
 ## Open decisions

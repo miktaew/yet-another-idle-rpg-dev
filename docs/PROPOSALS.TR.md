@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 38 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 39 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -833,7 +833,11 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     sanan dördüncü kişisin" olmuş: tek isim üzerine yığılmış iki sıfat-fiil -
     dilbilgisinin izin verdiği, yazının kullanmadığı bir şey. Kısa cümleler, sonda
     vurgu: "Masamda terazi var, sen muhafız sanıyorsun. Bugün dördüncüsün."
-33. **Milestone'ları tükenen beceriler için yenileri** — `yapılacak`. Okuryazarlık 10.
+33. **Milestone'ları tükenen beceriler için yenileri** — `bitti`, v0.6.37. Sonraki bir
+    talimatla kapsam düşük-max becerilerden 20'nin üstündeki her beceriye
+    genişletildi, beşer seviye: 45 beceri, 275 milestone; her biri o becerinin kendi
+    sözlüğünden, biriminden, temposundan ve tavanlarından üretildi. Hiç milestone'u
+    olmayan 15 beceri kapsam dışı. Aslen: Okuryazarlık 10.
     seviyede duruyor ve milestone'ları 5'te bitiyor, yani çubuğun ikinci yarısı hiçbir
     şey vermiyor. Bu şekildeki her beceriyi bul - düşük bir max_level'a karşılık çok
     önce biten bir milestone listesi - ve eksikleri yaz. 64 becerinin 49'unda milestone
@@ -916,6 +920,30 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     ve `refactoring` dallarının ikisi de 2026-08-27'de push edilen `19011a0`'da ve
     bizim master zaten onu içeriyor - yani alınacak yeni bir şey yok, ama
     gönderilecek biri var.
+43. **Bestiary bir yaratığın nerede çıktığını söylemeli** — `yapılacak`. Yaratığın ne
+    olduğunu ve ne düşürdüğünü listeliyor, ama oyuncunun ona genelde baktığı asıl şeyi
+    söylemiyor. Veri mevcut: her dövüş bölgesi düşman gruplarını bildiriyor, yani ters
+    dizin yazılmak yerine kurulabilir.
+44. **Lore panelinin yanına keşfedilen eşyalar sayfası** — `yapılacak`. Oyunun tepesine,
+    lore ile aynı aileden yeni bir mini sayfa: oyuncunun gerçekten bulduğu her şey -
+    haritadan toplanan, yaratıktan düşen, satın alınan - nereden geldiğiyle birlikte ve
+    geldiği bölgeye götüren bir butonla. Katalog değil keşif: oyuncu oynadıkça doluyor,
+    açmaya değer kılan da bu.
+45. **Rütbesi olmayan beceriler için rütbe adları** — `yapılacak`. Dokuz beceri seviye
+    atladıkça kendi adını değiştiriyor - Unarmed > Brawling > Martial arts, Tough skin >
+    Wooden skin > Stone skin > Iron skin, Beginner > Apprentice > Adept > Expert > Master
+    gatherer - 55'i değiştirmiyor. Eklenebilen her yere bu ilerleyişi ekle; yani iki
+    dilde de tırmanılacak gerçek bir merdivenin olduğu yerlere, yalnızca eşanlamlının
+    olduğu yerlere değil. Her rütbenin iki locale'de de `name X` satırı gerekiyor ve
+    Türkçesi gerçekten kullanılacak bir unvan gibi okunmalı.
+46. **Düzeltmeler değil geliştirmeler için ikinci bir PR** — `bitti`. PR
+    [#242](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/242): geliştirici
+    konsolu ve hız çarpanı, her çubuğun tepesine kadar beş seviyede bir milestone, ve
+    kuşanılanla kıyaslama.
+    [#241](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/241)'den bilerek ayrı
+    tutuldu - o kusurlar, bu eklemeler; ayrı cevapları hak ediyorlar. Her commit tek
+    başına duruyor. Onların Forging'i milestone işinin dışında bırakıldı: tek ödülü bir
+    tarif kilidi, yani sürdürülecek bir sözlük yok ve uydurmak dengeyi uydurmak olurdu.
 
 ---
 ## Bekleyen kararlar
