@@ -2235,7 +2235,46 @@ function get_location_rewards(location) {
  * @param {String} rewards_data.source_name //in case it's needed for logging a message
  * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
  */
+/*
+    The reward keys process_rewards reads, and the lock keys it reads inside `locks`.
+
+    Here so that a key it does NOT read gets said out loud. data/locations.js has a
+    reward written as `action:` where the function reads `rewards.actions`, so that
+    reward has never done anything - and nothing said so, because the skill_xp next to it
+    worked. A typo in a content file should not be invisible.
+*/
+const reward_keys = [
+    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
+    "housing", "items", "locations", "locks", "messages", "money", "move_to", "npcs",
+    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
+    "textlines", "traders", "xp",
+];
+const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];
+
+/**
+ * Reports any key in a reward object that nothing will read.
+ *
+ * Called with the source so the message says where to look, because a reward object on
+ * its own is not something you can search for.
+ */
+function warn_about_unread_reward_keys(rewards, source_type, source_name) {
+    const where = source_name ? ` (${source_type} "${source_name}")` : "";
+
+    for(const key of Object.keys(rewards)) {
+        if(!reward_keys.includes(key)) {
+            console.warn(`Reward key "${key}"${where} is not read by process_rewards`
+                + ` - that reward does nothing. Valid keys: ${reward_keys.join(", ")}.`);
+        }
+    }
+    for(const key of Object.keys(rewards.locks || {})) {
+        if(!lock_keys.includes(key)) {
+            console.warn(`Lock key "${key}"${where} is not read by process_rewards`
+                + ` - that lock does nothing. Valid keys: ${lock_keys.join(", ")}.`);
+        }
+    }
+}
 function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
+    warn_about_unread_reward_keys(rewards, source_type, source_name);
     let was_any_location_availability_changed = false;
     let is_current_location_reload_needed = false;
     if(rewards.messages && !is_from_loading) {
