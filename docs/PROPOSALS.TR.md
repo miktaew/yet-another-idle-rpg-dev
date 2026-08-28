@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 39 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 40 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -929,7 +929,9 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     haritadan toplanan, yaratıktan düşen, satın alınan - nereden geldiğiyle birlikte ve
     geldiği bölgeye götüren bir butonla. Katalog değil keşif: oyuncu oynadıkça doluyor,
     açmaya değer kılan da bu.
-45. **Rütbesi olmayan beceriler için rütbe adları** — `yapılacak`. Dokuz beceri seviye
+45. **Rütbesi olmayan beceriler için rütbe adları** — `bitti`, v0.6.41. 49 beceri merdiven
+    kazandı, yani 64'ün 58'i artık rütbe atlıyor; altı duruş becerisi dışarıda
+    bırakıldı, çünkü bir duruş becerisinin adı çalıştırdığı duruşun kimliği. Aslen: Dokuz beceri seviye
     atladıkça kendi adını değiştiriyor - Unarmed > Brawling > Martial arts, Tough skin >
     Wooden skin > Stone skin > Iron skin, Beginner > Apprentice > Adept > Expert > Master
     gatherer - 55'i değiştirmiyor. Eklenebilen her yere bu ilerleyişi ekle; yani iki
@@ -944,6 +946,15 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     tutuldu - o kusurlar, bu eklemeler; ayrı cevapları hak ediyorlar. Her commit tek
     başına duruyor. Onların Forging'i milestone işinin dışında bırakıldı: tek ödülü bir
     tarif kilidi, yani sürdürülecek bir sözlük yok ve uydurmak dengeyi uydurmak olurdu.
+47. **Tarayıcısız yükleyici üç içerik modülüne erişemiyor** — `yapılacak`, ve bu bir dilek
+    değil yetenek eksiği. tests/lib/browser-free-src.mjs bir modülü main.js ve display.js'i
+    stub'layarak gerçekten yüklüyor; enemies.js, traders.js ve data/locations.js ise
+    "Cannot access 'is_rat' before initialization" ile ölüyor - döngünün yanlış giriş
+    noktasıyla değerlendirilmesinden doğan bir TDZ hatası. Her çağrı kendi geçici grafiğini
+    kurduğu için önce items.js yüklemek işe yaramıyor. Maliyeti somut: Keşifler indeksi
+    trader.inventory_template'i liste sandı, oysa anahtar; ve hiçbir test bunu yakalayamazdı
+    çünkü hiçbir test bir tüccar kuramıyor. Çözüm, main.js'in kendi sırasıyla içe alan tek
+    bir giriş modülü üretip hedefi onun üzerinden değerlendirmek.
 
 ---
 ## Bekleyen kararlar

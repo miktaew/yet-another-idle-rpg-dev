@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 39 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 40 -->
 
 # Proposals
 
@@ -920,7 +920,9 @@ not after. Each item is the request as it was given, and the state it is in.
     found - gathered from a map, dropped by a creature, bought - with where it comes
     from, and a button that travels to the region it comes from. Discovered, not
     catalogued: it fills in as the player plays, which is what makes it worth opening.
-45. **Rank names for the skills that have none** — `todo`. Nine skills already rename
+45. **Rank names for the skills that have none** — `done`, v0.6.41. 49 skills gained a
+    ladder, so 58 of 64 now rank up; the six stance skills are left out because a
+    stance skill's name is the identity of the stance it trains. Originally: Nine skills already rename
     themselves as they level - Unarmed > Brawling > Martial arts, Tough skin > Wooden
     skin > Stone skin > Iron skin, Beginner > Apprentice > Adept > Expert > Master
     gatherer - and 55 do not. Add that progression wherever it can be added, which means
@@ -936,6 +938,16 @@ not after. Each item is the request as it was given, and the state it is in.
     commit stands alone. Their Forging is deliberately left out of the milestone work:
     its only reward is a recipe unlock, so there is no vocabulary to extend and
     inventing one would be inventing balance.
+47. **The browser-free loader cannot reach three content modules** — `todo`, and it is a
+    capability gap rather than a wish. tests/lib/browser-free-src.mjs loads a module from
+    src/ for real by stubbing main.js and display.js, and enemies.js, traders.js and
+    data/locations.js all die on it with "Cannot access 'is_rat' before initialization" -
+    a TDZ fault from evaluating the cycle with the wrong entry point. Each call builds its
+    own temp graph, so loading items.js first does not help. The cost is concrete: the
+    Discoveries index read trader.inventory_template as a list when it is a key, and no
+    test could have caught it because no test can construct a trader. The fix is to
+    generate one entry module that imports in main.js's own order and evaluate the target
+    through it.
 
 ---
 ## Open decisions
