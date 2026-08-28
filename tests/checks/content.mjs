@@ -364,6 +364,78 @@ function bracketed_body(text, open_at) {
  * Two shapes are read, and a zone can carry both: enemies_list, and enemy_groups_list
  * whose entries hold their own lists.
  */
+/**
+ * Every trader stocks a list that exists.
+ *
+ * A Trader carries the NAME of its stock list and the lists live in
+ * inventory_templates, so a name with no list behind it leaves the trader with nothing
+ * to sell and nothing to say about it - get_inventory_from_template reads length off
+ * undefined and throws when the shop is opened.
+ */
+/**
+ * A skill's rank names all sit within the levels it can reach.
+ *
+ * A skill renames itself as it levels, and english_name() picks the highest rung at or
+ * below current_level. A rung above max_level is therefore a name no player can ever see -
+ * dead content that looks like content. At max_level exactly is fine and deliberate: Iron
+ * skin is named after its own top rung.
+ */
+function check_skill_rank_levels() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/skills.js"), "utf8"));
+
+    let ranked = 0;
+    let checked = 0;
+    for (const match of source.matchAll(/skills\["([^"]+)"\]\s*=\s*new Skill\(\{/g)) {
+        const body = braced_body(source, source.indexOf("{", match.index + match[0].length - 1));
+        if (body === null) continue;
+
+        const names = body.match(/names:\s*\{([^}]*)\}/);
+        if (!names) continue;
+        checked++;
+
+        const rungs = [...names[1].matchAll(/(\d+)\s*:\s*"([^"]+)"/g)]
+            .map(rung => ({level: Number(rung[1]), name: rung[2]}));
+        if (rungs.length > 1) ranked++;
+
+        const max_level = Number((body.match(/max_level:\s*(\d+)/) || [, 60])[1]);
+        for (const rung of rungs) {
+            if (rung.level > max_level) {
+                error(`the skill "${match[1]}" is renamed to "${rung.name}" at level`
+                    + ` ${rung.level}, but it stops at ${max_level} - so that name can never`
+                    + ` be seen.`);
+            }
+        }
+    }
+
+    if (checked < 50) {
+        error(`only ${checked} skills inspected - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] skill rank names: ${ranked} of ${checked} skills rank up`);
+}
+function check_trader_stock_lists() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/traders.js"), "utf8"));
+
+    const lists = new Set([...source.matchAll(/inventory_templates\["([^"]+)"\]\s*=/g)]
+        .map(match => match[1]));
+
+    let checked = 0;
+    for (const match of source.matchAll(/inventory_template:\s*"([^"]+)"/g)) {
+        checked++;
+        if (!lists.has(match[1])) {
+            error(`a trader stocks "${match[1]}", which is not an inventory template.`
+                + ` Its shop would be empty and would throw when opened.`);
+        }
+    }
+
+    if (checked === 0 || lists.size === 0) {
+        error(`found ${checked} traders and ${lists.size} stock lists - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] trader stock: ${checked} traders across ${lists.size} lists`);
+}
 function check_every_enemy_has_a_home() {
     const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
     const enemies = strip_comments(fs.readFileSync(path.join(repo_root, "src/enemies.js"), "utf8"));
@@ -752,6 +824,8 @@ function check_content_is_reachable() {
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
+    check_skill_rank_levels,
+    check_trader_stock_lists,
     check_actions_can_explain_failure,
     check_quest_task_item_sources,
     check_content_object_keys,

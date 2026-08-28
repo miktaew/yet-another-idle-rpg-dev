@@ -480,6 +480,21 @@ async function check_enumerable_id_families() {
             shown_by: "the skill milestone list",
         },
         {
+            what: "skill name",
+            prefix: "name",
+            /*
+                A skill renames itself as it ranks up - Swordsmanship becomes Sword mastery
+                at 20 and Master of blades at 40 - and each of those names is looked up
+                through getDisplayName, which falls back to the English when there is no
+                row. So a rank with no row is invisible in English and shows English to
+                everyone else. 80 names across 64 skills.
+            */
+            values: collect(read("src/data/skills.js"),
+                /names:\s*\{([^}]*)\}/g,
+                (body) => [...body.matchAll(/\d+\s*:\s*"([^"]+)"/g)].map(m => m[1])),
+            shown_by: "the skill list and every tooltip that names a skill",
+        },
+        {
             what: "location",
             prefix: "name",
             /*

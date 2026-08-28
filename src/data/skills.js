@@ -514,7 +514,7 @@ function format_skill_rewards(milestone){
 //basic combat skills
 (function(){
     skills["Combat"] = new Skill({
-                                names: {0: "Combat"}, 
+                                names: {0: "Combat", 20: "Battle-hardened", 40: "Veteran"}, 
                                 category: "Combat",
                                 description: "desc skill Combat",
                                 max_level_coefficient: 2,
@@ -671,7 +671,7 @@ function format_skill_rewards(milestone){
                                 
 
     skills["Evasion"] = new Skill({
-                                names: {0: "Evasion"},                                
+                                names: {0: "Evasion", 20: "Slippery", 40: "Untouchable"},                                
                                 description: "desc skill Evasion",
                                 max_level_coefficient: 2,
                                 base_xp_cost: 20,
@@ -791,7 +791,7 @@ function format_skill_rewards(milestone){
                                 }
                             });
     skills["Shield blocking"] = new Skill({
-                                    names: {0: "Shield blocking"}, 
+                                    names: {0: "Shield blocking", 10: "Shield wall", 20: "Bulwark"}, 
                                     description: "desc skill Shield blocking",
                                     max_level: 30, 
                                     max_level_bonus: 0.2,
@@ -1113,7 +1113,7 @@ function format_skill_rewards(milestone){
 //environment related skills
 (function(){
     skills["Spatial awareness"] = new Skill({
-                                            names: {0: "Spatial awareness"}, 
+                                            names: {0: "Spatial awareness", 20: "Reading the ground", 40: "Battlefield sense"}, 
                                             description: "desc skill Spatial awareness",
                                             get_effect_description: ()=> {
                                                 return translationManager.getText(language, "skill effect Spatial awareness");
@@ -1222,7 +1222,7 @@ function format_skill_rewards(milestone){
                                             }
                                         });
     skills["Tight maneuvers"] = new Skill({
-                                        names: {0: "Tight maneuvers"}, 
+                                        names: {0: "Tight maneuvers", 20: "Close quarters", 40: "No room needed"}, 
                                         description: "desc skill Tight maneuvers",
                                         category: "Environmental",
                                         get_effect_description: ()=> {
@@ -1316,7 +1316,7 @@ function format_skill_rewards(milestone){
                                         }
                                     });
     skills["Night vision"] = new Skill({
-                                    names: {0: "Night vision"},
+                                    names: {0: "Night vision", 5: "Owl eyes"},
                                     description: "desc skill Night vision",
                                     base_xp_cost: 600,
                                     xp_scaling: 1.9,
@@ -1375,7 +1375,7 @@ function format_skill_rewards(milestone){
                                     }
                             });
     skills["Presence sensing"] = new Skill({
-                names: {0: "Presence sensing"},
+                names: {0: "Presence sensing", 10: "Sixth sense"},
                 description: "desc skill Presence sensing",
                 base_xp_cost: 60,
                 xp_scaling: 2,
@@ -1587,7 +1587,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Scrambling"] = new Skill({
-		names: {0: "Scrambling"}, 
+		names: {0: "Scrambling", 20: "Rough ground", 40: "Goat-footed"}, 
         description: "desc skill Scrambling",
         category: "Environmental",
         base_xp_cost: 400,
@@ -1757,14 +1757,14 @@ function format_skill_rewards(milestone){
     });
 
     skills["Heat resistance"] = new Skill({
-        names: {0: "Heat resistance"},
+        names: {0: "Heat resistance", 15: "Sun-hardened", 30: "Desert-born"},
         description: "desc skill Heat resistance",
         base_xp_cost: 100,
         max_level: 40,
         category: "Environmental",
     });
     skills["Cold resistance"] = new Skill({
-        names: {0: "Cold resistance"},
+        names: {0: "Cold resistance", 15: "Frost-hardened", 30: "Winterborn"},
         description: "desc skill Cold resistance",
         base_xp_cost: 200,
         xp_scaling: 1.8,
@@ -1776,7 +1776,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Dazzle resistance"] = new Skill({
-        names: {0: "Dazzle resistance"},
+        names: {0: "Dazzle resistance", 10: "Steady gaze", 20: "Unblinking"},
         description: "desc skill Dazzle resistance",
         base_xp_cost: 60,
         max_level: 30,
@@ -1800,7 +1800,7 @@ function format_skill_rewards(milestone){
                                 });
     skills["Swords"] = new Skill({
                                 parent_skill: "Weapon mastery",
-                                names: {0: "Swordsmanship"}, 
+                                names: {0: "Swordsmanship", 20: "Sword mastery", 40: "Master of blades"}, 
                                 category: "Weapon",
                                 description: "desc skill Swords",
                                 get_effect_description: ()=> {
@@ -1904,7 +1904,7 @@ function format_skill_rewards(milestone){
 
     skills["Axes"] = new Skill({ 
                                 parent_skill: "Weapon mastery",
-                                names: {0: "Axe combat"}, 
+                                names: {0: "Axe combat", 20: "Axe mastery", 40: "Master of axes"}, 
                                 category: "Weapon",
                                 description: "desc skill Axes",
                                 get_effect_description: ()=> {
@@ -2003,7 +2003,7 @@ function format_skill_rewards(milestone){
 
     skills["Spears"] = new Skill({
                                 parent_skill: "Weapon mastery",
-                                names: {0: "Spearmanship"}, 
+                                names: {0: "Spearmanship", 20: "Spear mastery", 40: "Master of spears"}, 
                                 category: "Weapon",
                                 description: "desc skill Spears",
                                 get_effect_description: ()=> {
@@ -2106,7 +2106,7 @@ function format_skill_rewards(milestone){
 
     skills["Hammers"] = new Skill({ 
                                         parent_skill: "Weapon mastery",
-                                        names: {0: "Hammer combat"}, 
+                                        names: {0: "Hammer combat", 20: "Hammer mastery", 40: "Master of hammers"}, 
                                         category: "Weapon",
                                         description: "desc skill Hammers",
                                         get_effect_description: ()=> {
@@ -2206,7 +2206,7 @@ function format_skill_rewards(milestone){
 
     skills["Daggers"] = new Skill({
                                 parent_skill: "Weapon mastery",
-                                names: {0: "Dagger combat"},
+                                names: {0: "Dagger combat", 20: "Dagger mastery", 40: "Master of daggers"},
                                 category: "Weapon",
                                 description: "desc skill Daggers",
                                 get_effect_description: ()=> {
@@ -2311,7 +2311,7 @@ function format_skill_rewards(milestone){
 
     skills["Wands"] = new Skill({
                                 parent_skill: "Weapon mastery",
-                                names: {0: "Wand casting"}, 
+                                names: {0: "Wand casting", 20: "Wand mastery", 40: "Master of wands"}, 
                                 category: "Weapon",
                                 description: "desc skill Wands",
                                 get_effect_description: ()=> {
@@ -2321,7 +2321,7 @@ function format_skill_rewards(milestone){
 
     skills["Staffs"] = new Skill({
                                 parent_skill: "Weapon mastery",
-                                names: {0: "Staff casting"}, 
+                                names: {0: "Staff casting", 20: "Staff mastery", 40: "Master of staves"}, 
                                 category: "Weapon",
                                 description: "desc skill Staffs",
                                 get_effect_description: ()=> {
@@ -2333,7 +2333,7 @@ function format_skill_rewards(milestone){
 //work related
 (function(){
     skills["Farming"] = new Skill({
-                                names: {0: "Farming"}, 
+                                names: {0: "Farming", 5: "Master farmer"}, 
                                 description: "desc skill Farming",
                                 base_xp_cost: 40,
                                 category: "Activity",
@@ -2419,7 +2419,7 @@ function format_skill_rewards(milestone){
 //non-work activity related
 (function(){
     skills["Sleeping"] = new Skill({
-                                    names: {0: "Sleeping"}, 
+                                    names: {0: "Sleeping", 5: "Deep sleep"}, 
                                     description: "desc skill Sleeping",
                                     get_effect_description: ()=>{
                                         return translationManager.getText(language, "skill effect Sleeping", {v1: Math.round(100*(1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level))/100});
@@ -2504,7 +2504,7 @@ function format_skill_rewards(milestone){
                                     }
                                 });                         
     skills["Meditation"] = new Skill({
-        names: {0: "Meditation"}, 
+        names: {0: "Meditation", 10: "Deep meditation", 20: "Stillness"}, 
         description: "desc skill Meditation",
         base_xp_cost: 200,
         category: "Activity",
@@ -2630,7 +2630,7 @@ function format_skill_rewards(milestone){
     });                  
     skills["Running"] = new Skill({
         description: "desc skill Running",
-        names: {0: "Running"},
+        names: {0: "Running", 20: "Long stride", 40: "Tireless"},
         max_level: 50,
         category: "Activity",
         max_level_coefficient: 2,
@@ -2781,7 +2781,7 @@ function format_skill_rewards(milestone){
     });
     skills["Weightlifting"] = new Skill({
         description: "desc skill Weightlifting",
-        names: {0: "Weightlifting"},
+        names: {0: "Weightlifting", 20: "Heavy lifting", 40: "Unbending back"},
         max_level: 50,
         category: "Activity",
         max_level_coefficient: 4,
@@ -2927,7 +2927,7 @@ function format_skill_rewards(milestone){
             let value = get_total_skill_coefficient({skill_id:"Swimming",scaling_type:"multiplicative"})
             return translationManager.getText(language, "skill effect Swimming", {v1: Math.round(value*100)/100});
         },
-        names: {0: "Swimming"},
+        names: {0: "Swimming", 20: "Deep water", 40: "At home in water"},
         max_level: 50,
         category: "Activity",
         max_level_coefficient: 2,
@@ -3062,7 +3062,7 @@ function format_skill_rewards(milestone){
 
     skills["Equilibrium"] = new Skill({
         description: "desc skill Equilibrium",
-        names: {0: "Equilibrium"},
+        names: {0: "Equilibrium", 20: "Steady footing", 40: "Unshakeable"},
         category: "Activity",
         max_level: 50,
         max_level_coefficient: 4,
@@ -3181,7 +3181,7 @@ function format_skill_rewards(milestone){
 
     skills["Climbing"] = new Skill({
         description: "desc skill Climbing",
-        names: {0: "Climbing"},
+        names: {0: "Climbing", 20: "Free climbing", 40: "Cliff sense"},
         max_level: 50,
         category: "Activity",
         max_level_coefficient: 2,
@@ -3391,7 +3391,7 @@ function format_skill_rewards(milestone){
         },
     });
     skills["Woodcutting"] = new Skill({
-        names: {0: "Woodcutting"},
+        names: {0: "Woodcutting", 20: "Adept woodcutter", 40: "Master woodcutter"},
         parent_skill: "Gathering mastery",
         description: "desc skill Woodcutting",
         milestones: {
@@ -3496,7 +3496,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Mining"] = new Skill({
-        names: {0: "Mining"},
+        names: {0: "Mining", 20: "Adept miner", 40: "Master miner"},
         parent_skill: "Gathering mastery",
         description: "desc skill Mining",
         milestones: {
@@ -3603,7 +3603,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Digging"] = new Skill({
-        names: {0: "Digging"},
+        names: {0: "Digging", 20: "Adept digger", 40: "Master digger"},
         parent_skill: "Gathering mastery",
         description: "desc skill Digging",
         milestones: {
@@ -3708,7 +3708,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Herbalism"] = new Skill({
-        names: {0: "Herbalism"},
+        names: {0: "Herbalism", 20: "Adept herbalist", 40: "Master herbalist"},
         parent_skill: "Gathering mastery",
         description: "desc skill Herbalism",
         milestones: {
@@ -3815,7 +3815,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Animal handling"] = new Skill({
-        names: {0: "Animal handling"},
+        names: {0: "Animal handling", 20: "Adept handler", 40: "Master handler"},
         parent_skill: "Gathering mastery",
         description: "desc skill Animal handling",
         milestones: {
@@ -3918,7 +3918,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Fishing"] = new Skill({
-        names: {0: "Fishing"},
+        names: {0: "Fishing", 20: "Adept fisher", 40: "Master fisher"},
         parent_skill: "Gathering mastery",
         description: "desc skill Fishing",
         category: "Gathering",
@@ -4162,7 +4162,7 @@ function format_skill_rewards(milestone){
     });
 
     skills["Crafting"] = new Skill({
-        names: {0: "Tinkering"}, 
+        names: {0: "Tinkering", 20: "Adept tinkerer", 40: "Master tinkerer"}, 
         description: "desc skill Crafting",
         milestones: {
             3: {
@@ -4231,7 +4231,7 @@ function format_skill_rewards(milestone){
         },
     });
     skills["Smelting"] = new Skill({
-        names: {0: "Smelting"}, 
+        names: {0: "Smelting", 20: "Adept smelter", 40: "Master smelter"}, 
         description: "desc skill Smelting",
         milestones: {
             3: {
@@ -4298,7 +4298,7 @@ function format_skill_rewards(milestone){
         max_level: 60,
     });
     skills["Forging"] = new Skill({
-        names: {0: "Forging"}, 
+        names: {0: "Forging", 20: "Adept smith", 40: "Master smith"}, 
         description: "desc skill Forging",
         category: skill_category_crafting,
         base_xp_cost: 40,
@@ -4377,7 +4377,7 @@ function format_skill_rewards(milestone){
         }
     });
     skills["Cooking"] = new Skill({
-        names: {0: "Cooking"}, 
+        names: {0: "Cooking", 20: "Adept cook", 40: "Master cook"}, 
         description: "desc skill Cooking",
         milestones: {
             3: {
@@ -4451,7 +4451,7 @@ function format_skill_rewards(milestone){
         max_level: 60,
     });
     skills["Alchemy"] = new Skill({
-        names: {0: "Alchemy"}, 
+        names: {0: "Alchemy", 20: "Adept alchemist", 40: "Master alchemist"}, 
         description: "desc skill Alchemy",
         milestones: {
             3: {
@@ -4526,7 +4526,7 @@ function format_skill_rewards(milestone){
     });
     skills["Butchering"] = new Skill({
         skill_id: "Butchering", 
-        names: {0: "Butchering"}, 
+        names: {0: "Butchering", 20: "Adept butcher", 40: "Master butcher"}, 
         description: "desc skill Butchering",
         milestones: {
             3: {
@@ -4601,7 +4601,7 @@ function format_skill_rewards(milestone){
     });
     skills["Woodworking"] = new Skill({
         skill_id: "Woodworking", 
-        names: {0: "Woodworking"}, 
+        names: {0: "Woodworking", 20: "Adept woodworker", 40: "Master woodworker"}, 
         description: "desc skill Woodworking",
         milestones: {
             3: {
@@ -4749,7 +4749,7 @@ function format_skill_rewards(milestone){
     });
     skills["Fortitude"] = new Skill({
         category: "Combat",
-        names: {0: "Fortitude"},
+        names: {0: "Fortitude", 20: "Endurance", 40: "Immovable"},
         description: "desc skill Fortitude",
         base_xp_cost: 200,
         xp_scaling: 1.6,
@@ -4857,7 +4857,7 @@ function format_skill_rewards(milestone){
 //character skills and resistances
 (function(){
     skills["Persistence"] = new Skill({
-        names: {0: "Persistence"},
+        names: {0: "Persistence", 10: "Stubbornness", 20: "Unbreakable will"},
         description: "desc skill Persistence",
         flavour_text: "skill flavour Persistence",
         base_xp_cost: 60,
@@ -4962,7 +4962,7 @@ function format_skill_rewards(milestone){
         max_level_bonus: 0.3
     });
     skills["Perception"] = new Skill({
-        names: {0: "Perception"}, 
+        names: {0: "Perception", 15: "Keen eye", 30: "Hawk's eye"}, 
         description: "desc skill Perception",
         base_xp_cost: 100,
         visibility_treshold: 80,
@@ -5065,7 +5065,7 @@ function format_skill_rewards(milestone){
         }
     });
     skills["Literacy"] = new Skill({
-        names: {0: "Literacy"}, 
+        names: {0: "Literacy", 5: "Well-read"}, 
         description: "desc skill Literacy",
         category: "Character",
         base_xp_cost: 120,
@@ -5114,7 +5114,7 @@ function format_skill_rewards(milestone){
         }
     });
     skills["Medicine"] = new Skill({
-        names: {0: "Medicine"}, 
+        names: {0: "Medicine", 10: "Field medicine", 20: "Master physician"}, 
         description: "desc skill Medicine",
         milestones: {
             3: {
@@ -5164,7 +5164,7 @@ function format_skill_rewards(milestone){
         },
     });
     skills["Poison resistance"] = new Skill({
-        names: {0: "Poison resistance"}, 
+        names: {0: "Poison resistance", 10: "Hardened gut", 20: "Venom-proof"}, 
         description: "desc skill Poison resistance",
         category: "Character",
         max_level: 30,
@@ -5260,7 +5260,7 @@ function format_skill_rewards(milestone){
         }
     });
     skills["Gluttony"] = new Skill({
-        names: {0: "Gluttony"}, 
+        names: {0: "Gluttony", 10: "Big appetite", 20: "Bottomless"}, 
         description: "desc skill Gluttony",
         category: "Character",
         max_level: 30,
@@ -5356,7 +5356,7 @@ function format_skill_rewards(milestone){
         }
     });
     skills["Breathing"] = new Skill({
-        names: {0: "Breathing"},
+        names: {0: "Breathing", 15: "Steady breath", 30: "Long breath"},
         description: "desc skill Breathing",
         flavour_text: "skill flavour Breathing",
         base_xp_cost: 400,
@@ -5490,7 +5490,7 @@ function format_skill_rewards(milestone){
           },
     });  
     skills["Regeneration"] = new Skill({
-                                names: {0: "Regeneration"}, 
+                                names: {0: "Regeneration", 15: "Quick healing", 30: "Living blood"}, 
                                 description: "desc skill Regeneration",
                                 get_effect_description: ()=>{
                                     return translationManager.getText(language, "skill effect Regeneration", {v1: Math.round(100*(1 + 3*get_total_skill_level("Regeneration")/skills["Regeneration"].max_level))/100});
@@ -5606,7 +5606,7 @@ function format_skill_rewards(milestone){
 //miscellaneous skills
 (function(){
     skills["Haggling"] = new Skill({
-        names: {0: "Haggling"},
+        names: {0: "Haggling", 10: "Sharp tongue", 20: "Silver tongue"},
         description: "desc skill Haggling",
         category: "Character",
         base_xp_cost: 100,

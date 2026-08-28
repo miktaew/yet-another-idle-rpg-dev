@@ -1,6 +1,6 @@
 "use strict";
 
-import { traders } from "./traders.js";
+import { traders, inventory_templates } from "./traders.js";
 import { current_trader, to_buy, to_sell } from "./trade.js";
 import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "./data/skills.js";
 import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "./character.js";
@@ -5605,6 +5605,22 @@ function update_bestiary_entry_killcount(enemy_name) {
     bestiary_entry_divs[enemy_name].children[1].innerText = enemy_killcount[enemy_name];
 }
 
+/**
+ * A list, or an empty one - and a word about it when the value was neither.
+ *
+ * The index reads four fields it does not own, and the first version of it assumed all
+ * four were arrays. One was not, and a panel threw while drawing instead of saying which
+ * field had surprised it.
+ */
+function as_list(value, what) {
+    if(Array.isArray(value)) {
+        return value;
+    }
+    if(value !== undefined && value !== null) {
+        console.warn(`Expected a list${what ? ` for ${what}` : ""}, got ${typeof value}.`);
+    }
+    return [];
+}
 /*
     Where each item can be found, built once from the content itself.
 
@@ -5636,13 +5652,18 @@ function build_item_sources_index() {
         const location = locations[location_key];
 
         Object.values(location.activities || {}).forEach(activity => {
-            (activity.gained_resources?.resources || []).forEach(resource => {
+            as_list(activity.gained_resources?.resources, "gained_resources.resources")
+                .forEach(resource => {
                 note(resource.name, {kind: "gather", location_key});
             });
         });
 
-        (location.traders || []).forEach(trader_key => {
-            (traders[trader_key]?.inventory_template || []).forEach(stocked => {
+        as_list(location.traders).forEach(trader_key => {
+            //inventory_template holds the NAME of a stock list, not the list - the lists
+            //live in inventory_templates. Calling forEach on the name is what threw when
+            //this panel was first opened.
+            const stock = inventory_templates[traders[trader_key]?.inventory_template];
+            as_list(stock).forEach(stocked => {
                 if(stocked.item_name) {
                     note(stocked.item_name, {kind: "trade", location_key, via: trader_key});
                 }
@@ -5651,7 +5672,7 @@ function build_item_sources_index() {
     });
 
     Object.keys(enemy_templates).forEach(enemy_key => {
-        (enemy_templates[enemy_key].loot_list || []).forEach(loot => {
+        as_list(enemy_templates[enemy_key].loot_list, "loot_list").forEach(loot => {
             if(!loot.item_name) {
                 return;
             }
