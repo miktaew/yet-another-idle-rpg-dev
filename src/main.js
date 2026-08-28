@@ -200,6 +200,7 @@ let current_location;
 let current_activity;
 
 let game_action_interval;
+let game_action_tick;
 let current_game_action;
 
 //loot from currently active source (combat location or specific activity), used for display if dynamic loot logging option is enabled
@@ -235,7 +236,10 @@ let save_counter = 0;
 const backup_period = 3600;
 let backup_counter = 0;
 
-const tickrate = config.tickrate;
+//Not const: set_game_speed multiplies it. It is the divisor of every wall-clock delay
+//in this file and of every per-tick accounting term, which is what makes it the right
+//and only place a speed control belongs.
+let tickrate = config.tickrate;
 
 //accumulates deviations
 let time_variance_accumulator = 0;
@@ -779,9 +783,11 @@ function start_game_action(action_key, event) {
         let current_iterations = game_action.keep_progress?game_action.accumulated_progress:0;
         const total_iterations = game_action.attempt_duration/0.1;
 
-        game_action_interval = setInterval(()=>{
+        //Kept in a variable rather than passed inline, so the interval can be re-armed
+        //at a new speed without losing the progress that lives in this closure.
+        game_action_tick = ()=>{
             if(current_iterations >= total_iterations - 1) {
-                clearInterval(game_action_interval);
+                stop_game_action_interval();
                 finish_game_action({action_key, conditions_status, dialogue_key: current_dialogue});
             }
 
@@ -790,13 +796,40 @@ function start_game_action(action_key, event) {
                 game_action.accumulated_progress = current_iterations;
             }
             update_game_action_progress_bar(current_iterations/total_iterations);
-        }, 1000*0.1/tickrate);
+        };
+        game_action_interval = setInterval(game_action_tick, game_action_period());
     } else {
         update_game_action_progress_bar(1);
         finish_game_action({action_key, conditions_status,dialogue_key: current_dialogue});
     }
 }
 
+/** The action ticker's period at the current speed. */
+function game_action_period() {
+    return 1000 * 0.1 / tickrate;
+}
+
+function stop_game_action_interval() {
+    clearInterval(game_action_interval);
+    game_action_interval = undefined;
+    game_action_tick = undefined;
+}
+
+/**
+ * Re-arms the running action at the current speed.
+ *
+ * setInterval keeps the period it was created with, so raising the speed mid-action
+ * would change nothing until the action was over - the one moment the speed is no
+ * longer wanted. The progress lives in the tick's closure, so swapping the interval
+ * out from under it loses nothing.
+ */
+function rearm_game_action_interval() {
+    if(!game_action_tick) {
+        return;
+    }
+    clearInterval(game_action_interval);
+    game_action_interval = setInterval(game_action_tick, game_action_period());
+}
 /**
  * Handles the finish, successful or not, of a game action. Not to be mistaken for end_game_action
  * @param {String} action_key 
@@ -884,7 +917,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
  */
 function end_game_action() {
     end_activity_animation();
-    clearInterval(game_action_interval);
+    stop_game_action_interval();
     current_game_action = null;
     remove_from_content_stack(content_stack_removal_options.TOP);
 }
@@ -3051,7 +3084,7 @@ function switch_action_box_content() {
     } else if(current_game_action) {
         current_game_action = null;
         end_activity_animation();
-        clearInterval(game_action_interval);
+        stop_game_action_interval();
     }
 
     if(content_stack.length) {
@@ -6068,6 +6101,134 @@ window.get_game_version = get_game_version;
 window.run = run;
 
 //Verify_Game_Objects();
+/*
+    The development speed multiplier.
+
+    Not saved. A reload is back to 1x, which is the right default for something that
+    makes every activity, book and journey trivial.
+*/
+let game_speed = 1;
+
+function set_game_speed(multiplier) {
+    const allowed = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+    if(!allowed.includes(multiplier)) {
+        console.error(`Speed must be one of ${allowed.join(", ")}.`);
+        return game_speed;
+    }
+    game_speed = multiplier;
+    tickrate = config.tickrate * game_speed;
+
+    //An action already running holds its own interval, which has to be re-armed to
+    //notice this at all.
+    rearm_game_action_interval();
+    return game_speed;
+}
+
+/**
+ * Development console, off until it is asked for.
+ *
+ * Typed once in the browser console:
+ *
+ *     enable_dev_console()
+ *
+ * After that a handful of functions exist as bare globals, so a change can be
+ * exercised without playing up to it:
+ *
+ *     add_active_effect("Coffee", 1800)
+ *     give({items: [{item: "Iron sword", quality: 120}], money: 50000})
+ *     goto("The bay")
+ *     set_speed(100)
+ *
+ * Deliberately NOT on by default and deliberately NOT saved. A reload turns it off
+ * again. It can hand out every item in the game and walk to any room, which is exactly
+ * what makes it useful and exactly why it should not be one typo away from a player who
+ * opened devtools to look at something else. is_on_dev() is not the gate either: the dev
+ * release is still a release somebody plays.
+ *
+ * The functions are the game's own. Nothing here is a second implementation of a reward
+ * or an unlock - `give` is process_rewards, the same path a quest takes, so anything
+ * granted here behaves the way the content would have granted it.
+ */
+function enable_dev_console() {
+    const list = (registry) => Object.keys(registry).sort();
+
+    //Captured before the globals are attached. Module scope would win over window
+    //anyway, so `add_active_effect` inside the wrapper is already the real function -
+    //but a reader should not have to know that to be sure it is not calling itself.
+    const real_add_active_effect = add_active_effect;
+
+    const helpers = {
+        //Duration is in in-game minutes, like every duration in content:
+        //{effect: "Coffee", duration: 150} is what an item says.
+        add_active_effect: (effect_key, duration = 600) => {
+            if(!effect_templates[effect_key]) {
+                console.error(`No such effect as "${effect_key}". Try list_effects().`);
+                return;
+            }
+            real_add_active_effect(effect_key, duration);
+            return `${effect_key} for ${duration} minutes`;
+        },
+
+        //Everything the content can grant, through the path the content grants it by.
+        //The shape is a rewards object exactly as written in quests.js or dialogues.js.
+        give: (rewards) => {
+            process_rewards({rewards, source_type: "dev console", source_name: "dev console"});
+            return Object.keys(rewards);
+        },
+
+        add_money: (amount) => { add_money_to_character(amount); return character.money; },
+        add_xp: (amount) => { add_xp_to_character(amount); return character.xp.current_level; },
+        add_skill_xp: (skill, amount) => {
+            if(!skills[skill]) {
+                console.error(`No such skill as "${skill}". Try list_skills().`);
+                return;
+            }
+            add_xp_to_skill({skill: skills[skill], xp_to_add: amount});
+            return skills[skill].current_level;
+        },
+
+        //Unlocks the room first, because walking somewhere locked is the usual reason
+        //this is being typed at all.
+        goto: (location_name) => {
+            if(!locations[location_name]) {
+                console.error(`No such location as "${location_name}". Try list_locations().`);
+                return;
+            }
+            unlock_location({location: locations[location_name], skip_message: true});
+            change_location({location_id: location_name});
+            return location_name;
+        },
+
+        set_flag: (flag, value = true) => {
+            if(!(flag in global_flags)) {
+                console.error(`No such flag as "${flag}". Known: ${list(global_flags).join(", ")}`);
+                return;
+            }
+            global_flags[flag] = value;
+            return `${flag} = ${value}`;
+        },
+
+        list_effects: () => list(effect_templates),
+        list_items: () => list(item_templates),
+        list_locations: () => list(locations),
+        list_skills: () => list(skills),
+        list_quests: () => list(quests),
+        list_dialogues: () => list(dialogues),
+        list_flags: () => list(global_flags),
+
+        set_speed: (multiplier) => set_game_speed(multiplier),
+    };
+
+    Object.keys(helpers).forEach(name => { window[name] = helpers[name]; });
+
+    console.log("dev console on. Not saved - a reload turns it off.");
+    console.log(Object.keys(helpers).join("(), ") + "()");
+    return Object.keys(helpers);
+}
+
+//The only thing the dev console exposes by itself. Everything else it hands out
+//appears when this is called.
+window.enable_dev_console = enable_dev_console;
 window.Verify_Game_Objects = Verify_Game_Objects;
 
 set_loading_screen_progress("Waking up from a nyap...");
