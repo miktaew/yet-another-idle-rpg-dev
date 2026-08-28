@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 34 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 35 -->
 
 # Proposals
 
@@ -823,6 +823,32 @@ not after. Each item is the request as it was given, and the state it is in.
     dördüncü kişisin", two participles stacked on one noun - permitted by the grammar,
     absent from the prose. Short clauses with the point last: "Masamda terazi var, sen
     muhafız sanıyorsun. Bugün dördüncüsün."
+33. **Milestones for the skills that run out of them** — `todo`. Literacy caps at
+    level 10 and its milestones stop at 5, so the second half of the bar grants
+    nothing. Find every skill in that shape - a low max_level whose milestone list
+    ends well before it - and write the missing ones. 49 of 64 skills have milestones
+    at all, so this is about the tail of the ones that do, not about the fifteen that
+    have none.
+34. **Do the merge, then offer the result upstream** — `active`. Take what can be
+    taken from upstream, including whatever they add next, without overwriting our own
+    work; then send the current code to them as a contribution and let them take it or
+    not. This is strategy (A) as put to the owner, and it is now the standing
+    priority: the measurement that decided it is that the merge grows while we keep
+    fixing bugs in the files upstream rewrote - 191 conflict hunks when first measured,
+    222 six versions later. The GameAction move worked as intended in the same window
+    (modify/delete conflicts 4 -> 3), so the direction is right and the cost is time,
+    not doubt.
+35. **Look at Echoes-Beneath for STORY and GAMEPLAY, not only tooling** — `todo`. The
+    first review answered the tooling question and missed the one that was asked. What
+    was wanted: mechanics and narrative devices worth adopting - a **title system** was
+    named as the example. Its `js/systems/` holds abilities, effectors, planner and
+    simulation, none of which this game has, and its docs carry REGIONS, STORY and two
+    STORYPROGRESS files.
+36. **What the lore panel is for** — `todo`, and this sharpens P-13/1. It holds the
+    questions the player has asked and the answers they were given, so the story can be
+    followed rather than remembered; and it guides - it should leave a player who comes
+    back after a week knowing what they were in the middle of. Not a transcript: the
+    parts that carry the thread.
 
 ---
 ## Open decisions

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 34 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 35 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -833,6 +833,29 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     sanan dördüncü kişisin" olmuş: tek isim üzerine yığılmış iki sıfat-fiil -
     dilbilgisinin izin verdiği, yazının kullanmadığı bir şey. Kısa cümleler, sonda
     vurgu: "Masamda terazi var, sen muhafız sanıyorsun. Bugün dördüncüsün."
+33. **Milestone'ları tükenen beceriler için yenileri** — `yapılacak`. Okuryazarlık 10.
+    seviyede duruyor ve milestone'ları 5'te bitiyor, yani çubuğun ikinci yarısı hiçbir
+    şey vermiyor. Bu şekildeki her beceriyi bul - düşük bir max_level'a karşılık çok
+    önce biten bir milestone listesi - ve eksikleri yaz. 64 becerinin 49'unda milestone
+    var; mesele hiç olmayan on beş tanesi değil, olanların kuyruğu.
+34. **Merge'ü yap, sonra sonucu upstream'e öner** — `etkin`. Upstream'den alınabilecek
+    olanı al - sonradan ekleyecekleri de dâhil - ama kendi işimizi ezmeden; sonra
+    mevcut kodu katkı olarak onlara gönder, isterlerse alsınlar. Bu, sahibe sunulan (A)
+    yolu ve artık kalıcı öncelik: kararı verdiren ölçüm şu - upstream'in yeniden
+    yazdığı dosyalarda hata düzeltmeye devam ettikçe merge büyüyor; ilk ölçümde 191
+    çakışma bloğu, altı sürüm sonra 222. Aynı aralıkta GameAction taşıması amaçlandığı
+    gibi işledi (sil/değiştir çakışması 4 -> 3), yani yön doğru; maliyet zaman, kuşku
+    değil.
+35. **Echoes-Beneath'e yalnızca araçlar için değil, HİKÂYE ve OYNANIŞ için bak** —
+    `yapılacak`. İlk inceleme araç sorusunu cevaplayıp sorulan soruyu kaçırdı. İstenen:
+    alınmaya değer mekanikler ve anlatı araçları - örnek olarak **unvan sistemi**
+    verildi. Onların `js/systems/` klasöründe bu oyunda hiç olmayan abilities,
+    effectors, planner ve simulation var; docs'unda da REGIONS, STORY ve iki
+    STORYPROGRESS dosyası.
+36. **Lore paneli ne işe yarayacak** — `yapılacak`, ve bu P-13/1'i keskinleştiriyor.
+    Oyuncunun sorduğu soruları ve aldığı cevapları tutacak, böylece hikâye
+    hatırlanmak yerine takip edilebilecek; ve yönlendirecek - bir hafta sonra dönen
+    oyuncu neyin ortasında kaldığını bilerek dönmeli. Döküm değil: ipi taşıyan kısımlar.
 
 ---
 ## Bekleyen kararlar
