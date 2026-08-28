@@ -510,7 +510,7 @@ async function option_language(option) {
     fill_character_bio();
     update_save_load_buttons();
     //The stance list takes the current stance and the favourites, which live here.
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
     retranslate_interface({
         location: current_location,
         active_quest_ids: Object.keys(active_quests),
@@ -1491,7 +1491,7 @@ function unlock_combat_stance(stance_id) {
         log_message(translationManager.getText(language, "log you have learned a new", {v1: stances[stance_id].getName()}), "location_unlocked");
     }
     stances[stance_id].is_unlocked = true;
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
 }
 
 function change_stance({stance_id, is_temporary = false}) {
@@ -4215,7 +4215,7 @@ function load(save_data) {
             });
         }
 
-        update_displayed_stance_list(stances, current_stance, faved_stances);
+        update_displayed_stance_list(stances, current_stance);
 
         if(save_data.faved_stances) {
             Object.keys(save_data.faved_stances).forEach(stance_id=> {
@@ -6344,7 +6344,7 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
     update_displayed_money();
     update_character_stats();
 
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
     change_stance({stance_id: "normal"});
     create_displayed_crafting_recipes();
     change_location({location_id: "Village", skip_travel_time: true});

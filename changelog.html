@@ -257,6 +257,12 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.35</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Starring a stance broke the stance list. The quick-select bar was handed the list of which stances are starred where it needed the stances themselves, so it asked <em>true</em> for its name and the panel threw. The argument it should never have been given is gone rather than corrected - the bar already knows which ones are starred, so there is nothing left to pass wrongly.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.34</button>
     <div class="content">
         <ul class="entries">

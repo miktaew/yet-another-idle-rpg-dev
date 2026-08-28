@@ -5244,7 +5244,7 @@ function update_skill_category_order() {
 /**
  * @description updates the list of stances, 
  */
-function update_displayed_stance_list(stances, current_stance, fav_stances) {
+function update_displayed_stance_list(stances, current_stance) {
 
     clear_HTML_content(stance_list);
 
@@ -5309,7 +5309,7 @@ function update_displayed_stance_list(stances, current_stance, fav_stances) {
     }).forEach(node=>stance_list.appendChild(node));
 
     update_displayed_stance(current_stance);
-    update_displayed_faved_stances(fav_stances);
+    update_displayed_faved_stances(stances);
 }
 
 function create_stance_tooltip(stance) {
@@ -5376,6 +5376,14 @@ function update_displayed_stance(stance) {
     }
 }
 
+/**
+ * Redraws the quick-select bar under the character sheet.
+ *
+ * The argument is the stance REGISTRY, not the faved_stances map: which ids are
+ * starred is imported from main.js, and what is needed here is the object those ids
+ * resolve through. Passing the map instead is what threw
+ * "getName is not a function" the moment a stance was favourited.
+ */
 function update_displayed_faved_stances(stances) {
     
     const list = document.getElementById("character_stance_selection");
