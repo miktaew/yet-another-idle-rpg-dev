@@ -337,12 +337,23 @@ async function check_no_unused_locale_rows() {
         "age ", "height ", "race ", "ui rarity ", "ui enemy tag ", "loctype ",
     ];
 
-    //Stat keys are looked up bare and with a " long" suffix, off a runtime key.
-    const stat_block = strip_comments(fs.readFileSync(path.join(repo_root, "src/character.js"), "utf8"))
-        .match(/this\.base_stats = \{([\s\S]*?)\n\s{16}\};/);
-    const stat_keys = new Set(stat_block
-        ? [...stat_block[1].matchAll(/([a-z_]+)\s*:/g)].map(match => match[1])
-        : []);
+    /*
+        Stat keys are looked up bare and with a " long" suffix, off a runtime key. Both
+        sources count: base_stats is what the hero carries, and a stance can multiply a
+        key that base_stats does not name - hit_chance is one, and reading only
+        base_stats reported its two rows as unused.
+    */
+    const stat_keys = new Set();
+    for (const [relative, pattern] of [
+            ["src/character.js", /this\.base_stats\s*=\s*\{([\s\S]*?)\n\s{16}\};/g],
+            ["src/combat_stances.js", /stat_multipliers:\s*\{([^}]*)\}/g]]) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        for (const block of source.matchAll(pattern)) {
+            for (const key of block[1].matchAll(/([a-z_]+)\s*:/g)) {
+                stat_keys.add(key[1]);
+            }
+        }
+    }
 
     const unused = [];
     for (const key of Object.keys(reference)) {

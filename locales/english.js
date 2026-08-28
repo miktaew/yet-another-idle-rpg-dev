@@ -812,6 +812,8 @@ const stats = {
     "stamina_efficiency long": "stamina efficiency",
     "intuition": "int",
     "intuition long": "intuition",
+    "hit_chance": "hit chance",
+    "hit_chance long": "hit chance",
     "block_strength": "shield strength",
     "block_strength long": "shield strength",
     "evasion_points": "EP",

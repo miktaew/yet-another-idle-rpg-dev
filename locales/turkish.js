@@ -790,6 +790,8 @@ const stats = {
     "stamina_efficiency long": "dayanıklılık verimliliği",
     "intuition": "sezgi",
     "intuition long": "sezgi",
+    "hit_chance": "isabet şansı",
+    "hit_chance long": "isabet şansı",
     "block_strength": "kalkan gücü",
     "block_strength long": "kalkan gücü",
     "evasion_points": "KP",

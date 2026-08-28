@@ -399,6 +399,34 @@ async function check_enumerable_id_families() {
         enemy_tags.add(size);
     }
 
+    /*
+        The stat keys that reach a label, one entry per place display.js reads one from.
+        Each needs two rows: stat_label asks for `${key} long` and stat_label_short for
+        the bare `${key}`, and a key with neither printed
+        "x1.2 text not found, id: hit_chance" in the Berserker's Stride tooltip.
+
+        Deliberately NOT character.base_stats, which is wrong in both directions: it
+        carries the five mana stats its own comments call currently useless, and it does
+        not carry hit_chance. The book source yields nothing today - every book grants xp
+        multipliers - and is listed because format_book_bonuses exists, so the first book
+        to grant a stat gets its rows checked.
+    */
+    const stat_keys = new Set();
+    for (const [relative, pattern] of [
+            ["src/active_effects.js", /stats:\s*\{/g],
+            ["src/combat_stances.js", /stat_multipliers:\s*\{/g],
+            ["src/items.js", /component_stats:\s*\{/g],
+            //The lookbehind matters: xp_multipliers holds skill names, not stat keys.
+            ["src/items.js", /(?<!\w)(?:stats|multipliers):\s*\{/g],
+            ["src/data/locations.js", /effects:\s*\{/g]]) {
+        const source = read(relative);
+        for (const match of source.matchAll(pattern)) {
+            const open = source.indexOf("{", match.index + match[0].length - 1);
+            for (const key of top_level_keys(braced_body(source, open))) {
+                stat_keys.add(key);
+            }
+        }
+    }
     const families = [
         {
             what: "enemy tag",
@@ -433,6 +461,17 @@ async function check_enumerable_id_families() {
             shown_by: "the stat tooltips",
         },
         {
+            what: "stat label",
+            prefix: "",
+            /*
+                No prefix and two rows per value: the long form for the stat tooltips and
+                the bare one for the tight spots that abbreviate.
+            */
+            suffixes: ["", " long"],
+            values: stat_keys,
+            shown_by: "the stat and stance tooltips",
+        },
+        {
             what: "location type",
             prefix: "loctype",
             values: collect(read("src/data/locations.js"), /location_types\["([^"]+)"\]\s*=/g),
@@ -441,14 +480,17 @@ async function check_enumerable_id_families() {
     ];
 
     let total = 0;
-    for (const { what, prefix, values, shown_by } of families) {
+    for (const { what, prefix, values, shown_by, suffixes = [""] } of families) {
         if (values.size === 0) {
             error(`no ${what} values found - this check is out of date.`);
             continue;
         }
         for (const value of values) {
-            if (!(`${prefix} ${value}` in reference)) {
-                error(`locales/${default_language}.js has no "${prefix} ${value}" row, so`
+            for (const suffix of suffixes) {
+                //An empty prefix must not leave a leading space on the id.
+                const id = `${prefix ? `${prefix} ` : ""}${value}${suffix}`;
+                if (id in reference) continue;
+                error(`locales/${default_language}.js has no "${id}" row, so`
                     + ` ${shown_by} would show the ${what} "${value}" untranslated.`);
             }
         }

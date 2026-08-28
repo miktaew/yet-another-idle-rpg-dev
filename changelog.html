@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.34</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Berserker&#39;s Stride said "x1.2 text not found" where it should have said hit chance. A stance lists what it multiplies, and five of the six things it can multiply had a name to show - hit chance had none, in either language. It has one now.</li>
+            <li>The build now derives that list from the five places a stat name is actually read from - an active effect, a stance, an item&#39;s components, a location&#39;s type and a book&#39;s bonuses - and fails when one of them has no name to show. It used to read the hero&#39;s own stat block instead, which named five stats the game never shows and did not name this one.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.33</button>
     <div class="content">
         <ul class="entries">
