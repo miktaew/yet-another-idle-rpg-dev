@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 37 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 38 -->
 
 # Proposals
 
@@ -902,8 +902,11 @@ not after. Each item is the request as it was given, and the state it is in.
     an architecture rather than a fix), our content and canon, and the UI work that is
     tied to our own markup and to the `zoom` feature they do not have.
 
-    The PR body is written and the branch is pushed. Opening the PR is the owner's, since
-    `gh` is not installed here.
+    **PR [#241](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/241) is open** -
+    14 commits, 7 files, +349/-48, mergeable. Also worth recording, because it
+    reverses a standing assumption: upstream is **not** dead. Their `master` and
+    `refactoring` both sit at `19011a0`, pushed 2026-08-27, which our master already
+    contains - so there is nothing new to take, but there is somebody to send to.
 
 ---
 ## Open decisions

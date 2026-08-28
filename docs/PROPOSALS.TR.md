@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 37 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 38 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -910,8 +910,12 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     değil mimari), kendi içeriğimiz ve kanonumuz, ve kendi işaretlememize ile onlarda
     olmayan `zoom` özelliğine bağlı arayüz işi.
 
-    PR metni yazıldı ve dal push edildi. PR'ı açmak sahibe kalıyor, çünkü burada `gh`
-    kurulu değil.
+    **PR [#241](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/241) açık** - 14
+    commit, 7 dosya, +349/-48, birleştirilebilir. Kaydedilmeye değer bir şey daha,
+    çünkü yerleşik bir varsayımı tersine çeviriyor: upstream **ölü değil**. `master`
+    ve `refactoring` dallarının ikisi de 2026-08-27'de push edilen `19011a0`'da ve
+    bizim master zaten onu içeriyor - yani alınacak yeni bir şey yok, ama
+    gönderilecek biri var.
 
 ---
 ## Bekleyen kararlar
