@@ -604,6 +604,28 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
 /** 
  * @param {Object} item_effect from item effects[]
  */
+/**
+ * What to call an xp multiplier's target: a skill's name, a category, or an aggregate.
+ *
+ * The three places that needed this had three different answers - one handled
+ * category_ targets, two did not, and none of them checked that a named skill exists
+ * before asking it for its name. A misspelled target in content should read oddly, not
+ * throw while drawing a tooltip.
+ */
+function xp_target_name(target) {
+    if(target === "all" || target === "hero" || target === "all_skill") {
+        return target.replace("_", " ");
+    }
+    if(target.includes("category_")) {
+        return target.replace("category_", "") + " skills";
+    }
+    if(!skills[target]) {
+        console.warn(`An xp multiplier names "${target}", which is not a skill, a category`
+            + ` or an aggregate. Possibly a misspelling.`);
+        return target;
+    }
+    return skills[target].getName();
+}
 function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     const effect = effect_templates[effect_name];
     const tooltip = document.createElement("div");
@@ -663,13 +685,9 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     
     const xp_multipliers = Object.keys(effects.xp_multipliers);
     if(xp_multipliers.length > 0) {
-        let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            name = skills[xp_multipliers[0]].getName();
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
-        name = capitalize_first_letter(name);
+        //Same three cases models/skill.js handles, including category_ - which this copy
+        //did not, so a category target would have asked the skill registry for it.
+        const name = capitalize_first_letter(xp_target_name(xp_multipliers[0]));
         if(tooltip_html_content) {
             tooltip_html_content += `<br>${name} xp gain: x${effects.xp_multipliers[xp_multipliers[0]]}`;
         } else {
@@ -911,12 +929,7 @@ function format_book_bonuses(bonuses) {
     }
     if(bonuses.xp_multipliers) {
         const xp_multipliers = Object.keys(bonuses.xp_multipliers);
-        let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            name = skills[xp_multipliers[0]].getName();
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
+        const name = xp_target_name(xp_multipliers[0]);
 
         if(formatted) {
             formatted += `, x${bonuses.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
