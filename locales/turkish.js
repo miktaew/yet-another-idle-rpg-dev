@@ -3377,6 +3377,7 @@ const descriptions = {
     "ui level": "Seviye: {v1}",
     "ui max short": "Azami!",
     "ui bestiary stats": "Statlar:",
+    "ui bestiary found in": "Bulunduğu yerler",
     "ui region reputation": "{v1} itibarı",
     "name Town": "Kasaba",
     "ui stance col fav": "Fav.",

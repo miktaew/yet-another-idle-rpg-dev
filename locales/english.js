@@ -3337,6 +3337,7 @@ const descriptions = {
     "ui level": "Level: {v1}",
     "ui max short": "Max!",
     "ui bestiary stats": "Stats:",
+    "ui bestiary found in": "Found in",
     "ui region reputation": "{v1} reputation",
     "name Town": "Town",
     "ui stance col fav": "Fav",

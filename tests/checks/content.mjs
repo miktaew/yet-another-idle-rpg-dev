@@ -339,6 +339,76 @@ function check_content_object_keys() {
     console.log(`[check] content object keys: ${checked} objects against their constructors`);
 }
 
+/**
+ * The [...] starting at `open_at`, brackets balanced. The sibling of braced_body.
+ */
+function bracketed_body(text, open_at) {
+    let depth = 0;
+    for (let index = open_at; index < text.length; index++) {
+        if (text[index] === "[") depth++;
+        else if (text[index] === "]") {
+            depth--;
+            if (depth === 0) return text.slice(open_at, index + 1);
+        }
+    }
+    return "";
+}
+/**
+ * Every enemy is fielded by some zone, and every zone fields real enemies.
+ *
+ * Both directions fail silently in the game. A zone naming an enemy that is not a
+ * template produces a spawn that never happens - the fight is just smaller, with nothing
+ * to say why. A template no zone lists is content no player can reach, and now also a
+ * bestiary entry with no answer to "where is one found".
+ *
+ * Two shapes are read, and a zone can carry both: enemies_list, and enemy_groups_list
+ * whose entries hold their own lists.
+ */
+function check_every_enemy_has_a_home() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
+    const enemies = strip_comments(fs.readFileSync(path.join(repo_root, "src/enemies.js"), "utf8"));
+
+    const templates = new Set([...enemies.matchAll(/enemy_templates\["([^"]+)"\]\s*=/g)]
+        .map(match => match[1]));
+
+    const listed = new Map();
+    let zones = 0;
+    for (const match of source.matchAll(/locations\["([^"]+)"\]\s*=\s*new (?:Combat_zone|Challenge_zone)\(\{/g)) {
+        const body = braced_body(source, source.indexOf("{", match.index + match[0].length - 1));
+        if (body === null) continue;
+        zones++;
+
+        for (const key of ["enemies_list", "enemy_groups_list"]) {
+            const found = body.match(new RegExp(key + String.raw`:\s*\[`));
+            if (!found) continue;
+            const list = bracketed_body(body, body.indexOf("[", found.index));
+            for (const quoted of list.matchAll(/"([^"]+)"/g)) {
+                if (!listed.has(quoted[1])) listed.set(quoted[1], []);
+                listed.get(quoted[1]).push(match[1]);
+            }
+        }
+    }
+
+    for (const [name, zone_keys] of listed) {
+        if (!templates.has(name)) {
+            error(`the zone "${zone_keys[0]}" fields "${name}", which is not an enemy`
+                + ` template. That spawn never happens and the fight is silently smaller.`);
+        }
+    }
+    for (const name of templates) {
+        if (!listed.has(name)) {
+            error(`the enemy "${name}" is fielded by no zone, so no player can meet it`
+                + ` - and its bestiary entry would have nowhere to point at.`);
+        }
+    }
+
+    if (zones < 20 || templates.size < 20) {
+        error(`only ${zones} zones and ${templates.size} enemies found - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] enemy homes: ${templates.size} enemies across ${zones} zones`);
+}
 function check_action_branches() {
     let checked = 0;
     for (const relative of ["src/data/locations.js", "src/data/dialogues.js"]) {
@@ -650,6 +720,7 @@ function check_content_is_reachable() {
 
 export {
     check_action_branches,
+    check_every_enemy_has_a_home,
     check_actions_can_explain_failure,
     check_quest_task_item_sources,
     check_content_object_keys,

@@ -5473,6 +5473,48 @@ function create_bestiary_entry_content(enemy_name) {
     return entry_div;
 }
 
+/*
+    Which zones each enemy can be met in - the reverse of what the zones declare.
+
+    Built once on first use and cached. The values are the live location objects rather
+    than their names, so anything read off them here is read fresh.
+*/
+let enemy_locations_index;
+
+function build_enemy_locations_index() {
+    const index = {};
+    Object.values(locations).forEach(zone => {
+        //Two shapes, and a zone can carry both: a flat list of possible enemies, and
+        //predefined groups holding their own lists.
+        const names = new Set(zone.enemies_list || []);
+        (zone.enemy_groups_list || []).forEach(group => {
+            (group.enemies || []).forEach(name => names.add(name));
+        });
+
+        names.forEach(name => {
+            if(!index[name]) {
+                index[name] = [];
+            }
+            index[name].push(zone);
+        });
+    });
+    return index;
+}
+
+/**
+ * The zones a creature can be met in, named and sorted for reading.
+ *
+ * @param {String} enemy_name the registry key, which is what the zones list
+ * @returns {String[]} display names, or an empty array
+ */
+function enemy_location_names(enemy_name) {
+    if(!enemy_locations_index) {
+        enemy_locations_index = build_enemy_locations_index();
+    }
+    return (enemy_locations_index[enemy_name] || [])
+        .map(zone => zone.getName())
+        .sort(compare_display_names);
+}
 function create_bestiary_entry_tooltip(enemy_name) {
     const enemy = enemy_templates[enemy_name];
     const bestiary_tooltip = document.createElement("div");
@@ -5520,11 +5562,22 @@ function create_bestiary_entry_tooltip(enemy_name) {
         tooltip_drops.appendChild(create_bestiary_loot_line(enemy, enemy.loot_list[i]));
     }
     
+    //Where to find one. Last, because it is what a player reads after deciding the
+    //creature is worth looking for.
+    const found_in = enemy_location_names(enemy_name);
+    const tooltip_where = document.createElement("div");
+    if(found_in.length > 0) {
+        insert_HTML(tooltip_where, `<br>`
+            + `${translationManager.getText(language, "ui bestiary found in")}: `
+            + found_in.join(", "));
+    }
+
     bestiary_tooltip.appendChild(tooltip_desc);
     bestiary_tooltip.appendChild(tooltip_xp);
     bestiary_tooltip.appendChild(tooltip_tags);
     bestiary_tooltip.appendChild(tooltip_stats);
     bestiary_tooltip.appendChild(tooltip_drops);
+    bestiary_tooltip.appendChild(tooltip_where);
 
     return bestiary_tooltip;
 }
