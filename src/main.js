@@ -1700,6 +1700,8 @@ function do_enemy_combat_action(enemy_id) {
 
     damages_dealt = damages_dealt.sort((a,b)=>b-a);
     
+    let blocked_by_shield = false;
+
     if(character.getEquipment()["off-hand"]?.offhand_type === "shield") { //HAS SHIELD
         if(full_stats.block_chance > Math.random()) {//BLOCKED THE ATTACK
 
@@ -1716,11 +1718,26 @@ function do_enemy_combat_action(enemy_id) {
             } else {
                 damages_dealt = damages_dealt.map(val => Math.max(0,val-blocked));
                 partially_blocked = true;
+                blocked_by_shield = true;
             }
          } else {
             add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: attacker.xp_value/(2*enemy_count_xp_mod)});
          }
-    } else { // HAS NO SHIELD
+    }
+
+    /*
+        An attack the shield did not stop still gets dodged, if the character is quick
+        enough. This used to be the else-branch of the shield check, which meant that
+        carrying a shield removed the dodge outright - and with base_block_chance at 0.75,
+        a starter shield turned three quarters of the attacks into "reduced by the shield's
+        strength" and handed the remaining quarter a free full hit. A shield whose strength
+        is smaller than the damage it faces was therefore strictly worse than carrying
+        nothing at all, which is not what a starter shield should be.
+
+        An attack that WAS blocked skips this: it connected with the shield, so there is
+        nothing left to dodge.
+    */
+    if(!blocked_by_shield) {
         const hit_chance = get_hit_chance(attacker.stats.dexterity * Math.sqrt(attacker.stats.intuition ?? 1), full_stats.evasion_points*evasion_chance_modifier);
 
         if(hit_chance < Math.random()) { //EVADED ATTACK
