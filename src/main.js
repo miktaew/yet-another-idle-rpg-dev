@@ -846,7 +846,12 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         } else {
             //random loss
 
-            result_message = action.failure_texts.random_loss[Math.floor(action.failure_texts.random_loss.length * Math.random())];
+            //An empty list indexed at Math.floor(0 * random) is undefined, which reaches
+            //the player as a blank line or a missing-text marker depending on the caller.
+            const lines = action.failure_texts.random_loss;
+            result_message = lines?.length
+                ? lines[Math.floor(lines.length * Math.random())]
+                : result_message;
         }
 
         const success_conditions = action.getAvailabilityComponent().success_conditions;
@@ -855,7 +860,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         Object.keys(success_conditions[0]?.items_by_id || {}).forEach(item_id => {
             //no need to check if they are in inventory, as without them action would have been conditionally failed before reaching here
             if(success_conditions[0].items_by_id[item_id].remove) {
-                character.removeFromInventory([{item_key: item_templates[item_id].getInventoryKey(), item_count: action.success_conditions[0].items_by_id[item_id].count}]);
+                character.removeFromInventory([{item_key: item_templates[item_id].getInventoryKey(), item_count: success_conditions[0].items_by_id[item_id].count}]);
             }
         });
         Object.keys(start_conditions.items_by_id || {}).forEach(item_id => {
