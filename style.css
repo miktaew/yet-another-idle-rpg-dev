@@ -3035,3 +3035,42 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
 	background: white; 
   }
+
+ /* The Discoveries tab: one entry per item found, with where it comes from. */
+ .discovery_entry {
+	 border-bottom: 1px solid var(--border_color, #444);
+	 padding: 4px 2px;
+ }
+ .discovery_entry_name {
+	 font-weight: bold;
+ }
+ .discovery_entry_count {
+	 font-size: 0.85em;
+	 opacity: 0.75;
+ }
+ .discovery_source_line {
+	 display: flex;
+	 align-items: center;
+	 gap: 6px;
+	 font-size: 0.9em;
+	 padding-left: 8px;
+ }
+ .discovery_source_text {
+	 flex: 1 1 auto;
+	 min-width: 0;
+ }
+ .discovery_travel_button {
+	 flex: 0 0 auto;
+	 cursor: pointer;
+	 padding: 0 6px;
+	 border: 1px solid var(--border_color, #444);
+	 border-radius: 3px;
+ }
+ .discovery_travel_button:hover {
+	 background-color: var(--hovered_button_color);
+ }
+ .discovery_empty {
+	 opacity: 0.75;
+	 padding: 6px 2px;
+ }
+

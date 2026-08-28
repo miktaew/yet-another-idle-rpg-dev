@@ -50,6 +50,7 @@ import { end_activity_animation,
          start_reading_display,
          update_displayed_xp_bonuses, 
          update_displayed_skill_xp_gain, update_all_displayed_skills_xp_gain, update_displayed_stance_list, 
+         update_displayed_discoveries,
          update_displayed_stamina_efficiency, update_displayed_stance, update_displayed_faved_stances, update_stance_tooltip,
          update_gathering_tooltip,
          open_crafting_window,
@@ -6116,6 +6117,7 @@ window.update_fav_display = update_fav_display;
 window.do_enemy_combat_action = do_enemy_combat_action;
 
 window.sort_displayed_inventory = sort_displayed_inventory;
+window.update_displayed_discoveries = update_displayed_discoveries;
 window.update_displayed_character_inventory = update_displayed_character_inventory;
 window.update_displayed_trader_inventory = update_displayed_trader_inventory;
 window.update_displayed_storage_inventory = update_displayed_storage_inventory;
@@ -6184,6 +6186,7 @@ window.run = run;
  *     give({items: ["White iron ore"], money: 50000})
  *     give({items: [{item: "Iron ore", count: 50}]})
  *     give({items: [{item: "Iron sword", quality: 120}]})
+ *     give_best()
  *     goto("The bay")
  *
  * Deliberately NOT on by default and deliberately NOT saved. A reload turns it off
@@ -6244,6 +6247,25 @@ function show_game_speed_controls() {
     set_game_speed(game_speed);
 }
 
+/**
+ * How good an equippable is, measured the way its own slot measures things.
+ *
+ * A weapon has attack, armour has defense, a shield has block strength; an artifact, an
+ * amulet, a ring and the tools have none of those, so they are ranked by what the game
+ * itself prices them at.
+ */
+function rank_equippable(template, quality) {
+    if(template.getAttack) {
+        return template.getAttack(quality);
+    }
+    if(template.getDefense) {
+        return template.getDefense(quality);
+    }
+    if(template.getShieldStrength) {
+        return template.getShieldStrength(quality);
+    }
+    return template.getBaseValue({quality});
+}
 function enable_dev_console() {
     const list = (registry) => Object.keys(registry).sort();
 
@@ -6272,6 +6294,45 @@ function enable_dev_console() {
             return Object.keys(rewards);
         },
 
+
+        /*
+            The best of everything, into the inventory.
+
+            Sixteen slots is sixteen `give` calls and sixteen names to remember, which is
+            the whole reason this exists. Each slot's highest-ranking item is built at the
+            requested quality through getItem - the same call the inventory itself makes
+            for a quality that is not the template's own.
+
+            It does NOT equip anything. Handing over sixteen items and choosing what to
+            wear are two different decisions, and only the first one is tedious.
+
+            250 by default, which is the bottom of mythical.
+        */
+        give_best: (quality = 250) => {
+            if(typeof quality !== "number" || !(quality > 0)) {
+                console.error(`Quality has to be a positive number, got "${quality}".`);
+                return;
+            }
+
+            const best = {};
+            Object.values(item_templates).forEach(template => {
+                if(!template.equip_slot) {
+                    return;
+                }
+                const score = rank_equippable(template, quality);
+                if(!best[template.equip_slot] || score > best[template.equip_slot].score) {
+                    best[template.equip_slot] = {template, score};
+                }
+            });
+
+            const granted = [];
+            Object.keys(best).sort().forEach(slot => {
+                const item = getItem({...best[slot].template, quality});
+                add_to_character_inventory([{item_key: item.getInventoryKey(), count: 1}]);
+                granted.push(`${slot}: ${item.getName()}`);
+            });
+            return granted;
+        },
         add_money: (amount) => { add_money_to_character(amount); return character.money; },
         add_xp: (amount) => { add_xp_to_character(amount); return character.xp.current_level; },
         add_skill_xp: (skill, amount) => {

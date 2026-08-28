@@ -480,6 +480,18 @@ async function check_enumerable_id_families() {
             shown_by: "the skill milestone list",
         },
         {
+            what: "location",
+            prefix: "name",
+            /*
+                A location names itself through getDisplayName, which falls back to the
+                English key when there is no row - so a missing name is invisible in
+                English and shows the key to everyone else. 14 of the 69 had none.
+            */
+            values: collect(read("src/data/locations.js"),
+                /locations\["([^"]+)"\]\s*=\s*new (?:Location|Combat_zone|Challenge_zone)\(/g),
+            shown_by: "the location header and every travel line",
+        },
+        {
             what: "stat label",
             prefix: "",
             /*

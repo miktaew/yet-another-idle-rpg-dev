@@ -61,6 +61,19 @@ material like `Iron ore` accepts a quality too.
 
 Unsure of a name? `list_items()` returns all of them, sorted.
 
+### The best of everything
+
+```js
+give_best()        // the best item for every slot, at quality 250
+give_best(100)     // the same, at common quality
+```
+
+Puts one of the best item for each of the sixteen equip slots into the inventory and
+**does not equip anything** - what to wear is your call. "Best" is measured the way
+each slot measures things: attack for a weapon, defense for armour, block for a
+shield, and the price the game puts on it for the slots with no headline number
+(artifact, amulet, ring and the five tools). Returns what it handed over.
+
 ## Everything else `give` accepts
 
 All 23 reward keys, with the shape each one wants. The nested shapes below are copied

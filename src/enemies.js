@@ -616,7 +616,6 @@ const enemy_abilites = {
         name: "Warthog",
         description: "desc enemy Warthog",
         xp_value: 30,
-        add_to_bestiary: false,
         rank: 8,
         tags: ["living", "beast"],
         stats: {health: 12000, attack: 600, agility: 80, dexterity: 800, intuition: 100, magic: 0, attack_speed: 0.6, defense: 600},

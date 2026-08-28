@@ -371,12 +371,25 @@ function check_every_enemy_has_a_home() {
     const templates = new Set([...enemies.matchAll(/enemy_templates\["([^"]+)"\]\s*=/g)]
         .map(match => match[1]));
 
+    //The ones that ask to stay out of the bestiary.
+    const hidden = new Set();
+    for (const match of enemies.matchAll(/enemy_templates\["([^"]+)"\]\s*=\s*new Enemy\(\{/g)) {
+        const body = braced_body(enemies, enemies.indexOf("{", match.index + match[0].length - 1));
+        if (body !== null && /add_to_bestiary:\s*false/.test(body)) {
+            hidden.add(match[1]);
+        }
+    }
+
     const listed = new Map();
+    const combat_zones = new Set();
     let zones = 0;
-    for (const match of source.matchAll(/locations\["([^"]+)"\]\s*=\s*new (?:Combat_zone|Challenge_zone)\(\{/g)) {
+    for (const match of source.matchAll(/locations\["([^"]+)"\]\s*=\s*new (Combat_zone|Challenge_zone)\(\{/g)) {
         const body = braced_body(source, source.indexOf("{", match.index + match[0].length - 1));
         if (body === null) continue;
         zones++;
+        if (match[2] === "Combat_zone") {
+            combat_zones.add(match[1]);
+        }
 
         for (const key of ["enemies_list", "enemy_groups_list"]) {
             const found = body.match(new RegExp(key + String.raw`:\s*\[`));
@@ -402,6 +415,24 @@ function check_every_enemy_has_a_home() {
         }
     }
 
+
+    /*
+        add_to_bestiary is meant to hide challenge bosses, and its own comment in
+        enemies.js says to "set it false only for SOME of challenges and keep true for
+        everything else". An enemy a normal Combat_zone fields is not that: hiding it
+        leaves a creature the player fights repeatedly with no entry and no kill count,
+        which is how a warthog went missing from the list.
+    */
+    for (const [name, zone_keys] of listed) {
+        if (!hidden.has(name)) continue;
+        const ordinary = zone_keys.filter(key => combat_zones.has(key));
+        if (ordinary.length > 0) {
+            error(`the enemy "${name}" is hidden from the bestiary but is fielded by`
+                + ` "${ordinary[0]}", an ordinary combat zone - so it is fought over and`
+                + ` over with no entry and no kill count. add_to_bestiary: false is for`
+                + ` challenge bosses.`);
+        }
+    }
     if (zones < 20 || templates.size < 20) {
         error(`only ${zones} zones and ${templates.size} enemies found - this check is out of date.`);
         return;

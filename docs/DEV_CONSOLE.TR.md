@@ -61,6 +61,19 @@ kaydıdır. `Iron ore` gibi bir hammadde de kalite kabul eder.
 
 Adından emin değil misiniz? `list_items()` hepsini sıralı verir.
 
+### Her şeyin en iyisi
+
+```js
+give_best()        // her slot için en iyi eşya, kalite 250
+give_best(100)     // aynısı, sıradan kalitede
+```
+
+On altı kuşanma slotunun her biri için en iyi eşyadan birer tane envantere koyar ve
+**hiçbir şey giydirmez** - neyi giyeceğiniz sizin kararınız. "En iyi", her slotun
+kendi ölçtüğü şeye göre ölçülür: silahta saldırı, zırhta savunma, kalkanda blok; kendine
+ait bir başlık sayısı olmayan slotlarda ise oyunun ona biçtiği fiyata göre (tılsım,
+kolye, yüzük ve beş alet). Ne verdiğini döndürür.
+
 ## `give`'in kabul ettiği diğer her şey
 
 23 ödül anahtarının tamamı, her birinin istediği şekille. Aşağıdaki iç şekiller gerçek

@@ -5507,13 +5507,15 @@ function build_enemy_locations_index() {
  * @param {String} enemy_name the registry key, which is what the zones list
  * @returns {String[]} display names, or an empty array
  */
-function enemy_location_names(enemy_name) {
+function enemy_zones(enemy_name) {
     if(!enemy_locations_index) {
         enemy_locations_index = build_enemy_locations_index();
     }
-    return (enemy_locations_index[enemy_name] || [])
-        .map(zone => zone.getName())
-        .sort(compare_display_names);
+    return enemy_locations_index[enemy_name] || [];
+}
+
+function enemy_location_names(enemy_name) {
+    return enemy_zones(enemy_name).map(zone => zone.getName()).sort(compare_display_names);
 }
 function create_bestiary_entry_tooltip(enemy_name) {
     const enemy = enemy_templates[enemy_name];
@@ -5601,6 +5603,178 @@ function update_bestiary_entry(enemy_name) {
  */
 function update_bestiary_entry_killcount(enemy_name) {
     bestiary_entry_divs[enemy_name].children[1].innerText = enemy_killcount[enemy_name];
+}
+
+/*
+    Where each item can be found, built once from the content itself.
+
+    Three sources, all of them already declared somewhere: a location's gathering
+    activities name what they yield, a trader's stock names what it sells, and an enemy's
+    loot_list names what it drops - and the enemy index above says where that enemy lives.
+
+    Crafted items are left out on purpose. The crafting panel answers "how is this made",
+    and a recipe is not somewhere a player can walk to.
+*/
+let item_sources_index;
+
+function build_item_sources_index() {
+    const index = {};
+
+    const note = (item_id, entry) => {
+        if(!index[item_id]) {
+            index[item_id] = [];
+        }
+        //Two activities at one place, or one trader stocking an item twice, is one line.
+        const already = index[item_id].some(other => other.kind === entry.kind
+            && other.location_key === entry.location_key && other.via === entry.via);
+        if(!already) {
+            index[item_id].push(entry);
+        }
+    };
+
+    Object.keys(locations).forEach(location_key => {
+        const location = locations[location_key];
+
+        Object.values(location.activities || {}).forEach(activity => {
+            (activity.gained_resources?.resources || []).forEach(resource => {
+                note(resource.name, {kind: "gather", location_key});
+            });
+        });
+
+        (location.traders || []).forEach(trader_key => {
+            (traders[trader_key]?.inventory_template || []).forEach(stocked => {
+                if(stocked.item_name) {
+                    note(stocked.item_name, {kind: "trade", location_key, via: trader_key});
+                }
+            });
+        });
+    });
+
+    Object.keys(enemy_templates).forEach(enemy_key => {
+        (enemy_templates[enemy_key].loot_list || []).forEach(loot => {
+            if(!loot.item_name) {
+                return;
+            }
+            enemy_zones(enemy_key).forEach(zone => {
+                note(loot.item_name, {kind: "drop", location_key: zone.id, via: enemy_key});
+            });
+        });
+    });
+
+    return index;
+}
+
+function item_sources(item_id) {
+    if(!item_sources_index) {
+        item_sources_index = build_item_sources_index();
+    }
+    return item_sources_index[item_id] || [];
+}
+
+/**
+ * One source line: where it is, what makes it available there, and a way to go.
+ *
+ * The travel button is only offered for a place the player has already unlocked - the
+ * whole list is rebuilt each time the tab is opened, so that stays current.
+ */
+function create_discovery_source_line(source) {
+    const line = document.createElement("div");
+    line.classList.add("discovery_source_line");
+
+    const location = locations[source.location_key];
+    if(!location) {
+        return line;
+    }
+
+    const label = {
+        gather: "ui discovery gathered at",
+        drop: "ui discovery dropped by",
+        trade: "ui discovery sold by",
+    }[source.kind];
+
+    //`drop` and `trade` name the creature or the trader as well as the place, because
+    //"in the Deep forest" is not an answer on its own when a zone holds several.
+    let text = `${translationManager.getText(language, label)}: `;
+    if(source.kind === "drop") {
+        text += `${enemy_templates[source.via]?.getName() ?? source.via} - ${location.getName()}`;
+    } else if(source.kind === "trade") {
+        text += `${traders[source.via]?.getDisplayName() ?? source.via} - ${location.getName()}`;
+    } else {
+        text += location.getName();
+    }
+
+    const text_div = document.createElement("div");
+    text_div.innerText = text;
+    text_div.classList.add("discovery_source_text");
+    line.appendChild(text_div);
+
+    if(location.is_unlocked) {
+        const travel = document.createElement("div");
+        travel.classList.add("discovery_travel_button");
+        travel.innerText = translationManager.getText(language, "ui discovery travel");
+        travel.setAttribute("data-travel", source.location_key);
+        travel.setAttribute("onclick",
+            "change_location({location_id: this.getAttribute('data-travel')});");
+        line.appendChild(travel);
+    }
+
+    return line;
+}
+
+/**
+ * Redraws the Discoveries tab.
+ *
+ * Rebuilt in full each time the tab is opened rather than kept in step with the
+ * inventory: what is on it changes with every pickup and every unlock, and it is only
+ * ever on screen while a player is looking at it.
+ */
+function update_displayed_discoveries() {
+    const list = document.getElementById("discoveries_list");
+    if(!list) {
+        return;
+    }
+    clear_HTML_content(list);
+
+    const found = Object.keys(item_log.items)
+        .filter(item_id => item_templates[item_id])
+        .sort((first, second) => compare_display_names(
+            item_templates[first].getName(), item_templates[second].getName()));
+
+    if(found.length === 0) {
+        const empty = document.createElement("div");
+        empty.classList.add("discovery_empty");
+        empty.innerText = translationManager.getText(language, "ui discovery none");
+        list.appendChild(empty);
+        return;
+    }
+
+    found.forEach(item_id => {
+        const entry = document.createElement("div");
+        entry.classList.add("discovery_entry");
+
+        const name = document.createElement("div");
+        name.classList.add("discovery_entry_name");
+        name.innerText = item_templates[item_id].getName();
+        entry.appendChild(name);
+
+        const count = document.createElement("div");
+        count.classList.add("discovery_entry_count");
+        count.innerText = translationManager.getText(language, "ui discovery found count",
+            {v1: item_log.items[item_id].number});
+        entry.appendChild(count);
+
+        const sources = item_sources(item_id);
+        if(sources.length === 0) {
+            const unknown = document.createElement("div");
+            unknown.classList.add("discovery_source_line");
+            unknown.innerText = translationManager.getText(language, "ui discovery no source");
+            entry.appendChild(unknown);
+        } else {
+            sources.forEach(source => entry.appendChild(create_discovery_source_line(source)));
+        }
+
+        list.appendChild(entry);
+    });
 }
 
 function create_bestiary_loot_line(enemy, loot) {
@@ -6513,6 +6687,7 @@ export {
     start_reading_display,
     sort_displayed_skills,
     update_displayed_xp_bonuses, update_displayed_stance_list, update_displayed_stamina_efficiency, 
+    update_displayed_discoveries,
     update_displayed_stance, update_displayed_faved_stances, update_stance_tooltip,
     update_gathering_tooltip,
     update_displayed_location_types,
