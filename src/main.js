@@ -2526,17 +2526,28 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.items && !only_unlocks) {
         for(let i = 0; i < rewards.items.length; i++) {
-            let item;
-            let count;
-            if(typeof rewards.items[i] === "string") {
-                item = item_templates[rewards.items[i]];
-                count = 1;
-            } else {
-                item = item_templates[rewards.items[i].item];
-                count = rewards.items[i].count || 1;
-                item.quality = rewards.items[i].quality;
+            const entry = rewards.items[i];
+            const is_bare_name = typeof entry === "string";
+            const item_id = is_bare_name ? entry : entry.item;
+            const template = item_templates[item_id];
+
+            if(!template) {
+                console.error(`No such item as "${item_id}" - reward skipped.`);
+                continue;
             }
-            
+
+            const count = is_bare_name ? 1 : (entry.count || 1);
+            const quality = is_bare_name ? undefined : entry.quality;
+
+            //getItem instead of stamping the quality onto the template: getInventoryKey()
+            //caches into this.inventory_key, and a template's key is cached long before any
+            //reward is granted, so `item.quality = ...` never reached the key - the five
+            //starter weapons in dialogues.js ask for quality 50 and arrived at 100, worth
+            //double. It also wrote to the shared template, where getBaseValue's
+            //`quality || this.quality || 100` fallback reads it. This is the same call
+            //components/inventory_component.js makes for the item_id form.
+            const item = quality ? getItem({...template, quality}) : template;
+
             log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
             character.addToInventory([{item_key: item.getInventoryKey(), count}]);
         }
