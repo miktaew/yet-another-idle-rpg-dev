@@ -168,24 +168,42 @@ const process_conditions = (conditions, context) => {
 
     if(conditions[0].location_clears) {
         Object.keys(conditions[0].location_clears).forEach(location_key => {
-            const location = context.locations[location_key]; //error here
-            if("at_least" in conditions[0].location_clears[location_key]) {
-                if(Math.floor(location.enemy_groups_killed/location.enemy_count) < conditions[0].location_clears[location_key].at_least) {
-                    met = 0;
-                }
+            const location = context.locations[location_key];
+            if(!location) {
+                console.error(`A condition asks for clears of "${location_key}", which is not a location.`);
+                met = 0;
+                return;
             }
 
-            if("at_most" in conditions[0].location_clears[location_key]) {
-                if(Math.floor(location.enemy_groups_killed/location.enemy_count) > conditions[0].location_clears[location_key].at_most) {
-                    met = 0;
-                }
+            /*
+                A location with no enemy_count - every non-combat one - would divide to
+                NaN, and every comparison against NaN is false, so an at_least gate would
+                silently OPEN instead of closing. Zero clears is the honest answer.
+            */
+            const clears = location.enemy_count
+                ? Math.floor(location.enemy_groups_killed / location.enemy_count)
+                : 0;
+            const wanted = conditions[0].location_clears[location_key];
+
+            if("at_least" in wanted && clears < wanted.at_least) {
+                met = 0;
+            }
+            if("at_most" in wanted && clears > wanted.at_most) {
+                met = 0;
             }
         });
     }
 
     if(conditions[0].quests_completed) {
         for(let i = 0; i < conditions[0].quests_completed.length; i++) {
-            if(!context.quests[conditions[0].quests_completed[i]].is_finished) {
+            const quest = context.quests[conditions[0].quests_completed[i]];
+            if(!quest) {
+                console.error(`A condition requires quest "${conditions[0].quests_completed[i]}" to be finished, but no such quest exists.`);
+                met = 0;
+            } else if(!quest.isFinished()) {
+                //isFinished(), not .is_finished: the field moved into the availability
+                //component, so reading it off the instance is always undefined and this
+                //gate always reported "not finished".
                 met = 0;
             }
         }
@@ -193,7 +211,13 @@ const process_conditions = (conditions, context) => {
 
     if(conditions[0].quests_not_completed) {
         for(let i = 0; i < conditions[0].quests_not_completed.length; i++) {
-            if(quests[conditions[0].quests_not_completed[i]].is_finished) {
+            //context.quests, not a bare `quests`: this file imports nothing on purpose,
+            //so the bare reference threw ReferenceError the first time content used it.
+            const quest = context.quests[conditions[0].quests_not_completed[i]];
+            if(!quest) {
+                console.error(`A condition requires quest "${conditions[0].quests_not_completed[i]}" to be unfinished, but no such quest exists.`);
+                met = 0;
+            } else if(quest.isFinished()) {
                 met = 0;
             }
         }
