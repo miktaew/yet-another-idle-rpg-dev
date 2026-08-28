@@ -582,7 +582,70 @@ function format_skill_rewards(milestone){
                                             Combat: 1.05,
                                         }
                                     },
-                                    
+                                    15: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    20: {
+                                        xp_multipliers: {
+                                            category_Combat: 1.1,
+                                        },
+                                    },
+                                    25: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                        xp_multipliers: {
+                                            Combat: 1.1,
+                                        },
+                                    },
+                                    30: {
+                                        xp_multipliers: {
+                                            "Shield blocking": 1.1,
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            dexterity: {multiplier: 1.05},
+                                        },
+                                        xp_multipliers: {
+                                            category_Combat: 1.1,
+                                        },
+                                    },
+                                    45: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    50: {
+                                        xp_multipliers: {
+                                            Evasion: 1.1,
+                                        },
+                                    },
+                                    55: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                        xp_multipliers: {
+                                            Evasion: 1.1,
+                                        },
+                                    },
+                                    60: {
+                                        stats: {
+                                            dexterity: {multiplier: 1.05},
+                                        },
+                                        xp_multipliers: {
+                                            Combat: 1.2,
+                                            category_Combat: 1.2,
+                                            Evasion: 1.2,
+                                        },
+                                    },
                                 },
                                 get_stat_modifiers: () => {
                                     return {
@@ -673,7 +736,58 @@ function format_skill_rewards(milestone){
                                             Swimming: 1.2,
                                             Running: 1.2,
                                         }
-                                    }
+                                    },
+                                    25: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                    },
+                                    30: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                        xp_multipliers: {
+                                            Equilibrium: 1.1,
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                    },
+                                    45: {
+                                        stats: {
+                                            agility: {multiplier: 1.05},
+                                        },
+                                    },
+                                    50: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                        xp_multipliers: {
+                                            Climbing: 1.1,
+                                        },
+                                    },
+                                    55: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                    },
+                                    60: {
+                                        stats: {
+                                            agility: {multiplier: 1.05},
+                                        },
+                                        xp_multipliers: {
+                                            Equilibrium: 1.2,
+                                            Climbing: 1.2,
+                                            Swimming: 1.2,
+                                        },
+                                    },
                                 }
                             });
     skills["Shield blocking"] = new Skill({
@@ -751,7 +865,25 @@ function format_skill_rewards(milestone){
                                             stats: {
                                                 "strength": {multiplier: 1.05}
                                             }
-                                        }
+                                        },
+                                        25: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                        },
+                                        30: {
+                                            stats: {
+                                                strength: {multiplier: 1.05},
+                                                dexterity: {flat: 1},
+                                            },
+                                            xp_multipliers: {
+                                                Weightlifting: 1.2,
+                                                Fortitude: 1.2,
+                                                Perception: 1.2,
+                                            },
+                                        },
                                     }
                                 });
     
@@ -825,6 +957,73 @@ function format_skill_rewards(milestone){
                                                 Equilibrium: 1.1,
                                                 Weightlifting: 1.1,
                                                 Running: 1.1,
+                                            },
+                                        },
+                                        25: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                        },
+                                        30: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                        },
+                                        35: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                            xp_multipliers: {
+                                                Weightlifting: 1.1,
+                                            },
+                                        },
+                                        40: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                        },
+                                        45: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                        },
+                                        50: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                            xp_multipliers: {
+                                                Running: 1.1,
+                                            },
+                                        },
+                                        55: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                        },
+                                        60: {
+                                            stats: {
+                                                strength: {flat: 1},
+                                                dexterity: {flat: 1},
+                                                agility: {flat: 1},
+                                            },
+                                            xp_multipliers: {
+                                                Weightlifting: 1.2,
+                                                Running: 1.2,
+                                                Breathing: 1.2,
                                             },
                                         },
                                     }});
@@ -968,7 +1167,58 @@ function format_skill_rewards(milestone){
                                                     xp_multipliers: {
                                                         all_skill: 1.2,
                                                     }
-                                                }
+                                                },
+                                                25: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                },
+                                                30: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                },
+                                                35: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                    xp_multipliers: {
+                                                        Evasion: 1.1,
+                                                    },
+                                                },
+                                                40: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                },
+                                                45: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                },
+                                                50: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                    xp_multipliers: {
+                                                        "Shield blocking": 1.1,
+                                                    },
+                                                },
+                                                55: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                },
+                                                60: {
+                                                    stats: {
+                                                        intuition: {flat: 1},
+                                                    },
+                                                    xp_multipliers: {
+                                                        Evasion: 1.2,
+                                                        "Shield blocking": 1.2,
+                                                        Combat: 1.2,
+                                                    },
+                                                },
                                             }
                                         });
     skills["Tight maneuvers"] = new Skill({
@@ -1017,7 +1267,52 @@ function format_skill_rewards(milestone){
                                                     "Shield blocking": 1.2,
                                                     Combat: 1.2,
                                                 }
-                                            }
+                                            },
+                                            25: {
+                                                stats: {
+                                                    agility: {flat: 5},
+                                                },
+                                            },
+                                            30: {
+                                                xp_multipliers: {
+                                                    "Shield blocking": 1.1,
+                                                },
+                                            },
+                                            35: {
+                                                xp_multipliers: {
+                                                    Evasion: 1.1,
+                                                },
+                                            },
+                                            40: {
+                                                xp_multipliers: {
+                                                    Equilibrium: 1.1,
+                                                },
+                                            },
+                                            45: {
+                                                xp_multipliers: {
+                                                    Evasion: 1.1,
+                                                },
+                                            },
+                                            50: {
+                                                xp_multipliers: {
+                                                    "Shield blocking": 1.1,
+                                                },
+                                            },
+                                            55: {
+                                                stats: {
+                                                    agility: {flat: 5},
+                                                },
+                                            },
+                                            60: {
+                                                stats: {
+                                                    agility: {flat: 5},
+                                                },
+                                                xp_multipliers: {
+                                                    Evasion: 1.2,
+                                                    "Shield blocking": 1.2,
+                                                    Combat: 1.2,
+                                                },
+                                            },
                                         }
                                     });
     skills["Night vision"] = new Skill({
@@ -1260,6 +1555,34 @@ function format_skill_rewards(milestone){
                     Fortitude: 1.1,
                 }
             },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    all_skill: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {multiplier: 1.1},
+                },
+                xp_multipliers: {
+                    all_skill: 1.2,
+                    Literacy: 1.2,
+                    Persistence: 1.2,
+                },
+            },
         }
     });
 
@@ -1368,6 +1691,68 @@ function format_skill_rewards(milestone){
                     stamina_efficiency: { multiplier: 1.05 },
                 },
             },
+            25: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                    stamina_regeneration_flat: {flat: 0.2},
+                },
+            },
+            30: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                },
+                xp_multipliers: {
+                    Running: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                    stamina_regeneration_flat: {flat: 0.2},
+                    max_stamina: {multiplier: 1.2},
+                },
+            },
+            50: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                },
+                xp_multipliers: {
+                    Scrambling: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    dexterity: {flat: 1},
+                    agility: {flat: 1},
+                    max_stamina: {multiplier: 1.2},
+                },
+                xp_multipliers: {
+                    Running: 1.2,
+                    Scrambling: 1.2,
+                },
+            },
         }
     });
 
@@ -1454,6 +1839,65 @@ function format_skill_rewards(milestone){
                                             "dexterity": {flat: 2},
                                         }
                                     },
+                                    15: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            agility: {flat: 1},
+                                            strength: {flat: 1},
+                                            crit_multiplier: {flat: 0.1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    20: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    25: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    30: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    45: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            agility: {flat: 1},
+                                            strength: {flat: 1},
+                                            crit_multiplier: {flat: 0.1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    50: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    55: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    60: {
+                                        stats: {
+                                            agility: {flat: 1},
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
                                 },
                                 max_level_coefficient: 8
                             });
@@ -1499,6 +1943,61 @@ function format_skill_rewards(milestone){
                                             "dexterity": {flat: 2},
                                         }
                                     },
+                                    15: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                        },
+                                    },
+                                    20: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    25: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    30: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {multiplier: 1.05},
+                                        },
+                                    },
+                                    45: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                        },
+                                    },
+                                    50: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    55: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    60: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {multiplier: 1.05},
+                                        },
+                                    },
                                 },
                                 max_level_coefficient: 8});
 
@@ -1542,6 +2041,64 @@ function format_skill_rewards(milestone){
                                         stats: {
                                             "dexterity": {flat: 2},
                                         }
+                                    },
+                                    15: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                            crit_multiplier: {flat: 0.1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    20: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    25: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    30: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    45: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                            crit_multiplier: {flat: 0.1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    50: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    55: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    60: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            strength: {flat: 1},
+                                        },
                                     },
                                 },
                                 max_level_coefficient: 8
@@ -1588,6 +2145,61 @@ function format_skill_rewards(milestone){
                                                     "dexterity": {flat: 2},
                                                 }
                                             },
+                                            15: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                    dexterity: {flat: 1},
+                                                },
+                                            },
+                                            20: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                },
+                                            },
+                                            25: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                    dexterity: {flat: 1},
+                                                },
+                                            },
+                                            30: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                },
+                                            },
+                                            35: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                    dexterity: {flat: 1},
+                                                },
+                                            },
+                                            40: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                },
+                                            },
+                                            45: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                    dexterity: {flat: 1},
+                                                },
+                                            },
+                                            50: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                },
+                                            },
+                                            55: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                    dexterity: {flat: 1},
+                                                },
+                                            },
+                                            60: {
+                                                stats: {
+                                                    strength: {flat: 1},
+                                                },
+                                            },
                                         },
                                         max_level_coefficient: 8
                                     });
@@ -1632,6 +2244,66 @@ function format_skill_rewards(milestone){
                                         stats: {
                                             "dexterity": {flat: 2},
                                         }
+                                    },
+                                    15: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            agility: {flat: 1},
+                                            crit_multiplier: {flat: 0.1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    20: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    25: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    30: {
+                                        stats: {
+                                            crit_multiplier: {flat: 0.1},
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    45: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            agility: {flat: 1},
+                                            crit_multiplier: {flat: 0.1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    50: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                        },
+                                    },
+                                    55: {
+                                        stats: {
+                                            dexterity: {flat: 1},
+                                            crit_rate: {flat: 0.01},
+                                        },
+                                    },
+                                    60: {
+                                        stats: {
+                                            crit_multiplier: {flat: 0.1},
+                                            dexterity: {flat: 1},
+                                        },
                                     },
                                 },
                                 max_level_coefficient: 8
@@ -1934,7 +2606,22 @@ function format_skill_rewards(milestone){
                     "Presence sensing": 1.2,
                     Sleeping: 1.2,
                 }
-            }
+            },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    all: 1.2,
+                    "Presence sensing": 1.2,
+                    "Strength of mind": 1.2,
+                },
+            },
         },
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Meditation",scaling_type:"multiplicative"})
@@ -2045,7 +2732,47 @@ function format_skill_rewards(milestone){
                 xp_multipliers: {
                     "Breathing": 1.2,
                 },
-            }
+            },
+            25: {
+                stats: {
+                    agility: {flat: 1},
+                    max_stamina: {flat: 5},
+                },
+            },
+            30: {
+                stats: {
+                    agility: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    agility: {flat: 1},
+                },
+                xp_multipliers: {
+                    Breathing: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    agility: {flat: 1},
+                    max_stamina: {multiplier: 1.1},
+                },
+            },
+            45: {
+                stats: {
+                    agility: {flat: 1},
+                    max_stamina: {flat: 5},
+                },
+            },
+            50: {
+                stats: {
+                    agility: {flat: 1},
+                    max_stamina: {multiplier: 1.1},
+                },
+                xp_multipliers: {
+                    Breathing: 1.2,
+                },
+            },
         },
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Running",scaling_type:"multiplicative"})
@@ -2145,7 +2872,49 @@ function format_skill_rewards(milestone){
                         flat: 20,
                     },
                 },
-            }
+            },
+            25: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    strength: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    strength: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Unarmed: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    strength: {multiplier: 1.05},
+                },
+            },
+            45: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    strength: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    strength: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Unarmed: 1.2,
+                },
+            },
         },
         get_effect_description: ()=> {
         let value = get_total_skill_coefficient({skill_id:"Weightlifting",scaling_type:"multiplicative"})
@@ -2246,7 +3015,47 @@ function format_skill_rewards(milestone){
                 xp_multipliers: {
                     "Breathing": 1.2,
                 }
-            }
+            },
+            25: {
+                stats: {
+                    max_stamina: {flat: 10},
+                    agility: {flat: 1},
+                    strength: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    agility: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    agility: {flat: 1},
+                },
+                xp_multipliers: {
+                    Breathing: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                },
+            },
+            45: {
+                stats: {
+                    max_stamina: {flat: 10},
+                    agility: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                    max_stamina: {flat: 10},
+                },
+                xp_multipliers: {
+                    Breathing: 1.2,
+                },
+            },
         },
         
     });
@@ -2318,7 +3127,51 @@ function format_skill_rewards(milestone){
                 xp_multipliers: {
                     "Unarmed": 1.2,
                 }
-            }
+            },
+            25: {
+                stats: {
+                    agility: {flat: 1},
+                    strength: {flat: 1},
+                    intuition: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    agility: {flat: 1},
+                    strength: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    agility: {flat: 1},
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Unarmed: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                    strength: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    agility: {flat: 1},
+                    strength: {flat: 1},
+                    intuition: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Unarmed: 1.2,
+                },
+            },
         },
         get_effect_description: ()=> {
         let value = get_total_skill_coefficient({skill_id:"Equilibrium",scaling_type:"multiplicative"});
@@ -2407,7 +3260,46 @@ function format_skill_rewards(milestone){
                         flat: 3,
                     }
                 }
-            }
+            },
+            25: {
+                stats: {
+                    strength: {flat: 1},
+                    agility: {flat: 1},
+                    intuition: {flat: 3},
+                },
+            },
+            30: {
+                xp_multipliers: {
+                    Perception: 1.1,
+                },
+            },
+            35: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                },
+            },
+            45: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.2,
+                },
+            },
         },
         get_effect_description: ()=> {
           let value = get_total_skill_coefficient({skill_id:"Climbing",scaling_type:"multiplicative"});
@@ -2451,6 +3343,41 @@ function format_skill_rewards(milestone){
             30: {
                 stats: {
                     dexterity: {multiplier: 1.05},
+                },
+            },
+            35: {
+                xp_multipliers: {
+                    Woodcutting: 1.1,
+                },
+            },
+            40: {
+                xp_multipliers: {
+                    Mining: 1.1,
+                },
+            },
+            45: {
+                xp_multipliers: {
+                    Woodcutting: 1.1,
+                },
+            },
+            50: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            55: {
+                xp_multipliers: {
+                    "Animal handling": 1.1,
+                },
+            },
+            60: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Woodcutting: 1.2,
+                    Mining: 1.2,
+                    Digging: 1.2,
                 },
             },
         },
@@ -2510,6 +3437,57 @@ function format_skill_rewards(milestone){
                     strength: {multiplier: 1.05},
                 },
             },
+            25: {
+                stats: {
+                    strength: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Weightlifting: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+            50: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Weightlifting: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Weightlifting: 1.2,
+                },
+            },
         },
         category: "Gathering",
         base_xp_cost: 10,
@@ -2563,6 +3541,60 @@ function format_skill_rewards(milestone){
                     strength: {multiplier: 1.05},
                 },
             },
+            25: {
+                stats: {
+                    strength: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    strength: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Weightlifting: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    strength: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Weightlifting: 1.2,
+                    Perception: 1.2,
+                },
+            },
         },
         category: "Gathering",
         base_xp_cost: 10,
@@ -2614,6 +3646,58 @@ function format_skill_rewards(milestone){
             20: {
                 stats: {
                     max_stamina: {multiplier: 1.05},
+                },
+            },
+            25: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Running: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    strength: {flat: 1},
+                    max_stamina: {multiplier: 1.05},
+                },
+            },
+            50: {
+                stats: {
+                    strength: {flat: 1},
+                },
+                xp_multipliers: {
+                    Weightlifting: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    strength: {flat: 1},
+                    max_stamina: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Running: 1.2,
+                    Weightlifting: 1.2,
                 },
             },
         },
@@ -2670,6 +3754,59 @@ function format_skill_rewards(milestone){
                     intuition: {multiplier: 1.05},
                 },
             },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Perception: 1.2,
+                },
+            },
         },
         category: "Gathering",
         base_xp_cost: 10,
@@ -2721,6 +3858,56 @@ function format_skill_rewards(milestone){
             20: {
                 stats: {
                     intuition: {multiplier: 1.05},
+                },
+            },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Presence sensing": 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            50: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    Persistence: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    "Presence sensing": 1.2,
+                    Persistence: 1.2,
                 },
             },
         },
@@ -2820,6 +4007,65 @@ function format_skill_rewards(milestone){
                     Meditation: 1.2
                 }
             },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            35: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Persistence: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    intuition: {multiplier: 1.1},
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Perception: 1.1,
+                },
+            },
+            55: {
+                stats: {
+                    intuition: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    intuition: {multiplier: 1.1},
+                    dexterity: {flat: 1},
+                },
+                xp_multipliers: {
+                    Persistence: 1.2,
+                    Perception: 1.2,
+                    Meditation: 1.2,
+                },
+            },
         }
     });
 })();
@@ -2876,7 +4122,42 @@ function format_skill_rewards(milestone){
                         multiplier: 1.05,
                     },
                 }
-            }
+            },
+            35: {
+                xp_multipliers: {
+                    Crafting: 1.1,
+                },
+            },
+            40: {
+                xp_multipliers: {
+                    Butchering: 1.1,
+                },
+            },
+            45: {
+                xp_multipliers: {
+                    Crafting: 1.1,
+                },
+            },
+            50: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            55: {
+                xp_multipliers: {
+                    Butchering: 1.1,
+                },
+            },
+            60: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Crafting: 1.2,
+                    Butchering: 1.2,
+                    Woodworking: 1.2,
+                },
+            },
         }
     });
 
@@ -2905,6 +4186,36 @@ function format_skill_rewards(milestone){
                 },
             },
             30: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            35: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
                 stats: {
                     dexterity: {multiplier: 1.05},
                 },
@@ -2946,6 +4257,38 @@ function format_skill_rewards(milestone){
             30: {
                 stats: {
                     dexterity: {multiplier: 1.05},
+                },
+            },
+            35: {
+                stats: {
+                    strength: {flat: 1},
+                    dexterity: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    strength: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    dexterity: {flat: 1},
+                    strength: {multiplier: 1.05},
                 },
             },
         },
@@ -2999,6 +4342,38 @@ function format_skill_rewards(milestone){
                     strength: {multiplier: 1.05},
                 },
             },
+            35: {
+                stats: {
+                    dexterity: {flat: 1},
+                    strength: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    strength: {multiplier: 1.05},
+                    dexterity: {flat: 1},
+                },
+            },
         }
     });
     skills["Cooking"] = new Skill({
@@ -3031,6 +4406,42 @@ function format_skill_rewards(milestone){
             30: {
                 stats: {
                     intuition: {multiplier: 1.05},
+                },
+            },
+            35: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    Gluttony: 1.1,
+                },
+            },
+            50: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Gluttony: 1.2,
                 },
             },
         },
@@ -3071,6 +4482,42 @@ function format_skill_rewards(milestone){
                     intuition: {multiplier: 1.05},
                 },
             },
+            35: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    Medicine: 1.1,
+                },
+            },
+            50: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Medicine: 1.2,
+                },
+            },
         },
         category: skill_category_crafting,
         base_xp_cost: 40,
@@ -3105,6 +4552,38 @@ function format_skill_rewards(milestone){
             30: {
                 stats: {
                     strength: {multiplier: 1.05},
+                },
+            },
+            35: {
+                stats: {
+                    dexterity: {flat: 1},
+                    strength: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
+                stats: {
+                    strength: {flat: 1},
+                    dexterity: {multiplier: 1.05},
                 },
             },
         },
@@ -3146,6 +4625,36 @@ function format_skill_rewards(milestone){
                 },
             },
             30: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            35: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            40: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            45: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            50: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            55: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            60: {
                 stats: {
                     dexterity: {multiplier: 1.05},
                 },
@@ -3220,7 +4729,22 @@ function format_skill_rewards(milestone){
                     Fortitude: 1.2,
                     Persistence: 1.2,
                 }
-            }
+            },
+            25: {
+                stats: {
+                    unarmed_power: {flat: 0.4},
+                },
+            },
+            30: {
+                stats: {
+                    unarmed_power: {flat: 0.4},
+                    max_health: {multiplier: 1.1},
+                },
+                xp_multipliers: {
+                    Fortitude: 1.2,
+                    Persistence: 1.2,
+                },
+            },
         }
     });
     skills["Fortitude"] = new Skill({
@@ -3279,7 +4803,53 @@ function format_skill_rewards(milestone){
                     "Iron skin": 1.2,
                     Persistence: 1.2,
                 }
-            }
+            },
+            25: {
+                stats: {
+                    defense: {flat: 1},
+                },
+            },
+            30: {
+                xp_multipliers: {
+                    Persistence: 1.1,
+                },
+            },
+            35: {
+                xp_multipliers: {
+                    "Iron skin": 1.1,
+                },
+            },
+            40: {
+                xp_multipliers: {
+                    Persistence: 1.1,
+                },
+            },
+            45: {
+                stats: {
+                    defense: {flat: 1},
+                    max_health: {multiplier: 1.05},
+                },
+            },
+            50: {
+                xp_multipliers: {
+                    Persistence: 1.1,
+                },
+            },
+            55: {
+                xp_multipliers: {
+                    "Iron skin": 1.1,
+                },
+            },
+            60: {
+                stats: {
+                    max_health: {multiplier: 1.05},
+                    defense: {flat: 1},
+                },
+                xp_multipliers: {
+                    "Iron skin": 1.2,
+                    Persistence: 1.2,
+                },
+            },
         }
     });
 })();
@@ -3370,7 +4940,24 @@ function format_skill_rewards(milestone){
                 xp_multipliers: {
                     all: 1.1,
                 }
-            }
+            },
+            25: {
+                stats: {
+                    max_stamina: {flat: 5},
+                    heat_tolerance: {flat: 1},
+                    cold_tolerance: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    max_stamina: {multiplier: 1.1},
+                },
+                xp_multipliers: {
+                    all_skill: 1.2,
+                    hero: 1.2,
+                    all: 1.2,
+                },
+            },
         },
         max_level_bonus: 0.3
     });
@@ -3440,7 +5027,41 @@ function format_skill_rewards(milestone){
                     dexterity: {multiplier: 1.1},
                     crit_multiplier: {flat: 0.2},
                 },
-            }
+            },
+            25: {
+                stats: {
+                    intuition: {flat: 2},
+                    dexterity: {flat: 2},
+                    crit_multiplier: {flat: 0.1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {flat: 2},
+                    crit_multiplier: {flat: 0.1},
+                },
+            },
+            35: {
+                stats: {
+                    intuition: {flat: 2},
+                    crit_multiplier: {flat: 0.1},
+                },
+                xp_multipliers: {
+                    all: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    intuition: {flat: 2},
+                    crit_multiplier: {flat: 0.1},
+                    dexterity: {multiplier: 1.1},
+                },
+                xp_multipliers: {
+                    all: 1.2,
+                    Herbalism: 1.2,
+                    Fishing: 1.2,
+                },
+            },
         }
     });
     skills["Literacy"] = new Skill({
@@ -3472,7 +5093,24 @@ function format_skill_rewards(milestone){
                     hero: 1.05,
                     "Strength of mind": 1.05,
                 }
-            }
+            },
+            6: {
+                xp_multipliers: {
+                    hero: 1.1,
+                },
+            },
+            8: {
+                xp_multipliers: {
+                    "Strength of mind": 1.1,
+                },
+            },
+            10: {
+                xp_multipliers: {
+                    hero: 1.2,
+                    "Strength of mind": 1.2,
+                    all_skill: 1.2,
+                },
+            },
         }
     });
     skills["Medicine"] = new Skill({
@@ -3500,6 +5138,19 @@ function format_skill_rewards(milestone){
             20: {
                 stats: {
                     intuition: {flat: 2},
+                },
+            },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            30: {
+                stats: {
+                    intuition: {multiplier: 1.05},
+                },
+                xp_multipliers: {
+                    Regeneration: 1.2,
                 },
             },
         },
@@ -3588,6 +5239,24 @@ function format_skill_rewards(milestone){
                     Persistence: 1.2,
                 }
             },
+            25: {
+                stats: {
+                    max_health: {flat: 20},
+                    max_stamina: {flat: 20},
+                    health_regeneration_flat: {flat: 0.1},
+                },
+            },
+            30: {
+                stats: {
+                    max_stamina: {multiplier: 1.1},
+                    max_health: {flat: 20},
+                },
+                xp_multipliers: {
+                    Fortitude: 1.2,
+                    Persistence: 1.2,
+                    Regeneration: 1.2,
+                },
+            },
         }
     });
     skills["Gluttony"] = new Skill({
@@ -3665,6 +5334,24 @@ function format_skill_rewards(milestone){
                     hero: 1.1,
                     Regeneration: 1.2,
                 }
+            },
+            25: {
+                stats: {
+                    max_health: {flat: 20},
+                    cold_tolerance: {flat: 1},
+                    health_regeneration_flat: {flat: 0.1},
+                    stamina_regeneration_flat: {flat: 0.1},
+                },
+            },
+            30: {
+                stats: {
+                    max_health: {flat: 20},
+                },
+                xp_multipliers: {
+                    hero: 1.2,
+                    Regeneration: 1.2,
+                    Weightlifting: 1.2,
+                },
             },
         }
     });
@@ -3767,7 +5454,35 @@ function format_skill_rewards(milestone){
                         multiplier: 1.05,
                     }
                 }
-            }
+            },
+            25: {
+                stats: {
+                    strength: {flat: 2},
+                    agility: {flat: 2},
+                    stamina_regeneration_flat: {flat: 0.1},
+                },
+            },
+            30: {
+                xp_multipliers: {
+                    Meditation: 1.1,
+                },
+            },
+            35: {
+                xp_multipliers: {
+                    Running: 1.1,
+                },
+            },
+            40: {
+                stats: {
+                    agility: {multiplier: 1.05},
+                    strength: {flat: 2},
+                },
+                xp_multipliers: {
+                    Running: 1.2,
+                    Meditation: 1.2,
+                    category_Activity: 1.2,
+                },
+            },
         },
         get_effect_description: ()=> {
             let value = get_total_skill_coefficient({skill_id:"Breathing",scaling_type:"multiplicative"});
@@ -3853,6 +5568,37 @@ function format_skill_rewards(milestone){
                                             Fortitude: 1.2,
                                         }
                                     },
+                                    25: {
+                                        stats: {
+                                            max_health: {flat: 20},
+                                            health_regeneration_flat: {flat: 0.1},
+                                        },
+                                    },
+                                    30: {
+                                        stats: {
+                                            max_health: {flat: 20},
+                                            health_regeneration_flat: {flat: 0.1},
+                                        },
+                                    },
+                                    35: {
+                                        stats: {
+                                            max_health: {flat: 20},
+                                            health_regeneration_flat: {flat: 0.1},
+                                        },
+                                        xp_multipliers: {
+                                            "Iron skin": 1.1,
+                                        },
+                                    },
+                                    40: {
+                                        stats: {
+                                            max_health: {multiplier: 1.1},
+                                            health_regeneration_flat: {flat: 0.1},
+                                        },
+                                        xp_multipliers: {
+                                            "Iron skin": 1.2,
+                                            Fortitude: 1.2,
+                                        },
+                                    },
                                 }
     });  
 })();
@@ -3924,7 +5670,22 @@ function format_skill_rewards(milestone){
                     Persistence: 1.1,
                     Perception: 1.1,
                 },
-            }
+            },
+            20: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+            },
+            25: {
+                stats: {
+                    intuition: {flat: 1},
+                },
+                xp_multipliers: {
+                    Literacy: 1.2,
+                    Persistence: 1.2,
+                    Perception: 1.2,
+                },
+            },
         }
     });
 })();

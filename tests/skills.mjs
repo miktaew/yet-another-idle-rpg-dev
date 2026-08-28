@@ -817,6 +817,79 @@ const registries = {
         JSON.parse(getItem({...item_templates[name], quality: 50}).getInventoryKey()).quality === 50);
     check("the smith's five starter weapons can be granted at quality 50", at_fifty);
 }
+// ===========================================================================
+// skill milestones — every one of them has to render in every language
+// ===========================================================================
+/*
+    275 of the milestones are generated (P-13/33: every skill's bar grants something
+    every five levels to the top), so a mistake here would be systematic rather than
+    local. What a player actually reads is get_unlocked_skill_rewards, which names each
+    stat through stat_label_short and each xp target through xp_target_label - so a key
+    with no locale row surfaces as "text not found, id: ..." in the tooltip itself.
+
+    This loads skills.js a second time with the REAL translationManager rather than the
+    stub the xp tests use: a stub answers every lookup and would prove nothing.
+*/
+{
+    globalThis.__real_tm = translationManager;
+
+    const stub = `
+const get_total_level_bonus = () => 0;
+const get_total_skill_coefficient = () => 1;
+const get_total_skill_level = (id) => (skills[id] ? skills[id].current_level : 0);
+const get_crafting_quality_caps = () => ({});
+const language = globalThis.__lang;
+const translationManager = globalThis.__real_tm;
+`;
+
+    const markers = ["text not found", "undefined", "NaN", "[object Object]"];
+    let rendered = 0;
+    let printed = 0;
+    let short_of_max = [];
+    let with_markers = [];
+
+    for (const lang of ["english", "turkish"]) {
+        globalThis.__lang = lang;
+        const { skills: fresh, get_unlocked_skill_rewards } = await load_with_stubs(
+            "src/data/skills.js",
+            ["./character.js", "./crafting_recipes.js", "./translation.js", "./main.js"],
+            stub);
+
+        for (const id of Object.keys(fresh)) {
+            const skill = fresh[id];
+            if (!skill.milestones || Object.keys(skill.milestones).length === 0) continue;
+
+            //add_xp refuses a locked skill, and two are locked until content unlocks
+            //them - Meditation and Butchering.
+            skill.is_unlocked = true;
+            skill.add_xp({ xp_to_add: 1e30 });
+
+            if (skill.current_level !== skill.max_level) {
+                short_of_max.push(`${id} ${skill.current_level}/${skill.max_level}`);
+            }
+
+            const text = get_unlocked_skill_rewards(id);
+            rendered++;
+            if (lang === "english") printed += Object.keys(skill.milestones).length;
+
+            const hit = markers.find(marker => text.includes(marker));
+            if (hit) {
+                with_markers.push(`${lang}/${id}: ${hit}`);
+            }
+        }
+    }
+
+    check("every skill with milestones reaches its own max level",
+        short_of_max.length === 0, short_of_max.slice(0, 5).join("; "));
+
+    check("every milestone renders in both languages with no missing text",
+        with_markers.length === 0, with_markers.slice(0, 5).join("; "));
+
+    //A guard on the guard: if the loader silently stopped finding skills, the two checks
+    //above would pass while testing nothing.
+    check("the milestone render covered the whole skill list",
+        rendered >= 90 && printed >= 550, `${rendered} blocks, ${printed} milestones`);
+}
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

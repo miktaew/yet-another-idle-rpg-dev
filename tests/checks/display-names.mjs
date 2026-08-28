@@ -418,7 +418,11 @@ async function check_enumerable_id_families() {
             ["src/items.js", /component_stats:\s*\{/g],
             //The lookbehind matters: xp_multipliers holds skill names, not stat keys.
             ["src/items.js", /(?<!\w)(?:stats|multipliers):\s*\{/g],
-            ["src/data/locations.js", /effects:\s*\{/g]]) {
+            ["src/data/locations.js", /effects:\s*\{/g],
+            //A skill milestone prints its stats through the same accessor, which the
+            //first version of this check missed - and milestones are where new stat
+            //keys are most likely to be added.
+            ["src/data/skills.js", /(?<!\w)stats:\s*\{/g]]) {
         const source = read(relative);
         for (const match of source.matchAll(pattern)) {
             const open = source.indexOf("{", match.index + match[0].length - 1);
