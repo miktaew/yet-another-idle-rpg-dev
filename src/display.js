@@ -4959,13 +4959,14 @@ function create_new_bestiary_entry(enemy_name) {
         if(rank_a != rank_b) {
             return rank_a - rank_b;
         } else {
-            const name_a = a.querySelector(".bestiary_entry_name").innerText;
-            const name_b = b.querySelector(".bestiary_entry_name").innerText;
-            if(name_a > name_b) {
-                return 1;
-            } else {
-                return -1;
-            }
+            /*
+                localeCompare rather than `>`: comparing strings with `>` orders them by
+                UTF-16 code unit, which puts every accented or non-ASCII letter after Z.
+                It also never returns 0, so two entries with the same name flip order on
+                every re-sort.
+            */
+            return a.querySelector(".bestiary_entry_name").innerText
+                .localeCompare(b.querySelector(".bestiary_entry_name").innerText);
         }
     }).forEach(node=>bestiary_list.appendChild(node));
 }
@@ -5175,8 +5176,14 @@ function create_new_booklist_entry(book_name) {
 
     booklist_list.appendChild(booklist_entry_divs[book_name]);
 
-    //sorts booklist_list div by book title
-    [...booklist_list.children].sort((a,b)=>a.getAttribute("data-book") - b.getAttribute("data-book"))
+    /*
+        Sorts by title. Subtracting one title from another - which is what this did - is
+        NaN for every pair of strings, and a comparator that always returns NaN sorts
+        nothing: the anthology was in whatever order the books happened to be read in.
+    */
+    [...booklist_list.children].sort((a, b) =>
+                                    a.getAttribute("data-book")
+                                        .localeCompare(b.getAttribute("data-book")))
                                 .forEach(node=>booklist_list.appendChild(node));
 }
 
