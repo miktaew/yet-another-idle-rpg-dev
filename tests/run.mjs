@@ -42,6 +42,7 @@ import {
     check_base64_is_utf8_safe,
     check_no_english_in_dom,
     check_onclick_names_are_reachable,
+    check_journal_panels_are_styled,
     check_seasons_go_through_the_accessor,
 } from "./checks/dom-text.mjs";
 import { check_generated_items, check_recipe_item_names } from "./checks/items.mjs";
@@ -83,6 +84,7 @@ await check_item_display_names();
 await check_equipment_slot_names();
 await check_no_english_in_dom();
 check_onclick_names_are_reachable();
+check_journal_panels_are_styled();
 await check_base64_is_utf8_safe();
 await check_seasons_go_through_the_accessor();
 await check_registry_value_names();

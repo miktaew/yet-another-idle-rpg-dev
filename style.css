@@ -2503,16 +2503,16 @@ i {
 				overflow-y: scroll;
 			}
 
-			/* Its controls sit above the list, so the list scrolls and the box does not. */
-			#discoveries_box_div {
+			/* Their controls sit above the list, so the list scrolls and the box does not. */
+			#discoveries_box_div, #lore_box_div {
 				width: 100%;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div{
 				height: 284px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div{
 				display: none;
 			}
 
@@ -3083,6 +3083,7 @@ html, body {
  }
 
  /* The controls stay put while the list underneath them moves. */
+ #lore_controls_div,
  #discoveries_controls_div {
 	 display: flex;
 	 align-items: center;
@@ -3090,9 +3091,15 @@ html, body {
 	 font-size: 0.85em;
 	 padding: 2px;
  }
- #discoveries_list {
+ #discoveries_list,
+ #lore_list {
 	 height: 258px;
 	 overflow-y: scroll;
+ }
+
+ /* Lore's box shares its row with the checkbox rather than taking one of its own. */
+ #lore_controls_div .discoveries_search_box {
+	 flex: 1 1 auto;
  }
 
  .discovery_heading {

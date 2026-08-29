@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.52</button>
+    <div class="content">
+        <ul class="entries">
+            <li>The Lore tab stayed inside the journal instead of growing past it and over the skills underneath, and it no longer sits next to Quests before you have opened it. It had been added to the markup and left out of the two style rules that give a journal panel its height and hide it until its tab is chosen.</li>
+            <li>A build check now refuses any journal panel that is missing either rule. Six panels, all covered - and nothing else in the build reads the stylesheet, so this was the one kind of mistake only a person looking at the screen could catch.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.51</button>
     <div class="content">
         <ul class="entries">

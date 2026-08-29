@@ -37,6 +37,56 @@ import { read_string_literals, source_files, strip_comments, strip_interpolation
  * and the ones display.js sets with setAttribute - and functions declared inline in
  * index.html count, since they are globals already.
  */
+/**
+ * Every journal panel is given a height and a display rule.
+ *
+ * The tabs share one box and are swapped by setting `display` on them, so a panel that no
+ * rule hides is visible next to whichever tab is open, and a panel with no height grows
+ * past the box and over whatever is underneath it. The Lore tab did both.
+ *
+ * Nothing else in the build reads CSS, so this is the only place that can say so.
+ */
+function check_journal_panels_are_styled() {
+    const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+    const css = fs.readFileSync(path.join(repo_root, "style.css"), "utf8");
+
+    const start = html.indexOf('<div id = "journal_content_div">');
+    if (start === -1) {
+        error("index.html has no #journal_content_div - this check is out of date.");
+        return;
+    }
+    //To the start of the next sibling panel of the journal, which is the character box.
+    const end = html.indexOf('<div id = "character_div"', start);
+    const region = html.slice(start, end === -1 ? html.length : end);
+
+    const panels = [...region.matchAll(/id\s*=\s*"(\w+_box_div)"/g)].map(match => match[1]);
+    if (panels.length < 4) {
+        error(`found ${panels.length} journal panels - this check is out of date.`);
+        return;
+    }
+
+    //Selector plus body for every rule, so a panel can be looked up in the selectors that
+    //actually set the property rather than anywhere its name appears.
+    const rules = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+        .map(match => ({selector: match[1], body: match[2]}));
+
+    const sets = (panel, property) => rules.some(rule =>
+        rule.selector.includes(`#${panel}`)
+        && new RegExp(`(^|[;{\\s])${property}\\s*:`).test(rule.body));
+
+    for (const panel of panels) {
+        if (!sets(panel, "height")) {
+            error(`#${panel} is a journal panel and no rule gives it a height, so it would`
+                + ` grow past the journal box and over what is underneath it.`);
+        }
+        if (!sets(panel, "display")) {
+            error(`#${panel} is a journal panel and no rule sets its display, so it would be`
+                + ` on screen next to whichever tab is open.`);
+        }
+    }
+
+    console.log(`[check] journal panels: ${panels.length} styled`);
+}
 function check_onclick_names_are_reachable() {
     const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
     const source = source_files(repo_root)
@@ -249,4 +299,5 @@ export {
     check_seasons_go_through_the_accessor,
     check_no_english_in_dom,
     check_onclick_names_are_reachable,
+    check_journal_panels_are_styled,
 };
