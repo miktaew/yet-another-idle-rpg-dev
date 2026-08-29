@@ -9,6 +9,21 @@
 # renormalization diff.
 * text=auto
 
+# `text=auto` decides the working-tree ending from each contributor's core.autocrlf,
+# which is how this tree ended up with 64 files checked out CRLF and 10 LF while the
+# index holds LF for all of them. Every commit touching one of the LF files then
+# printed "LF will be replaced by CRLF". Pinning the source types to LF makes the
+# working tree match the index, so no conversion happens in either direction and the
+# warning has nothing left to warn about. The index is already LF, so this changes no
+# committed content. Node, esbuild and the browser are all indifferent to the choice.
+*.js   text eol=lf
+*.mjs  text eol=lf
+*.json text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.md   text eol=lf
+*.yml  text eol=lf
+
 # Binary assets
 # ----------------------------------------------------------------------------
 # `binary` is shorthand for `-text -diff`: never convert line endings, never
