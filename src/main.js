@@ -2,6 +2,7 @@
 
 import { current_game_time, is_night } from "./game_time.js";
 import { run_stats } from "./run_stats.js";
+import { game_state } from "./game_state.js";
 import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity, Weapon} from "./items.js";
 import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_market_saturations, set_loot_sold_count, capped_at } from "./market_saturation.js";
 import { locations, favourite_locations, location_types } from "./data/locations.js";
@@ -187,20 +188,16 @@ const language_tags = {
 };
 let language = languages.english;
 
-let is_loading_error = false;
 
 //in seconds
 
 //some random stats to keep count of in case they ever become relevant
-let gathered_materials = {};
 
 //keeping the time to use it for export bonus
-let last_rewarded_export = 0;
 
 //temperature
 let current_temperature = 20;
 
-let rain_counter = 0;
 const cold_status_counters = [0,0,0,0];
 
 let was_raining = false;
@@ -252,15 +249,12 @@ let is_resting = true;
 //sleeping, true -> health regenerates, timer goes up faster
 let is_sleeping = false;
 
-let last_location_with_bed = null; //actually last location where player slept!
-let last_combat_location = null;
 
 //reading, either null or book name
 let is_reading = null;
 
 //ticks between saves, 60 = ~1 minute
 const save_period = 60;
-let save_counter = 0;
 
 //ticks between backup saves, 60 = ~1 minute
 const backup_period = 3600;
@@ -278,7 +272,6 @@ let end_date;
 
 let current_dialogue;
 //The last line the player read, so the lore panel can open on where they left off.
-let lore_last = null;
 const active_effects = {};
 //e.g. health regen from food
 
@@ -796,7 +789,7 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
         }
 
         if(!current_location.is_challenge) {
-            last_combat_location = current_location.id;
+            game_state.last_combat_location = current_location.id;
         }
     }
 
@@ -1266,7 +1259,7 @@ function start_sleeping() {
     start_sleeping_display();
     is_sleeping = true;
 
-    last_location_with_bed = current_location.id;
+    game_state.last_location_with_bed = current_location.id;
 }
 
 function end_sleeping() {
@@ -1462,7 +1455,7 @@ function start_textline(textline_key){
     //Before the rewards, which can lock this very line: what matters is that it was
     //read, and this is the only place in the game where that is true.
     textline.is_heard = true;
-    lore_last = {dialogue: current_dialogue, textline: textline_key};
+    game_state.lore_last = {dialogue: current_dialogue, textline: textline_key};
 
     process_rewards({rewards: textline.rewards, source_type: "textline", inform_textline: false, source_name: current_dialogue})
 
@@ -2126,8 +2119,8 @@ function kill_player({is_combat = true} = {}) {
         log_message(translationManager.getText(language, "log heroname has lost consciousness"), "hero_defeat");
 
         update_displayed_health();
-        if(game_options.auto_return_to_bed && last_location_with_bed) {
-            change_location({location_id: last_location_with_bed});
+        if(game_options.auto_return_to_bed && game_state.last_location_with_bed) {
+            change_location({location_id: game_state.last_location_with_bed});
             start_sleeping();
         } else {
             change_location({location_id: current_location.parent_location.id});
@@ -2922,8 +2915,8 @@ function lock_location({location, challenge_self_lock = false}) {
         was_locked = true;
         location.is_finished = true;
     }
-    if(last_combat_location === location.id) {
-        last_combat_location = null;
+    if(game_state.last_combat_location === location.id) {
+        game_state.last_combat_location = null;
     }
 
     return was_locked;
@@ -3356,10 +3349,10 @@ function create_save() {
         save_data.total_hits_done = run_stats.total_hits_done;
         save_data.total_hits_taken = run_stats.total_hits_taken;
         save_data.strongest_hit = run_stats.strongest_hit;
-        save_data.gathered_materials = gathered_materials;
+        save_data.gathered_materials = game_state.gathered_materials;
         save_data.global_flags = global_flags;
-        save_data.lore_last = lore_last;
-        save_data.last_rewarded_export = last_rewarded_export || 0;
+        save_data.lore_last = game_state.lore_last;
+        save_data.last_rewarded_export = game_state.last_rewarded_export || 0;
         save_data["character"] = {
                                 name: character.name, titles: character.titles,
                                 personal: character.personal,
@@ -3375,7 +3368,7 @@ function create_save() {
         //stats don't get saved, they will be recalculated upon loading
         save_data["player_storage"] = {inventory: {}};
 
-        save_data.rain_counter = rain_counter;
+        save_data.rain_counter = game_state.rain_counter;
         save_data.cold_status_counters = cold_status_counters;
 
         save_data.are_finished_quests_hidden = document.getElementById("quest_hiding_button").checked;
@@ -3585,8 +3578,8 @@ function create_save() {
 
         save_data["loot_sold_count"] = loot_sold_count;
 
-        save_data["last_combat_location"] = last_combat_location;
-        save_data["last_location_with_bed"] = last_location_with_bed;
+        save_data["game_state.last_combat_location"] = game_state.last_combat_location;
+        save_data["game_state.last_location_with_bed"] = game_state.last_location_with_bed;
 
         save_data["options"] = game_options;
 
@@ -3658,8 +3651,8 @@ function from_base64(encoded) {
     return new TextDecoder().decode(bytes);
 }
 function save_to_file() {
-    if(Date.now() - last_rewarded_export > config.time_between_export_rewards) {
-        last_rewarded_export = Date.now();
+    if(Date.now() - game_state.last_rewarded_export > config.time_between_export_rewards) {
+        game_state.last_rewarded_export = Date.now();
         give_export_reward();
     }
 
@@ -3678,7 +3671,7 @@ function save_to_localStorage({key, is_manual}) {
         localStorage.setItem(key, save);
         if(is_manual) {
             log_message(translationManager.getText(language, "log saved the game manually"));
-            save_counter = 0;
+            game_state.save_counter = 0;
         }
     }
     return JSON.parse(save).saved_at;
@@ -3735,9 +3728,9 @@ function load(save_data) {
 
         //Absent in a save from before the lore panel, which is fine: the panel simply
         //has no "where you left off" until the next line is read.
-        lore_last = save_data.lore_last || null;
+        game_state.lore_last = save_data.lore_last || null;
 
-        last_rewarded_export = save_data.last_rewarded_export || last_rewarded_export;
+        game_state.last_rewarded_export = save_data.last_rewarded_export || game_state.last_rewarded_export;
 
         run_stats.total_playtime = save_data.total_playtime || 0;
         //Older saves have no log; restore_message_log ignores anything that is not
@@ -3752,7 +3745,7 @@ function load(save_data) {
         run_stats.total_hits_done = save_data.total_hits_done || 0;
         run_stats.total_hits_taken = save_data.total_hits_taken || 0;
         run_stats.strongest_hit = save_data.strongest_hit || 0;
-        gathered_materials = save_data.gathered_materials || {};
+        game_state.gathered_materials = save_data.gathered_materials || {};
 
         name_field.value = save_data.character.name;
         character.name = save_data.character.name;
@@ -3760,8 +3753,8 @@ function load(save_data) {
             character.personal[info] = save_data.character?.personal?.[info];
         });
 
-        last_location_with_bed = save_data.last_location_with_bed;
-        last_combat_location = save_data.last_combat_location;
+        game_state.last_location_with_bed = save_data.last_location_with_bed;
+        game_state.last_combat_location = save_data.last_combat_location;
 
         game_options.uniform_text_size_in_action = save_data.options?.uniform_text_size_in_action;
         option_uniform_textsize(game_options.uniform_text_size_in_action);
@@ -3817,7 +3810,7 @@ function load(save_data) {
 
         add_xp_to_character(save_data.character.xp.total_xp, false);
 
-        rain_counter = save_data.rain_counter || 0;
+        game_state.rain_counter = save_data.rain_counter || 0;
         for(let i = 0; i < save_data.cold_status_counters?.length; i++) {
             cold_status_counters[i] = save_data.cold_status_counters[i] || 0;
         }
@@ -4751,8 +4744,8 @@ function load(save_data) {
         }
 
         if(is_a_older_than_b(save_data["game version"], "v0.5.1.5")) {
-            if(last_location_with_bed === "Lake camp") {
-                last_location_with_bed = "Lake beach";
+            if(game_state.last_location_with_bed === "Lake camp") {
+                game_state.last_location_with_bed = "Lake beach";
             }
 
             if(locations["Lake beach"].actions["create lake camp"].is_finished) {
@@ -5173,7 +5166,7 @@ function load_from_localstorage() {
             load(JSON.parse(localStorage.getItem(save_key)));
         }
     } catch(error) {
-        is_loading_error = true;
+        game_state.is_loading_error = true;
         set_loading_screen_progress(translationManager.getText(language, "ui loading something went wrong"));
         set_loading_screen_errors_warning();
         console.error("Something went wrong on loading from localStorage!");
@@ -5312,13 +5305,13 @@ function update() {
         const prev_day = current_game_time.day;
         update_timer();
 
-        if(start_date - last_rewarded_export > config.time_between_export_rewards) {
+        if(start_date - game_state.last_rewarded_export > config.time_between_export_rewards) {
             document.getElementById("save_to_file_button").classList.add("export_button_with_reward");
         } else {
             document.getElementById("save_to_file_button").classList.remove("export_button_with_reward");
         }
 
-        update_export_button_tooltip(start_date - last_rewarded_export, config.time_between_export_rewards);
+        update_export_button_tooltip(start_date - game_state.last_rewarded_export, config.time_between_export_rewards);
 
         const curr_day = current_game_time.day;
         if(curr_day > prev_day) {
@@ -5341,7 +5334,7 @@ function update() {
         if(!current_location.is_under_roof) {
             //not under roof, background animations can happen
             if(is_raining()) {
-                if(rain_counter >= time_until_wet) {
+                if(game_state.rain_counter >= time_until_wet) {
                 //been in rain long enough, add wet even if present
                     add_active_effect("Wet",30);
                 } else {
@@ -5349,9 +5342,9 @@ function update() {
 
                     if(new_temperature < 0)
                         //snowing, doesn't soak the player as much the rain
-                        rain_counter += 0.25
+                        game_state.rain_counter += 0.25
                     else 
-                        rain_counter++;
+                        game_state.rain_counter++;
                 }
 
                 if(!was_raining && game_options.do_background_animations) {
@@ -5373,9 +5366,9 @@ function update() {
             } else {
                 //not raining
 
-                if(rain_counter > 0) {
+                if(game_state.rain_counter > 0) {
                     //not in rain -> reduce rain counter
-                    rain_counter--;
+                    game_state.rain_counter--;
                 }
                 was_raining = false;
 
@@ -5551,7 +5544,7 @@ function update() {
 
                                 items.push({item_id: gained_resources[i].name, quality: quality, count: count});
 
-                                gathered_materials[gained_resources[i].name] = (gathered_materials[gained_resources[i].name] || 0) + count;
+                                game_state.gathered_materials[gained_resources[i].name] = (game_state.gathered_materials[gained_resources[i].name] || 0) + count;
                             }
                         }
 
@@ -5664,9 +5657,9 @@ function update() {
             update_displayed_stamina();
         }
         
-        save_counter += 1;
-        if(save_counter >= save_period*tickrate) {
-            save_counter = 0;
+        game_state.save_counter += 1;
+        if(game_state.save_counter >= save_period*tickrate) {
+            game_state.save_counter = 0;
             if(is_on_dev()) {
                 save_to_localStorage({key: dev_save_key});
             } else {
@@ -6124,7 +6117,7 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
     change_location({location_id: "Village", skip_travel_time: true});
     questManager.startQuest({quest_id: "Lost memory"});
 
-    last_rewarded_export = Date.now() - 1000*60*60*16; //reduces timer by 16 hours, making first reward export appear in 4 hours from starting
+    game_state.last_rewarded_export = Date.now() - 1000*60*60*16; //reduces timer by 16 hours, making first reward export appear in 4 hours from starting
 }
 
 //Populated from `languages` so adding a language needs no HTML edit.
@@ -6140,7 +6133,7 @@ if(language_selector) {
     language_selector.value = language;
 }
 
-if(!is_loading_error) {
+if(!game_state.is_loading_error) {
     //Deliberately untranslated flavour, and no longer for a technical reason: the
     //locales are already in memory here and the save's language has been read, so
     //this line COULD be a text id. It is not, because it is a joke - and because
@@ -6281,14 +6274,11 @@ if(config.show_visitor_counter) {
 }
 export { language_tags,
         //Read by the lore panel to open on where the player left off.
-        lore_last,
         current_enemies,
         current_location,
         can_work, active_effects,
         enough_time_for_earnings, add_xp_to_skill, get_effective_skill_xp_gain,
         get_current_book,
-        last_location_with_bed,
-        last_combat_location,
         current_stance, selected_stance,
         faved_stances, game_options,
         global_flags,

@@ -1,14 +1,14 @@
 "use strict";
 
 import { traders, inventory_templates } from "./traders.js";
+import { game_state } from "./game_state.js";
 import { current_trader, to_buy, to_sell } from "./trade.js";
 import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "./data/skills.js";
 import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "./character.js";
 import { current_enemies, game_options, 
     can_work, current_location, 
     active_effects, enough_time_for_earnings, 
-    get_current_book, last_location_with_bed, 
-    last_combat_location, faved_stances, 
+    get_current_book, faved_stances, 
     selected_stance, 
     global_flags,
     unlocked_beds,
@@ -17,7 +17,7 @@ import { current_enemies, game_options,
     language,
     language_tags,
     favourite_items,
-    get_effective_skill_xp_gain, lore_last } from "./main.js";
+    get_effective_skill_xp_gain} from "./main.js";
 import { dialogues } from "./data/dialogues.js";
 import { activities } from "./activities.js";
 import { format_time, current_game_time, seasons } from "./game_time.js";
@@ -2365,7 +2365,7 @@ function update_displayed_normal_location(location) {
         ...Object.keys(unlocked_beds).filter(key => (key !== current_location.id && locations[key].is_unlocked && !locations[key].is_finished))
     ];
 
-    if((available_fast_travel.length + (last_combat_location?1:0)) > 0) {
+    if((available_fast_travel.length + (game_state.last_combat_location?1:0)) > 0) {
         location_choice_divs["fast_travel"] = create_location_choice_dropdown({name: translationManager.getText(language, "ui choice fast travel"), icon: "directions", class_name: "choice_travel"});
 
         location_choice_divs["fast_travel"].append(...create_location_choices({location: location, category: "fast_travel"}));
@@ -2773,8 +2773,8 @@ function create_location_choices({location, category, is_combat = false}) {
             choice_list.push(action);
         }
 
-        if(last_location_with_bed && !location.housing?.is_unlocked && !location.connected_locations) {
-            const last_bed = locations[last_location_with_bed];
+        if(game_state.last_location_with_bed && !location.housing?.is_unlocked && !location.connected_locations) {
+            const last_bed = locations[game_state.last_location_with_bed];
 
             const action = document.createElement("div");
             let action_html_content = "";
@@ -2852,8 +2852,8 @@ function create_fast_travel_choices() {
         ...Object.keys(unlocked_beds).filter(key => (key !== current_location.id && locations[key].is_unlocked && !locations[key].is_finished))
     ];
 
-    if(last_combat_location && !available_fast_travel.includes(last_combat_location)) {
-        available_fast_travel.push(last_combat_location);
+    if(game_state.last_combat_location && !available_fast_travel.includes(game_state.last_combat_location)) {
+        available_fast_travel.push(game_state.last_combat_location);
     }
 
     available_fast_travel = available_fast_travel.sort((a,b) => {
@@ -2909,7 +2909,7 @@ function create_fast_travel_choices() {
 
         insert_HTML(action, action_html_content);
 
-        if(!locations[available_fast_travel[i]].housing?.is_unlocked && locations[available_fast_travel[i]].id !== last_combat_location) {
+        if(!locations[available_fast_travel[i]].housing?.is_unlocked && locations[available_fast_travel[i]].id !== game_state.last_combat_location) {
             const removal_button = document.createElement("span");
             insert_HTML(removal_button, `<i class="material-icons fast_travel_removal_button">close</i>`);
             removal_button.setAttribute("onclick","remove_location_from_favourites({location_id:this.parentNode.getAttribute('data-travel')})");
@@ -2932,7 +2932,7 @@ function remove_fast_travel_choice({location_id}) {
         return;
     }
 
-    if(location_id === last_combat_location || locations[location_id].housing?.is_unlocked) {
+    if(location_id === game_state.last_combat_location || locations[location_id].housing?.is_unlocked) {
         //remove only button
         element.getElementsByClassName("fast_travel_removal_button")[0].parentNode.remove();
     } else {
@@ -5776,7 +5776,7 @@ function update_displayed_lore() {
         the last thing heard is still in view - filtering it away and leaving it pinned
         would be a lie about what the list is showing.
     */
-    const last = lore_last && lore_unit_of(lore_last.dialogue, lore_last.textline);
+    const last = game_state.lore_last && lore_unit_of(game_state.lore_last.dialogue, game_state.lore_last.textline);
     if(last && units.some(unit => unit.dialogue === last.dialogue && unit.head === last.head)) {
         const heading = document.createElement("div");
         heading.classList.add("discovery_heading");
