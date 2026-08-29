@@ -1266,6 +1266,12 @@ function start_activity_animation(settings) {
     end_activity_animation();
     activity_anim = setInterval(() => { //sets a tiny little "animation" for activity text
         const action_status_div = document.getElementById("action_status_div");
+        if(!action_status_div) {
+            //The panel this animates is gone - travelling out of an action used to
+            //leave this ticking at nothing, throwing on every beat from a timer.
+            end_activity_animation();
+            return;
+        }
         let end = "";
         if(action_status_div.innerText.endsWith("...")) {
             end = "...";
@@ -6120,8 +6126,10 @@ function create_travel_line(location, text) {
         travel.classList.add("discovery_travel_button");
         travel.innerText = translationManager.getText(language, "ui discovery travel");
         travel.setAttribute("data-travel", location.id);
+        //travel_to, not change_location: it ends a running action first. These buttons
+        //are on screen during one, which the ordinary travel lines never are.
         travel.setAttribute("onclick",
-            "change_location({location_id: this.getAttribute('data-travel')});");
+            "travel_to(this.getAttribute('data-travel'));");
         line.appendChild(travel);
     }
 
@@ -6253,6 +6261,22 @@ function create_displayed_quest_tasks_content(quest_id) {
         //there should still be an unfinished task left, add it do display as well
         if(!quest.quest_tasks[unfinished_index].is_hidden) {
             quest_tasks_div.appendChild(create_displayed_quest_task(quest_id, unfinished_index));
+        } else {
+            /*
+                A hidden task hides its own wording, not the whole quest. This branch used
+                to append nothing at all, so a quest sitting on a hidden step showed its
+                name and not one line under it - three at once in the journal, looking
+                stalled, with no way to tell what was being waited on. A task only counts
+                when its index equals the number already finished, so the player cannot
+                skip past it either.
+
+                The hint says where to go without saying what the step is, which is the
+                distinction the hidden flag was drawn for.
+            */
+            const hint = create_quest_step_hint(quest_id, unfinished_index);
+            if(hint) {
+                quest_tasks_div.appendChild(hint);
+            }
         }
     }
 

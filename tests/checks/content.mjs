@@ -394,6 +394,60 @@ function bracketed_body(text, open_at) {
  * quest could not be finished and the forge could not be built, for as long as both
  * blocks existed.
  */
+/**
+ * Every hidden quest task has something to point at.
+ *
+ * A hidden task hides its own wording, so the journal shows a hint in its place - where
+ * to go, without saying what the step is. A hidden task with no advancer indexed would
+ * therefore show nothing at all, which is what made three quests look stalled: the name
+ * in the list and not one line under it.
+ *
+ * The advancers are the same four sources the journal reads: a dialogue line, a dialogue
+ * action, a location action, or a zone's own clear rewards.
+ */
+function check_hidden_tasks_can_be_hinted() {
+    const sources = ["src/data/dialogues.js", "src/data/locations.js"]
+        .map(relative => strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8")))
+        .join("\n");
+    const quests_source = strip_comments(fs.readFileSync(path.join(repo_root, "src/quests.js"), "utf8"));
+
+    //Every quest_progress step the content grants, as "<quest>#<index>".
+    const advanced = new Set();
+    for (const match of sources.matchAll(
+            /quest_id:\s*"([^"]+)"\s*,\s*task_index:\s*(\d+)/g)) {
+        advanced.add(`${match[1]}#${match[2]}`);
+    }
+
+    let hidden = 0;
+    for (const quest of quests_source.matchAll(/quests\["([^"]+)"\]\s*=\s*new Quest\(\{/g)) {
+        const body = braced_body(quests_source, quests_source.indexOf("{", quest.index + quest[0].length - 1));
+        if (body === null) continue;
+
+        //braced_body, not [^}]*: a task carrying items_from or a condition has nested
+        //braces, and the cheap pattern skipped two of the eleven hidden tasks.
+        const tasks = [];
+        for (const task of body.matchAll(/new QuestTask\(\{/g)) {
+            const inner = braced_body(body, body.indexOf("{", task.index + task[0].length - 1));
+            tasks.push(inner ?? "");
+        }
+        tasks.forEach((task, index) => {
+            if (!/is_hidden:\s*true/.test(task)) return;
+            hidden++;
+            if (!advanced.has(`${quest[1]}#${index}`)) {
+                error(`"${quest[1]}" task ${index} is hidden and nothing in the content`
+                    + ` advances it, so the journal would show the quest with no line under`
+                    + ` it and no hint - which reads as a stalled quest.`);
+            }
+        });
+    }
+
+    if (hidden < 5) {
+        error(`only ${hidden} hidden tasks found - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] hidden quest tasks: ${hidden} all have an advancer`);
+}
 function check_location_collections_assigned_once() {
     const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
 
@@ -862,6 +916,7 @@ function check_content_is_reachable() {
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
+    check_hidden_tasks_can_be_hinted,
     check_location_collections_assigned_once,
     check_skill_rank_levels,
     check_trader_stock_lists,

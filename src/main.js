@@ -698,6 +698,27 @@ function option_do_dynamic_loot_message(option) {
  * @param {Event} params.event
  * @param {Boolean} params.skip_combat used to not call start_combat function, used in loading as it's only called after 'PLAY' button is clicked
  */
+/**
+ * Travels somewhere, ending whatever is under way first.
+ *
+ * While an action or activity runs, its panel replaces the location panel, so the
+ * ordinary travel lines cannot be clicked - the game's guard against leaving mid-action
+ * is that there is nothing to click. The journal's hint and discovery buttons are on
+ * screen the whole time, so they need the guard written down: without it the action kept
+ * running while the player walked away, and its animation went on ticking at a panel
+ * that was no longer there.
+ *
+ * end_activity is what the in-game stop button calls, so an activity still hands over
+ * what it gathered rather than losing it.
+ */
+function travel_to(location_id) {
+    if(current_activity) {
+        end_activity();
+    } else if(current_game_action) {
+        end_game_action();
+    }
+    change_location({location_id});
+}
 function change_location({location_id, event, skip_travel_time = false, do_quest_events = true, skip_combat = false}) {
     if(event?.target.classList.contains("fast_travel_removal_button")) {
         return;
@@ -2695,12 +2716,20 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         for(let i = 0; i < rewards.quest_progress.length; i++) {
             const quest_id = rewards.quest_progress[i].quest_id;
             const task_index = rewards.quest_progress[i].task_index;
-            if(task_index == quests[quest_id].getCompletedTaskCount()) {
+            const completed = quests[quest_id]?.getCompletedTaskCount();
+            if(task_index == completed) {
                 if(quests[quest_id]?.quest_tasks[task_index]) {
                     questManager.finishQuestTask({quest_id: quest_id, task_index: task_index, skip_warning: true});
                 } else {
                     console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
                 }
+            } else if(quests[quest_id]) {
+                //Deliberate - tasks run in order - but silent, which is the problem. Doing
+                //the right thing for step three while step two is unfinished looks exactly
+                //like doing nothing, and that is how three quests came to look stalled.
+                console.warn(`Quest progress for '${quest_id}' task ${task_index} was`
+                    + ` dropped: ${completed} task(s) are finished, so only task ${completed}`
+                    + ` can advance right now.`);
             }
         }
     }
@@ -6078,6 +6107,7 @@ window.start_textline = start_textline;
 window.remove_fast_travel_choice = remove_fast_travel_choice;
 
 window.start_activity = start_activity;
+window.travel_to = travel_to;
 window.end_activity = end_activity;
 
 window.start_game_action = start_game_action;
