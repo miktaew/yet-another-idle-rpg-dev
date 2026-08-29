@@ -55,6 +55,7 @@ import {
 } from "./checks/locales.mjs";
 import { check_modules_import_what_they_call } from "./checks/modules.mjs";
 import { check_save_keys_round_trip } from "./checks/save_contract.mjs";
+import { check_docs_are_paired } from "./checks/docs.mjs";
 import {
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
@@ -102,6 +103,7 @@ check_item_name_collisions();
 await check_recipe_item_names();
 await check_modules_import_what_they_call();
 await check_save_keys_round_trip();
+await check_docs_are_paired();
 check_action_branches();
 check_every_enemy_has_a_home();
 check_hidden_tasks_can_be_hinted();

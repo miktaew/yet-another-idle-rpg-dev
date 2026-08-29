@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 41 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 43 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -73,6 +73,29 @@ uzun biçimi, bir etiket ile alabileceği değerler birlikte çevrilir ve birbir
 uyumlu olmalıdır.
 
 Kurallar, sözlük ve bilinen boşluklar: [I18N.TR.md](I18N.TR.md).
+
+### D-8 — Her düzeltme, onu yakalayacak testle birlikte gelir
+
+Oyuncuya ulaşmış bir hata, geçitte onu arayan hiçbir şey olmadığının kanıtıdır.
+Korumayı eklemeden hatayı düzeltmek kapıyı açık bırakır ve bu depo o kapıdan birden
+çok kez geri girdi: `restore_message_log` ile `effect_templates` üç hafta arayla
+yaşanan aynı eksik-içe-aktarma hatasıydı.
+
+Dolayısıyla bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş sayılmaz.
+Bunu gerçek kılan iki kural:
+
+1. **Korumayı tersten sınayın.** Hatayı geri koyun, kontrolün patladığını görün,
+   çıkarın, geçtiğini görün. Hiç patlamamış bir koruma sınanmış değil yalnızca
+   yazılmıştır — ve genişletilen bir eşleyici, eskiden yakaladığını sessizce
+   yakalamaz olabilir.
+2. **Örneği değil sınıfı koruyun.** `check_save_keys_round_trip`,
+   `last_combat_location` diye bir şey bilmez; kaydın yazdığı her anahtarın yüklemenin
+   okuduğu bir anahtar olmasını şart koşar. Bir sonraki yeniden adlandırma da aynı
+   yerden patlar.
+
+Nerede duruyorlar: `tests/checks/*.mjs`, `tests/run.mjs` içinde kayıtlı, `npm run check`
+ile çalışıyor. Geçit `npm run build && npm run check && npm test && npm run check:bundle`
+ve commit öncesi dördünün de geçmesi gerekiyor.
 
 ### D-6 — Doğrudan varsayılan branch'e push
 
@@ -920,11 +943,11 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     ve `refactoring` dallarının ikisi de 2026-08-27'de push edilen `19011a0`'da ve
     bizim master zaten onu içeriyor - yani alınacak yeni bir şey yok, ama
     gönderilecek biri var.
-43. **Bestiary bir yaratığın nerede çıktığını söylemeli** — `yapılacak`. Yaratığın ne
+43. **Bestiary bir yaratığın nerede çıktığını söylemeli** — `bitti`, v0.6.48. Yaratığın ne
     olduğunu ve ne düşürdüğünü listeliyor, ama oyuncunun ona genelde baktığı asıl şeyi
     söylemiyor. Veri mevcut: her dövüş bölgesi düşman gruplarını bildiriyor, yani ters
     dizin yazılmak yerine kurulabilir.
-44. **Lore panelinin yanına keşfedilen eşyalar sayfası** — `yapılacak`. Oyunun tepesine,
+44. **Lore panelinin yanına keşfedilen eşyalar sayfası** — `bitti`, v0.6.49; arama v0.6.51'de eklendi. Oyunun tepesine,
     lore ile aynı aileden yeni bir mini sayfa: oyuncunun gerçekten bulduğu her şey -
     haritadan toplanan, yaratıktan düşen, satın alınan - nereden geldiğiyle birlikte ve
     geldiği bölgeye götüren bir butonla. Katalog değil keşif: oyuncu oynadıkça doluyor,
@@ -991,6 +1014,52 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     için o listeyi taklit ediyor; crafting.js'i başa koymak character.js'i items.js'ten
     önce çekti ve beş kontrolü bozdu. Paket her iki hâlde de sorunsuzdu.
 
+49. **Yükleyici yarı yolda duruyordu** — `bitti`, v0.6.55. "Görevler tamamen
+    bozuldu, boş geliyor" diye bir ReferenceError'la, ayrıca favorilenen yerlerin hızlı
+    yolculuktan kaybolduğu şeklinde bildirildi. Tek sebep: kaydetme/yüklemeyi kendi
+    dosyasına taşımak `effect_templates`'i içe aktarılmamış bıraktı; esbuild çözülmemiş
+    bir adı çalışma zamanı genel değişkeni saydığı için derleme ve bütün kontroller
+    geçti, hata yalnızca yüklemede çıktı. `load()` içinde o satırdan sonraki her şey —
+    favoriler dâhil — hiç çalışmadı. Sahibinin gerçek kaydıyla tarayıcıda
+    doğrulandı: yedi görev çiziliyor, iki favori de geri geliyor.
+50. **Yatak ve dövüş konumları kalıcı olmuyordu** — `bitti`, v0.6.55. Bildirilmedi;
+    49'u ölçerken bulundu: aynı ayrım `last_combat_location`'ı her yerde
+    `game_state.last_combat_location` yaptı ve bu, tırnak içindeki iki **kayıt
+    anahtarının** içine kadar uzandı. Kayıt, yükleyicinin okumadığı bir adla yazdı,
+    değer boş döndü, sonraki kayıt da anahtarı dosyadan düşürdü. Ancak sahibinin günler
+    arayla aldığı iki dışa aktarma karşılaştırılınca ortaya çıktı. Kayıt anahtarı, hâlihazırda
+    var olan kayıtlarla yapılmış bir sözleşmedir; bkz. D-8.
+51. **Satır sonları `.gitattributes` ile sabitlendi** — `bitti`. `* text=auto`,
+    çalışma kopyasındaki satır sonunu her katılımcının `core.autocrlf` ayarına bırakıyordu;
+    sonuçta tamamı LF olan bir indekse karşı 64 dosyası CRLF, 10 dosyası LF çıkarılmış bir
+    ağaç oluştu ve commit'ler "LF will be replaced by CRLF" yazdı. Artık
+    `.js/.mjs/.json/.css/.html/.md/.yml` için `eol=lf`. CRLF ile commit edilmiş tek dosya
+    olan `tests/checks/content.mjs` bu sırada normalleştirildi.
+52. **Bir ajanın başlayabileceği durum belgesi** — `bitti`.
+    [STATUS.md](STATUS.md): oyunun nerede olduğu, mimarinin gerçekte ne olduğu, hangi
+    kısıtların can yaktığı ve nelerin sürdüğü. Geçmişi olmayan bir ajana verildiğinde
+    yetecek şekilde yazıldı.
+53. **Belge çifti kontrolü** — `bitti`. D-3, her belgenin `NAME.md` ve
+    `NAME.TR.md` olarak çift geldiğini söylüyor ama bunu zorlayan bir şey yoktu; çeviri
+    sessizce geride kalabiliyordu — bayat bir Türkçe dosya, artık doğru olmayan
+    paragrafa gelene kadar gayet iyi okunur. `check_docs_are_paired` artık eşin var
+    olmasını, `doc-source` olarak İngilizce dosyayı göstermesini ve aynı `doc-version`'ı
+    taşımasını şart koşuyor. Yedi çift. Türkçenin İngilizceyle aynı şeyi söyleyip
+    söylemediğini denetleyemez; o D-7'nin işi.
+54. **Hikâyeyi sürdür, yeni alanları bağla** — `yapılacak`. Motor toparlanırken
+    anlatı işine ara verilmiyor: inşa edilen bölgelerin hikâyenin yanında durmak yerine
+    hikâyeye bağlanması gerekiyor.
+55. **Kasabayı genişlet ve hareketlendir** — `yapılacak`. Oyuncunun en çok vakit
+    geçirdiği yer başlangıç yerleşimi ve içinde en az şey olan yer de orası. Daha çok
+    yapılacak şey, daha çok görülecek şey, geri dönmek için daha çok sebep.
+56. **İtibar yeni aksiyon ve konuşmalar açsın** — `yapılacak`. Kasaba, içinde
+    kurulan itibara tepki vermeli: itibar yükseldikçe yeni aksiyonlar ve yeni
+    konuşmalar açılmalı ki mekân sabit bir fon olmaktan çıkıp oyuncuyla değişsin.
+57. **Dev konsolu için `add_best_effect`** — `yapılacak`. `give_best`'in eşi:
+    olumlu etkilerin tamamını — Spark of inspiration, Coffee, Well hydrated ve
+    diğerleri — tek tek adlandırmak yerine istenen süreyle uygulayan tek komut.
+    Hangi etkinin olumlu sayıldığı elle listelenmeyip şablonlardan türetilmeli; yoksa
+    liste, yeni bir etki eklendiği anda çürür.
 ---
 ## Bekleyen kararlar
 

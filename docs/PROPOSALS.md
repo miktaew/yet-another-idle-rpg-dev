@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 41 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 43 -->
 
 # Proposals
 
@@ -69,6 +69,26 @@ whatever is above it on screen, so a question and its reply, a stat's short and 
 form, and a label and its possible values are translated together and must agree.
 
 Rules, glossary and known gaps: [I18N.md](I18N.md).
+
+### D-8 — Every fix ships with the test that would have caught it
+
+A bug that reached a player is evidence that nothing in the gate was looking for it.
+Fixing the bug without adding that guard leaves the door open, and this repository has
+walked back through it more than once: `restore_message_log` and `effect_templates`
+were the same missing-import bug three weeks apart.
+
+So a fix is not finished until a check fails without it. Two rules make that real:
+
+1. **Negative-test the guard.** Put the bug back, watch the check fail, take it out
+   again, watch it pass. A guard that has never failed has not been tested, only
+   written - and a widened matcher can silently stop catching what it used to.
+2. **Guard the class, not the instance.** `check_save_keys_round_trip` does not know
+   about `last_combat_location`; it requires that every key the save writes is a key
+   the load reads. The next rename fails the same way.
+
+Where they live: `tests/checks/*.mjs`, registered in `tests/run.mjs`, run by
+`npm run check`. The gate is `npm run build && npm run check && npm test &&
+npm run check:bundle`, and all four have to pass before a commit.
 
 ### D-6 — Push straight to the default branch
 
@@ -911,11 +931,11 @@ not after. Each item is the request as it was given, and the state it is in.
     reverses a standing assumption: upstream is **not** dead. Their `master` and
     `refactoring` both sit at `19011a0`, pushed 2026-08-27, which our master already
     contains - so there is nothing new to take, but there is somebody to send to.
-43. **The bestiary should say where a creature is found** — `todo`. It lists what a
+43. **The bestiary should say where a creature is found** — `done`, v0.6.48. It lists what a
     creature is and what it drops, and not the one thing a player is usually looking it
     up for. The data is there: every combat zone declares its enemy groups, so the
     reverse index can be built rather than written.
-44. **A discovered-items page, alongside the lore panel** — `todo`. A new mini page at
+44. **A discovered-items page, alongside the lore panel** — `done`, v0.6.49, with search added in v0.6.51. A new mini page at
     the top of the game, in the same family as lore: everything the player has actually
     found - gathered from a map, dropped by a creature, bought - with where it comes
     from, and a button that travels to the region it comes from. Discovered, not
@@ -983,7 +1003,50 @@ not after. Each item is the request as it was given, and the state it is in.
     The browser-free test loader replays that list to reproduce the browser's evaluation
     order, and putting crafting.js early pulled character.js in ahead of items.js and
     broke five checks. The bundle was fine either way.
+49. **The loader stopped part-way through** — `done`, v0.6.55. Reported as "quests are
+    completely broken, they come back empty" with a ReferenceError, and separately as
+    favourited places gone from fast travel. One cause: moving save/load into its own
+    file left `effect_templates` unimported, and esbuild reads an unresolved name as a
+    runtime global, so it built and passed every check and threw only on load. Everything
+    in `load()` after that line - the favourites among it - never ran. Verified in a
+    browser against the owner's real save: seven quests render, both favourites return.
+50. **The bed and combat locations stopped persisting** — `done`, v0.6.55. Found while
+    measuring 49, not reported: the same split rewrote `last_combat_location` to
+    `game_state.last_combat_location` everywhere, and the rewrite reached inside the two
+    quoted **save keys**. The save wrote a name the loader did not read, the value came
+    back undefined, and the next save dropped the key from the file. It surfaced only by
+    diffing two of the owner's exports days apart. A save key is a contract with saves
+    that already exist; see D-8.
+51. **Line endings pinned in `.gitattributes`** — `done`. `* text=auto` left the
+    working-tree ending to each contributor's `core.autocrlf`, giving a tree checked out
+    64 files CRLF and 10 LF against an all-LF index, so commits printed "LF will be
+    replaced by CRLF". `.js/.mjs/.json/.css/.html/.md/.yml` are `eol=lf` now.
+    `tests/checks/content.mjs` was the one file committed with CRLF and renormalised.
+52. **A status document an agent can start from** — `done`. [STATUS.md](STATUS.md):
+    where the game stands, what the architecture actually is, which constraints bite, and
+    what is in flight. Written so that handing it to an agent with no history is enough.
 
+53. **A documentation pair check** — `done`. D-3 says every doc ships as
+    `NAME.md` plus `NAME.TR.md` and nothing enforced it, so a translation could fall
+    behind silently - a stale Turkish file reads perfectly well right up to the
+    paragraph that is no longer true. `check_docs_are_paired` requires the counterpart
+    to exist, to name the English file as its `doc-source`, and to carry the same
+    `doc-version`. Seven pairs. It cannot check that the Turkish says what the English
+    says; that stays D-7's business.
+54. **Keep the story going, and connect the new areas** — `todo`. Not a pause in
+    narrative work while the engine is tidied: the regions that were built need to be
+    tied into the story rather than left standing next to it.
+55. **Expand the town and make it livelier** — `todo`. The starting settlement is
+    where a player spends the most time and it has the least happening in it. More to
+    do, more to see, more reason to come back.
+56. **Reputation opens actions and dialogue** — `todo`. A town should react to
+    standing built up in it: new actions and new conversations unlock as reputation
+    rises, so the place changes with the player rather than staying a fixed backdrop.
+57. **`add_best_effect` for the dev console** — `todo`. The counterpart to
+    `give_best`: one command that applies every positive effect - Spark of inspiration,
+    Coffee, Well hydrated and the rest - for a chosen duration, instead of naming them
+    one at a time. Which effects count as positive has to be derived from the
+    templates, not hand-listed, or the list rots the moment an effect is added.
 ---
 ## Open decisions
 
