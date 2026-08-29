@@ -3076,6 +3076,7 @@ const descriptions = {
     "ui quest hint": "Try:",
     "ui quest hint talk": "Talk to {v1}, in {v2}",
     "ui quest hint action": "{v1} - in {v2}",
+    "ui quest hint place": "Somewhere in {v1}",
     "ui quest hint clear": "Clear {v1}",
     "ui discovery none": "You have not found anything yet.",
     "ui discovery no source": "No known source",

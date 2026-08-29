@@ -1,6 +1,7 @@
 "use strict";
 
 import { current_game_time, is_night } from "./game_time.js";
+import { run_stats } from "./run_stats.js";
 import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity, Weapon} from "./items.js";
 import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_market_saturations, set_loot_sold_count, capped_at } from "./market_saturation.js";
 import { locations, favourite_locations, location_types } from "./data/locations.js";
@@ -179,18 +180,8 @@ let language = languages.english;
 let is_loading_error = false;
 
 //in seconds
-let total_playtime = 0;
 
 //some random stats to keep count of in case they ever become relevant
-let total_deaths = 0;
-let total_crafting_attempts = 0;
-let total_crafting_successes = 0;
-let total_kills = 0; 
-let total_crits_done = 0;
-let total_crits_taken = 0;
-let total_hits_done = 0;
-let total_hits_taken = 0;
-let strongest_hit = 0;
 let gathered_materials = {};
 
 //keeping the time to use it for export bonus
@@ -1932,11 +1923,11 @@ function do_enemy_combat_action(enemy_id) {
         }
     }
 
-    total_hits_taken++;
+    run_stats.total_hits_taken++;
     if(config.enemy_crit_chance > Math.random()){
         damages_dealt = damages_dealt.map(val => val*config.enemy_crit_damage);
         critted = true;
-        total_crits_taken++;
+        run_stats.total_crits_taken++;
     }
 
     if(!character.wears_armor()) //no armor so either completely naked or in things with 0 def
@@ -2006,7 +1997,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
 
     if(hit_chance > Math.random()) {//hero's attack hits
 
-        total_hits_done++;
+        run_stats.total_hits_done++;
         if(character.equipment.weapon != null) {
             //if has weapon
             damage_dealt = Math.round(10 * damage_modifier * hero_base_damage * (1.2 - Math.random() * 0.4))/10;
@@ -2027,7 +2018,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
         if(character.stats.full.crit_rate > Math.random()) {
             damage_dealt = Math.round(10*damage_dealt * character.stats.full.crit_multiplier)/10;
             critted = true;
-            total_crits_done++;
+            run_stats.total_crits_done++;
             add_xp_to_skill({skill: skills['Perception'], xp_to_add: 1/target_count}); //gains unaffected by damage nor by enemy xp value
         }
         else {
@@ -2037,8 +2028,8 @@ function do_character_combat_action({target, attack_power, target_count}) {
         damage_dealt = Math.ceil(10*Math.max(damage_dealt - Math.max(0,target.stats.defense-character.stats.full.armor_penetration), damage_dealt*0.1, 1))/10;
 
         target.stats.health -= damage_dealt;
-        if(damage_dealt > strongest_hit) {
-            strongest_hit = damage_dealt;
+        if(damage_dealt > run_stats.strongest_hit) {
+            run_stats.strongest_hit = damage_dealt;
         }
         if(critted) {
             log_message(translationManager.getText(language, "log target critically hit", {v1: target.getName(), v2: damage_dealt}), "enemy_attacked_critically");
@@ -2050,7 +2041,7 @@ function do_character_combat_action({target, attack_power, target_count}) {
         target.on_damaged(character);
 
         if(target.stats.health <= 0) {
-            total_kills++;
+            run_stats.total_kills++;
             target.stats.health = 0; //to not go negative on displayed value
             target.on_death(character);
 
@@ -2114,7 +2105,7 @@ function kill_enemy(target, do_quest_events = true) {
 
 function kill_player({is_combat = true} = {}) {
     if(is_combat) {
-        total_deaths++;
+        run_stats.total_deaths++;
         log_message(translationManager.getText(language, "log heroname has lost consciousness"), "hero_defeat");
 
         update_displayed_health();
@@ -3023,8 +3014,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
 
                 xp_to_add = current_gained_xp + xp_per_craft*(success+fail/4);
 
-                total_crafting_attempts += attempted_crafting_ammount;
-                total_crafting_successes += successful_crafting_ammount;
+                run_stats.total_crafting_attempts += attempted_crafting_ammount;
+                run_stats.total_crafting_successes += successful_crafting_ammount;
 
                 //remove used materials
                 for (let i = 0; i < selected_recipe.materials.length; i++) {
@@ -3156,8 +3147,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                             needed_xp = recipe_skill.total_xp_to_next_lvl - recipe_skill.total_xp;
                         }
                     }
-                    total_crafting_attempts+=ammount_that_can_be_crafted;
-                    total_crafting_successes+=ammount_that_can_be_crafted;
+                    run_stats.total_crafting_attempts+=ammount_that_can_be_crafted;
+                    run_stats.total_crafting_successes+=ammount_that_can_be_crafted;
 
                     if(crafted_count > 0) {
                         const qualities = Object.keys(crafted_items).map(x => Number(x)).sort((a,b)=>b-a);
@@ -3272,8 +3263,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 }
             }
 
-            total_crafting_attempts+=ammount_that_can_be_crafted;
-            total_crafting_successes+=ammount_that_can_be_crafted;
+            run_stats.total_crafting_attempts+=ammount_that_can_be_crafted;
+            run_stats.total_crafting_successes+=ammount_that_can_be_crafted;
 
             if(crafted_count > 0) {
                 const qualities = Object.keys(crafted_items).map(x => Number(x)).sort((a,b)=>b-a);
@@ -3693,18 +3684,18 @@ function create_save() {
         save_data["current time"] = current_game_time;
         save_data["language"] = language;
         save_data.saved_at = get_date();
-        save_data.total_playtime = total_playtime;
+        save_data.total_playtime = run_stats.total_playtime;
         //The message log, so a reload does not wipe what the player was just told.
         save_data.message_log = get_message_log_history();
-        save_data.total_deaths = total_deaths;
-        save_data.total_crafting_attempts = total_crafting_attempts;
-        save_data.total_crafting_successes = total_crafting_successes;
-        save_data.total_kills = total_kills;
-        save_data.total_crits_done = total_crits_done;
-        save_data.total_crits_taken = total_crits_taken;
-        save_data.total_hits_done = total_hits_done;
-        save_data.total_hits_taken = total_hits_taken;
-        save_data.strongest_hit = strongest_hit;
+        save_data.total_deaths = run_stats.total_deaths;
+        save_data.total_crafting_attempts = run_stats.total_crafting_attempts;
+        save_data.total_crafting_successes = run_stats.total_crafting_successes;
+        save_data.total_kills = run_stats.total_kills;
+        save_data.total_crits_done = run_stats.total_crits_done;
+        save_data.total_crits_taken = run_stats.total_crits_taken;
+        save_data.total_hits_done = run_stats.total_hits_done;
+        save_data.total_hits_taken = run_stats.total_hits_taken;
+        save_data.strongest_hit = run_stats.strongest_hit;
         save_data.gathered_materials = gathered_materials;
         save_data.global_flags = global_flags;
         save_data.last_rewarded_export = last_rewarded_export || 0;
@@ -4082,19 +4073,19 @@ function load(save_data) {
 
         last_rewarded_export = save_data.last_rewarded_export || last_rewarded_export;
 
-        total_playtime = save_data.total_playtime || 0;
+        run_stats.total_playtime = save_data.total_playtime || 0;
         //Older saves have no log; restore_message_log ignores anything that is not
         //an array, so there is nothing to guard here.
         restore_message_log(save_data.message_log);
-        total_deaths = save_data.total_deaths || 0;
-        total_crafting_attempts = save_data.total_crafting_attempts || 0;
-        total_crafting_successes = save_data.total_crafting_successes || 0;
-        total_kills = save_data.total_kills || 0;
-        total_crits_done = save_data.total_crits_done || 0;
-        total_crits_taken = save_data.total_crits_taken || 0;
-        total_hits_done = save_data.total_hits_done || 0;
-        total_hits_taken = save_data.total_hits_taken || 0;
-        strongest_hit = save_data.strongest_hit || 0;
+        run_stats.total_deaths = save_data.total_deaths || 0;
+        run_stats.total_crafting_attempts = save_data.total_crafting_attempts || 0;
+        run_stats.total_crafting_successes = save_data.total_crafting_successes || 0;
+        run_stats.total_kills = save_data.total_kills || 0;
+        run_stats.total_crits_done = save_data.total_crits_done || 0;
+        run_stats.total_crits_taken = save_data.total_crits_taken || 0;
+        run_stats.total_hits_done = save_data.total_hits_done || 0;
+        run_stats.total_hits_taken = save_data.total_hits_taken || 0;
+        run_stats.strongest_hit = save_data.strongest_hit || 0;
         gathered_materials = save_data.gathered_materials || {};
 
         name_field.value = save_data.character.name;
@@ -6056,7 +6047,7 @@ function update() {
             }
         }
 
-        total_playtime += 1/tickrate;
+        run_stats.total_playtime += 1/tickrate;
         update();
     }, 1000/tickrate - time_adjustment);
     //uses time_adjustment based on time_variance_accumulator for more precise overall stabilization

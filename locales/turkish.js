@@ -3116,6 +3116,7 @@ const descriptions = {
     "ui quest hint": "Şuralara bak:",
     "ui quest hint talk": "{v2}'de {v1} ile konuş",
     "ui quest hint action": "{v1} - {v2}",
+    "ui quest hint place": "{v1} içinde bir yerde",
     "ui quest hint clear": "{v1} bölgesini temizle",
     "ui discovery none": "Henüz bir şey bulmadınız.",
     "ui discovery no source": "Bilinen bir kaynağı yok",

@@ -25,6 +25,71 @@ import { read_string_literals, source_files, strip_comments, strip_interpolation
  *
  * What is left is a word a player can read that no translation can reach.
  */
+/**
+ * Every function an onclick names is reachable as a global.
+ *
+ * An onclick is a string resolved against the global object at click time, so a function
+ * that loses its `window.` assignment fails there and nowhere else: not in the build, not
+ * in a check, not in the bundle-load test. The button just stops working.
+ *
+ * That makes this the net under any move of code out of main.js, which is where 89 of
+ * those assignments live. Two sources of onclick are read - the attributes in index.html
+ * and the ones display.js sets with setAttribute - and functions declared inline in
+ * index.html count, since they are globals already.
+ */
+function check_onclick_names_are_reachable() {
+    const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+    const source = source_files(repo_root)
+        .map(relative => fs.readFileSync(path.join(repo_root, relative), "utf8"))
+        .join("\n");
+
+    const reachable = new Set();
+    for (const match of source.matchAll(/window\.(\w+)\s*=/g)) {
+        reachable.add(match[1]);
+    }
+    for (const match of source.matchAll(/window\[["'](\w+)["']\]\s*=/g)) {
+        reachable.add(match[1]);
+    }
+    //A function declared in the markup is a global without being assigned to one.
+    for (const match of html.matchAll(/function\s+(\w+)\s*\(/g)) {
+        reachable.add(match[1]);
+    }
+    //The dev console attaches its helpers in a loop, by name, at runtime.
+    const dev_console = /window\[name\]\s*=/.test(source);
+
+    const called = new Map();
+    const record = (name, where) => {
+        if (!called.has(name)) called.set(name, new Set());
+        called.get(name).add(where);
+    };
+    for (const match of html.matchAll(/onclick\s*=\s*["']([^"']+)["']/g)) {
+        for (const call of match[1].matchAll(/(?<![\w.])([A-Za-z_]\w*)\s*\(/g)) {
+            record(call[1], "index.html");
+        }
+    }
+    for (const match of source.matchAll(
+            /setAttribute\(\s*["']onclick["']\s*,\s*(["'`])([\s\S]*?)\1/g)) {
+        for (const call of match[2].matchAll(/(?<![\w.])([A-Za-z_]\w*)\s*\(/g)) {
+            record(call[1], "a setAttribute in src/");
+        }
+    }
+
+    for (const [name, wheres] of called) {
+        if (reachable.has(name)) continue;
+        error(`${[...wheres].join(" and ")} calls "${name}" from an onclick, but nothing`
+            + ` assigns it to window. That button would do nothing, and only a click would`
+            + ` say so.`);
+    }
+
+    if (called.size < 50 || reachable.size < 50) {
+        error(`found ${called.size} onclick names and ${reachable.size} globals`
+            + ` - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] onclick names: ${called.size} reachable`
+        + `${dev_console ? " (plus the dev console's, attached by name)" : ""}`);
+}
 async function check_no_english_in_dom() {
     const reference = await load_locale(default_language);
     if (!reference) return;
@@ -183,4 +248,5 @@ export {
     check_base64_is_utf8_safe,
     check_seasons_go_through_the_accessor,
     check_no_english_in_dom,
+    check_onclick_names_are_reachable,
 };

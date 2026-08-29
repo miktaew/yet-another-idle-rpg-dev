@@ -6230,8 +6230,19 @@ function create_quest_step_hint(quest_id, task_index) {
                         {v1: location.getName()}));
             }
             const action = location.actions?.[step.via];
-            if(!action || action.is_finished || !action.is_unlocked) {
+            if(action?.is_finished) {
                 return null;
+            }
+            /*
+                A locked action keeps its name to itself - the player has not earned the
+                wording yet - but not its place. The place is the answer to "where do I go",
+                it is not a secret, and saying nothing at all left a task standing alone
+                with no way to act on it.
+            */
+            if(!action || !action.is_unlocked) {
+                return create_hint_line(location,
+                    translationManager.getText(language, "ui quest hint place",
+                        {v1: location.getName()}));
             }
             return create_hint_line(location,
                 translationManager.getText(language, "ui quest hint action",
