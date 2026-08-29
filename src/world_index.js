@@ -322,6 +322,144 @@ function build_advancers_index() {
     return index;
 }
 
+/*
+    What opens a locked thing.
+
+    A reward can unlock an action or a dialogue line, and both say so in the same shape
+    the advancers do. Indexed by what is opened, so a locked step can be walked backwards
+    to the first thing the player can actually do.
+
+    Keys are "action:<location>#<action>" and "line:<dialogue>#<line>".
+*/
+let unlock_sources_index;
+
+function build_unlock_sources_index() {
+    const index = {};
+
+    const note = (rewards, opener) => {
+        if(!rewards) {
+            return;
+        }
+        const add = (key) => {
+            if(!index[key]) {
+                index[key] = [];
+            }
+            const already = index[key].some(other => other.kind === opener.kind
+                && other.via === opener.via && other.location_key === opener.location_key);
+            if(!already) {
+                index[key].push(opener);
+            }
+        };
+
+        as_list(rewards.actions).forEach(step => {
+            if(step?.location && step?.action) {
+                add(`action:${step.location}#${step.action}`);
+            }
+        });
+        as_list(rewards.textlines).forEach(step => {
+            if(!step?.dialogue) {
+                return;
+            }
+            as_list(step.lines).forEach(line => add(`line:${step.dialogue}#${line}`));
+        });
+    };
+
+    Object.keys(locations).forEach(location_key => {
+        Object.keys(locations[location_key].actions || {}).forEach(action_key => {
+            note(locations[location_key].actions[action_key].rewards,
+                {kind: "action", via: action_key, location_key});
+        });
+        ["first_reward", "repeatable_reward"].forEach(which => {
+            note(locations[location_key][which],
+                {kind: "clear", via: location_key, location_key});
+        });
+    });
+
+    const host_of = {};
+    Object.keys(locations).forEach(location_key => {
+        as_list(locations[location_key].dialogues).forEach(dialogue_key => {
+            host_of[dialogue_key] = location_key;
+        });
+    });
+
+    Object.keys(dialogues).forEach(dialogue_key => {
+        const location_key = host_of[dialogue_key];
+        //The line key travels with the opener: the elder can be available while the one
+        //line that matters is still locked, and "talk to the elder" would then be a hint
+        //that leads nowhere.
+        Object.entries(dialogues[dialogue_key].textlines || {}).forEach(([line_key, line]) => {
+            note(line.rewards, {kind: "talk", via: dialogue_key, location_key, line: line_key});
+        });
+        Object.values(dialogues[dialogue_key].actions || {}).forEach(action => {
+            note(action.rewards, {kind: "talk", via: dialogue_key, location_key});
+        });
+    });
+
+    return index;
+}
+
+/**
+ * Whether a step can be done right now.
+ */
+function is_step_available(step) {
+    const location = locations[step.location_key];
+    if(!location?.is_unlocked) {
+        return false;
+    }
+    if(step.kind === "talk") {
+        if(!dialogues[step.via]?.is_unlocked) {
+            return false;
+        }
+        return step.line
+            ? !!dialogues[step.via].textlines?.[step.line]?.is_unlocked
+            : true;
+    }
+    if(step.kind === "clear") {
+        return !location.is_finished;
+    }
+    const action = location.actions?.[step.via];
+    return !!action?.is_unlocked && !action.is_finished;
+}
+
+/**
+ * The first thing the player can do that leads to a locked step, walking backwards.
+ *
+ * "build a hearth" is locked until the village elder mentions a hollow, and he cannot
+ * until a flue is cut on the mountain - so the answer to "where do I build a hearth" is
+ * a mountain, three links away. Content may be circular, so the walk is cycle-guarded and
+ * depth-capped: a hint is not worth a hang.
+ *
+ * @param {String} key "action:<location>#<action>" or "line:<dialogue>#<line>"
+ * @returns {Object|null} an available step, or null if nothing in the chain is reachable
+ */
+function first_available_opener(key, depth = 0, seen = new Set()) {
+    if(depth > 4 || seen.has(key)) {
+        return null;
+    }
+    seen.add(key);
+
+    if(!unlock_sources_index) {
+        unlock_sources_index = build_unlock_sources_index();
+    }
+
+    const openers = unlock_sources_index[key] || [];
+    for(const opener of openers) {
+        if(is_step_available(opener)) {
+            return opener;
+        }
+    }
+    //Nothing here is available, so ask what would open each opener in turn.
+    for(const opener of openers) {
+        const next = opener.kind === "talk"
+            ? (opener.line ? `line:${opener.via}#${opener.line}` : null)
+            : `action:${opener.location_key}#${opener.via}`;
+        const found = next && first_available_opener(next, depth + 1, seen);
+        if(found) {
+            return found;
+        }
+    }
+    return null;
+}
 /**
  * What advances one quest task.
  *
@@ -336,5 +474,14 @@ function quest_task_advancers(quest_id, task_index) {
     return advancers_index[`${quest_id}#${task_index}`] || [];
 }
 
-export { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
+//Exported for the tests: the raw index, so a walk can be inspected without a browser.
+function unlock_sources_for(key) {
+    if(!unlock_sources_index) {
+        unlock_sources_index = build_unlock_sources_index();
+    }
+    return unlock_sources_index[key] || [];
+}
+
+export { enemy_zones, zones_for_enemy_tag, item_sources, training_places, unlock_sources_for,
+    first_available_opener, is_step_available,
     quest_task_advancers };

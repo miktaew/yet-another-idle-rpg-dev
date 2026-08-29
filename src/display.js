@@ -28,6 +28,7 @@ import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_old
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
+    first_available_opener,
     quest_task_advancers } from "./world_index.js";
 import { effect_templates } from "./active_effects.js";
 import { player_storage } from "./data/storage.js";
@@ -6207,47 +6208,64 @@ function create_quest_hint(task_type, target_id) {
  * action is finished somewhere. Without this the journal shows a task with no numbers and
  * no clue, which is what made four quests look impossible at once.
  */
+/**
+ * One line for one step: talk to somebody, do something, clear somewhere.
+ *
+ * Shared by the steps that advance a task directly and by the ones found further back
+ * up an unlock chain, so both read the same way.
+ */
+function create_quest_step_line(step) {
+    const location = locations[step.location_key];
+    //Nothing is pointed at until the place is known: a hint into an undiscovered
+    //room is a spoiler, not a hint.
+    if(!location?.is_unlocked) {
+        return null;
+    }
+    if(step.kind === "talk") {
+        const who = capitalize_first_letter(translationManager.getDisplayName(language,
+            dialogues[step.via].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})), true);
+        return create_hint_line(location,
+            translationManager.getText(language, "ui quest hint talk",
+                {v1: who, v2: location.getName()}));
+    }
+    if(step.kind === "clear") {
+        //A zone is its own place, so naming it twice would say nothing twice.
+        return create_hint_line(location,
+            translationManager.getText(language, "ui quest hint clear",
+                {v1: location.getName()}));
+    }
+    const action = location.actions?.[step.via];
+    if(action?.is_finished) {
+        return null;
+    }
+    /*
+        A locked action keeps its own wording to itself, but the player still needs
+        somewhere to go. What opens it is in the content - rewards say which actions
+        and lines they unlock - so the chain is walked backwards to the first link
+        that is reachable now.
+
+        "build a hearth" is opened by the elder's hollow line, which is opened by
+        cutting a flue on the mountain: the answer to a question about the village
+        is a mountain, three links away. Falling back to the place only when the
+        whole chain is still closed.
+    */
+    if(!action || !action.is_unlocked) {
+        const opener = first_available_opener(`action:${step.location_key}#${step.via}`);
+        if(opener) {
+            return create_quest_step_line(opener);
+        }
+        return create_hint_line(location,
+            translationManager.getText(language, "ui quest hint place",
+                {v1: location.getName()}));
+    }
+    return create_hint_line(location,
+        translationManager.getText(language, "ui quest hint action",
+            {v1: action.getActionName(), v2: location.getName()}));
+}
+
 function create_quest_step_hint(quest_id, task_index) {
     const lines = quest_task_advancers(quest_id, task_index)
-        .map(step => {
-            const location = locations[step.location_key];
-            //Nothing is pointed at until the place is known: a hint into an undiscovered
-            //room is a spoiler, not a hint.
-            if(!location?.is_unlocked) {
-                return null;
-            }
-            if(step.kind === "talk") {
-                const who = capitalize_first_letter(translationManager.getDisplayName(language,
-                    dialogues[step.via].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})), true);
-                return create_hint_line(location,
-                    translationManager.getText(language, "ui quest hint talk",
-                        {v1: who, v2: location.getName()}));
-            }
-            if(step.kind === "clear") {
-                //A zone is its own place, so naming it twice would say nothing twice.
-                return create_hint_line(location,
-                    translationManager.getText(language, "ui quest hint clear",
-                        {v1: location.getName()}));
-            }
-            const action = location.actions?.[step.via];
-            if(action?.is_finished) {
-                return null;
-            }
-            /*
-                A locked action keeps its name to itself - the player has not earned the
-                wording yet - but not its place. The place is the answer to "where do I go",
-                it is not a secret, and saying nothing at all left a task standing alone
-                with no way to act on it.
-            */
-            if(!action || !action.is_unlocked) {
-                return create_hint_line(location,
-                    translationManager.getText(language, "ui quest hint place",
-                        {v1: location.getName()}));
-            }
-            return create_hint_line(location,
-                translationManager.getText(language, "ui quest hint action",
-                    {v1: action.getActionName(), v2: location.getName()}));
-        })
+        .map(create_quest_step_line)
         .filter(Boolean);
 
     return create_hint_block(lines);
