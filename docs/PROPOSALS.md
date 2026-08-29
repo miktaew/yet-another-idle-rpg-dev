@@ -1042,7 +1042,7 @@ not after. Each item is the request as it was given, and the state it is in.
 56. **Reputation opens actions and dialogue** — `todo`. A town should react to
     standing built up in it: new actions and new conversations unlock as reputation
     rises, so the place changes with the player rather than staying a fixed backdrop.
-57. **`add_best_effect` for the dev console** — `todo`. The counterpart to
+57. **`add_best_effect` for the dev console** — `done`, v0.6.56. The counterpart to
     `give_best`: one command that applies every positive effect - Spark of inspiration,
     Coffee, Well hydrated and the rest - for a chosen duration, instead of naming them
     one at a time. Which effects count as positive has to be derived from the

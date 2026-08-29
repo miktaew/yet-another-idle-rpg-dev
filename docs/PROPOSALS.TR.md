@@ -1055,7 +1055,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
 56. **İtibar yeni aksiyon ve konuşmalar açsın** — `yapılacak`. Kasaba, içinde
     kurulan itibara tepki vermeli: itibar yükseldikçe yeni aksiyonlar ve yeni
     konuşmalar açılmalı ki mekân sabit bir fon olmaktan çıkıp oyuncuyla değişsin.
-57. **Dev konsolu için `add_best_effect`** — `yapılacak`. `give_best`'in eşi:
+57. **Dev konsolu için `add_best_effect`** — `bitti`, v0.6.56. `give_best`'in eşi:
     olumlu etkilerin tamamını — Spark of inspiration, Coffee, Well hydrated ve
     diğerleri — tek tek adlandırmak yerine istenen süreyle uygulayan tek komut.
     Hangi etkinin olumlu sayıldığı elle listelenmeyip şablonlardan türetilmeli; yoksa

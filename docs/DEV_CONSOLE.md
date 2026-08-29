@@ -1,4 +1,4 @@
-<!-- doc-source: docs/DEV_CONSOLE.md  doc-version: 1 -->
+<!-- doc-source: docs/DEV_CONSOLE.md  doc-version: 2 -->
 
 # Dev console
 
@@ -73,6 +73,28 @@ Puts one of the best item for each of the sixteen equip slots into the inventory
 each slot measures things: attack for a weapon, defense for armour, block for a
 shield, and the price the game puts on it for the slots with no headline number
 (artifact, amulet, ring and the five tools). Returns what it handed over.
+
+### Every good effect at once
+
+```js
+add_best_effect()        // all 22 buffs, for 1800 in-game minutes
+add_best_effect(120)     // the same, for two in-game hours
+```
+
+The counterpart to `give_best`, for the same reason: naming Coffee, Spark of
+Inspiration and Well hydrated one at a time is the tedious part. It applies every
+effect the templates tag as a `buff` - meals, the healing items, Coffee, Well
+hydrated and Spark of Inspiration - and nothing else. Poisons, the cold stages and
+`Potion of sapping` are not tagged buff and are not touched.
+
+Which effects count is read off the data rather than listed in the console's own
+code, so an effect added tomorrow is included the moment it is tagged. A check
+(`check_effect_tags_match_their_numbers`) fails the build if anything tagged `buff`
+has a wholly harmful stat profile, since this command trusts that tag.
+
+Duration is in in-game minutes, like every duration in content. Returns the list it
+applied; if a stronger effect in the same group blocks one, the blocked names come
+back under `held_back_by_a_stronger_effect`.
 
 ## Everything else `give` accepts
 

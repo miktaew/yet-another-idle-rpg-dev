@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.56</button>
+    <div class="content">
+        <ul class="entries">
+            <li>The dev console gained <code>add_best_effect()</code>, the counterpart to <code>give_best()</code>: every good effect at once for a duration you choose, instead of naming Coffee, Spark of Inspiration and Well hydrated one at a time. Which effects count as good is read off the templates rather than listed in the console, so one added tomorrow is included the moment it is tagged - and a check now fails the build if anything tagged as a buff has a wholly harmful stat profile, since the command trusts that tag. 22 effects today.</li>
+            <li>Documentation is now checked in pairs. Every English file has to have its Turkish counterpart at the same version, which until now was only a rule people remembered: a translation falling behind is invisible, because a stale file reads perfectly well right up to the paragraph that is no longer true.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.55</button>
     <div class="content">
         <ul class="entries">

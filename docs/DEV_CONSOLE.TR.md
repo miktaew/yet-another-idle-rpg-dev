@@ -1,4 +1,4 @@
-<!-- doc-source: docs/DEV_CONSOLE.md  doc-version: 1 -->
+<!-- doc-source: docs/DEV_CONSOLE.md  doc-version: 2 -->
 
 # Geliştirici konsolu
 
@@ -73,6 +73,28 @@ On altı kuşanma slotunun her biri için en iyi eşyadan birer tane envantere k
 kendi ölçtüğü şeye göre ölçülür: silahta saldırı, zırhta savunma, kalkanda blok; kendine
 ait bir başlık sayısı olmayan slotlarda ise oyunun ona biçtiği fiyata göre (tılsım,
 kolye, yüzük ve beş alet). Ne verdiğini döndürür.
+
+### Bütün iyi etkiler tek seferde
+
+```js
+add_best_effect()        // 22 buff'ın tamamı, 1800 oyun içi dakika boyunca
+add_best_effect(120)     // aynısı, iki oyun içi saat boyunca
+```
+
+`give_best`'in eşi ve varlık sebebi de aynı: Kahve, İlham Kıvılcımı ve İyi su almış'ı
+tek tek yazmak işin sıkıcı kısmı. Şablonların `buff` diye etiketlediği bütün etkileri
+uygular - yemekler, iyileştirici eşyalar, Kahve, İyi su almış ve İlham Kıvılcımı - ve
+başka hiçbir şeyi. Zehirler, soğuk kademeleri ve `Potion of sapping` buff etiketli
+olmadığı için hiç dokunulmaz.
+
+Hangi etkinin sayılacağı konsolun kendi kodunda listelenmez, veriden okunur; böylece
+yarın eklenen bir etki, etiketlendiği anda listeye girer. Bir kontrol
+(`check_effect_tags_match_their_numbers`), `buff` etiketli bir şeyin bütün sayıları
+zararlıysa derlemeyi düşürür - çünkü bu komut o etikete güveniyor.
+
+Süre, içerikteki her süre gibi oyun içi dakikadır. Uyguladığı listeyi döndürür; aynı
+gruptaki daha güçlü bir etki birini engellerse engellenen adlar
+`held_back_by_a_stronger_effect` altında geri gelir.
 
 ## `give`'in kabul ettiği diğer her şey
 

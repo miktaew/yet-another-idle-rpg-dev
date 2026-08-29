@@ -4008,6 +4008,7 @@ window.run = run;
  *     give({items: [{item: "Iron ore", count: 50}]})
  *     give({items: [{item: "Iron sword", quality: 120}]})
  *     give_best()
+ *     add_best_effect(1800)
  *     goto("The bay")
  *
  * Deliberately NOT on by default and deliberately NOT saved. A reload turns it off
@@ -4153,6 +4154,42 @@ function enable_dev_console() {
                 granted.push(`${slot}: ${item.getName()}`);
             });
             return granted;
+        },
+        /*
+            Every good effect at once, the counterpart to give_best.
+
+            Which effects count as good is read off the templates - `tags.buff` - and
+            never hand-listed here. A list written out in this file would be correct
+            until the next effect is added and then quietly wrong, and the data already
+            carries the answer: Tipsy raises agility and is tagged debuff, so the tag
+            knows something that reading the stat signs would not.
+
+            Effects sharing a group_tag do not stack: add_active_effect keeps the
+            stronger and skips the weaker. No buff declares a group today - only the
+            cold stages do - so all twenty-two currently apply together, measured in
+            the browser. The skipped list is still reported rather than assumed empty,
+            because the day a buff joins a group the count would otherwise just be
+            quietly short.
+
+            Duration is in in-game minutes, like every duration in content.
+        */
+        add_best_effect: (duration = 1800) => {
+            if(typeof duration !== "number" || !(duration > 0)) {
+                console.error(`Duration has to be a positive number of in-game minutes, got "${duration}".`);
+                return;
+            }
+
+            const good = Object.keys(effect_templates).filter(key => effect_templates[key].tags?.buff);
+            const applied = [];
+            const skipped = [];
+            good.sort().forEach(key => {
+                real_add_active_effect(key, duration);
+                (active_effects[key] ? applied : skipped).push(key);
+            });
+
+            return skipped.length
+                ? {applied, held_back_by_a_stronger_effect: skipped}
+                : applied;
         },
         add_money: (amount) => { add_money_to_character(amount); return character.money; },
         add_xp: (amount) => { add_xp_to_character(amount); return character.xp.current_level; },
