@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 40 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 41 -->
 
 # Proposals
 
@@ -948,6 +948,41 @@ not after. Each item is the request as it was given, and the state it is in.
     test could have caught it because no test can construct a trader. The fix is to
     generate one entry module that imports in main.js's own order and evaluate the target
     through it.
+48. **Splitting the big files** — `in progress`, and the measurements are the point.
+    Two cuts are made and the rest are costed rather than guessed at. A cut is judged by
+    two numbers: how many names the moved code needs from what stays, and how many the
+    staying code needs back. The second is the expensive one - it becomes an import INTO
+    a module that is already the entry point of a load-bearing cycle.
+
+    Done: **crafting.js** (357 lines, 4 in / 0 out) and **run_stats.js** (the ten run
+    counters, which had to leave first because an imported binding is read-only and
+    use_recipe increments two of them). **ui_helpers.js** (9 functions) followed, for the
+    same reason on the display.js side. main.js 6606 -> 6279.
+
+    Costed and NOT done, with the reason:
+
+      * `process_rewards` (365 lines) needs 20 names from main.js and would put
+        rewards.js and quests.js in a direct two-module cycle, which is the shape that
+        broke v0.6.27. Would need `questManager` published through registries.js first.
+      * save/load (1821 lines, 29% of main.js) needs 60 names, nearly all of them module
+        state the two functions read and write. The run_stats.js pattern generalises: a
+        `game_state.js` leaf holding that state would cut the 60 down hard. Biggest prize,
+        biggest preparation, and save-format risk if done carelessly.
+      * bestiary + Discoveries out of display.js (389 lines) is now 5 in / 1 out - the one
+        back-edge is `create_travel_line`, which the quest hints also use. Moving the hint
+        renderer with it moves the need to `create_quest_step_hint`, and so on into the
+        quest journal. The next preparation is to decide where the journal's shared
+        rendering lives.
+
+    Safety net in place: `check_onclick_names_are_reachable`. An onclick is a string
+    resolved against the global object at click time, so a function that loses its
+    `window.` assignment fails there and nowhere else - not the build, not a check, not
+    the bundle-load test. 81 names, and main.js holds 89 of the assignments.
+
+    One rule learned the hard way: a new import goes at the END of main.js's import list.
+    The browser-free test loader replays that list to reproduce the browser's evaluation
+    order, and putting crafting.js early pulled character.js in ahead of items.js and
+    broke five checks. The bundle was fine either way.
 
 ---
 ## Open decisions

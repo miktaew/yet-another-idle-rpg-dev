@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 40 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 41 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -955,6 +955,41 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     trader.inventory_template'i liste sandı, oysa anahtar; ve hiçbir test bunu yakalayamazdı
     çünkü hiçbir test bir tüccar kuramıyor. Çözüm, main.js'in kendi sırasıyla içe alan tek
     bir giriş modülü üretip hedefi onun üzerinden değerlendirmek.
+48. **Büyük dosyaları bölmek** — `sürüyor`, ve asıl mesele ölçümler. İki kesit yapıldı,
+    kalanların maliyeti tahmin edilmedi, hesaplandı. Bir kesit iki sayıyla yargılanıyor:
+    taşınan kod kalandan kaç ad istiyor, ve kalan koddan kaç ad geri isteniyor. Pahalı
+    olan ikincisi - o, zaten yük taşıyan bir döngünün giriş noktasına doğru bir import'a
+    dönüşüyor.
+
+    Yapıldı: **crafting.js** (357 satır, 4 giren / 0 çıkan) ve **run_stats.js** (on koşu
+    sayacı; önce onların çıkması gerekti, çünkü içe aktarılmış bağ salt okunur ve
+    use_recipe ikisini artırıyor). Ardından aynı gerekçeyle display.js tarafında
+    **ui_helpers.js** (9 fonksiyon). main.js 6606 -> 6279.
+
+    Hesaplandı ama YAPILMADI, gerekçesiyle:
+
+      * `process_rewards` (365 satır) main.js'ten 20 ad istiyor ve rewards.js ile
+        quests.js'i doğrudan iki modüllük döngüye sokardı - v0.6.27'yi bozan şekil. Önce
+        `questManager`'ın registries.js üzerinden yayımlanması gerekir.
+      * save/load (1821 satır, main.js'in %29'u) 60 ad istiyor ve neredeyse hepsi bu iki
+        fonksiyonun okuyup yazdığı modül durumu. run_stats.js kalıbı genelleşiyor: o
+        durumu tutan bir `game_state.js` yaprağı 60'ı sert biçimde düşürür. En büyük
+        ödül, en büyük hazırlık; dikkatsiz yapılırsa kayıt biçimi riski.
+      * bestiary + Keşifler'in display.js'ten çıkarılması (389 satır) artık 5 giren / 1
+        çıkan - tek geri-bağ, görev ipuçlarının da kullandığı `create_travel_line`. İpucu
+        render'ını da taşımak ihtiyacı `create_quest_step_hint`'e kaydırıyor ve zincir
+        görev günlüğüne uzanıyor. Sıradaki hazırlık, günlüğün ortak render'ının nerede
+        duracağına karar vermek.
+
+    Güvenlik ağı kuruldu: `check_onclick_names_are_reachable`. Bir onclick, tıklama anında
+    global nesneye karşı çözülen bir dizgedir; yani `window.` atamasını kaybeden bir
+    fonksiyon yalnızca orada patlar - derlemede değil, kontrolde değil, paket testinde
+    değil. 81 ad var ve atamaların 89'u main.js'te.
+
+    Zor yoldan öğrenilen bir kural: yeni bir import, main.js'in import listesinin SONUNA
+    gider. Tarayıcısız test yükleyicisi tarayıcının değerlendirme sırasını yeniden üretmek
+    için o listeyi taklit ediyor; crafting.js'i başa koymak character.js'i items.js'ten
+    önce çekti ve beş kontrolü bozdu. Paket her iki hâlde de sorunsuzdu.
 
 ---
 ## Bekleyen kararlar
