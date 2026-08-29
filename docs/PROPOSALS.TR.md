@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 45 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 46 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1051,9 +1051,11 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     kalanı hâlâ hikâyenin içinde değil, yanında duruyor. Motor toparlanırken
     anlatı işine ara verilmiyor: inşa edilen bölgelerin hikâyenin yanında durmak yerine
     hikâyeye bağlanması gerekiyor.
-55. **Kasabayı genişlet ve hareketlendir** — `sürüyor`. Kenar mahalle, bir aktivite ve
-    sıfır aksiyondan üç aksiyona çıktı; tarayıcıda ölçüldü. Kasaba meydanı hâlâ içinde
-    hiçbir şey olmayan bir kasaba merkezi; sıradaki o. Oyuncunun en çok vakit
+55. **Kasabayı genişlet ve hareketlendir** — `bitti`, v0.6.57 ve v0.6.58. Kenar mahalle
+    bir aktivite ve sıfır aksiyondan üçe çıktı; kasaba meydanı ise hiçten üçe. Meydandakiler
+    yeni mobilya değil, zaten oradaki ambiyanstan kuruldu: çeşmedeki güvercinler, gazete
+    tellalı, birbirine bayat diyen iki ekmekçi. İkisi de tarayıcıda doğrulandı - kapı ve
+    etiketler. Hiç yokken altı yerleşim aksiyonu. Oyuncunun en çok vakit
     geçirdiği yer başlangıç yerleşimi ve içinde en az şey olan yer de orası. Daha çok
     yapılacak şey, daha çok görülecek şey, geri dönmek için daha çok sebep.
 56. **İtibar yeni aksiyon ve konuşmalar açsın** — `bitti`, v0.6.57, aksiyonlar için.

@@ -3091,6 +3091,126 @@ function get_location_type_penalty(type, stage, stat, category) {
         Visible before they are earned, and refused with a reason. A locked door the
         player cannot see is not a goal.
     */
+    /*
+        The square is loud and does nothing, which is a strange thing for the town's
+        centre of life. Everything below is already in its background noises: the
+        pigeons on the fountain, the crier with the newspaper, and the two bakers who
+        have been calling each other stale for as long as the location has existed.
+
+        Gated on Town reputation, which 320 points are earnable of and which one
+        dialogue line reads. 50 / 150 / 250, so the square opens up as the town decides
+        it knows you - and the last one is judging the bakers, because being trusted to
+        settle an argument is what standing actually buys in a place like this.
+    */
+    locations["Town square"].actions = {
+        "chase the pigeons": new GameAction({
+            action_id: "chase the pigeons",
+            starting_text: "action chase the pigeons starting",
+            description: "action chase the pigeons desc",
+            action_text: "action chase the pigeons during",
+            success_text: "action chase the pigeons success",
+            failure_texts: {
+                unable_to_begin: ["action chase the pigeons fail unable_to_begin 1"],
+            },
+            is_unlocked: true,
+            required: {
+                reputation: {Town: 50},
+            },
+            attempt_duration: 120,
+            success_chances: [1],
+            keep_progress: true,
+            rewards: {
+                money: 90,
+                reputation: {Town: 10},
+                skill_xp: {
+                    "Quick steps": 150,
+                },
+            },
+        }),
+        "cry the news": new GameAction({
+            action_id: "cry the news",
+            starting_text: "action cry the news starting",
+            description: "action cry the news desc",
+            action_text: "action cry the news during",
+            success_text: "action cry the news success",
+            failure_texts: {
+                unable_to_begin: ["action cry the news fail unable_to_begin 1"],
+                random_loss: ["action cry the news fail random_loss 1"],
+                conditional_loss: ["action cry the news fail conditional_loss 1"],
+            },
+            is_unlocked: true,
+            required: {
+                reputation: {Town: 150},
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Literacy": 3,
+                    }
+                },
+                {
+                    skills: {
+                        "Literacy": 12,
+                    }
+                }
+            ],
+            attempt_duration: 300,
+            success_chances: [0.6, 1],
+            keep_progress: true,
+            rewards: {
+                money: 260,
+                reputation: {Town: 20},
+                skill_xp: {
+                    Literacy: 350,
+                    "Presence sensing": 150,
+                },
+            },
+        }),
+        /*
+            The payoff, and deliberately not a fight or a haul. Being handed the
+            casting vote in an argument nobody can win is what standing buys in a
+            square: it is the town saying it will take your word over its own habit.
+        */
+        "settle the bread argument": new GameAction({
+            action_id: "settle the bread argument",
+            starting_text: "action settle the bread argument starting",
+            description: "action settle the bread argument desc",
+            action_text: "action settle the bread argument during",
+            success_text: "action settle the bread argument success",
+            failure_texts: {
+                unable_to_begin: ["action settle the bread argument fail unable_to_begin 1"],
+                random_loss: ["action settle the bread argument fail random_loss 1"],
+                conditional_loss: ["action settle the bread argument fail conditional_loss 1"],
+            },
+            is_unlocked: true,
+            required: {
+                reputation: {Town: 250},
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Cooking": 5,
+                    }
+                },
+                {
+                    skills: {
+                        "Cooking": 20,
+                    }
+                }
+            ],
+            attempt_duration: 180,
+            success_chances: [0.5, 1],
+            keep_progress: true,
+            rewards: {
+                reputation: {Town: 35},
+                skill_xp: {
+                    Cooking: 400,
+                    Haggling: 200,
+                },
+            },
+        }),
+    };
+
     locations["Slums"].actions = {
         "mind the scales": new GameAction({
             action_id: "mind the scales",

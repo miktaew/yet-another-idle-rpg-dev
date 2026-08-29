@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 2 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 3 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -143,10 +143,10 @@ Kayıt defterlerinden ve kontrollerden ölçüldü:
 - **64 yetenek**, 58'inde rütbe adı, ayrıca kilometre taşları.
 - 36 dövüş bölgesine yayılmış **32 yaratık**.
 - **139 tarif**; 450 şablona karşı 549 tarif eşya adı çözülüyor.
-- **22 diyalog**, 7 stok listesinde 8 tüccar, 56 aksiyon.
-- Tamamı çözülen **1.983 içerik metin kimliği**.
+- **22 diyalog**, 7 stok listesinde 8 tüccar, 59 aksiyon.
+- Tamamı çözülen **2.002 içerik metin kimliği**.
 
-Yerelleştirme: **3.234 yerel anahtar, Türkçe %100, eksik yok** ve 3.234 satırın tamamına
+Yerelleştirme: **3.253 yerel anahtar, Türkçe %100, eksik yok** ve 3.253 satırın tamamına
 oyun içinden erişilebiliyor. Türkçe öncelikli dildir ve çeviri değil, Türkçe yazılmış
 gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D-7.
 
@@ -162,13 +162,13 @@ yayımlanmış bir hatayı kodlayanlar:
 | `modules import what they call` | İçe aktarılmadan kullanılan ad. 47 dosya. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
-| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 1.983 kimlik. |
-| `action button labels` | Düğmenin içine çizilen paragraf. 41 aksiyon, 80 karakter sınırı. |
+| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.002 kimlik. |
+| `action button labels` | Düğmenin içine çizilen paragraf. 44 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
 | `documentation pairs` | Türkçe eşi geride kalmış İngilizce belge. |
 | `no English written into the DOM` | Yereli atlayıp doğrudan yazılmış metin. 212 sabit. |
 | `hidden quest tasks` | İlerleyemeyen görev. 11 adım. |
-| `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 56 aksiyon. |
+| `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 59 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş

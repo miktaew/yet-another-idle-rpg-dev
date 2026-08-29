@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 45 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 46 -->
 
 # Proposals
 
@@ -1038,9 +1038,12 @@ not after. Each item is the request as it was given, and the state it is in.
     had. The rest of the regions are still standing beside the story rather than in it. Not a pause in
     narrative work while the engine is tidied: the regions that were built need to be
     tied into the story rather than left standing next to it.
-55. **Expand the town and make it livelier** — `in progress`. The Slums went from one
-    activity and no actions to three actions, measured in the browser. Town square is still
-    the town hub with nothing in it, which is the next one. The starting settlement is
+55. **Expand the town and make it livelier** — `done`, v0.6.57 and v0.6.58. The Slums
+    went from one activity and no actions to three; Town square went from nothing at all to
+    three, built out of the ambience it already had - the pigeons on the fountain, the
+    newspaper crier, the two bakers calling each other stale - rather than new furniture.
+    Both verified in a browser, gate and labels. Six settlement actions where there were
+    none. The starting settlement is
     where a player spends the most time and it has the least happening in it. More to
     do, more to see, more reason to come back.
 56. **Reputation opens actions and dialogue** — `done`, v0.6.57, for actions. Measured

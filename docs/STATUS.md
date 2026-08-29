@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 2 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 3 -->
 
 # Status
 
@@ -140,10 +140,10 @@ Measured from the registries and the checks:
 - **64 skills**, 58 of them with rank names, plus milestones.
 - **32 enemies** across 36 combat zones.
 - **139 recipes**; 549 recipe item names resolve against 450 templates.
-- **22 dialogues**, 8 traders across 7 stock lists, 56 actions.
-- **1,983 content text ids**, all resolved.
+- **22 dialogues**, 8 traders across 7 stock lists, 59 actions.
+- **2,002 content text ids**, all resolved.
 
-Localisation: **3,234 locale keys, Turkish at 100% with 0 missing**, and all 3,234 rows
+Localisation: **3,253 locale keys, Turkish at 100% with 0 missing**, and all 3,253 rows
 are reachable. Turkish is the priority language and must read as though written in
 Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
@@ -159,13 +159,13 @@ but the ones that encode a bug that shipped:
 | `modules import what they call` | A name used without importing it. 47 files. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 83 names. |
-| `content text ids` | Player-facing text with no locale row. 1,983 ids. |
-| `action button labels` | A paragraph rendered inside a button. 41 actions, 80-char limit. |
+| `content text ids` | Player-facing text with no locale row. 2,002 ids. |
+| `action button labels` | A paragraph rendered inside a button. 44 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation pairs` | An English doc whose Turkish counterpart has fallen behind. |
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
-| `actions can explain failure` | An action that fails with no reason shown. 56 actions. |
+| `actions can explain failure` | An action that fails with no reason shown. 59 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
