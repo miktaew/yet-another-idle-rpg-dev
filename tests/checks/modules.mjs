@@ -70,6 +70,19 @@ async function check_modules_import_what_they_call() {
                                /class\s+(\w+)/g]) {
             for (const match of source.matchAll(pattern)) declared.add(match[1]);
         }
+        /*
+            Parameters count as declared. display.js takes the stance registry as an argument
+            because it cannot import it - line 28 keeps that import commented out on purpose,
+            since the edge breaks the bundle - so `stances[...]` inside those functions is a
+            parameter, not a missing import, and reporting it would be the check crying wolf
+            about the very workaround that keeps the game loading.
+        */
+        for (const params of source.matchAll(/function\s*\w*\s*\(([^)]*)\)/g)) {
+            for (const part of params[1].split(",")) {
+                const name = part.split("=")[0].replace(/[{}[\]]/g, "").split(":").pop().trim();
+                if (/^[A-Za-z_]\w*$/.test(name)) declared.add(name);
+            }
+        }
 
         /*
             A handler written as markup is not a call. display.js builds them as strings -
@@ -85,8 +98,27 @@ async function check_modules_import_what_they_call() {
         const source_lines = source.split("\n");
 
         //Every name used in call position.
-        for (const call of source.matchAll(/(?<![.\w$])([a-z_][A-Za-z0-9_]*)\s*\(/g)) {
-            const name = call[1];
+        /*
+            Three shapes, not one. The check began by looking only at `name(`, and
+            `effect_templates[effect]` walked straight past it into a shipped build: esbuild
+            left it as a runtime global, the bundle evaluated fine, and the loader threw
+            ReferenceError the moment a player loaded a save - taking everything after that
+            line in load() with it, which is why favourited places vanished too.
+
+            `name[` and `new name(` are added rather than every bare mention, because a bare
+            mention is mostly prose: Book, Skill and Location all appear inside console
+            messages in save_load.js and none of them is a reference.
+        */
+        /*
+            The lookbehind has to let a spread through. `{...effect_templates[effect]}` puts a
+            dot immediately before the name, which is indistinguishable from property access
+            to a plain `(?<![.\w$])` - and that is exactly how this one reached a player:
+            the reference the check was widened to catch was hidden by the widening's own
+            lookbehind.
+        */
+        const reference = /(?:(?<=\.\.\.)|(?<![.\w$]))(?:([a-z_][A-Za-z0-9_]*)\s*[([]|new\s+([A-Z]\w*)\s*\()/g;
+        for (const call of source.matchAll(reference)) {
+            const name = call[1] ?? call[2];
             if (declared.has(name) || imported.has(name)) continue;
 
             const line = source_lines[source.slice(0, call.index).split("\n").length - 1] ?? "";
@@ -96,8 +128,8 @@ async function check_modules_import_what_they_call() {
             if (!owner) continue;
 
             checked++;
-            error(`${file} calls ${name}(), which ${owner[0]} exports and this file does`
-                + " not import. esbuild treats an unresolved identifier as a runtime global, so this"
+            error(`${file} uses ${name}, which ${owner[0]} exports and this file does not`
+                + " import. esbuild treats an unresolved identifier as a runtime global, so this"
                 + " builds and then throws ReferenceError in the browser.");
         }
     }

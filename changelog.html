@@ -257,6 +257,14 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.55</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Loading a save stopped part-way through, so quests came back empty and favourited places vanished from fast travel. Splitting saving and loading out into their own file last version left one name behind: the loader reached for the effect templates without importing them. An unresolved name is a legitimate reference to a runtime global as far as the bundler is concerned, so it built cleanly and threw only once somebody loaded a save - and everything in the loader after that line never ran. The check that exists to catch exactly this now reads names used as values and through a spread, not only names being called.</li>
+            <li>The game had also stopped remembering which bed to return to and where you last fought. The same split renamed two fields, and the rename reached inside the quoted save keys as well - so the save wrote them under names the loader did not read. The value came back empty, the next save wrote nothing at all, and the keys left the file. Both are written under their proper names again, and a new check requires every key the save writes to be a key the load reads, because this one broke nothing loudly enough to notice.</li>
+            <li>If you played v0.6.54, that version wrote its losses into your save: favourited places, kill counts and the two locations above were saved as empty. Progress made in the meantime is untouched - it is only those fields that were cleared. An export taken before v0.6.54 still holds them.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.54</button>
     <div class="content">
         <ul class="entries">

@@ -13,7 +13,7 @@
  * written by hand, so it cannot be short by omission.
  */
 
-import { ActiveEffect } from "./active_effects.js";
+import { ActiveEffect, effect_templates } from "./active_effects.js";
 import { activities } from "./activities.js";
 import { add_to_character_inventory, character, equip_item, update_character_stats } from "./character.js";
 import { stances } from "./combat_stances.js";
@@ -289,8 +289,8 @@ function create_save() {
 
         save_data["loot_sold_count"] = loot_sold_count;
 
-        save_data["game_state.last_combat_location"] = game_state.last_combat_location;
-        save_data["game_state.last_location_with_bed"] = game_state.last_location_with_bed;
+        save_data["last_combat_location"] = game_state.last_combat_location;
+        save_data["last_location_with_bed"] = game_state.last_location_with_bed;
 
         save_data["options"] = game_options;
 

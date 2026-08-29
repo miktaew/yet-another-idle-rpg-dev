@@ -257,6 +257,14 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.55</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Kayıt yüklemesi yarıda kesiliyor, bu yüzden görevler boş geliyor ve favorilediğiniz yerler hızlı yolculuktan kayboluyordu. Geçen sürümde kaydetme ile yüklemeyi ayrı bir dosyaya taşırken bir ad geride kalmış: yükleyici etki şablonlarını içe aktarmadan kullanıyordu. Paketleyici açısından çözülmemiş bir ad, çalışma zamanındaki bir genel değişkene yapılmış geçerli bir göndermedir; bu yüzden derleme tertemiz geçti, hata ancak biri kaydını yüklediğinde ortaya çıktı - ve yükleyicide o satırdan sonrası hiç çalışmadı. Tam da bunu yakalamak için duran kontrol, artık yalnızca çağrılan adları değil, değer olarak ve yayılma içinde kullanılan adları da okuyor.</li>
+            <li>Oyun ayrıca hangi yatağa döneceğini ve en son nerede dövüştüğünüzü de unutur olmuştu. Aynı ayrım sırasında iki alan yeniden adlandırılmış, adlandırma tırnak içindeki kayıt anahtarlarına da uzanmıştı - böylece kayıt, bu alanları yükleyicinin okumadığı adlarla yazıyordu. Değer boş dönüyor, bir sonraki kayıt hiçbir şey yazmıyor ve anahtar dosyadan büsbütün siliniyordu. İkisi de yeniden kendi adlarıyla yazılıyor; üstelik yeni bir kontrol, kaydın yazdığı her anahtarın yüklemenin okuduğu bir anahtar olmasını şart koşuyor - çünkü bu hata fark edilecek kadar yüksek sesle hiçbir şeyi bozmadı.</li>
+            <li>v0.6.54 ile oynadıysanız, o sürüm kayıplarını kaydınıza da yazdı: favorilediğiniz yerler, öldürme sayaçları ve yukarıdaki iki konum boş olarak kaydedildi. Bu arada elde ettiğiniz ilerlemeye dokunulmadı - yalnızca bu alanlar silindi. v0.6.54 öncesinde alınmış bir dışa aktarma bunları hâlâ içeriyor.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.54</button>
     <div class="content">
         <ul class="entries">
