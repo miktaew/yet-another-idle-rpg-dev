@@ -479,6 +479,27 @@ function update_translated_page_links() {
 }
 const default_language_for_pages = "english";
 
+/**
+ * Sets the language, for a caller that is not the options panel.
+ *
+ * `language` is a module-scope binding here and an imported - therefore read-only - one
+ * everywhere else, so a module that has to set it needs a function rather than an
+ * assignment. That is the last of the three writes keeping save/load inside this file.
+ *
+ * Deliberately NOT moved into game_state.js: 694 references across 21 files to relocate a
+ * single assignment. A setter costs one line.
+ *
+ * @param {String} chosen a key of `languages`
+ * @returns {Boolean} whether it was a language this build knows
+ */
+function set_language(chosen) {
+    if(!languages[chosen]) {
+        return false;
+    }
+    language = chosen;
+    return true;
+}
+
 async function option_language(option) {
     const selector = document.getElementById("options_language");
 
@@ -3701,14 +3722,12 @@ function load(save_data) {
         //player's language for the error message and for the next save, instead
         //of silently downgrading it to the default.
         if(save_data.language) {
-            if(languages[save_data.language]) {
-                language = save_data.language;
-            } else {
-                if(save_data.language !== "mofu_english") {
-                    console.warn(`Language ${save_data.language} could not be found.`);
-                }
+            //Through the setter rather than by assignment: this is the one write that used
+            //to make save/load unmovable, and a binding cannot be assigned from another
+            //module.
+            if(!set_language(save_data.language) && save_data.language !== "mofu_english") {
+                console.warn(`Language ${save_data.language} could not be found.`);
             }
-            
         }
 
         let any_warnings = false;
@@ -3920,10 +3939,24 @@ function load(save_data) {
         }
 
         if(save_data.current_stance) {
-            current_stance = stances[save_data.current_stance.id] || stances[save_data.current_stance];
-            selected_stance = stances[save_data.selected_stance.id] || stances[save_data.selected_stance];
+            /*
+                Both assignments used to be written out here and both were dead. change_stance
+                is called without is_temporary, so it takes the branch that sets
+                selected_stance AND current_stance - and it sets current_stance from the
+                SELECTED one, so a save where the two differ ended up with them equal anyway.
 
-            change_stance({stance_id: selected_stance.id});
+                Writing them here is what kept save/load inside main.js: an imported binding
+                cannot be assigned, so two of the three writes that pinned it are gone with
+                this.
+
+                The id is taken the way it always was, because an old save stores the stance
+                as a bare string rather than an object.
+            */
+            const saved_stance = stances[save_data.selected_stance?.id]
+                ? save_data.selected_stance.id
+                : save_data.selected_stance;
+
+            change_stance({stance_id: stances[saved_stance] ? saved_stance : "normal"});
         }
 
         Object.keys(save_data.character.equipment).forEach(function(key){
@@ -6273,6 +6306,7 @@ if(config.show_visitor_counter) {
     );
 }
 export { language_tags,
+        set_language,
         //Read by the lore panel to open on where the player left off.
         current_enemies,
         current_location,
