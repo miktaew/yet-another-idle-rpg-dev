@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 44 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 45 -->
 
 # Proposals
 
@@ -1057,6 +1057,18 @@ not after. Each item is the request as it was given, and the state it is in.
     Coffee, Well hydrated and the rest - for a chosen duration, instead of naming them
     one at a time. Which effects count as positive has to be derived from the
     templates, not hand-listed, or the list rots the moment an effect is added.
+58. **Send what fits upstream when the changes pile up** — `standing`. Measured before
+    offering anything, because most of a round's work is fork-shaped: the checks depend on a
+    `tests/` framework upstream does not have, and `effect_templates` was our own refactor's
+    bug, not theirs. What did fit was `add_best_effect`, which belongs beside the dev console
+    already in PR #242, so it went there as a fourth commit rather than into a third PR.
+    Checked against upstream's own tree first: 22 buffs apply, no poison among them.
+
+    Also measured and **not** sent: the action-button label fix. Upstream has the same
+    structure - `action_name || starting_text`, and the button draws `starting_text` - but
+    its own labels are all short, so the effect there is three ant-nest actions sharing one
+    button label while their distinguishing names sit unused. That is an arguable improvement
+    to their copy rather than a bug, and not ours to decide.
 ---
 ## Open decisions
 

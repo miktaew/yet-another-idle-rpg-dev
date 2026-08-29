@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 44 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 45 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1070,6 +1070,18 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     diğerleri — tek tek adlandırmak yerine istenen süreyle uygulayan tek komut.
     Hangi etkinin olumlu sayıldığı elle listelenmeyip şablonlardan türetilmeli; yoksa
     liste, yeni bir etki eklendiği anda çürür.
+58. **Değişiklikler biriktiğinde uyanı yukarı akışa gönder** — `sürekli`. Bir şey teklif
+    etmeden önce ölçüldü, çünkü bir turun işinin çoğu forka özgü: kontroller upstream'de
+    olmayan bir `tests/` çatısına dayanıyor ve `effect_templates` bizim refaktörümüzün hatasıydı,
+    onların değil. Uyan tek şey `add_best_effect`'ti; zaten PR #242'de duran dev konsolunun
+    yanına ait olduğu için üçüncü bir PR yerine oraya dördüncü commit olarak gitti.
+    Önce upstream'in kendi ağacında denendi: 22 buff uygulanıyor, aralarında zehir yok.
+
+    Ölçülüp gönderil**meyen**: aksiyon düğmesi etiketi düzeltmesi. Upstream'de aynı yapı var
+    - `action_name || starting_text` ve düğme `starting_text` çiziyor - ama onların etiketleri
+    zaten kısa; oradaki etkisi, üç karınca yuvası aksiyonunun tek bir düğme etiketini
+    paylaşması ve ayırt edici adlarının kullanılmaması. Bu bir hatadan çok metinlerine dair
+    tartışmaya açık bir iyileştirme ve kararı bizim değil.
 ---
 ## Bekleyen kararlar
 
