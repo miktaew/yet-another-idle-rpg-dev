@@ -2,7 +2,8 @@
 
 import { character } from "./character.js";
 import { config } from "./config.js";
-import { capitalize_first_letter, create_height_tooltip, create_race_tooltip, uncapitalize_first_letter } from "./display.js";
+import { create_height_tooltip, create_race_tooltip } from "./display.js";
+import { capitalize_first_letter, uncapitalize_first_letter } from "./ui_helpers.js";
 import { global_flags, language, run } from "./main.js";
 import { playable_races } from "./races.js";
 import { translationManager } from "./translation.js";

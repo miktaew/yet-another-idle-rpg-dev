@@ -25,6 +25,9 @@ import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, 
 import { favourite_locations, get_location_type_penalty, location_types, locations } from "./data/locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
 import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
+import { set_HTML, insert_HTML, clear_HTML_content, compare_display_names,
+    capitalize_first_letter, uncapitalize_first_letter, toggle_exclusive_class,
+    remove_class_from_all, is_element_above_x } from "./ui_helpers.js";
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
@@ -278,33 +281,8 @@ function default_dialogue_return_text() {
     return translationManager.getText(language, "ui nevermind");
 }
 
-/**
- * general function for clearing HTML content of an element, for easier management if approach changes
- * @param {HTMLElement} element 
- */
-function clear_HTML_content(element) {
-    if(!element) {return;}
-    element.replaceChildren();
-}
 
-/**
- * general function for inserting HTML content to an element, for easier management if approach changes
- * @param {HTMLElement} element 
- * @param {String} html_string
- */
-function insert_HTML(element, html_string) {
-    element.insertAdjacentHTML("beforeend", html_string);
-}
 
-/**
- * general function for setting HTML content of an element, for easier management if approach changes
- * @param {HTMLElement} element 
- * @param {String} html_string
- */
-function set_HTML(element, html_string) {
-    clear_HTML_content(element);
-    element.insertAdjacentHTML("beforeend", html_string);
-}
 
 /**
  * Capitalises the first letter.
@@ -394,26 +372,8 @@ function xp_target_label(target_key) {
     }
     return capitalize_first_letter(skills[target_key].name(), true);
 }
-function capitalize_first_letter(some_string, is_translated = false) {
-    const tag = is_translated ? language_tags[language] : undefined;
-    return some_string.charAt(0).toLocaleUpperCase(tag) + some_string.slice(1);
-}
 
-/**
- * Orders two display names the way a reader of this interface would.
- *
- * `>` on strings compares UTF-16 code units, which puts every Turkish letter carrying
- * a diacritic after Z - so a bestiary sorted that way listed Çakal below Zebra.
- */
-function compare_display_names(first, second) {
-    return String(first).localeCompare(String(second), language_tags[language]);
-}
 
-/** Mirror of capitalize_first_letter; the same locale caveat applies. */
-function uncapitalize_first_letter(some_string, is_translated = false) {
-    const tag = is_translated ? language_tags[language] : undefined;
-    return some_string.charAt(0).toLocaleLowerCase(tag) + some_string.slice(1);
-}
 
 /**
  * If item was obtained at least once, returns its name. If it wasn't, returns "???" instead.
@@ -6849,38 +6809,7 @@ function set_play_button_text(text) {
     play_button.innerText = text;
 }
 
-/**
- * Toggles a specificed class for target 'element', removing it from any other element that might have had it.
- * If 'siblings_only' is true, class will be removed only from siblings
- * @param {Object} params
- * @param {HTMLElement} params.element
- * @param {Boolean} [params.siblings_only]
- * @param {String} params.class_name
- */
-function toggle_exclusive_class({element, siblings_only=false, class_name}) {
-    const elems = siblings_only?element.parentNode.querySelectorAll(`.${class_name}`):document.getElementsByClassName(class_name);
-    const has_class = element.classList.contains(class_name);
-    for(let i = 0; i < elems.length; i++) {
-        elems[i].classList.remove(class_name);
-    }
 
-    if(!has_class) {
-        element.classList.add(class_name);
-    }
-}
-function remove_class_from_all(class_name) {
-    const elems = document.getElementsByClassName(class_name);
-    while(elems.length > 0) {
-        elems.item(0).classList.remove(class_name);
-    }
-}
-
-function is_element_above_x(element, x) {
-    const rect = element.getBoundingClientRect();
-    const rect2 = x.getBoundingClientRect();
-
-    return rect.bottom <= rect2.top;
-}
 
 export {
     fill_action_box,

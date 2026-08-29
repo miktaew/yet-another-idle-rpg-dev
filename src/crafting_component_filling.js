@@ -1,6 +1,6 @@
 "use strict";
 import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";
-import { capitalize_first_letter } from "./display.js";
+import { capitalize_first_letter } from "./ui_helpers.js";
 
 /*
     GENERATES CRAFTING COMPONENTS BASED ON PROVIDED PROPERTIES AND PARAMETERS

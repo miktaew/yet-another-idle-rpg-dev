@@ -26,7 +26,9 @@ import { pathToFileURL } from "node:url";
 
 const item_import =
     'import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";';
-const display_import = 'import { capitalize_first_letter } from "./display.js";';
+//capitalize_first_letter moved to ui_helpers.js, so that a module lifted out of
+//display.js can have it without importing display.js back.
+const display_import = 'import { capitalize_first_letter } from "./ui_helpers.js";';
 
 const shim = [
     "const item_templates = {};",
