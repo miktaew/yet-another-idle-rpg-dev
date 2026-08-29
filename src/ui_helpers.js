@@ -95,6 +95,45 @@ function is_element_above_x(element, x) {
     return rect.bottom <= rect2.top;
 }
 
+
+/*
+    Turkish has two i's and five other letters an English keyboard does not, and a search
+    box is the one place a player should not have to care. Both the name and the query are
+    folded to the same plain letters before comparing, so "cekic" finds Çekiç, "isik"
+    finds Işık, and "iron" finds Iron - which locale-aware lowercasing alone does NOT do:
+    under Turkish rules "Iron" lowercases to "ıron" while "iron" stays "iron", and the two
+    stop matching.
+*/
+const SEARCH_FOLDING = [
+    [/[İIıi]/g, "i"],
+    [/[çÇ]/g, "c"],
+    [/[ğĞ]/g, "g"],
+    [/[öÖ]/g, "o"],
+    [/[şŞ]/g, "s"],
+    [/[üÜ]/g, "u"],
+];
+
+function fold_for_search(text) {
+    let folded = String(text ?? "");
+    for(const [pattern, plain] of SEARCH_FOLDING) {
+        folded = folded.replace(pattern, plain);
+    }
+    //After the folding, so the two i's are already one letter and cannot diverge again.
+    return folded.toLocaleLowerCase("en");
+}
+
+/**
+ * Whether a display name matches what somebody typed into a search box.
+ *
+ * An empty query matches everything, which is what makes an empty box mean "no filter".
+ */
+function matches_search(display_name, query) {
+    if(!query) {
+        return true;
+    }
+    return fold_for_search(display_name).includes(fold_for_search(query));
+}
+
 export {
     set_HTML,
     insert_HTML,
@@ -105,4 +144,5 @@ export {
     toggle_exclusive_class,
     remove_class_from_all,
     is_element_above_x,
+    matches_search,
 };

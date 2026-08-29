@@ -36,6 +36,33 @@ if (!fs.existsSync(bundle)) {
     process.exit(1);
 }
 
+/*
+    A bundle older than the source it was built from is the wrong artefact, and testing it
+    says nothing about the code that was just written. This has already happened: a build
+    failed on a syntax error, and this check went on to load the previous bundle and pass.
+*/
+{
+    const built_at = fs.statSync(bundle).mtimeMs;
+    const newer = [];
+    const walk = (dir) => {
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, entry.name);
+            if (entry.isDirectory()) walk(full);
+            else if (entry.name.endsWith(".js") && fs.statSync(full).mtimeMs > built_at) {
+                newer.push(path.relative(repo_root, full));
+            }
+        }
+    };
+    walk(path.join(repo_root, "src"));
+
+    if (newer.length > 0) {
+        console.error(`[check-bundle] dist/bundle.js is older than ${newer.length} file(s) in`
+            + ` src/ - so this would be testing the previous build. Run npm run build first.`);
+        console.error(`[check-bundle] newest: ${newer.slice(0, 3).join(", ")}`);
+        process.exit(1);
+    }
+}
+
 /**
  * A value that answers to anything: property reads, calls, construction, iteration.
  * Enough for module-scope DOM lookups, which is all this needs to get past.

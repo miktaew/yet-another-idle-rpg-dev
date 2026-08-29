@@ -3086,6 +3086,7 @@ const descriptions = {
     "ui discovery items header": "= What you have found =",
     "ui discovery hide traded": "Hide bought-only",
     "ui discovery hide sourceless": "Hide unsourced",
+    "ui discovery search": "Search by name",
     "ui discovery hide crafted": "Hide crafted-only",
     "ui tab anthology": "Anthology",
     "ui tab data": "Data",

@@ -27,7 +27,7 @@ import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./
 import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 import { set_HTML, insert_HTML, clear_HTML_content, compare_display_names,
     capitalize_first_letter, uncapitalize_first_letter, toggle_exclusive_class,
-    remove_class_from_all, is_element_above_x } from "./ui_helpers.js";
+    remove_class_from_all, is_element_above_x, matches_search } from "./ui_helpers.js";
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
 import { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
@@ -5705,9 +5705,11 @@ function update_displayed_discoveries() {
     const hide_sourceless = document.getElementById("discoveries_hide_sourceless")?.checked;
     const hide_crafted = document.getElementById("discoveries_hide_crafted")?.checked;
     const hide_traded = document.getElementById("discoveries_hide_traded")?.checked;
+    const query = document.getElementById("discoveries_search")?.value.trim() ?? "";
 
     const found = Object.keys(item_log.items)
         .filter(item_id => item_templates[item_id])
+        .filter(item_id => matches_search(item_templates[item_id].getDisplayName(), query))
         .filter(item_id => {
             const sources = item_sources(item_id);
             if(hide_sourceless && sources.length === 0) {

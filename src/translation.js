@@ -222,6 +222,11 @@ class TranslationManager {
             elem.innerText = this.getText(language, elem.dataset.translation);
         });
 
+        //An input's prompt is an attribute, not its text, so it was the one piece of
+        //the interface this could not reach.
+        document.querySelectorAll('[data-translation-placeholder]').forEach(elem => {
+            elem.placeholder = this.getText(language, elem.dataset.translationPlaceholder);
+        });
     };
 }
 

@@ -3126,6 +3126,7 @@ const descriptions = {
     "ui discovery items header": "= Bulduklarınız =",
     "ui discovery hide traded": "Yalnızca satılanları gizle",
     "ui discovery hide sourceless": "Kaynaksızları gizle",
+    "ui discovery search": "Ada göre ara",
     "ui discovery hide crafted": "Yalnızca üretilenleri gizle",
     "ui tab anthology": "Antoloji",
     "ui tab data": "Veri",

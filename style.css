@@ -3120,3 +3120,15 @@ html, body {
  .quest_hint_label {
 	 opacity: 0.7;
  }
+
+ /* The Discoveries search box: full width above the filters it sits with. */
+ .discoveries_search_box {
+	 flex: 1 1 100%;
+	 min-width: 0;
+	 margin-bottom: 2px;
+	 background-color: var(--hovered_button_color);
+	 color: inherit;
+	 border: 1px solid #444;
+	 border-radius: 3px;
+	 padding: 1px 4px;
+ }
