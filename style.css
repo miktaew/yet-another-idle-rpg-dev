@@ -2503,9 +2503,16 @@ i {
 				overflow-y: scroll;
 			}
 
-			/* Their controls sit above the list, so the list scrolls and the box does not. */
+			/*
+				Their controls sit above the list, so the list scrolls and the box does not.
+				A column rather than a block: the controls wrap onto a second row once there
+				are enough of them, and a list with a fixed height then pushed the box past
+				its own bottom edge. flex-basis 0 with min-height 0 lets it take whatever is
+				left instead of a number that has to be kept in step by hand.
+			*/
 			#discoveries_box_div, #lore_box_div {
 				width: 100%;
+				flex-direction: column;
 			}
 
 			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div{
@@ -3085,6 +3092,8 @@ html, body {
  /* The controls stay put while the list underneath them moves. */
  #lore_controls_div,
  #discoveries_controls_div {
+	 flex: 0 0 auto;
+	 flex-wrap: wrap;
 	 display: flex;
 	 align-items: center;
 	 gap: 4px;
@@ -3093,7 +3102,8 @@ html, body {
  }
  #discoveries_list,
  #lore_list {
-	 height: 258px;
+	 flex: 1 1 0;
+	 min-height: 0;
 	 overflow-y: scroll;
  }
 

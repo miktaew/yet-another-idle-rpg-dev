@@ -1275,13 +1275,16 @@
             function showLore() {
                 //Rebuilt on open: every conversation adds to it, and it is only on
                 //screen while somebody is reading it.
-                changeTab(document.getElementById("lore_box_div"));
+                changeTab(document.getElementById("lore_box_div"), "flex");
                 update_displayed_lore();
             }
             function showDiscoveries() {
                 //Rebuilt on open: what is on it changes with every pickup and every
                 //unlock, and it is only on screen while somebody is reading it.
-                changeTab(document.getElementById("discoveries_box_div"));
+                //flex, not block: changeTab writes this inline and an inline display beats
+                //the stylesheet, so asking for block would turn the column back into a
+                //block and the list would lose the constraint that makes it scroll.
+                changeTab(document.getElementById("discoveries_box_div"), "flex");
                 update_displayed_discoveries();
             }
             function showReadBooks() {
