@@ -976,6 +976,41 @@ const translationManager = globalThis.__real_tm;
             .map(() => skill_id));
     check("a training place comes back as the location object itself",
         bad_places.length === 0, bad_places.slice(0, 3).join(", "));
+
+    /*
+        What advances a quest task. This is the index the journal needs most: 73 tasks
+        exist and 5 declare a condition, so 68 of them show a player a line with no
+        numbers and no clue unless something says what moves it.
+    */
+    const { quests } = await load_browser_free(repo_root, "src/quests.js");
+    let conditionless = 0;
+    let hinted = 0;
+    for (const [quest_id, quest] of Object.entries(quests)) {
+        (quest.quest_tasks || []).forEach((task, index) => {
+            const conditions = Object.values(task.task_condition || {})
+                .reduce((count, group) => count + Object.keys(group).length, 0);
+            if (conditions > 0) return;
+            conditionless++;
+            if (world.quest_task_advancers(quest_id, index).length) hinted++;
+        });
+    }
+    check("most conditionless quest tasks resolve to something that advances them",
+        hinted >= 50, `${hinted} of ${conditionless}`);
+
+    //Every advancer names a real place, or the hint would point at nothing.
+    const { locations: places } = await load_browser_free(repo_root, "src/data/locations.js");
+    const bad_steps = [];
+    for (const [quest_id, quest] of Object.entries(quests)) {
+        (quest.quest_tasks || []).forEach((task, index) => {
+            for (const step of world.quest_task_advancers(quest_id, index)) {
+                if (!places[step.location_key]) {
+                    bad_steps.push(`${quest_id}#${index} -> ${step.location_key}`);
+                }
+            }
+        });
+    }
+    check("every quest hint names a location that exists",
+        bad_steps.length === 0, bad_steps.slice(0, 3).join("; "));
 }
 console.log("");
 if (failures.length > 0) {

@@ -3073,6 +3073,10 @@ const descriptions = {
     "ui discovery dropped by": "Dropped by",
     "ui discovery sold by": "Sold by",
     "ui discovery travel": "Go",
+    "ui quest hint": "Try:",
+    "ui quest hint talk": "Talk to {v1}, in {v2}",
+    "ui quest hint action": "{v1} - in {v2}",
+    "ui quest hint clear": "Clear {v1}",
     "ui discovery none": "You have not found anything yet.",
     "ui discovery no source": "No known source",
     "ui discovery crafted": "Crafted",
@@ -3506,6 +3510,7 @@ const descriptions = {
     "ui skill category Stance": "Stance",
     "ui skill category Weapon": "Weapon",
     "ui next milestone unknown": "lvl {v1}: ???",
+    "ui skill ranks": "Ranks",
 
     //The rest of the item material types. The nine a recipe can name arrived
     //with the crafting fix; these sixteen only ever appear on an item tooltip.

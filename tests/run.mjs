@@ -13,6 +13,7 @@ import { errors, warnings } from "./lib/report.mjs";
 import {
     check_action_branches,
     check_every_enemy_has_a_home,
+    check_location_collections_assigned_once,
     check_skill_rank_levels,
     check_trader_stock_lists,
     check_actions_can_explain_failure,
@@ -96,6 +97,7 @@ await check_recipe_item_names();
 await check_modules_import_what_they_call();
 check_action_branches();
 check_every_enemy_has_a_home();
+check_location_collections_assigned_once();
 check_skill_rank_levels();
 check_trader_stock_lists();
 check_actions_can_explain_failure();

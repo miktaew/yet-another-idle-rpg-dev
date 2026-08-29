@@ -3113,6 +3113,10 @@ const descriptions = {
     "ui discovery dropped by": "Düşüren",
     "ui discovery sold by": "Satan",
     "ui discovery travel": "Git",
+    "ui quest hint": "Şuralara bak:",
+    "ui quest hint talk": "{v2}'de {v1} ile konuş",
+    "ui quest hint action": "{v1} - {v2}",
+    "ui quest hint clear": "{v1} bölgesini temizle",
     "ui discovery none": "Henüz bir şey bulmadınız.",
     "ui discovery no source": "Bilinen bir kaynağı yok",
     "ui discovery crafted": "Üretilebilir",
@@ -3546,6 +3550,7 @@ const descriptions = {
     "ui skill category Stance": "Duruş",
     "ui skill category Weapon": "Silah",
     "ui next milestone unknown": "sv. {v1}: ???",
+    "ui skill ranks": "Rütbeler",
 
     //The rest of the item material types. The nine a recipe can name arrived
     //with the crafting fix; these sixteen only ever appear on an item tooltip.

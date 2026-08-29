@@ -18,6 +18,7 @@ import { enemy_templates } from "./enemies.js";
 import { traders, inventory_templates } from "./traders.js";
 import { recipes } from "./crafting_recipes.js";
 import { activities } from "./activities.js";
+import { dialogues } from "./data/dialogues.js";
 /**
  * A list, or an empty one - and a word about it when the value was neither.
  *
@@ -229,4 +230,111 @@ function training_places() {
     return training_index;
 }
 
-export { enemy_zones, item_sources, training_places };
+/**
+ * The zones that field any creature carrying a given tag.
+ *
+ * `kill_any` tasks name a tag rather than a creature - "kill 10 Pest" - so the hint for
+ * one has to go through every creature that carries it.
+ *
+ * @param {String} tag e.g. "beast"
+ * @returns {Array} live location objects
+ */
+function zones_for_enemy_tag(tag) {
+    const zones = [];
+    Object.keys(enemy_templates).forEach(enemy_key => {
+        if(!enemy_templates[enemy_key].tags?.[tag]) {
+            return;
+        }
+        enemy_zones(enemy_key).forEach(zone => {
+            if(!zones.includes(zone)) {
+                zones.push(zone);
+            }
+        });
+    });
+    return zones;
+}
+
+/*
+    What advances each quest task.
+
+    73 tasks exist and 5 declare a task_condition; the rest are advanced by a
+    `quest_progress` reward hung off a dialogue line, a dialogue action or a location
+    action. This walks all three and indexes them by quest and task, so the journal can
+    say what to do rather than only what is being counted.
+*/
+let advancers_index;
+
+function build_advancers_index() {
+    const index = {};
+
+    const note = (progress, entry) => {
+        as_list(progress).forEach(step => {
+            if(!step?.quest_id || step.task_index === undefined) {
+                return;
+            }
+            const key = `${step.quest_id}#${step.task_index}`;
+            if(!index[key]) {
+                index[key] = [];
+            }
+            const already = index[key].some(other => other.kind === entry.kind
+                && other.via === entry.via && other.location_key === entry.location_key);
+            if(!already) {
+                index[key].push(entry);
+            }
+        });
+    };
+
+    //Where each conversation happens, so a hint can point at a place and not just a name.
+    const host_of = {};
+    Object.keys(locations).forEach(location_key => {
+        as_list(locations[location_key].dialogues).forEach(dialogue_key => {
+            host_of[dialogue_key] = location_key;
+        });
+
+        Object.keys(locations[location_key].actions || {}).forEach(action_key => {
+            note(locations[location_key].actions[action_key].rewards?.quest_progress,
+                {kind: "action", via: action_key, location_key});
+        });
+
+        //Clearing the zone itself. Eight zones advance a quest this way, and without
+        //it the two Giant Enemy Crab tasks - "beat the crab once", "beat it twice" -
+        //had nothing to point at.
+        ["first_reward", "repeatable_reward"].forEach(which => {
+            note(locations[location_key][which]?.quest_progress,
+                {kind: "clear", via: location_key, location_key});
+        });
+    });
+
+    Object.keys(dialogues).forEach(dialogue_key => {
+        const location_key = host_of[dialogue_key];
+
+        Object.values(dialogues[dialogue_key].textlines || {}).forEach(line => {
+            note(line.rewards?.quest_progress,
+                {kind: "talk", via: dialogue_key, location_key});
+        });
+
+        Object.values(dialogues[dialogue_key].actions || {}).forEach(action => {
+            note(action.rewards?.quest_progress,
+                {kind: "talk", via: dialogue_key, location_key});
+        });
+    });
+
+    return index;
+}
+
+/**
+ * What advances one quest task.
+ *
+ * @param {String} quest_id
+ * @param {Number} task_index
+ * @returns {Array} {kind: "talk"|"action"|"clear", via, location_key}
+ */
+function quest_task_advancers(quest_id, task_index) {
+    if(!advancers_index) {
+        advancers_index = build_advancers_index();
+    }
+    return advancers_index[`${quest_id}#${task_index}`] || [];
+}
+
+export { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
+    quest_task_advancers };

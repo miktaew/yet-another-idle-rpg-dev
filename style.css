@@ -3100,3 +3100,23 @@ html, body {
 	 padding: 4px 0;
 	 opacity: 0.8;
  }
+
+ /* A skill's rank ladder: where the player stands, and what is still ahead. */
+ .skill_rank_label {
+	 opacity: 0.7;
+ }
+ .skill_rank_current {
+	 font-weight: bold;
+ }
+ .skill_rank_ahead {
+	 opacity: 0.5;
+ }
+
+ /* A quest task's hint: where the thing it asks for can be found. */
+ .quest_hint_div {
+	 padding-left: 10px;
+	 font-size: 0.85em;
+ }
+ .quest_hint_label {
+	 opacity: 0.7;
+ }

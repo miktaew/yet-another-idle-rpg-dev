@@ -27,7 +27,8 @@ import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./
 import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
-import { enemy_zones, item_sources, training_places } from "./world_index.js";
+import { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
+    quest_task_advancers } from "./world_index.js";
 import { effect_templates } from "./active_effects.js";
 import { player_storage } from "./data/storage.js";
 import { quests } from "./quests.js";
@@ -4987,6 +4988,7 @@ function create_new_skill_bar(skill) {
     const tooltip_effect = document.createElement("div");
     const tooltip_milestones = document.createElement("div");
     const tooltip_next = document.createElement("div");
+    const tooltip_ranks = document.createElement("div");
     
     skill_bar_max.classList.add("skill_bar_max");
     skill_bar_current.classList.add("skill_bar_current");
@@ -4995,6 +4997,7 @@ function create_new_skill_bar(skill) {
     skill_bar_xp.classList.add("skill_bar_xp");
     skill_tooltip.classList.add("skill_tooltip");
     tooltip_next.classList.add("skill_tooltip_next_milestone");
+    tooltip_ranks.classList.add("skill_tooltip_ranks");
 
     skill_bar_text.appendChild(skill_bar_name);
     skill_bar_text.append(skill_bar_xp);
@@ -5007,6 +5010,8 @@ function create_new_skill_bar(skill) {
     skill_tooltip.appendChild(tooltip_effect);
     skill_tooltip.appendChild(tooltip_milestones);
     skill_tooltip.appendChild(tooltip_next);
+    //Last, because update_displayed_skill_bar addresses these children by index.
+    skill_tooltip.appendChild(tooltip_ranks);
 
     let html_content = `<span class="skill_id">id: "${skill.skill_id}"</span><br><br>${skill.getDescription()}<br>`;
     if(skill.flavour_text) {
@@ -5043,6 +5048,47 @@ function create_new_skill_bar(skill) {
  * @param {Boolean} leveled_up 
  * @returns 
  */
+/**
+ * A skill's rank ladder, with where the player currently stands on it.
+ *
+ * 58 skills rename themselves as they level, so a player watching Tough skin become
+ * Wooden skin has no way to know what came before or what is still ahead. Returns "" for
+ * the skills that keep one name, which have no ladder to show.
+ */
+function create_skill_rank_ladder(skill) {
+    const rungs = Object.keys(skill.names || {})
+        .map(Number)
+        .sort((first, second) => first - second);
+    if(rungs.length < 2) {
+        return "";
+    }
+
+    //The rung the player is on: the highest one at or below the current level, which is
+    //the same rule english_name() picks by.
+    let current = rungs[0];
+    for(const level of rungs) {
+        if(skill.current_level >= level) {
+            current = level;
+        }
+    }
+
+    const parts = rungs.map(level => {
+        const name = translationManager.getDisplayName(language, skill.names[level]);
+        //Level 0 is where everyone starts, so printing "(0)" beside it says nothing.
+        const at = level > 0 ? ` (${level})` : "";
+        if(level === current) {
+            return `<span class="skill_rank_current">${name}${at}</span>`;
+        }
+        if(level > skill.current_level) {
+            return `<span class="skill_rank_ahead">${name}${at}</span>`;
+        }
+        return `${name}${at}`;
+    });
+
+    return `<br><span class="skill_rank_label">`
+        + `${translationManager.getText(language, "ui skill ranks")}:</span> `
+        + parts.join(" &rsaquo; ");
+}
 function update_displayed_skill_bar(skill, leveled_up=true) {
     /*
     skill_bar divs: 
@@ -5052,13 +5098,14 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
                     skill_bar_name,
                     skill_bar_xp
                 skill_bar_current, 
-                skill_tooltip -> children(5):
+                skill_tooltip -> children(7):
                     tooltip_xp,
                     tooltip_xp_gain,
                     tooltip_desc,
                     tooltip_effect,
                     tooltip_milestones,
-                    tooltip_next
+                    tooltip_next,
+                    tooltip_ranks
     */
 
     //The guard was one level too shallow: a whole category can be absent from
@@ -5108,6 +5155,11 @@ function update_displayed_skill_bar(skill, leveled_up=true) {
         //tooltip_effect
     }
     
+    //children[6]: the rank ladder. Rebuilt rather than patched, because a level-up can
+    //move which rung is current and a language switch changes every name on it.
+    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[6],
+        create_skill_rank_ladder(skill));
+
     if(leveled_up) {
         sort_displayed_skills({sort_by: skill_sorting}); //in case of a name change on levelup
     }
@@ -5614,15 +5666,9 @@ function create_discovery_source_line(source) {
     text_div.classList.add("discovery_source_text");
     line.appendChild(text_div);
 
-    if(location.is_unlocked) {
-        const travel = document.createElement("div");
-        travel.classList.add("discovery_travel_button");
-        travel.innerText = translationManager.getText(language, "ui discovery travel");
-        travel.setAttribute("data-travel", source.location_key);
-        travel.setAttribute("onclick",
-            "change_location({location_id: this.getAttribute('data-travel')});");
-        line.appendChild(travel);
-    }
+    //The button itself comes from create_travel_line, which the quest journal uses too.
+    const with_button = create_travel_line(location, text);
+    line.replaceChildren(...with_button.childNodes);
 
     return line;
 }
@@ -6051,6 +6097,142 @@ function create_displayed_quest_content(quest_id) {
     return quest_div;
 }
 
+/**
+ * A line naming a place, with a button that goes there.
+ *
+ * Shared by the Discoveries page and the quest journal, which both answer the same
+ * question - where do I go - and were about to grow two copies of this.
+ *
+ * The button only appears for a place the player has unlocked. Both callers rebuild on
+ * open, so that stays current.
+ */
+function create_travel_line(location, text) {
+    const line = document.createElement("div");
+    line.classList.add("discovery_source_line");
+
+    const text_div = document.createElement("div");
+    text_div.innerText = text;
+    text_div.classList.add("discovery_source_text");
+    line.appendChild(text_div);
+
+    if(location?.is_unlocked) {
+        const travel = document.createElement("div");
+        travel.classList.add("discovery_travel_button");
+        travel.innerText = translationManager.getText(language, "ui discovery travel");
+        travel.setAttribute("data-travel", location.id);
+        travel.setAttribute("onclick",
+            "change_location({location_id: this.getAttribute('data-travel')});");
+        line.appendChild(travel);
+    }
+
+    return line;
+}
+
+/**
+ * Where to go for a quest task, worked out from the task itself.
+ *
+ * A task says what to do and never where, which is what made four quests look impossible
+ * at once. Every type resolves through an index that already exists, so a hint cannot
+ * drift away from the content: move a creature and its hint moves with it.
+ *
+ * Returns an empty array for a type with nowhere to point - and for a task whose places
+ * are all still undiscovered, which is a hint the player has not earned yet.
+ */
+function quest_task_places(task_type, target_id) {
+    switch(task_type) {
+        case "kill":
+            return enemy_zones(target_id);
+        case "kill_any":
+            return zones_for_enemy_tag(target_id);
+        case "clear":
+        case "enter_location":
+            return locations[target_id] ? [locations[target_id]] : [];
+        case "reach_skill":
+            return training_places()[target_id] || [];
+        default:
+            return [];
+    }
+}
+
+/** One hint line: a label, the thing to do, and a way to get there. */
+function create_hint_line(location, text) {
+    return create_travel_line(location, text);
+}
+
+/**
+ * A hint block, or nothing when there is nothing worth saying.
+ *
+ * @param {Array} lines already-built line elements
+ */
+function create_hint_block(lines) {
+    if(lines.length === 0) {
+        return null;
+    }
+    const hint = document.createElement("div");
+    hint.classList.add("quest_hint_div");
+
+    const label = document.createElement("div");
+    label.classList.add("quest_hint_label");
+    label.innerText = translationManager.getText(language, "ui quest hint");
+    hint.appendChild(label);
+
+    lines.forEach(line => hint.appendChild(line));
+    return hint;
+}
+
+/**
+ * Where to go for a counted task target - kill this, clear that, reach this skill.
+ */
+function create_quest_hint(task_type, target_id) {
+    const lines = quest_task_places(task_type, target_id)
+        .filter(place => place.is_unlocked)
+        .sort((first, second) => compare_display_names(first.getName(), second.getName()))
+        .map(place => create_hint_line(place, place.getName()));
+
+    return create_hint_block(lines);
+}
+
+/**
+ * What advances a task that counts nothing - which is 68 of the 73.
+ *
+ * Those tasks carry no condition at all: they move when a dialogue line is read or an
+ * action is finished somewhere. Without this the journal shows a task with no numbers and
+ * no clue, which is what made four quests look impossible at once.
+ */
+function create_quest_step_hint(quest_id, task_index) {
+    const lines = quest_task_advancers(quest_id, task_index)
+        .map(step => {
+            const location = locations[step.location_key];
+            //Nothing is pointed at until the place is known: a hint into an undiscovered
+            //room is a spoiler, not a hint.
+            if(!location?.is_unlocked) {
+                return null;
+            }
+            if(step.kind === "talk") {
+                const who = capitalize_first_letter(translationManager.getDisplayName(language,
+                    dialogues[step.via].getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})), true);
+                return create_hint_line(location,
+                    translationManager.getText(language, "ui quest hint talk",
+                        {v1: who, v2: location.getName()}));
+            }
+            if(step.kind === "clear") {
+                //A zone is its own place, so naming it twice would say nothing twice.
+                return create_hint_line(location,
+                    translationManager.getText(language, "ui quest hint clear",
+                        {v1: location.getName()}));
+            }
+            const action = location.actions?.[step.via];
+            if(!action || action.is_finished || !action.is_unlocked) {
+                return null;
+            }
+            return create_hint_line(location,
+                translationManager.getText(language, "ui quest hint action",
+                    {v1: action.getActionName(), v2: location.getName()}));
+        })
+        .filter(Boolean);
+
+    return create_hint_block(lines);
+}
 function create_displayed_quest_tasks_content(quest_id) {
     const quest = quests[quest_id];
     const quest_tasks_div = document.createElement("div");
@@ -6167,6 +6349,13 @@ function create_displayed_quest_task(quest_id, task_index) {
                     task_target_div.classList.add("task_target_div");
                     task_target_div.innerText += quest_target_label(task_type, task_target_id) + ": " + task.task_condition[task_group][task_type][task_target_id].current +"/"+task.task_condition[task_group][task_type][task_target_id].target;
                     task_type_div.appendChild(task_target_div);
+
+                    //Where to go for it, worked out from the task rather than written.
+                    const hint = create_quest_hint(task_type, task_target_id);
+                    if(hint) {
+                        task_type_div.appendChild(hint);
+                    }
+
                     total_tasks++;
                 });
                 task_condition_div.appendChild(task_type_div);
@@ -6186,6 +6375,15 @@ function create_displayed_quest_task(quest_id, task_index) {
     task_div.appendChild(task_status_icon_span);
     task_div.appendChild(task_desc_div);
     task_div.appendChild(task_conditions_div);
+
+    //68 of the 73 tasks count nothing at all - they move when something is said or
+    //done somewhere. Those are the ones a player gets stuck on with no clue at all.
+    if(total_tasks === 0 && !task.is_finished) {
+        const step_hint = create_quest_step_hint(quest_id, task_index);
+        if(step_hint) {
+            task_div.appendChild(step_hint);
+        }
+    }
     return task_div;
 }
 

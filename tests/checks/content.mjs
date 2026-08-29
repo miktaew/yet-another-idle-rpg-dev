@@ -380,6 +380,44 @@ function bracketed_body(text, open_at) {
  * dead content that looks like content. At max_level exactly is fine and deliberate: Iron
  * skin is named after its own top rung.
  */
+/**
+ * A location's actions and activities are assigned once each.
+ *
+ * Both are attached after construction - `locations["X"].actions = {...}` - and a second
+ * assignment replaces the first wholesale rather than adding to it. That is silent: the
+ * file still reads as though both blocks exist, and nothing at runtime is missing enough
+ * to complain.
+ *
+ * Mountain camp had exactly that. Its first block declared "cut a flue", the action that
+ * builds the mountain forge, sets is_mountain_forge_built and advances the second task of
+ * "A Fire in a Hollow"; a later block declared two explore actions and erased it. The
+ * quest could not be finished and the forge could not be built, for as long as both
+ * blocks existed.
+ */
+function check_location_collections_assigned_once() {
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
+
+    const seen = new Map();
+    for (const match of source.matchAll(/locations\["([^"]+)"\]\.(actions|activities)\s*=/g)) {
+        const key = `${match[1]}.${match[2]}`;
+        seen.set(key, (seen.get(key) ?? 0) + 1);
+    }
+
+    for (const [key, count] of seen) {
+        if (count > 1) {
+            error(`${key} is assigned ${count} times, and the last one replaces the rest -`
+                + ` so everything the earlier blocks declared is discarded before any player`
+                + ` can reach it. Merge them into one.`);
+        }
+    }
+
+    if (seen.size < 20) {
+        error(`only ${seen.size} late assignments found - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] location collections: ${seen.size} assigned once each`);
+}
 function check_skill_rank_levels() {
     const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/skills.js"), "utf8"));
 
@@ -824,6 +862,7 @@ function check_content_is_reachable() {
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
+    check_location_collections_assigned_once,
     check_skill_rank_levels,
     check_trader_stock_lists,
     check_actions_can_explain_failure,
