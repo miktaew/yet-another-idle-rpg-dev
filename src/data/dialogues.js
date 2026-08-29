@@ -1310,6 +1310,25 @@ class Textline {
                 text: "old account answ",
                 locks_lines: ["account"],
             }),
+            /*
+                The slums counterpart, and the opposite reading of the same fact. The
+                broker prices standing; she tells you what it costs. Gated at 300, which
+                is where the row's night watch and the gate both sit, so it arrives after
+                the hero has actually done the work rather than after being told about it.
+            */
+            "roster": new Textline({
+                lore: true, //carries the thread; see the lore panel
+                name: "old roster",
+                text: "old roster answ",
+                is_unlocked: true,
+                display_conditions: {
+                    reputation: {Slums: 300},
+                },
+                rewards: {
+                    xp: 700,
+                },
+                locks_lines: ["roster"],
+            }),
         },
         getDescription: ()=>{
             if(dialogues["old woman of the slums"].textlines["hello"].is_finished) {
@@ -2881,6 +2900,29 @@ class Textline {
                     textlines: [{dialogue: "antique collector", lines: ["mine"]}],
                 },
                 locks_lines: ["rest"],
+            }),
+            /*
+                Opens on Town standing alone, not on an unlock, because the thing it
+                responds to is the standing itself. He is the man who prices everything
+                in the square, so what he does with a reputation is price it - and he
+                answers without resolving anything, which is the rule for him.
+
+                Deliberately not ordered against the confrontation. A player can reach
+                this before or after learning what he did, and it reads the same either
+                way, because he would say it either way.
+            */
+            "standing": new Textline({
+                lore: true, //carries the thread; see the lore panel
+                name: "broker standing",
+                text: "broker standing answ",
+                is_unlocked: true,
+                display_conditions: {
+                    reputation: {Town: 250},
+                },
+                rewards: {
+                    xp: 900,
+                },
+                locks_lines: ["standing"],
             }),
         },
     });

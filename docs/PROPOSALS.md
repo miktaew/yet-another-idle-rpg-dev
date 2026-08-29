@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 46 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 47 -->
 
 # Proposals
 
@@ -1051,8 +1051,12 @@ not after. Each item is the request as it was given, and the state it is in.
     gate on it, no action did, and **nothing at all** read Slums back except a trader's
     margin. Three Slums actions now gate at 100 / 200 / 300, verified in a browser both
     ways: at 200 the scales open and the gate refuses with its reason. Reputation-gated
-    dialogue already existed (four lines) and was left as it was; what was missing was
-    actions, and a reason to have slums standing at all. A town should react to
+    dialogue already existed (four lines) and was left as it was. v0.6.59 added the half
+    that was actually missing: two lines that open on standing **alone**, with no quest
+    and no unlock behind them - the square broker pricing a reputation the way he prices
+    grain, and the old woman telling the hero what the row's roster costs rather than
+    what it is worth. Both verified hidden below the threshold and offered above it, and
+    both land in the lore panel. A town should react to
     standing built up in it: new actions and new conversations unlock as reputation
     rises, so the place changes with the player rather than staying a fixed backdrop.
 57. **`add_best_effect` for the dev console** — `done`, v0.6.56. The counterpart to

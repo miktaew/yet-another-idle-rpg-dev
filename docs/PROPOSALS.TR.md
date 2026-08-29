@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 46 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 47 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1063,8 +1063,11 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     diyalog satırı buna bakıyor, hiçbir aksiyon bakmıyordu ve Kenar mahalleyi bir tüccarın
     kâr payı dışında **hiçbir şey** geri okumuyordu. Üç aksiyon artık 100 / 200 / 300'de
     kapı tutuyor; tarayıcıda iki yönden de doğrulandı. İtibara bağlı konuşmalar zaten
-    vardı (dört satır) ve olduğu gibi bırakıldı; eksik olan aksiyonlardı ve kenar
-    mahalle itibarına sahip olmanın bir sebebiydi. Kasaba, içinde
+    vardı (dört satır) ve olduğu gibi bırakıldı. v0.6.59, asıl eksik olan yarıyı ekledi:
+    arkasında görev de kilit açma da olmayan, **yalnızca** itibarla açılan iki satır -
+    meydandaki komisyoncunun bir itibara da buğdaya biçtiği gibi fiyat biçmesi ve yaşlı
+    kadının nöbet listesinin ne ettiğini değil neye mal olduğunu söylemesi. İkisi de eşiğin
+    altında gizli, üstünde açık olarak doğrulandı ve ikisi de lore paneline düşüyor. Kasaba, içinde
     kurulan itibara tepki vermeli: itibar yükseldikçe yeni aksiyonlar ve yeni
     konuşmalar açılmalı ki mekân sabit bir fon olmaktan çıkıp oyuncuyla değişsin.
 57. **Dev konsolu için `add_best_effect`** — `bitti`, v0.6.56. `give_best`'in eşi:
