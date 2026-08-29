@@ -71,10 +71,26 @@ async function check_modules_import_what_they_call() {
             for (const match of source.matchAll(pattern)) declared.add(match[1]);
         }
 
+        /*
+            A handler written as markup is not a call. display.js builds them as strings -
+            setAttribute("onclick", "change_location({...})") - and the name inside one is
+            resolved against the global object when somebody clicks it, which is what
+            check_onclick_names_are_reachable covers instead.
+
+            Skipped line by line rather than by stripping every quoted string first. That
+            was the first attempt and it is not safe across six thousand lines: one
+            unbalanced quote anywhere above desynchronises the scan below it, and measured,
+            it silently stopped catching two real missing imports in save_load.js.
+        */
+        const source_lines = source.split("\n");
+
         //Every name used in call position.
         for (const call of source.matchAll(/(?<![.\w$])([a-z_][A-Za-z0-9_]*)\s*\(/g)) {
             const name = call[1];
             if (declared.has(name) || imported.has(name)) continue;
+
+            const line = source_lines[source.slice(0, call.index).split("\n").length - 1] ?? "";
+            if (line.includes("onclick")) continue;
 
             const owner = [...exported_by].find(([other, names]) => other !== file && names.has(name));
             if (!owner) continue;

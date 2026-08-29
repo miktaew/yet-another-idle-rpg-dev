@@ -324,5 +324,19 @@ export {
         select_outline_class,
         component_name_mapping, get_component_name,
         get_item_mapping,
-        rtp
-    };
+        rtp, is_JSON};
+
+/**
+ * Whether a string parses as JSON.
+ *
+ * Shared: an inventory key is either a plain id or a JSON blob, and both the reading
+ * code and the loader have to tell them apart. It lived in main.js beside the loader
+ * until the loader left.
+ */
+function is_JSON(str) {
+    try {
+        return (JSON.parse(str) && !!str);
+    } catch (e) {
+        return false;
+    }
+}
