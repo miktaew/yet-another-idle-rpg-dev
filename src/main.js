@@ -6135,6 +6135,7 @@ function set_game_speed(multiplier) {
  * exercised without playing up to it:
  *
  *     add_active_effect("Coffee", 1800)
+ *     add_best_effect(1800)
  *     give({items: [{item: "Iron sword", quality: 120}], money: 50000})
  *     goto("The bay")
  *     set_speed(100)
@@ -6176,6 +6177,40 @@ function enable_dev_console() {
             return Object.keys(rewards);
         },
 
+        /*
+            Every good effect at once.
+
+            Which effects count as good is read off the templates - `tags.buff` - rather
+            than listed here. A list written into this file would be correct until the
+            next effect is added and then quietly wrong, and the data already carries
+            the answer better than the numbers would: Tipsy raises agility, lowers
+            dexterity, and is tagged debuff, which is an intent the stat signs cannot
+            express.
+
+            Effects sharing a group_tag do not stack; add_active_effect keeps the
+            stronger and skips the weaker, so the skipped names are reported rather than
+            silently missing from the count.
+
+            Duration is in in-game minutes, like every duration in content.
+        */
+        add_best_effect: (duration = 1800) => {
+            if(typeof duration !== "number" || !(duration > 0)) {
+                console.error(`Duration has to be a positive number of in-game minutes, got "${duration}".`);
+                return;
+            }
+
+            const good = Object.keys(effect_templates).filter(key => effect_templates[key].tags?.buff);
+            const applied = [];
+            const skipped = [];
+            good.sort().forEach(key => {
+                real_add_active_effect(key, duration);
+                (active_effects[key] ? applied : skipped).push(key);
+            });
+
+            return skipped.length
+                ? {applied, held_back_by_a_stronger_effect: skipped}
+                : applied;
+        },
         add_money: (amount) => { add_money_to_character(amount); return character.money; },
         add_xp: (amount) => { add_xp_to_character(amount); return character.xp.current_level; },
         add_skill_xp: (skill, amount) => {
