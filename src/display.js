@@ -6299,16 +6299,29 @@ function create_displayed_quest_task(quest_id, task_index) {
 
     const task_conditions_div = document.createElement("div");
     /*
-        A task that is about gathering shows how far along it is. The requirement is
-        read off the action that consumes the materials rather than copied into the
-        task, so there is one place to change a number.
+        A task that is about gathering shows how far along it is. The requirement is read
+        off the action that consumes the materials rather than copied into the task, so
+        there is one place to change a number.
+
+        Which action that is comes from the advancer index - the same one the hints read -
+        rather than from a field somebody has to remember to fill in. All three tasks in
+        the game whose advancing action consumes items had been left without one, so all
+        three counted nothing. `items_from` survives as an override, for a task that
+        counts something its advancer does not.
     */
-    if(task.items_from && !task.is_finished) {
-        const source = locations[task.items_from.location]?.actions?.[task.items_from.action];
+    const counts_from = task.items_from ?? quest_task_advancers(quest_id, task_index)
+        .filter(step => step.kind === "action")
+        .map(step => ({location: step.location_key, action: step.via}))
+        .find(candidate => Object.keys(
+            locations[candidate.location]?.actions?.[candidate.action]?.required?.items_by_id ?? {},
+        ).length > 0);
+
+    if(counts_from && !task.is_finished) {
+        const source = locations[counts_from.location]?.actions?.[counts_from.action];
         const needed = source?.required?.items_by_id;
         if(!needed) {
-            console.error(`Quest task points at the action "${task.items_from.action}" in`
-                + ` "${task.items_from.location}" for its item counts, but that action has none.`);
+            console.error(`Quest task points at the action "${counts_from.action}" in`
+                + ` "${counts_from.location}" for its item counts, but that action has none.`);
         } else {
             for(const item_id of Object.keys(needed)) {
                 const template = item_templates[item_id];
