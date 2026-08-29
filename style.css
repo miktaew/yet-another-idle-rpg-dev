@@ -3132,3 +3132,31 @@ html, body {
 	 border-radius: 3px;
 	 padding: 1px 4px;
  }
+
+ /* The Lore tab: what you were told, grouped by who told you. */
+ .lore_speaker_block {
+	 border-bottom: 1px solid var(--border_color, #444);
+	 padding: 2px 0;
+ }
+ .lore_speaker {
+	 font-weight: bold;
+	 cursor: pointer;
+ }
+ .lore_resume .lore_speaker {
+	 cursor: default;
+ }
+ .lore_resume {
+	 border-bottom: 1px solid var(--border_color, #444);
+	 padding-bottom: 4px;
+ }
+ .lore_entry {
+	 padding: 3px 0 3px 8px;
+ }
+ .lore_question {
+	 font-style: italic;
+	 opacity: 0.8;
+ }
+ .lore_answer {
+	 padding-left: 8px;
+	 white-space: pre-wrap;
+ }

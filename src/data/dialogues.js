@@ -74,6 +74,10 @@ class Textline {
                 otherUnlocks,
                 required_flags,
                 display_conditions = [],
+                //Whether this line belongs in the lore panel, when the derived rule
+                //gets it wrong. true keeps it, false drops it, undefined leaves the
+                //decision to what the line changes in the world.
+                lore,
             }) 
     {
         this.name = name; // displayed option to click, don't make it too long
@@ -82,6 +86,18 @@ class Textline {
         this.otherUnlocks = otherUnlocks || function(){return;};
         this.is_unlocked = is_unlocked;
         this.is_finished = is_finished;
+        this.lore = lore;
+        /*
+            Whether the player has actually read this, which is not the same as
+            is_finished. That one is written from a designer lock list, so across the
+            233 lines it is right for 190, wrong-positive for 10 that another line
+            locks, and blind to 33 that nothing ever locks.
+
+            Set in the constructor body rather than taken as a parameter: no content
+            passes it, and check_content_object_keys compares content keys against
+            constructor keys.
+        */
+        this.is_heard = false;
         this.is_branch_only = is_branch_only; //if true, textline won't be displayed in overall view and instead will only be available as a branch dialogue
         this.rewards = rewards || {};
         this.branches_into = branches_into;
@@ -420,6 +436,7 @@ class Textline {
                 is_unlocked: false,
             }),
             "rats": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "elder rats",
                 text: "elder rats answ",
                 is_unlocked: false,
@@ -491,6 +508,7 @@ class Textline {
                 },
             }),
             "amulet": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "elder amulet",
                 text: "elder amulet answ",
                 is_unlocked: false,
@@ -503,6 +521,7 @@ class Textline {
                 },
             }),
             "about guard": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "elder about guard",
                 text: "elder about guard answ",
                 is_unlocked: false,
@@ -578,6 +597,7 @@ class Textline {
         is_unlocked: false,
         textlines: {
             "hello": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "craftsman hello",
                 text: "craftsman hello answ",
                 rewards: {
@@ -649,6 +669,7 @@ class Textline {
                 locks_lines: ["heat"],
             }),
             "heat after": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "craftsman heat after",
                 text: "craftsman heat after answ",
                 is_unlocked: false,
@@ -656,11 +677,13 @@ class Textline {
             //P-11. He asked to hold one thing made up there. He gets the hearth instead,
             //which is the same request answered better than he made it.
             "hearth": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "craftsman hearth",
                 text: "craftsman hearth answ",
                 is_unlocked: false,
             }),
             "about guard": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "craftsman about guard",
                 text: "craftsman about guard answ",
                 is_unlocked: false,
@@ -791,6 +814,7 @@ class Textline {
                 locks_lines: ["serious 2", "serious"],
             }),
             "after": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "guard after",
                 is_unlocked: false,
                 text: "guard after answ",
@@ -1017,6 +1041,7 @@ class Textline {
                 text: "millers how2 answ",
             }),
             "about guard": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "millers about guard",
                 text: "millers about guard answ",
                 is_unlocked: false,
@@ -1279,6 +1304,7 @@ class Textline {
                 },
             }),
             "account": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "old account",
                 is_unlocked: false,
                 text: "old account answ",
@@ -1657,6 +1683,7 @@ class Textline {
                 locks_lines: ["swampcook help"],
             }),
             "swampcook know": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook know",
                 text: "swampcook know answ",
                 is_unlocked: false,
@@ -1696,6 +1723,7 @@ class Textline {
                 locks_lines: ["swampcook history"],
             }),
             "swampcook history1": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook history1",
                 text: "swampcook history1 answ",
                 is_unlocked: false,
@@ -1812,6 +1840,7 @@ class Textline {
                 locks_lines: ["swampcook chief"],
             }),
             "swampcook chief1": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook chief1",
                 text: "swampcook chief1 answ",
                 is_unlocked: false,
@@ -1852,6 +1881,7 @@ class Textline {
                 locks_lines: ["swampcook people"],
             }),
             "swampcook cook": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook cook",
                 text: "swampcook cook answ",
                 is_unlocked: false,
@@ -1881,6 +1911,7 @@ class Textline {
                 locks_lines: ["swampcook trader"],
             }),
             "swampcook trader1": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook trader1",
                 text: "swampcook trader1 answ",
                 is_unlocked: false,
@@ -1933,6 +1964,7 @@ class Textline {
                 locks_lines: ["swampcook tailor"],
             }),
             "swampcook tailor1": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook tailor1",
                 text: "swampcook tailor1 answ",
                 is_unlocked: false,
@@ -2009,6 +2041,7 @@ class Textline {
                 locks_lines: ["swampcook whycrab"],
             }),
             "swampcook whycrabpress": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampcook whycrabpress",
                 text: "swampcook whycrabpress answ",
                 is_unlocked: false,
@@ -2148,6 +2181,7 @@ class Textline {
                 locks_lines: ["swamptailor interrupt", "swamptailor listen1", "swamptailor listen2", "swamptailor listen3", "swamptailor listen4", "swamptailor listen5", "swamptailor listen6", "swamptailor listen7", "swamptailor listen8"],
             }),
             "swamptailor listen1": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swamptailor listen1",
                 text: "swamptailor listen1 answ",
                 is_unlocked: true,
@@ -2389,6 +2423,7 @@ class Textline {
         name: "swampland scout",
         textlines: {
             "swampscout meet": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "swampscout meet",
                 text: "swampscout meet answ",
                 is_unlocked: true,
@@ -2590,6 +2625,7 @@ class Textline {
                 locks_lines: ["tallyman that night"],
             }),
             "tallyman after": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "tallyman after",
                 text: "tallyman after answ",
                 is_unlocked: false,
@@ -2768,6 +2804,7 @@ class Textline {
         description: "clerk description",
         textlines: {
             "hello": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "clerk hello",
                 text: "clerk hello answ",
                 rewards: {
@@ -2804,6 +2841,7 @@ class Textline {
         description: "broker description",
         textlines: {
             "hello": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "broker hello",
                 text: "broker hello answ",
                 locks_lines: ["hello"],
@@ -2819,12 +2857,14 @@ class Textline {
                 locks_lines: ["confront"],
             }),
             "who": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "broker who",
                 is_unlocked: false,
                 text: "broker who answ",
                 locks_lines: ["who"],
             }),
             "object": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "broker object",
                 is_unlocked: false,
                 text: "broker object answ",
@@ -2864,6 +2904,7 @@ class Textline {
         description: "collector description",
         textlines: {
             "hello": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "collector hello",
                 text: "collector hello answ",
                 locks_lines: ["hello"],
@@ -2953,6 +2994,7 @@ class Textline {
         description: "rat description",
         textlines: {
             "hello": new Textline({
+                lore: true, //carries the thread; see the lore panel
                 name: "rat hello",
                 text: "rat hello answ",
                 rewards: {

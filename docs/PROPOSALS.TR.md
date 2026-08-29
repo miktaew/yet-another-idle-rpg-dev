@@ -856,7 +856,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     verildi. Onların `js/systems/` klasöründe bu oyunda hiç olmayan abilities,
     effectors, planner ve simulation var; docs'unda da REGIONS, STORY ve iki
     STORYPROGRESS dosyası.
-36. **Lore paneli ne işe yarayacak** — `yapılacak`, ve bu P-13/1'i keskinleştiriyor.
+36. **Lore paneli ne işe yarayacak** — `bitti`, v0.6.51, ve bu P-13/1'i keskinleştiriyor.
     Oyuncunun sorduğu soruları ve aldığı cevapları tutacak, böylece hikâye
     hatırlanmak yerine takip edilebilecek; ve yönlendirecek - bir hafta sonra dönen
     oyuncu neyin ortasında kaldığını bilerek dönmeli. Döküm değil: ipi taşıyan kısımlar.

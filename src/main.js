@@ -52,6 +52,7 @@ import { end_activity_animation,
          update_displayed_xp_bonuses, 
          update_displayed_skill_xp_gain, update_all_displayed_skills_xp_gain, update_displayed_stance_list, 
          update_displayed_discoveries,
+         update_displayed_lore,
          update_displayed_stamina_efficiency, update_displayed_stance, update_displayed_faved_stances, update_stance_tooltip,
          update_gathering_tooltip,
          open_crafting_window,
@@ -276,6 +277,8 @@ let start_date;
 let end_date;
 
 let current_dialogue;
+//The last line the player read, so the lore panel can open on where they left off.
+let lore_last = null;
 const active_effects = {};
 //e.g. health regen from food
 
@@ -1455,6 +1458,11 @@ function reload_normal_location() {
 function start_textline(textline_key){
     const dialogue = dialogues[current_dialogue];
     const textline = dialogue.textlines[textline_key];
+
+    //Before the rewards, which can lock this very line: what matters is that it was
+    //read, and this is the only place in the game where that is true.
+    textline.is_heard = true;
+    lore_last = {dialogue: current_dialogue, textline: textline_key};
 
     process_rewards({rewards: textline.rewards, source_type: "textline", inform_textline: false, source_name: current_dialogue})
 
@@ -3350,6 +3358,7 @@ function create_save() {
         save_data.strongest_hit = run_stats.strongest_hit;
         save_data.gathered_materials = gathered_materials;
         save_data.global_flags = global_flags;
+        save_data.lore_last = lore_last;
         save_data.last_rewarded_export = last_rewarded_export || 0;
         save_data["character"] = {
                                 name: character.name, titles: character.titles,
@@ -3486,7 +3495,8 @@ function create_save() {
             if(dialogues[dialogue].textlines) {
                 Object.keys(dialogues[dialogue].textlines).forEach(textline_key => {
                     save_data["dialogues"][dialogue].textlines[textline_key] = {is_unlocked: dialogues[dialogue].textlines[textline_key].is_unlocked,
-                                                                is_finished: dialogues[dialogue].textlines[textline_key].is_finished};
+                                                                is_finished: dialogues[dialogue].textlines[textline_key].is_finished,
+                                                                is_heard: dialogues[dialogue].textlines[textline_key].is_heard};
                 });
             }
             if(dialogues[dialogue].actions) {
@@ -3722,6 +3732,10 @@ function load(save_data) {
                 global_flags[flag] = save_data.global_flags[flag];
             }
         });
+
+        //Absent in a save from before the lore panel, which is fine: the panel simply
+        //has no "where you left off" until the next line is read.
+        lore_last = save_data.lore_last || null;
 
         last_rewarded_export = save_data.last_rewarded_export || last_rewarded_export;
 
@@ -4288,6 +4302,15 @@ function load(save_data) {
                     if(dialogues[dialogue].textlines[textline_key]) {
                         dialogues[dialogue].textlines[textline_key].is_unlocked = save_data.dialogues[dialogue].textlines[textline_key].is_unlocked;
                         dialogues[dialogue].textlines[textline_key].is_finished = save_data.dialogues[dialogue].textlines[textline_key].is_finished;
+                        /*
+                            A save from before the lore panel has no is_heard, so it
+                            falls back to is_finished. That inherits the ten lines
+                            another line locks - finished without being read - once,
+                            for one save, which beats back-filling nothing at all.
+                        */
+                        dialogues[dialogue].textlines[textline_key].is_heard =
+                            save_data.dialogues[dialogue].textlines[textline_key].is_heard
+                            ?? save_data.dialogues[dialogue].textlines[textline_key].is_finished;
                     } else {
                         console.warn(`Textline "${textline_key}" in dialogue "${dialogue}" couldn't be found!`);
                         any_warnings = true;
@@ -5791,6 +5814,7 @@ window.do_enemy_combat_action = do_enemy_combat_action;
 
 window.sort_displayed_inventory = sort_displayed_inventory;
 window.update_displayed_discoveries = update_displayed_discoveries;
+window.update_displayed_lore = update_displayed_lore;
 window.update_displayed_character_inventory = update_displayed_character_inventory;
 window.update_displayed_trader_inventory = update_displayed_trader_inventory;
 window.update_displayed_storage_inventory = update_displayed_storage_inventory;
@@ -6256,6 +6280,8 @@ if(config.show_visitor_counter) {
     );
 }
 export { language_tags,
+        //Read by the lore panel to open on where the player left off.
+        lore_last,
         current_enemies,
         current_location,
         can_work, active_effects,

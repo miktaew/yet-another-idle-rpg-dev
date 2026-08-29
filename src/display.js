@@ -17,7 +17,7 @@ import { current_enemies, game_options,
     language,
     language_tags,
     favourite_items,
-    get_effective_skill_xp_gain} from "./main.js";
+    get_effective_skill_xp_gain, lore_last } from "./main.js";
 import { dialogues } from "./data/dialogues.js";
 import { activities } from "./activities.js";
 import { format_time, current_game_time, seasons } from "./game_time.js";
@@ -30,7 +30,8 @@ import { set_HTML, insert_HTML, clear_HTML_content, compare_display_names,
     remove_class_from_all, is_element_above_x, matches_search } from "./ui_helpers.js";
 //import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
-import { enemy_zones, zones_for_enemy_tag, item_sources, training_places,
+import { lore_units, lore_unit_of,
+    enemy_zones, zones_for_enemy_tag, item_sources, training_places,
     first_available_opener,
     quest_task_advancers } from "./world_index.js";
 import { effect_templates } from "./active_effects.js";
@@ -5689,6 +5690,138 @@ function append_training_section(list) {
     });
 }
 
+/**
+ * One remembered exchange: the question asked, and the answer given.
+ *
+ * A unit can fold several lines into one beat - the swamp scout's account is nine - so
+ * the answers are joined rather than listed as separate entries.
+ */
+function create_lore_entry(unit) {
+    const dialogue = dialogues[unit.dialogue];
+    const lines = unit.keys.map(key => dialogue.textlines[key]).filter(Boolean);
+
+    const entry = document.createElement("div");
+    entry.classList.add("lore_entry");
+
+    const question = document.createElement("div");
+    question.classList.add("lore_question");
+    question.innerText = translationManager.getText(language, lines[0].name);
+    entry.appendChild(question);
+
+    lines.filter(line => line.is_heard).forEach(line => {
+        const answer = document.createElement("div");
+        answer.classList.add("lore_answer");
+        answer.innerText = translationManager.getText(language, line.getText());
+        entry.appendChild(answer);
+    });
+
+    return entry;
+}
+
+/** Who said it, and where they were. */
+function lore_speaker_label(dialogue_key) {
+    const dialogue = dialogues[dialogue_key];
+    const who = capitalize_first_letter(translationManager.getDisplayName(language,
+        dialogue.getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})), true);
+    const place = locations[dialogue.location_name]?.getName();
+    return place ? `${who} - ${place}` : who;
+}
+
+/**
+ * Redraws the Lore tab.
+ *
+ * Built fresh each time it is opened, like Discoveries: what is on it changes with every
+ * conversation, and it is only on screen while somebody is reading it.
+ */
+function update_displayed_lore() {
+    const list = document.getElementById("lore_list");
+    if(!list) {
+        return;
+    }
+    clear_HTML_content(list);
+
+    const everything = document.getElementById("lore_show_everything")?.checked;
+    const query = document.getElementById("lore_search")?.value.trim() ?? "";
+
+    const matches = (unit) => {
+        if(!query) {
+            return true;
+        }
+        const haystack = [lore_speaker_label(unit.dialogue)].concat(
+            unit.keys.map(key => {
+                const line = dialogues[unit.dialogue].textlines[key];
+                if(!line) {
+                    return "";
+                }
+                return `${translationManager.getText(language, line.name)} `
+                    + translationManager.getText(language, line.getText());
+            }),
+        ).join(" ");
+        return matches_search(haystack, query);
+    };
+
+    const units = lore_units(everything).filter(matches);
+
+    if(units.length === 0) {
+        const empty = document.createElement("div");
+        empty.classList.add("discovery_empty");
+        empty.innerText = translationManager.getText(language, "ui lore none");
+        list.appendChild(empty);
+        return;
+    }
+
+    /*
+        Where you left off, which is the half of this the owner asked for twice: a player
+        coming back after a week should know what they were in the middle of. Only when
+        the last thing heard is still in view - filtering it away and leaving it pinned
+        would be a lie about what the list is showing.
+    */
+    const last = lore_last && lore_unit_of(lore_last.dialogue, lore_last.textline);
+    if(last && units.some(unit => unit.dialogue === last.dialogue && unit.head === last.head)) {
+        const heading = document.createElement("div");
+        heading.classList.add("discovery_heading");
+        heading.innerText = translationManager.getText(language, "ui lore resume header");
+        list.appendChild(heading);
+
+        const resume = document.createElement("div");
+        resume.classList.add("lore_resume");
+        const who = document.createElement("div");
+        who.classList.add("lore_speaker");
+        who.innerText = lore_speaker_label(last.dialogue);
+        resume.appendChild(who);
+        resume.appendChild(create_lore_entry(last));
+        list.appendChild(resume);
+    }
+
+    const heading = document.createElement("div");
+    heading.classList.add("discovery_heading");
+    heading.innerText = translationManager.getText(language, "ui lore heard header");
+    list.appendChild(heading);
+
+    //Grouped by who said it, in the order the dialogues are declared, which is the order
+    //the player meets them.
+    const by_speaker = {};
+    units.forEach(unit => {
+        (by_speaker[unit.dialogue] ??= []).push(unit);
+    });
+
+    Object.keys(dialogues).filter(key => by_speaker[key]).forEach(dialogue_key => {
+        //<details> rather than a class toggle: no click handler, no window assignment,
+        //and it works from a keyboard.
+        const block = document.createElement("details");
+        block.classList.add("lore_speaker_block");
+        //The one the player is in the middle of is the one they came back for.
+        block.open = !!last && last.dialogue === dialogue_key;
+
+        const summary = document.createElement("summary");
+        summary.classList.add("lore_speaker");
+        summary.innerText = `${lore_speaker_label(dialogue_key)} · ${by_speaker[dialogue_key].length}`;
+        block.appendChild(summary);
+
+        by_speaker[dialogue_key].forEach(unit => block.appendChild(create_lore_entry(unit)));
+        list.appendChild(block);
+    });
+}
 function update_displayed_discoveries() {
     const list = document.getElementById("discoveries_list");
     if(!list) {
@@ -6226,9 +6359,22 @@ function create_quest_step_line(step) {
 }
 
 function create_quest_step_hint(quest_id, task_index) {
-    const lines = quest_task_advancers(quest_id, task_index)
-        .map(create_quest_step_line)
-        .filter(Boolean);
+    const steps = quest_task_advancers(quest_id, task_index);
+    const lines = steps.map(create_quest_step_line).filter(Boolean);
+
+    /*
+        Every step is somewhere the player has not found yet. Naming the place would be a
+        spoiler, but saying nothing at all was worse: the task stood there with no line
+        under it and no way to tell whether it was waiting on a place, on an unlock, or on
+        nothing. This names nothing and still answers the question - it is elsewhere, go
+        and look.
+    */
+    if(lines.length === 0 && steps.length > 0) {
+        const elsewhere = document.createElement("div");
+        elsewhere.classList.add("discovery_source_text");
+        elsewhere.innerText = translationManager.getText(language, "ui quest hint elsewhere");
+        lines.push(elsewhere);
+    }
 
     return create_hint_block(lines);
 }
@@ -6861,6 +7007,7 @@ export {
     sort_displayed_skills,
     update_displayed_xp_bonuses, update_displayed_stance_list, update_displayed_stamina_efficiency, 
     update_displayed_discoveries,
+    update_displayed_lore,
     update_displayed_stance, update_displayed_faved_stances, update_stance_tooltip,
     update_gathering_tooltip,
     update_displayed_location_types,

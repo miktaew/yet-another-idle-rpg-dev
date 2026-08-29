@@ -734,6 +734,7 @@
                         <div id = "journal_show_bestiary" class = "journal_control_button" onclick = "showBestiary()" data-translation="ui tab bestiary"></div>
                         <div id = "journal_show_books" class = "journal_control_button" onclick = "showReadBooks()" data-translation="ui tab anthology"></div>
                         <div id = "journal_show_discoveries" class = "journal_control_button" onclick = "showDiscoveries()" data-translation="ui tab discoveries"></div>
+                        <div id = "journal_show_lore" class = "journal_control_button" onclick = "showLore()" data-translation="ui tab lore"></div>
                         <div id = "journal_show_data" class = "journal_control_button" onclick = "showData()" data-translation="ui tab data"></div>
                     </div>
                     <div id = "journal_content_div">
@@ -770,6 +771,17 @@
                                 <input type="checkbox" id="discoveries_hide_traded" onclick="update_displayed_discoveries()">
                             </div>
                             <div id = "discoveries_list">
+
+                            </div>
+                        </div>
+                        <div id = "lore_box_div">
+                            <div id = "lore_controls_div">
+                                <input type="search" id="lore_search" class="discoveries_search_box" oninput="update_displayed_lore()"
+                                    data-translation-placeholder="ui lore search">
+                                <label for="lore_show_everything" data-translation="ui lore everything"></label>
+                                <input type="checkbox" id="lore_show_everything" onclick="update_displayed_lore()">
+                            </div>
+                            <div id = "lore_list">
 
                             </div>
                         </div>
@@ -1259,6 +1271,12 @@
             }
             function showBestiary() {
                 changeTab(document.getElementById("bestiary_box_div"));
+            }
+            function showLore() {
+                //Rebuilt on open: every conversation adds to it, and it is only on
+                //screen while somebody is reading it.
+                changeTab(document.getElementById("lore_box_div"));
+                update_displayed_lore();
             }
             function showDiscoveries() {
                 //Rebuilt on open: what is on it changes with every pickup and every

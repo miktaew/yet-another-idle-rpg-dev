@@ -474,6 +474,146 @@ function quest_task_advancers(quest_id, task_index) {
     return advancers_index[`${quest_id}#${task_index}`] || [];
 }
 
+/*
+    What the conversations left behind, and which of it carries the thread.
+
+    Two derived rules and one authored override - see docs/PROPOSALS.md P-13/1 and 36 for
+    what the panel is for. The numbers below were measured against the content and hold:
+    233 textlines collapse to 171 units, of which the world rule keeps 75.
+*/
+let lore_index;
+
+//What a line can change that means the story moved. Not items, money, xp or reputation:
+//those are payment. Not textlines: that only means the conversation carried on.
+const LORE_WORLD_REWARDS = ["locations", "dialogues", "traders", "activities",
+    "global_activities", "flags", "stances", "recipes", "crafting", "actions", "quests",
+    "quest_progress"];
+
+function changes_the_world(line) {
+    const rewards = line.rewards;
+    if(!rewards) {
+        return false;
+    }
+    for(const field of LORE_WORLD_REWARDS) {
+        const value = rewards[field];
+        const size = Array.isArray(value) ? value.length : Object.keys(value || {}).length;
+        if(size > 0) {
+            return true;
+        }
+    }
+    return (rewards.locks?.quests?.length ?? 0) > 0
+        || (rewards.locks?.traders?.length ?? 0) > 0;
+}
+
+function build_lore_index() {
+    //Who unlocks whom, so a line that only ever follows one other can be recognised.
+    const unlocked_by = {};
+    Object.keys(dialogues).forEach(dialogue_key => {
+        Object.entries(dialogues[dialogue_key].textlines || {}).forEach(([line_key, line]) => {
+            as_list(line.rewards?.textlines).forEach(step => {
+                as_list(step?.lines).forEach(target => {
+                    const key = `${step.dialogue}#${target}`;
+                    (unlocked_by[key] ??= new Set()).add(`${dialogue_key}#${line_key}`);
+                });
+            });
+        });
+    });
+
+    //A -> B when A unlocks exactly one line, B is in A's own dialogue, B ships locked and
+    //nothing else opens it. That is one beat continuing, not a new question.
+    const successor = {};
+    const absorbed = new Set();
+    Object.keys(dialogues).forEach(dialogue_key => {
+        const textlines = dialogues[dialogue_key].textlines || {};
+        Object.entries(textlines).forEach(([line_key, line]) => {
+            const steps = as_list(line.rewards?.textlines);
+            if(steps.length !== 1 || steps[0]?.dialogue !== dialogue_key) {
+                return;
+            }
+            const targets = as_list(steps[0].lines);
+            if(targets.length !== 1) {
+                return;
+            }
+            const target = textlines[targets[0]];
+            if(!target || target.is_unlocked) {
+                return;
+            }
+            if((unlocked_by[`${dialogue_key}#${targets[0]}`]?.size ?? 0) !== 1) {
+                return;
+            }
+            successor[`${dialogue_key}#${line_key}`] = targets[0];
+            absorbed.add(`${dialogue_key}#${targets[0]}`);
+        });
+    });
+
+    const units = [];
+    Object.keys(dialogues).forEach(dialogue_key => {
+        Object.keys(dialogues[dialogue_key].textlines || {}).forEach(line_key => {
+            if(absorbed.has(`${dialogue_key}#${line_key}`)) {
+                return;
+            }
+            const keys = [line_key];
+            let at = `${dialogue_key}#${line_key}`;
+            while(successor[at]) {
+                keys.push(successor[at]);
+                at = `${dialogue_key}#${successor[at]}`;
+            }
+            units.push({dialogue: dialogue_key, head: line_key, keys});
+        });
+    });
+
+    return units;
+}
+
+/**
+ * Every unit of conversation, in the order the dialogues declare them.
+ *
+ * A unit is one question and the answer it led to, with any line that merely continued
+ * that answer folded in.
+ */
+function lore_all_units() {
+    if(!lore_index) {
+        lore_index = build_lore_index();
+    }
+    return lore_index;
+}
+
+/**
+ * Whether a unit belongs in the panel: heard, and carrying the thread.
+ *
+ * `lore` on any of its lines decides it outright - false drops, true keeps - and
+ * otherwise it is kept when something in it changed the world.
+ */
+function is_lore_worth_keeping(unit) {
+    const lines = unit.keys.map(key => dialogues[unit.dialogue].textlines[key]).filter(Boolean);
+    if(!lines.some(line => line.is_heard)) {
+        return false;
+    }
+    if(lines.some(line => line.lore === false)) {
+        return false;
+    }
+    return lines.some(line => line.lore === true || changes_the_world(line));
+}
+
+/**
+ * The units to show, and every unit heard - the second for the "everything" view.
+ *
+ * @param {Boolean} everything whether to keep what the thread rule would drop
+ */
+function lore_units(everything) {
+    return lore_all_units().filter(unit => everything
+        ? unit.keys.some(key => dialogues[unit.dialogue].textlines[key]?.is_heard)
+        : is_lore_worth_keeping(unit));
+}
+
+/**
+ * The unit a given line belongs to, so "where you left off" can show the whole beat
+ * rather than the fragment the player happened to stop on.
+ */
+function lore_unit_of(dialogue_key, line_key) {
+    return lore_all_units().find(unit => unit.dialogue === dialogue_key
+        && unit.keys.includes(line_key)) ?? null;
+}
 //Exported for the tests: the raw index, so a walk can be inspected without a browser.
 function unlock_sources_for(key) {
     if(!unlock_sources_index) {
@@ -483,5 +623,6 @@ function unlock_sources_for(key) {
 }
 
 export { enemy_zones, zones_for_enemy_tag, item_sources, training_places, unlock_sources_for,
+    lore_units, lore_unit_of, lore_all_units,
     first_available_opener, is_step_available,
     quest_task_advancers };

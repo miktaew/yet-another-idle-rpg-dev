@@ -848,7 +848,7 @@ not after. Each item is the request as it was given, and the state it is in.
     named as the example. Its `js/systems/` holds abilities, effectors, planner and
     simulation, none of which this game has, and its docs carry REGIONS, STORY and two
     STORYPROGRESS files.
-36. **What the lore panel is for** — `todo`, and this sharpens P-13/1. It holds the
+36. **What the lore panel is for** — `done`, v0.6.51, and this sharpens P-13/1. It holds the
     questions the player has asked and the answers they were given, so the story can be
     followed rather than remembered; and it guides - it should leave a player who comes
     back after a week knowing what they were in the middle of. Not a transcript: the
