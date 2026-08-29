@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 1 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 2 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -54,7 +54,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (dokuz dosya, yardımcılarıyla ~5.200 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on iki dosya, yardımcılarıyla ~5.700 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 136 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -68,14 +68,14 @@ npm run check:bundle
 
 ## Kod nerede
 
-`src/`, 47 modülde 44.602 satır (`find src -name "*.js" | xargs wc -l`).
+`src/`, 47 modülde 44.770 satır (`find src -name "*.js" | xargs wc -l`).
 
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
-| `display.js` | 7.044 | Bütün DOM güncellemeleri. En büyük dosya ve sıradaki hedef. |
+| `display.js` | 7.057 | Bütün DOM güncellemeleri. En büyük dosya ve sıradaki hedef. |
 | `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
-| `main.js` | 4.464 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
+| `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
 | `data/locations.js` | 4.403 | 158 konum, aksiyonları ve bağlantıları. |
 | `data/dialogues.js` | 3.073 | 22 diyalog ve replikleri. |
 | `crafting_recipes.js` | 1.989 | 139 tarif. |
@@ -143,10 +143,10 @@ Kayıt defterlerinden ve kontrollerden ölçüldü:
 - **64 yetenek**, 58'inde rütbe adı, ayrıca kilometre taşları.
 - 36 dövüş bölgesine yayılmış **32 yaratık**.
 - **139 tarif**; 450 şablona karşı 549 tarif eşya adı çözülüyor.
-- **22 diyalog**, 7 stok listesinde 8 tüccar, 53 aksiyon.
-- Tamamı çözülen **1.964 içerik metin kimliği**.
+- **22 diyalog**, 7 stok listesinde 8 tüccar, 56 aksiyon.
+- Tamamı çözülen **1.983 içerik metin kimliği**.
 
-Yerelleştirme: **3.215 yerel anahtar, Türkçe %100, eksik yok** ve 3.215 satırın tamamına
+Yerelleştirme: **3.234 yerel anahtar, Türkçe %100, eksik yok** ve 3.234 satırın tamamına
 oyun içinden erişilebiliyor. Türkçe öncelikli dildir ve çeviri değil, Türkçe yazılmış
 gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D-7.
 
@@ -154,7 +154,7 @@ gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D
 
 ## Kontroller neyi kapsıyor
 
-`tests/checks/` altında dokuz dosya. Değerli olanlar genel biçim kuralları değil,
+`tests/checks/` altında on iki dosya. Değerli olanlar genel biçim kuralları değil,
 yayımlanmış bir hatayı kodlayanlar:
 
 | Kontrol | Neyi engelliyor |
@@ -162,10 +162,13 @@ yayımlanmış bir hatayı kodlayanlar:
 | `modules import what they call` | İçe aktarılmadan kullanılan ad. 47 dosya. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
-| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 1.964 kimlik. |
+| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 1.983 kimlik. |
+| `action button labels` | Düğmenin içine çizilen paragraf. 41 aksiyon, 80 karakter sınırı. |
+| `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
+| `documentation pairs` | Türkçe eşi geride kalmış İngilizce belge. |
 | `no English written into the DOM` | Yereli atlayıp doğrudan yazılmış metin. 212 sabit. |
 | `hidden quest tasks` | İlerleyemeyen görev. 11 adım. |
-| `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 53 aksiyon. |
+| `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 56 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
@@ -178,7 +181,7 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 7.044 satırla `display.js`
+- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 7.057 satırla `display.js`
   sırada; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
   ölçülüp henüz yapılmayanlar: `options.js`, `release.js`, ödüller.
 - **12. madde, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe malzemeler

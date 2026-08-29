@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 43 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 44 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1046,13 +1046,23 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     olmasını, `doc-source` olarak İngilizce dosyayı göstermesini ve aynı `doc-version`'ı
     taşımasını şart koşuyor. Yedi çift. Türkçenin İngilizceyle aynı şeyi söyleyip
     söylemediğini denetleyemez; o D-7'nin işi.
-54. **Hikâyeyi sürdür, yeni alanları bağla** — `yapılacak`. Motor toparlanırken
+54. **Hikâyeyi sürdür, yeni alanları bağla** — `sürüyor`. v0.6.57, kenar mahalleyi
+    kasaba kapısına bağladı; oyunun ikisi arasında kurduğu ilk geçiş bu. Bölgelerin geri
+    kalanı hâlâ hikâyenin içinde değil, yanında duruyor. Motor toparlanırken
     anlatı işine ara verilmiyor: inşa edilen bölgelerin hikâyenin yanında durmak yerine
     hikâyeye bağlanması gerekiyor.
-55. **Kasabayı genişlet ve hareketlendir** — `yapılacak`. Oyuncunun en çok vakit
+55. **Kasabayı genişlet ve hareketlendir** — `sürüyor`. Kenar mahalle, bir aktivite ve
+    sıfır aksiyondan üç aksiyona çıktı; tarayıcıda ölçüldü. Kasaba meydanı hâlâ içinde
+    hiçbir şey olmayan bir kasaba merkezi; sıradaki o. Oyuncunun en çok vakit
     geçirdiği yer başlangıç yerleşimi ve içinde en az şey olan yer de orası. Daha çok
     yapılacak şey, daha çok görülecek şey, geri dönmek için daha çok sebep.
-56. **İtibar yeni aksiyon ve konuşmalar açsın** — `yapılacak`. Kasaba, içinde
+56. **İtibar yeni aksiyon ve konuşmalar açsın** — `bitti`, v0.6.57, aksiyonlar için.
+    Önce ölçüldü: 610 Köy / 350 Kenar mahalle / 320 Kasaba itibarı kazanılabiliyor, dört
+    diyalog satırı buna bakıyor, hiçbir aksiyon bakmıyordu ve Kenar mahalleyi bir tüccarın
+    kâr payı dışında **hiçbir şey** geri okumuyordu. Üç aksiyon artık 100 / 200 / 300'de
+    kapı tutuyor; tarayıcıda iki yönden de doğrulandı. İtibara bağlı konuşmalar zaten
+    vardı (dört satır) ve olduğu gibi bırakıldı; eksik olan aksiyonlardı ve kenar
+    mahalle itibarına sahip olmanın bir sebebiydi. Kasaba, içinde
     kurulan itibara tepki vermeli: itibar yükseldikçe yeni aksiyonlar ve yeni
     konuşmalar açılmalı ki mekân sabit bir fon olmaktan çıkıp oyuncuyla değişsin.
 57. **Dev konsolu için `add_best_effect`** — `bitti`, v0.6.56. `give_best`'in eşi:

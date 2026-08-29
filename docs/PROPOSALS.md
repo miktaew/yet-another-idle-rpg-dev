@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 43 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 44 -->
 
 # Proposals
 
@@ -1033,13 +1033,23 @@ not after. Each item is the request as it was given, and the state it is in.
     to exist, to name the English file as its `doc-source`, and to carry the same
     `doc-version`. Seven pairs. It cannot check that the Turkish says what the English
     says; that stays D-7's business.
-54. **Keep the story going, and connect the new areas** — `todo`. Not a pause in
+54. **Keep the story going, and connect the new areas** — `in progress`. v0.6.57 tied
+    the slums to the town gate, which is the first crossing between the two the game has
+    had. The rest of the regions are still standing beside the story rather than in it. Not a pause in
     narrative work while the engine is tidied: the regions that were built need to be
     tied into the story rather than left standing next to it.
-55. **Expand the town and make it livelier** — `todo`. The starting settlement is
+55. **Expand the town and make it livelier** — `in progress`. The Slums went from one
+    activity and no actions to three actions, measured in the browser. Town square is still
+    the town hub with nothing in it, which is the next one. The starting settlement is
     where a player spends the most time and it has the least happening in it. More to
     do, more to see, more reason to come back.
-56. **Reputation opens actions and dialogue** — `todo`. A town should react to
+56. **Reputation opens actions and dialogue** — `done`, v0.6.57, for actions. Measured
+    first: 610 Village / 350 Slums / 320 Town reputation is earnable, four dialogue lines
+    gate on it, no action did, and **nothing at all** read Slums back except a trader's
+    margin. Three Slums actions now gate at 100 / 200 / 300, verified in a browser both
+    ways: at 200 the scales open and the gate refuses with its reason. Reputation-gated
+    dialogue already existed (four lines) and was left as it was; what was missing was
+    actions, and a reason to have slums standing at all. A town should react to
     standing built up in it: new actions and new conversations unlock as reputation
     rises, so the place changes with the player rather than staying a fixed backdrop.
 57. **`add_best_effect` for the dev console** — `done`, v0.6.56. The counterpart to

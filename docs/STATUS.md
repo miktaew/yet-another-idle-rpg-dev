@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 1 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 2 -->
 
 # Status
 
@@ -51,8 +51,8 @@ npm test
 npm run check:bundle
 ```
 
-- `check` runs the content and consistency checks in `tests/checks/` (nine files,
-  ~5,200 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+- `check` runs the content and consistency checks in `tests/checks/` (twelve files,
+  ~5,700 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 136 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -66,14 +66,14 @@ npm run check:bundle
 
 ## Where the code lives
 
-`src/` is 44,602 lines across 47 modules (`find src -name "*.js" | xargs wc -l`).
+`src/` is 44,770 lines across 47 modules (`find src -name "*.js" | xargs wc -l`).
 
 | File | Lines | What it holds |
 | --- | ---: | --- |
-| `display.js` | 7,044 | Every DOM update. The largest file and the next target. |
+| `display.js` | 7,057 | Every DOM update. The largest file and the next target. |
 | `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
-| `main.js` | 4,464 | Entry point: game loop, actions, combat, rewards, options. |
+| `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
 | `data/locations.js` | 4,403 | 158 locations, their actions and connections. |
 | `data/dialogues.js` | 3,073 | 22 dialogues and their textlines. |
 | `crafting_recipes.js` | 1,989 | 139 recipes. |
@@ -140,10 +140,10 @@ Measured from the registries and the checks:
 - **64 skills**, 58 of them with rank names, plus milestones.
 - **32 enemies** across 36 combat zones.
 - **139 recipes**; 549 recipe item names resolve against 450 templates.
-- **22 dialogues**, 8 traders across 7 stock lists, 53 actions.
-- **1,964 content text ids**, all resolved.
+- **22 dialogues**, 8 traders across 7 stock lists, 56 actions.
+- **1,983 content text ids**, all resolved.
 
-Localisation: **3,215 locale keys, Turkish at 100% with 0 missing**, and all 3,215 rows
+Localisation: **3,234 locale keys, Turkish at 100% with 0 missing**, and all 3,234 rows
 are reachable. Turkish is the priority language and must read as though written in
 Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
@@ -151,7 +151,7 @@ Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
 ## What the checks actually cover
 
-Nine files in `tests/checks/`. The valuable ones are not the generic lint-style rules
+Twelve files in `tests/checks/`. The valuable ones are not the generic lint-style rules
 but the ones that encode a bug that shipped:
 
 | Check | What it prevents |
@@ -159,10 +159,13 @@ but the ones that encode a bug that shipped:
 | `modules import what they call` | A name used without importing it. 47 files. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 83 names. |
-| `content text ids` | Player-facing text with no locale row. 1,964 ids. |
+| `content text ids` | Player-facing text with no locale row. 1,983 ids. |
+| `action button labels` | A paragraph rendered inside a button. 41 actions, 80-char limit. |
+| `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
+| `documentation pairs` | An English doc whose Turkish counterpart has fallen behind. |
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
-| `actions can explain failure` | An action that fails with no reason shown. 53 actions. |
+| `actions can explain failure` | An action that fails with no reason shown. 56 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
@@ -175,7 +178,7 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **Item 48, splitting the big files** - `in progress`. `display.js` at 7,044 lines is
+- **Item 48, splitting the big files** - `in progress`. `display.js` at 7,057 lines is
   next; the measured candidates and their coupling costs are listed there. `main.js`
   cuts still costed and not done: `options.js`, `release.js`, rewards.
 - **Item 12, the metals above steel** - `partly done`. Tier-4 and tier-5 materials

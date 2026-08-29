@@ -2833,7 +2833,20 @@ function create_location_choices({location, category, is_combat = false}) {
 
             location_action_div.appendChild(create_location_action_tooltip(location.actions[key]));
     
-            insert_HTML(location_action_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.actions[key].getStartingText());
+            /*
+                getActionName, not getStartingText. starting_text is documented in the
+                model as "text on the button" and most of them read like one, but six
+                actions carry a narrative sentence there and were rendering a hundred
+                characters of prose inside a button - "You mark it out behind the well.
+                Within the hour there are more people carrying brick than you asked
+                for." was the label for Build the village hearth.
+
+                Every one of those six already declares action_name with the short
+                label written and unused, and the model falls back to
+                `action_name || starting_text`, so the other eighty-one labels are
+                byte-for-byte what they were.
+            */
+            insert_HTML(location_action_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.actions[key].getActionName());
             choice_list.push(location_action_div);
         });
     } else if (category === "fast_travel") {

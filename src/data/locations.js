@@ -3079,6 +3079,124 @@ function get_location_type_penalty(type, stage, stat, category) {
         }),
     };
 
+    /*
+        The slums pay in standing, because standing is the only thing they have.
+
+        350 Slums reputation is earnable across the story and until now nothing read it
+        back except a trader's margin, so the number rose and meant nothing. These three
+        read it, at 100 / 200 / 300, which is the shape the district already has: the
+        shed with the scales, the row that has to watch itself now the gang is gone, and
+        the gate that has never opened for anyone from here.
+
+        Visible before they are earned, and refused with a reason. A locked door the
+        player cannot see is not a goal.
+    */
+    locations["Slums"].actions = {
+        "mind the scales": new GameAction({
+            action_id: "mind the scales",
+            starting_text: "action mind the scales starting",
+            description: "action mind the scales desc",
+            action_text: "action mind the scales during",
+            success_text: "action mind the scales success",
+            failure_texts: {
+                unable_to_begin: ["action mind the scales fail unable_to_begin 1"],
+            },
+            is_unlocked: true,
+            required: {
+                reputation: {Slums: 100},
+                flags: ["is_slums_account_open"],
+            },
+            attempt_duration: 240,
+            success_chances: [1],
+            keep_progress: true,
+            rewards: {
+                money: 400,
+                reputation: {Slums: 15},
+                skill_xp: {
+                    Haggling: 120,
+                },
+            },
+        }),
+        "stand the row": new GameAction({
+            action_id: "stand the row",
+            starting_text: "action stand the row starting",
+            description: "action stand the row desc",
+            action_text: "action stand the row during",
+            success_text: "action stand the row success",
+            failure_texts: {
+                unable_to_begin: ["action stand the row fail unable_to_begin 1"],
+                random_loss: ["action stand the row fail random_loss 1"],
+                conditional_loss: ["action stand the row fail conditional_loss 1"],
+            },
+            is_unlocked: true,
+            required: {
+                reputation: {Slums: 200},
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Perception": 5,
+                    }
+                },
+                {
+                    skills: {
+                        "Perception": 20,
+                    }
+                }
+            ],
+            attempt_duration: 480,
+            success_chances: [0.6, 1],
+            keep_progress: true,
+            rewards: {
+                reputation: {Slums: 25},
+                skill_xp: {
+                    Perception: 400,
+                    "Night vision": 250,
+                    Persistence: 200,
+                },
+            },
+        }),
+        /*
+            The one that goes somewhere. Slums standing converts into Town standing,
+            which is the only bridge between the two the game has ever had - and it
+            opens nothing behind the gate, resolves nothing, and does not touch the
+            ex-boss. It buys one person through a door, and the hero is the surety.
+        */
+        "speak at the gate": new GameAction({
+            action_id: "speak at the gate",
+            starting_text: "action speak at the gate starting",
+            description: "action speak at the gate desc",
+            action_text: "action speak at the gate during",
+            success_text: "action speak at the gate success",
+            failure_texts: {
+                unable_to_begin: ["action speak at the gate fail unable_to_begin 1"],
+                conditional_loss: ["action speak at the gate fail conditional_loss 1"],
+                random_loss: ["action speak at the gate fail random_loss 1"],
+            },
+            is_unlocked: true,
+            required: {
+                reputation: {Slums: 300},
+            },
+            conditions: [
+                {
+                    reputation: {Town: 100},
+                },
+                {
+                    reputation: {Town: 250},
+                }
+            ],
+            attempt_duration: 360,
+            success_chances: [0.5, 1],
+            keep_progress: true,
+            rewards: {
+                reputation: {Town: 30, Slums: 20},
+                skill_xp: {
+                    Haggling: 300,
+                },
+            },
+        }),
+    };
+
     locations["Town outskirts"].activities = {
         "herbalism": new LocationGatheringActivity({
             activity_name: "herbalism",

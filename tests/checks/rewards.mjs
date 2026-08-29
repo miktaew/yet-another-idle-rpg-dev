@@ -31,12 +31,24 @@ function check_money_requirements() {
         }
         const source = strip_comments(fs.readFileSync(full_path, "utf8"));
 
-        // Only inside a requirement: a bare `money:` elsewhere is a REWARD, which is
-        // a plain number by design and must not be caught here.
-        for (const block of source.matchAll(/(?:required|conditions):\s*\[?\s*\{([\s\S]*?)\n\s{16}\}/g)) {
+        /*
+            Only inside a requirement: a bare `money:` elsewhere is a REWARD, which is
+            a plain number by design and must not be caught here.
+
+            The requirement's extent is brace-matched rather than assumed. It used to
+            end at the first `\n` + sixteen spaces + `}`, which is not the end of a
+            requirement - it is the end of whatever object happened to be nested one
+            level inside it. A requirement written with its contents inline, as
+            `reputation: {Slums: 100},`, has no such line, so the scan ran on into the
+            rewards below and reported a reward of 400 money as an uncharged price.
+        */
+        for (const start of source.matchAll(/(?:required|conditions):\s*\[?\s*\{/g)) {
+            const open = source.indexOf("{", start.index + start[0].length - 1);
+            const body = braced_body(source, open);
+            if (body === null) continue;
             // The braced alternative comes first, or the bare one truncates the
             // object at its first comma and loses the removal flag.
-            const money = block[1].match(/(?<![A-Za-z0-9_])money:\s*(\{[^}]*\}|[^,\n]+)/);
+            const money = body.match(/(?<![A-Za-z0-9_])money:\s*(\{[^}]*\}|[^,\n]+)/);
             if (!money) continue;
             checked++;
 
