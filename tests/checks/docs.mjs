@@ -2,6 +2,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { execFileSync } from "node:child_process";
 import { error } from "../lib/report.mjs";
 import { repo_root } from "../lib/context.mjs";
 
@@ -11,6 +12,27 @@ import { repo_root } from "../lib/context.mjs";
 */
 const SKIP_DIRECTORIES = new Set([".git", "node_modules", "_site", "dist", ".playwright-mcp"]);
 const VENDORED = ["resources/js/HackTimer/"];
+
+/**
+ * What git actually tracks, or null when git cannot answer.
+ *
+ * The walk below says "tracked-looking" and never asked. The difference shows up the
+ * moment a draft is sitting in the tree unadded - a plan for a later session, a file
+ * being written - and the pair rule fails on something the repository does not ship
+ * yet. Staging it is what makes it ours, and `git ls-files` reads the index, so a new
+ * document is held to the rule from the moment it is added rather than the moment it
+ * is committed.
+ */
+function tracked_markdown(root) {
+    try {
+        const listed = execFileSync("git", ["-C", root, "ls-files", "-z", "--", "*.md"],
+            { encoding: "utf8" });
+        return new Set(listed.split("\0").filter(Boolean));
+    } catch {
+        //No git, or not a checkout - a tarball still deserves the rest of the check.
+        return null;
+    }
+}
 
 /** Every tracked-looking .md file, at any depth. */
 function markdown_files(root) {
@@ -26,7 +48,8 @@ function markdown_files(root) {
         }
     };
     walk(root, "");
-    return found.sort();
+    const tracked = tracked_markdown(root);
+    return (tracked ? found.filter(f => tracked.has(f)) : found).sort();
 }
 
 /**

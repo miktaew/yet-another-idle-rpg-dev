@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 56 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 57 -->
 
 # Changelog
 
@@ -21,6 +21,70 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 
 ## 2026-08-30
 
+### The original game is linked from the game, and tooltips learned to translate
+
+**v0.6.71.** The corner carried one GitHub mark, this fork's. The project it
+continues was credited on the help page and unreachable from the game itself,
+so there are two marks now, the original's dimmed to 50% until it is pointed
+at - two identical logos side by side say nothing about which repository each
+one opens.
+
+The tooltip was meant to carry the rest, and could not: those `title`
+attributes sat outside the translation system entirely and stayed English
+whatever the game was set to. `translateUI` already reaches an input's prompt
+through `data-translation-placeholder`, for exactly this reason; a tooltip is
+the same situation, so `data-translation-title` joins it. All three corner
+icons have one now, and all three translate.
+
+Measured in the running game rather than argued from the CSS: three icons at
+right offsets 98 / 56 / 14, about 39px wide, no overlap; switching to Turkish
+repaints all three titles with the diacritics intact.
+
+**The check.** A locale missing an id falls back to English and is safe. An id
+in *no* locale falls back to nothing, and `getText` writes the literal string
+`text not found, id: ui link repo` into the interface. Nothing looked for
+that: `locales.mjs` compares the locales against each other, so a typo made in
+the HTML is invisible to it - both locales agree, and the id neither of them
+has is the one on screen. `check_ui_ids_exist` reads all three attributes
+across every page. Negative-tested by misspelling the new id; 124 ui text ids
+across 5 pages, all present.
+
+### The pair rule asked about files the repository does not ship
+
+`check_docs_are_paired` walks the tree for markdown and its own comment called
+the result "every tracked-looking .md file". It never asked git. So a draft
+sitting in the working tree unadded - a plan for a later session, a file half
+written - failed D-3 for want of a Turkish counterpart it had no business
+having yet.
+
+It asks now. `git ls-files` reads the index, so a new document comes under the
+rule the moment it is staged rather than the moment it is committed, which is
+the right boundary: staging is what makes it ours. Without git - a tarball,
+say - the walk stands as before. Negative-tested from both sides: an unstaged
+draft is ignored, and the same file staged fails immediately.
+
+### Four broken imports in upstream's tree, and the check that found them
+
+Offered as [PR #244](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/244).
+
+`src/mods/glassmaking.js` there imports from `../locations.js` and
+`../traders.js`; neither file exists any more. `locations` moved to
+`src/data/`, `LocationActivity` to `src/models/location.js`, `TradeItem` to
+`src/models/trade_item.js`, and `inventory_templates` became the *default*
+export of `src/data/inventory_templates.js`. All four fail to resolve, and the
+mod has not been loadable for some time. `src/data/npcs.js` separately asks
+for `../models/NPC.js` while the file is `npc.js` - fine on Windows and macOS,
+nothing at all on Linux.
+
+Our `check_imports_resolve` found the first set. It did not find the second,
+and that is worth recording: `fs.existsSync` answers case-insensitively here,
+so the check agreed with the bug on the machine that wrote it. The standalone
+copy sent upstream walks the directory listing instead and gives the same
+answer everywhere, and reads every *form* of import rather than only `{ named }`
+lists - the case bug was a plain default import with no braces, so a
+brace-only matcher walks straight past it. Both gaps were ours as much as
+theirs. 492 imported names across 53 files of upstream's tree, no false
+positives.
 ### The save stopped loading, and the check that should have seen it was blind
 
 **v0.6.55.** Reported as "quests are completely broken, they come back empty", with a

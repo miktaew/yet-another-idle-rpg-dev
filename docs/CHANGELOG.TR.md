@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 56 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 57 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -23,6 +23,71 @@ geldiğinde buraya girer.
 
 ## 2026-08-30
 
+### Özgün oyuna oyunun içinden bağlantı, ve çevrilmeyi öğrenen ipuçları
+
+**v0.6.71.** Köşede tek bir GitHub işareti vardı, bu çatallamanınki. Devam
+ettirdiği proje yardım sayfasında anılıyordu ama oyunun kendisinden
+erişilemiyordu; artık iki işaret var ve özgün oyununki, üzerine gelinene kadar
+%50 solukta duruyor - yan yana duran iki aynı logo, hangisinin hangi depoyu
+açtığını söylemez.
+
+Gerisini ipucu yazısının taşıması gerekiyordu, taşıyamıyordu: o `title`
+öznitelikleri çeviri sisteminin tümüyle dışındaydı ve oyunun dili ne olursa
+olsun İngilizce kalıyordu. `translateUI`, bir girdinin yönergesine
+`data-translation-placeholder` ile tam da bu yüzden uzanıyor; ipucu yazısı da
+aynı durum, bu yüzden yanına `data-translation-title` katıldı. Köşedeki üç
+simgenin de artık böyle bir özniteliği var ve üçü de çevriliyor.
+
+CSS'ten akıl yürütmek yerine çalışan oyunda ölçüldü: üç simge sağdan 98 / 56 /
+14 uzaklıkta, yaklaşık 39px genişlikte, çakışma yok; Türkçeye geçince üçünün de
+başlığı diakritikleri bozulmadan yeniden çiziliyor.
+
+**Kontrol.** Bir kimliğin bir locale'de eksik olması İngilizceye düşer,
+güvenlidir. *Hiçbir* locale'de olmaması hiçbir şeye düşer ve `getText`,
+arayüze düpedüz `text not found, id: ui link repo` yazar. Bunu arayan yoktu:
+`locales.mjs` locale'leri birbiriyle karşılaştırır, dolayısıyla HTML'de
+yapılan bir yazım hatası ona görünmez - iki locale de birbiriyle uyumludur ve
+ekranda duran, ikisinde de olmayan kimliktir. `check_ui_ids_exist` üç
+özniteliği de her sayfada okuyor. Yeni kimlik yanlış yazılarak negatif test
+edildi; 5 sayfada 124 arayüz metin kimliği, hepsi yerinde.
+
+### Eşleştirme kuralı, deponun göndermediği dosyaları da sorguluyordu
+
+`check_docs_are_paired` ağacı markdown için tarıyor ve kendi yorumu sonuca
+"izlenir görünen her .md dosyası" diyordu. Git'e hiç sormamıştı. Dolayısıyla
+çalışma ağacında duran, henüz eklenmemiş bir taslak - sonraki bir oturumun
+planı, yarısı yazılmış bir dosya - henüz sahip olması gerekmeyen bir Türkçe
+eşi yok diye D-3'ten kalıyordu.
+
+Artık soruyor. `git ls-files` indeksi okuduğu için yeni bir belge kuralın
+kapsamına commit edildiği anda değil, sahnelendiği anda giriyor; doğru sınır da
+bu: onu bizim yapan şey sahnelenmesi. Git yoksa - diyelim bir tarball - tarama
+eskisi gibi çalışıyor. İki yönden de negatif test edildi: sahnelenmemiş taslak
+görmezden geliniyor, aynı dosya sahnelenince anında kalıyor.
+
+### Upstream'in ağacında dört kırık import, ve onları bulan kontrol
+
+[PR #244](https://github.com/miktaew/yet-another-idle-rpg-dev/pull/244) olarak
+sunuldu.
+
+Oradaki `src/mods/glassmaking.js`, `../locations.js` ve `../traders.js`'ten
+import ediyor; ikisi de artık yok. `locations` `src/data/` altına,
+`LocationActivity` `src/models/location.js`'e, `TradeItem`
+`src/models/trade_item.js`'e taşınmış, `inventory_templates` ise
+`src/data/inventory_templates.js`'in *varsayılan* dışa aktarımı olmuş. Dördü de
+çözülemiyor ve mod bir süredir yüklenebilir değil. Ayrıca `src/data/npcs.js`,
+dosyanın adı `npc.js` iken `../models/NPC.js` istiyor - Windows ve macOS'ta
+sorunsuz, Linux'ta hiçbir şey.
+
+İlk grubu bizim `check_imports_resolve`'umuz buldu. İkincisini bulamadı ve bunu
+kaydetmeye değer: `fs.existsSync` burada büyük/küçük harfe duyarsız yanıt
+veriyor, yani kontrol, hatayı yazan makinede hatayla hemfikirdi. Upstream'e
+gönderilen bağımsız kopya bunun yerine dizin listesini yürüyor ve her yerde
+aynı yanıtı veriyor; ayrıca yalnızca `{ isimli }` listeleri değil, importun
+*her* biçimini okuyor - harf hatası, süslü parantezi olmayan düz bir varsayılan
+importtu, yani yalnızca süslü parantez arayan bir eşleştirici onun yanından
+geçip gider. İki boşluk da onlarınki kadar bizimdi. Upstream'in ağacında 53
+dosyada 492 import edilmiş isim, yanlış pozitif yok.
 ### Kayıt yüklenmez oldu; görmesi gereken kontrol de kördü
 
 **v0.6.55.** "Görevler tamamen bozuldu, boş geliyor" diye bir `ReferenceError`'la, ayrıca
