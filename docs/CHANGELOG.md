@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 51 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 52 -->
 
 # Changelog
 
@@ -173,6 +173,38 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### Splitting the big files, and where it stops
+
+Six cuts took display.js from **7,057 lines to 3,815**, and it is no longer the largest
+file in the project - `data/skills.js`, `items.js`, `data/locations.js` and `main.js`
+are all bigger, and three of those are content, which is meant to be.
+
+| module | lines | version | names it needs back |
+| --- | ---: | --- | --- |
+| `save_load.js` | 1,951 | v0.6.54 | (out of main.js) |
+| `item_tooltips.js` | 706 | v0.6.62 | `format_money` |
+| `crafting_display.js` | 624 | v0.6.63 | `action_div`, `update_displayed_normal_location` |
+| `journal_panels.js` | 696 | v0.6.65 | `item_divs` |
+| `skills_display.js` | 660 | v0.6.67 | nothing |
+| `inventory_display.js` | 963 | v0.6.68 | four, all runtime |
+
+**Why it stops here.** Every remaining cut is a worse trade, and the measurements say
+so rather than instinct:
+
+- The **quest journal** is 893 lines and needs **91** names from display.js. It is the
+  panel every other panel talks to.
+- The **options** in main.js are 289 lines and need `game_options`, `language`,
+  `current_location`, `current_stance` and `global_flags` - core state that half the
+  project reads. Moving it is a different job; leaving it means ten back-edges into
+  main.js, which is the entry point and the one place a cycle broke a release before.
+- **Combat** and **animations** in display.js need 22 and 13 names out for 166 and 169
+  lines, which is a cycle per ten lines saved.
+
+The rule the six cuts produced, worth more than the line count: **a cut is judged by
+how many names the moved code needs back, not by how many lines it takes away.** Five
+of the six needed four or fewer, one needed none, and the two that looked expensive
+turned out cheap once the state that only they read moved with them.
 
 ### The inventories and the trade window
 

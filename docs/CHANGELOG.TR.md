@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 51 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 52 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,38 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Büyük dosyaları bölmek ve bunun nerede durduğu
+
+Altı kesme display.js'i **7.057 satırdan 3.815'e** indirdi ve artık projedeki en büyük
+dosya bile değil - `data/skills.js`, `items.js`, `data/locations.js` ve `main.js`
+hepsi daha büyük; üçü de içerik dosyası, ki büyük olmaları gerekiyor.
+
+| modül | satır | sürüm | geri istediği adlar |
+| --- | ---: | --- | --- |
+| `save_load.js` | 1.951 | v0.6.54 | (main.js'ten çıktı) |
+| `item_tooltips.js` | 706 | v0.6.62 | `format_money` |
+| `crafting_display.js` | 624 | v0.6.63 | `action_div`, `update_displayed_normal_location` |
+| `journal_panels.js` | 696 | v0.6.65 | `item_divs` |
+| `skills_display.js` | 660 | v0.6.67 | hiçbiri |
+| `inventory_display.js` | 963 | v0.6.68 | dört, hepsi çalışma zamanı |
+
+**Neden burada duruyor.** Kalan her kesme daha kötü bir takas ve bunu sezgi değil
+ölçümler söylüyor:
+
+- **Görev günlüğü** 893 satır ve display.js'ten **91** ad istiyor. Diğer bütün
+  panellerin konuştuğu panel o.
+- main.js'teki **seçenekler** 289 satır ve `game_options`, `language`,
+  `current_location`, `current_stance`, `global_flags` istiyor - projenin yarısının
+  okuduğu çekirdek durum. Onu taşımak başka bir iş; bırakmak ise giriş noktası olan
+  main.js'e on geri kenar demek - bir döngünün daha önce bir sürümü bozduğu tek yer.
+- display.js'teki **dövüş** ve **animasyonlar**, 166 ve 169 satır için 22 ve 13 ad
+  istiyor; on satır başına bir döngü eder.
+
+Altı kesmenin ürettiği ve satır sayısından değerli olan kural: **bir kesme, kazandırdığı
+satırla değil, taşınan kodun geri kaç ada ihtiyaç duyduğuyla ölçülür.** Altısının beşi
+dört ya da daha az istedi, biri hiç istemedi; pahalı görünen ikisi de yalnızca onların
+okuduğu durum birlikte taşınınca ucuzladı.
 
 ### Envanterler ve ticaret penceresi
 

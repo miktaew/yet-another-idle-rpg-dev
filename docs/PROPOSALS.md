@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 61 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 62 -->
 
 # Proposals
 
@@ -169,71 +169,6 @@ not after. Each item is the request as it was given, and the state it is in.
     named as the example. Its `js/systems/` holds abilities, effectors, planner and
     simulation, none of which this game has, and its docs carry REGIONS, STORY and two
     STORYPROGRESS files.
-
-48. **Splitting the big files** — `in progress`, and the measurements are the point.
-
-    v0.6.62 took the tooltips out: `item_tooltips.js`, 706 lines, and display.js 7,057 ->
-    6,430. Three of the names the cut appeared to need turned out not to be needed at all -
-    `rarity_colors` and `rarity_outlines` belong with the tooltips that read them,
-    `select_outline_class` is in misc.js rather than display.js, and `round` is used by
-    nothing else - which left `format_money` as the only name borrowed back, called at
-    runtime and never at module scope.
-
-    Three faults on the way, each caught by a different net and each worth remembering:
-    a destructured parameter list opens a brace, so counting from `function` ended
-    create_item_tooltip_content at its own signature; `Object.keys(x).forEach(...)` closes
-    with `});` and leaving the `);` behind is a syntax error; and moving a `const` above
-    the loop that reads it puts it in its temporal dead zone, which the build accepts and
-    `check:bundle` refuses. The last one is why that check exists.
-
-    v0.6.63 took the crafting window (`crafting_display.js`, 624 lines) and v0.6.65 the
-    journal's panels (`journal_panels.js`, 696 - bestiary, book list, lore, Discoveries).
-    display.js is 7,057 -> 5,273 across the four cuts. Each needed exactly one or two
-    names back out of display.js, all read at runtime.
-
-    Two things learned since. **A re-export makes a split cosmetic**: display.js was
-    handing the moved names on to main.js, save_load.js, crafting.js and items.js, which
-    were still asking it for functions it no longer had. Repointing them is part of the
-    cut, not a follow-up. And **the browser-free loader needs a `document`**, not a longer
-    stub list: journal_panels.js takes two element handles at module scope, and stubbing
-    the global once means the next split does not have to touch the loader at all.
-
-    Remaining, re-measured: inventory 921 lines (23 out), trade 173 (8), quest journal
-    907 (121 - the coupled one), animations 204, combat 172.
-    Two cuts are made and the rest are costed rather than guessed at. A cut is judged by
-    two numbers: how many names the moved code needs from what stays, and how many the
-    staying code needs back. The second is the expensive one - it becomes an import INTO
-    a module that is already the entry point of a load-bearing cycle.
-
-    Done: **crafting.js** (357 lines, 4 in / 0 out) and **run_stats.js** (the ten run
-    counters, which had to leave first because an imported binding is read-only and
-    use_recipe increments two of them). **ui_helpers.js** (9 functions) followed, for the
-    same reason on the display.js side. main.js 6606 -> 6279.
-
-    Costed and NOT done, with the reason:
-
-      * `process_rewards` (365 lines) needs 20 names from main.js and would put
-        rewards.js and quests.js in a direct two-module cycle, which is the shape that
-        broke v0.6.27. Would need `questManager` published through registries.js first.
-      * save/load (1821 lines, 29% of main.js) needs 60 names, nearly all of them module
-        state the two functions read and write. The run_stats.js pattern generalises: a
-        `game_state.js` leaf holding that state would cut the 60 down hard. Biggest prize,
-        biggest preparation, and save-format risk if done carelessly.
-      * bestiary + Discoveries out of display.js (389 lines) is now 5 in / 1 out - the one
-        back-edge is `create_travel_line`, which the quest hints also use. Moving the hint
-        renderer with it moves the need to `create_quest_step_hint`, and so on into the
-        quest journal. The next preparation is to decide where the journal's shared
-        rendering lives.
-
-    Safety net in place: `check_onclick_names_are_reachable`. An onclick is a string
-    resolved against the global object at click time, so a function that loses its
-    `window.` assignment fails there and nowhere else - not the build, not a check, not
-    the bundle-load test. 81 names, and main.js holds 89 of the assignments.
-
-    One rule learned the hard way: a new import goes at the END of main.js's import list.
-    The browser-free test loader replays that list to reproduce the browser's evaluation
-    order, and putting crafting.js early pulled character.js in ahead of items.js and
-    broke five checks. The bundle was fine either way.
 
 54. **Keep the story going, and connect the new areas** — `in progress`. v0.6.57 tied
     the slums to the town gate, which is the first crossing between the two the game has
