@@ -415,8 +415,50 @@ async function check_no_placeholder_text() {
     console.log("[check] no placeholder text in the locales");
 }
 
+/**
+ * Every text id the HTML asks for exists in the reference locale.
+ *
+ * The pages carry three attributes that name a locale id - data-translation for an
+ * element's text, -placeholder for an input's prompt, -title for a tooltip. A locale
+ * that is missing an id falls back to English, which is safe; an id that is in NO
+ * locale falls back to nothing, and getText renders the literal string
+ * "text not found, id: ui link repo" into the interface.
+ *
+ * Nothing catches that today. locales.mjs compares the locales against each other, so
+ * a typo made in the HTML is invisible to it - both locales agree, and the id neither
+ * of them has is the one on screen.
+ */
+async function check_ui_ids_exist() {
+    const reference = await load_locale(default_language);
+    if (!reference) return;
+
+    const pages = fs.readdirSync(repo_root).filter(f => f.endsWith(".html"));
+    const asked = new Map();
+    for (const page of pages) {
+        const html = fs.readFileSync(path.join(repo_root, page), "utf8");
+        for (const use of html.matchAll(
+                /data-translation(?:-placeholder|-title)?\s*=\s*"([^"]*)"/g)) {
+            //One id may be asked for from several places; name the first page found.
+            if (!asked.has(use[1])) asked.set(use[1], page);
+        }
+    }
+
+    let missing = 0;
+    for (const [id, page] of asked) {
+        if (!(id in reference)) {
+            missing++;
+            error(`${page} asks for text id "${id}", which no locale has. `
+                + `It would render as "text not found, id: ${id}".`);
+        }
+    }
+    if (missing === 0) {
+        console.log(`[check] ${asked.size} ui text ids across ${pages.length} pages all exist`);
+    }
+}
+
 export {
     check_duplicate_keys,
+    check_ui_ids_exist,
     check_interpolated_pairs,
     check_locales,
     check_locales_are_bundled,

@@ -1708,6 +1708,20 @@ input[type=checkbox], input[type=radio] {
 	position: fixed;
 	padding: 3px;
 }
+/*
+	The original project, next to this fork's own mark. Both are the same GitHub logo,
+	so this one is dimmed until it is pointed at - otherwise two identical icons sit
+	side by side and neither says which repository it opens.
+*/
+.upstream_link {
+	right: 84px;
+	position: fixed;
+	padding: 3px;
+	opacity: 0.5;
+}
+.upstream_link:hover {
+	opacity: 1;
+}
 .financial_link {
 	right: 0px;
 	position: fixed;

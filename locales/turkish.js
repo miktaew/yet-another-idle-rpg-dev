@@ -714,6 +714,12 @@ const ui = {
     "ui show bio": "Künye",
     "ui show tools": "Aletler",
     "ui language": "Dil:",
+
+    //Tooltips on the icons in the corner. They have no text of their own.
+    "ui link repo": "Bu çatallamanın deposu",
+    "ui link upstream": "Devam ettirdiği özgün oyun",
+    "ui link ko-fi": "Özgün yapımcı Miktaew'e Ko-fi'den destek ol",
+
     //Location choice dropdowns.
     "ui choice travel": "Başka bir yere git",
     "ui choice fast travel": "Hızlı yolculuk",

@@ -227,6 +227,12 @@ class TranslationManager {
         document.querySelectorAll('[data-translation-placeholder]').forEach(elem => {
             elem.placeholder = this.getText(language, elem.dataset.translationPlaceholder);
         });
+
+        //A tooltip is an attribute too, and the icons along the bottom bar are nothing
+        //BUT tooltip - without this they stay English in every language.
+        document.querySelectorAll('[data-translation-title]').forEach(elem => {
+            elem.title = this.getText(language, elem.dataset.translationTitle);
+        });
     };
 }
 

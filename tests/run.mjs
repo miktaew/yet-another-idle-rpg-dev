@@ -50,6 +50,7 @@ import {
     check_interpolated_pairs,
     check_locales,
     check_no_placeholder_text,
+    check_ui_ids_exist,
     check_no_unused_locale_rows,
     check_translations_have_no_english,
 } from "./checks/locales.mjs";
@@ -103,6 +104,7 @@ await check_global_flags();
 await check_no_placeholder_text();
 await check_translations_have_no_english();
 await check_no_unused_locale_rows();
+await check_ui_ids_exist();
 await check_creation_panel_values();
 check_item_name_collisions();
 await check_recipe_item_names();

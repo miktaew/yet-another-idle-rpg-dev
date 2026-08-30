@@ -747,6 +747,11 @@ const ui = {
     "ui show tools": "Tools",
     "ui language": "Language:",
 
+    //Tooltips on the icons in the corner. They have no text of their own.
+    "ui link repo": "This fork's repository",
+    "ui link upstream": "The original game this one continues",
+    "ui link ko-fi": "Support Miktaew, the original creator, on Ko-fi",
+
     //Location choice dropdowns.
     "ui choice travel": "Move somewhere else",
     "ui choice fast travel": "Fast travel",
