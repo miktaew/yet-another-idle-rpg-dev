@@ -1075,17 +1075,8 @@ function start_activity_animation(settings) {
     end_activity_animation();
     activity_anim = setInterval(() => { //sets a tiny little "animation" for activity text
         const action_status_div = document.getElementById("action_status_div");
-        /*
-            The interval outlives the element it animates. Anything that clears the
-            panel without also calling end_activity_animation leaves this reading
-            .innerText off null, and because it is a timer it does not throw once - it
-            throws on every beat, several times a second, until the page is reloaded.
-
-            Found in a fork whose travel path can do exactly that. I could not prove a
-            path to it in this tree, where end_activity_animation is called from a
-            dozen places and looks disciplined - so this is offered as the cheap half
-            of the fix: stop the timer rather than let it spin on nothing.
-        */
+        
+        //small safeguard in case something clears out activity without cancelling the animation
         if(!action_status_div) {
             end_activity_animation();
             return;
