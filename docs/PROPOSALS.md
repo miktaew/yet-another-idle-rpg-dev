@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 64 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 65 -->
 
 # Proposals
 
@@ -190,6 +190,115 @@ not after. Each item is the request as it was given, and the state it is in.
     and I could not prove a path to it there. What stayed behind: every check, since they
     have no `tests/`, no `package.json` and no test runner to hang one on.
 
+
+### P-14 — v0.7, the Marrowmoth `open`
+
+The next arc, and the first one this fork writes into a hook it left itself rather
+than into one it inherited. What follows is the owner's brief measured against the
+code, not restated from it.
+
+**Canon it may use, and nothing past it.** Forty tons; out on the ebb; one crate
+unweighed; a stroke drawn twice through her account column; back twice a year; the
+tallyman will not send word. All six are already in
+`action read the departures success` and in [STORY.md](STORY.md) section 1b.
+
+**What it may not resolve.** Who paid for the robbery; why that traveller; where the
+taken object came from; why the hero had it; the architecture under the village; the
+Rat God; the banished tribe; the four-legged bird. **One layer, once** — the arc may
+show that the crate and the stolen object share a hand, and may not say whose.
+
+**Measured before planning**, at v0.6.71 with all four gates green:
+
+- The bay is three places — The bay, The salt house, Coast road — and **one** action,
+  `read the departures`, gated on Perception 15 / 34. It is the thinnest region by
+  count on purpose, and the arc must not fatten it into a fifth region.
+- Reputation has exactly three regions: `Village`, `Slums`, `Town`. **There is no
+  guild standing**, which quest 3's three-path design assumes. See Q-7.
+- Discoveries indexes *items* by where they come from; Lore lists *heard textlines*
+  grouped by speaker. Neither can hold an investigation note. See Q-8.
+- `conditions.js` already reads `season`, and `game_time` carries day, season, day of
+  week and moon phase. A twice-a-year hull needs no scheduler. See Q-10.
+- A trader's stock is read from `inventory_templates[this.inventory_template]` **at
+  refresh time**, and `inventory_template` is not written to the save. A stock that
+  changes while she is in port therefore has to be *derived* on load, never stored -
+  otherwise it silently reverts on the player's next session and nothing fails.
+- Skills that exist and could carry a check here: Perception, Presence sensing,
+  Spatial awareness, Climbing, Swimming, Equilibrium, Literacy, Haggling, Medicine.
+  **There is no lockpicking skill and no navigation skill.** Do not add one for a
+  single door.
+- `Enemy` already takes `on_hit`, `on_damaged` and `on_death`, and four enemies use
+  them. That is the reusable abstraction stance-relevant enemies need; there is no
+  case for a second one.
+- Tier 5 is blocked on two locale rows, not on design: `material white` and
+  `material black` have no entry in either locale, so every white-steel and
+  black-steel component would render its own key at the player. That is P-12's
+  remaining first step and it is two lines.
+
+#### Phases
+
+Each phase ships on its own, passes `build` + `LOCALE_STRICT=1 check` + `test` +
+`check:bundle`, and gets both changelog entries. No phase starts before the one
+before it is green.
+
+**Phase 0 — the ground.** No story. Settle Q-7 to Q-10. Correct whichever of
+[STATUS.md](STATUS.md) and this file is wrong about item 48 and P-13/35, which
+STATUS lists as in flight and this file does not carry. Measure the two quest tasks
+that show no hint **in the running game** rather than from the source, and fix them.
+Add the two missing material rows. Guard: none new; this phase is the one that makes
+the following ones measurable.
+
+**Phase 1 — v0.7.0, *No Word Sent*.** The player learns the Marrowmoth is back from
+the world, never from a quest notification: the salt house's shelf changes, the bay's
+ambient lines change, and the guild has a rumour. Built on the season condition and a
+derived trader template, per Q-10. Quest 1 opens from the discovery, not the other
+way round. Guard: `check_seasonal_content_is_reachable` — anything whose only source
+is a seasonal window must occur in every year.
+
+**Phase 2 — v0.7.1, *Forty Tons*.** Unloading, as actions on the existing bay, with a
+manifest read as cargo / weight / origin / destination / seal / status. Every normal
+line is complete. One is not, and the same crate went unweighed last time too, which
+is stated and not explained. No new UI: the manifest is action success text and a
+lore thread. Guard: covered by the existing class-level checks, which new actions
+join automatically.
+
+**Phase 3 — v0.7.2, *A Stroke Through It*.** Investigation, gated on standing, three
+paths that give **different pieces rather than the same piece**: guild records, dock
+worker testimony, old manifests. Thresholds derived from what is actually earnable
+(610 Village, 350 Slums, 320 Town today) and from where the existing settlement
+actions already sit, not invented. Guard: `check_reputation_regions_have_names` -
+every key of `character.reputation` resolves to a display name in every locale;
+negative-tested with a nameless region.
+
+**Phase 4 — v0.7.3, *Out on the Ebb*.** The low-tide approach. Two new places at
+most, per Q-9, with the anchorage and the cargo deck as actions rather than rooms.
+Skill and action checks, not combat. Every gate names a skill that exists and every
+failure says why and leaves another way — longer, dearer, or through standing. Guard:
+`check_no_dead_end_skill_gates` — a task whose only advancer is a skill-gated action
+must have a second advancer. This is the mechanical form of the owner's rule that a
+failed check never locks a quest.
+
+**Phase 5 — v0.7.4, *One Unweighed Crate*.** The crate is reached. It carries the
+same hand as the object taken on the forest road — one motif, one metal, one
+unexplained material — and nothing else. The player should finish with more questions
+than answers, deliberately. Guard: `check_lore_threads_resolve`, if Q-8 lands on
+threads.
+
+**Phase 6 — v0.7.5, the systems pass.** The 20% the brief asks for and the part that
+makes the arc worth having: stance choice made to matter through `on_hit` /
+`on_damaged` rather than through stat bonuses; the arc's money sink priced against
+the existing economy; tier-4 and tier-5 materials wired to what the ebb opens, which
+is where P-12's "an ore that is mined rather than bought" belongs; standing
+consequences that read as world-state and not as punishment.
+
+**Phase 7 — v0.8 groundwork, *Beyond the Lake*.** Not started before phase 6 is
+green. Traces first — tracks, feathers, noise, broken cover — and the player must be
+unsure the four-legged bird exists at all before they meet it.
+
+#### What this proposal must not do
+
+Invent a fifth region, a second investigation UI, a scheduler framework, a
+lockpicking skill, or a mystery's answer. Where authored content already covers a
+beat, wire it up instead.
 ---
 ## Open decisions
 
@@ -283,6 +392,75 @@ imperatively once and never redrawn: the character bio, and the hero creation
 panel. Each gets an explicit repaint in `option_language`, and `npm run check`
 fails if one of them is missing, so the list cannot silently grow. No reload, and
 nothing had to be split.
+
+### Q-7 — Does guild standing become a fourth reputation region? **PROPOSED: yes**
+
+P-14 phase 3 wants three information paths that differ, and two of the three axes
+are already spent: the town square reads Town at 50 / 150 / 250 and the row reads
+Slums at 100 / 200 / 300. A third path off either of those is the same path twice.
+
+The cost was measured rather than feared. `character.reputation` is a plain object;
+`load()` walks the keys **in the save** and warns past a region it does not know, so
+an old save simply arrives with no `Guild` and the field keeps its declared 0.
+`update_displayed_reputation` shows only regions above 0, so nobody sees a row they
+have not earned, and the region's name goes through `getDisplayName`, which wants one
+locale row per language. `market_saturation` is a separate map and is not touched: a
+guild that prices nothing does not need a market region.
+
+So the whole cost is one field, two locale rows and a check. The alternative -
+expressing guild favour as flags and quest state - costs less code and buys nothing:
+a number the player can watch rise is exactly what makes a third path feel like a
+third path.
+
+### Q-8 — Where do investigation notes live? **PROPOSED: a lore thread, not a new panel**
+
+Measured, because the brief names Discoveries and Discoveries is not what it sounds
+like. `update_displayed_discoveries` renders **items** against where each one comes
+from, built from `world_index`. `update_displayed_lore` renders **textlines the
+player has heard**, grouped by speaker, with a resume line for where they left off.
+An action's success text is neither, and today it is read once in the log and gone.
+
+Three options, and the middle one is right:
+
+- **Route clues through dialogue lines flagged `lore: true`.** No code at all, and
+  it already works. But it groups by speaker, so the Marrowmoth's six facts would sit
+  under three different people and read as three conversations rather than one thread.
+- **Give `Textline` an optional `lore_thread` id and the lore panel a thread grouping
+  above the by-speaker list.** One optional field, one branch, no save impact -
+  textlines are already tracked as unlocked. Reusable by the banished tribe and the
+  Rat God, which is the test of whether an abstraction earns itself.
+- **A new investigation panel.** Excluded by the brief and by the evidence: the game
+  has four journal surfaces already and a fifth would be the parallel system every
+  standing directive here exists to prevent.
+
+### Q-9 — How many new places does the ebb chain need? **PROPOSED: two, not four**
+
+The brief sketches Bay → low-tide flats → anchorage → cargo deck → lower hold. The
+bay is deliberately the thinnest region in the game - three places, because a harbour
+is somewhere you pass through - and four more would make it the largest after the
+mountain, which says the wrong thing about it.
+
+Two carry the whole chain: the **flats**, which is the approach and the thing the
+tide gates, and the **hold**, which is the destination. The anchorage and the cargo
+deck are actions on those two. Locations are cheap here, which is the trap: the test
+is not what it costs to add a room but whether the room has anything in it, and a
+corridor does not.
+
+### Q-10 — How does "twice a year" work? **PROPOSED: two seasons, no scheduler**
+
+`conditions.js` already reads `season: {yes, not}` and `game_time` carries the
+season, the day of the week, the day count and the moon phase. Twice a year is two
+seasons, and the whole of the world-event vocabulary the brief lists - trader stock,
+ambient lines, actions, dialogue - can read the same condition.
+
+The one real hazard is not the time model, it is the state: `inventory_template` is
+**not saved**. Anything flipped on a trader while she is in port has to be recomputed
+from the season on load rather than written down, or it reverts on the next session
+and nothing fails loudly - which is the exact shape of the bug that lost the owner's
+favourites (see constraint 4 in [STATUS.md](STATUS.md)). Derive it; do not store it.
+
+A general world-event framework is explicitly out of scope. If a second event ever
+wants the same wiring, that is when the abstraction has earned itself.
 
 ---
 
