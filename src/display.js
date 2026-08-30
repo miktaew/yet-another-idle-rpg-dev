@@ -673,17 +673,6 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     return item_tooltip;
 }
 
-/** 
- * @param {Object} item_effect from item effects[]
- */
-/**
- * What to call an xp multiplier's target: a skill's name, a category, or an aggregate.
- *
- * The three places that needed this had three different answers - one handled
- * category_ targets, two did not, and none of them checked that a named skill exists
- * before asking it for its name. A misspelled target in content should read oddly, not
- * throw while drawing a tooltip.
- */
 function xp_target_name(target) {
     if(target === "all" || target === "hero" || target === "all_skill") {
         return target.replace("_", " ");
@@ -693,11 +682,16 @@ function xp_target_name(target) {
     }
     if(!skills[target]) {
         console.warn(`An xp multiplier names "${target}", which is not a skill, a category`
-            + ` or an aggregate. Possibly a misspelling.`);
+            + ` or an aggregate.`);
         return target;
     }
     return skills[target].getName();
 }
+
+/** 
+ * @param {Object} item_effect from item effects[]
+ */
+
 function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     const effect = effect_templates[effect_name];
     const tooltip = document.createElement("div");
