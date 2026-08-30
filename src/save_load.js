@@ -58,6 +58,7 @@ import { create_displayed_crafting_recipes } from "./crafting_display.js";
 import { create_new_bestiary_entry, update_booklist_entry } from "./journal_panels.js";
 import { skill_category_order, skill_list, update_displayed_stance_list } from "./skills_display.js";
 import { update_displayed_character_inventory } from "./inventory_display.js";
+import { titles } from "./data/titles.js";
 /**
  * puts all important stuff into a string
  * @returns string with save data
@@ -83,6 +84,7 @@ function create_save() {
         save_data.strongest_hit = run_stats.strongest_hit;
         save_data.gathered_materials = game_state.gathered_materials;
         save_data.global_flags = global_flags;
+        save_data.titles = Object.keys(titles).filter(id => titles[id].is_earned);
         save_data.lore_last = game_state.lore_last;
         save_data.last_rewarded_export = game_state.last_rewarded_export || 0;
         save_data["character"] = {
@@ -447,6 +449,19 @@ function load(save_data) {
         current_game_time.loadTime(save_data["current time"]);
         time_field.innerText = current_game_time.toString();
         //set game time
+
+        /*
+            Titles are saved as a list of ids rather than as objects: the registry owns
+            everything else about them, so a title dropped from the registry later just
+            fails to be found here instead of restoring a shape nothing understands.
+        */
+        (save_data.titles || []).forEach(title_id => {
+            if(titles[title_id]) {
+                titles[title_id].is_earned = true;
+            } else {
+                console.warn(`Title ${title_id} couldn't be found and was skipped!`);
+            }
+        });
 
         Object.keys(save_data.global_flags||{}).forEach(flag => {
             

@@ -2510,16 +2510,16 @@ i {
 				its own bottom edge. flex-basis 0 with min-height 0 lets it take whatever is
 				left instead of a number that has to be kept in step by hand.
 			*/
-			#discoveries_box_div, #lore_box_div {
+			#discoveries_box_div, #lore_box_div, #titles_box_div {
 				width: 100%;
 				flex-direction: column;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div{
 				height: 284px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div{
 				display: none;
 			}
 
@@ -3102,6 +3102,18 @@ html, body {
  }
  #discoveries_list,
  #lore_list {
+	 flex: 1 1 0;
+	 min-height: 0;
+	 overflow-y: scroll;
+ }
+
+ /*
+     The titles list scrolls for the same reason Lore's does: the header above it takes
+     a row of its own, and a list with a fixed height would either overlap it or run
+     past the bottom of the journal box. flex-basis 0 with min-height 0 lets it take
+     whatever the header leaves rather than a number kept in step by hand.
+ */
+ #titles_list {
 	 flex: 1 1 0;
 	 min-height: 0;
 	 overflow-y: scroll;

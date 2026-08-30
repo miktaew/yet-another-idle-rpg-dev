@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 63 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 64 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -171,29 +171,6 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
 
 15. **Her talebi buraya kaydet** — `sürekli`. Bu bölümün kendisi o kuralın
     uygulanması.
-
-54. **Hikâyeyi sürdür, yeni alanları bağla** — `sürüyor`; Echoes-Beneath
-    incelemesinden (eski P-13/35) iki sonucu devralıyor.
-
-    **Bir bölgenin şekli olmalı.** Onların `docs/REGIONS.md`'si her bölgeye bir Açılış,
-    Sahneler, Beklentiler ve bir Bitiş veriyor. Buradaki `STORY.md`'de böyle bir şey
-    yok: hikâyenin nerede durduğunu söylüyor ve inşa edilmiş her bölge, başı sonu olan
-    bir şey değil bir yerler listesi. "Onları bağlamak" somut olarak, inşa edilmiş dört
-    bölgeye o şekli yazmak demek.
-
-    **Unvanlar, lore panelinin öbür yarısı.** Panel oyuncuya ne söylendiğini
-    kaydediyor; bir unvan ne yaptığını. `process_rewards` zaten 23 ödül anahtarı
-    alıyor, yani `titles: [...]` oraya oturur; günlükte sekme şekli zaten var; eşikler
-    de mevcut - öldürme sayaçları, yetenek seviyeleri, itibarlar, koşu sayaçları.
-    Kaydı al, yeteneği alma: yetenek kilometre taşları zaten eşiklerde istatistik
-    veriyor ve aynı anda aynı işi yapan iki sistem, bir sayı üzerinde böyle anlaşmazlığa
-    düşer.
-
-    Aslen: v0.6.57, kenar mahalleyi
-    kasaba kapısına bağladı; oyunun ikisi arasında kurduğu ilk geçiş bu. Bölgelerin geri
-    kalanı hâlâ hikâyenin içinde değil, yanında duruyor. Motor toparlanırken
-    anlatı işine ara verilmiyor: inşa edilen bölgelerin hikâyenin yanında durmak yerine
-    hikâyeye bağlanması gerekiyor.
 
 58. **Yukarı akışla iki yönlü alışveriş** — `sürekli`; P-13/34'ü de içine alıyor.
     **Alma:** upstream 2026-08-30'da temmuzdan beri ilk kez kımıldadı ve üç commit'inin de

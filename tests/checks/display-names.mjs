@@ -518,6 +518,18 @@ async function check_enumerable_id_families() {
             shown_by: "the stat and stance tooltips",
         },
         {
+            what: "title",
+            prefix: "title",
+            /*
+                Two rows per title, and the panel shows both: the name is the record and
+                the description is what it is a record OF, which is the whole point of
+                the panel.
+            */
+            suffixes: [" name", " desc"],
+            values: collect(read("src/data/titles.js"), /titles\["([^"]+)"\]\s*=\s*new Title\(/g),
+            shown_by: "the titles panel in the journal",
+        },
+        {
             what: "location type",
             prefix: "loctype",
             values: collect(read("src/data/locations.js"), /location_types\["([^"]+)"\]\s*=/g),

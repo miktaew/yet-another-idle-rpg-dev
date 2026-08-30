@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 54 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 55 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,46 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Unvanlar, lore panelinin öbür yarısı
+
+**v0.6.69.** Lore paneli oyuncuya ne **söylendiğini** kaydeder; bir unvan ne **yaptığını**.
+Echoes-Beneath'ten uyarlandı ve o incelemenin savunduğu tek değişiklik tasarımın kendisi:
+**kaydı al, yeteneği alma.** Onlarınki kazanıldığında bir kez uygulanan bir `talent()`
+taşıyabiliyor; buradaki yetenek kilometre taşları ise zaten eşiklerde istatistik veriyor ve
+aynı anda aynı işi yapan iki sistem, bir sayı üzerinde böyle anlaşmazlığa düşer.
+
+On iki unvan ve her biri oyunun zaten tuttuğu bir sayacı okuyor: öldürmeler, adı geçen bir
+yaratığın öldürme sayısı, başarılı üretimler, ölümler, en sert vuruş, yetenek seviyeleri,
+itibarlar. Hiçbiri yeni bir sayaç gerektirmedi; bir unvanın oyun hakkında mı yoksa kendi
+hakkında mı olduğunun sınavı da bu.
+
+Koşullar bilerek **fonksiyon değil bildirimsel**: bir kontrol `{skill: {Forging: 20}}`'yi
+okuyup var olmayan bir yetenekte patlayabiliyor, oysa bir `() => ...` bunu oyuncu oraya
+gelene kadar gizlerdi. Kazandırabilecek her olaydan değil, oyun içi dakikada bir kez
+veriliyor - on iki koşulu yeniden okumak ucuz ve sayaç artıran her yere kanca koymak,
+biri on üçüncü kazanma yolunu eklediği anda eskiyen bir liste demek. Bir unvan bir kez
+kazanıldı mı kazanılmış kalıyor: itibar harcanabilir ve oyuncunun yaptığının kaydı sessizce
+doğru olmaktan çıkmamalı.
+
+Kazanılmamış unvanlar listede hiç görünmüyor, soluk hâlde bile. Göstermek, bir kaydı
+yapılacaklar listesine çevirirdi.
+
+Bunu kurarken üç kontrol genişledi; her biri bir şeyi geçirdiği için:
+
+- **Onclick kontrolü yalnızca ilk sıçramayı doğruluyordu.** `onclick="showTitles()"`
+  işaretlemede tanımlı bir işleyiciyi adlandırıyor, o işleyici de `window`'da olmayan
+  `update_displayed_titles`'ı çağırıyordu. Sekme hiçbir şey çizmedi ve bunu yalnızca bir
+  tıklama söyledi. Artık ikinci sıçramayı da izliyor; o işleyicilerin kendi tanımladığı
+  yerelleri saymak, on yedi yanlış alarmı sıfıra indiriyor.
+- **Panel kontrolü yüksekliği ve görünürlüğü biliyordu ama kaydırmayı bilmiyordu.**
+  Yüksekliği doğru ama listesi doğru olmayan bir panel, tam olarak iki kez bildirilen
+  hata - önce Keşifler, sonra Lore - ve unvanlar paneli aynı oturumda üçüncüsünü yaptı.
+  Kutu da liste de kaydırabilir - bestiary kutuyu, Lore ise başlığı sabit kalsın diye
+  listeyi kaydırıyor - o yüzden kontrol ikisini de kabul ediyor; tasarımın uymadığı bir
+  kuralı icat etmiyor.
+- **Yerel kontrolleri şablonla kurulan bir kimliği göremiyordu.** `title ${id} name`'in,
+  konum türleri ve nadirlikler gibi, sayılabilir bir aile olarak kaydedilmesi gerekti.
 
 ### Dört bölge bir şekil kazanıyor
 

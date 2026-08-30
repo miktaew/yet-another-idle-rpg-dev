@@ -9,6 +9,7 @@ import { enemy_killcount, enemy_templates } from "./enemies.js";
 import { locations } from "./data/locations.js";
 import { dialogues } from "./data/dialogues.js";
 import { skills } from "./data/skills.js";
+import { titles } from "./data/titles.js";
 import { traders } from "./traders.js";
 import { game_state } from "./game_state.js";
 import { enemy_zones, item_sources, lore_unit_of, lore_units,
@@ -684,7 +685,50 @@ function create_travel_line(location, text) {
     return line;
 }
 
+const titles_list = document.getElementById("titles_list");
+
+/**
+ * The titles panel: what the player has done, in the order the game granted it.
+ *
+ * Unearned titles are not listed at all, not even greyed out. A title is a record
+ * rather than a checklist - showing the ones still to come would turn it into a list
+ * of chores, which is the opposite of what it is for.
+ */
+function update_displayed_titles() {
+    if(!titles_list) {
+        return;
+    }
+    clear_HTML_content(titles_list);
+
+    const earned = Object.keys(titles).filter(title_id => titles[title_id].is_earned);
+    if(earned.length === 0) {
+        const empty = document.createElement("div");
+        empty.classList.add("discovery_source_text");
+        empty.innerText = translationManager.getText(language, "ui titles empty");
+        titles_list.appendChild(empty);
+        return;
+    }
+
+    for(const title_id of earned) {
+        const entry = document.createElement("div");
+        entry.classList.add("lore_entry");
+
+        const name = document.createElement("div");
+        name.classList.add("lore_entry_speaker");
+        name.innerText = titles[title_id].getName();
+        entry.appendChild(name);
+
+        const description = document.createElement("div");
+        description.classList.add("discovery_source_text");
+        description.innerText = titles[title_id].getDescription();
+        entry.appendChild(description);
+
+        titles_list.appendChild(entry);
+    }
+}
+
 export {
+    update_displayed_titles,
     booklist_entry_divs,
     clear_bestiary,
     create_new_bestiary_entry,

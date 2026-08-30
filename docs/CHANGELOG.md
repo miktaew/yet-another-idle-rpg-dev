@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 54 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 55 -->
 
 # Changelog
 
@@ -173,6 +173,46 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### Titles, the other half of the lore panel
+
+**v0.6.69.** The lore panel records what the player was **told**; a title records what
+they **did**. Adapted from Echoes-Beneath, and the one change that review argued for is
+the whole design: **take the record, not the talent.** Theirs may carry a `talent()`
+applied once when earned; skill milestones here already hand out stats at thresholds, and
+two systems doing that at the same moment is how they start disagreeing about a number.
+
+Twelve titles, and every one reads a counter the game already keeps - kills, a named
+enemy's kill count, crafting successes, deaths, the strongest hit, skill levels,
+reputations. Nothing here needed a new counter, which is the test of whether a title is
+about play or about itself.
+
+Conditions are **declarative rather than functions**, on purpose: a check can read
+`{skill: {Forging: 20}}` and fail on a skill that does not exist, which a `() => ...`
+would hide until a player got there. Granted once per in-game minute rather than from
+each event that could earn one - twelve conditions are cheap to re-read, and a hook in
+every place that raises a count is a list that goes out of date the first time somebody
+adds a thirteenth way to earn one. A title stays earned once earned: reputation can be
+spent, and a record of what the player did should not quietly stop being true.
+
+Unearned titles are not listed at all, not even greyed out. Showing them would turn a
+record into a list of chores.
+
+Three checks were widened by building it, each because it let something through:
+
+- **The onclick check only verified the first hop.** `onclick="showTitles()"` names a
+  handler declared in the markup, and that handler then called `update_displayed_titles`,
+  which was not on `window`. The tab drew nothing and only a click said so. It follows
+  the second hop now; counting the locals those handlers declare for themselves takes it
+  from seventeen false alarms to none.
+- **The journal-panel check knew about height and display but not scrolling.** A panel
+  the right height whose list is not is exactly the fault reported twice, for Discoveries
+  and then for Lore, and the titles panel shipped it a third time in the same session.
+  Either the box or the list may scroll - the bestiary scrolls the box, Lore scrolls the
+  list because its header has to stay put - so the check accepts both rather than
+  inventing a rule the design does not follow.
+- **The locale checks could not see a template-built id.** `title ${id} name` needed
+  registering as an enumerable family, the same as location types and rarities.
 
 ### The four regions get a shape
 

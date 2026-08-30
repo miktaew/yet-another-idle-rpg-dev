@@ -138,7 +138,7 @@ import { close_crafting_window, create_displayed_crafting_recipes,
          update_recipe_tooltip } from "./crafting_display.js";
 import { booklist_entry_divs, create_new_bestiary_entry, update_bestiary_entry_killcount,
          update_bestiary_entry_tooltip, update_booklist_entry, update_displayed_book,
-         update_displayed_discoveries, update_displayed_lore } from "./journal_panels.js";
+         update_displayed_discoveries, update_displayed_lore, update_displayed_titles } from "./journal_panels.js";
 import { create_new_skill_bar, skill_category_order, skill_list, sort_displayed_skills,
          update_all_displayed_skills_xp_gain, update_displayed_faved_stances,
          update_displayed_skill_bar, update_displayed_skill_description,
@@ -146,6 +146,7 @@ import { create_new_skill_bar, skill_category_order, skill_list, sort_displayed_
          update_displayed_stance_list, update_stance_tooltip } from "./skills_display.js";
 import { sort_displayed_inventory, update_displayed_character_inventory,
          update_displayed_storage_inventory, update_displayed_trader_inventory } from "./inventory_display.js";
+import { is_title_earned, titles } from "./data/titles.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
 const backup_key = "backup save";
@@ -2554,6 +2555,30 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         }
     }
 
+    /*
+        A title a piece of content hands over directly, for the ones no counter can
+        see - finishing something, being told something, being somewhere. The
+        condition-less titles in the registry exist for exactly this.
+    */
+    if(rewards.titles) {
+        for(let i = 0; i < rewards.titles.length; i++) {
+            const title = titles[rewards.titles[i]];
+            if(!title) {
+                console.error(`No such title as "${rewards.titles[i]}" - reward skipped.`);
+                continue;
+            }
+            if(title.is_earned) {
+                continue;
+            }
+            title.is_earned = true;
+            if(inform_overall) {
+                log_message(translationManager.getText(language, "log title earned",
+                            {v1: title.getName()}), "message_travel");
+            }
+            update_displayed_titles();
+        }
+    }
+
     if(rewards.flags) {
         for(let i = 0; i < rewards.flags.length; i++) {
             const flag = global_flags[rewards.flags[i]];
@@ -3375,6 +3400,31 @@ function hard_reset() {
 }
 
 //update game time
+/**
+ * Grants any title whose condition has come true.
+ *
+ * Called once per in-game minute rather than from each event that could earn one.
+ * Twelve declarative conditions are cheap to re-read, and the alternative - a hook in
+ * every place that raises a kill count, a skill level or a reputation - is a list that
+ * silently goes out of date the first time somebody adds a fourteenth way to earn one.
+ *
+ * A title stays earned once earned. The condition is not re-tested afterwards, because
+ * reputation can be spent and a skill can be recalculated, and a record of what the
+ * player did should not quietly stop being true.
+ */
+function check_earned_titles() {
+    for(const title_id in titles) {
+        const title = titles[title_id];
+        if(title.is_earned || !is_title_earned(title)) {
+            continue;
+        }
+        title.is_earned = true;
+        log_message(translationManager.getText(language, "log title earned", {v1: title.getName()}),
+                    "message_travel");
+        update_displayed_titles();
+    }
+}
+
 function update_timer(time_in_minutes) {
     const was_night = is_night(current_game_time);
     current_game_time.goUp(time_in_minutes || (is_sleeping ? 6 : 1));
@@ -3386,6 +3436,7 @@ function update_timer(time_in_minutes) {
     }
     
     update_displayed_time();
+    check_earned_titles();
 }
 
 function progress_time({value = 0, source}) {
@@ -3941,6 +3992,7 @@ window.do_enemy_combat_action = do_enemy_combat_action;
 window.sort_displayed_inventory = sort_displayed_inventory;
 window.update_displayed_discoveries = update_displayed_discoveries;
 window.update_displayed_lore = update_displayed_lore;
+window.update_displayed_titles = update_displayed_titles;
 window.update_displayed_character_inventory = update_displayed_character_inventory;
 window.update_displayed_trader_inventory = update_displayed_trader_inventory;
 window.update_displayed_storage_inventory = update_displayed_storage_inventory;

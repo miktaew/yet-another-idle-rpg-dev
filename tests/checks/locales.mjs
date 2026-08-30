@@ -335,6 +335,8 @@ async function check_no_unused_locale_rows() {
         "skill effect ", "skill milestone ", "book ", "effect ",
         "loc ", "noise ", "travel ", "activity ", "action ", "quest ", "recipe ",
         "age ", "height ", "race ", "ui rarity ", "ui enemy tag ", "loctype ",
+        //`title ${title_id} name` and `... desc`, built off the registry key.
+        "title ",
     ];
 
     /*

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 63 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 64 -->
 
 # Proposals
 
@@ -162,28 +162,6 @@ not after. Each item is the request as it was given, and the state it is in.
 
 15. **Record every request here** — `standing`. This section is that rule being
     followed.
-
-54. **Keep the story going, and connect the new areas** — `in progress`, and it
-    inherits two conclusions from the Echoes-Beneath review (was P-13/35).
-
-    **A region needs a shape.** Their `docs/REGIONS.md` gives each one an Opening,
-    Scenes, Expectations and an Ending. `STORY.md` here has nothing like it: it says
-    where the story stops, and each built region is a list of places rather than
-    something with a beginning and an end. Writing that shape for the four built
-    regions is what "connect them" concretely means.
-
-    **Titles are the other half of the lore panel.** The panel records what the player
-    was told; a title records what they did. `process_rewards` already takes 23 reward
-    keys so `titles: [...]` slots in, the journal already has the tab shape, and the
-    thresholds exist - kill counts, skill levels, reputations, run counters. Take the
-    record, not the talent: skill milestones already hand out stats at thresholds, and
-    two systems doing that at the same moment is how they start disagreeing.
-
-    Originally: v0.6.57 tied
-    the slums to the town gate, which is the first crossing between the two the game has
-    had. The rest of the regions are still standing beside the story rather than in it. Not a pause in
-    narrative work while the engine is tidied: the regions that were built need to be
-    tied into the story rather than left standing next to it.
 
 58. **Trade with upstream in both directions** — `standing`, and it absorbs what was
     P-13/34. **Taking:** upstream moved for the first time since July on 2026-08-30, and

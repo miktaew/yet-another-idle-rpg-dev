@@ -85,6 +85,31 @@ function check_journal_panels_are_styled() {
         }
     }
 
+    /*
+        A fixed-height panel needs something in it that scrolls, or its content runs off
+        the bottom - the fault reported twice, for Discoveries and then for Lore, and the
+        one the two rules above cannot see. The panel is the right height; what is inside
+        it is not.
+
+        Either place will do, and the project uses both on purpose. The bestiary, the book
+        list and the data tab scroll the BOX. Discoveries, Lore and Titles cannot: each has
+        a row of controls or a header that has to stay put while the list under it moves,
+        so the LIST scrolls and takes whatever that row leaves. Demanding one shape would
+        be the check inventing a rule the design deliberately does not follow.
+    */
+    const scrolls = (element) => sets(element, "overflow-y") || sets(element, "overflow");
+    for (const panel of panels) {
+        const list = `${panel.replace(/_box_div$/, "")}_list`;
+        const has_list = region.includes(`id = "${list}"`) || region.includes(`id="${list}"`);
+        if (scrolls(panel) || (has_list && scrolls(list))) {
+            continue;
+        }
+        error(`#${panel} has a fixed height and nothing in it scrolls - neither the box nor`
+            + `${has_list ? ` #${list}` : " a list of its own"}. Its content runs off the`
+            + " bottom once there is enough of it. #lore_list is the shape to copy when the"
+            + " panel has a header that must stay put.");
+    }
+
     console.log(`[check] journal panels: ${panels.length} styled`);
 }
 function check_onclick_names_are_reachable() {
@@ -104,6 +129,17 @@ function check_onclick_names_are_reachable() {
     for (const match of html.matchAll(/function\s+(\w+)\s*\(/g)) {
         reachable.add(match[1]);
     }
+    /*
+        And whatever those handlers declare for themselves. prepareGame alone defines a
+        dozen local helpers, and a scan that cannot see them reports every one of them
+        as an unreachable global - seventeen false alarms against one real fault.
+    */
+    for (const match of html.matchAll(/(?:const|let|var)\s+(\w+)\s*=/g)) {
+        reachable.add(match[1]);
+    }
+    for (const match of html.matchAll(/(\w+)\s*=\s*(?:function|\([^)]*\)\s*=>)/g)) {
+        reachable.add(match[1]);
+    }
     //The dev console attaches its helpers in a loop, by name, at runtime.
     const dev_console = /window\[name\]\s*=/.test(source);
 
@@ -121,6 +157,41 @@ function check_onclick_names_are_reachable() {
             /setAttribute\(\s*["']onclick["']\s*,\s*(["'`])([\s\S]*?)\1/g)) {
         for (const call of match[2].matchAll(/(?<![\w.])([A-Za-z_]\w*)\s*\(/g)) {
             record(call[1], "a setAttribute in src/");
+        }
+    }
+
+    /*
+        The second hop. An onclick names a handler declared in the markup, and that
+        handler then calls module functions - which only work if something assigned them
+        to window. Checking the first hop alone let `showTitles()` ship calling an
+        `update_displayed_titles` that was not a global: the tab drew nothing and only a
+        click said so.
+
+        Browser builtins are listed rather than guessed at, because there is no way to
+        tell one from a missing global by shape alone.
+    */
+    //`if (`, `for (`, `while (` and `function (` all look like a call to a matcher that
+    //only knows "a name followed by a bracket".
+    const keywords = new Set(["if", "for", "while", "switch", "catch", "return", "function",
+        "typeof", "new", "do", "else", "await", "delete", "void", "in", "of"]);
+    const browser_builtins = new Set([
+        "getComputedStyle", "setTimeout", "setInterval", "clearTimeout", "clearInterval",
+        "requestAnimationFrame", "parseInt", "parseFloat", "alert", "confirm", "prompt",
+        "isNaN", "encodeURIComponent", "decodeURIComponent", "fetch", "structuredClone",
+        //rgba() only ever appears inside a CSS colour string being assembled.
+        "rgba", "rgb", "url", "calc", "translate",
+    ]);
+    for (const declaration of html.matchAll(/function\s+(\w+)\s*\([^)]*\)\s*\{/g)) {
+        const open = html.indexOf("{", declaration.index + declaration[0].length - 1);
+        let depth = 0;
+        let end = open;
+        for (let i = open; i < html.length; i++) {
+            if (html[i] === "{") { depth++; }
+            else if (html[i] === "}") { depth--; if (depth === 0) { end = i; break; } }
+        }
+        for (const call of html.slice(open, end).matchAll(/(?<![\w.$])([a-z_][A-Za-z0-9_]*)\s*\(/g)) {
+            if (keywords.has(call[1]) || browser_builtins.has(call[1])) continue;
+            record(call[1], `${declaration[1]}() in index.html`);
         }
     }
 
