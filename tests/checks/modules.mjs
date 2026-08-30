@@ -77,8 +77,17 @@ async function check_modules_import_what_they_call() {
             parameter, not a missing import, and reporting it would be the check crying wolf
             about the very workaround that keeps the game loading.
         */
-        for (const params of source.matchAll(/function\s*\w*\s*\(([^)]*)\)/g)) {
-            for (const part of params[1].split(",")) {
+        /*
+            Arrow parameters count too, and did not until the `${name}` shape was added.
+            translation.js writes `load = async(language) => {` and interpolates
+            `${language}` inside it, so the widened matcher reported a parameter as a
+            missing import - the check crying wolf about correct code, which is worse
+            than the gap it was closing.
+        */
+        for (const params of source.matchAll(
+                /function\s*\w*\s*\(([^)]*)\)|\(([^)]*)\)\s*=>|(?:^|[\s(,=])([A-Za-z_]\w*)\s*=>/g)) {
+            const list = params[1] ?? params[2] ?? params[3] ?? "";
+            for (const part of list.split(",")) {
                 const name = part.split("=")[0].replace(/[{}[\]]/g, "").split(":").pop().trim();
                 if (/^[A-Za-z_]\w*$/.test(name)) declared.add(name);
             }
@@ -116,13 +125,35 @@ async function check_modules_import_what_they_call() {
             the reference the check was widened to catch was hidden by the widening's own
             lookbehind.
         */
-        const reference = /(?:(?<=\.\.\.)|(?<![.\w$]))(?:([a-z_][A-Za-z0-9_]*)\s*[([]|new\s+([A-Z]\w*)\s*\()/g;
+        /*
+            A fourth shape: `${name}`. Moving the stance list into its own module left
+            `[data-stance='${selected_stance}']` behind, which is a plain value inside a
+            template literal - not a call, not a subscript, not a construction - and it
+            went past all three. The bundle built and the page came up blank.
+
+            Low noise, because an interpolation is never prose: what is inside `${}` is
+            always evaluated.
+        */
+        /*
+            And a fifth: `name.property`, which is how an imported object is normally
+            used and which all four earlier shapes missed. `character.bonus_skill_levels`
+            went into skills_display.js unimported, built clean, evaluated clean, and
+            threw the moment a save loaded - the same failure as effect_templates, one
+            shape along.
+
+            Measured before adding, because a dot is common: across all 51 modules it
+            produces exactly one hit, the real one, once module paths are excluded.
+            "./character.js" otherwise reads as `character` followed by `.j`.
+        */
+        const reference = /(?:(?<=\.\.\.)|(?<![.\w$]))(?:([a-z_][A-Za-z0-9_]*)\s*[([.]|new\s+([A-Z]\w*)\s*\()|\$\{\s*([a-z_][A-Za-z0-9_]*)\s*[}.[]/g;
         for (const call of source.matchAll(reference)) {
-            const name = call[1] ?? call[2];
+            const name = call[1] ?? call[2] ?? call[3];
             if (declared.has(name) || imported.has(name)) continue;
 
             const line = source_lines[source.slice(0, call.index).split("\n").length - 1] ?? "";
             if (line.includes("onclick")) continue;
+            //A module path is not a reference.
+            if (/^\s*(?:import|export)\b/.test(line) || line.includes('from "')) continue;
 
             const owner = [...exported_by].find(([other, names]) => other !== file && names.has(name));
             if (!owner) continue;

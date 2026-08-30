@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 49 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 50 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,32 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Yetenek çubukları ile duruş listesi, ve kontrolün göremediği iki şekil daha
+
+**v0.6.67.** `skills_display.js`, 660 satır; display.js 5.273'ten 4.699'a. Beş kesmenin
+en temizi: display.js'ten ihtiyaç duyduğu sanılan yedi adın hepsi bu koda ait modül
+durumu - çubuk div'leri, iki liste, sıralama ölçütü ve yönü - ve onlar da birlikte
+taşınınca yeni modülün geri **hiçbir** ada ihtiyacı kalmadı. Tek yönlü bir içe aktarma
+ve üzerine düşünülecek bir döngü yok.
+
+Ardından `check_modules_import_what_they_call`'ın göremediği iki şekil daha çıktı; ikisi
+de `effect_templates`'in bir adım ötesi: tertemiz derlendi, tertemiz değerlendirildi ve
+kayıt yüklenince patladı.
+
+- **`${name}`.** `[data-stance='${selected_stance}']`, şablon dizesi içinde çıplak bir
+  değer: ne çağrı, ne indis, ne kurulum. Eklemesi düşük gürültülü, çünkü `${}` içindeki
+  her şey mutlaka değerlendirilir.
+- **`name.property`.** `character.bonus_skill_levels` - içe aktarılmış bir nesnenin
+  normalde kullanılma biçimi ve beşinin en geniş boşluğu. Eklemeden önce ölçüldü: 51
+  modülün tamamında tam olarak bir isabet veriyor, o da gerçek olanı - yeter ki modül
+  yolları dışarıda bırakılsın. Yoksa `"./character.js"`, `character` ve ardından `.j`
+  diye okunuyor.
+
+`${name}`'i eklemek kontrolün `translation.js` hakkında boş yere bağırmasına da yol açtı;
+orada `load = async(language) => {` yazıyor ve içinde `${language}` geçiyor - bu bir
+parametre, eksik bir içe aktarma değil. Ok fonksiyonu parametreleri artık bildirilmiş
+sayılıyor; önce sayılmıyordu.
 
 ### Katkı geri döndü ve alınacak bir şey yoktu
 

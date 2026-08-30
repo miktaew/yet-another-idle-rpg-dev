@@ -33,8 +33,6 @@ import {
          set_loading_screen_progress,
          set_loading_screen_versions,
          set_loading_screen_warnings_warning,
-         skill_category_order,
-         skill_list,
          update_displayed_character_inventory,
          update_displayed_effects,
          update_displayed_health,
@@ -42,7 +40,6 @@ import {
          update_displayed_money,
          update_displayed_quest,
          update_displayed_reputation,
-         update_displayed_stance_list,
          update_displayed_time,
         } from "./display.js";
 import { enemy_killcount } from "./enemies.js";
@@ -60,6 +57,7 @@ import { traders } from "./traders.js";
 import { translationManager } from "./translation.js";
 import { create_displayed_crafting_recipes } from "./crafting_display.js";
 import { create_new_bestiary_entry, update_booklist_entry } from "./journal_panels.js";
+import { skill_category_order, skill_list, update_displayed_stance_list } from "./skills_display.js";
 /**
  * puts all important stuff into a string
  * @returns string with save data

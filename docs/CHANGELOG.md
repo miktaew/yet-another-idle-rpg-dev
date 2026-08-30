@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 49 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 50 -->
 
 # Changelog
 
@@ -173,6 +173,30 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### The skill bars and the stance list, and two more shapes the check could not see
+
+**v0.6.67.** `skills_display.js`, 660 lines, and display.js 5,273 -> 4,699. The
+cleanest of the five cuts: all seven names it appeared to need from display.js are
+module state that belongs with this code - the bar divs, the two lists, the sort order
+and direction - so once they moved with it the new module needed **nothing** back. A
+one-way import and no cycle to reason about.
+
+It then found two more shapes `check_modules_import_what_they_call` could not see, both
+the same failure as `effect_templates` one step along - built clean, evaluated clean,
+threw when a save loaded:
+
+- **`${name}`.** `[data-stance='${selected_stance}']` is a plain value inside a template
+  literal: not a call, not a subscript, not a construction. Low noise to add, because
+  what sits inside `${}` is always evaluated.
+- **`name.property`.** `character.bonus_skill_levels` - which is how an imported object
+  is normally used, and the widest gap of the five. Measured before adding: across all
+  51 modules it produces exactly one hit, the real one, once module paths are excluded.
+  `"./character.js"` otherwise reads as `character` followed by `.j`.
+
+Adding `${name}` also made the check cry wolf about `translation.js`, which writes
+`load = async(language) => {` and interpolates `${language}` inside it - a parameter,
+not a missing import. Arrow parameters count as declared now, which they did not before.
 
 ### The contribution came back, and there was nothing to take
 

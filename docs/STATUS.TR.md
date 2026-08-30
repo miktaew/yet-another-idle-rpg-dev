@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 9 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 10 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -71,11 +71,11 @@ npm run check:bundle
 
 ## Kod nerede
 
-`src/`, 50 modülde 45.215 satır (`find src -name "*.js" | xargs wc -l`).
+`src/`, 51 modülde 45.370 satır (`find src -name "*.js" | xargs wc -l`).
 
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
-| `display.js` | 5.273 | Bütün DOM güncellemeleri. Hâlâ en büyüğü ve hâlâ sıradaki hedef. |
+| `display.js` | 4.699 | Bütün DOM güncellemeleri. Hâlâ en büyüğü ve hâlâ sıradaki hedef. |
 | `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
@@ -85,6 +85,7 @@ npm run check:bundle
 | `item_tooltips.js` | 706 | Eşya, etki ve tarif ipuçları. v0.6.62'de ayrıldı. |
 | `crafting_display.js` | 624 | Zanaat penceresi. v0.6.63'te ayrıldı. |
 | `journal_panels.js` | 696 | Bestiary, kitap listesi, lore ve Keşifler. v0.6.65'te ayrıldı. |
+| `skills_display.js` | 660 | Yetenek çubukları ve duruş listesi. v0.6.67'de ayrıldı. |
 | `save_load.js` | 1.951 | Kaydetme ve yükleme. v0.6.54'te `main.js`'ten ayrıldı. |
 
 `main.js` giriş noktasıdır ve bu bölme turundan önce 6.606 satırdı. Ondan çıkanlar:
@@ -112,7 +113,8 @@ Kullanılan ama içe aktarılmayan bir ad tertemiz derlenir, tarayıcıda `Refer
 fırlatır. Bu iki kez yayımlandı — önce `restore_message_log`, sonra `effect_templates` —
 ve ikincisi `load()` içinde kendi satırından sonraki her şeyi öldürdü: kayıtlar görevsiz
 ve favorisiz geldi. `check_modules_import_what_they_call` bunu korur; `name(`, `name[`
-ve `new name(` biçimlerini okur, geriye bakışı da yayılma operatörüne izin verir.
+`new name(`, `${name}` ve `name.property` biçimlerini okur; geriye bakışı da yayılma
+operatörüne izin verir.
 
 **3. İçe aktarılan bir bağ salt okunurdur.** Başka bir modülün yazdığı durum, bir
 nesnenin içinde yaşamak zorundadır. `run_stats.js` ve `game_state.js` bunun içindir;
@@ -190,7 +192,7 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 5.273 satırla `display.js`
+- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 4.699 satırla `display.js`
   hâlâ sırada; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
   ölçülüp henüz yapılmayanlar: `options.js`, `release.js`, ödüller.
 - **12. madde, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe malzemeler

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 9 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 10 -->
 
 # Status
 
@@ -68,11 +68,11 @@ npm run check:bundle
 
 ## Where the code lives
 
-`src/` is 45,215 lines across 50 modules (`find src -name "*.js" | xargs wc -l`).
+`src/` is 45,370 lines across 51 modules (`find src -name "*.js" | xargs wc -l`).
 
 | File | Lines | What it holds |
 | --- | ---: | --- |
-| `display.js` | 5,273 | Every DOM update. Still the largest, and still the next target. |
+| `display.js` | 4,699 | Every DOM update. Still the largest, and still the next target. |
 | `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
@@ -82,6 +82,7 @@ npm run check:bundle
 | `item_tooltips.js` | 706 | Item, effect and recipe tooltips. Split out in v0.6.62. |
 | `crafting_display.js` | 624 | The crafting window. Split out in v0.6.63. |
 | `journal_panels.js` | 696 | Bestiary, book list, lore and Discoveries. Split out in v0.6.65. |
+| `skills_display.js` | 660 | The skill bars and the stance list. Split out in v0.6.67. |
 | `save_load.js` | 1,951 | Save and load. Split out of `main.js` in v0.6.54. |
 
 `main.js` is the entry point and was 6,606 lines before this round of splitting. What
@@ -109,7 +110,8 @@ never imported builds cleanly and throws `ReferenceError` in the browser. This h
 shipped twice - `restore_message_log`, then `effect_templates` - and the second one
 killed everything in `load()` after its line, so saves came back with no quests and no
 favourites. `check_modules_import_what_they_call` guards it, and reads `name(`,
-`name[` and `new name(`, with a lookbehind that lets a spread through.
+`name[`, `new name(`, `${name}` and `name.property`, with a lookbehind that lets a
+spread through.
 
 **3. An imported binding is read-only.** State that another module writes has to live
 inside an object. That is what `run_stats.js` and `game_state.js` are for; assigning to
@@ -187,7 +189,7 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **Item 48, splitting the big files** - `in progress`. `display.js` at 5,273 lines is
+- **Item 48, splitting the big files** - `in progress`. `display.js` at 4,699 lines is
   still next; the measured candidates and their coupling costs are listed there. `main.js`
   cuts still costed and not done: `options.js`, `release.js`, rewards.
 - **Item 12, the metals above steel** - `partly done`. Tier-4 and tier-5 materials
