@@ -1275,7 +1275,9 @@
                 changeTab(document.getElementById("data_box_div"));
             }
             function showQuests() {
-                changeTab(document.getElementById("quests_box_div"));
+                //A column, like lore, titles and discoveries: changeTab writes display
+                //inline, so asking for the default would flatten it back to a block.
+                changeTab(document.getElementById("quests_box_div"), "flex");
             }
             function showBestiary() {
                 changeTab(document.getElementById("bestiary_box_div"));

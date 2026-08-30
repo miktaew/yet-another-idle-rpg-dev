@@ -98,10 +98,31 @@ function check_journal_panels_are_styled() {
         be the check inventing a rule the design deliberately does not follow.
     */
     const scrolls = (element) => sets(element, "overflow-y") || sets(element, "overflow");
+
+    /*
+        Which ids live inside a given panel, read from the markup rather than guessed
+        from the panel's own name. Guessing `${panel}_list` worked for six of the seven
+        and quietly failed for the quests tab, whose list is #quest_list - singular. The
+        box scrolled at the time, so the miss cost nothing and stayed invisible until
+        the scrolling moved to the list.
+    */
+    const ids_inside = (panel) => {
+        const opens = region.indexOf(`id = "${panel}"`);
+        if (opens === -1) return [];
+        const next = panels
+            .map(other => other === panel ? -1 : region.indexOf(`id = "${other}"`, opens))
+            .filter(at => at > opens);
+        const closes = next.length ? Math.min(...next) : region.length;
+        return [...region.slice(opens, closes).matchAll(/id\s*=\s*"(\w+)"/g)]
+            .map(match => match[1])
+            .filter(id => id !== panel);
+    };
+
     for (const panel of panels) {
-        const list = `${panel.replace(/_box_div$/, "")}_list`;
-        const has_list = region.includes(`id = "${list}"`) || region.includes(`id="${list}"`);
-        if (scrolls(panel) || (has_list && scrolls(list))) {
+        const inside = ids_inside(panel);
+        const list = inside.find(id => id.endsWith("_list"));
+        const has_list = list !== undefined;
+        if (scrolls(panel) || inside.some(scrolls)) {
             continue;
         }
         error(`#${panel} has a fixed height and nothing in it scrolls - neither the box nor`
@@ -110,7 +131,37 @@ function check_journal_panels_are_styled() {
             + " panel has a header that must stay put.");
     }
 
-    console.log(`[check] journal panels: ${panels.length} styled`);
+    /*
+        A height in pixels is a guess about how tall the tab bar is, and the tab bar
+        wraps. Seven tabs take three rows where five took two, so adding the Titles tab
+        silently invalidated `#journal_content_div { height: 287px }` and every panel
+        below it painted past the bottom of the journal - reported as the titles, the
+        discoveries and the quest list all spilling over the panel border at once.
+
+        Nothing above could see it: each panel HAD a height and something in it DID
+        scroll. The height was simply a number about a different layout.
+
+        So the height has to be relative - 100% of whatever the row above left, or a
+        flex basis - and then no one has to remember to change it when a tab is added.
+    */
+    const fixed_px_height = (element) => rules.find(rule =>
+        rule.selector.includes(`#${element}`)
+        && /(^|[;{\s])height\s*:\s*\d+(\.\d+)?px/.test(rule.body));
+
+    for (const element of [...panels, "journal_content_div"]) {
+        const rule = fixed_px_height(element);
+        if (rule) {
+            const height = /height\s*:\s*([^;]+)/.exec(rule.body)[1].trim();
+            error(`#${element} is given height: ${height}. That is a guess about how tall`
+                + " the journal's tab bar is, and the bar wraps to another row when a tab"
+                + " is added - which puts this panel past the bottom of the journal, where"
+                + " nothing clips it. Use a relative height (100%, or a flex basis) so the"
+                + " panel takes whatever the bar leaves.");
+        }
+    }
+
+    console.log(`[check] journal panels: ${panels.length} styled, none sized against the`
+        + " tab bar's height");
 }
 function check_onclick_names_are_reachable() {
     const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");

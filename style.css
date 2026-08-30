@@ -2420,14 +2420,28 @@ i {
 	flex-direction: column;
 }
 
+/*
+	The tab bar wraps, and the content below it must not be told in advance how tall
+	that bar is. Seven tabs take three rows where five took two, so 287px - a number
+	written against the old bar - put every panel past the bottom of the journal, and
+	nothing here clips, so the overflow painted over whatever sat below. Adding the
+	Titles tab is what tipped it over.
+
+	A column instead: the content takes whatever the bar leaves, whatever the bar
+	turns out to be. min-height 0 so the scrolling lists inside are allowed to shrink
+	rather than forcing their own height back up the tree.
+*/
 #journal_div {
 	width: 400px;
 	left: 820px;
 	height: 330px;
-	top: 0px
+	top: 0px;
+	display: flex;
+	flex-direction: column;
 }
 #journal_content_div {
-	height: 287px;
+	flex: 1 1 0;
+	min-height: 0;
 }
 	#quests_header {
 		width: 100%;
@@ -2435,12 +2449,18 @@ i {
 		padding-top: 5px;
 		margin-bottom: 5px;
 	}
+	/*
+		This used to be positioned absolutely at bottom 0. The nearest positioned
+		ancestor is #journal_div, not the quest box, so the bar was pinned to the
+		journal's bottom edge while the list above it kept its own height - and the
+		last quests slid underneath the bar. As the last row of a column it stays
+		visible and stays out of the way without either of them knowing the other's
+		height.
+	*/
 	#quest_hiding_div {
-		bottom: 0px;
+		flex: 0 0 auto;
 		text-align: right;
-		position: absolute;
 		border-top: 1px solid white;
-		width: 385px;
 		padding-right: 15px;
 	}
 		.quest_div {
@@ -2512,7 +2532,7 @@ i {
 				height: 255px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div{
 				width: 100%;
 				overflow-y: scroll;
 			}
@@ -2529,17 +2549,36 @@ i {
 				flex-direction: column;
 			}
 
+			/*
+				100% of whatever the content div was left with, rather than a number
+				that has to be kept in step with the height of a tab bar that wraps.
+			*/
 			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div{
-				height: 284px;
+				height: 100%;
+				min-height: 0;
 			}
 
 			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div{
 				display: none;
 			}
 
+			/*
+				A column like its siblings: header, then the list taking what is left
+				and scrolling on its own, then the hide-completed bar. The box itself
+				no longer scrolls - if it did, the bar would scroll away with the
+				content instead of staying under it.
+			*/
 			#quests_box_div {
-				display: block;
-				height: 263px;
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+				height: 100%;
+				min-height: 0;
+			}
+			#quest_list {
+				flex: 1 1 0;
+				min-height: 0;
+				overflow-y: auto;
 			}
 
 				.bestiary_entry_div, .data_entry, .anthology_entry_div {
