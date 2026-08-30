@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 7 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 8 -->
 
 # Status
 
@@ -68,11 +68,11 @@ npm run check:bundle
 
 ## Where the code lives
 
-`src/` is 45,127 lines across 49 modules (`find src -name "*.js" | xargs wc -l`).
+`src/` is 45,215 lines across 50 modules (`find src -name "*.js" | xargs wc -l`).
 
 | File | Lines | What it holds |
 | --- | ---: | --- |
-| `display.js` | 5,878 | Every DOM update. Still the largest, and still the next target. |
+| `display.js` | 5,273 | Every DOM update. Still the largest, and still the next target. |
 | `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
@@ -81,6 +81,7 @@ npm run check:bundle
 | `crafting_recipes.js` | 1,989 | 139 recipes. |
 | `item_tooltips.js` | 706 | Item, effect and recipe tooltips. Split out in v0.6.62. |
 | `crafting_display.js` | 624 | The crafting window. Split out in v0.6.63. |
+| `journal_panels.js` | 696 | Bestiary, book list, lore and Discoveries. Split out in v0.6.65. |
 | `save_load.js` | 1,951 | Save and load. Split out of `main.js` in v0.6.54. |
 
 `main.js` is the entry point and was 6,606 lines before this round of splitting. What
@@ -184,7 +185,7 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **Item 48, splitting the big files** - `in progress`. `display.js` at 5,878 lines is
+- **Item 48, splitting the big files** - `in progress`. `display.js` at 5,273 lines is
   still next; the measured candidates and their coupling costs are listed there. `main.js`
   cuts still costed and not done: `options.js`, `release.js`, rewards.
 - **Item 12, the metals above steel** - `partly done`. Tier-4 and tier-5 materials

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 52 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 53 -->
 
 # Proposals
 
@@ -990,6 +990,21 @@ not after. Each item is the request as it was given, and the state it is in.
     with `});` and leaving the `);` behind is a syntax error; and moving a `const` above
     the loop that reads it puts it in its temporal dead zone, which the build accepts and
     `check:bundle` refuses. The last one is why that check exists.
+
+    v0.6.63 took the crafting window (`crafting_display.js`, 624 lines) and v0.6.65 the
+    journal's panels (`journal_panels.js`, 696 - bestiary, book list, lore, Discoveries).
+    display.js is 7,057 -> 5,273 across the four cuts. Each needed exactly one or two
+    names back out of display.js, all read at runtime.
+
+    Two things learned since. **A re-export makes a split cosmetic**: display.js was
+    handing the moved names on to main.js, save_load.js, crafting.js and items.js, which
+    were still asking it for functions it no longer had. Repointing them is part of the
+    cut, not a follow-up. And **the browser-free loader needs a `document`**, not a longer
+    stub list: journal_panels.js takes two element handles at module scope, and stubbing
+    the global once means the next split does not have to touch the loader at all.
+
+    Remaining, re-measured: inventory 921 lines (23 out), trade 173 (8), quest journal
+    907 (121 - the coupled one), animations 204, combat 172.
     Two cuts are made and the rest are costed rather than guessed at. A cut is judged by
     two numbers: how many names the moved code needs from what stays, and how many the
     staying code needs back. The second is the expensive one - it becomes an import INTO

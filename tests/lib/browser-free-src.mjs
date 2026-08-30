@@ -172,6 +172,25 @@ export async function load_browser_free(repo_root, module_path) {
     const entry = path.join(temp_dir, "browser-free-entry.mjs");
     fs.writeFileSync(entry, entry_source);
 
+    /*
+        A minimal `document`, because a module can reach for one at module scope and Node
+        has none. display.js and main.js are stubbed for the import cycle, not for this -
+        journal_panels.js is neither, and it takes two element handles as it loads.
+
+        Stubbing the global rather than adding each such module to the stub list: the
+        list would have to grow with every split of display.js, and a module that only
+        holds the handle it was given evaluates perfectly well when the handle is null.
+    */
+    if (typeof globalThis.document === "undefined") {
+        globalThis.document = {
+            getElementById: () => null,
+            querySelector: () => null,
+            querySelectorAll: () => [],
+            createElement: () => ({ classList: { add() {}, remove() {} }, style: {},
+                                    appendChild() {}, setAttribute() {} }),
+        };
+    }
+
     const loaded = await import(pathToFileURL(entry).href);
     return loaded.target;
 }

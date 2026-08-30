@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 52 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 53 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1000,7 +1000,23 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     create_item_tooltip_content'i kendi imzasında bitirdi; `Object.keys(x).forEach(...)`
     `});` ile kapanır ve geride bırakılan `);` sözdizimi hatasıdır; bir `const`'u onu okuyan
     döngünün üstüne taşımak onu geçici ölü bölgeye sokar - derleme kabul eder,
-    `check:bundle` reddeder. Sonuncusu, o kontrolün var olma sebebi. İki kesit yapıldı,
+    `check:bundle` reddeder. Sonuncusu, o kontrolün var olma sebebi.
+
+    v0.6.63 zanaat penceresini (`crafting_display.js`, 624 satır), v0.6.65 ise günlüğün
+    panellerini aldı (`journal_panels.js`, 696 - bestiary, kitap listesi, lore, Keşifler).
+    display.js dört kesmede 7.057'den 5.273'e indi. Her biri display.js'ten yalnızca bir
+    ya da iki ad geri istedi; hepsi çalışma zamanında okunuyor.
+
+    Bu arada iki şey öğrenildi. **Yeniden dışa aktarım bölmeyi kozmetik yapar**: display.js
+    taşınan adları main.js, save_load.js, crafting.js ve items.js'e devrediyordu; onlar da
+    artık içinde olmayan fonksiyonları ondan istemeye devam ediyordu. İçe aktaranları
+    yönlendirmek kesmenin parçası, sonradan yapılacak bir iş değil. Bir de **tarayıcısız
+    yükleyicinin uzayan bir saplama listesine değil bir `document`'a ihtiyacı var**:
+    journal_panels.js modül kapsamında iki eleman tutamağı alıyor ve global'i bir kez
+    saplamak, bir sonraki bölmede yükleyiciye hiç dokunmamak demek.
+
+    Kalanlar, yeniden ölçüldü: envanter 921 satır (23 dışarı), ticaret 173 (8), görev
+    günlüğü 907 (121 - bağlaşık olan), animasyonlar 204, dövüş 172. İki kesit yapıldı,
     kalanların maliyeti tahmin edilmedi, hesaplandı. Bir kesit iki sayıyla yargılanıyor:
     taşınan kod kalandan kaç ad istiyor, ve kalan koddan kaç ad geri isteniyor. Pahalı
     olan ikincisi - o, zaten yük taşıyan bir döngünün giriş noktasına doğru bir import'a

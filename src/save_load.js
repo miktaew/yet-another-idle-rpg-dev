@@ -25,7 +25,6 @@ import { skills } from "./data/skills.js";
 import { player_storage } from "./data/storage.js";
 import {
          change_completed_quest_visibility,
-         create_new_bestiary_entry,
          format_money,
          get_message_log_history,
          log_message,
@@ -36,7 +35,6 @@ import {
          set_loading_screen_warnings_warning,
          skill_category_order,
          skill_list,
-         update_booklist_entry,
          update_displayed_character_inventory,
          update_displayed_effects,
          update_displayed_health,
@@ -61,6 +59,7 @@ import { add_to_trader_inventory } from "./trade.js";
 import { traders } from "./traders.js";
 import { translationManager } from "./translation.js";
 import { create_displayed_crafting_recipes } from "./crafting_display.js";
+import { create_new_bestiary_entry, update_booklist_entry } from "./journal_panels.js";
 /**
  * puts all important stuff into a string
  * @returns string with save data
