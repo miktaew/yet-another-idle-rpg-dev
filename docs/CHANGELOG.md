@@ -174,6 +174,55 @@ metal. Fifteen pieces reachable, with a row added to each of the five exterior r
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
 
+### The contribution came back, and there was nothing to take
+
+Upstream moved for the first time since July, on the same day: three commits, and all
+three trace to our own pull request. Two are our commits by name - the dev console and
+the gear comparison - and the third is theirs, "added and tweaked commits from PR".
+PR #242 was closed with *"cherry picked some of the commits included (all but
+milestone's expansion), with a few tweaks on the way"*.
+
+So the strategy in P-13/34 - take what can be taken from upstream, then offer ours back -
+has an answer for this round: **there is nothing to take**. Their delta against our tree
+is our own code in their house style: `equipment_comparison` renamed to
+`create_equipment_comparison`, an array join turned back into string concatenation,
+multipliers shown as `x1.05` rather than `+5%`, and the explanatory comments removed.
+Merging it would conflict in four files and would overwrite our own work, which is the
+one thing that strategy excludes.
+
+The single substantive addition is a `enable_dev_mode: false` flag in `config.js`, which
+is a different design from ours on purpose. Ours is `enable_dev_console()` typed at the
+console, off by default and never saved, and deliberately not gated on a release flag -
+the dev release is still a release somebody plays. Taking a config switch instead would
+weaken that, so it stays.
+
+What this closes is the *taking* half. The giving half is a standing posture and lives in
+P-13/58.
+
+### The browser-free loader reaches the content modules
+
+`tests/lib/browser-free-src.mjs` loads a module from `src/` for real by replacing
+`main.js` and `display.js` with generated stubs. Three modules died on it -
+`enemies.js`, `traders.js` and `data/locations.js` - with "Cannot access 'is_rat'
+before initialization": a temporal dead zone fault from evaluating a deliberate import
+cycle with the wrong entry point. Importing `items.js` first did not help, because each
+call builds its own temp graph.
+
+The fix is that the loader now generates an entry module which imports every module
+**in main.js's own order**, read from the real `main.js`, and pulls the target through
+it. In a browser `main.js` is the entry point and that order is what settles which of
+`character.js` and `items.js` is entered first; replaying it reproduces the same
+resolution in Node. The target is deliberately not filtered out of the order - removing
+it changes the order, and with `items.js` taken out `market_saturation.js` was entered
+first and read `group_key_prefix` out of a half-evaluated module.
+
+The cost of the gap was concrete: the Discoveries index read `trader.inventory_template`
+as a list when it is the NAME of one, and no test could have caught it because no test
+could construct a trader. That test exists now - "trade sources are found through the
+stock list a trader names" - built from the real objects rather than from the source
+text, so a field that is not the shape the index assumes fails in the suite rather than
+in front of a player.
+
 ### The lore panel
 
 **v0.6.52.** Asked for as "a place holding the story's history and the conversations

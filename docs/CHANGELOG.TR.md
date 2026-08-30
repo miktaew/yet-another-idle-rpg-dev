@@ -175,6 +175,54 @@ kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
 
+### Katkı geri döndü ve alınacak bir şey yoktu
+
+Upstream, temmuzdan beri ilk kez ve aynı gün kımıldadı: üç commit ve üçünün de kaynağı
+bizim çekme isteğimiz. İkisi adıyla bizim commit'lerimiz - dev konsolu ve teçhizat
+karşılaştırması - üçüncüsü onların: "added and tweaked commits from PR". PR #242,
+*"cherry picked some of the commits included (all but milestone's expansion), with a few
+tweaks on the way"* denilerek kapatıldı.
+
+Yani P-13/34'teki strateji - upstream'den alınabileni al, sonra kendimizinkini sun - bu
+tur için cevabını buldu: **alınacak bir şey yok**. Onların bizim ağacımıza göre farkı,
+kendi kodumuzun onların ev üslubuyla yazılmış hâli: `equipment_comparison`,
+`create_equipment_comparison` olmuş, bir dizi birleştirmesi yeniden metin toplamaya
+dönmüş, çarpanlar `+%5` yerine `x1.05` gösteriliyor ve açıklayıcı yorumlar silinmiş.
+Birleştirmek dört dosyada çakışırdı ve kendi işimizin üstüne yazardı; stratejinin dışladığı
+tek şey de bu.
+
+Tek özlü ekleme `config.js` içindeki `enable_dev_mode: false` bayrağı ve o da bilerek
+bizimkinden farklı bir tasarım. Bizimki konsola yazılan `enable_dev_console()`; varsayılan
+olarak kapalı, hiç kaydedilmiyor ve bilerek bir sürüm bayrağına bağlanmıyor - geliştirme
+sürümü de birilerinin oynadığı bir sürüm. Onun yerine bir config anahtarı almak bunu
+zayıflatırdı; olduğu gibi kalıyor.
+
+Bu, *alma* yarısını kapatıyor. Verme yarısı duran bir tutum ve P-13/58'de yaşıyor.
+
+### Tarayıcısız yükleyici içerik modüllerine ulaşıyor
+
+`tests/lib/browser-free-src.mjs`, `main.js` ile `display.js`'i üretilmiş saplamalarla
+değiştirerek `src/` içinden bir modülü gerçekten yüklüyor. Üç modül bunda ölüyordu -
+`enemies.js`, `traders.js` ve `data/locations.js` - "Cannot access 'is_rat' before
+initialization" diyerek: bilinçli bir içe aktarma döngüsünü yanlış giriş noktasıyla
+değerlendirmekten doğan bir geçici ölü bölge hatası. Önce `items.js`'i yüklemek işe
+yaramıyordu, çünkü her çağrı kendi geçici çizgesini kuruyor.
+
+Düzeltme şu: yükleyici artık her modülü **main.js'in kendi sırasıyla** içe aktaran bir
+giriş modülü üretiyor - sıra gerçek `main.js`'ten okunuyor - ve hedefi onun üzerinden
+çekiyor. Tarayıcıda giriş noktası `main.js`'tir ve `character.js` ile `items.js`'ten
+hangisinin önce girileceğini o sıra belirler; sırayı tekrarlamak aynı çözümü Node'da da
+üretiyor. Hedef, sıradan bilerek çıkarılmıyor: çıkarmak sırayı değiştirir ve `items.js`
+çıkarıldığında `market_saturation.js` önce giriliyor, `group_key_prefix`'i yarı
+değerlendirilmiş bir modülden okuyordu.
+
+Boşluğun bedeli somuttu: Keşifler indeksi `trader.inventory_template`'i bir liste sanıp
+okuyordu, oysa o bir listenin ADI; ve hiçbir test bunu yakalayamazdı çünkü hiçbir test
+bir tüccar kuramıyordu. O test artık var - "trade sources are found through the stock
+list a trader names" - kaynak metninden değil gerçek nesnelerden kuruluyor; yani
+indeksin varsaydığı şekilde olmayan bir alan, oyuncunun karşısında değil takımda
+patlıyor.
+
 ### Lore paneli
 
 **v0.6.52.** "Hikâyenin geçmişini ve daha önce yapılan konuşmaları tutan bir yer" diye

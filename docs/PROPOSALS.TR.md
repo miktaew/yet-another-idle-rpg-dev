@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 59 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 61 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -172,14 +172,6 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
 15. **Her talebi buraya kaydet** — `sürekli`. Bu bölümün kendisi o kuralın
     uygulanması.
 
-34. **Merge'ü yap, sonra sonucu upstream'e öner** — `etkin`. Upstream'den alınabilecek
-    olanı al - sonradan ekleyecekleri de dâhil - ama kendi işimizi ezmeden; sonra
-    mevcut kodu katkı olarak onlara gönder, isterlerse alsınlar. Bu, sahibe sunulan (A)
-    yolu ve artık kalıcı öncelik: kararı verdiren ölçüm şu - upstream'in yeniden
-    yazdığı dosyalarda hata düzeltmeye devam ettikçe merge büyüyor; ilk ölçümde 191
-    çakışma bloğu, altı sürüm sonra 222. Aynı aralıkta GameAction taşıması amaçlandığı
-    gibi işledi (sil/değiştir çakışması 4 -> 3), yani yön doğru; maliyet zaman, kuşku
-    değil.
 35. **Echoes-Beneath'e yalnızca araçlar için değil, HİKÂYE ve OYNANIŞ için bak** —
     `yapılacak`. İlk inceleme araç sorusunu cevaplayıp sorulan soruyu kaçırdı. İstenen:
     alınmaya değer mekanikler ve anlatı araçları - örnek olarak **unvan sistemi**
@@ -187,15 +179,6 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     effectors, planner ve simulation var; docs'unda da REGIONS, STORY ve iki
     STORYPROGRESS dosyası.
 
-47. **Tarayıcısız yükleyici üç içerik modülüne erişemiyor** — `yapılacak`, ve bu bir dilek
-    değil yetenek eksiği. tests/lib/browser-free-src.mjs bir modülü main.js ve display.js'i
-    stub'layarak gerçekten yüklüyor; enemies.js, traders.js ve data/locations.js ise
-    "Cannot access 'is_rat' before initialization" ile ölüyor - döngünün yanlış giriş
-    noktasıyla değerlendirilmesinden doğan bir TDZ hatası. Her çağrı kendi geçici grafiğini
-    kurduğu için önce items.js yüklemek işe yaramıyor. Maliyeti somut: Keşifler indeksi
-    trader.inventory_template'i liste sandı, oysa anahtar; ve hiçbir test bunu yakalayamazdı
-    çünkü hiçbir test bir tüccar kuramıyor. Çözüm, main.js'in kendi sırasıyla içe alan tek
-    bir giriş modülü üretip hedefi onun üzerinden değerlendirmek.
 48. **Büyük dosyaları bölmek** — `sürüyor`, ve asıl mesele ölçümler.
 
     v0.6.62 ipuçlarını çıkardı: `item_tooltips.js`, 706 satır; display.js 7.057'den
@@ -268,7 +251,13 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     anlatı işine ara verilmiyor: inşa edilen bölgelerin hikâyenin yanında durmak yerine
     hikâyeye bağlanması gerekiyor.
 
-58. **Değişiklikler biriktiğinde uyanı yukarı akışa gönder** — `sürekli`. Bir şey teklif
+58. **Yukarı akışla iki yönlü alışveriş** — `sürekli`; P-13/34'ü de içine alıyor.
+    **Alma:** upstream 2026-08-30'da temmuzdan beri ilk kez kımıldadı ve üç commit'inin de
+    kaynağı bizim PR'ımız — ikisi adıyla bizim, üçüncüsü onların yeniden üsluplandırması.
+    Alınacak bir şey yoktu: farkları, kendi kodumuzun onların ev üslubuyla yazılmış hâli;
+    birleştirmek dört dosyada çakışırdı ve stratejinin dışladığı tek şeyi yapardı, kendi
+    işimizin üstüne yazardı. Her kımıldadıklarında yeniden ölçülecek.
+    **Verme:** bir şey teklif
     etmeden önce ölçüldü, çünkü bir turun işinin çoğu forka özgü: kontroller upstream'de
     olmayan bir `tests/` çatısına dayanıyor ve `effect_templates` bizim refaktörümüzün hatasıydı,
     onların değil. Uyan tek şey `add_best_effect`'ti; zaten PR #242'de duran dev konsolunun

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 59 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 61 -->
 
 # Proposals
 
@@ -163,15 +163,6 @@ not after. Each item is the request as it was given, and the state it is in.
 15. **Record every request here** — `standing`. This section is that rule being
     followed.
 
-34. **Do the merge, then offer the result upstream** — `active`. Take what can be
-    taken from upstream, including whatever they add next, without overwriting our own
-    work; then send the current code to them as a contribution and let them take it or
-    not. This is strategy (A) as put to the owner, and it is now the standing
-    priority: the measurement that decided it is that the merge grows while we keep
-    fixing bugs in the files upstream rewrote - 191 conflict hunks when first measured,
-    222 six versions later. The GameAction move worked as intended in the same window
-    (modify/delete conflicts 4 -> 3), so the direction is right and the cost is time,
-    not doubt.
 35. **Look at Echoes-Beneath for STORY and GAMEPLAY, not only tooling** — `todo`. The
     first review answered the tooling question and missed the one that was asked. What
     was wanted: mechanics and narrative devices worth adopting - a **title system** was
@@ -179,16 +170,6 @@ not after. Each item is the request as it was given, and the state it is in.
     simulation, none of which this game has, and its docs carry REGIONS, STORY and two
     STORYPROGRESS files.
 
-47. **The browser-free loader cannot reach three content modules** — `todo`, and it is a
-    capability gap rather than a wish. tests/lib/browser-free-src.mjs loads a module from
-    src/ for real by stubbing main.js and display.js, and enemies.js, traders.js and
-    data/locations.js all die on it with "Cannot access 'is_rat' before initialization" -
-    a TDZ fault from evaluating the cycle with the wrong entry point. Each call builds its
-    own temp graph, so loading items.js first does not help. The cost is concrete: the
-    Discoveries index read trader.inventory_template as a list when it is a key, and no
-    test could have caught it because no test can construct a trader. The fix is to
-    generate one entry module that imports in main.js's own order and evaluate the target
-    through it.
 48. **Splitting the big files** — `in progress`, and the measurements are the point.
 
     v0.6.62 took the tooltips out: `item_tooltips.js`, 706 lines, and display.js 7,057 ->
@@ -260,7 +241,13 @@ not after. Each item is the request as it was given, and the state it is in.
     narrative work while the engine is tidied: the regions that were built need to be
     tied into the story rather than left standing next to it.
 
-58. **Send what fits upstream when the changes pile up** — `standing`. Measured before
+58. **Trade with upstream in both directions** — `standing`, and it absorbs what was
+    P-13/34. **Taking:** upstream moved for the first time since July on 2026-08-30, and
+    all three of its commits trace to our own PR — two are ours by name, the third is
+    their restyling of them. There was nothing to take: their delta is our code in their
+    house style, merging it would conflict in four files, and it would overwrite our own
+    work, which is the one thing that strategy excluded. Re-measure whenever they move.
+    **Giving:** measured before
     offering anything, because most of a round's work is fork-shaped: the checks depend on a
     `tests/` framework upstream does not have, and `effect_templates` was our own refactor's
     bug, not theirs. What did fit was `add_best_effect`, which belongs beside the dev console
