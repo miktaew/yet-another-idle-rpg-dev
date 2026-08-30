@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 11 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 12 -->
 
 # Status
 
@@ -53,10 +53,10 @@ npm test
 npm run check:bundle
 ```
 
-- `check` runs the content and consistency checks in `tests/checks/` (sixteen files,
+- `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~6,100 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 136 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 143 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.
@@ -68,17 +68,17 @@ npm run check:bundle
 
 ## Where the code lives
 
-`src/` is 45,453 lines across 52 modules (`find src -name "*.js" | xargs wc -l`).
+`src/` is 45,785 lines across 53 modules (`find src -name "*.js" | xargs wc -l`).
 
 | File | Lines | What it holds |
 | --- | ---: | --- |
-| `display.js` | 3,819 | Every DOM update. Down from 7,057 across six cuts. |
+| `display.js` | 3,815 | Every DOM update. Down from 7,057 across six cuts. |
 | `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
-| `data/locations.js` | 4,403 | 158 locations, their actions and connections. |
-| `data/dialogues.js` | 3,073 | 22 dialogues and their textlines. |
-| `crafting_recipes.js` | 1,989 | 139 recipes. |
+| `data/locations.js` | 4,684 | 69 locations, their actions and connections. |
+| `data/dialogues.js` | 3,073 | 20 dialogues and their textlines. |
+| `crafting_recipes.js` | 1,989 | 142 recipes. |
 | `item_tooltips.js` | 706 | Item, effect and recipe tooltips. Split out in v0.6.62. |
 | `crafting_display.js` | 624 | The crafting window. Split out in v0.6.63. |
 | `journal_panels.js` | 696 | Bestiary, book list, lore and Discoveries. Split out in v0.6.65. |
@@ -123,12 +123,12 @@ never renamed or translated. A rename during the `game_state.js` extraction reac
 inside two quoted save keys, so the save wrote names the loader did not read, the value
 came back undefined, and the next save dropped the keys from the file entirely.
 Nothing failed loudly. `check_save_keys_round_trip` now requires every written key to
-be read: 53 written, 53 read.
+be read: 54 written, 54 read.
 
 **5. An `onclick` is a string resolved at click time.** `display.js` builds handlers as
 markup, so a function that loses its `window.` assignment fails when a player clicks
 and nowhere else - not the build, not the checks, not the bundle test.
-`check_onclick_names_are_reachable` covers 83 names.
+`check_onclick_names_are_reachable` covers 141 names.
 
 Two smaller ones worth knowing. Turkish locale-aware lowercasing turns a capital I into
 a dotless one while an already-lowercase `iron` stays put, so search must fold both
@@ -142,17 +142,21 @@ sides to plain letters rather than lowercasing with a locale. And `changeTab` wr
 
 Measured from the registries and the checks:
 
-- **158 locations** across the starting village and four built regions, with 56 type
-  claims across 9 location types and 4 trader shops in 4 regions.
-- **21 quests**, 11 of which have hidden tasks; every hidden task has an advancer.
-- **64 skills**, 58 of them with rank names, plus milestones.
-- **32 enemies** across 36 combat zones.
-- **139 recipes** plus three plate materials; 585 recipe item names resolve against 453
-  templates.
-- **22 dialogues**, 8 traders across 7 stock lists, 59 actions.
-- **2,002 content text ids**, all resolved.
+- **69 places** in the registry: 33 ordinary locations, 27 combat zones and 9
+  challenge zones, across the starting village and four built regions. 56 type claims
+  across 9 location types.
+- **45 actions** and **46 activities** spread over those places.
+- **19 quests** holding **70 tasks**, 11 of them hidden across 6 quests; every hidden
+  task has an advancer.
+- **64 skills**, 58 of them with more than one rank name, plus milestones.
+- **32 enemies**.
+- **142 recipes** in 7 disciplines, plus three plate materials; recipe item names all
+  resolve against **453 item templates**.
+- **20 dialogues** and **8 traders**.
+- **3,302 locale keys**, with Turkish at 100% coverage.
+- **1,918 content text ids**, all resolved.
 
-Localisation: **3,253 locale keys, Turkish at 100% with 0 missing**, and all 3,253 rows
+Localisation: **3,302 locale keys, Turkish at 100% with 0 missing**, and all 3,302 rows
 are reachable. Turkish is the priority language and must read as though written in
 Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
@@ -166,11 +170,11 @@ but the ones that encode a bug that shipped:
 | Check | What it prevents |
 | --- | --- |
 | `modules import what they call` | A name used without importing it. 47 files. |
-| `imports resolve` | A name imported from a module that does not export it. 677 names. |
+| `imports resolve` | A name imported from a module that does not export it. 864 names. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
-| `onclick names reachable` | A markup handler pointing at nothing. 83 names. |
-| `content text ids` | Player-facing text with no locale row. 2,002 ids. |
-| `action button labels` | A paragraph rendered inside a button. 44 actions, 80-char limit. |
+| `onclick names reachable` | A markup handler pointing at nothing. 141 names. |
+| `content text ids` | Player-facing text with no locale row. 1,918 ids. |
+| `action button labels` | A paragraph rendered inside a button. 45 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
 | `no raw control bytes` | A NUL written as a byte, which makes grep call a file binary. |

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 11 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 12 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,9 +57,9 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on altı dosya, yardımcılarıyla ~6.100 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on beş dosya, yardımcılarıyla ~6.100 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 136 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 143 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.
@@ -71,17 +71,17 @@ npm run check:bundle
 
 ## Kod nerede
 
-`src/`, 52 modülde 45.453 satır (`find src -name "*.js" | xargs wc -l`).
+`src/`, 53 modülde 45.785 satır (`find src -name "*.js" | xargs wc -l`).
 
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
-| `display.js` | 3.819 | Bütün DOM güncellemeleri. Altı kesmede 7.057'den indi. |
+| `display.js` | 3.815 | Bütün DOM güncellemeleri. Altı kesmede 7.057'den indi. |
 | `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
-| `data/locations.js` | 4.403 | 158 konum, aksiyonları ve bağlantıları. |
-| `data/dialogues.js` | 3.073 | 22 diyalog ve replikleri. |
-| `crafting_recipes.js` | 1.989 | 139 tarif. |
+| `data/locations.js` | 4.684 | 69 yer, aksiyonları ve bağlantıları. |
+| `data/dialogues.js` | 3.073 | 20 diyalog ve replikleri. |
+| `crafting_recipes.js` | 1.989 | 142 tarif. |
 | `item_tooltips.js` | 706 | Eşya, etki ve tarif ipuçları. v0.6.62'de ayrıldı. |
 | `crafting_display.js` | 624 | Zanaat penceresi. v0.6.63'te ayrıldı. |
 | `journal_panels.js` | 696 | Bestiary, kitap listesi, lore ve Keşifler. v0.6.65'te ayrıldı. |
@@ -146,16 +146,19 @@ bir panelin açıkça `"flex"` olarak istenmesi gerekir.
 
 Kayıt defterlerinden ve kontrollerden ölçüldü:
 
-- Başlangıç köyü ve inşa edilmiş dört bölgede **158 konum**; 9 konum türü üzerinden 56
-  tür beyanı ve 4 bölgede 4 tüccar dükkânı.
-- **21 görev**; 11'inde gizli görev adımı var ve her gizli adımın bir ilerleticisi var.
-- **64 yetenek**, 58'inde rütbe adı, ayrıca kilometre taşları.
-- 36 dövüş bölgesine yayılmış **32 yaratık**.
-- **139 tarif** ve üç plaka malzemesi; 453 şablona karşı 585 tarif eşya adı çözülüyor.
-- **22 diyalog**, 7 stok listesinde 8 tüccar, 59 aksiyon.
-- Tamamı çözülen **2.002 içerik metin kimliği**.
+- Kayıt defterinde **69 yer**: başlangıç köyü ile inşa edilmiş dört bölgeye yayılmış
+  33 sıradan konum, 27 dövüş bölgesi ve 9 meydan okuma bölgesi. 9 konum türü üzerinden
+  56 tür beyanı.
+- Bu yerlere dağılmış **45 aksiyon** ve **46 etkinlik**.
+- **70 adım** taşıyan **19 görev**; adımların 11'i gizli ve 6 göreve dağılmış, her gizli
+  adımın bir ilerleticisi var.
+- **64 yetenek**, 58'inde birden fazla rütbe adı, ayrıca kilometre taşları.
+- **32 yaratık**.
+- 7 dalda **142 tarif** ve üç plaka malzemesi; tarif eşya adlarının tamamı **453 eşya
+  şablonuna** karşı çözülüyor.
+- **20 diyalog** ve **8 tüccar**.
 
-Yerelleştirme: **3.253 yerel anahtar, Türkçe %100, eksik yok** ve 3.253 satırın tamamına
+Yerelleştirme: **3.302 yerel anahtar, Türkçe %100, eksik yok** ve 3.302 satırın tamamına
 oyun içinden erişilebiliyor. Türkçe öncelikli dildir ve çeviri değil, Türkçe yazılmış
 gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D-7.
 
@@ -172,8 +175,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `imports resolve` | Dışa aktarmayan bir modülden içe aktarılan ad. 677 ad. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
-| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.002 kimlik. |
-| `action button labels` | Düğmenin içine çizilen paragraf. 44 aksiyon, 80 karakter sınırı. |
+| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 1.918 kimlik. |
+| `action button labels` | Düğmenin içine çizilen paragraf. 45 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
 | `documentation` | Geride kalmış çeviri ya da hiçbir yeri göstermeyen bağlantı. 18 dosya. |
 | `no raw control bytes` | Bayt olarak yazılmış NUL; grep'in dosyayı ikili saymasına yol açar. |
