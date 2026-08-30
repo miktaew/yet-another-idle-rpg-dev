@@ -106,6 +106,16 @@ titles["a name on both sides of the wall"] = new Title({
     condition: {reputation: {Village: 300, Slums: 250, Town: 200}},
 });
 
+//--- what content hands over directly ------------------------------------------
+/*
+    No condition: nothing the game counts can see this one. It marks having cut the
+    flax that grew back in the wet woods once the Drowned grove was cleared through,
+    which is a moment rather than a number.
+*/
+titles["the woods are quiet"] = new Title({
+    title_id: "the woods are quiet",
+});
+
 /**
  * Whether a title's condition is met right now.
  *

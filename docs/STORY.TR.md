@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 12 -->
+<!-- doc-source: docs/STORY.md  doc-version: 13 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -61,9 +61,10 @@ arkasına oturup düşündüğü tek yer.
 **Beklentiler.** Toplama ve sessizlik. Parayla ya da itibarla değil, malzemeyle ödeyen
 bölge burası; oyuncu buradan daha iyi donanmış ama daha çok tanınmamış olarak çıkmalı.
 
-**Bitiş.** Yok, ve dürüst boşluk da bu. Kapanmıyor, duruyor: onunla işinin bittiğini
-söyleyen tek satır yok. Onu bitirecek şey küçük olmalı ve bir insan sokmamalı — bölgenin
-bütün karakteri kimsenin orada olmaması.
+**Bitiş.** Suya batmış koruyu baştan sona temizlemek, sonra geri dönüp gri şekillerin
+bıraktığı boşlukta biten keteni biçmek. Küçük, ve bunu gören kimse yok - bu şeklin
+kendine koyduğu brief buydu, doğru olmasının sebebi de. Bölge eskiden kapanmıyor sadece
+duruyordu; artık kapanıyor ve hâlâ içinde bir insan yok.
 
 ### Ovalar — *zemin hatırlar*
 

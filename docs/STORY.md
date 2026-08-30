@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 12 -->
+<!-- doc-source: docs/STORY.md  doc-version: 13 -->
 
 # Story canon
 
@@ -56,9 +56,10 @@ player sits behind falling water to think.
 than in coin or standing, and the player should come out of it better equipped and no
 better known.
 
-**Ending.** It has none, and that is the honest gap. It stops rather than closes: no
-line marks having finished with it. Whatever ends it should be small and should not
-introduce a person — the region's whole character is that nobody is there.
+**Ending.** Clearing the drowned grove through, then going back to cut the flax that
+grew in the space the grey shapes left. Small, and nobody is there to see it — which
+was the brief this shape set for itself and the reason it is the right one. The region
+used to stop rather than close; it closes now, and still without a person in it.
 
 ### The plains — *the ground remembers*
 

@@ -1012,6 +1012,51 @@ const translationManager = globalThis.__real_tm;
     check("every quest hint names a location that exists",
         bad_steps.length === 0, bad_steps.slice(0, 3).join("; "));
 }
+/*
+    The wet woods' ending.
+
+    `location_clears` is a condition the engine has supported since the conditions
+    rewrite and that no content had used until now, so this is the first thing that
+    proves it works on real data rather than in the abstract. The action that ends the
+    region is gated on one full clear of the Drowned grove, which is the same state its
+    own description reaches - grey shapes gone, flax standing.
+*/
+{
+    //Both from ONE graph: separate calls build separate copies of src/, and the
+    //condition would read a registry this test never touched.
+    const [{ locations }, { process_conditions }] =
+        await load_browser_free(repo_root, ["src/data/locations.js", "src/conditions.js"]);
+
+    const grove = locations["Drowned grove"];
+    check("the Drowned grove is a zone with a group count to clear",
+        grove !== undefined && grove.enemy_count > 0, `enemy_count=${grove?.enemy_count}`);
+
+    const gate = [{location_clears: {"Drowned grove": {at_least: 1}}}];
+
+    grove.enemy_groups_killed = 0;
+    check("the wet woods' ending is shut before the grove is cleared",
+        !process_conditions(gate, false));
+
+    //One short of a clear: the floor division must not round a nearly-finished run up.
+    grove.enemy_groups_killed = grove.enemy_count - 1;
+    check("one group short does not count as a clear",
+        !process_conditions(gate, false), `${grove.enemy_groups_killed}/${grove.enemy_count}`);
+
+    grove.enemy_groups_killed = grove.enemy_count;
+    check("the ending opens on the clear the description already reacts to",
+        Boolean(process_conditions(gate, false)));
+
+    const ending = locations["Wet woods"].actions?.["cut the standing flax"];
+    check("the wet woods have an ending action at all", ending !== undefined);
+    check("it grants the title that marks the region closed",
+        ending?.rewards?.titles?.includes("the woods are quiet") === true);
+    //It has to lock itself: there is no is_unique on a GameAction, and an ending that
+    //can be repeated is not an ending.
+    check("and locks itself once done",
+        ending?.rewards?.locks?.actions?.some(entry =>
+            entry.location === "Wet woods" && entry.action === "cut the standing flax") === true);
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

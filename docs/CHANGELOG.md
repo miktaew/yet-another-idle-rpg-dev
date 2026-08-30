@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 55 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 56 -->
 
 # Changelog
 
@@ -173,6 +173,39 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### The wet woods get an ending
+
+**v0.6.70.** Writing the region shapes into `STORY.md` turned this up: the wet woods
+**stopped rather than closed**. Nothing marked having finished with them, even though the
+region already had the arc - its description moves through three states as the Drowned
+grove is cleared, and the last one says the grey shapes are gone and the flax runs in
+long uncut stands. The state existed and nothing said so.
+
+The brief came from the shape and was kept to: small, and **no person**. Nobody lives in
+the wet woods and the whole character of the place is that nobody is there, so the ending
+is something noticed rather than somebody met - the player goes back and cuts what grew
+in the space the grey shapes left. It pays in flax, because materials are what this
+region pays in.
+
+Three things it is the first use of:
+
+- **`location_clears`**, a condition the engine has supported since the conditions
+  rewrite and that no content had ever used. One full clear of the grove, which is
+  exactly the state the description already reacts to.
+- **The `titles: [...]` reward key**, and the condition-less title the registry left room
+  for: nothing the game counts can see this one, because it is a moment rather than a
+  number.
+- **`rewards.locks.actions` on itself.** There is no `is_unique` on a GameAction - the
+  field is `is_finished` - so an ending that should happen once locks itself through the
+  same rewards path everything else uses. An ending that repeats is not one.
+
+The test for it needed the loader to grow. Every `load_browser_free` call builds its own
+temp copy of `src/`, so mutating `locations` from one call and asking `process_conditions`
+from another proves nothing: the condition reads a registry the first call never touched,
+and the gate test failed against working code. `module_path` takes an array now and
+returns both from ONE graph; a single string still returns the module itself, so every
+existing caller is unchanged. 136 checks to 143.
 
 ### Titles, the other half of the lore panel
 

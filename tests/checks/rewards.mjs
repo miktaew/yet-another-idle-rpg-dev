@@ -91,7 +91,7 @@ const reward_keys = [
     "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
     "housing", "items", "locations", "locks", "messages", "money", "move_to",
     "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills",
-    "stances", "textlines", "traders", "xp",
+    "stances", "textlines", "titles", "traders", "xp",
 ];
 
 const lock_keys = ["actions", "dialogues", "locations", "quests", "textlines", "traders"];

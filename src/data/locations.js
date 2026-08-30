@@ -3563,6 +3563,49 @@ function get_location_type_penalty(type, stage, stat, category) {
         }),
     };
 
+    /*
+        The wet woods' ending.
+
+        Available only once the Drowned grove has been cleared through, which is the same
+        state the location's own description reaches: nothing grey left, and the flax
+        standing uncut because nothing has been through to trample it.
+
+        One action, once, and it introduces nobody. The region's whole character is that
+        there is no one in it, so what closes it is the player noticing what grew back.
+    */
+    locations["Wet woods"].actions = {
+        "cut the standing flax": new GameAction({
+            action_id: "cut the standing flax",
+            starting_text: "action cut the standing flax starting",
+            description: "action cut the standing flax desc",
+            action_text: "action cut the standing flax during",
+            success_text: "action cut the standing flax success",
+            failure_texts: {
+                unable_to_begin: ["action cut the standing flax fail unable_to_begin 1"],
+            },
+            is_unlocked: true,
+            required: {
+                location_clears: {"Drowned grove": {at_least: 1}},
+            },
+            attempt_duration: 240,
+            success_chances: [1],
+            keep_progress: true,
+            rewards: {
+                items: [{item: "Flax", count: 40}],
+                skill_xp: {
+                    Herbalism: 600,
+                },
+                titles: ["the woods are quiet"],
+                //Once. There is no `is_unique` on a GameAction - the field is
+                //is_finished, and an action that should happen once locks itself
+                //through the same rewards path everything else uses.
+                locks: {
+                    actions: [{location: "Wet woods", action: "cut the standing flax"}],
+                },
+            },
+        }),
+    };
+
     locations["Swampland tribe"].activities = {
         "herbalism": new LocationGatheringActivity({
             activity_name: "herbalism",

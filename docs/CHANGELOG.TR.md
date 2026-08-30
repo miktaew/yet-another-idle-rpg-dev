@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 55 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 56 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,38 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Islak ormanlar bir bitiş kazanıyor
+
+**v0.6.70.** Bölge şekillerini `STORY.md`'ye yazmak bunu ortaya çıkardı: ıslak ormanlar
+**kapanmıyor, duruyordu**. Onlarla işinin bittiğini işaretleyen hiçbir şey yoktu; oysa
+bölgenin yayı zaten vardı - Drowned grove temizlendikçe açıklaması üç durumda ilerliyor ve
+sonuncusu gri şekillerin gittiğini, ketenin uzun ve kesilmemiş uzandığını söylüyor. Durum
+vardı, onu söyleyen yoktu.
+
+Brief o şekilden geldi ve ona sadık kalındı: küçük olacak ve **insan sokmayacak**. Islak
+ormanlarda kimse yaşamıyor ve oranın bütün karakteri kimsenin orada olmaması; o yüzden
+bitiş, birinin karşılaşılması değil bir şeyin fark edilmesi - oyuncu geri dönüp gri
+şekillerin bıraktığı boşlukta biteni biçiyor. Ödemesi keten, çünkü bu bölgenin ödediği şey
+malzeme.
+
+İlk kez kullanılan üç şey:
+
+- **`location_clears`**: motorun koşul yeniden yazımından beri desteklediği ama hiçbir
+  içeriğin kullanmadığı bir koşul. Korunun bir tam temizliği - açıklamanın zaten tepki
+  verdiği durumun aynısı.
+- **`titles: [...]` ödül anahtarı** ve kayıt defterinin yer ayırdığı koşulsuz unvan:
+  oyunun saydığı hiçbir şey bunu göremez, çünkü bir sayı değil bir an.
+- **`rewards.locks.actions`'ın kendine uygulanması.** GameAction'da `is_unique` yok -
+  alan `is_finished` - yani bir kez olması gereken bir bitiş, her şeyin kullandığı aynı
+  ödül yolundan kendini kilitliyor. Tekrarlanan bitiş, bitiş değildir.
+
+Testi için yükleyicinin büyümesi gerekti. Her `load_browser_free` çağrısı `src/`'nin kendi
+geçici kopyasını kuruyor; dolayısıyla bir çağrıdan `locations`'ı değiştirip başka bir
+çağrıdan `process_conditions` sormak hiçbir şey kanıtlamıyor: koşul, ilk çağrının hiç
+dokunmadığı bir kayıt defterini okuyor ve kapı testi çalışan kodun üstünde patladı.
+`module_path` artık dizi alıyor ve ikisini de **tek** çizgeden döndürüyor; tek bir metin
+hâlâ modülün kendisini döndürdüğü için mevcut çağıranlar değişmedi. 136 kontrolden 143'e.
 
 ### Unvanlar, lore panelinin öbür yarısı
 

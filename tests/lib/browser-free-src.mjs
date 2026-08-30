@@ -129,7 +129,8 @@ function main_import_order(repo_root) {
 }
 /**
  * @param {String} repo_root absolute path to the repository root
- * @param {String} module_path e.g. "src/items.js"
+ * @param {String|String[]} module_path e.g. "src/items.js", or several to be loaded
+ *        into ONE graph so that mutating one is visible to the others
  * @returns {Promise<Object>} the module's exports
  */
 export async function load_browser_free(repo_root, module_path) {
@@ -159,15 +160,25 @@ export async function load_browser_free(repo_root, module_path) {
         throw new Error("main.js imports nothing - this loader is out of date.");
     }
 
+    /*
+        One or several targets, and several matter: every call builds its own temp copy
+        of src/, so two calls are two unrelated graphs. Mutating `locations` from one and
+        asking `process_conditions` from another proves nothing - the condition reads a
+        registry the first call never touched, which is exactly how the wet woods' gate
+        test first failed against working code.
+    */
+    const wanted = Array.isArray(module_path) ? module_path : [module_path];
     //The relative path as given, so a module in a sub-folder of src/ resolves too.
-    const target = "./" + ["src", ...module_path.split("/").slice(1)].join("/");
-    //The target is NOT filtered out of the order. Removing it changes the order, which is
-    //the one thing this is for: with items.js taken out, market_saturation.js was entered
-    //first and items.js then read group_key_prefix out of a half-evaluated module.
+    const targets = wanted.map(one => "./" + ["src", ...one.split("/").slice(1)].join("/"));
+    //The targets are NOT filtered out of the order. Removing one changes the order, which
+    //is the one thing this is for: with items.js taken out, market_saturation.js was
+    //entered first and items.js then read group_key_prefix out of a half-evaluated module.
     const entry_source = order
         .map(relative => `import "./src/${relative}";`)
         .join("\n")
-        + `\nimport * as target from "${target}";\nexport { target };\n`;
+        + "\n"
+        + targets.map((one, index) => `import * as target_${index} from "${one}";`).join("\n")
+        + `\nexport const targets = [${targets.map((_, index) => `target_${index}`).join(", ")}];\n`;
 
     const entry = path.join(temp_dir, "browser-free-entry.mjs");
     fs.writeFileSync(entry, entry_source);
@@ -192,5 +203,6 @@ export async function load_browser_free(repo_root, module_path) {
     }
 
     const loaded = await import(pathToFileURL(entry).href);
-    return loaded.target;
+    //A single path returns the module itself, so every existing caller is untouched.
+    return Array.isArray(module_path) ? loaded.targets : loaded.targets[0];
 }
