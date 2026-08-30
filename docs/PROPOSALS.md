@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 48 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 49 -->
 
 # Proposals
 
@@ -1076,6 +1076,14 @@ not after. Each item is the request as it was given, and the state it is in.
     its own labels are all short, so the effect there is three ant-nest actions sharing one
     button label while their distinguishing names sit unused. That is an arguable improvement
     to their copy rather than a bug, and not ours to decide.
+
+    Reopened and sent after all, as **PR #243**, once the case was measured properly:
+    their unlock message already reads `action_name`, so the log announces an action
+    under a name the button never shows. That is an inconsistency in their own code
+    rather than a preference about wording. The activity-animation null guard went with
+    it, labelled honestly as defensive - the same unguarded dereference is in their tree
+    and I could not prove a path to it there. What stayed behind: every check, since they
+    have no `tests/`, no `package.json` and no test runner to hang one on.
 59. **A visible quest task must be answerable** — `done`, v0.6.60. Closes the
     report of "I know what to do and not how": a task named in the journal with no line
     under it. The hint builder already handled a task whose advancers are undiscovered;

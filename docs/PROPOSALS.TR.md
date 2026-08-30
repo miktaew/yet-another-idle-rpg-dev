@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 48 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 49 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1087,6 +1087,14 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     zaten kısa; oradaki etkisi, üç karınca yuvası aksiyonunun tek bir düğme etiketini
     paylaşması ve ayırt edici adlarının kullanılmaması. Bu bir hatadan çok metinlerine dair
     tartışmaya açık bir iyileştirme ve kararı bizim değil.
+
+    Dava düzgün ölçülünce yine de açıldı, **PR #243** olarak: kilit-açma mesajları zaten
+    `action_name` okuyor, yani günlük bir aksiyonu düğmenin hiç göstermediği bir adla
+    duyuruyor. Bu, sözcük tercihi değil kendi kodlarındaki bir tutarsızlık. Animasyonun
+    null koruması da onunla gitti; savunmacı olduğu açıkça yazılarak - aynı korumasız
+    erişim onların ağacında da var ama oraya giden bir yol olduğunu kanıtlayamadım.
+    Geride kalan: bütün kontroller; çünkü onlarda ne `tests/` var, ne `package.json`,
+    ne de birini asacak bir koşucu.
 59. **Görünür bir görev adımı cevaplanabilir olmalı** — `bitti`, v0.6.60. "Ne yapacağım
     var, nasıl yapacağım yok" bildirimini kapatıyor: günlükte adı yazan ama altında satır
     olmayan adım. İpucu üreteci, ilerleticileri henüz keşfedilmemiş bir adımı zaten
