@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 48 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 49 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,179 @@ geldiğinde buraya girer.
 > (0.6.1, 0.6.2, …). `npm run check`, iki HTML kopyanın da yayımlanan
 > `game_version` için bir girdi taşıdığını doğruluyor; böylece ikisi fark
 > edilmeden birbirinden uzaklaşamıyor.
+
+---
+
+## 2026-08-30
+
+### Kayıt yüklenmez oldu; görmesi gereken kontrol de kördü
+
+**v0.6.55.** "Görevler tamamen bozuldu, boş geliyor" diye bir `ReferenceError`'la, ayrıca
+favorilenen yerlerin hızlı yolculuktan kaybolması olarak bildirildi. İkisinin de tek
+sebebi vardı: bir önceki sürümde kaydetme/yüklemeyi `save_load.js`'e taşırken
+`effect_templates` kullanılıyor ama içe aktarılmıyor kalmıştı. esbuild, çözülmemiş bir
+tanımlayıcıyı çalışma zamanındaki bir genel değişkene yapılmış geçerli bir gönderme
+sayar; bu yüzden paket derlendi, bütün kontroller geçti ve hata ancak bir oyuncu kaydını
+yüklediğinde çıktı - `load()` içinde o satırdan sonraki her şeyi, favoriler dâhil,
+beraberinde götürerek.
+
+`check_modules_import_what_they_call` tam da bunun için vardı ve tetiklenmedi; çünkü
+yalnızca *çağrı* konumundaki adlara bakıyordu, `effect_templates[effect]` ise bir indis.
+Genişletme, doğru sonuca varmadan önce iki kez yanlış gitti ve ikisi de saklanmaya değer:
+
+- `onclick` işaretlemesini atlamak için önce tırnaklı metinleri sıyırmak, altı bin satır
+  boyunca tek bir dengesiz tırnakla senkronu kaybediyor ve iki gerçek eksik içe
+  aktarmayı sessizce yakalamaz oluyor;
+- genişletilmiş eşleyicinin kendi geriye bakışı, `(?<![.\w$])`, tam da yakalamak için
+  eklendiği göndermeyi reddediyor: `{...effect_templates[effect]}` adın hemen önüne bir
+  nokta koyar ve `...` açıkça geçirilmedikçe yayılma, özellik erişiminden ayırt
+  edilemez.
+
+**İkinci bir hata; birincisi ölçülürken bulundu ve hiç bildirilmemişti.** Aynı ayrım
+`last_combat_location`'ı her yerde `game_state.last_combat_location` yaptı - tırnak
+içindeki iki kayıt anahtarının içi dâhil. Kayıt, yükleyicinin okumadığı bir adla yazdı,
+değer `undefined` döndü ve bir sonraki kayıt anahtarı dosyadan büsbütün düşürdü. Hiçbir
+şey yüksek sesle bozulmadı. Ancak sahibinin günler arayla aldığı iki dışa aktarma
+karşılaştırılınca ortaya çıktı: `favourite_locations` 10 -> 0, `enemy_killcount` 25 -> 0,
+yatak ve dövüş konumları da yok. `check_save_keys_round_trip` artık kaydın yazdığı her
+anahtarın yüklemenin okuduğu bir anahtar olmasını şart koşuyor - 53'e 53.
+
+İkisi de kaynaktan akıl yürütülerek değil, sahibinin gerçek kaydıyla tarayıcıda
+doğrulandı: yedi görev çiziliyor, iki favori de geri geliyor.
+
+### İtibar, mekânların harcadığı bir para birimine dönüşüyor
+
+**v0.6.57, v0.6.58, v0.6.59.** Tek satır yazılmadan önce ölçüldü: hikâye boyunca 610 Köy,
+350 Kenar mahalle ve 320 Kasaba itibarı kazanılabiliyor; dört diyalog satırı buna bakıyor;
+**hiçbir aksiyon bakmıyordu**; ve Kenar mahalleyi bir tüccarın kâr payı dışında hiçbir şey
+geri okumuyordu. Yani oyuncu kenar mahallede 350 itibar biriktirebiliyordu ve bunun tek
+yaptığı şey bir fiyattan birkaç kuruş kırmaktı.
+
+Artık altı yerleşim aksiyonu onu okuyor ve altısı da o mekânların yanına eklenmedi, zaten
+oldukları şeyden kuruldu. Kenar mahallede, 100 / 200 / 300'de: kâhyanın P-11'de açtığı
+terazili baraka, çete gittiğinden beri kendi gecesini kendi bekleyen sokak, ve kasaba
+kapısında birine kefil olmak - oyunda kenar mahalle itibarını kasaba itibarına çeviren
+ilk şey, ve kapının arkasında hiçbir şey açmıyor. Kasaba meydanında, 50 / 150 / 250'de:
+çeşmedeki güvercinler, gazete tellalı ve konum var olduğundan beri birbirine bayat diyen
+iki ekmekçi; hepsi arka plan seslerindeydi ve hiçbiri oyuncunun katılabileceği bir şey
+değildi.
+
+İki konuşma **yalnızca** itibarla açılıyor - görev yok, kilit açma yok. Meydandaki
+komisyoncu bir itibara da buğdaya biçtiği gibi fiyat biçiyor; kenar mahallenin yaşlı
+kadını sokağın nöbet listesinin ne ettiğini değil neye mal olduğunu söylüyor. İkisi de
+hiçbir şeyi çözmüyor - bu çatalın açmadığı gizemlere dair kural gereği.
+
+### display.js, 7.057 satırdan 5.273'e
+
+**v0.6.62, v0.6.63, v0.6.65**; öncesinde **v0.6.54** kaydetme/yüklemeyi `main.js`'ten
+çıkarmıştı. Dört kesme; her biri iki sayı ölçülerek seçildi - taşınan kodun kalanlardan
+kaç ada ihtiyacı var ve kalan kodun geri kaç ada ihtiyacı var - çünkü döngüyü yaratan
+ikincisidir.
+
+| modül | satır | display.js'ten geri istenen adlar |
+| --- | ---: | --- |
+| `item_tooltips.js` | 706 | `format_money` |
+| `crafting_display.js` | 624 | `action_div`, `update_displayed_normal_location` |
+| `journal_panels.js` | 696 | `item_divs` |
+
+Ölçmek daha ilk kesmede kendini ödedi: ihtiyaç duyulduğu sanılan üç adın aslında hiç
+gerekmediği çıktı. `rarity_colors` ve `rarity_outlines` onları okuyan ipuçlarına ait,
+`select_outline_class` `display.js`'te değil `misc.js`'te ve `round`'u başka hiçbir şey
+kullanmıyor.
+
+Dört ayrı yanlış; her biri farklı bir ağa takıldı:
+
+- yıkıcı parametre listesi de bir süslü parantez açar, bu yüzden `function`'dan saymak
+  259 satırlık bir fonksiyonu kendi imzasında bitirdi;
+- `Object.keys(x).forEach(...)` `});` ile kapanır ve eşleşen paranteze kadar kesmek
+  geride `);` bırakır;
+- bir `const`'u onu okuyan döngünün üstüne taşımak onu geçici ölü bölgeye sokar - paket
+  tertemiz derlenir ve sayfa bomboş açılır; `check:bundle` tam bunun içindir ve ardından
+  taşımanın geride bıraktığı iki adı daha yakaladı;
+- tembel bir `import\s*\{[\s\S]*?from "./display.js"` deseni dosyadaki İLK import'tan
+  başlayıp aradaki her şeyi yutar; `main.js`'te bir yorumu sözdizimi hatasına çevirdi.
+
+Bir sonraki kesmenin nasıl yapılacağını değiştiren iki ders. **Yeniden dışa aktarım
+bölmeyi kozmetik yapar**: `display.js` taşınan adları `main.js`, `save_load.js`,
+`crafting.js` ve `items.js`'e devrediyordu; onlar da artık içinde olmayan fonksiyonları
+ondan istemeye devam ediyordu. Yani içe aktaranları yönlendirmek kesmenin parçası,
+sonradan yapılacak bir iş değil. Bir de **tarayıcısız yükleyicinin uzayan bir saplama
+listesine değil bir `document`'a ihtiyacı var**: `main.js` ile `display.js`'i içe aktarma
+döngüsü için saplıyor, `journal_panels.js` ikisi de değil ve yüklenirken iki eleman
+tutamağı alıyor; global'i bir kez saplamak, bir sonraki bölmede yükleyiciye hiç
+dokunmamak demek.
+
+### Beş kontrol; her biri çoktan yayımlanmış bir şey için
+
+- **`check_save_keys_round_trip`** - adı değişen kayıt anahtarının oyuncu verisini
+  sessizce düşürmesi.
+- **`check_imports_resolve`** (**v0.6.61**) - `crafting.js`, `main.js`'ten `update`'i içe
+  aktarıyordu; main.js onu dışa aktarmıyor ve crafting.js hiç çağırmıyordu. esbuild göz
+  yumuyor; tarayıcının kendi modül yükleyicisi reddediyor - `npm run serve`'ü sessizce
+  bozan da buydu. Bu, `check_modules_import_what_they_call`'ın aynadaki eşi: ikisi
+  birlikte bir içe aktarma listesinin gerçekle iki yönden de uyuşmasını istiyor. 677 ad.
+- **`check_visible_tasks_can_be_finished`** (**v0.6.60**) - "ne yapacağım var, nasıl
+  yapacağım yok" bildirimini kapatıyor; günlükte adı yazan ama altında satır olmayan
+  adım. İpucu üreteci, ilerleticileri henüz keşfedilmemiş bir adımı zaten karşılıyordu;
+  hiç ilerleticisi olmayanı karşılayamıyordu. Önce ölçüldü ve içerik zaten temizdi.
+- **`check_action_labels_fit_a_button`** - altı aksiyon, modelin "düğme üzerindeki yazı"
+  diye tanımladığı `starting_text` alanına anlatı cümlesi koymuştu ve düğme 105
+  karakterin hepsini çiziyordu. Altısının da kısa etiketi zaten yazılmış, kullanılmıyordu.
+- **`check_no_raw_control_bytes`** - `\0` kaçışı yerine bayt olarak yazılmış NUL.
+  `tests/checks/content.mjs`'i grep'e ikili gösterdi; sonra iki PROPOSALS dosyası da bunu
+  anlatan maddeden birer tane kaptı, çünkü bir kabuk heredoc'u kaçışı yeniden bayta
+  çevirdi.
+
+Hepsi hata geri konularak tersten sınandı; bu artık D-8 direktifi. Bu oturumda iki kez
+genişletilmiş bir eşleyici, eskiden yakaladığını sessizce yakalamaz oldu; yani hiç
+patlamamış bir koruma, koruma değildir.
+
+### Belgeler denetleniyor ve projenin nerede olduğunu söylüyor
+
+**v0.6.64.** `docs/STATUS.md` yeni: oyunun nerede olduğu, eline yalnızca o dosya verilen
+bir ajanın burada çalışabilmesi için yazıldı; her sayı hatırlanarak değil ölçülerek ve
+onu üreten komut da verilerek.
+
+Çift kontrolü yalnızca `docs/` içine bakıyordu; dolayısıyla Türkçe eşi bulunan kök
+`AGENTS.md` ve `README.md` hiç denetlenmemişti ve denetlenecek bir `doc-version`
+taşımıyorlardı. Artık ikisinde de var; ayrıca her markdown dosyasındaki her göreli
+bağlantı izleniyor: 9 çift, 166 bağlantı, 18 dosya.
+
+`STORY.md` de yetişti. 7. bölüm hâlâ her NPC'nin tükendiğini söylüyordu; komisyoncu ile
+yaşlı kadın itibara cevap veren satırlar kazandığında bu doğru olmaktan çıkmıştı ve
+itibarın bir para birimine dönüşmesinden hiç söz etmiyordu. Meydandaki komisyoncu da
+kendi yayımlanmış satırlarının tanıklığıyla hitap tablosuna girdi - `siz` değil, `sen`.
+
+### Plaka zırh ve hiç var olmamış basamak
+
+**v0.6.66.** P-12 bunu eksik bir 4. kademe malzemesi diye yazmıştı. Ölçünce daha genişti:
+bileşen üreticisi beş malzeme ve beş yuvada **yirmi beş** plaka parçası kuruyor ve hiçbiri
+yapılamıyordu, çünkü ortada metal plaka diye bir eşya hiç yoktu - çelik dâhil; oysa
+kaplumbağadan düşen kabuk plaka gayet çalışıyordu. Hattın ilk basamağı hiç yoktu.
+
+`Steel plate`, `White iron plate` ve `Black iron plate` artık birer malzeme; zincir zırhın
+iki külçesine karşılık üçer külçeden dövülüyorlar. Bu oran uydurma değil: üretici plakaya
+zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriyor. Beş dış
+kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
+ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
+iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Bakım
+
+- **v0.6.56** - dev konsoluna `add_best_effect(duration)`; `give_best`'in eşi. Hangi
+  etkinin iyi sayıldığı `main.js` içinde listelenmiyor, `tags.buff`'tan okunuyor; çünkü
+  veri, cevabı sayılardan daha iyi taşıyor: Tipsy çevikliği artırır, el becerisini
+  düşürür ve debuff etiketlidir. `check_effect_tags_match_their_numbers`, komutun
+  güvendiği etiketi çapraz denetliyor.
+- **Satır sonları sabitlendi.** `* text=auto`, çalışma kopyasındaki satır sonunu her
+  katılımcının `core.autocrlf` ayarına bırakıyordu; tamamı LF olan bir indekse karşı 64
+  dosyası CRLF, 10 dosyası LF çıkarılmış bir ağaç oluşuyordu. Artık
+  `.js/.mjs/.json/.css/.html/.md/.yml` için `eol=lf`.
+- **Yukarı akış.** `add_best_effect`, ait olduğu dev konsolunun yanına, PR #242'ye gitti.
+  PR #243 ise yeni: onların aksiyon düğmeleri `starting_text` çiziyor ama kilit-açma
+  mesajları `action_name` okuyor; yani günlük, düğmenin hiç göstermediği bir adla bir
+  aksiyon duyuruyor - üç karınca yuvası aksiyonu tek bir etiketi paylaşıyor. Kontroller
+  geride kaldı; upstream'de ne `tests/` var ne de birini asacak bir `package.json`.
 
 ---
 
@@ -2009,6 +2182,17 @@ Kapsam %72,8'den %80,7'ye; referans 907 anahtara çıktı.
 
 ---
 ## 2026-08-19
+
+### Hiçbir şey değiştirilmeden önce iki denetim — P-1
+
+İş, düzenlemekle değil okumakla başladı: mimarinin, içerik katmanının, i18n
+hazırlığının ve çataldaki ayrışmanın teknik denetimi; bir de hikâye omurgası, açık
+uçlar, öksüz içerik, NPC yayları ve ilerleyiş sistemleri üzerinden bir anlatı keşfi.
+İkisi de tek başına bir değişiklik üretmedi. Ürettikleri şey, aşağıdaki her şeyin
+çıktığı listeydi: README'nin yeniden yazılması, yerelleştirme, NaN uyarıları ve
+hikâyenin sürdürülmesi; hepsi sonradan akla gelen fikirler değil, bu iki taramanın
+bulguları.
+
 
 ### Sabit kodlanmış metin envanteri çıkarıldı, skill açıklamaları taşındı — P-7
 

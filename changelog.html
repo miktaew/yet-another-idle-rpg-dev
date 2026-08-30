@@ -263,42 +263,6 @@
             <li>Plate armour can be made. The game has always known what steel, white iron and black iron plate armour looks like - twenty-five pieces of it across five slots - and there was nothing to forge any of it from, because no metal plate existed as a material. Not a missing tier: the whole line had no first rung, steel included, while the shell plate a turtle drops worked fine. Three plates now forge from three ingots each, one band harder than the chainmail of the same metal, and every helmet, chest, leg, glove and boot piece in those three metals is reachable. Fifteen pieces. White and black steel stay out until there is a forge hot enough for them.</li>
         </ul>
     </div>
-    <button type="button" class="collapsible">v0.6.65</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. The journal's panels - the bestiary, the book list, the lore page and Discoveries - moved into their own file, and the display file drops from 5,878 lines to 5,273. Across the last few versions it has gone from 7,057 to 5,273, with the tooltips, the crafting window and now the journal each in a file of their own. Checked in a browser: all four panels draw their real contents and the console is clean.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.64</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Documentation, no change to play. Every markdown file in the project is now checked rather than only the ones under docs: the two at the root had Turkish counterparts and no way to tell when one had fallen behind, and every relative link across all eighteen files is followed to make sure it points at something. The story document also caught up with the game - it still said every character was out of things to say, which stopped being true when the broker and the old woman started answering to your standing.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.63</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. The crafting window - its pages, its recipe rows and its component pickers - moved into its own file, and the display file drops from 6,431 lines to 5,878. The modules that use it now ask the file that owns it rather than being handed it through the display file, so the split is real from their side too.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.62</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. Everything drawn on hover - item, effect and recipe tooltips - now lives in its own file instead of the display one, which drops from 7,057 lines to 6,430. The cut was chosen by measuring what it would cost rather than by what looked tidy: three of the things it seemed to need from the display file turned out to be movable or to live somewhere else entirely, leaving exactly one name borrowed back.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.61</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. One module imported a name another module does not export - `update`, imported by the crafting code and never called. The bundler tolerates that, so it built and ran; the browser's own module loader refuses outright, which is what had been quietly breaking the un-bundled page. The import is gone and a check now requires every imported name to exist where it is imported from: 677 names across 47 files. It is the mirror of the check added six versions ago, which catches a name used and never imported - between them an import list has to agree with reality in both directions.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.60</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. A quest task you can see now has to be one you can finish: a check fails the build if a visible task has nothing in the content that advances it and no condition it completes from play. That is the state a player described as knowing what to do and not how - the step named in the journal with no line under it. Measured first, and the content is already clean: 56 visible tasks, all answerable.</li>
-        </ul>
-    </div>
     <button type="button" class="collapsible">v0.6.59</button>
     <div class="content">
         <ul class="entries">
@@ -322,7 +286,6 @@
     <div class="content">
         <ul class="entries">
             <li>The dev console gained <code>add_best_effect()</code>, the counterpart to <code>give_best()</code>: every good effect at once for a duration you choose, instead of naming Coffee, Spark of Inspiration and Well hydrated one at a time. Which effects count as good is read off the templates rather than listed in the console, so one added tomorrow is included the moment it is tagged - and a check now fails the build if anything tagged as a buff has a wholly harmful stat profile, since the command trusts that tag. 22 effects today.</li>
-            <li>Documentation is now checked in pairs. Every English file has to have its Turkish counterpart at the same version, which until now was only a rule people remembered: a translation falling behind is invisible, because a stale file reads perfectly well right up to the paragraph that is no longer true.</li>
         </ul>
     </div>
     <button type="button" class="collapsible">v0.6.55</button>
@@ -331,12 +294,6 @@
             <li>Loading a save stopped part-way through, so quests came back empty and favourited places vanished from fast travel. Splitting saving and loading out into their own file last version left one name behind: the loader reached for the effect templates without importing them. An unresolved name is a legitimate reference to a runtime global as far as the bundler is concerned, so it built cleanly and threw only once somebody loaded a save - and everything in the loader after that line never ran. The check that exists to catch exactly this now reads names used as values and through a spread, not only names being called.</li>
             <li>The game had also stopped remembering which bed to return to and where you last fought. The same split renamed two fields, and the rename reached inside the quoted save keys as well - so the save wrote them under names the loader did not read. The value came back empty, the next save wrote nothing at all, and the keys left the file. Both are written under their proper names again, and a new check requires every key the save writes to be a key the load reads, because this one broke nothing loudly enough to notice.</li>
             <li>If you played v0.6.54, that version wrote its losses into your save: favourited places, kill counts and the two locations above were saved as empty. Progress made in the meantime is untouched - it is only those fields that were cleared. An export taken before v0.6.54 still holds them.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.54</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. Saving and loading now live in their own file - 1871 lines, a third of what the main file used to be, which is down from 6606 lines to 4464 across this round of tidying.</li>
         </ul>
     </div>
     <button type="button" class="collapsible">v0.6.53</button>
@@ -373,12 +330,6 @@
     <div class="content">
         <ul class="entries">
             <li>A task that asks you to gather things now says how many and how far along you are. The hint pointed at the flue and the conversation asked for two hundred bricks, ten ingots and enough charcoal - and the task line said none of it. The counter only drew when a task named the action whose requirement it should read, and three of the three tasks in the game that needed it had been left without one. The panel already knows which action advances a task, so it reads the numbers from there instead of from a field somebody has to remember to fill in.</li>
-        </ul>
-    </div>
-    <button type="button" class="collapsible">v0.6.48</button>
-    <div class="content">
-        <ul class="entries">
-            <li>Housekeeping, no change to play. main.js is 335 lines lighter: crafting now lives in its own file, and the counters the game keeps about a run - kills, crafts, the hardest hit - live in theirs. The nine small helpers every panel uses have moved out of display.js too, which is what will let the bestiary and Discoveries follow them.</li>
         </ul>
     </div>
     <button type="button" class="collapsible">v0.6.47</button>

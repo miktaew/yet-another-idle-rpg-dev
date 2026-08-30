@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 48 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 49 -->
 
 # Changelog
 
@@ -16,6 +16,179 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 > own minor version heading (0.6.1, 0.6.2, …) rather than being folded into an
 > existing one. `npm run check` enforces that both HTML copies hold an entry for
 > the shipped `game_version`, so the two cannot drift apart unnoticed.
+
+---
+
+## 2026-08-30
+
+### The save stopped loading, and the check that should have seen it was blind
+
+**v0.6.55.** Reported as "quests are completely broken, they come back empty", with a
+`ReferenceError`, and separately as favourited places gone from fast travel. One cause
+for both: moving save/load into `save_load.js` the version before left `effect_templates`
+used and never imported. esbuild treats an unresolved identifier as a legitimate
+reference to a runtime global, so the bundle built, every check passed, and it threw
+only when a player loaded a save - taking everything in `load()` after that line with
+it, favourites included.
+
+`check_modules_import_what_they_call` existed precisely for this and did not fire,
+because it only looked at names in *call* position and `effect_templates[effect]` is a
+subscript. Widening it went wrong twice before it went right, and both are worth
+keeping:
+
+- stripping quoted strings first, to skip `onclick` markup, desynchronises over six
+  thousand lines on one unbalanced quote and silently stopped catching two real
+  missing imports;
+- the widened matcher's own lookbehind, `(?<![.\w$])`, rejects the very reference it
+  was added to catch: `{...effect_templates[effect]}` puts a dot immediately before the
+  name, and a spread is indistinguishable from property access without letting `...`
+  through explicitly.
+
+**A second fault, found by measuring the first and never reported.** The same split
+rewrote `last_combat_location` to `game_state.last_combat_location` everywhere -
+including inside the two quoted save keys. The save wrote a name the loader did not
+read, the value came back `undefined`, and the next save dropped the key from the file
+entirely. Nothing failed loudly. It surfaced only by diffing two of the owner's exports
+days apart: `favourite_locations` 10 -> 0, `enemy_killcount` 25 -> 0, and the bed and
+combat locations gone. `check_save_keys_round_trip` now requires every key the save
+writes to be a key the load reads - 53 and 53.
+
+Both were verified in a browser against the owner's real save rather than argued from
+the source: seven quests render and both favourites return.
+
+### Reputation becomes a currency the places spend
+
+**v0.6.57, v0.6.58, v0.6.59.** Measured before writing anything: 610 Village, 350 Slums
+and 320 Town reputation is earnable across the story; four dialogue lines gate on it;
+**no action did**; and nothing at all read Slums back except a trader's profit margin.
+So a player could build 350 standing in the slums and the only thing it ever did was
+shave a few coins off a price.
+
+Six settlement actions read it now, and all six are built out of what those places
+already were rather than added beside them. In the slums, at 100 / 200 / 300: the shed
+with the scales the factor opened in P-11, the row keeping its own nights since the
+gang went, and standing surety for somebody at the town gate - the first thing in the
+game that turns slums standing into town standing, and it opens nothing behind the
+gate. In the town square, at 50 / 150 / 250: the pigeons on the fountain, the
+newspaper crier and the two bakers who have been calling each other stale since the
+location existed, all of which were in its background noises and none of which a
+player could join.
+
+Two conversations open on standing **alone** - no quest, no unlock. The square broker
+prices a reputation the way he prices grain; the old woman of the slums says what the
+row's roster costs rather than what it is worth. Neither resolves anything, per the
+rule about mysteries this fork did not open.
+
+### display.js, 7,057 lines to 5,273
+
+**v0.6.62, v0.6.63, v0.6.65**, after **v0.6.54** took save/load out of `main.js`.
+Four cuts, each chosen by measuring two numbers - how many names the moved code needs
+from what stays, and how many the staying code needs back - because the second is what
+creates a cycle.
+
+| module | lines | names needed back out of display.js |
+| --- | ---: | --- |
+| `item_tooltips.js` | 706 | `format_money` |
+| `crafting_display.js` | 624 | `action_div`, `update_displayed_normal_location` |
+| `journal_panels.js` | 696 | `item_divs` |
+
+The measuring paid for itself in the first cut: three of the names it appeared to need
+turned out not to be needed at all. `rarity_colors` and `rarity_outlines` belong with
+the tooltips that read them, `select_outline_class` is in `misc.js` rather than
+`display.js`, and `round` is used by nothing else.
+
+Four ways it went wrong, each caught by a different net:
+
+- a destructured parameter list opens a brace, so counting from `function` ended a
+  259-line function at its own signature;
+- `Object.keys(x).forEach(...)` closes with `});`, and cutting to the matching brace
+  leaves the `);` behind;
+- moving a `const` above the loop that reads it puts it in its temporal dead zone -
+  the bundle builds clean and the page comes up blank, which is what `check:bundle`
+  is for, and it then caught two more names the move had left behind;
+- a lazy `import\s*\{[\s\S]*?from "./display.js"` starts at the FIRST import in the
+  file and swallows everything between, which rewrote a comment in `main.js` into a
+  syntax error.
+
+Two things learned that change how the next cut is done. **A re-export makes a split
+cosmetic**: `display.js` was handing the moved names on to `main.js`, `save_load.js`,
+`crafting.js` and `items.js`, which were still asking it for functions it no longer
+had, so repointing the importers is part of the cut rather than a follow-up. And **the
+browser-free loader needs a `document`, not a longer stub list**: it stubs `main.js`
+and `display.js` for the import cycle, `journal_panels.js` is neither and takes two
+element handles as it loads, and stubbing the global once means the next split does not
+have to touch the loader at all.
+
+### Five checks, each for something that had already shipped
+
+- **`check_save_keys_round_trip`** - a renamed save key silently dropping player data.
+- **`check_imports_resolve`** (**v0.6.61**) - `crafting.js` imported `update` from
+  `main.js`, which does not export it, and never called it. esbuild tolerates that; the
+  browser's own module loader refuses, which is what had been quietly breaking
+  `npm run serve`. It is the mirror of `check_modules_import_what_they_call`: between
+  them an import list must agree with reality in both directions. 677 names.
+- **`check_visible_tasks_can_be_finished`** (**v0.6.60**) - closes the report of "I
+  know what to do and not how", a task named in the journal with no line under it. The
+  hint builder already handled a task whose advancers are undiscovered; it could not
+  handle a task with none. Measured first, and the content was already clean.
+- **`check_action_labels_fit_a_button`** - six actions had a narrative sentence in
+  `starting_text`, which the model documents as "text on the button", and the button
+  drew all 105 characters of it. Each already declared the short label, unused.
+- **`check_no_raw_control_bytes`** - a NUL written as a byte rather than the `\0`
+  escape. It made grep call `tests/checks/content.mjs` binary, and then both PROPOSALS
+  files picked one up from the entry describing that, because a shell heredoc collapsed
+  the escape back into the byte.
+
+Every one was negative-tested by reintroducing the bug, which is now directive D-8.
+Twice this session a widened matcher silently stopped catching what it used to, so a
+guard that has never failed is not a guard.
+
+### Documentation gets checked, and says where the project stands
+
+**v0.6.64.** `docs/STATUS.md` is new: where the game stands, written so an agent handed
+nothing but that file can work here, with every number measured rather than remembered
+and the command that produces it given.
+
+The pairing check only ever looked inside `docs/`, so the root `AGENTS.md` and
+`README.md` - both of which have Turkish counterparts - had never been checked at all
+and carried no `doc-version` to check with. Both pairs have one now, and every relative
+link in every markdown file is followed: 9 pairs, 166 links, 18 files.
+
+`STORY.md` also caught up. Section 7 still said every NPC was exhausted, which stopped
+being true when the broker and the old woman got lines that answer to standing, and it
+said nothing about reputation becoming a currency. The square broker joined the
+address-register table on the evidence of his own shipped lines - *sen*, not *siz*.
+
+### Plate armour, and the rung that was never there
+
+**v0.6.66.** P-12 had this as a missing tier-4 material. Measured, it was wider: the
+component generator builds **twenty-five** plate pieces across five materials and five
+slots, and not one could be made, because no metal plate existed as an item at all -
+steel included, while the shell plate a turtle drops worked fine. The line had no first
+rung.
+
+`Steel plate`, `White iron plate` and `Black iron plate` are materials now, forged from
+three ingots each against chainmail's two. That ratio is not invented: the generator
+already gives plate 1.5x the value and 1.6x the strength of the chainmail of the same
+metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
+White and black steel stay out - P-12 says the ceiling moves with the story, they have
+no display name in either locale, and there is no station above the mountain flue.
+
+### Housekeeping
+
+- **v0.6.56** - `add_best_effect(duration)` in the dev console, the counterpart to
+  `give_best`. Which effects count as good is read off `tags.buff` rather than listed
+  in `main.js`, because the data carries the answer better than the numbers do: Tipsy
+  raises agility, lowers dexterity, and is tagged debuff.
+  `check_effect_tags_match_their_numbers` cross-checks the tag the command trusts.
+- **Line endings pinned.** `* text=auto` left the working-tree ending to each
+  contributor's `core.autocrlf`, giving a tree checked out 64 files CRLF and 10 LF
+  against an all-LF index. `.js/.mjs/.json/.css/.html/.md/.yml` are `eol=lf` now.
+- **Upstream.** `add_best_effect` went to PR #242, beside the dev console it belongs
+  with. PR #243 is new: their action buttons draw `starting_text` while their unlock
+  message reads `action_name`, so the log announces an action under a name the button
+  never shows - three ant-nest actions share one label. The checks stayed behind;
+  upstream has no `tests/` and no `package.json` to hang one on.
 
 ---
 
@@ -2017,6 +2190,17 @@ Coverage 72.8% to 80.7%, against a reference that grew to 907 keys.
 
 ---
 ## 2026-08-19
+
+### Two audits before anything was changed — P-1
+
+The work started by reading rather than editing: a technical audit of the
+architecture, content layer, i18n readiness and fork divergence, and a narrative
+discovery pass over the story spine, the open hooks, the orphaned content, the NPC
+arcs and the progression systems. Neither produced a change on its own. What they
+produced was the list everything below came from: the README rewrite, the
+localisation, the NaN warnings and the continuation of the story are all findings
+from these two passes rather than ideas had afterwards.
+
 
 ### Inventoried the hardcoded text, and moved the skill descriptions — P-7
 

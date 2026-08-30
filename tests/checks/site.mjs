@@ -179,9 +179,33 @@ function check_changelogs_cover_version() {
             error(`${file} has no collapsible version headings - this check is out of date.`);
             continue;
         }
+        /*
+            A version the player cannot see does not belong here.
+
+            The in-game changelog is what a player reads inside the game, and
+            "the tooltips moved into their own file" is not news to them - that
+            reasoning belongs in docs/CHANGELOG.md, which is the developer history.
+            So a version may be absent from here, as long as it is written up there:
+            nothing ships unrecorded, and the player is only shown what concerns them.
+        */
         if (!headings.includes(version)) {
-            error(`${file} has no entry for ${version} - its newest heading is "${headings[0]}".`
-                + " The in-game changelog is the player-facing history and has to cover the shipped version.");
+            const developer = path.join(repo_root, "docs", "CHANGELOG.md");
+            const written_up = fs.existsSync(developer)
+                && fs.readFileSync(developer, "utf8").includes(version);
+            if (!written_up) {
+                error(`${version} appears in neither ${file} nor docs/CHANGELOG.md. A release`
+                    + " has to be written up somewhere: player-facing changes go in the in-game"
+                    + " changelog, maintenance in the developer one.");
+            }
+        }
+
+        //An empty version block reads as a release that did nothing.
+        for (const block of html.matchAll(
+                /<button[^>]*class="collapsible"[^>]*>([^<]+)<\/button>\s*<div class="content">([\s\S]*?)\n    <\/div>/g)) {
+            if (!block[2].includes("<li>")) {
+                error(`${file}: the entry for ${block[1].trim()} has no items. Remove the`
+                    + " version rather than shipping a heading with nothing under it.");
+            }
         }
 
         const built = path.join(site_dir, file);

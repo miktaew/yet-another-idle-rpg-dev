@@ -113,6 +113,28 @@ async function check_docs_are_paired() {
         }
     }
 
+    /*
+        A finished proposal leaves PROPOSALS.md (D-9). It is a backlog, not an archive:
+        64 of its 78 items were `done` before this rule, which meant the fourteen still
+        open were buried in the record of everything that was not. The account lives in
+        CHANGELOG.md at developer depth instead.
+
+        The status vocabulary table and the conventions section explain the marker, so
+        only numbered items and proposal headings are read.
+    */
+    for (const file of ["docs/PROPOSALS.md", "docs/PROPOSALS.TR.md"]) {
+        const full = path.join(repo_root, file);
+        if (!fs.existsSync(full)) continue;
+        for (const line of fs.readFileSync(full, "utf8").split("\n")) {
+            const is_entry = /^\d+\. \*\*/.test(line) || /^### P-\d+/.test(line);
+            if (is_entry && /`(done|bitti|tamam)`/.test(line)) {
+                error(`${file}: "${line.trim().slice(0, 60)}" is finished and still here.`
+                    + " Write it up in CHANGELOG.md and remove it - the backlog is what is"
+                    + " still open (D-9).");
+            }
+        }
+    }
+
     if (paired === english.length) {
         console.log(`[check] documentation: ${paired} pairs at matching versions,`
             + ` ${links} relative links resolving, across ${files.length} files`);
