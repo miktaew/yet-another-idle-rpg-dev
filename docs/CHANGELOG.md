@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 52 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 53 -->
 
 # Changelog
 
@@ -173,6 +173,52 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### Echoes-Beneath, read for story and gameplay this time
+
+The first review answered the tooling question and missed the one that was asked. This
+one looks at the mechanics and the narrative devices, with the title system named as the
+example.
+
+**Titles - worth taking, with one change.** `js/data/titles.js` is 883 lines and 30
+titles. A title carries a name, a description, a rarity and a `have` flag; it is purely
+cosmetic unless it defines a `talent()`, which is applied once when the title is first
+earned. They are granted from thresholds already scattered through the game - a skill
+reaching level 10, a kill count, a money total, an equipment event.
+
+It fits this game unusually well, because the complementary half already exists: the
+lore panel records **what you were told**, and a title records **what you did**. The
+machinery is there too - `process_rewards` already takes 23 reward keys, so `titles:
+[...]` slots in beside them, the journal already has a tab shape for a list like this,
+and `enemy_killcount`, the skill levels, the reputations and the run counters are the
+thresholds.
+
+The change: **take the record, not the talent.** Skill milestones already hand out stat
+bonuses at thresholds, and a title with a `talent()` would be a second system doing the
+same job at the same moment, which is how two systems start disagreeing about a number.
+A title here should be a record and nothing else.
+
+**Effectors - already here under another name.** `js/systems/effectors.js` is 56 lines:
+an environmental modifier attached to an area, toggling world state such as darkness.
+`location_types` with staged applied effects is the same device, and the cold stages are
+it working. Nothing to take.
+
+**Abilities - a different game.** Named per-creature attacks with their own narration
+phrases, resolved by a damage calculator. Combat here is stats and stances with no named
+attacks, so adopting this is a combat rewrite rather than an addition, and the register
+it buys is not this game's.
+
+**Planner - no gain.** Deferred work on a later tick. `game_action_period` and the
+existing intervals already do it.
+
+**The most useful thing is not code.** `docs/REGIONS.md` gives every region a fixed
+shape - Opening, Scenes, Expectations, Ending - and `STORY.md` here has nothing like it:
+it describes the world and where the story stops, but each built region is a list of
+places rather than a shape with a beginning and an end. That is exactly the gap P-13/54
+names, so the shape goes there rather than into a proposal of its own.
+
+`STORYPROGRESS.TR.MD` turned out to be a prompt rather than a device - the same role
+brief this project works under. Nothing to adopt.
 
 ### Splitting the big files, and where it stops
 

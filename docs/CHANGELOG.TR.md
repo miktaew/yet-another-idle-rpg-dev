@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 52 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 53 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,50 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Echoes-Beneath, bu kez hikâye ve oynanış için okundu
+
+İlk inceleme araç gereç sorusunu cevaplayıp asıl sorulanı kaçırmıştı. Bu inceleme
+mekaniklere ve anlatı aygıtlarına bakıyor; örnek olarak da unvan sistemi adı geçmişti.
+
+**Unvanlar - alınmaya değer, tek bir değişiklikle.** `js/data/titles.js` 883 satır ve 30
+unvan. Bir unvanın adı, açıklaması, nadirliği ve bir `have` bayrağı var; bir `talent()`
+tanımlamadıkça tamamen kozmetik, tanımlarsa da ilk kazanıldığında bir kez uygulanıyor.
+Zaten oyunun içine dağılmış eşiklerden veriliyorlar: bir yeteneğin 10. seviyeye gelmesi,
+bir öldürme sayacı, bir para toplamı, bir teçhizat olayı.
+
+Bu oyuna alışılmadık biçimde iyi oturuyor, çünkü tamamlayıcı yarısı zaten var: lore
+paneli **size ne söylendiğini** kaydediyor, bir unvan ise **ne yaptığınızı**. Düzenek de
+hazır - `process_rewards` zaten 23 ödül anahtarı alıyor, yani `titles: [...]` yanlarına
+oturur; günlükte böyle bir liste için sekme şekli zaten var; `enemy_killcount`, yetenek
+seviyeleri, itibarlar ve koşu sayaçları da eşikler.
+
+Değişiklik şu: **kaydı al, yeteneği alma.** Yetenek kilometre taşları zaten eşiklerde
+istatistik veriyor; `talent()` taşıyan bir unvan, aynı anda aynı işi yapan ikinci bir
+sistem olurdu - iki sistemin bir sayı üzerinde anlaşmazlığa düşmesi de böyle başlar.
+Buradaki unvan bir kayıt olmalı, başka bir şey değil.
+
+**Effector'lar - burada zaten başka adla var.** `js/systems/effectors.js` 56 satır: bir
+alana bağlı, karanlık gibi dünya durumlarını açıp kapatan çevresel bir değiştirici.
+Kademeli uygulanan etkileriyle `location_types` aynı aygıt ve soğuk kademeleri de onun
+çalışan hâli. Alınacak bir şey yok.
+
+**Yetenekler (abilities) - başka bir oyun.** Yaratığa özel adlandırılmış saldırılar, kendi
+anlatım cümleleriyle ve bir hasar hesaplayıcısıyla çözülüyor. Buradaki dövüş istatistik ve
+duruşlardan ibaret, adlandırılmış saldırı yok; yani bunu almak bir ekleme değil dövüşün
+yeniden yazımı olur ve getirdiği ton da bu oyunun tonu değil.
+
+**Planner - kazanç yok.** İşi sonraki bir tick'e erteliyor. `game_action_period` ve
+mevcut aralıklar zaten bunu yapıyor.
+
+**En işe yarar şey kod değil.** `docs/REGIONS.md` her bölgeye sabit bir şekil veriyor -
+Açılış, Sahneler, Beklentiler, Bitiş - ve buradaki `STORY.md`'de böyle bir şey yok:
+dünyayı ve hikâyenin nerede durduğunu anlatıyor ama inşa edilmiş her bölge, başı ve sonu
+olan bir şekil değil bir yerler listesi. P-13/54'ün işaret ettiği boşluk tam olarak bu;
+o yüzden şekil kendi önerisine değil oraya gidiyor.
+
+`STORYPROGRESS.TR.MD`'nin bir aygıt değil bir istem olduğu çıktı - bu projenin de altında
+çalıştığı aynı rol tarifi. Alınacak bir şey yok.
 
 ### Büyük dosyaları bölmek ve bunun nerede durduğu
 

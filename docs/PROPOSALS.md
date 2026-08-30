@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 62 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 63 -->
 
 # Proposals
 
@@ -163,14 +163,23 @@ not after. Each item is the request as it was given, and the state it is in.
 15. **Record every request here** — `standing`. This section is that rule being
     followed.
 
-35. **Look at Echoes-Beneath for STORY and GAMEPLAY, not only tooling** — `todo`. The
-    first review answered the tooling question and missed the one that was asked. What
-    was wanted: mechanics and narrative devices worth adopting - a **title system** was
-    named as the example. Its `js/systems/` holds abilities, effectors, planner and
-    simulation, none of which this game has, and its docs carry REGIONS, STORY and two
-    STORYPROGRESS files.
+54. **Keep the story going, and connect the new areas** — `in progress`, and it
+    inherits two conclusions from the Echoes-Beneath review (was P-13/35).
 
-54. **Keep the story going, and connect the new areas** — `in progress`. v0.6.57 tied
+    **A region needs a shape.** Their `docs/REGIONS.md` gives each one an Opening,
+    Scenes, Expectations and an Ending. `STORY.md` here has nothing like it: it says
+    where the story stops, and each built region is a list of places rather than
+    something with a beginning and an end. Writing that shape for the four built
+    regions is what "connect them" concretely means.
+
+    **Titles are the other half of the lore panel.** The panel records what the player
+    was told; a title records what they did. `process_rewards` already takes 23 reward
+    keys so `titles: [...]` slots in, the journal already has the tab shape, and the
+    thresholds exist - kill counts, skill levels, reputations, run counters. Take the
+    record, not the talent: skill milestones already hand out stats at thresholds, and
+    two systems doing that at the same moment is how they start disagreeing.
+
+    Originally: v0.6.57 tied
     the slums to the town gate, which is the first crossing between the two the game has
     had. The rest of the regions are still standing beside the story rather than in it. Not a pause in
     narrative work while the engine is tidied: the regions that were built need to be
