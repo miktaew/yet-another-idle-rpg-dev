@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 53 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 54 -->
 
 # Proposals
 
@@ -578,11 +578,15 @@ descriptions in both languages.
 
 **What is left, and in what order:**
 
-1. **Tier-4 plate.** The generator makes `White iron plate helmet armor` and its nine
-   siblings, and there is no `White iron plate` material to forge them from - the
-   iron/steel line has no plate either, so this needs two new material items rather
-   than two new recipe rows. Their `material white iron plate` naming rows already
-   exist in both locales.
+1. **Tier-4 plate** — `done`, v0.6.66, and the gap was wider than this said.
+   Measured: the generator builds **twenty-five** plate pieces across five materials and
+   five slots, and not one could be made, because no metal plate existed as an item at
+   all - steel included, while the turtle's shell plate worked fine. So the line had no
+   first rung rather than a missing top one. `Steel plate`, `White iron plate` and
+   `Black iron plate` are materials now, forged from three ingots each against
+   chainmail's two, which matches the 1.5x value and 1.6x strength the generator already
+   gave them. Fifteen pieces reachable; the ten white/black steel ones wait for item 2.
+   Verified in a browser end to end: ingot to plate to helmet armour, craftable.
 2. **Tier 5: white steel and black steel.** The ingots and chainmail exist as items.
    What does not exist is a display name: `material white` and `material black` have
    no row in either locale, which is where the original work stopped. A tier above
@@ -1130,7 +1134,7 @@ not after. Each item is the request as it was given, and the state it is in.
     class is now guarded: `check_visible_tasks_can_be_finished`, 56 answerable, negative-
     tested by deleting one advancer.
 60. **A raw NUL byte in a source file** — `done`. `tests/checks/content.mjs` used the
-    byte itself as a sentinel rather than the ` ` escape, which made grep call the whole
+    byte itself as a sentinel rather than the `\0` escape, which made grep call the whole
     file binary, diffs unreadable, and the byte one careless editor save from vanishing.
     Same value, written as two characters. It predates this session.
 61. **A module imported a name nothing exports** — `done`, v0.6.61. `crafting.js`

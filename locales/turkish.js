@@ -3564,6 +3564,13 @@ const descriptions = {
     //The rest of the item material types. The nine a recipe can name arrived
     //with the crafting fix; these sixteen only ever appear on an item tooltip.
     "material type bone": "kemik",
+    "material type plate": "plaka",
+    "name Steel plate": "Çelik plaka",
+    "name White iron plate": "Beyaz demir plaka",
+    "name Black iron plate": "Siyah demir plaka",
+    "desc item Steel plate": "Düz ve eşit biçimde dövülmüş bir çelik levha. Giyilebilir bir biçimden çok uzak; zırha dönüştürmek hâlâ bir sürü emek ve odak isteyecek",
+    "desc item White iron plate": "Düz ve eşit biçimde dövülmüş, boyuna göre ağır bir beyaz demir levha. Giyilebilir bir biçimden çok uzak; zırha dönüştürmek hâlâ bir sürü emek ve odak isteyecek",
+    "desc item Black iron plate": "Düz ve eşit biçimde dövülmüş, boyuna göre ağır bir siyah demir levha. Giyilebilir bir biçimden çok uzak; zırha dönüştürmek hâlâ bir sürü emek ve odak isteyecek",
     "material type chainmail": "zincir zırh",
     "material type culinary herb": "mutfak otu",
     "material type disinfectant herb": "antiseptik ot",

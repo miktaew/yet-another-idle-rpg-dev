@@ -4792,6 +4792,34 @@ function add_gear() {
         material_type: "chainmail",
     });
 
+    /*
+        Plate, the other half of the metal armour line.
+
+        The component generator has always built plate armour for steel, white iron and
+        black iron, and there was nothing to forge it from - the material simply did not
+        exist, so twenty-five pieces sat in the templates unreachable - fifteen of them
+        reachable now, with white and black steel left for whenever a tier 5 station is.
+        Value is above the
+        chainmail of the same metal because a plate is three ingots against its two.
+    */
+    item_templates["Steel plate"] = new Material({
+        description: "desc item Steel plate",
+        value: 90,
+        material_type: "plate",
+    });
+
+    item_templates["White iron plate"] = new Material({
+        description: "desc item White iron plate",
+        value: 160,
+        material_type: "plate",
+    });
+
+    item_templates["Black iron plate"] = new Material({
+        description: "desc item Black iron plate",
+        value: 160,
+        material_type: "plate",
+    });
+
     item_templates["White iron chainmail"] = new Material({
         description: "desc item White iron chainmail",
         value: 105,

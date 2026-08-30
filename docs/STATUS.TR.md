@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 8 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 9 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on dört dosya, yardımcılarıyla ~5.900 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on altı dosya, yardımcılarıyla ~6.100 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 136 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -148,7 +148,7 @@ Kayıt defterlerinden ve kontrollerden ölçüldü:
 - **21 görev**; 11'inde gizli görev adımı var ve her gizli adımın bir ilerleticisi var.
 - **64 yetenek**, 58'inde rütbe adı, ayrıca kilometre taşları.
 - 36 dövüş bölgesine yayılmış **32 yaratık**.
-- **139 tarif**; 450 şablona karşı 549 tarif eşya adı çözülüyor.
+- **139 tarif** ve üç plaka malzemesi; 453 şablona karşı 585 tarif eşya adı çözülüyor.
 - **22 diyalog**, 7 stok listesinde 8 tüccar, 59 aksiyon.
 - Tamamı çözülen **2.002 içerik metin kimliği**.
 
@@ -160,7 +160,7 @@ gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D
 
 ## Kontroller neyi kapsıyor
 
-`tests/checks/` altında on dört dosya. Değerli olanlar genel biçim kuralları değil,
+`tests/checks/` altında on altı dosya. Değerli olanlar genel biçim kuralları değil,
 yayımlanmış bir hatayı kodlayanlar:
 
 | Kontrol | Neyi engelliyor |
@@ -173,6 +173,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `action button labels` | Düğmenin içine çizilen paragraf. 44 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
 | `documentation` | Geride kalmış çeviri ya da hiçbir yeri göstermeyen bağlantı. 18 dosya. |
+| `no raw control bytes` | Bayt olarak yazılmış NUL; grep'in dosyayı ikili saymasına yol açar. |
 | `no English written into the DOM` | Yereli atlayıp doğrudan yazılmış metin. 212 sabit. |
 | `hidden quest tasks` | İlerleyemeyen görev. 11 adım. |
 | `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 56 adım. |

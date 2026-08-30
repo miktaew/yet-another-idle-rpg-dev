@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 8 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 9 -->
 
 # Status
 
@@ -53,8 +53,8 @@ npm test
 npm run check:bundle
 ```
 
-- `check` runs the content and consistency checks in `tests/checks/` (fourteen files,
-  ~5,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+- `check` runs the content and consistency checks in `tests/checks/` (sixteen files,
+  ~6,100 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 136 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -144,7 +144,8 @@ Measured from the registries and the checks:
 - **21 quests**, 11 of which have hidden tasks; every hidden task has an advancer.
 - **64 skills**, 58 of them with rank names, plus milestones.
 - **32 enemies** across 36 combat zones.
-- **139 recipes**; 549 recipe item names resolve against 450 templates.
+- **139 recipes** plus three plate materials; 585 recipe item names resolve against 453
+  templates.
 - **22 dialogues**, 8 traders across 7 stock lists, 59 actions.
 - **2,002 content text ids**, all resolved.
 
@@ -156,7 +157,7 @@ Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
 ## What the checks actually cover
 
-Fourteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
+Sixteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
 but the ones that encode a bug that shipped:
 
 | Check | What it prevents |
@@ -169,6 +170,7 @@ but the ones that encode a bug that shipped:
 | `action button labels` | A paragraph rendered inside a button. 44 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
+| `no raw control bytes` | A NUL written as a byte, which makes grep call a file binary. |
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
 | `visible quest tasks` | A task named in the journal with no way to finish it. 56 tasks. |

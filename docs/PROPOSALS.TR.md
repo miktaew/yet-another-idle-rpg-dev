@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 53 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 54 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -590,10 +590,15 @@ adları ile açıklamaları.
 
 **Kalanlar, ve sırası:**
 
-1. **4. kademe plaka.** Üretici `White iron plate helmet armor` ve dokuz kardeşini
-   yapıyor, ama onları dövecek bir `White iron plate` malzemesi yok — demir/çelik
-   hattında da plaka yok, yani bu iki yeni tarif satırı değil, iki yeni malzeme eşyası
-   istiyor. `material white iron plate` adlandırma satırları iki yerelde de zaten var.
+1. **4. kademe plaka** — `bitti`, v0.6.66; üstelik boşluk burada yazandan genişmiş.
+   Ölçüldü: üretici beş malzeme ve beş yuvada **yirmi beş** plaka parçası kuruyor ve
+   hiçbiri yapılamıyordu, çünkü ortada metal plaka diye bir eşya hiç yoktu — çelik
+   dâhil; oysa kaplumbağanın kabuk plakası çalışıyordu. Yani hattın eksiği tepesi değil,
+   ilk basamağıydı. `Steel plate`, `White iron plate` ve `Black iron plate` artık birer
+   malzeme; zincir zırhın iki külçesine karşılık üçer külçeden dövülüyorlar ve bu, üreticinin
+   onlara zaten verdiği 1,5 kat değer ile 1,6 kat güce birebir oturuyor. On beş parça
+   erişilebilir; beyaz/siyah çeliğin on parçası 2. maddeyi bekliyor. Tarayıcıda uçtan uca
+   doğrulandı: külçeden plakaya, plakadan kask zırhına — yapılabilir durumda.
 2. **5. kademe: beyaz çelik ve siyah çelik.** Külçeler ve zincir zırh eşya olarak
    mevcut. Olmayan şey bir görünen ad: `material white` ve `material black`'in iki
    yerelde de satırı yok; özgün çalışma da orada durmuş. 4. kademenin üstündeki bir
@@ -1142,7 +1147,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     bir yetenek hedefiyle `task_condition` üzerinden bitiyor. Yani içerik temiz, sınıf ise
     artık korumalı: `check_visible_tasks_can_be_finished`, 56 cevaplanabilir; bir ilerletici
     silinerek tersten sınandı.
-60. **Kaynak dosyada ham NUL baytı** — `bitti`. `tests/checks/content.mjs`, ` `
+60. **Kaynak dosyada ham NUL baytı** — `bitti`. `tests/checks/content.mjs`, `\0`
     kaçışı yerine baytın kendisini imleç olarak kullanıyordu; bu da grep'in dosyanın
     tamamını ikili sayması, farkların okunamaması ve baytın dikkatsiz bir kayıtla yok olması
     demekti. Aynı değer, iki karakterle yazıldı. Bu oturumdan öncesine dayanıyor.

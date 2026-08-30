@@ -645,6 +645,9 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Helmet exterior",
         materials: [
             {material_id: "Iron chainmail", count: 3, result_id: "Iron chainmail helmet armor"},
+            {material_id: "Steel plate", count: 3, result_id: "Steel plate helmet armor"},
+            {material_id: "White iron plate", count: 3, result_id: "White iron plate helmet armor"},
+            {material_id: "Black iron plate", count: 3, result_id: "Black iron plate helmet armor"},
             {material_id: "Steel chainmail", count: 3, result_id: "Steel chainmail helmet armor"},
             {material_id: "White iron chainmail", count: 3, result_id: "White iron chainmail helmet armor"},
             {material_id: "Black iron chainmail", count: 3, result_id: "Black iron chainmail helmet armor"},
@@ -672,6 +675,9 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Chestplate exterior",
         materials: [
             {material_id: "Iron chainmail", count: 5, result_id: "Iron chainmail vest"},
+            {material_id: "Steel plate", count: 5, result_id: "Steel plate chestplate armor"},
+            {material_id: "White iron plate", count: 5, result_id: "White iron plate chestplate armor"},
+            {material_id: "Black iron plate", count: 5, result_id: "Black iron plate chestplate armor"},
             {material_id: "Steel chainmail", count: 5, result_id: "Steel chainmail vest"},
             {material_id: "White iron chainmail", count: 5, result_id: "White iron chainmail chestplate armor"},
             {material_id: "Black iron chainmail", count: 5, result_id: "Black iron chainmail chestplate armor"},
@@ -699,6 +705,9 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Leg armor exterior",
         materials: [
             {material_id: "Iron chainmail", count: 4, result_id: "Iron chainmail greaves"},
+            {material_id: "Steel plate", count: 4, result_id: "Steel plate greaves"},
+            {material_id: "White iron plate", count: 4, result_id: "White iron plate greaves"},
+            {material_id: "Black iron plate", count: 4, result_id: "Black iron plate greaves"},
             {material_id: "Steel chainmail", count: 4, result_id: "Steel chainmail greaves"},
             {material_id: "White iron chainmail", count: 4, result_id: "White iron chainmail greaves"},
             {material_id: "Black iron chainmail", count: 4, result_id: "Black iron chainmail greaves"},
@@ -726,6 +735,9 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Glove exterior",
         materials: [
             {material_id: "Iron chainmail", count: 3, result_id: "Iron chainmail glove armor"},
+            {material_id: "Steel plate", count: 3, result_id: "Steel plate glove armor"},
+            {material_id: "White iron plate", count: 3, result_id: "White iron plate glove armor"},
+            {material_id: "Black iron plate", count: 3, result_id: "Black iron plate glove armor"},
             {material_id: "Steel chainmail", count: 3, result_id: "Steel chainmail glove armor"},
             {material_id: "White iron chainmail", count: 3, result_id: "White iron chainmail glove armor"},
             {material_id: "Black iron chainmail", count: 3, result_id: "Black iron chainmail glove armor"},
@@ -753,6 +765,9 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Shoes exterior",
         materials: [
             {material_id: "Iron chainmail", count: 3, result_id: "Iron chainmail shoe armor"},
+            {material_id: "Steel plate", count: 3, result_id: "Steel plate shoe armor"},
+            {material_id: "White iron plate", count: 3, result_id: "White iron plate shoe armor"},
+            {material_id: "Black iron plate", count: 3, result_id: "Black iron plate shoe armor"},
             {material_id: "Steel chainmail", count: 3, result_id: "Steel chainmail shoe armor"},
             {material_id: "White iron chainmail", count: 3, result_id: "White iron chainmail shoe armor"},
             {material_id: "Black iron chainmail", count: 3, result_id: "Black iron chainmail shoe armor"},
@@ -1147,6 +1162,37 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         success_chance: [0.1,1],
         recipe_skill: "Forging",
         recipe_level: [15,25],
+    });
+    /*
+        Plate is three ingots where chainmail is two, and a band harder to get right:
+        beating a sheet flat and even is the part a smith gets wrong, not the rings.
+    */
+    forging_recipes.items["Steel plate"] = new ItemRecipe({
+        name: "Steel plate",
+        recipe_type: "material",
+        materials: [{material_id: "Steel ingot", count: 3}],
+        result: {result_id: "Steel plate", count: 1},
+        success_chance: [0.1,1],
+        recipe_skill: "Forging",
+        recipe_level: [12,22],
+    });
+    forging_recipes.items["White iron plate"] = new ItemRecipe({
+        name: "White iron plate",
+        recipe_type: "material",
+        materials: [{material_id: "White iron ingot", count: 3}],
+        result: {result_id: "White iron plate", count: 1},
+        success_chance: [0.1,1],
+        recipe_skill: "Forging",
+        recipe_level: [17,27],
+    });
+    forging_recipes.items["Black iron plate"] = new ItemRecipe({
+        name: "Black iron plate",
+        recipe_type: "material",
+        materials: [{material_id: "Black iron ingot", count: 3}],
+        result: {result_id: "Black iron plate", count: 1},
+        success_chance: [0.1,1],
+        recipe_skill: "Forging",
+        recipe_level: [17,27],
     });
     forging_recipes.items["Iron chainmail"] = new ItemRecipe({
         name: "Iron chainmail",

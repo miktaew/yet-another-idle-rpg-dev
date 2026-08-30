@@ -3524,6 +3524,13 @@ const descriptions = {
     //The rest of the item material types. The nine a recipe can name arrived
     //with the crafting fix; these sixteen only ever appear on an item tooltip.
     "material type bone": "bone",
+    "material type plate": "plate",
+    "name Steel plate": "Steel plate",
+    "name White iron plate": "White iron plate",
+    "name Black iron plate": "Black iron plate",
+    "desc item Steel plate": "A sheet of steel beaten flat and even. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+    "desc item White iron plate": "A sheet of white iron beaten flat and even, and heavy for its size. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
+    "desc item Black iron plate": "A sheet of black iron beaten flat and even, and heavy for its size. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
     "material type chainmail": "chainmail",
     "material type culinary herb": "culinary herb",
     "material type disinfectant herb": "disinfectant herb",

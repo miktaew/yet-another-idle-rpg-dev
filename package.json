@@ -1,6 +1,6 @@
 {
   "name": "yairp",
-  "version": "0.6.65",
+  "version": "0.6.66",
   "private": true,
   "description": "Yet Another Idle RPG - a text-based idle RPG (fork of miktaew/yet-another-idle-rpg)",
   "license": "MIT",
