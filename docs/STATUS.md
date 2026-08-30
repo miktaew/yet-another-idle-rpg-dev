@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 5 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 6 -->
 
 # Status
 
@@ -68,17 +68,18 @@ npm run check:bundle
 
 ## Where the code lives
 
-`src/` is 44,770 lines across 47 modules (`find src -name "*.js" | xargs wc -l`).
+`src/` is 45,011 lines across 48 modules (`find src -name "*.js" | xargs wc -l`).
 
 | File | Lines | What it holds |
 | --- | ---: | --- |
-| `display.js` | 7,057 | Every DOM update. The largest file and the next target. |
+| `display.js` | 6,430 | Every DOM update. Still the largest, and still the next target. |
 | `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
 | `data/locations.js` | 4,403 | 158 locations, their actions and connections. |
 | `data/dialogues.js` | 3,073 | 22 dialogues and their textlines. |
 | `crafting_recipes.js` | 1,989 | 139 recipes. |
+| `item_tooltips.js` | 706 | Item, effect and recipe tooltips. Split out in v0.6.62. |
 | `save_load.js` | 1,951 | Save and load. Split out of `main.js` in v0.6.54. |
 
 `main.js` is the entry point and was 6,606 lines before this round of splitting. What
@@ -182,8 +183,8 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **Item 48, splitting the big files** - `in progress`. `display.js` at 7,057 lines is
-  next; the measured candidates and their coupling costs are listed there. `main.js`
+- **Item 48, splitting the big files** - `in progress`. `display.js` at 6,430 lines is
+  still next; the measured candidates and their coupling costs are listed there. `main.js`
   cuts still costed and not done: `options.js`, `release.js`, rewards.
 - **Item 12, the metals above steel** - `partly done`. Tier-4 and tier-5 materials
   exist but are not fully wired into progression.

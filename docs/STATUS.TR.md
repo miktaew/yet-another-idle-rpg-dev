@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 5 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 6 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -71,17 +71,18 @@ npm run check:bundle
 
 ## Kod nerede
 
-`src/`, 47 modülde 44.770 satır (`find src -name "*.js" | xargs wc -l`).
+`src/`, 48 modülde 45.011 satır (`find src -name "*.js" | xargs wc -l`).
 
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
-| `display.js` | 7.057 | Bütün DOM güncellemeleri. En büyük dosya ve sıradaki hedef. |
+| `display.js` | 6.430 | Bütün DOM güncellemeleri. Hâlâ en büyüğü ve hâlâ sıradaki hedef. |
 | `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
 | `data/locations.js` | 4.403 | 158 konum, aksiyonları ve bağlantıları. |
 | `data/dialogues.js` | 3.073 | 22 diyalog ve replikleri. |
 | `crafting_recipes.js` | 1.989 | 139 tarif. |
+| `item_tooltips.js` | 706 | Eşya, etki ve tarif ipuçları. v0.6.62'de ayrıldı. |
 | `save_load.js` | 1.951 | Kaydetme ve yükleme. v0.6.54'te `main.js`'ten ayrıldı. |
 
 `main.js` giriş noktasıdır ve bu bölme turundan önce 6.606 satırdı. Ondan çıkanlar:
@@ -186,8 +187,8 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 7.057 satırla `display.js`
-  sırada; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
+- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 6.430 satırla `display.js`
+  hâlâ sırada; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
   ölçülüp henüz yapılmayanlar: `options.js`, `release.js`, ödüller.
 - **12. madde, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe malzemeler
   var ama ilerleyişe tam bağlanmadı.

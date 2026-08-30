@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 50 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 51 -->
 
 # Proposals
 
@@ -969,6 +969,20 @@ not after. Each item is the request as it was given, and the state it is in.
     generate one entry module that imports in main.js's own order and evaluate the target
     through it.
 48. **Splitting the big files** — `in progress`, and the measurements are the point.
+
+    v0.6.62 took the tooltips out: `item_tooltips.js`, 706 lines, and display.js 7,057 ->
+    6,430. Three of the names the cut appeared to need turned out not to be needed at all -
+    `rarity_colors` and `rarity_outlines` belong with the tooltips that read them,
+    `select_outline_class` is in misc.js rather than display.js, and `round` is used by
+    nothing else - which left `format_money` as the only name borrowed back, called at
+    runtime and never at module scope.
+
+    Three faults on the way, each caught by a different net and each worth remembering:
+    a destructured parameter list opens a brace, so counting from `function` ended
+    create_item_tooltip_content at its own signature; `Object.keys(x).forEach(...)` closes
+    with `});` and leaving the `);` behind is a syntax error; and moving a `const` above
+    the loop that reads it puts it in its temporal dead zone, which the build accepts and
+    `check:bundle` refuses. The last one is why that check exists.
     Two cuts are made and the rest are costed rather than guessed at. A cut is judged by
     two numbers: how many names the moved code needs from what stays, and how many the
     staying code needs back. The second is the expensive one - it becomes an import INTO

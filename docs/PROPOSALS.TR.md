@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 50 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 51 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -978,7 +978,21 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     trader.inventory_template'i liste sandı, oysa anahtar; ve hiçbir test bunu yakalayamazdı
     çünkü hiçbir test bir tüccar kuramıyor. Çözüm, main.js'in kendi sırasıyla içe alan tek
     bir giriş modülü üretip hedefi onun üzerinden değerlendirmek.
-48. **Büyük dosyaları bölmek** — `sürüyor`, ve asıl mesele ölçümler. İki kesit yapıldı,
+48. **Büyük dosyaları bölmek** — `sürüyor`, ve asıl mesele ölçümler.
+
+    v0.6.62 ipuçlarını çıkardı: `item_tooltips.js`, 706 satır; display.js 7.057'den
+    6.430'a indi. Kesmenin ihtiyaç duyduğu sanılan üç adın aslında hiç gerekmediği çıktı -
+    `rarity_colors` ve `rarity_outlines` onları okuyan ipuçlarına ait, `select_outline_class`
+    display.js'te değil misc.js'te ve `round`'u başka hiçbir şey kullanmıyor. Geriye ödünç
+    alınan tek ad `format_money` kaldı; o da modül kapsamında değil çalışma zamanında
+    çağrılıyor.
+
+    Yolda üç hata, her biri farklı bir ağa takıldı ve her biri hatırlanmaya değer:
+    yıkıcı parametre listesi de bir süslü parantez açar, bu yüzden `function`'dan saymak
+    create_item_tooltip_content'i kendi imzasında bitirdi; `Object.keys(x).forEach(...)`
+    `});` ile kapanır ve geride bırakılan `);` sözdizimi hatasıdır; bir `const`'u onu okuyan
+    döngünün üstüne taşımak onu geçici ölü bölgeye sokar - derleme kabul eder,
+    `check:bundle` reddeder. Sonuncusu, o kontrolün var olma sebebi. İki kesit yapıldı,
     kalanların maliyeti tahmin edilmedi, hesaplandı. Bir kesit iki sayıyla yargılanıyor:
     taşınan kod kalandan kaç ad istiyor, ve kalan koddan kaç ad geri isteniyor. Pahalı
     olan ikincisi - o, zaten yük taşıyan bir döngünün giriş noktasına doğru bir import'a
