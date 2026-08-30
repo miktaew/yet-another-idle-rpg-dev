@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 13 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 14 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on beş dosya, yardımcılarıyla ~6.300 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on beş dosya, yardımcılarıyla ~6.400 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 143 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -186,6 +186,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 59 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
 | `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 44'ü yapılamaz. |
+| `quest hints` | Listesini boşaltıp sonra hiçbir şey söylemeyen bir ipucu kurucusu. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -203,8 +204,19 @@ sayılmaz; koruma da hata geri konularak sınanır.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.
-- İki görev adımı günlükte ipucu göstermiyor; kaynağı okuyarak değil, oyun çalışırken
-  ölçerek çözülmesi gerekiyor.
+**İpucu göstermeyen iki görev adımı bu listeden ölçülerek çıktı.** Yeniden
+üretilemiyor. Sahibin iki dışa aktarımında da her aktif görevin güncel adımı tam
+olarak bir adlandırılmış yere çözülüyor; üstelik görünür hiçbir adım, geri dönüşü
+olmayan ipucu yoluna ulaşamıyor: yaşayan beş `task_condition` bloğunun hepsi gizli
+görevlere ait ve gizli görev günlüğe hiç çıkmıyor, `Test quest` ise yorum satırında.
+İddia, "başka bir yerde" satırı eklenmeden önce doğruydu ve o gün bugündür bayat.
+
+Altında gerçek olan şey şuydu: iki ipucu kurucusundan yalnızca birinin bu geri
+dönüşü vardı. Sayan bir adımın andığı bölgelerin hepsi henüz bulunmamışken
+`create_quest_hint` hiçbir şey döndürmüyordu; yani bir kill sayan ilk görünür görev,
+altında tek satır olmayan bir 0/10 gösterecekti. Artık iki kurucu tek bir geri
+dönüşü paylaşıyor ve biri onu kullanmayı bırakırsa
+`check_hints_say_when_they_cannot_point` düşüyor.
 
 48. madde ile P-13/35 kapandıktan sonra da burada listeleniyordu; bu da okuyucuyu
 çalışma listesinde olmayan önerileri aramaya gönderiyordu. İkisi de

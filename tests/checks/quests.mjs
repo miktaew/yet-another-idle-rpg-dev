@@ -93,6 +93,81 @@ async function check_visible_tasks_can_be_finished() {
         + " skipped");
 }
 
+
+/**
+ * A hint that has nowhere to point still says so.
+ *
+ * The journal builds a task's hint two different ways. A task that counts something -
+ * kill ten of these, clear that - goes through `create_quest_hint`, which lists the
+ * zones the target lives in. A task that counts nothing goes through
+ * `create_quest_step_hint`, which lists what advances it. Both filter their list down
+ * to places the player has actually found, and both can filter it to nothing.
+ *
+ * Only one of them said so. `create_quest_step_hint` was given an "it is elsewhere"
+ * line for exactly this case, after a task standing with no line under it was reported
+ * as "I know what to do and not how"; `create_quest_hint` was left returning null, so
+ * the same state there renders a 0/10 with nothing beneath it.
+ *
+ * It has never been reachable: all five live `task_condition` blocks belong to hidden
+ * quests, which never appear in the journal at all, so no visible task takes that path
+ * today. That is precisely why it needed a check rather than a note - a gap nothing
+ * exercises is a gap nobody notices, and the next arc adds quests.
+ *
+ * The rule is the one Q-6 settled for the language switch: name the places that must do
+ * the thing, and fail when one of them stops. Both builders must reach the shared
+ * `create_hint_elsewhere_line`, and the locale id must live only inside it, so a third
+ * hint path cannot quietly grow its own copy or go without.
+ */
+async function check_hints_say_when_they_cannot_point() {
+    const display_path = path.join(repo_root, "src/display.js");
+    if (!fs.existsSync(display_path)) {
+        error("src/display.js is missing - this check is out of date.");
+        return;
+    }
+    const source = strip_comments(fs.readFileSync(display_path, "utf8"));
+
+    const helper = "create_hint_elsewhere_line";
+    if (!source.includes(`function ${helper}(`)) {
+        error(`src/display.js has no ${helper}. Both quest hint builders fall back through`
+            + " it when nothing they could point at has been found yet.");
+        return;
+    }
+
+    for (const builder of ["create_quest_hint", "create_quest_step_hint"]) {
+        const found = source.match(new RegExp(`function ${builder}\\s*\\([^)]*\\)\\s*\\{`));
+        if (!found) {
+            error(`src/display.js has no ${builder} - this check is out of date.`);
+            continue;
+        }
+        const body = braced_body(source, source.indexOf("{", found.index + found[0].length - 1));
+        if (body === null) {
+            error(`could not read the body of ${builder} - this check is out of date.`);
+            continue;
+        }
+        if (!body.includes(`${helper}(`)) {
+            error(`${builder} filters its list down to what the player has found and can end`
+                + ` up with nothing, and it does not call ${helper}. The task would render`
+                + " with no line under it, which is the state that was reported as knowing"
+                + " what to do and not how.");
+        }
+    }
+
+    /*
+        The id itself, not just the helper: an inlined second copy would pass the test
+        above while putting the wording back in two places, which is how the two paths
+        drifted apart the first time.
+    */
+    const id = "ui quest hint elsewhere";
+    const uses = source.split(`"${id}"`).length - 1;
+    if (uses !== 1) {
+        error(`"${id}" is written ${uses} times in src/display.js. It belongs only inside`
+            + ` ${helper}, so every hint path says it the same way.`);
+    }
+
+    console.log("[check] quest hints: 2 builders fall back through one elsewhere line");
+}
+
 export {
+    check_hints_say_when_they_cannot_point,
     check_visible_tasks_can_be_finished,
 };

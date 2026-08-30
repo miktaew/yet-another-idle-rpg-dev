@@ -3076,13 +3076,42 @@ function create_hint_block(lines) {
 }
 
 /**
+ * "It is somewhere you have not been yet."
+ *
+ * Both hint builders end up here for the same reason: the task has somewhere to be and
+ * the player has not found any of it. Naming the place would be a spoiler, and saying
+ * nothing at all leaves the task standing with no line under it - which is the state a
+ * player reported as "I know what to do and not how". Shared rather than written twice,
+ * because it was written once and the other path went without it.
+ */
+function create_hint_elsewhere_line() {
+    const elsewhere = document.createElement("div");
+    elsewhere.classList.add("discovery_source_text");
+    elsewhere.innerText = translationManager.getText(language, "ui quest hint elsewhere");
+    return elsewhere;
+}
+
+/**
  * Where to go for a counted task target - kill this, clear that, reach this skill.
  */
 function create_quest_hint(task_type, target_id) {
-    const lines = quest_task_places(task_type, target_id)
+    const places = quest_task_places(task_type, target_id);
+    const lines = places
         .filter(place => place.is_unlocked)
         .sort((first, second) => compare_display_names(first.getName(), second.getName()))
         .map(place => create_hint_line(place, place.getName()));
+
+    /*
+        The zones exist and none of them is on the player's map yet. No visible quest
+        counts anything today - the five live task_conditions all belong to hidden
+        quests - so this branch cannot be reached in play right now. It is here because
+        the moment a visible quest counts a kill, this path would show a 0/10 with
+        nothing under it, and the fix the other path already has would have to be found
+        a second time.
+    */
+    if(lines.length === 0 && places.length > 0) {
+        lines.push(create_hint_elsewhere_line());
+    }
 
     return create_hint_block(lines);
 }
@@ -3161,10 +3190,7 @@ function create_quest_step_hint(quest_id, task_index) {
         and look.
     */
     if(lines.length === 0 && steps.length > 0) {
-        const elsewhere = document.createElement("div");
-        elsewhere.classList.add("discovery_source_text");
-        elsewhere.innerText = translationManager.getText(language, "ui quest hint elsewhere");
-        lines.push(elsewhere);
+        lines.push(create_hint_elsewhere_line());
     }
 
     return create_hint_block(lines);

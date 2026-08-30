@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 13 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 14 -->
 
 # Status
 
@@ -54,7 +54,7 @@ npm run check:bundle
 ```
 
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
-  ~6,300 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+  ~6,400 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 143 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -185,6 +185,7 @@ but the ones that encode a bug that shipped:
 | `actions can explain failure` | An action that fails with no reason shown. 59 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 | `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
+| `quest hints` | A hint builder that filters itself down to nothing and then says nothing. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -202,8 +203,18 @@ directive is recorded before it is worked on:
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.
-- Two quest tasks show no hint in the journal and need live-state measurement rather
-  than reading the source.
+**The two quest tasks with no hint came off this list by being measured.** They do not
+reproduce. At both of the owner's exports every active quest's current task resolves
+to exactly one named place, and no visible task can reach the hint path that had no
+fallback: all five live `task_condition` blocks belong to hidden quests, which never
+appear in the journal, and `Test quest` is commented out. The claim was true before
+the "it is elsewhere" line landed and has been stale since.
+
+What was real underneath it: only one of the two hint builders had that fallback.
+`create_quest_hint` returned nothing at all when the zones a counted task names are
+all still unfound, so the first visible quest to count a kill would have shown a
+0/10 with no line under it. Both builders share one fallback now, and
+`check_hints_say_when_they_cannot_point` fails if either stops using it.
 
 Item 48 and P-13/35 were listed here after they closed, which sent a reader looking
 in the backlog for proposals that are not in it. Both are written up in

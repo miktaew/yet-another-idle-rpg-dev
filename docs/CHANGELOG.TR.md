@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 59 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 60 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,38 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-30
+
+### İpucu göstermeyen iki görev adımı yok; altlarındaki açık vardı
+
+STATUS, "iki görev adımı günlükte ipucu göstermiyor" maddesini oyun çalışırken ölçüm
+bekleyen açık bir iş olarak taşıyordu. Kaynağa değil, sahibin kendi dışa aktarımlarına
+karşı ölçüldü: hem 2026-08-29'da hem 2026-08-30'da her aktif görevin güncel adımı tam
+olarak bir adlandırılmış yere çözülüyor. İpucusuz çizilen hiçbir şey yok.
+
+Yapısal olarak da olamaz. Günlük ipucunu iki yoldan kuruyor — sayan bir adım için
+`create_quest_hint`, saymayan için `create_quest_step_hint` — ve görünür bir görevden
+yalnızca ikincisine ulaşılabiliyor. Yaşayan beş `task_condition` bloğunun hepsi iki
+gizli göreve ait ve gizli görev günlüğe hiç çıkmıyor; `Test quest` ise yorum satırında.
+Bildirim, "başka bir yerde" satırı eklenmeden önce doğruydu ve o gün bugündür bayat.
+
+Kaydı doğru okumak iki denemede oldu, ilki yanlıştı. `task_status` adım başına bir
+boolean değil: güncel bitmemiş adım **dâhil** olmak üzere `{is_finished: true}`
+tutuyor ve o son girdi bunun yerine `{progress}` taşıyor — yani uzunluğunun bir eksiği
+oyuncunun gerçekte nerede olduğu. Boolean gibi okununca her girdi doğru sayılıyor ve iki
+dışa aktarımda üç görev bitmiş-ama-aktif gibi görünüyor. Değiller; son adımlarındalar.
+
+**Gerçek olan neydi.** Geri dönüş yalnızca `create_quest_step_hint`'te vardı. Eşi,
+sayan bir adımın andığı bölgelerin hepsi henüz bulunmamışken hiçbir şey döndürmüyordu;
+yani bir kill sayan ilk görünür görev, altında tek satır olmayan bir 0/10 gösterecekti —
+geri dönüşün yazılma sebebi olan durumun ta kendisi, öteki yolda bekliyordu. İkisi artık
+tek bir `create_hint_elsewhere_line` paylaşıyor.
+
+`check_hints_say_when_they_cannot_point` ikisini bir arada tutuyor; Q-6'nın dil
+değiştirme için koyduğu kuralla: bu işi yapmak zorunda olan yerleri adıyla say ve biri
+bıraktığında düş. İki kurucunun da ortak satıra ulaşmasını ve locale kimliğinin yalnızca
+onun içinde yaşamasını şart koşuyor; çünkü ikisinin ilk etapta birbirinden ayrılma
+sebebi, satır içine kopyalanmış ikinci bir nüshaydı. İki yönden negatif test edildi:
+geri dönüş bir kurucudan çıkarıldı ve kimliğin ikinci bir kopyası ötekine gömüldü.
 
 ### Çalışma listesi, var olmayan bir tıkacı anlatıyordu
 

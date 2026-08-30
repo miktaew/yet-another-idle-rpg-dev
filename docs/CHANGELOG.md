@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 59 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 60 -->
 
 # Changelog
 
@@ -20,6 +20,39 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-30
+
+### The two quest tasks with no hint do not exist, and the gap under them did
+
+STATUS has carried "two quest tasks show no hint in the journal" as an open item
+needing live-state measurement. Measured, against the owner's own exports rather than
+against the source: at 2026-08-29 and at 2026-08-30, every active quest's current task
+resolves to exactly one named place. Nothing renders without a hint.
+
+Structurally it cannot, either. The journal builds a hint two ways - `create_quest_hint`
+for a task that counts something, `create_quest_step_hint` for one that does not - and
+only the second can be reached from a visible quest. All five live `task_condition`
+blocks belong to the two hidden quests, which never appear in the journal at all, and
+`Test quest` is commented out. The report was true before the "it is elsewhere" line
+landed and has been stale since.
+
+Reading the save right took two attempts and the first was wrong. `task_status` is not
+a boolean per task: it holds `{is_finished: true}` up to and **including** the current
+unfinished task, whose entry carries `{progress}` instead - so its length minus one is
+where the player actually is. Read as booleans, every entry is truthy, and three quests
+across two exports look finished-but-active. They are not; they are on their last step.
+
+**What was real.** Only `create_quest_step_hint` had the fallback. Its counterpart
+returned nothing at all when the zones a counted task names are all still unfound, so
+the first visible quest to count a kill would have shown a 0/10 with no line under it -
+the same state the fallback was written for, waiting in the other path. Both share one
+`create_hint_elsewhere_line` now.
+
+`check_hints_say_when_they_cannot_point` keeps them together, on the rule Q-6 settled
+for the language switch: name the places that must do the thing and fail when one stops.
+It requires both builders to reach the shared line, and the locale id to live only
+inside it, because an inlined second copy is how the two drifted apart in the first
+place. Negative-tested both ways: the fallback taken out of one builder, and a second
+copy of the id inlined into the other.
 
 ### The backlog described a blocker that was not there
 
