@@ -2,7 +2,6 @@
 
 import { skill_categories, skills, weapon_type_to_skill } from "./data/skills.js";
 import {
-         update_displayed_character_inventory,
          update_displayed_equipment,
          update_displayed_stats,
          update_displayed_health,
@@ -24,6 +23,7 @@ import { playable_races } from "./races.js";
 import { config } from "./config.js";
 import { update_all_displayed_skills_xp_gain, update_displayed_skill_level,
          update_displayed_skill_xp_gain } from "./skills_display.js";
+import { update_displayed_character_inventory } from "./inventory_display.js";
 
 const base_block_chance = 0.75; //+20 from the skill
 const base_xp_cost = 10;

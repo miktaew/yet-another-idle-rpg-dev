@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 50 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 51 -->
 
 # Changelog
 
@@ -173,6 +173,30 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### The inventories and the trade window
+
+**v0.6.68.** `inventory_display.js`, 963 lines, and display.js 4,699 -> 3,819 - a
+third of what it was at v0.6.60, and 7,057 -> 3,819 across the six cuts.
+
+The character's inventory, the trader's, the storage chest and the trade window cut as
+one piece because they share their sorting, their item rows and twelve pieces of state.
+Four names come back out of display.js - two DOM handles taken once at module scope,
+the money formatter and the quest-counter redraw - all used inside functions and never
+while the module is being evaluated.
+
+`sort_displayed_quests` was left behind on purpose. It sorts with the inventory's
+comparators but reads `quest_list`, which is the journal's state, so taking it would
+have dragged the quest panel's state into the inventory module for one function.
+
+One check had to change with the move: `check_equipment_slot_names` read
+`equipment_slots_divs` out of `src/display.js` by name and broke when the map left.
+It searches for it now, because a check that hard-codes the file it reads breaks on
+correct work every time that file is cut.
+
+`check_imports_resolve`, added six versions ago, earned itself here: it caught
+`crafting.js` still asking display.js for `update_displayed_character_inventory` after
+the repoint missed it.
 
 ### The skill bars and the stance list, and two more shapes the check could not see
 

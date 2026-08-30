@@ -1,8 +1,9 @@
 "use strict";
 
 import { traders } from "./traders.js";
-import { update_displayed_trader, update_displayed_trader_inventory, 
-         update_displayed_character_inventory, exit_displayed_trade, update_displayed_money } from "./display.js";
+import {
+         update_displayed_money,
+        } from "./display.js";
 import { add_to_character_inventory, remove_from_character_inventory } from "./character.js";
 import { skills } from "./data/skills.js";
 import { getItemFromKey } from "./items.js";
@@ -10,6 +11,8 @@ import { add_to_sold, calculate_total_saturation, capped_at, equipment_capped_at
 import { character } from "./character.js";
 import { add_xp_to_skill, current_location } from "./main.js";
 import { round_item_price } from "./misc.js";
+import { exit_displayed_trade, update_displayed_character_inventory,
+         update_displayed_trader, update_displayed_trader_inventory } from "./inventory_display.js";
 
 let current_trader = null;
 const to_sell = {value: 0, items: [], groups: {}};

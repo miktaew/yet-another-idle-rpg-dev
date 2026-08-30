@@ -14,7 +14,10 @@ import { game_state } from "./game_state.js";
 import { enemy_zones, item_sources, lore_unit_of, lore_units,
          training_places } from "./world_index.js";
 import { create_item_tooltip, create_item_tooltip_content, obscure_name } from "./item_tooltips.js";
-import { item_divs } from "./display.js";
+import {
+
+        } from "./display.js";
+import { item_divs } from "./inventory_display.js";
 
 /*
     item_divs is the one name this module takes back out of display.js - the inventory's

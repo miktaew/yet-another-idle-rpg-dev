@@ -651,10 +651,23 @@ async function check_equipment_slot_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
 
-    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/display.js"), "utf8"));
-    const map = source.match(/const equipment_slots_divs\s*=\s*\{([\s\S]*?)\n\};/);
+    /*
+        Searched for rather than read out of one named file. The map moved to
+        inventory_display.js when the inventories were split out of display.js, and a
+        check that hard-codes the file it reads has to be edited every time that file
+        is cut - which is a check breaking on correct work.
+    */
+    let map = null;
+    for (const file of ["src/inventory_display.js", "src/display.js"]) {
+        const full = path.join(repo_root, file);
+        if (!fs.existsSync(full)) continue;
+        map = strip_comments(fs.readFileSync(full, "utf8"))
+            .match(/const equipment_slots_divs\s*=\s*\{([\s\S]*?)\n\};/);
+        if (map) break;
+    }
     if (!map) {
-        error("src/display.js has no `const equipment_slots_divs = { ... }` - this check is out of date.");
+        error("no `const equipment_slots_divs = { ... }` anywhere under src/ - this check is"
+            + " out of date.");
         return;
     }
 

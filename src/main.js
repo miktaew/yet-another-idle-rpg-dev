@@ -32,9 +32,6 @@ import { character,
 import { activities } from "./activities.js";
 import {
          end_activity_animation,
-         update_displayed_character_inventory,
-         update_displayed_trader_inventory,
-         sort_displayed_inventory,
          update_displayed_money,
          log_message,
          //The message log's save and restore. Exported from display.js because that
@@ -70,7 +67,6 @@ import {
          set_game_action_finish_text,
          update_game_action_progress_bar,
          update_game_action_finish_button,
-         update_displayed_storage_inventory,
          update_location_icon,
          update_displayed_temperature,
          update_displayed_quest,
@@ -148,6 +144,8 @@ import { create_new_skill_bar, skill_category_order, skill_list, sort_displayed_
          update_displayed_skill_bar, update_displayed_skill_description,
          update_displayed_skill_xp_gain, update_displayed_stance,
          update_displayed_stance_list, update_stance_tooltip } from "./skills_display.js";
+import { sort_displayed_inventory, update_displayed_character_inventory,
+         update_displayed_storage_inventory, update_displayed_trader_inventory } from "./inventory_display.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
 const backup_key = "backup save";

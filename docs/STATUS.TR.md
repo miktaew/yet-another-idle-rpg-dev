@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 10 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 11 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -71,11 +71,11 @@ npm run check:bundle
 
 ## Kod nerede
 
-`src/`, 51 modülde 45.370 satır (`find src -name "*.js" | xargs wc -l`).
+`src/`, 52 modülde 45.453 satır (`find src -name "*.js" | xargs wc -l`).
 
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
-| `display.js` | 4.699 | Bütün DOM güncellemeleri. Hâlâ en büyüğü ve hâlâ sıradaki hedef. |
+| `display.js` | 3.819 | Bütün DOM güncellemeleri. Altı kesmede 7.057'den indi. |
 | `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
@@ -86,6 +86,7 @@ npm run check:bundle
 | `crafting_display.js` | 624 | Zanaat penceresi. v0.6.63'te ayrıldı. |
 | `journal_panels.js` | 696 | Bestiary, kitap listesi, lore ve Keşifler. v0.6.65'te ayrıldı. |
 | `skills_display.js` | 660 | Yetenek çubukları ve duruş listesi. v0.6.67'de ayrıldı. |
+| `inventory_display.js` | 963 | Üç envanter ve ticaret penceresi. v0.6.68'de ayrıldı. |
 | `save_load.js` | 1.951 | Kaydetme ve yükleme. v0.6.54'te `main.js`'ten ayrıldı. |
 
 `main.js` giriş noktasıdır ve bu bölme turundan önce 6.606 satırdı. Ondan çıkanlar:
@@ -192,8 +193,8 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 4.699 satırla `display.js`
-  hâlâ sırada; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
+- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 3.819 satırla `display.js`
+  artık en büyük sorun değil; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
   ölçülüp henüz yapılmayanlar: `options.js`, `release.js`, ödüller.
 - **12. madde, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe malzemeler
   var ama ilerleyişe tam bağlanmadı.

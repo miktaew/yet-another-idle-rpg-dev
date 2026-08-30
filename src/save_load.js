@@ -33,7 +33,6 @@ import {
          set_loading_screen_progress,
          set_loading_screen_versions,
          set_loading_screen_warnings_warning,
-         update_displayed_character_inventory,
          update_displayed_effects,
          update_displayed_health,
          update_displayed_item_log,
@@ -58,6 +57,7 @@ import { translationManager } from "./translation.js";
 import { create_displayed_crafting_recipes } from "./crafting_display.js";
 import { create_new_bestiary_entry, update_booklist_entry } from "./journal_panels.js";
 import { skill_category_order, skill_list, update_displayed_stance_list } from "./skills_display.js";
+import { update_displayed_character_inventory } from "./inventory_display.js";
 /**
  * puts all important stuff into a string
  * @returns string with save data

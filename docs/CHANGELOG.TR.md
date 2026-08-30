@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 50 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 51 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,30 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Envanterler ve ticaret penceresi
+
+**v0.6.68.** `inventory_display.js`, 963 satır; display.js 4.699'dan 3.819'a - v0.6.60'ta
+olduğunun üçte biri ve altı kesme boyunca 7.057'den 3.819'a.
+
+Karakterin envanteri, tüccarınki, depo sandığı ve ticaret penceresi tek parça hâlinde
+kesildi; çünkü sıralamalarını, eşya satırlarını ve on iki parça durumu paylaşıyorlar.
+display.js'ten geri dört ad geliyor - modül kapsamında bir kez alınan iki DOM tutamağı,
+para biçimlendirici ve görev sayacı yeniden çizimi - dördü de fonksiyonların içinde
+kullanılıyor, modül değerlendirilirken değil.
+
+`sort_displayed_quests` bilerek geride bırakıldı. Envanterin karşılaştırıcılarıyla
+sıralıyor ama günlüğün durumu olan `quest_list`'i okuyor; almak, tek bir fonksiyon için
+görev panelinin durumunu envanter modülüne sürüklemek olurdu.
+
+Taşımayla birlikte bir kontrolün de değişmesi gerekti: `check_equipment_slot_names`,
+`equipment_slots_divs`'i `src/display.js`'ten adıyla okuyordu ve harita gidince kırıldı.
+Artık arıyor; çünkü okuduğu dosyayı sabit yazan bir kontrol, o dosya her kesildiğinde
+doğru işin üstünde kırılır.
+
+Altı sürüm önce eklenen `check_imports_resolve` burada kendini ödedi: yönlendirmenin
+atladığı `crafting.js`'in hâlâ display.js'ten `update_displayed_character_inventory`
+istediğini yakaladı.
 
 ### Yetenek çubukları ile duruş listesi, ve kontrolün göremediği iki şekil daha
 
