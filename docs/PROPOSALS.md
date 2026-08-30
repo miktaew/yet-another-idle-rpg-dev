@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 51 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 52 -->
 
 # Proposals
 
@@ -45,6 +45,13 @@ same universe.
 Every documentation file ships as a pair: `NAME.md` and `NAME.TR.md`. The
 English file is canonical. Code comments are written in English. Conversation
 with the project owner is in Turkish.
+
+**Every markdown file in the repository is checked, not only `docs/`.** Each
+carries a `doc-source` and `doc-version` header, the pair must sit at the same
+version, and every relative link must point at a file that exists.
+`check_docs_are_paired` covers all of them - the root `AGENTS.md` and `README.md`
+included, which had Turkish counterparts and no way to tell when one fell behind.
+Vendored third-party markdown is excluded; it is not ours to hold to this.
 
 ### D-4 — One canonical agent instruction file
 
@@ -1121,6 +1128,18 @@ not after. Each item is the request as it was given, and the state it is in.
     putting the phantom import back. It is the mirror of
     `check_modules_import_what_they_call`; between them an import list must agree with
     reality in both directions.
+62. **Check every markdown file, not just `docs/`** — `done`. The pairing check only
+    ever looked inside `docs/`, so the root `AGENTS.md` and `README.md` - both of which
+    have Turkish counterparts - had never been checked at all, and neither had a
+    `doc-version` header to check with. Both pairs have one now. The check also follows
+    every relative link in every markdown file: 9 pairs, 166 links, 18 files. Negative-
+    tested both ways, with a bumped version and a link to a file that does not exist.
+63. **Keep STORY.md current with the game** — `done`. Section 7 said every NPC was
+    exhausted, which stopped being true the moment the broker and the old woman got lines
+    that answer to standing; and it said nothing about the six settlement actions or about
+    reputation becoming a currency the places spend. Both are recorded now, in the
+    document's own register, and the square broker joined the address table on the
+    evidence of his own shipped lines - `sen`, not `siz`.
 ---
 ## Open decisions
 

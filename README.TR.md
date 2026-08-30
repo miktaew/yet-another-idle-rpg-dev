@@ -1,3 +1,5 @@
+<!-- doc-source: README.md  doc-version: 1 -->
+
 # Yet Another Idle RPG
 
 Skill seviyelendirme üzerinden ilerlemeye ağırlık veren, metin tabanlı bir idle

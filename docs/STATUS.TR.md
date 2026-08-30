@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 6 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 7 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -71,11 +71,11 @@ npm run check:bundle
 
 ## Kod nerede
 
-`src/`, 48 modülde 45.011 satır (`find src -name "*.js" | xargs wc -l`).
+`src/`, 49 modülde 45.127 satır (`find src -name "*.js" | xargs wc -l`).
 
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
-| `display.js` | 6.430 | Bütün DOM güncellemeleri. Hâlâ en büyüğü ve hâlâ sıradaki hedef. |
+| `display.js` | 5.878 | Bütün DOM güncellemeleri. Hâlâ en büyüğü ve hâlâ sıradaki hedef. |
 | `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
@@ -83,6 +83,7 @@ npm run check:bundle
 | `data/dialogues.js` | 3.073 | 22 diyalog ve replikleri. |
 | `crafting_recipes.js` | 1.989 | 139 tarif. |
 | `item_tooltips.js` | 706 | Eşya, etki ve tarif ipuçları. v0.6.62'de ayrıldı. |
+| `crafting_display.js` | 624 | Zanaat penceresi. v0.6.63'te ayrıldı. |
 | `save_load.js` | 1.951 | Kaydetme ve yükleme. v0.6.54'te `main.js`'ten ayrıldı. |
 
 `main.js` giriş noktasıdır ve bu bölme turundan önce 6.606 satırdı. Ondan çıkanlar:
@@ -170,7 +171,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.002 kimlik. |
 | `action button labels` | Düğmenin içine çizilen paragraf. 44 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
-| `documentation pairs` | Türkçe eşi geride kalmış İngilizce belge. |
+| `documentation` | Geride kalmış çeviri ya da hiçbir yeri göstermeyen bağlantı. 18 dosya. |
 | `no English written into the DOM` | Yereli atlayıp doğrudan yazılmış metin. 212 sabit. |
 | `hidden quest tasks` | İlerleyemeyen görev. 11 adım. |
 | `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 56 adım. |
@@ -187,7 +188,7 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 6.430 satırla `display.js`
+- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 5.878 satırla `display.js`
   hâlâ sırada; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
   ölçülüp henüz yapılmayanlar: `options.js`, `release.js`, ödüller.
 - **12. madde, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe malzemeler

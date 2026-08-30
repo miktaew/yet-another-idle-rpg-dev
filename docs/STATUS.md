@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 6 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 7 -->
 
 # Status
 
@@ -68,11 +68,11 @@ npm run check:bundle
 
 ## Where the code lives
 
-`src/` is 45,011 lines across 48 modules (`find src -name "*.js" | xargs wc -l`).
+`src/` is 45,127 lines across 49 modules (`find src -name "*.js" | xargs wc -l`).
 
 | File | Lines | What it holds |
 | --- | ---: | --- |
-| `display.js` | 6,430 | Every DOM update. Still the largest, and still the next target. |
+| `display.js` | 5,878 | Every DOM update. Still the largest, and still the next target. |
 | `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
@@ -80,6 +80,7 @@ npm run check:bundle
 | `data/dialogues.js` | 3,073 | 22 dialogues and their textlines. |
 | `crafting_recipes.js` | 1,989 | 139 recipes. |
 | `item_tooltips.js` | 706 | Item, effect and recipe tooltips. Split out in v0.6.62. |
+| `crafting_display.js` | 624 | The crafting window. Split out in v0.6.63. |
 | `save_load.js` | 1,951 | Save and load. Split out of `main.js` in v0.6.54. |
 
 `main.js` is the entry point and was 6,606 lines before this round of splitting. What
@@ -166,7 +167,7 @@ but the ones that encode a bug that shipped:
 | `content text ids` | Player-facing text with no locale row. 2,002 ids. |
 | `action button labels` | A paragraph rendered inside a button. 44 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
-| `documentation pairs` | An English doc whose Turkish counterpart has fallen behind. |
+| `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
 | `visible quest tasks` | A task named in the journal with no way to finish it. 56 tasks. |
@@ -183,7 +184,7 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **Item 48, splitting the big files** - `in progress`. `display.js` at 6,430 lines is
+- **Item 48, splitting the big files** - `in progress`. `display.js` at 5,878 lines is
   still next; the measured candidates and their coupling costs are listed there. `main.js`
   cuts still costed and not done: `options.js`, `release.js`, rewards.
 - **Item 12, the metals above steel** - `partly done`. Tier-4 and tier-5 materials

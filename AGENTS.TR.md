@@ -1,3 +1,5 @@
+<!-- doc-source: AGENTS.md  doc-version: 1 -->
+
 # AGENTS
 
 **Kanonik talimatlar: [docs/AGENTS.md](docs/AGENTS.md)** (Türkçesi:

@@ -1,3 +1,5 @@
+<!-- doc-source: README.md  doc-version: 1 -->
+
 # Yet Another Idle RPG
 
 A text-based idle RPG with a heavy focus on progression through skill levelling.

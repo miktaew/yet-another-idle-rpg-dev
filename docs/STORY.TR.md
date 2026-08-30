@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 10 -->
+<!-- doc-source: docs/STORY.md  doc-version: 11 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -132,7 +132,7 @@ edemez.
 | Kip | NPC'ler |
 | --- | --- |
 | *siz* (resmî) | `village elder`, `old craftsman`, `old woman of the slums`, `gate guard`, `farm supervisor`, bataklık `chief`, bataklık `tanner` ve her lonca görevlisi |
-| *sen* (samimi) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, bataklık `cook` / `tailor` / `scout` |
+| *sen* (samimi) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, `square broker`, bataklık `cook` / `tailor` / `scout` |
 
 Bataklık `tanner`'ı çevrilirken samimi gruptan resmî gruba taşındı. Bataklık kadrosunun
 tamamını samimi saymak fazla kabaydı: kadın yaşlı ve oyuncunun ona ilk repliği
@@ -170,10 +170,38 @@ tamamlanmış 36 bileşen. Cevherleri yalnızca körfezde satılıyor; aşçın�
 metal gelir, çok uzaktan"* repliğinin ilk kez doğru olması da bu. 5. kademe hâlâ
 iskele; bkz. P-12.
 
-**Her NPC tükenmiş durumda.** Yaşlı *"Not yet, but hopefully soon"* üzerinde
-duruyor. Muhafız *"that will have to be enough… I'm generally a terrible teacher"*
-üzerinde. Tabakhaneci hâlâ hiç teslim edilmeyen bir zırhı bekliyor. İzci için
-*"time is the only help for me"*.
+**İki istisna dışında her NPC tükenmiş durumda.** Yaşlı *"Not yet, but hopefully
+soon"* üzerinde duruyor. Muhafız *"that will have to be enough… I'm generally a
+terrible teacher"* üzerinde. Tabakhaneci hâlâ hiç teslim edilmeyen bir zırhı
+bekliyor. İzci için *"time is the only help for me"*.
+
+Tükenmemiş iki kişi, bir göreve değil itibara cevap verenler; ikisi de hiçbir şeyi
+çözmüyor. **Meydandaki komisyoncu** bir itibara da buğdaya biçtiği gibi fiyat
+biçiyor - *"üç kişi bana senin ne ettiğini sordu… fiyatını kimsenin bilmediği adam
+ya çok ucuzdur ya çok pahalı, ve hangisi olduğuna genellikle bir başkası karar
+verir"* - **kenar mahallenin yaşlı kadını** ise sokağın nöbet listesinin ne ettiğini
+değil neye mal olduğunu söylüyor: *"uğruna yataktan kalkacağımız insanların listesi…
+burada işler kötüye gittiğinde - gidecek - biri gelip başkasının değil sizin
+kapınızı çalacak."*
+
+**İtibar artık mekânların harcadığı bir para birimi.** Eskiden yükselen ve hiçbir
+şey yapmayan bir sayıydı: 610 Köy, 350 Kenar mahalle ve 320 Kasaba itibarı
+kazanılabiliyor, dört diyalog satırı bunlardan birine bakıyor ve kenar mahalleyi bir
+tüccarın kâr payı dışında hiçbir şey okumuyordu. Artık altı yerleşim aksiyonu ona
+cevap veriyor - her mekânda üç tane - ve hepsi o mekânların yanına eklenmedi, zaten
+oldukları şeyden kuruldu.
+
+**Kenar mahallede** - terazili baraka, çete gittiğinden beri kendi gecesini kendi
+bekleyen sokak, ve kasaba kapısında birine kefil olmak. Sonuncusu, oyunda kenar
+mahalle itibarını kasaba itibarına çeviren ilk şey ve kapının arkasında hiçbir şey
+açmıyor: bir kişiyi bir kapıdan geçiriyor, kefil de kahramanın kendisi.
+
+**Kasaba meydanında** - güvercinleri ekmekten uzak tutmak, tellalın nöbetini
+devralmak ve ekmekçilerin bayatlık kavgasında son sözü söylemek. Meydanda bir çeşme,
+güvercinler, gazete satan bir tellal ve birbirine bayat diyen iki adam vardı; hepsi
+arka plan seslerindeydi ve hiçbiri oyuncunun katılabileceği bir şey değildi. İşe
+yarayan hüküm ikiye bölüyor: içi birine, kabuğu ötekine; ikisini de memnun etmiyor
+ve ikisi de kabul ediyor - bir meydanda itibarın satın aldığı şey de bu.
 
 **Dört quest görevi bağlanmamış durumda**, her biri kodda "devam edecek" olarak
 işaretli: kasabaya girmek, mağarada daha derine inmek, köy genişlemesi ve

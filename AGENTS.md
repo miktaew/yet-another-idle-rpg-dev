@@ -1,3 +1,5 @@
+<!-- doc-source: AGENTS.md  doc-version: 1 -->
+
 # AGENTS
 
 **Canonical instructions: [docs/AGENTS.md](docs/AGENTS.md).** Read that file. It

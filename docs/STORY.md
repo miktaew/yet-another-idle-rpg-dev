@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 10 -->
+<!-- doc-source: docs/STORY.md  doc-version: 11 -->
 
 # Story canon
 
@@ -125,7 +125,7 @@ axis.
 | Register | NPCs |
 | --- | --- |
 | *siz* (formal) | `village elder`, `old craftsman`, `old woman of the slums`, `gate guard`, `farm supervisor`, swampland `chief`, swampland `tanner`, and any guild official |
-| *sen* (informal) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, swampland `cook` / `tailor` / `scout` |
+| *sen* (informal) | `village guard`, `village millers`, `suspicious man`, `nekomimi proprietress`, `square broker`, swampland `cook` / `tailor` / `scout` |
 
 The swampland `tanner` moved from the informal group to the formal one while she was
 being translated. Grouping the whole swampland cast as informal was too coarse: she is
@@ -164,10 +164,38 @@ finished, since before this fork. Their ore is sold at the bay and nowhere else,
 which is the cook's *"many metal come from there, from very far away"* being true
 for the first time. Tier 5 is still scaffolding; see P-12.
 
-**Every NPC is exhausted.** The elder rests on *"Not yet, but hopefully soon"*.
-The guard rests on *"that will have to be enough… I'm generally a terrible
-teacher"*. The tanner is still waiting for armour that is never delivered. The
-scout has *"time is the only help for me"*.
+**Every NPC is exhausted, with two exceptions.** The elder rests on *"Not yet, but
+hopefully soon"*. The guard rests on *"that will have to be enough… I'm generally a
+terrible teacher"*. The tanner is still waiting for armour that is never delivered.
+The scout has *"time is the only help for me"*.
+
+The two that are not exhausted are the two who answer to standing rather than to a
+quest, and neither resolves anything. The **square broker** prices a reputation the
+way he prices grain - *"three of them have asked me what you are worth… a man whose
+price nobody knows is either very cheap or very expensive, and which one it turns
+out to be is usually decided by somebody else"* - and the **old woman of the slums**
+tells the hero what the row's roster costs rather than what it is worth: *"it is the
+people we would get out of bed for… when things go badly here, and they will,
+somebody is going to come and knock on your door instead of somebody else's."*
+
+**Standing is a currency the places spend now.** It used to be a number that rose
+and did nothing: 610 Village, 350 Slums and 320 Town were earnable, four dialogue
+lines read any of it, and nothing at all read the slums except a trader's margin.
+Six settlement actions answer to it now, three in each place, and they are built out
+of what those places already were rather than added beside them.
+
+In the **slums** - the shed with the scales, the row that keeps its own nights since
+the gang went, and standing surety for somebody at the town gate. That last one is
+the first thing in the game that turns slums standing into town standing, and it
+opens nothing behind the gate: it buys one person through a door, with the hero as
+the surety.
+
+In the **town square** - keeping the pigeons off the bread, taking the crier's
+shift, and being handed the casting vote in the bakers' argument about staleness.
+The square had a fountain, pigeons, a newspaper crier and two men calling each other
+stale, all of it in its background noises and none of it anything a player could
+join. The verdict that works splits it: crumb to one, crust to the other, satisfying
+neither and accepted by both, which is what standing buys in a square.
 
 **Four quest tasks sit unwired**, each marked in code as to-be-continued: getting
 into the town, going deeper into the cave, the village expansion, and the light in

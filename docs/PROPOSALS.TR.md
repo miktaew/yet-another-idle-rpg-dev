@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 51 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 52 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -46,6 +46,14 @@ ve yarım kalmış bölgeler. Yeni içerik, aynı evrenin doğal devamı gibi ok
 Her doküman dosyası çift olarak yayınlanır: `NAME.md` ve `NAME.TR.md`. İngilizce
 dosya kanoniktir. Kod yorumları İngilizce yazılır. Proje sahibiyle iletişim
 Türkçedir.
+
+**Yalnızca `docs/` değil, depodaki her markdown dosyası denetlenir.** Her biri bir
+`doc-source` ve `doc-version` başlığı taşır, çiftin iki yarısı aynı sürümde olmak
+zorundadır ve her göreli bağlantı var olan bir dosyayı göstermelidir.
+`check_docs_are_paired` hepsini kapsıyor - Türkçe eşi olduğu hâlde birinin geride
+kaldığını anlamanın hiçbir yolu bulunmayan kök `AGENTS.md` ve `README.md` dâhil.
+Dışarıdan alınmış üçüncü taraf markdown'ı kapsam dışı; onu bu kurala tabi tutmak
+bize düşmez.
 
 ### D-4 — Agent'lar için tek kanonik talimat dosyası
 
@@ -1132,6 +1140,18 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     aktarıldığı yerde var olmasını şart koşuyor: 47 dosyada 677 ad; hayalet içe aktarma geri
     konularak tersten sınandı. Bu, `check_modules_import_what_they_call`'ın aynadaki eşi;
     ikisi birlikte bir içe aktarma listesinin gerçekle iki yönden de uyuşmasını istiyor.
+62. **Yalnızca `docs/` değil, her markdown dosyası denetlensin** — `bitti`. Çift kontrolü
+    yalnızca `docs/` içine bakıyordu; dolayısıyla Türkçe eşi bulunan kök `AGENTS.md` ve
+    `README.md` hiç denetlenmemişti ve denetlenecek bir `doc-version` başlıkları da yoktu.
+    Artık ikisinde de var. Kontrol ayrıca her markdown dosyasındaki her göreli bağlantıyı
+    izliyor: 9 çift, 166 bağlantı, 18 dosya. İki yönden de tersten sınandı - sürüm
+    kaydırılarak ve var olmayan bir dosyaya bağlantı verilerek.
+63. **STORY.md oyunla güncel tutulsun** — `bitti`. 7. bölüm her NPC'nin tükendiğini
+    söylüyordu; komisyoncu ile yaşlı kadın itibara cevap veren satırlar kazandığı anda bu
+    doğru olmaktan çıktı. Altı yerleşim aksiyonundan ve itibarın mekânların harcadığı bir
+    para birimine dönüşmesinden de hiç söz etmiyordu. İkisi de belgenin kendi diliyle
+    işlendi; meydandaki komisyoncu da kendi yayımlanmış satırlarının tanıklığıyla hitap
+    tablosuna girdi - `siz` değil, `sen`.
 ---
 ## Bekleyen kararlar
 
