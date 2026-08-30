@@ -35,6 +35,8 @@ const config = {
 
     equipment_crafting_quality_precision: 2,
     item_crafting_quality_precision: 4,
+
+    enable_dev_mode: false,
 };
 
 

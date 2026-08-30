@@ -359,60 +359,45 @@ function round(number) {
     return +number.toFixed(1);
 }
 
+
 /**
- * @param {Object} params
- * @param {Item} params.item
- * @param {Object} params.options
- * @param {String} params.options.class_name
- * @param {String} params.options.trader
- * @param {Boolean} params.options.skip_quality
- * @param {Array} params.options.quality array with 1 or 2 values (1 - show only it, instead of item's; 2 - show start comparison between the two)
- */
-/**
- * How this item would change things if it replaced what is worn in its slot.
- *
- * Flat values as a difference, multipliers as a percentage - those are the two
- * questions a player has about a piece of gear. A stat that comes out identical is left
- * out, because the point of the block is what would change.
- *
- * Returns "" when there is nothing to say: an empty slot, the worn item itself, or a
- * quality range rather than one quality.
+ * Writes comparison of hovered equippable item vs one currently equipped in same slot, to be used in item tooltip
  *
  * @param {Object} item the item being hovered
- * @param {Number} quality optional, the quality the tooltip is showing
+ * @param {Number} quality
+ * @returns {String} HTML string
  */
-function equipment_comparison(item, quality) {
+function create_equipment_comparison(item, quality) {
     if(!item?.equip_slot) {
         return "";
     }
+
     const worn = character.getEquipment()[item.equip_slot];
     if(!worn || worn === item) {
         return "";
     }
 
-    const lines = [];
-    const round2 = (value) => Math.round(value * 100) / 100;
+    let comparison = "";
 
     const flat_line = (label, mine, theirs) => {
-        const delta = round2((mine || 0) - (theirs || 0));
+        const delta = Math.round(((mine || 0) - (theirs || 0))*100)/100;
         if(!delta) {
             return;
         }
         const better = delta > 0 ? "comparison_better" : "comparison_worse";
-        lines.push(`<br><span class="${better}">${label}: ${delta > 0 ? "+" : ""}${delta}</span>`);
+        comparison += `<br><span class="${better}">${label}: ${delta > 0 ? "+" : ""}${delta}</span>`;
     };
 
     const multiplier_line = (label, mine, theirs) => {
-        const percent = Math.round(((mine || 1) / (theirs || 1) - 1) * 1000) / 10;
-        if(!percent) {
+        const multi = 1 + Math.round(((mine || 1) / (theirs || 1) - 1) * 100) / 100;
+        if(multi == 1) {
             return;
         }
-        const better = percent > 0 ? "comparison_better" : "comparison_worse";
-        lines.push(`<br><span class="${better}">${label}: ${percent > 0 ? "+" : ""}${percent}%</span>`);
+        const better = multi > 1 ? "comparison_better" : "comparison_worse";
+        comparison += `<br><span class="${better}">${label}: ${multi > 0 ? "x" : "x"}${multi}</span>`;
     };
 
-    //The headline number for the slot, whichever one this kind of item has. The worn
-    //item is asked without a quality so it answers with its own.
+
     if(item.getAttack && worn.getAttack) {
         flat_line("Attack", item.getAttack(quality), worn.getAttack());
     } else if(item.getDefense && worn.getDefense) {
@@ -433,11 +418,23 @@ function equipment_comparison(item, quality) {
         }
     }
 
-    if(lines.length === 0) {
+    if(!comparison) {
         return "";
+    } else {
+        return "<br><br>Compared to equipped:" + comparison;
     }
-    return `<br><br>Compared to equipped:${lines.join("")}`;
+
 }
+
+/**
+ * @param {Object} params
+ * @param {Item} params.item
+ * @param {Object} params.options
+ * @param {String} params.options.class_name
+ * @param {String} params.options.trader
+ * @param {Boolean} params.options.skip_quality
+ * @param {Array} params.options.quality array with 1 or 2 values (1 - show only it, instead of item's; 2 - show start comparison between the two)
+ */
 function create_item_tooltip_content({item, options={}, is_trade = false}) {
     let item_tooltip = "";
 
@@ -602,9 +599,9 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         });
     }
 
-    //Only for a single quality: a range has no one value to subtract.
+    //for singular tooltips (i.e. not ones in crafting), add comparison with worn item
     if(!(options?.quality?.length > 1)) {
-        item_tooltip += equipment_comparison(item, quality);
+        item_tooltip += create_equipment_comparison(item, quality);
     }
 
     if(item?.base_size) {

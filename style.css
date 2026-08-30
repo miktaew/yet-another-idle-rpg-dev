@@ -2868,10 +2868,9 @@ i {
 	background: white; 
   }
 
- /* An item tooltip's comparison with what is worn: better in green, worse in red. */
- .comparison_better {
-	 color: green;
- }
- .comparison_worse {
-	 color: red;
- }
+.comparison_better {
+	color: rgb(51, 255, 0);
+}
+.comparison_worse {
+	color: red;
+}
