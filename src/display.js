@@ -4972,9 +4972,6 @@ function update_displayed_stance(stance) {
     }
 }
 
-//The argument is the stance REGISTRY, not the faved_stances map: which ids are starred
-//is imported from main.js, and what is needed here is the object those ids resolve
-//through.
 function update_displayed_faved_stances(stances) {
     
     const list = document.getElementById("character_stance_selection");
@@ -5040,12 +5037,6 @@ function create_new_bestiary_entry(enemy_name) {
         if(rank_a != rank_b) {
             return rank_a - rank_b;
         } else {
-            /*
-                localeCompare rather than `>`: comparing strings with `>` orders them by
-                UTF-16 code unit, which puts every accented or non-ASCII letter after Z.
-                It also never returns 0, so two entries with the same name flip order on
-                every re-sort.
-            */
             return a.querySelector(".bestiary_entry_name").innerText
                 .localeCompare(b.querySelector(".bestiary_entry_name").innerText);
         }
@@ -5257,11 +5248,7 @@ function create_new_booklist_entry(book_name) {
 
     booklist_list.appendChild(booklist_entry_divs[book_name]);
 
-    /*
-        Sorts by title. Subtracting one title from another - which is what this did - is
-        NaN for every pair of strings, and a comparator that always returns NaN sorts
-        nothing: the anthology was in whatever order the books happened to be read in.
-    */
+    //sorts by title
     [...booklist_list.children].sort((a, b) =>
                                     a.getAttribute("data-book")
                                         .localeCompare(b.getAttribute("data-book")))

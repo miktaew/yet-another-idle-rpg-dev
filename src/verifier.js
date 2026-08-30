@@ -6,7 +6,6 @@ import { enemy_templates } from "./enemies.js";
 import { item_templates } from "./items.js";
 import { locations } from "./data/locations.js";
 import { skills, skill_categories } from "./data/skills.js";
-import { traders } from "./data/traders.js";
 import { quests } from "./quests.js";
 import { market_region_mapping } from "./market_saturation.js";
 import { translations } from "./translation.js";
@@ -38,16 +37,6 @@ function Verify_Game_Objects() {
                 }
             }
         }
-        /*
-        UNNEEDED, check is already done in item creation
-        if(item.components) {
-            Object.values(item.components).forEach(component => {
-                if(!item_templates[component]) {
-                    console.error(`Component "${component}" of item "${key}" is not defined in item templates`);
-                    has_issue = true;
-                }
-            })
-        }*/
 
         if(item.stats) {
             Object.keys(item.stats).forEach(stat_key => {

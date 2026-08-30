@@ -869,8 +869,6 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         } else {
             //random loss
 
-            //An empty list indexed at Math.floor(0 * random) is undefined, which reaches
-            //the player as a blank line or a missing-text marker depending on the caller.
             const lines = action.failure_texts.random_loss;
             result_message = lines?.length
                 ? lines[Math.floor(lines.length * Math.random())]
@@ -1706,13 +1704,12 @@ function do_enemy_combat_action(enemy_id) {
         if(enemy_tag_to_skill_mapping[enemy_tag]) {
             for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
                 const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
+
                 add_xp_to_skill({skill, xp_to_add: attacker.xp_value/enemy_count_xp_mod});
+
                 const {modifier_to_evasion, modifier_to_defense} = skill.get_stat_modifiers();
+                
                 evasion_chance_modifier *= modifier_to_evasion || 1;
-                //`|| 0`, not `|| 1`: this one is a SUM, and 1 is the identity for the
-                //multiplication on the line above, not for addition. Most skills return no
-                //modifier_to_defense at all, so every matched tag-skill was handing out a
-                //free point of defence that no skill declares.
                 defense_modifier += modifier_to_defense || 0;
             }
         }
@@ -2224,17 +2221,7 @@ function get_location_rewards(location) {
     }
 }
 
-/**
- * processes rewards and logs all necessary messages
- * @param {Object} rewards_data
- * @param {Object} rewards_data.rewards //the standard object with rewards
- * @param {String} rewards_data.source_type //location, gameAction, textline
- * @param {Boolean} rewards_data.is_first_clear //exclusively for location rewards (and only for a single message to be logged)
- * @param {Boolean} rewards_data.inform_overall //if unlocks are to be logged
- * @param {Boolean} rewards_data.inform_textline //if textline unlock is to be logged (requires inform_overall to also be true)
- * @param {String} rewards_data.source_name //in case it's needed for logging a message
- * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
- */
+
 /*
     The reward keys process_rewards reads, and the lock keys it reads inside `locks`.
 
@@ -2249,32 +2236,37 @@ const reward_keys = [
     "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
     "textlines", "traders", "xp",
 ];
+const special_keys = ["required_clear_count"];
 const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];
 
-/**
- * Reports any key in a reward object that nothing will read.
- *
- * Called with the source so the message says where to look, because a reward object on
- * its own is not something you can search for.
- */
 function warn_about_unread_reward_keys(rewards, source_type, source_name) {
     const where = source_name ? ` (${source_type} "${source_name}")` : "";
-
+    const valid_keys = [...reward_keys, ...special_keys];
     for(const key of Object.keys(rewards)) {
-        if(!reward_keys.includes(key)) {
-            console.warn(`Reward key "${key}"${where} is not read by process_rewards`
-                + ` - that reward does nothing. Valid keys: ${reward_keys.join(", ")}.`);
+        if(!valid_keys.includes(key)) {
+            console.warn(`Reward key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${valid_keys.join(", ")}.`);
         }
     }
     for(const key of Object.keys(rewards.locks || {})) {
         if(!lock_keys.includes(key)) {
-            console.warn(`Lock key "${key}"${where} is not read by process_rewards`
-                + ` - that lock does nothing. Valid keys: ${lock_keys.join(", ")}.`);
+            console.warn(`Lock key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${lock_keys.join(", ")}.`);
         }
     }
 }
+
+/**
+ * processes rewards and logs all necessary messages
+ * @param {Object} rewards_data
+ * @param {Object} rewards_data.rewards //the standard object with rewards
+ * @param {String} rewards_data.source_type //location, gameAction, textline
+ * @param {Boolean} rewards_data.is_first_clear //exclusively for location rewards (and only for a single message to be logged)
+ * @param {Boolean} rewards_data.inform_overall //if unlocks are to be logged
+ * @param {Boolean} rewards_data.inform_textline //if textline unlock is to be logged (requires inform_overall to also be true)
+ * @param {String} rewards_data.source_name //in case it's needed for logging a message
+ * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
+ */
 function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
-    warn_about_unread_reward_keys(rewards, source_type, source_name);
+    warn_about_unread_reward_keys(rewards, source_type, source_name); //remember to update keys it accepts if process_rewards gets expanded to new ones
     let was_any_location_availability_changed = false;
     let is_current_location_reload_needed = false;
     if(rewards.messages && !is_from_loading) {
@@ -2578,13 +2570,6 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             const count = is_bare_name ? 1 : (entry.count || 1);
             const quality = is_bare_name ? undefined : entry.quality;
 
-            //getItem instead of stamping the quality onto the template: getInventoryKey()
-            //caches into this.inventory_key, and a template's key is cached long before any
-            //reward is granted, so `item.quality = ...` never reached the key - the five
-            //starter weapons in dialogues.js ask for quality 50 and arrived at 100, worth
-            //double. It also wrote to the shared template, where getBaseValue's
-            //`quality || this.quality || 100` fallback reads it. This is the same call
-            //components/inventory_component.js makes for the item_id form.
             const item = quality ? getItem({...template, quality}) : template;
 
             log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
@@ -3702,24 +3687,7 @@ function create_save() {
     }
 } 
 
-/**
- * called from index.html
- * @returns save string encoded to base64
- */
-/**
- * Base64 for text that is not Latin-1.
- *
- * btoa throws InvalidCharacterError on any character above U+00FF, and the savefile
- * carries the hero's name - which the player types. A hero called Ayşe, José or Müller
- * makes every export throw, and because the throw happens inside the Export button's
- * onclick it is silent: the button simply does nothing.
- *
- * Older exports still load. One could only ever have been produced from pure Latin-1,
- * and decoding ASCII as UTF-8 gives ASCII back.
- *
- * The loops are deliberate: String.fromCharCode(...bytes) spreads a whole savefile
- * across the argument list and overflows the stack on a long one.
- */
+//encodes provided text (presumably: JSONified save data) to base64, necessary as 'btoa' does not support any characters outside of Latin1 encoding
 function to_base64(text) {
     const bytes = new TextEncoder().encode(text);
     let latin1 = "";
@@ -3737,6 +3705,11 @@ function from_base64(encoded) {
     }
     return new TextDecoder().decode(bytes);
 }
+
+/**
+ * called from index.html
+ * @returns save string encoded to base64
+ */
 function save_to_file() {
     if(Date.now() - last_rewarded_export > config.time_between_export_rewards) {
         last_rewarded_export = Date.now();

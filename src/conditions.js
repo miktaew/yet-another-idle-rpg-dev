@@ -175,14 +175,15 @@ const process_conditions = (conditions, context) => {
                 return;
             }
 
-            /*
-                A location with no enemy_count - every non-combat one - would divide to
-                NaN, and every comparison against NaN is false, so an at_least gate would
-                silently OPEN instead of closing. Zero clears is the honest answer.
-            */
-            const clears = location.enemy_count
-                ? Math.floor(location.enemy_groups_killed / location.enemy_count)
-                : 0;
+            if(!location.tags.combat_zone) {
+                console.error(`A condition asks for clears of "${location_key}", which is not a combat zone.`);
+                met = 0;
+                return;
+            }
+            //both safeguards could be moved to verifier instead?
+
+            
+            const clears = Math.floor(location.enemy_groups_killed / location.enemy_count)
             const wanted = conditions[0].location_clears[location_key];
 
             if("at_least" in wanted && clears < wanted.at_least) {
@@ -201,9 +202,6 @@ const process_conditions = (conditions, context) => {
                 console.error(`A condition requires quest "${conditions[0].quests_completed[i]}" to be finished, but no such quest exists.`);
                 met = 0;
             } else if(!quest.isFinished()) {
-                //isFinished(), not .is_finished: the field moved into the availability
-                //component, so reading it off the instance is always undefined and this
-                //gate always reported "not finished".
                 met = 0;
             }
         }
@@ -211,8 +209,6 @@ const process_conditions = (conditions, context) => {
 
     if(conditions[0].quests_not_completed) {
         for(let i = 0; i < conditions[0].quests_not_completed.length; i++) {
-            //context.quests, not a bare `quests`: this file imports nothing on purpose,
-            //so the bare reference threw ReferenceError the first time content used it.
             const quest = context.quests[conditions[0].quests_not_completed[i]];
             if(!quest) {
                 console.error(`A condition requires quest "${conditions[0].quests_not_completed[i]}" to be unfinished, but no such quest exists.`);

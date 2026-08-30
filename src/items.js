@@ -359,14 +359,6 @@ class ItemComponent extends Item {
         this.use_quality = item_data.use_quality ?? true;
         this.quality = Math.round(item_data.quality) || 100;
 
-        /*
-            The material a shown name is assembled from. crafting_component_filling.js has
-            always passed this and no class stored it, so `material_id` was undefined on
-            every component instance - which means the assembleName branch of
-            Armor.getDisplayName and Shield.getDisplayName can never run, and every
-            generated helmet, armour, glove, shoe, trouser, shield and weapon falls through
-            to its raw English name.
-        */
         this.material_id = item_data.material_id;
     }
 
@@ -4031,8 +4023,6 @@ function add_gear() {
     });
 
     item_templates["Cooked potato"] = new UsableItem({
-        //"Cooked potato", not "Potato": the name is what the player reads, and this one
-        //made a cooked potato indistinguishable from the raw one in the inventory.
         name: "Cooked potato", description: "A common tuber with versatile culinary usage, though this one was simply cooked",
         value: 40,
         effects: [{effect: "Basic meal", duration: 150}],
