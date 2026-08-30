@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 57 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 58 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,77 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-30
+
+### Günlük panelleri, alta saran bir sekme çubuğuna göre boyutlandırılmıştı
+
+**v0.6.72.** Üç kez bildirildi: unvanlar, keşifler ve görev listesi günlüğün alt
+kenarını aşıp altındaki beceriler kutusunun üzerine basıyor, ayrıca görev listesi
+kendi "tamamlananları gizle" çubuğunun altına giriyordu.
+
+Sebep tek. Sekme çubuğunun altındaki her şey, o çubuğun boyuna dair bir tahmine
+göre boyutlandırılmıştı:
+
+```
+#journal_div          height: 330px
+#journal_content_div  height: 287px   <- 330 eksi 43px'lik çubuk
+paneller              height: 284px
+```
+
+Çalışan oyunda ölçüldü: yedi sekmeyle çubuk **üç satır ve 72px** yer kaplıyor, tek
+satır ve 43px değil. 330px'lik günlüğe karşı 287 + 72 = 329, yani her panel alttan
+~18px dışarı taşıyor ve bu zincirde hiçbir şey kırpmıyor. v0.6.69'da eklenen
+Unvanlar sekmesi çubuğu üçüncü satıra itmiş - bir sekme gizlenerek kanıtlandı:
+çubuk iki satıra düşüyor, taşma tam olarak sıfırlanıyor.
+
+Sayılar kaldırıldı: `#journal_div` bir sütun, içerik çubuktan geriye kalanı alıyor,
+paneller de onun %100'ü. Baştan sona `min-height: 0`, ki içteki kayan listeler
+küçülebilsin, kendi yüksekliklerini ağaçta yukarı doğru dayatmasın.
+
+Görev çubuğu aynı hatanın küçük hâliydi. `position: absolute` ve `bottom: 0`; en
+yakın konumlanmış atası görev kutusu değil `#journal_div`, dolayısıyla çubuk
+günlüğün alt kenarına çakılıyken üstündeki liste kendi yüksekliğini koruyordu.
+Artık sütunun son satırı ve kutu yerine `#quest_list` kayıyor: kutu kaymaya devam
+etseydi çubuk da içerikle birlikte kayıp giderdi.
+
+İki farklı pencere boyutunda, gerçek bir kayıtla doğrulandı: yedi panel de
+günlüğün 2px içinde, çubuk 2px içinde, görev listesi sonuna kadar kaydırıldığında
+listenin altı çubuğun üstüyle tam olarak buluşuyor.
+
+**Kontrol, ve kontroldeki kör nokta.**
+`check_journal_panels_are_styled`, her panele yükseklik verilmiş mi ve içinde kayan
+bir şey var mı diye soruyordu. Burada ikisi de doğruydu - yükseklik yalnızca başka
+bir düzene ait bir sayıydı. Artık günlük panellerinde ve içerik div'inde piksel
+cinsinden yüksekliği reddediyor; çünkü bu her zaman, alta saran bir çubuğa dair bir
+tahmindir.
+
+Bunu yazarken kontrolün kendisindeki ikinci bir kusur ortaya çıktı: her panelin
+listesini `${panel}_list` diye tahmin ediyordu, ki görevler sekmesi için bu yanlış -
+`#quest_list`, tekil. O sırada kutu kaydığı için ıska bir şeye mal olmamış ve
+kaydırma listeye taşınana kadar görünmez kalmıştı. Artık kimlikleri işaretlemeden
+okuyor. Üç yönden negatif test edildi: 287px geri konarak, `#quest_list`'in
+kaydırması alınarak ve bir sekme gizlenerek.
+
+### Bir kaydın kaybettiği görev ilerlemesi için bir araç
+
+`node scripts/restore-quests.js <yeni-kayit.txt> <eski-kayit.txt>`
+
+30 Ağustos 2026'daki iki dışa aktarım arasında bir kayıt, görev bloğu düzleşmiş
+hâlde geri geldi - her görevde `is_active` false, `is_finished` false,
+`task_status` boş - karakterin geri kalanına ise dokunulmamıştı. Dışa aktarımlar
+üzerinden ölçüldü: 08-29 22:23'te 14 tamamlanmış görev ve 18'inde adım ilerlemesi
+var; aynı karakterin daha fazla tecrübeye sahip 08-30 01:44 kaydında 1 ve 2.
+
+Sebep giderildi ve yuvarlak testi temiz: o kaydı yükleyip doğrudan geri yazmak 14
+tamamlanmış, 4 aktif, 18'inde adım ilerlemesi döndürüyor, hiçbir şey kaybolmuyor.
+Ama hata etkinken yazılmış bir kayıt kaybı ileriye taşıyor; eski dışa aktarımı
+yeniden oynamak ise o günden beri kazanılan her şeyi geri veriyor.
+
+Birleştirme hiçbir ilerlemeyi geri almaz - `is_finished` iki kayıttan birinde true
+ise kazanır, `is_active` de öyle (görev zaten tamamlanmadıysa), `task_status` ise
+indeks indeks birleşir - yani sağlıklı bir çiftte hiçbir şey yapmaz ve her çiftte
+tekrar çalıştırılabilir. `task_status` konumsaldır ve görevler o günden beri yeni
+adımlar kazandı; bu yüzden dizi, iki kayda değil *güncel* tanıma göre eşlenir:
+fazla girdiler atılır, eksikler false ile tamamlanır.
 
 ### Özgün oyuna oyunun içinden bağlantı, ve çevrilmeyi öğrenen ipuçları
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 57 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 58 -->
 
 # Changelog
 
@@ -20,6 +20,79 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-30
+
+### The journal's panels were sized against a tab bar that wraps
+
+**v0.6.72.** Reported three times: titles, discoveries and the quest list
+each painting past the bottom of the journal and over the skills box below,
+plus the quest list sliding under its own hide-completed bar.
+
+One cause. Everything under the tab bar was sized against a guess at how tall
+that bar is:
+
+```
+#journal_div          height: 330px
+#journal_content_div  height: 287px   <- 330 minus a 43px bar
+the panels            height: 284px
+```
+
+Measured in the running game: with seven tabs the bar takes **three rows and
+72px**, not one row and 43px. 287 + 72 = 329 against a 330px journal, so each
+panel hung ~18px out of the bottom, and nothing in that chain clips. Adding
+the Titles tab in v0.6.69 pushed the bar onto the third row - proved by hiding
+one tab, which drops the bar to two rows and the overflow to exactly zero.
+
+The numbers are gone: `#journal_div` is a column, the content takes what the
+bar leaves, the panels are 100% of that, `min-height: 0` throughout so the
+scrolling lists are allowed to shrink instead of forcing their height back up
+the tree.
+
+The quest bar was the same mistake in miniature. `position: absolute` with
+`bottom: 0`, whose nearest positioned ancestor is `#journal_div` rather than
+the quest box - so it was pinned to the journal's bottom edge while the list
+above kept its own height. It is the column's last row now, and `#quest_list`
+scrolls rather than the box: had the box kept scrolling, the bar would scroll
+away with the content.
+
+Verified at two viewports with a real save: all seven panels 2px inside the
+journal, the bar 2px inside it, and with the quest list scrolled to its end
+the list's bottom meets the bar's top exactly.
+
+**The check, and a blind spot in the check.**
+`check_journal_panels_are_styled` asked whether each panel had a height and
+whether something in it scrolled. Both were true here - the height was simply
+a number about a different layout. It now refuses a px height on a journal
+panel or on the content div, because that is always a guess about a bar that
+wraps.
+
+Writing that exposed a second fault in the check itself: it guessed each
+panel's list as `${panel}_list`, which is wrong for the quests tab -
+`#quest_list`, singular. The box scrolled at the time, so the miss cost
+nothing and stayed invisible until the scrolling moved to the list. It reads
+the ids out of the markup now. Negative-tested three ways: the 287px put back,
+the scrolling taken off `#quest_list`, and a tab hidden.
+
+### A tool for the quest progress that a save lost
+
+`node scripts/restore-quests.js <newer-save.txt> <older-save.txt>`
+
+Between two exports on 2026-08-30 a save came back with its quest block
+flattened - every quest `is_active` false, `is_finished` false, `task_status`
+empty - while the rest of the character was untouched. Measured across the
+exports: 08-29 22:23 holds 14 finished quests and 18 with task progress;
+08-30 01:44, same character and more xp, holds 1 and 2.
+
+The cause is fixed and the round-trip is clean: loading that save and writing
+it straight back returns 14 finished, 4 active, 18 with task progress, losing
+nothing. But a save written while the bug was live carries the loss forward,
+and replaying the older export gives up everything earned since.
+
+The merge never takes progress away - `is_finished` true in either save wins,
+`is_active` likewise unless already finished, `task_status` merged index by
+index - so it is a no-op on a healthy pair and idempotent on any pair.
+`task_status` is positional and quests have gained tasks since, so the array
+is matched against the *current* definition rather than either save: extra
+entries dropped, missing ones filled with false.
 
 ### The original game is linked from the game, and tooltips learned to translate
 
