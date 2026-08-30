@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 65 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 66 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -243,10 +243,11 @@ söyleyemez.
 - `Enemy` zaten `on_hit`, `on_damaged` ve `on_death` alıyor ve dört düşman bunları
   kullanıyor. Stance kararını anlamlı kılacak düşmanların ihtiyaç duyduğu yeniden
   kullanılabilir soyutlama budur; ikincisine gerek yok.
-- Tier 5'i tıkayan şey tasarım değil, iki locale satırı: `material white` ve
-  `material black` hiçbir dilde yok, yani her white-steel ve black-steel bileşeni
-  oyuncuya kendi anahtarını gösterirdi. P-12'nin kalan ilk adımı budur ve iki
-  satırdır.
+- Tier 5'i tıkayan şey adlandırma değil, tarifler — ve ölçülene kadar P-12 bunun
+  tersini söylüyordu. Üretici 36 white-steel ve black-steel bileşeni kuruyor, hiçbir
+  şey bunların hiçbirini üretmiyor ve locale satırları en başından beri yerinde.
+  Sayıyı `check_components_can_be_made` tutuyor: üretilen 203 bileşenin 159'una
+  ulaşılabiliyor, 44'üne ulaşılamıyor ve o 44'ün 36'sı bu.
 
 #### Fazlar
 

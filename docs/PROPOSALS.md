@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 65 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 66 -->
 
 # Proposals
 
@@ -139,11 +139,14 @@ descriptions in both languages.
 
 **What is left, and in what order:**
 
-2. **Tier 5: white steel and black steel.** The ingots and chainmail exist as items.
-   What does not exist is a display name: `material white` and `material black` have
-   no row in either locale, which is where the original work stopped. A tier above
-   tier 4 also wants a station above 3, and there is none - the mountain flue is the
-   game's best fire.
+2. **Tier 5: white steel and black steel.** Re-measured, because the blocker recorded
+   here was the wrong one. The display names are **not** missing: the generator asks
+   for `material name white steel` and `material name black steel`, and both rows are
+   in both locales along with the other thirty-six. What is missing is every recipe -
+   36 components are built and not one of them is produced by anything, which
+   `check_components_can_be_made` now says on every push. A tier above tier 4 also
+   wants a station above 3, and there is none - the mountain flue is the game's best
+   fire.
 3. **An ore that is mined rather than bought.** Buying at the bay is correct for a
    metal that comes "from very far away", but a tier the player can only shop for is
    thin. Where it is mined is a story question and belongs to whatever region opens
@@ -229,10 +232,11 @@ show that the crate and the stolen object share a hand, and may not say whose.
 - `Enemy` already takes `on_hit`, `on_damaged` and `on_death`, and four enemies use
   them. That is the reusable abstraction stance-relevant enemies need; there is no
   case for a second one.
-- Tier 5 is blocked on two locale rows, not on design: `material white` and
-  `material black` have no entry in either locale, so every white-steel and
-  black-steel component would render its own key at the player. That is P-12's
-  remaining first step and it is two lines.
+- Tier 5 is blocked on recipes, not on naming - and P-12 said the opposite until this
+  was measured. The generator builds 36 white-steel and black-steel components,
+  nothing produces any of them, and their locale rows have been in place all along.
+  `check_components_can_be_made` holds the number: 159 of 203 generated components
+  are reachable, 44 are not, and 36 of those 44 are this.
 
 #### Phases
 

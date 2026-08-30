@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 12 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 13 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on beş dosya, yardımcılarıyla ~6.100 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on beş dosya, yardımcılarıyla ~6.300 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 143 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -93,8 +93,8 @@ npm run check:bundle
 `save_load.js`, `run_stats.js`, `game_state.js`, `ui_helpers.js`, `crafting.js`,
 `world_index.js`. Her kesme iki sayı ölçülerek seçildi — taşınan kodun kalanlardan kaç
 ada ihtiyacı var ve kalan kodun geri kaç ada ihtiyacı var — çünkü döngüyü yaratan
-ikincisidir. Ölçülmüş ama henüz yapılmamış kesmeler ve maliyetleri
-[PROPOSALS.md](PROPOSALS.md) 48. maddededir.
+ikincisidir. 48. madde altıncı kesmeyle kapandı; neyi ölçtüğü —
+nerede durmaya karar verdiği dâhil — [CHANGELOG.TR.md](CHANGELOG.TR.md) dosyasındadır.
 
 ---
 
@@ -166,7 +166,7 @@ gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D
 
 ## Kontroller neyi kapsıyor
 
-`tests/checks/` altında on altı dosya. Değerli olanlar genel biçim kuralları değil,
+`tests/checks/` altında on beş dosya. Değerli olanlar genel biçim kuralları değil,
 yayımlanmış bir hatayı kodlayanlar:
 
 | Kontrol | Neyi engelliyor |
@@ -185,6 +185,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 56 adım. |
 | `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 59 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
+| `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 44'ü yapılamaz. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -196,14 +197,19 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **48. madde, büyük dosyaların bölünmesi** — `devam ediyor`. 3.819 satırla `display.js`
-  artık en büyük sorun değil; ölçülmüş adaylar ve bağlaşım maliyetleri orada listeli. `main.js` tarafında
-  ölçülüp henüz yapılmayanlar: `options.js`, `release.js`, ödüller.
-- **12. madde, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe malzemeler
-  var ama ilerleyişe tam bağlanmadı.
-- **P-13/35, Aşağıdaki Yankılar** — unvan sisteminin ötesinde hikâye ve oynanış.
+- **P-14, v0.7 ve Marrowmoth** — `open`. Sıradaki arc; onu isteyen briefe karşı değil
+  koda karşı planlandı, her biri tek başına yayınlanabilir sekiz faz hâlinde. Dört
+  tasarım kararı Q-7 ile Q-10 arasında duruyor.
+- **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
+  külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
+  yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.
 - İki görev adımı günlükte ipucu göstermiyor; kaynağı okuyarak değil, oyun çalışırken
   ölçerek çözülmesi gerekiyor.
+
+48. madde ile P-13/35 kapandıktan sonra da burada listeleniyordu; bu da okuyucuyu
+çalışma listesinde olmayan önerileri aramaya gönderiyordu. İkisi de
+[CHANGELOG.TR.md](CHANGELOG.TR.md) içinde yazılı; biten madde oraya aittir, başka
+hiçbir yere değil.
 
 ---
 

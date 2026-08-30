@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 58 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 59 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,41 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-08-30
+
+### Çalışma listesi, var olmayan bir tıkacı anlatıyordu
+
+P-12, 5. kademeyi iki eksik locale satırına bağlı sayıyordu — `material white` ve
+`material black` — yani beyaz çelik bir bileşenin adını alacağı yer yoktu. İki
+yarısı da yanlış. Üretici `material white` değil `material name white steel`
+istiyor ve o satır diğer otuz yediyle birlikte en başından beri iki dilde de
+duruyor. Asıl eksik olan bütün tarifler: `crafting_component_filling.js` 36 tane
+beyaz çelik ve siyah çelik bileşeni kuruyor ve oyunda hiçbir şey bunlardan tekini
+bile üretmiyor.
+
+Yanlış tıkacı anlatan bir liste maddesi, onu eline alan kişiye aynı ölçümü iki kez
+yaptırır; o yüzden ölçüm artık bir cümle değil, bir kontrol.
+`check_components_can_be_made` oku `check_recipe_item_names`'in tersine okuyor:
+"bu tarif gerçek bir eşyayı mı anıyor" değil, "bu üretilmiş eşyaya hiçbir şekilde
+ulaşılabiliyor mu" — tarifle, tüccarla, düşman düşürmesiyle ya da ödülle. 203'ün
+159'una ulaşılıyor. Ulaşılamayan 44'ü gerekçesiyle listeli ve liste iki yönde birden
+zorunlu tutuluyor: bir ad, onu üreten bir şey çıktıktan sonra listede kalamıyor ve
+üreticinin kurmadığı bir şey için listeye eklenemiyor.
+
+5. kademenin ötesinde kimsenin fark etmediği sekiz tane buldu: `Wool shoes`,
+`Linen shoes`, `Turtleshell shield handle` ve tariflerin asıl andığı elle yazılmış
+`Turtleshell` parçalarını tekrarlayan beş `Turtle shellplate` zırh parçası.
+Sekizi de, hiçbir tarifin yazılmadığı bir bileşen türünü listeleyen bir malzeme —
+bir `types` dizisini genişletmek tam olarak bunu sessizce yapar; eşyaların çalışma
+anında maliyeti yok ve oyunda görünmüyorlar, birikmelerinin sebebi de bu.
+
+Üç yönden negatif test edildi: yaşayan bir 4. kademe tarif satırı kaldırıldı,
+listeye üreticinin kurmadığı bir ad eklendi ve listedeki bir ada tarif verildi. Her
+biri kendi cümlesiyle düşüyor.
+
+**Bir de durum dosyası bitmiş işi anlatıyordu.** `Devam eden işler` bölümü, 48.
+madde ile P-13/35 kapandıktan sonra da onları listeliyordu; bu da okuyucuyu çalışma
+listesinde olmayan önerileri aramaya gönderiyor. Artık P-14 ile P-12'yi listeliyor
+ve biten bir maddenin nerede durduğunu söylüyor.
 
 ### Günlük panelleri, alta saran bir sekme çubuğuna göre boyutlandırılmıştı
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 58 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 59 -->
 
 # Changelog
 
@@ -20,6 +20,41 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-08-30
+
+### The backlog described a blocker that was not there
+
+P-12 has recorded tier 5 as blocked on two missing locale rows - `material white`
+and `material black`, leaving a white-steel component with nowhere to get its name
+from. Both halves are wrong. The generator asks for `material name white steel`,
+not `material white`, and that row has been in both locales the whole time along
+with the other thirty-seven. What is actually missing is every recipe:
+`crafting_component_filling.js` builds 36 white-steel and black-steel components
+and nothing in the game produces a single one.
+
+A backlog entry describing the wrong blocker costs whoever picks it up the same
+measurement twice, so the measurement is a check now rather than a sentence.
+`check_components_can_be_made` reads the arrow the opposite way from
+`check_recipe_item_names`: not "does this recipe name a real item" but "can this
+generated item be got at all" - by recipe, by trader, by drop, or as a reward. 159
+of 203 can. The 44 that cannot are listed with a reason, and the list is enforced in
+both directions, so a name cannot sit on it once something makes it and cannot be
+added for something the generator does not build.
+
+It found eight beyond tier 5 that nobody had noticed: `Wool shoes`, `Linen shoes`,
+`Turtleshell shield handle`, and five `Turtle shellplate` armour pieces duplicating
+the hand-written `Turtleshell` ones the recipes actually name. All eight are a
+material listing a component type no recipe was written for, which is exactly what
+widening a `types` array does silently - the items cost nothing at runtime and are
+invisible in play, which is why they accumulate.
+
+Negative-tested three ways: a live tier-4 recipe row removed, a name added to the
+list that the generator does not build, and a listed name given a recipe. Each fails
+with its own sentence.
+
+**And the status file was describing finished work.** Its `In flight` section still
+listed item 48 and P-13/35 after both closed, which sends a reader into the backlog
+hunting for proposals that are not in it. It lists P-14 and P-12 now, and says where
+a finished item lives instead.
 
 ### The journal's panels were sized against a tab bar that wraps
 

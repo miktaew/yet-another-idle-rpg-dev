@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 12 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 13 -->
 
 # Status
 
@@ -54,7 +54,7 @@ npm run check:bundle
 ```
 
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
-  ~6,100 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+  ~6,300 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 143 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -90,8 +90,9 @@ npm run check:bundle
 came out of it: `save_load.js`, `run_stats.js`, `game_state.js`, `ui_helpers.js`,
 `crafting.js`, `world_index.js`. Each cut was chosen by measuring two numbers - how
 many names the moved code needs from what stays, and how many the staying code needs
-back - because the second is what creates a cycle. The remaining measured cuts and
-their costs are item 48 in [PROPOSALS.md](PROPOSALS.md).
+back - because the second is what creates a cycle. Item 48 closed with the sixth cut,
+and what it measured - including where it decided to stop - is in
+[CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -164,7 +165,7 @@ Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
 ## What the checks actually cover
 
-Sixteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
+Fifteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
 but the ones that encode a bug that shipped:
 
 | Check | What it prevents |
@@ -183,6 +184,7 @@ but the ones that encode a bug that shipped:
 | `visible quest tasks` | A task named in the journal with no way to finish it. 56 tasks. |
 | `actions can explain failure` | An action that fails with no reason shown. 59 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
+| `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -194,14 +196,18 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **Item 48, splitting the big files** - `in progress`. `display.js` at 3,819 lines is
-  no longer the biggest problem; the measured candidates and their coupling costs are listed there. `main.js`
-  cuts still costed and not done: `options.js`, `release.js`, rewards.
-- **Item 12, the metals above steel** - `partly done`. Tier-4 and tier-5 materials
-  exist but are not fully wired into progression.
-- **P-13/35, the Echoes Beneath** - story and gameplay beyond the title system.
+- **P-14, v0.7 and the Marrowmoth** - `open`. The next arc, planned against the code
+  rather than against the brief that asked for it, in eight phases that each ship on
+  their own. Four of its design decisions are Q-7 to Q-10.
+- **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
+  ingots, its chainmail and its names in both languages, and **no recipes at all**:
+  36 of the 44 components nothing can make are white steel and black steel.
 - Two quest tasks show no hint in the journal and need live-state measurement rather
   than reading the source.
+
+Item 48 and P-13/35 were listed here after they closed, which sent a reader looking
+in the backlog for proposals that are not in it. Both are written up in
+[CHANGELOG.md](CHANGELOG.md); a finished item belongs there and nowhere else.
 
 ---
 

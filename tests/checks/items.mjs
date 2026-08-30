@@ -149,7 +149,153 @@ async function check_recipe_item_names() {
     console.log(`[check] recipe item names: ${checked} resolved against ${known.size} templates`);
 }
 
+
+/*
+    Generated components nothing in the game can produce, grouped by why.
+
+    The list is the point of the check rather than an exemption from it. A name is on
+    it because somebody looked and found no way to get the item, and the reason is
+    written down; a name that leaves the list has been made reachable. Both directions
+    are enforced below, so the list cannot rot into a suppression file.
+*/
+const known_unmade = {
+    /*
+        P-12's tier 5. The generator builds the whole white-steel and black-steel
+        family - heads, handles, shield bases, and chainmail and plate exteriors for
+        all five armour slots - and not one recipe produces any of them. Their ingots
+        and chainmail exist in items.js and their names exist in both locales, so what
+        is missing is the recipes and an ore, not the naming that P-12 used to claim.
+    */
+    "tier 5, white steel and black steel": [
+        "White short blade", "White long blade", "White axe head", "White hammer head",
+        "White short handle", "White medium handle", "White long handle",
+        "White shield base",
+        "White chainmail helmet armor", "White chainmail chestplate armor",
+        "White chainmail greaves", "White chainmail shoe armor",
+        "White chainmail glove armor",
+        "White plate helmet armor", "White plate chestplate armor",
+        "White plate greaves", "White plate shoe armor", "White plate glove armor",
+        "Black short blade", "Black long blade", "Black axe head", "Black hammer head",
+        "Black short handle", "Black medium handle", "Black long handle",
+        "Black shield base",
+        "Black chainmail helmet armor", "Black chainmail chestplate armor",
+        "Black chainmail greaves", "Black chainmail shoe armor",
+        "Black chainmail glove armor",
+        "Black plate helmet armor", "Black plate chestplate armor",
+        "Black plate greaves", "Black plate shoe armor", "Black plate glove armor",
+    ],
+    /*
+        A material listing a component type nobody wrote a recipe for. `turtleshell`
+        asks for both shield components and only the base has one; `turtle shellplate`
+        is a second turtle material whose five armour pieces duplicate the hand-written
+        `Turtleshell *` ones in items.js that the recipes actually name; and the two
+        cloth shoes are exteriors on materials whose recipes stop at the interior.
+
+        Inherited from upstream's generator and harmless - an item nothing produces is
+        dead weight rather than a bug - but it is the shape a real oversight has, which
+        is why it is written down instead of tolerated silently.
+    */
+    "a component type no recipe was written for": [
+        "Wool shoes", "Linen shoes", "Turtleshell shield handle",
+        "Turtle shellplate helmet armor", "Turtle shellplate chestplate armor",
+        "Turtle shellplate greaves", "Turtle shellplate shoe armor",
+        "Turtle shellplate glove armor",
+    ],
+};
+
+/**
+ * Every generated component has some way of reaching a player's hands.
+ *
+ * check_recipe_item_names reads the arrow one way - a recipe naming an item that does
+ * not exist. This is the other way, and it catches a different mistake: the generator
+ * builds a component out of a material and a type list, so **widening a material's
+ * `types` array silently creates items nothing produces**. They cost nothing at
+ * runtime and they are invisible in play, which is exactly why they accumulate - 44
+ * of the 203 the generator builds are in that state today.
+ *
+ * It is also the check that would have caught a documentation drift. P-12 said tier 5
+ * was blocked on two missing locale rows; the rows are there and have been, and what
+ * is actually missing is every recipe. A backlog entry describing the wrong blocker
+ * costs whoever picks it up the same measurement twice, so the measurement lives here
+ * where it re-runs on every push.
+ *
+ * Reachable means: produced by a recipe, stocked by a trader, dropped by an enemy, or
+ * handed over as a reward. All four are read rather than assumed - today every
+ * reachable generated component arrives by one of the first two, and hard-coding that
+ * would fire falsely the day one becomes a quest reward.
+ */
+async function check_components_can_be_made() {
+    const { generated, problem } = await load_generated_item_templates(repo_root);
+    if (problem) {
+        error(`${problem} - this check is out of date.`);
+        return;
+    }
+
+    const read = (file) => strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"));
+    const names_in = (source, pattern) => [...source.matchAll(pattern)].map(match => match[1]);
+
+    const reachable = new Set([
+        ...names_in(read("src/crafting_recipes.js"), /result_id:\s*"([^"]+)"/g),
+        ...names_in(read("src/traders.js"), /item_name:\s*"([^"]+)"/g),
+        ...names_in(read("src/enemies.js"), /item_name:\s*"([^"]+)"/g),
+    ]);
+    //Rewards name an item either bare inside `items: [...]` or as `{item: "..."}`.
+    for (const file of ["src/data/dialogues.js", "src/data/locations.js", "src/quests.js"]) {
+        const source = read(file);
+        for (const name of names_in(source, /item:\s*"([^"]+)"/g)) {
+            reachable.add(name);
+        }
+        for (const group of source.matchAll(/items:\s*\[([^\]]*)\]/g)) {
+            for (const name of names_in(group[1], /"([^"]+)"/g)) {
+                reachable.add(name);
+            }
+        }
+    }
+
+    const excused = new Map();
+    for (const [reason, names] of Object.entries(known_unmade)) {
+        for (const name of names) {
+            excused.set(name, reason);
+        }
+    }
+
+    const keys = Object.keys(generated);
+    const built = new Set(keys);
+    let unreachable = 0;
+
+    for (const key of keys) {
+        if (reachable.has(key)) {
+            if (excused.has(key)) {
+                error(`the generated component "${key}" is listed under "${excused.get(key)}"`
+                    + " in check_components_can_be_made, but something produces it now."
+                    + " Take it off the list - a list that keeps names it no longer"
+                    + " explains stops being a record of what is missing.");
+            }
+            continue;
+        }
+        unreachable++;
+        if (excused.has(key)) {
+            continue;
+        }
+        error(`crafting_component_filling.js builds "${key}", and no recipe produces it,`
+            + " no trader stocks it, nothing drops it and no reward hands it over. Either"
+            + " give it a way to be made or add it to known_unmade with the reason.");
+    }
+
+    for (const name of excused.keys()) {
+        if (!built.has(name)) {
+            error(`check_components_can_be_made excuses "${name}", which the generator does`
+                + " not build. The entry is stale.");
+        }
+    }
+
+    const groups = Object.keys(known_unmade).length;
+    console.log(`[check] generated components can be made: ${keys.length - unreachable} of`
+        + ` ${keys.length}, ${unreachable} known unmade in ${groups} groups`);
+}
+
 export {
+    check_components_can_be_made,
     check_generated_items,
     check_recipe_item_names,
 };
