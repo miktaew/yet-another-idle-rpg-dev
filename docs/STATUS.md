@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 4 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 5 -->
 
 # Status
 
@@ -37,8 +37,10 @@ npm run serve:site     # builds to _site/ and serves it on 127.0.0.1:8081
 ```
 
 `npm run serve` (port 8080) serves the repository root, which loads the raw ES modules
-rather than the bundle. That path is **not** what ships and is currently broken; use
-`serve:site`.
+rather than the bundle. It is not the path that ships, and it is stricter than the one
+that does: the browser's own module loader rejects an import the bundler tolerates,
+which is how a phantom `update` import in crafting.js was found. Worth opening after a
+refactor for exactly that reason.
 
 ### The gate
 
@@ -51,8 +53,8 @@ npm test
 npm run check:bundle
 ```
 
-- `check` runs the content and consistency checks in `tests/checks/` (thirteen files,
-  ~5,800 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+- `check` runs the content and consistency checks in `tests/checks/` (fourteen files,
+  ~5,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 136 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -151,12 +153,13 @@ Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
 ## What the checks actually cover
 
-Thirteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
+Fourteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
 but the ones that encode a bug that shipped:
 
 | Check | What it prevents |
 | --- | --- |
 | `modules import what they call` | A name used without importing it. 47 files. |
+| `imports resolve` | A name imported from a module that does not export it. 677 names. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 83 names. |
 | `content text ids` | Player-facing text with no locale row. 2,002 ids. |

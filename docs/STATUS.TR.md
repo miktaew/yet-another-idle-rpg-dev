@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 4 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 5 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -40,7 +40,10 @@ npm run serve:site     # _site/ dizinine derler, 127.0.0.1:8081 üzerinden sunar
 ```
 
 `npm run serve` (8080) depo kökünü sunar; bu yol paketi değil ham ES modüllerini
-yükler. Yayına giden yol **o değildir** ve şu anda bozuktur; `serve:site` kullanın.
+yükler. Yayına giden yol o değil ve yayına gidenden daha katı: tarayıcının kendi modül
+yükleyicisi, paketleyicinin göz yumduğu bir içe aktarmayı reddediyor - `crafting.js`
+içindeki hayalet `update` içe aktarması böyle bulundu. Tam da bu yüzden bir refaktörden
+sonra açmaya değer.
 
 ### Geçit
 
@@ -54,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on üç dosya, yardımcılarıyla ~5.800 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on dört dosya, yardımcılarıyla ~5.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 136 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -154,12 +157,13 @@ gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D
 
 ## Kontroller neyi kapsıyor
 
-`tests/checks/` altında on üç dosya. Değerli olanlar genel biçim kuralları değil,
+`tests/checks/` altında on dört dosya. Değerli olanlar genel biçim kuralları değil,
 yayımlanmış bir hatayı kodlayanlar:
 
 | Kontrol | Neyi engelliyor |
 | --- | --- |
 | `modules import what they call` | İçe aktarılmadan kullanılan ad. 47 dosya. |
+| `imports resolve` | Dışa aktarmayan bir modülden içe aktarılan ad. 677 ad. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
 | `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.002 kimlik. |

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 49 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 50 -->
 
 # Proposals
 
@@ -1097,6 +1097,16 @@ not after. Each item is the request as it was given, and the state it is in.
     byte itself as a sentinel rather than the ` ` escape, which made grep call the whole
     file binary, diffs unreadable, and the byte one careless editor save from vanishing.
     Same value, written as two characters. It predates this session.
+61. **A module imported a name nothing exports** — `done`, v0.6.61. `crafting.js`
+    imported `update` from `main.js`, which does not export it, and never called it. esbuild
+    tolerates that, so the bundle built and the game ran - the browser's own module loader
+    refuses, which is why the un-bundled page at `npm run serve` had been failing with "does
+    not provide an export named 'update'". It surfaced only when an unrelated change pulled
+    that part of the graph into a test. `check_imports_resolve` now requires every imported
+    name to exist where it is imported from: 677 names across 47 files, negative-tested by
+    putting the phantom import back. It is the mirror of
+    `check_modules_import_what_they_call`; between them an import list must agree with
+    reality in both directions.
 ---
 ## Open decisions
 

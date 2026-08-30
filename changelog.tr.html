@@ -257,6 +257,12 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.61</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Bakım işi, oynanışta değişiklik yok. Bir modül, başka bir modülün dışa aktarmadığı bir adı içe aktarıyordu: zanaat kodunun aldığı ama hiç çağırmadığı `update`. Paketleyici buna göz yumuyor, o yüzden derleniyor ve çalışıyordu; tarayıcının kendi modül yükleyicisi ise düpedüz reddediyor - paketlenmemiş sayfayı sessizce bozan da buydu. İçe aktarma kaldırıldı ve yeni bir kontrol, içe aktarılan her adın aktarıldığı yerde gerçekten var olmasını şart koşuyor: 47 dosyada 677 ad. Bu, altı sürüm önce eklenen ve kullanılıp içe aktarılmayan adı yakalayan kontrolün aynadaki eşi; ikisi birlikte bir içe aktarma listesinin gerçekle iki yönden de uyuşmasını istiyor.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.60</button>
     <div class="content">
         <ul class="entries">

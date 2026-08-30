@@ -26,7 +26,7 @@ import { translationManager } from "./translation.js";
 //The four this still needs from main.js. `language` and `current_location` are live
 //bindings - read here, written there - and the other two are the game's own paths for
 //granting xp and redrawing.
-import { language, current_location, add_xp_to_skill, update } from "./main.js";
+import { language, current_location, add_xp_to_skill } from "./main.js";
 function use_recipe(target, ammount_wanted_to_craft = 1) {
 
     const category = target.parentNode.parentNode.dataset.crafting_category;

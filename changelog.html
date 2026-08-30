@@ -257,6 +257,12 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.6.61</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Housekeeping, no change to play. One module imported a name another module does not export - `update`, imported by the crafting code and never called. The bundler tolerates that, so it built and ran; the browser's own module loader refuses outright, which is what had been quietly breaking the un-bundled page. The import is gone and a check now requires every imported name to exist where it is imported from: 677 names across 47 files. It is the mirror of the check added six versions ago, which catches a name used and never imported - between them an import list has to agree with reality in both directions.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.6.60</button>
     <div class="content">
         <ul class="entries">

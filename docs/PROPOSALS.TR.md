@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 49 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 50 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1108,6 +1108,16 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     kaçışı yerine baytın kendisini imleç olarak kullanıyordu; bu da grep'in dosyanın
     tamamını ikili sayması, farkların okunamaması ve baytın dikkatsiz bir kayıtla yok olması
     demekti. Aynı değer, iki karakterle yazıldı. Bu oturumdan öncesine dayanıyor.
+61. **Bir modül, hiçbir yerin dışa aktarmadığı bir adı içe aktarıyordu** — `bitti`,
+    v0.6.61. `crafting.js`, `main.js`'ten `update`'i içe aktarıyordu; main.js onu dışa
+    aktarmıyor ve crafting.js hiç çağırmıyordu. esbuild buna göz yumduğu için paket derlendi
+    ve oyun çalıştı; tarayıcının kendi modül yükleyicisi ise reddediyor - `npm run serve`
+    ile açılan paketlenmemiş sayfanın "does not provide an export named 'update'" hatası
+    vermesinin sebebi buydu. Ancak ilgisiz bir değişiklik grafın o kısmını bir teste
+    çektiğinde ortaya çıktı. `check_imports_resolve` artık içe aktarılan her adın
+    aktarıldığı yerde var olmasını şart koşuyor: 47 dosyada 677 ad; hayalet içe aktarma geri
+    konularak tersten sınandı. Bu, `check_modules_import_what_they_call`'ın aynadaki eşi;
+    ikisi birlikte bir içe aktarma listesinin gerçekle iki yönden de uyuşmasını istiyor.
 ---
 ## Bekleyen kararlar
 
