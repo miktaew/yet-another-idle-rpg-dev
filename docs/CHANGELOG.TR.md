@@ -175,6 +175,43 @@ kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
 
+### Lore paneli
+
+**v0.6.52.** "Hikâyenin geçmişini ve daha önce yapılan konuşmaları tutan bir yer" diye
+istendi. Oyunda bunu kaydeden hiçbir şey yoktu: bir replik bir kez okunuyor ve
+kayboluyordu; bir hafta sonra dönen oyuncunun kendisine söylenene geri dönmesinin yolu
+yoktu.
+
+Yeni bir panel olarak değil, günlüğe beşinci sekme olarak eklendi; görevlerin,
+bestiary'nin, antolojinin ve verinin yanına - çünkü oyunun sizin için hatırladığı şeyleri
+tuttuğu yer zaten günlük. `Textline` kurucusunda bir `lore` bayrağı, gövdesinde de
+`is_heard` kazandı; `check_content_object_keys`'in etkilenmemesinin sebebi de bu: bayrak
+içeriğin bildirdiği veri, duyulma durumu ise çalışma zamanı. Yirmi altı satır işaretli;
+konuşana göre gruplanıp duyulduğu sırayla diziliyorlar.
+
+Ardından panel günlüğün altından taştı; bu da **v0.6.53**: filtreleri ikinci bir satıra
+kayıyor ve altındaki listenin bundan haberi olmayan sabit bir yüksekliği vardı. Artık
+denetimlerden ne artarsa onu alıyor, kaç satır olursa olsun; aynı kusur Keşifler'de de
+vardı ve onunla birlikte düzeldi.
+
+### Çalışma listesinden çıkmadan önce iki madde daha
+
+**Dükkândaki İptal.** "İptal geri götürmeli" diye bildirildi. Davranış zaten doğruydu -
+ticaret penceresinde Kabul, İptal ve Çıkış var; İptal sepeti boşaltıp orada kalıyor,
+Çıkış ise çıkıyor. Yani kusur etiketlerdeydi (Türkçede iki eylemi yeterince ayırmıyorlardı)
+ve üçünden birini gizleyen yerleşimdeydi. Davranış olarak değil, sözcük olarak düzeltildi;
+bildirimin dürüst okuması buydu.
+
+**Bir kısmı değil, aktarılabilenlerin tamamı.** `contribute/upstream-fixes` 14 commit
+taşıyor; her biri upstream'in kendi koduna ve üslubuna göre yazılmış, her biri şüphelenilen
+değil ölçülen bir kusur ve her biri tek başına düşürülebilir: `src/` içinde on iki
+düzeltme, bir derleme düzeltmesi - `build.js`, sürümü damgalayamadığında 0 ile çıkıyordu,
+yani hiçbir tarayıcının çekmeyeceği bir paket başarılı derleme olarak raporlanıyordu ve
+orada `dist/` commit'li - ve isteğe bağlı bir paket-yükleme kontrolü. Küme tahminle değil,
+kendi kontrol takımımız onların ağacına doğrultularak kapatıldı; o kontroller zaten bunun
+için var: her biri burada bulunmuş bir hata sınıfını kodluyor. Kaynak düzeyinde onların
+kodunda başka bir şey bulmuyorlar.
+
 ### Bakım
 
 - **v0.6.56** - dev konsoluna `add_best_effect(duration)`; `give_best`'in eşi. Hangi

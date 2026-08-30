@@ -174,6 +174,41 @@ metal. Fifteen pieces reachable, with a row added to each of the five exterior r
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
 
+### The lore panel
+
+**v0.6.52.** Asked for as "a place holding the story's history and the conversations
+already had". Nothing in the game recorded that: a textline was read once and gone, so
+a player returning after a week had no way back to what they had been told.
+
+It went into the journal as a fifth tab rather than a new panel, beside quests, the
+bestiary, the anthology and data - the journal is already where the game keeps what it
+remembers for you. `Textline` gained a `lore` flag in its constructor and `is_heard` in
+its body, which is why `check_content_object_keys` is unaffected: the flag is data the
+content declares, the heard-state is runtime. Twenty-six lines are marked, grouped by
+speaker and ordered as they were heard.
+
+The panel then ran off the bottom of the journal, which is **v0.6.53**: its filters wrap
+onto a second row and the list underneath had a fixed height that knew nothing about
+that. It takes whatever the controls leave now, at any number of rows, and Discoveries
+had the same fault and is fixed with it.
+
+### Two more, before they left the backlog
+
+**The shop's Cancel.** Reported as "Cancel should take you back". The behaviour was
+already right - the trade window has Accept, Cancel and Exit; Cancel clears the basket
+and stays, Exit leaves - so the fault was the labels, which did not distinguish the two
+actions well enough in Turkish, and the layout, which was hiding one of the three.
+Fixed as wording rather than as behaviour, which is the honest reading of the report.
+
+**Everything transferable, not a subset.** `contribute/upstream-fixes` carries 14
+commits, each written against upstream's own code and style, each a fault measured
+rather than suspected, and each droppable on its own: twelve fixes in `src/`, one build
+fix - `build.js` exited 0 when it could not stamp the version, so a bundle no browser
+will fetch reported as a successful build, and `dist/` is committed there - and one
+optional bundle-load check. The set was closed rather than guessed at by pointing our
+own check suite at their tree, which is what those checks are for: each encodes a bug
+class found here. At source level they find nothing further in their code.
+
 ### Housekeeping
 
 - **v0.6.56** - `add_best_effect(duration)` in the dev console, the counterpart to

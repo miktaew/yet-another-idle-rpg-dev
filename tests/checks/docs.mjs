@@ -127,7 +127,13 @@ async function check_docs_are_paired() {
         if (!fs.existsSync(full)) continue;
         for (const line of fs.readFileSync(full, "utf8").split("\n")) {
             const is_entry = /^\d+\. \*\*/.test(line) || /^### P-\d+/.test(line);
-            if (is_entry && /`(done|bitti|tamam)`/.test(line)) {
+            /*
+                The marker is not always the bare word. Five items said
+                `done, as labels rather than behaviour`, `done for what is detectable`
+                and the like, and an exact match let all of them sit in the backlog
+                after they were finished - so the span only has to START with it.
+            */
+            if (is_entry && /`(done|bitti|tamam)\b/.test(line)) {
                 error(`${file}: "${line.trim().slice(0, 60)}" is finished and still here.`
                     + " Write it up in CHANGELOG.md and remove it - the backlog is what is"
                     + " still open (D-9).");
