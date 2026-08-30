@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 53 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 54 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -174,6 +174,31 @@ zaten aynı metalin zincir zırhına göre 1,5 kat değer ve 1,6 kat güç veriy
 kaplama tarifinin her birine birer satır eklenerek on beş parça erişilebilir oldu. Beyaz
 ve siyah çelik dışarıda kaldı - P-12 tavanın hikâyeyle birlikte yükselmesini şart koşuyor,
 iki yerelde de görünen adları yok ve dağdaki bacanın üstünde bir istasyon da yok.
+
+### Dört bölge bir şekil kazanıyor
+
+P-13/54, inşa edilmiş bölgelerin hikâyenin yanında durmak yerine ona bağlanmasını
+istiyor. Somut olarak, Echoes-Beneath incelemesinden: her birine `STORY.md` içinde bir
+**Açılış, Sahneler, Beklentiler ve Bitiş** veriliyor; onların REGIONS.md'sinin tuttuğu ve
+burada hiç olmayan şekil bu.
+
+Bölgelerin gerçekte ne içerdiğine bakılarak yazıldı, hatırlanarak değil: ıslak ormanlar
+içinde hiç NPC olmayan dört yer, ovalar oyunun on dört NPC'sinden beşini barındıran yedi
+yer, körfez sayıca en ince olan üç yer, dağ ise en fazlası olan sekiz yer.
+
+Dördün ikisinin bitişi olmadığı çıktı ve bunu söylemek zaten alıştırmanın amacı:
+
+- **Islak ormanlar kapanmıyor, duruyor.** Onlarla işinin bittiğini söyleyen tek satır yok.
+  Onları bitirecek şey küçük olmalı ve bir insan sokmamalı; çünkü bölgenin bütün karakteri
+  kimsenin orada olmaması.
+- **Körfez bilerek çözülmemiş** ve çatalın sahip olduğu en güçlü uç: Marrowmoth,
+  tartılmamış bir sandık, hesap sütununda iki kez çizilmiş bir çizgi ve haber salmayacak
+  bir sayman.
+
+1. bölüm ayrıca 7. bölümle çelişiyordu. Hâlâ dört bölgenin "henüz olmadığını" söylüyordu,
+oysa 7. bölüm dördünün de inşa edildiğini yazıyordu. Artık hangilerinin inşa edildiğini ve
+hangilerinin yalnızca adının geçtiğini söylüyor - büyük nehir havzası ve Forest lake'in
+ötesindeki kadim orman.
 
 ### Echoes-Beneath, bu kez hikâye ve oynanış için okundu
 

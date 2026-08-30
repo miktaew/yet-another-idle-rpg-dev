@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 53 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 54 -->
 
 # Changelog
 
@@ -173,6 +173,30 @@ already gives plate 1.5x the value and 1.6x the strength of the chainmail of the
 metal. Fifteen pieces reachable, with a row added to each of the five exterior recipes.
 White and black steel stay out - P-12 says the ceiling moves with the story, they have
 no display name in either locale, and there is no station above the mountain flue.
+
+### The four regions get a shape
+
+P-13/54 asks for the built regions to be tied into the story rather than left standing
+next to it. Concretely, from the Echoes-Beneath review: each one gets an **Opening,
+Scenes, Expectations and an Ending** in `STORY.md`, which is the shape their REGIONS.md
+keeps and which nothing here had.
+
+Written from what the regions actually contain, measured rather than remembered: the wet
+woods are four places with no NPC in them, the plains seven with five of the game's
+fourteen NPCs, the bay three and the thinnest by count, the mountain eight and the most.
+
+Two of the four turn out to have no ending, and saying so is the point of the exercise:
+
+- **The wet woods stop rather than close.** No line marks having finished with them.
+  Whatever ends them should be small and should not introduce a person, because the
+  region's whole character is that nobody is there.
+- **The bay is unresolved on purpose** and is the strongest thread the fork has: the
+  Marrowmoth, one unweighed crate, a stroke drawn twice through her account column, and
+  a tallyman who will not send word.
+
+Section 1 was also contradicting section 7. It still said the four regions "do not exist
+yet" while section 7 said all four were built. It now says which are built and which are
+still only named - the great river basin and the ancient forest past Forest lake.
 
 ### Echoes-Beneath, read for story and gameplay this time
 

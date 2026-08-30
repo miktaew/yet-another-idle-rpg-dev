@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 11 -->
+<!-- doc-source: docs/STORY.md  doc-version: 12 -->
 
 # Story canon
 
@@ -23,12 +23,95 @@ Four settled places exist in code: a **village** at the foot of the mountains, a
 walled **town** whose gate is shut, the **slums** outside that wall, and the
 **Snake Fang Tribe** in the swamplands, six clear-gates downriver.
 
-Four more regions are named in dialogue and do not exist yet — *"The mountain! The
-plains! The woods! The bay!"* — along with the great river basin and an ancient
+Four more regions are named in dialogue before any of them exists — *"The mountain!
+The plains! The woods! The bay!"* — and all four are built now; their shapes are in
+section 1b. Still named and still absent: the great river basin, and the ancient
 forest past Forest lake.
 
 Civilisation is thin and thins fast. As the village elder puts it: *"Many leave
 looking for better lives and we never hear from them again."*
+
+## 1b. The four regions, as shapes
+
+Each built region is a list of places in the code and needs to be a shape in the
+story: where it opens, what happens in the middle, what the player is entitled to
+expect, and what ends it. Written after reading Echoes-Beneath, whose `REGIONS.md`
+keeps every region to Opening / Scenes / Expectations / Ending — the most useful
+thing that review found, and not code.
+
+The cook's geography lesson named all four before any existed: *"The mountain! The
+plains! The woods! The bay!"* What he said about each is what each turned out to be.
+
+### The wet woods — *what the water leaves behind*
+
+**Opening.** South from the Waterfall basin, found by asking rather than by walking:
+the way in is a question, which is the register the whole region keeps.
+
+**Scenes.** Four places — Wet woods, Waterfall basin, and the Forest den and Frogs as
+its two combat zones. No NPC lives here. The region talks through what it drops and
+what grows in it, and the Waterfall basin is the only place in the game where a
+player sits behind falling water to think.
+
+**Expectations.** Gathering and quiet. It is the region that pays in materials rather
+than in coin or standing, and the player should come out of it better equipped and no
+better known.
+
+**Ending.** It has none, and that is the honest gap. It stops rather than closes: no
+line marks having finished with it. Whatever ends it should be small and should not
+introduce a person — the region's whole character is that nobody is there.
+
+### The plains — *the ground remembers*
+
+**Opening.** Southeast past the Swampland fields, opened by the cook, who is also the
+first person in the game to describe geography as opportunity.
+
+**Scenes.** Seven places, and the only region with a settled people in it: the Snake
+Fang Tribe, whose chief, cook, tailor, tanner and scout are five of the game's
+fourteen NPCs. The swamplands and the Infested field are its combat, the Coast road
+its way onward, the Town farms its way back.
+
+**Expectations.** People. This is where the fork's story actually happens — the
+recipes that make the town possible are taught here, in broken Turkish that must stay
+broken.
+
+**Ending.** The tribe's own quest closes, and the region hands the player to the coast
+road. What stays open on purpose: **the banished tribe whose traces are in the
+plains**, which is a hook the original author left and this fork has not touched.
+
+### The bay — *an account with a stroke through it*
+
+**Opening.** Three days north of the gate, opened by asking the factor what leaves
+rather than what arrives — the one question nobody had paid him to answer.
+
+**Scenes.** Three places and the thinnest region by count, which is right: a harbour
+is a place you pass through. The harbour tallyman and the salt house are its whole
+population, and white and black iron ore are sold here and nowhere else — the cook's
+*"many metal come from there, from very far away"* being true for the first time.
+
+**Expectations.** Trade and a name. It is the region that pays in access rather than
+in materials.
+
+**Ending.** Deliberately unresolved and the strongest thread in the fork: the
+**Marrowmoth**, forty tons, out on the ebb the night after the forest road, one
+unweighed crate, a stroke drawn twice through her account column. She comes back twice
+a year. The tallyman will not send word.
+
+### The mountain — *depth rather than ground*
+
+**Opening.** Not a direction but a descent. The cave is reachable from the first hour
+of the game; the mountain proper opens above it.
+
+**Scenes.** Eight places, the most of any region, split between the cave under the
+village and the camp above it. The Mysterious depths hold the rat questline and the
+game's only talking rat; the Mountain camp holds the flue, which is the first forging
+and smelting station in the game above tier 1.
+
+**Expectations.** Making. Everything the player forges after this is better because of
+a hole cut in rock behind a tent.
+
+**Ending.** The forge is built and the second gate under the village opens with mind
+rather than strength. What stays open: **the Rat God**, who is named and never
+explained, and should not be.
 
 ## 2. The protagonist
 

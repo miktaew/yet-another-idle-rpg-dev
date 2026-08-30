@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 11 -->
+<!-- doc-source: docs/STORY.md  doc-version: 12 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -29,12 +29,90 @@ Kodda dört yerleşim var: dağların eteğindeki bir **köy**, kapısı kapalı
 **kasaba**, o surun dışındaki **slum'lar** ve nehrin altı geçit aşağısındaki
 bataklıklarda yaşayan **Snake Fang Tribe**.
 
-Dört bölge daha dialogue'larda adı geçiyor ama henüz yok — *"The mountain! The
-plains! The woods! The bay!"* — ayrıca büyük nehir havzası ve Forest lake'in
+Dört bölge daha, hiçbiri yokken dialogue'larda adı geçiyor — *"The mountain!
+The plains! The woods! The bay!"* — ve dördü de artık inşa edildi; şekilleri 1b
+bölümünde. Hâlâ adı geçen ama hâlâ olmayan: büyük nehir havzası ve Forest lake'in
 ötesindeki kadim orman.
 
 Uygarlık ince ve hızla inceliyor. Köy yaşlısının deyişiyle: *"Many leave looking
 for better lives and we never hear from them again."*
+
+## 1b. Dört bölge, birer şekil olarak
+
+İnşa edilmiş her bölge kodda bir yerler listesi; hikâyede ise bir şekil olması gerekiyor:
+nerede açıldığı, ortada ne olduğu, oyuncunun ne beklemeye hakkı olduğu ve neyin onu
+bitirdiği. Bu, Echoes-Beneath okunduktan sonra yazıldı; oranın `REGIONS.md`'si her
+bölgeyi Açılış / Sahneler / Beklentiler / Bitiş düzeninde tutuyor — o incelemenin
+bulduğu en işe yarar şey ve kod değil.
+
+Aşçının coğrafya dersi dördünü de hiçbiri yokken saymıştı: *"The mountain! The plains!
+The woods! The bay!"* Her biri için söylediği şey, her birinin çıktığı şey oldu.
+
+### Islak ormanlar — *suyun geride bıraktığı*
+
+**Açılış.** Waterfall basin'den güneye; yürüyerek değil sorarak bulunuyor. İçeri giden
+yol bir soru ve bölge boyunca korunan ton da bu.
+
+**Sahneler.** Dört yer — Islak ormanlar, Waterfall basin ve iki dövüş bölgesi olarak
+Forest den ile Frogs. Burada hiçbir NPC yaşamıyor. Bölge, düşürdükleri ve içinde
+yetişenler üzerinden konuşuyor; Waterfall basin de oyunda bir oyuncunun düşen suyun
+arkasına oturup düşündüğü tek yer.
+
+**Beklentiler.** Toplama ve sessizlik. Parayla ya da itibarla değil, malzemeyle ödeyen
+bölge burası; oyuncu buradan daha iyi donanmış ama daha çok tanınmamış olarak çıkmalı.
+
+**Bitiş.** Yok, ve dürüst boşluk da bu. Kapanmıyor, duruyor: onunla işinin bittiğini
+söyleyen tek satır yok. Onu bitirecek şey küçük olmalı ve bir insan sokmamalı — bölgenin
+bütün karakteri kimsenin orada olmaması.
+
+### Ovalar — *zemin hatırlar*
+
+**Açılış.** Bataklık tarlalarının güneydoğusu; aşçı açıyor ve o, oyunda coğrafyayı fırsat
+diye tarif eden ilk kişi.
+
+**Sahneler.** Yedi yer ve içinde yerleşik bir halk olan tek bölge: Snake Fang Tribe;
+şefi, aşçısı, terzisi, tabakhanecisi ve izcisi oyunun on dört NPC'sinin beşi.
+Bataklıklar ile Infested field dövüşü, Coast road ileriye giden yolu, Town farms geri
+dönen yolu.
+
+**Beklentiler.** İnsanlar. Çatalın hikâyesinin asıl geçtiği yer burası; kasabayı mümkün
+kılan tarifler burada öğretiliyor, kırık bir Türkçeyle — ve o Türkçe kırık kalmalı.
+
+**Bitiş.** Kabilenin kendi görevi kapanıyor ve bölge oyuncuyu sahil yoluna devrediyor.
+Bilerek açık kalan: **ovalardaki izleriyle sürgün edilmiş kabile**; özgün yazarın
+bıraktığı ve bu çatalın hiç dokunmadığı bir uç.
+
+### Körfez — *üstü çizilmiş bir hesap*
+
+**Açılış.** Kapının üç gün kuzeyi; mubayaacıya neyin geldiğini değil neyin gittiğini
+sorarak açılıyor — kimsenin ona cevaplaması için para ödemediği tek soru.
+
+**Sahneler.** Üç yer, sayıca en ince bölge ve bu doğru: liman, içinden geçilen bir yer.
+Liman saymanı ile tuz evi bütün nüfusu; beyaz ve siyah demir cevheri de yalnızca burada
+satılıyor — aşçının *"many metal come from there, from very far away"* sözü ilk kez
+doğru çıkıyor.
+
+**Beklentiler.** Ticaret ve bir ad. Malzemeyle değil erişimle ödeyen bölge burası.
+
+**Bitiş.** Bilerek çözülmemiş ve çataldaki en güçlü uç: **Marrowmoth**, kırk ton, orman
+yolundan sonraki gece sularla çıkmış, bir sandığı tartılmamış ve hesap sütununda iki kez
+çizilmiş bir çizgi. Yılda iki kez dönüyor. Sayman haber salmayacak.
+
+### Dağ — *zemin değil derinlik*
+
+**Açılış.** Bir yön değil, bir iniş. Mağara oyunun ilk saatinden itibaren erişilebilir;
+dağın kendisi onun üstünde açılıyor.
+
+**Sahneler.** Sekiz yer, bölgeler arasında en fazlası; köyün altındaki mağara ile
+üstündeki kamp arasında bölünmüş. Mysterious depths sıçan görev zincirini ve oyunun tek
+konuşan sıçanını barındırıyor; Mountain camp ise oyunun 1. kademenin üstündeki ilk dövme
+ve eritme istasyonu olan bacayı.
+
+**Beklentiler.** Yapmak. Oyuncunun bundan sonra dövdüğü her şey, bir çadırın arkasında
+kayaya açılmış bir delik sayesinde daha iyi.
+
+**Bitiş.** Ocak kuruluyor ve köyün altındaki ikinci kapı güçle değil akılla açılıyor.
+Açık kalan: adı konan ve hiç açıklanmayan **Sıçan Tanrı** — açıklanmamalı da.
 
 ## 2. Protagonist
 
