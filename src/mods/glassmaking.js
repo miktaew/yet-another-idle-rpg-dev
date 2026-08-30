@@ -1,8 +1,10 @@
 "use strict";
 
-import { locations, LocationActivity } from "../locations.js"
+import { locations } from "../data/locations.js"
+import { LocationActivity } from "../models/location.js"
 import { Material, Book, BookData, item_templates, book_stats } from "../items.js"
-import { inventory_templates, TradeItem } from "../traders.js"
+import inventory_templates from "../data/inventory_templates.js"
+import { TradeItem } from "../models/trade_item.js"
 import { recipes, ItemRecipe } from "../crafting_recipes.js"
 
 console.log("Glassmaking mod loaded");

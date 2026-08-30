@@ -4,7 +4,7 @@ import { availabilities, talkables } from "./component_references.js";
 import { dialogue_owners } from "../components/dialogue_component.js";
 import { equipments } from "../components/equipment_component.js";
 import { inventories } from "../components/inventory_component.js";
-import NPC from "../models/NPC.js";
+import NPC from "../models/npc.js";
 import { levels } from "./component_references.js";
 //import { bios } from "../models/person.js";
 import { dialogues } from "./dialogues.js";
