@@ -15,9 +15,10 @@ import { character, add_to_character_inventory, remove_from_character_inventory,
     update_character_stats, get_skill_xp_gain } from "./character.js";
 import { recipes, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
 import { skills, crafting_skill_xp_gains_cap } from "./data/skills.js";
-import { log_message, update_displayed_character_inventory, update_displayed_crafting_recipes,
-    update_displayed_component_choice, update_displayed_material_choice,
-    update_item_recipe_tooltips, update_item_recipe_visibility } from "./display.js";
+import {
+         log_message,
+         update_displayed_character_inventory,
+        } from "./display.js";
 import { item_templates, getItemRarity, rarity_multipliers } from "./items.js";
 import { crafting_tags_to_skills } from "./misc.js";
 import { run_stats } from "./run_stats.js";
@@ -27,6 +28,9 @@ import { translationManager } from "./translation.js";
 //bindings - read here, written there - and the other two are the game's own paths for
 //granting xp and redrawing.
 import { language, current_location, add_xp_to_skill } from "./main.js";
+import { update_displayed_component_choice, update_displayed_crafting_recipes, 
+         update_displayed_material_choice, update_item_recipe_tooltips, 
+         update_item_recipe_visibility } from "./crafting_display.js";
 function use_recipe(target, ammount_wanted_to_craft = 1) {
 
     const category = target.parentNode.parentNode.dataset.crafting_category;

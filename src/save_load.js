@@ -23,7 +23,30 @@ import { dialogues } from "./data/dialogues.js";
 import { favourite_locations, locations } from "./data/locations.js";
 import { skills } from "./data/skills.js";
 import { player_storage } from "./data/storage.js";
-import { change_completed_quest_visibility, create_displayed_crafting_recipes, create_new_bestiary_entry, format_money, get_message_log_history, log_message, restore_message_log, set_loading_screen_errors_warning, set_loading_screen_progress, set_loading_screen_versions, set_loading_screen_warnings_warning, skill_category_order, skill_list, update_booklist_entry, update_displayed_character_inventory, update_displayed_effects, update_displayed_health, update_displayed_item_log, update_displayed_money, update_displayed_quest, update_displayed_reputation, update_displayed_stance_list, update_displayed_time } from "./display.js";
+import {
+         change_completed_quest_visibility,
+         create_new_bestiary_entry,
+         format_money,
+         get_message_log_history,
+         log_message,
+         restore_message_log,
+         set_loading_screen_errors_warning,
+         set_loading_screen_progress,
+         set_loading_screen_versions,
+         set_loading_screen_warnings_warning,
+         skill_category_order,
+         skill_list,
+         update_booklist_entry,
+         update_displayed_character_inventory,
+         update_displayed_effects,
+         update_displayed_health,
+         update_displayed_item_log,
+         update_displayed_money,
+         update_displayed_quest,
+         update_displayed_reputation,
+         update_displayed_stance_list,
+         update_displayed_time,
+        } from "./display.js";
 import { enemy_killcount } from "./enemies.js";
 import { game_state } from "./game_state.js";
 import { current_game_time } from "./game_time.js";
@@ -37,6 +60,7 @@ import { run_stats } from "./run_stats.js";
 import { add_to_trader_inventory } from "./trade.js";
 import { traders } from "./traders.js";
 import { translationManager } from "./translation.js";
+import { create_displayed_crafting_recipes } from "./crafting_display.js";
 /**
  * puts all important stuff into a string
  * @returns string with save data
