@@ -2558,7 +2558,20 @@ function create_location_choices({location, category, is_combat = false}) {
 
             location_action_div.appendChild(create_location_action_tooltip(location.actions[key]));
     
-            insert_HTML(location_action_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.actions[key].starting_text);
+            /*
+                action_name, not starting_text. The model sets
+                `action_name = data.action_name || data.starting_text`, so an action that
+                does not declare one is unchanged - but seven do, and their names never
+                reach the screen.
+
+                Three of those seven are the ant nests: "Search for ant nests", "Search
+                for second ant nest" and "Search for third ant nests" all draw the same
+                button, "Dig in search of red ant nests", because that is the
+                starting_text they share. The unlock message uses action_name, so the log
+                says Unlocked action "Search for second ant nest" and the player then
+                cannot find anything by that name.
+            */
+            insert_HTML(location_action_div, `<i class="material-icons location_choice_icon">check_box_outline_blank</i> ` + location.actions[key].action_name);
             choice_list.push(location_action_div);
         });
     } else if (category === "fast_travel") {
