@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 47 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 48 -->
 
 # Proposals
 
@@ -1076,6 +1076,19 @@ not after. Each item is the request as it was given, and the state it is in.
     its own labels are all short, so the effect there is three ant-nest actions sharing one
     button label while their distinguishing names sit unused. That is an arguable improvement
     to their copy rather than a bug, and not ours to decide.
+59. **A visible quest task must be answerable** — `done`, v0.6.60. Closes the
+    report of "I know what to do and not how": a task named in the journal with no line
+    under it. The hint builder already handled a task whose advancers are undiscovered;
+    what it could not handle was a task with **no** advancer at all, which produces no hint
+    block. Measured before writing the guard - 59 visible tasks, 11 hidden, and exactly
+    three with nothing indexed, all three in quests marked `is_hidden` at the quest level
+    and finished by `task_condition` on a skill target. So the content is clean and the
+    class is now guarded: `check_visible_tasks_can_be_finished`, 56 answerable, negative-
+    tested by deleting one advancer.
+60. **A raw NUL byte in a source file** — `done`. `tests/checks/content.mjs` used the
+    byte itself as a sentinel rather than the ` ` escape, which made grep call the whole
+    file binary, diffs unreadable, and the byte one careless editor save from vanishing.
+    Same value, written as two characters. It predates this session.
 ---
 ## Open decisions
 

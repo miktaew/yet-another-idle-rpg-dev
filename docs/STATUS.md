@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 3 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 4 -->
 
 # Status
 
@@ -51,8 +51,8 @@ npm test
 npm run check:bundle
 ```
 
-- `check` runs the content and consistency checks in `tests/checks/` (twelve files,
-  ~5,700 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+- `check` runs the content and consistency checks in `tests/checks/` (thirteen files,
+  ~5,800 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 136 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -151,7 +151,7 @@ Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
 ## What the checks actually cover
 
-Twelve files in `tests/checks/`. The valuable ones are not the generic lint-style rules
+Thirteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
 but the ones that encode a bug that shipped:
 
 | Check | What it prevents |
@@ -165,6 +165,7 @@ but the ones that encode a bug that shipped:
 | `documentation pairs` | An English doc whose Turkish counterpart has fallen behind. |
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
+| `visible quest tasks` | A task named in the journal with no way to finish it. 56 tasks. |
 | `actions can explain failure` | An action that fails with no reason shown. 59 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 3 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 4 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -54,7 +54,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on iki dosya, yardımcılarıyla ~5.700 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on üç dosya, yardımcılarıyla ~5.800 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 136 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -154,7 +154,7 @@ gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D
 
 ## Kontroller neyi kapsıyor
 
-`tests/checks/` altında on iki dosya. Değerli olanlar genel biçim kuralları değil,
+`tests/checks/` altında on üç dosya. Değerli olanlar genel biçim kuralları değil,
 yayımlanmış bir hatayı kodlayanlar:
 
 | Kontrol | Neyi engelliyor |
@@ -168,6 +168,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `documentation pairs` | Türkçe eşi geride kalmış İngilizce belge. |
 | `no English written into the DOM` | Yereli atlayıp doğrudan yazılmış metin. 212 sabit. |
 | `hidden quest tasks` | İlerleyemeyen görev. 11 adım. |
+| `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 56 adım. |
 | `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 59 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
 

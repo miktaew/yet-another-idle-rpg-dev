@@ -58,6 +58,7 @@ import { check_save_keys_round_trip } from "./checks/save_contract.mjs";
 import { check_docs_are_paired } from "./checks/docs.mjs";
 import { check_effect_tags_match_their_numbers } from "./checks/effects.mjs";
 import { check_action_labels_fit_a_button } from "./checks/labels.mjs";
+import { check_visible_tasks_can_be_finished } from "./checks/quests.mjs";
 import {
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
@@ -108,6 +109,7 @@ await check_save_keys_round_trip();
 await check_docs_are_paired();
 await check_effect_tags_match_their_numbers();
 await check_action_labels_fit_a_button();
+await check_visible_tasks_can_be_finished();
 check_action_branches();
 check_every_enemy_has_a_home();
 check_hidden_tasks_can_be_hinted();

@@ -295,10 +295,10 @@ function check_content_object_keys() {
                     accepted.add(name);
                 }
                 //Everything up to the next top-level comma is a default value.
-                token = character === "=" ? " " : "";
+                token = character === "=" ? "\0" : "";
                 continue;
             }
-            if (depth === 0 && token !== " ") {
+            if (depth === 0 && token !== "\0") {
                 token += character;
             }
         }

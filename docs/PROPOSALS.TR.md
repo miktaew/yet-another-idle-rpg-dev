@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 47 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 48 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -1087,6 +1087,19 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     zaten kısa; oradaki etkisi, üç karınca yuvası aksiyonunun tek bir düğme etiketini
     paylaşması ve ayırt edici adlarının kullanılmaması. Bu bir hatadan çok metinlerine dair
     tartışmaya açık bir iyileştirme ve kararı bizim değil.
+59. **Görünür bir görev adımı cevaplanabilir olmalı** — `bitti`, v0.6.60. "Ne yapacağım
+    var, nasıl yapacağım yok" bildirimini kapatıyor: günlükte adı yazan ama altında satır
+    olmayan adım. İpucu üreteci, ilerleticileri henüz keşfedilmemiş bir adımı zaten
+    karşılıyordu; karşılayamadığı, **hiç** ilerleticisi olmayan adımdı - o durumda ipucu
+    bloğu hiç oluşmuyor. Koruma yazılmadan önce ölçüldü: 59 görünür adım, 11 gizli ve
+    hiçbir şeyin ilerletmediği tam üç adım; üçü de görev seviyesinde `is_hidden` işaretli ve
+    bir yetenek hedefiyle `task_condition` üzerinden bitiyor. Yani içerik temiz, sınıf ise
+    artık korumalı: `check_visible_tasks_can_be_finished`, 56 cevaplanabilir; bir ilerletici
+    silinerek tersten sınandı.
+60. **Kaynak dosyada ham NUL baytı** — `bitti`. `tests/checks/content.mjs`, ` `
+    kaçışı yerine baytın kendisini imleç olarak kullanıyordu; bu da grep'in dosyanın
+    tamamını ikili sayması, farkların okunamaması ve baytın dikkatsiz bir kayıtla yok olması
+    demekti. Aynı değer, iki karakterle yazıldı. Bu oturumdan öncesine dayanıyor.
 ---
 ## Bekleyen kararlar
 
