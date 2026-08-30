@@ -199,11 +199,20 @@ function check_changelogs_cover_version() {
             }
         }
 
-        //An empty version block reads as a release that did nothing.
-        for (const block of html.matchAll(
-                /<button[^>]*class="collapsible"[^>]*>([^<]+)<\/button>\s*<div class="content">([\s\S]*?)\n    <\/div>/g)) {
-            if (!block[2].includes("<li>")) {
-                error(`${file}: the entry for ${block[1].trim()} has no items. Remove the`
+        /*
+            An empty version block reads as a release that did nothing.
+
+            Each heading is paired with everything up to the NEXT heading rather than
+            with a `</div>` at a fixed indent: v0.3.3 carries an extra
+            `<p class="version_note">` and would have been skipped by a pattern that
+            assumed one shape, which is the wrong way for a check to be quiet.
+        */
+        const sections = html.split(/(?=<button[^>]*class="collapsible"[^>]*>v)/);
+        for (const section of sections) {
+            const heading = /<button[^>]*class="collapsible"[^>]*>([^<]+)<\/button>/.exec(section);
+            if (!heading) continue;
+            if (!section.includes("<li>")) {
+                error(`${file}: the entry for ${heading[1].trim()} has no items. Remove the`
                     + " version rather than shipping a heading with nothing under it.");
             }
         }
