@@ -328,7 +328,7 @@ class Person{
                                                         * this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Climbing"})
                                                         * this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Breathing"});
 
-        levelable.stats.multiplier.skills.block_strength = 1 + 5*this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Shield blocking"});
+        levelable.stats.multiplier.skills.block_strength = 1 + 5*this.getTotalLevelBonus("Shield blocking");
 
         levelable.stats.multiplier.skills.agility = this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Equilibrium"}) 
                                                         * this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Climbing"})
