@@ -50,7 +50,8 @@ async function check_imports_resolve() {
     let checked = 0;
     for (const file of files) {
         const source = strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"));
-        for (const block of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*"([^"]+)"/g)) {
+        //`import Default, { named } from` counts too; see modules.mjs.
+        for (const block of source.matchAll(/import\s+(?:\w+\s*,\s*)?\{([^}]*)\}\s*from\s*"([^"]+)"/g)) {
             const target = block[2];
             //Only our own modules: a package or a node builtin is not ours to verify.
             if (!target.startsWith(".")) continue;
@@ -59,8 +60,16 @@ async function check_imports_resolve() {
                 path.posix.join(path.posix.dirname(file), target));
             const exports = exported_by.get(resolved);
             if (!exports) {
-                error(`${file} imports from "${target}", which does not resolve to a file`
-                    + " under src/. A path that resolves to nothing fails at load time.");
+                /*
+                    A path may legitimately leave src/ - verifier.js reads
+                    "../locales/english.js", which exists and is not a module this
+                    check indexes. Only a path that resolves to NOTHING is a fault, so
+                    the filesystem is asked before anything is reported.
+                */
+                if (!fs.existsSync(path.join(repo_root, resolved))) {
+                    error(`${file} imports from "${target}", which resolves to no file at`
+                        + " all. A path that resolves to nothing fails at load time.");
+                }
                 continue;
             }
 

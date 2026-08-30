@@ -50,7 +50,13 @@ async function check_modules_import_what_they_call() {
     for (const [file, source] of sources) {
         //What this module imports, under whatever local name.
         const imported = new Set();
-        for (const block of source.matchAll(/import\s*\{([^}]*)\}\s*from/g)) {
+        /*
+            `import Default, { named } from` counts too. Requiring the brace to follow
+            `import` directly missed that form entirely, which reported every name in
+            it as an unimported global - measured against upstream, where person.js
+            writes exactly that, it invented two findings against correct code.
+        */
+        for (const block of source.matchAll(/import\s+(?:\w+\s*,\s*)?\{([^}]*)\}\s*from/g)) {
             for (const part of block[1].split(",")) {
                 const piece = part.trim();
                 if (!piece) continue;
@@ -58,7 +64,7 @@ async function check_modules_import_what_they_call() {
                 imported.add((as[1] ?? as[0]).trim());
             }
         }
-        for (const star of source.matchAll(/import\s+(?:\*\s+as\s+)?(\w+)\s+from/g)) {
+        for (const star of source.matchAll(/import\s+(?:\*\s+as\s+)?(\w+)\s*(?:,|\s+from)/g)) {
             imported.add(star[1]);
         }
 
@@ -69,6 +75,17 @@ async function check_modules_import_what_they_call() {
                                /(?:const|let|var)\s+(\w+)\s*=/g,
                                /class\s+(\w+)/g]) {
             for (const match of source.matchAll(pattern)) declared.add(match[1]);
+        }
+        /*
+            Destructured declarations too. `const {stats, xp_multipliers} = race` binds
+            both names and the bare-name pattern above sees neither, so every use of
+            one reads as a missing import - five false findings in one file, measured.
+        */
+        for (const match of source.matchAll(/(?:const|let|var)\s*\{([^}]*)\}\s*=/g)) {
+            for (const part of match[1].split(",")) {
+                const name = part.split("=")[0].split(":").pop().trim();
+                if (/^[A-Za-z_]\w*$/.test(name)) declared.add(name);
+            }
         }
         /*
             Parameters count as declared. display.js takes the stance registry as an argument
@@ -84,9 +101,14 @@ async function check_modules_import_what_they_call() {
             missing import - the check crying wolf about correct code, which is worse
             than the gap it was closing.
         */
+        /*
+            A class method is not written `function name(...)`, so its parameters
+            were invisible: hero.js declares `addBookBonus({xp_multipliers = {}})`
+            and every use of that parameter inside it read as a missing import.
+        */
         for (const params of source.matchAll(
-                /function\s*\w*\s*\(([^)]*)\)|\(([^)]*)\)\s*=>|(?:^|[\s(,=])([A-Za-z_]\w*)\s*=>/g)) {
-            const list = params[1] ?? params[2] ?? params[3] ?? "";
+                /function\s*\w*\s*\(([^)]*)\)|\(([^)]*)\)\s*=>|(?:^|[\s(,=])([A-Za-z_]\w*)\s*=>|^\s{4}(?:async\s+)?[A-Za-z_]\w*\s*\(([^)]*)\)\s*\{/gm)) {
+            const list = params[1] ?? params[2] ?? params[3] ?? params[4] ?? "";
             for (const part of list.split(",")) {
                 const name = part.split("=")[0].replace(/[{}[\]]/g, "").split(":").pop().trim();
                 if (/^[A-Za-z_]\w*$/.test(name)) declared.add(name);
