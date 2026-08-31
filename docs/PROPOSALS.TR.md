@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 66 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 67 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -255,7 +255,8 @@ Her faz kendi başına yayınlanır, `build` + `LOCALE_STRICT=1 check` + `test` 
 `check:bundle` kapılarından geçer ve her iki changelog girdisini alır. Bir önceki
 faz yeşile dönmeden sonraki başlamaz.
 
-**Faz 0 — zemin.** Hikâye yok. Q-7 ile Q-10 karara bağlanır.
+**Faz 0 — zemin.** Hikâye yok. Q-7 ile Q-10 karara bağlandı; her cevap onu
+tüketen faza taşınır.
 [STATUS.TR.md](STATUS.TR.md) 48. maddeyi ve P-13/35'i devam ediyor diye sayıyor,
 bu dosyada ikisi de yok; hangisinin yanıldığı ölçülüp düzeltilir. İpucu göstermeyen
 iki quest task'ı kaynaktan değil **çalışan oyunda** ölçülüp düzeltilir. Eksik iki
@@ -408,7 +409,7 @@ Her biri `option_language` içinde açık bir yeniden çizim alıyor ve biri eks
 olursa `npm run check` düşüyor; böylece liste sessizce büyüyemiyor. Yeniden yükleme
 yok ve hiçbir şeyin bölünmesi gerekmedi.
 
-### Q-7 — Lonca itibarı dördüncü bir reputation bölgesi mi olsun? **ÖNERİ: evet**
+### Q-7 — Lonca itibarı dördüncü bir reputation bölgesi mi olsun? **KARAR: evet**
 
 P-14'ün 3. fazı birbirinden farklı üç bilgi yolu istiyor ve üç eksenin ikisi zaten
 harcanmış durumda: kasaba meydanı Town'u 50 / 150 / 250'de, sıra evleri Slums'ı
@@ -429,7 +430,7 @@ gözdeliğini flag ve quest durumuyla ifade etmek — daha az kod tutar ve hiçb
 kazandırmaz: üçüncü bir yolu üçüncü bir yol gibi hissettiren şey, tam olarak
 oyuncunun yükselişini izleyebildiği bir sayıdır.
 
-### Q-8 — Soruşturma notları nerede durur? **ÖNERİ: yeni panel değil, bir lore ipliği**
+### Q-8 — Soruşturma notları nerede durur? **KARAR: yeni panel değil, bir lore ipliği**
 
 Ölçüldü; çünkü brief Discoveries diyor ve Discoveries kulağa geldiği şey değil.
 `update_displayed_discoveries` **eşyaları** nereden geldiklerine karşı çiziyor;
@@ -452,7 +453,7 @@ Bir aksiyonun başarı metni ikisi de değil; bugün günlükte bir kez okunup g
   dört günlük yüzeyi var ve beşincisi, buradaki her kalıcı direktifin önlemek için
   var olduğu paralel sistem olurdu.
 
-### Q-9 — Cezir zinciri kaç yeni yer ister? **ÖNERİ: dört değil, iki**
+### Q-9 — Cezir zinciri kaç yeni yer ister? **KARAR: dört değil, iki**
 
 Brief şu zinciri çiziyor: Körfez → cezir düzlüğü → demirleme yeri → güverte → alt
 ambar. Körfez oyunun bilerek en ince bölgesi — üç yer, çünkü liman insanın içinden
@@ -465,7 +466,7 @@ Zincirin tamamını iki yer taşır: yaklaşımı ve gelgitin kapattığı şeyi
 eklemenin maliyeti değil, o odanın içinde bir şey olup olmadığıdır — koridorun
 içinde yoktur.
 
-### Q-10 — "Yılda iki kez" nasıl çalışır? **ÖNERİ: iki mevsim, zamanlayıcı yok**
+### Q-10 — "Yılda iki kez" nasıl çalışır? **KARAR: iki mevsim, zamanlayıcı yok**
 
 `conditions.js` zaten `season: {yes, not}` okuyor; `game_time` mevsimi, haftanın
 gününü, gün sayısını ve ay evresini taşıyor. Yılda iki kez, iki mevsim demektir ve

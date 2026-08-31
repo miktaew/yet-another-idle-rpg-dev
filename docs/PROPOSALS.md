@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 66 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 67 -->
 
 # Proposals
 
@@ -244,7 +244,8 @@ Each phase ships on its own, passes `build` + `LOCALE_STRICT=1 check` + `test` +
 `check:bundle`, and gets both changelog entries. No phase starts before the one
 before it is green.
 
-**Phase 0 — the ground.** No story. Settle Q-7 to Q-10. Correct whichever of
+**Phase 0 — the ground.** No story. Q-7 to Q-10 are decided; carry each
+answer into the phase that consumes it. Correct whichever of
 [STATUS.md](STATUS.md) and this file is wrong about item 48 and P-13/35, which
 STATUS lists as in flight and this file does not carry. Measure the two quest tasks
 that show no hint **in the running game** rather than from the source, and fix them.
@@ -397,7 +398,7 @@ panel. Each gets an explicit repaint in `option_language`, and `npm run check`
 fails if one of them is missing, so the list cannot silently grow. No reload, and
 nothing had to be split.
 
-### Q-7 — Does guild standing become a fourth reputation region? **PROPOSED: yes**
+### Q-7 — Does guild standing become a fourth reputation region? **DECIDED: yes**
 
 P-14 phase 3 wants three information paths that differ, and two of the three axes
 are already spent: the town square reads Town at 50 / 150 / 250 and the row reads
@@ -416,7 +417,7 @@ expressing guild favour as flags and quest state - costs less code and buys noth
 a number the player can watch rise is exactly what makes a third path feel like a
 third path.
 
-### Q-8 — Where do investigation notes live? **PROPOSED: a lore thread, not a new panel**
+### Q-8 — Where do investigation notes live? **DECIDED: a lore thread, not a new panel**
 
 Measured, because the brief names Discoveries and Discoveries is not what it sounds
 like. `update_displayed_discoveries` renders **items** against where each one comes
@@ -437,7 +438,7 @@ Three options, and the middle one is right:
   has four journal surfaces already and a fifth would be the parallel system every
   standing directive here exists to prevent.
 
-### Q-9 — How many new places does the ebb chain need? **PROPOSED: two, not four**
+### Q-9 — How many new places does the ebb chain need? **DECIDED: two, not four**
 
 The brief sketches Bay → low-tide flats → anchorage → cargo deck → lower hold. The
 bay is deliberately the thinnest region in the game - three places, because a harbour
@@ -450,7 +451,7 @@ deck are actions on those two. Locations are cheap here, which is the trap: the 
 is not what it costs to add a room but whether the room has anything in it, and a
 corridor does not.
 
-### Q-10 — How does "twice a year" work? **PROPOSED: two seasons, no scheduler**
+### Q-10 — How does "twice a year" work? **DECIDED: two seasons, no scheduler**
 
 `conditions.js` already reads `season: {yes, not}` and `game_time` carries the
 season, the day of the week, the day count and the moon phase. Twice a year is two
