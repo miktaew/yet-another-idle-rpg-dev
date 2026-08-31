@@ -3580,6 +3580,10 @@ function create_save() {
                 }
             }
 
+            
+            /*
+            no need to save since availabilities get saved separately?
+
             //write_availability_status(save_data["npcs"][npc_key], npc_availability);
             //write_availability_status(save_data["npcs"][npc_key]["dialogue"], dialogue_availability);
             //write_availability_status(save_data["npcs"][npc_key]["trader"], trader_availability);
@@ -3589,6 +3593,7 @@ function create_save() {
                 save_data["npcs"][npc_key]["dialogue"]["textlines"][textline_key] = {};
                 //write_availability_status(save_data["npcs"][npc_key]["dialogue"]["textlines"][textline_key], textline_availability);
             });
+            */
 
             Object.keys(dialogue.actions).forEach(action_key => {
                 //const action_availability = dialogue.actions[action_key].getAvailabilityComponent();
@@ -4522,16 +4527,16 @@ function load(save_data) {
                 if(key) {
                     const npc = NPCRegistry.get(key);
                     const dialogue = npc.getDialogueComponent();
-                    //const dialogue_availability = npc.getDialogueAvailability();
+                    const dialogue_availability = npc.getDialogueAvailability();
 
-                    //write_availability_status(dialogue_availability, save_data.dialogues[dialogue_key]);
+                    write_availability_status(dialogue_availability, save_data.dialogues[dialogue_key]);
                     
                     
                     if(save_data.dialogues[dialogue_key].textlines) {  
                         Object.keys(save_data.dialogues[dialogue_key].textlines).forEach(textline_key => {
                             if(dialogue.textlines[textline_key]) {
-                                //const textline_availability = dialogue.textlines[textline_key].getAvailabilityComponent();
-                                //write_availability_status(textline_availability, save_data["dialogues"][dialogue_key]["textlines"][textline_key]);
+                                const textline_availability = dialogue.textlines[textline_key].getAvailabilityComponent();
+                                write_availability_status(textline_availability, save_data["dialogues"][dialogue_key]["textlines"][textline_key]);
                             } else {
                                 console.warn(`Textline "${textline_key}" in npc "${dialogue_key}" couldn't be found!`);
                                 any_warnings = true;
@@ -4543,8 +4548,8 @@ function load(save_data) {
                         Object.keys(save_data.dialogues[dialogue_key].actions).forEach(action_key => {
                             if(dialogue.actions[action_key]) {
 
-                                //const action_availability = dialogue.actions[action_key].getAvailabilityComponent();
-                                //write_availability_status(action_availability, save_data["dialogues"][dialogue_key]["actions"][action_key]);
+                                const action_availability = dialogue.actions[action_key].getAvailabilityComponent();
+                                write_availability_status(action_availability, save_data["dialogues"][dialogue_key]["actions"][action_key]);
 
                                 dialogue.actions[action_key].setCurrentProgress(save_data.dialogues[dialogue_key].actions[action_key]["accumulated_progress"]);
                                 dialogue.actions[action_key].setCompletionCount(save_data.dialogues[dialogue_key].actions[action_key]["completion_count"]);
@@ -4565,9 +4570,9 @@ function load(save_data) {
                     const npc = NPCRegistry.get(key);
                     if(npc?.tags?.trader) {
                         const trader = npc.getTraderComponent();
-                        //const trader_availability = npc.getTraderAvailability();
+                        const trader_availability = npc.getTraderAvailability();
                         
-                        //write_availability_status(trader_availability, save_data.traders[trader_key]);
+                        write_availability_status(trader_availability, save_data.traders[trader_key]);
                         
                         let trader_item_list = [];
 
