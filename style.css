@@ -822,7 +822,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .equipped_item_control {
-	width: 383px;
+	width: 100%;
 	border-bottom: 1px dotted white;
 	font-size: 13px;
 	background-color: rgba(255, 236, 128, 0.15);
@@ -853,7 +853,7 @@ input[type=checkbox], input[type=radio] {
 
 .inventory_item_control {
 	border-bottom: 1px dotted white;
-	width: 383px;
+	width: 100%;
 }
 .inventory_item_control:hover {
 	background-color: var(--active_button_color);
@@ -2414,7 +2414,7 @@ i {
 			}
 
 				.bestiary_entry_div, .data_entry, .anthology_entry_div {
-					width: 380px;
+					width: 100%;
 					display: flex;
 					box-shadow: 0 -1px 0 gray, 0 1px 0 gray;
 					margin-bottom: 1px;
