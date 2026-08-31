@@ -17,6 +17,8 @@ const config = {
     //how many ticks per second
     //1 is the default value; going too high might make the game unstable
 
+    time_speedup_when_sleeping: 6,
+
     global_xp_multiplier: 1, //this does not ignore the xp gain cap
 
     base_xp_cost: 10, //base xp for level up of a levelable character/npc

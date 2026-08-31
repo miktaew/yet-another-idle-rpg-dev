@@ -5546,7 +5546,7 @@ function hard_reset() {
 //update game time
 function update_timer(time_in_minutes) {
     const was_night = is_night(current_game_time);
-    current_game_time.goUp(time_in_minutes || (is_sleeping ? 6 : 1));
+    current_game_time.goUp(time_in_minutes || (is_sleeping ? config.time_speedup_when_sleeping : 1));
 
     //character.updateStatsAndDisplay(); //done every second, probably only used for day-night cycle at this point
     const daynight_change = was_night !== is_night(current_game_time);
@@ -5572,6 +5572,10 @@ function update_effect_durations({time_in_minutes = 1, is_travel}) {
     let were_stats_updated = false;
     Object.keys(active_effects).forEach(key => {
         if(!is_travel || is_travel && active_effects[key].affected_by_travel) {
+
+            if(time_in_minutes == 1 && is_sleeping && active_effects[key].tags.debuff) {
+                time_in_minutes = config.time_speedup_when_sleeping;
+            }
 
             active_effects[key].duration-= time_in_minutes;
             if(active_effects[key].duration <= 0) {
