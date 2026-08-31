@@ -21,6 +21,50 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 
 ## 2026-08-30
 
+### The agent's own loop instructions stay out of git
+
+`.claude/` is ignored. It holds the development loop's instruction file and
+whatever local settings a harness writes beside it.
+
+The reason is not tidiness. `.loop.md` is written in Turkish, and D-3 holds every
+*tracked* markdown file to a `NAME.md` / `NAME.TR.md` pair at a matching
+`doc-version`. Committing that directory would have `check_docs_are_paired`
+demand a `.loop.TR.md` - so the loop's own instruction file would fail the
+quality gate the loop exists to pass. An English-canonical Turkish-translated
+pair is the wrong shape for a file that is one agent's working orders.
+
+The loop file itself was replaced as well: what was there was a generic
+template, and most of what it said about this repository was not true of it. The
+corrections, in order of how much they would have cost:
+
+- It said to mark a finished proposal `done` and leave it in `PROPOSALS.md`.
+  `check_docs_are_paired` reports exactly that as an error (D-9: write it up in
+  `CHANGELOG.md` and remove it), so the loop would have failed its own gate on
+  every iteration that finished anything.
+- It treated `docs/TODO.md` as the work queue, outranking `PROPOSALS.md`. That
+  file has no checkboxes and is untracked, so there is nothing there to tick -
+  and the owner has already measured the brief into P-14. Working from the brief
+  would re-derive settled decisions and act on things the code does not have:
+  no guild standing, no lockpicking skill, no navigation skill.
+- It never mentioned the Turkish half of anything, or `doc-version`. Both are
+  enforced.
+- It invented a `// SORU:` comment for a blocked item. The project already has a
+  convention - status `blocked` plus a numbered `Q-n` under **Open decisions** -
+  and Q-7 to Q-10 are sitting at `PROPOSED`, undecided, which Phase 0 of P-14
+  asks to be settled first.
+- The version rule was one vague paragraph. It is now two branches: maintenance
+  touches only `docs/CHANGELOG.md` and its Turkish half and leaves
+  `game_version.js`, `package.json` and both changelog HTML files alone;
+  player-visible work bumps both version files and adds both HTML entries. The
+  symmetry is enforced - `npm run check` requires both HTML copies to carry an
+  entry for the current `game_version`.
+
+It also carries the traps this session actually hit: `LOCALE_STRICT=1` is bash
+syntax and needs `$env:` in PowerShell, `npm run build` fails with EBUSY while a
+test server holds `_site`, esbuild treats an unresolved identifier as a runtime
+global, and `git checkout <file>` silently discards your own work - which is how
+`style.css` was lost mid-way through a negative test today.
+
 ### The two quest tasks with no hint do not exist, and the gap under them did
 
 STATUS has carried "two quest tasks show no hint in the journal" as an open item

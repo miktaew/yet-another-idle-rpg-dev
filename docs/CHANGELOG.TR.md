@@ -23,6 +23,51 @@ geldiğinde buraya girer.
 
 ## 2026-08-30
 
+### Ajanın kendi loop talimatı git'in dışında kalıyor
+
+`.claude/` artık yoksayılıyor. İçinde geliştirme döngüsünün talimat dosyası ve
+bir harness'ın yanına yazdığı yerel ayarlar duruyor.
+
+Sebep düzen tutkusu değil. `.loop.md` Türkçe yazılmış, D-3 ise *izlenen* her
+markdown dosyasını `NAME.md` / `NAME.TR.md` çiftine ve aynı `doc-version`
+değerine bağlıyor. O dizini commit etmek `check_docs_are_paired`'in bir
+`.loop.TR.md` istemesine yol açardı - yani loop'un kendi talimat dosyası,
+loop'un geçmek için var olduğu kalite kapısından kalırdı. İngilizce kanonik +
+Türkçe çeviri biçimi, tek bir ajanın çalışma emri olan bir dosya için yanlış
+biçim.
+
+Loop dosyasının kendisi de değiştirildi: orada duran genel bir şablondu ve bu
+repository hakkında söylediklerinin çoğu burada doğru değildi. Düzeltmeler,
+maliyet sırasıyla:
+
+- Bitmiş bir proposal'ı `done` işaretleyip `PROPOSALS.md` içinde bırakmayı
+  söylüyordu. `check_docs_are_paired` tam olarak bunu hata olarak bildiriyor
+  (D-9: `CHANGELOG.md` içine yaz ve dosyadan çıkar), yani loop bir şey
+  bitirdiği her iterasyonda kendi kapısından kalacaktı.
+- `docs/TODO.md`'yi iş kuyruğu sayıyor ve `PROPOSALS.md`'nin üstüne
+  koyuyordu. O dosyada checkbox yok ve izlenmiyor, yani işaretlenecek bir şey
+  de yok - ayrıca sahibi brief'i zaten ölçüp P-14 olarak yazdı. Brief'ten
+  çalışmak, verilmiş kararları yeniden türetmek ve kodda olmayan şeylere göre
+  davranmak olurdu: guild standing yok, lockpicking yok, navigation skill'i yok.
+- Hiçbir şeyin Türkçe yarısından ya da `doc-version`'dan söz etmiyordu. İkisi de
+  zorunlu.
+- Bloklanmış madde için `// SORU:` diye bir yorum biçimi uyduruyordu. Projenin
+  kendi kuralı var - `blocked` durumu ve **Open decisions** altında numaralı
+  `Q-n` - ve Q-7 ile Q-10 şu an `PROPOSED`, yani kararsız; P-14'ün Faz 0'ı da
+  önce bunların çözülmesini istiyor.
+- Sürüm kuralı tek muğlak paragraftı. Artık iki kol: bakım yalnızca
+  `docs/CHANGELOG.md` ve Türkçe yarısına dokunur, `game_version.js`,
+  `package.json` ve iki changelog HTML'ini rahat bırakır; oyuncuyu etkileyen iş
+  iki sürüm dosyasını da yükseltir ve iki HTML girdisini de ekler. Simetri
+  zorunlu - `npm run check`, iki HTML kopyanın da güncel `game_version` için
+  girdi taşımasını şart koşuyor.
+
+Dosya ayrıca bu oturumda bizzat çarpılan tuzakları taşıyor: `LOCALE_STRICT=1`
+bash sözdizimidir ve PowerShell'de `$env:` gerekir, `npm run build` bir test
+sunucusu `_site`'ı tutarken EBUSY ile düşer, esbuild çözülmemiş bir
+tanımlayıcıyı runtime global sayar ve `git checkout <dosya>` kendi çalışmanı
+sessizce siler - bugün bir negatif testin ortasında `style.css` böyle kayboldu.
+
 ### İpucu göstermeyen iki görev adımı yok; altlarındaki açık vardı
 
 STATUS, "iki görev adımı günlükte ipucu göstermiyor" maddesini oyun çalışırken ölçüm

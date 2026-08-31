@@ -25,6 +25,15 @@ yet-another-idle-rpg*.txt
 # root while driving the game in a browser to verify a change. Throwaway.
 .playwright-mcp/
 
+# Agent session config: the development loop's instructions, and whatever local
+# settings a harness writes next to them. Kept local for a reason beyond taste -
+# .loop.md is written in Turkish, and D-3 holds every tracked markdown file to a
+# NAME.md / NAME.TR.md pair at a matching doc-version. Committing this directory
+# would have check_docs_are_paired demand a .loop.TR.md and fail the quality gate
+# the loop itself has to pass. If something in here should ever be shared, add
+# that one file as an English-canonical pair rather than removing this line.
+.claude/
+
 # Logs
 *.log
 npm-debug.log*
