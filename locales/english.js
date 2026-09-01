@@ -3533,6 +3533,7 @@ const descriptions = {
     "ui max short": "Max!",
     "ui bestiary stats": "Stats:",
     "ui bestiary found in": "Found in",
+    "ui reputation repaired": "Your standing with {v1} was raised by {v2}, for work you had already finished before it counted for anything.",
     "ui region reputation": "{v1} reputation",
     "name Town": "Town",
     "ui stance col fav": "Fav",

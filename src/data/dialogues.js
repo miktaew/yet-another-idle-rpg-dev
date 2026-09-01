@@ -1926,9 +1926,11 @@ class Textline {
                 text: "swampcook woods answ",
                 is_unlocked: false,
                 rewards: {
-                    //No reputation: nothing in the game grants or consumes a Swamp
-                    //reputation, so a grant here would be a reward that looks like
-                    //something and does nothing. The gathering ground IS the reward.
+                    //No reputation, and the reason is no longer the one written here
+                    //before v0.7.21: the region does have standing now, and five
+                    //deliveries grant it. This line is not one of them because the
+                    //gathering ground IS the reward - showing the player where the
+                    //crabs are is worth more than a number.
                     xp: 2000,
                     quest_progress: [{quest_id: "Where We Gathered", task_index: 2}],
                 },

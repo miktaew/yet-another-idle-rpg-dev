@@ -24,6 +24,7 @@ import { favourite_locations, locations } from "./data/locations.js";
 import { skills } from "./data/skills.js";
 import { player_storage } from "./data/storage.js";
 import { restore_obtained_order } from "./components/inventory_component.js";
+import { late_reputation_owed } from "./save_repairs.js";
 import {
          change_completed_quest_visibility,
          format_money,
@@ -1503,6 +1504,32 @@ function load(save_data) {
                 return;
             }
         }); //load for locations their unlocked status and their killcounts
+
+        /*
+            Reputation that was earned before the reward for earning it existed.
+
+            This runs here rather than with the other version-gated patches below because it
+            needs both the dialogues and the locations restored - it reads what the save says
+            was finished - and because it is not version-gated at all. A save records when it
+            was last written, not when its content was done, so v0.7.25 can still be missing a
+            grant added in v0.7.21 (P-38). What it compares instead is what the finished
+            content owes against what the standing is.
+
+            Paid through process_rewards so a repaired standing takes exactly the path a
+            freshly earned one does, and told to the player, because a number in their Data
+            panel changing between one session and the next with no explanation is worse than
+            the shortfall.
+        */
+        late_reputation_owed(save_data, character.reputation).forEach(repair => {
+            process_rewards({
+                rewards: {reputation: {[repair.region]: repair.missing}},
+                inform_overall: false,
+            });
+            log_message(translationManager.getText(language, "ui reputation repaired", {
+                v1: translationManager.getDisplayName(language, repair.region),
+                v2: repair.missing,
+            }), "notification");
+        });
 
         if(is_a_older_than_b(save_data["game version"], "v0.5")) {
             //unlock status was swapped from local activity to global activity, so a need for this

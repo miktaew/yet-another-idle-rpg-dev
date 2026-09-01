@@ -81,6 +81,10 @@ import {
     check_every_sort_button_is_understood,
 } from "./checks/inventory.mjs";
 import {
+    check_a_standing_gate_can_be_reached,
+    check_a_late_repair_still_finds_its_grants,
+} from "./checks/reputation.mjs";
+import {
     check_duration_units_have_rows,
     check_interpolated_pairs,
     check_locales,
@@ -199,6 +203,8 @@ await check_qualitied_materials_can_still_be_found();
 check_the_prediction_and_the_roll_share_one_source();
 check_a_sorted_field_is_saved();
 check_every_sort_button_is_understood();
+await check_a_standing_gate_can_be_reached();
+await check_a_late_repair_still_finds_its_grants();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

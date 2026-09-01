@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 45 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 46 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -208,6 +208,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `recurring gates` | Bir mevsim ya da ayla saklanan aksiyon; açıklamasız kaybolup geri geliyor. 72 aksiyon. |
 | `sorted fields` | Listenin sıraladığı ama kaydın tutmadığı bir envanter alanı; yeniden yükleme onu keyfi diziyor. 2 kayıtlı envanter. |
 | `sort buttons` | Hiçbir karşılaştırıcı dalının anlamadığı bir sıralama düğmesi ya da hiçbir düğmenin sunmadığı bir dal. 4 sıralama. |
+| `standing gates` | Oyunun verebileceğinden fazlasını isteyen bir itibar kapısı; kimse açamıyor. 46 bağış, 5 kapatılmış bölge. |
+| `late repairs` | Sonradan eklenmiş bir ödül için yazılmış ama tekrarladığı şeyi artık bulamayan bir onarım; sessizce hiçbir şey ödemiyor. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 114 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 115 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -751,57 +751,27 @@ sürümü muhtemelen her paneli okuduğu durumla eşleştirip o durumu yazan her
 onun güncelleyicisine ulaşıp ulaşmadığını soruyor — ki bu bir çağrı grafiği sorusu ve bu
 projedeki ilki olurdu.
 
-### P-38 — Zaten kazanılmış itibar geriye dönük işlenmeli `open`
+### P-39 — Hiç craft edilmemişi işaretle, yapılabilire göre filtrele `open`
 
-Sahibinin bildirimi, karşı kontrol için bir kayıtla birlikte
-(`yet-another-idle-rpg 2026-09-01 17_49_16.txt`): *"bataklığa ekledik ama görevler
-tamamlandığı için görev tamamlamalara göre kontrol edip rep'leri güncelleyen bir metot
-ekleyelim"*. Ekran görüntüsü, Veri panelinde Köy 460, Kenar mahalle 200 ve Kasaba 150'yi
-listeliyor ve hiç bataklık satırı yok — hem de bataklık kabilesinde dururken alınmış.
+Sahibinin isteği, iki parça: *"craft edilebilir ama hiç craft edilmemiş eşyaları bir belirteçle
+keşfedildi/keşfedilmedi şeklinde işaretleyelim. craft sayfalarında sadece yapılabilirleri
+filtrelemek için bir checkbox ekleyelim."*
 
-**Herhangi bir şey tasarlanmadan önce ölçülen iki olgu.**
+**İki yarı farklı şeylere ihtiyaç duyuyor.** "Şu anda yapılabilir" zaten hesaplanıyor —
+zanaat listesi malzemenin ya da becerinin izin vermediğini soluklaştırıyor, yani filtre var
+olan bir yüklem ve onu okuyan bir onay kutusu. "Hiç craft edilmemiş" ise değil: P-32'deki
+edinme sırası gibi, bunu hiçbir şey kaydetmiyor; yani var olmaya başlaması ve kayda yazılması
+gereken bir alan.
 
-- **Eksik satır bir görüntü hatası değil.** `update_displayed_reputation` bir bölgeyi
-  yalnızca değeri sıfırın üzerindeyken gösteriyor ve bunu kendi üzerindeki yorumda
-  söylüyor. Yani bataklık satırının yokluğu, panelin doğruyu bildirmesi: itibar gerçekten
-  sıfır.
-- **Ödül var ve ulaşılamaz.** Beş bataklık teslimi her biri 50 ile 70 arası Swamp veriyor;
-  v0.7.20'de eklendi. Beşi de tek seferlik replikler ve bu sahibin kaydında hepsi
-  tamamlanmış — itibarı yalnızca kazanılmamış değil, kazanılamaz yapan şey de bu. Oyundaki
-  hiçbir şey artık onu veremiyor.
+**Karar verilmesi gerekenler.** "Keşfedildi"nin *en az bir kez craft edilmiş* mi yoksa *en az
+bir kez yapılabilir olduğu görülmüş* mü anlamına geldiği. Birincisi oyuncunun yaptığının kaydı
+ve isteğin bariz okuması; ikincisi belirteci bir tarif defteri sayacına dönüştürüyor, ki bu
+aynı kelimeyi giyen farklı bir özellik.
 
-**Sahibinin kaydına karşı ölçüldü (v0.7.25, `npm run check:save` ile kontrol edildi — her
-anahtar çözülüyor).** Kayıttaki bataklık itibarı tam olarak 0 ve beş bağış boyunca 300
-sunuluyor. Bunun en az 120'si kaydın tamamlanmış işaretlediği repliklerin üzerinde duruyor,
-yani kazanılabilir olarak 180 kalıyor — karşısında ise `{Swamp: {at_least: 200}}` isteyen
-`swampchief standing` var. **Yani reisin repliği bu kayıtta yalnızca kazanılmamış değil,
-bölgenin hâlâ sunduğu her şey yapıldıktan sonra bile ulaşılamaz.** Sorunun en keskin biçimi bu
-ve cevabın sabır değil bir onarım olmasını gerektiren de bu.
-
-**Bunun neden tek bir bölge değil bir sınıf olduğu.** Bir oyuncunun zaten bitirdiği içeriğe
-bağlanan her ödülün biçimi aynı: bağış yazılı, tetikleyici harcanmış ve oyuncu, tasarımın
-kazandığını söylediği bir şeyden kalıcı olarak yoksun. Bataklık, koca bir bölgenin itibarı
-sıfırda durduğu için fark edilen örnek.
-
-**Sahibi karar verdi ve bu tek durum için değil genel olarak karar verdi:** *"oyun
-yüklendiğinde, sayfa açıldığında kontroller bir kere çalışmalı. save migration yapılmalı.
-sürüm artışında örneğin swamp'a rep ekledik, ancak kullanıcının kaydında bu bilgi yok. bu
-durumda üst sürüme çıkarırken bunu eklemeli, mevcut kayıt kontrol edilmeli ve güncellemeleri
-yapılmalı."*
-
-Yani: sürüme bağlı, kayıt yüklenirken bir kez çalışan bir göç. Bu, `save_load.js`'in zaten bir
-düzine yerde kullandığı kalıp — `is_a_older_than_b(save_data["game version"], "v0.4.6.12")` ve
-akrabaları — ve bir kez çalışıp bir daha çalışmamasını sağlayan şey de sürüm karşılaştırması;
-neyin ödendiğini kaydetmeye gerek bırakmıyor.
-
-**Bunun işi neye dönüştürdüğü.** "Bataklığı işle" değil; bir itibar bağışını ekleyen sürümden
-önce yazılmış bir kayıt için, bitmiş içeriğin ne borçlu olduğunu hesaplayıp ödeyen bir göç
-adımı. Bataklık o adımın ilk maddesi; makine ise bir sonraki bağışın ihtiyaç duyacağı şey.
-
-**Muhafız sınıfı tutmalı.** Zaten bitirilebilir durumdaki içeriğe eklenmiş ve sonradan onu
-işleyen bir yolu olmayan bir ödül. Bu kontrol edilebilir: bir şey veren tek seferlik bir
-replik ya da görev, karşısında o bağışı zaten harcanmış bir kayıt için uzlaştıran herhangi
-bir şeyin olup olmadığı.
+**Nerede yaşamalı.** `item_log` bir oyuncunun elde ettiğini, en iyi kaliteyi ve toplamı zaten
+kaydediyor ve Keşifler panelinde zaten çiziliyor. En-az-bir-kez-craft-edildi bayrağı yeni bir
+deponun içinde değil onun yanında olabilir — ki bu da belirtecin iki panelde aynı şeyi
+söylemesini sağlar.
 
 ---
 

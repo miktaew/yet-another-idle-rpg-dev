@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 98 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 99 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,77 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.27 - bir işe yaramadan önce kazanılan itibar yüklemede ödeniyor
+
+P-38; karşı kontrol için bir kayıtla bildirildi: *"bataklığa ekledik ama görevler tamamlandığı
+için görev tamamlamalara göre kontrol edip rep'leri güncelleyen bir metot ekleyelim"*.
+
+**Önce ölçüldü ve ilk ölçüm yanlıştı.** Bir kaynak taraması beş bataklık bağışını en yakın
+önceki `new Textline`'a atfetti ve 300'ün 120'sinin kayıp, 180'inin kazanılabilir olduğunu
+bildirdi. Onlar `new DialogueAction`. Doğru alana karşı okunduğunda **beşi de tamamlanmış ve
+300'ün tamamı harcanmış** — ve aynı tarama iki `display_conditions` bloğunu bağış saymış,
+hiç eksiği olmayan bir bölgede 140 puanlık bir açık uydurmuştu; çünkü `rewards:`,
+`display_conditions:`'ın dört satır üstünde duruyor. Aşağıdaki her şey artık canlı ödül
+nesnelerini okuyor: bağış `rewards` altında, kapı `display_conditions` altında ve hiçbiri
+diğeriyle karıştırılamıyor.
+
+Yani sahibinin kaydının gerçek durumu: **bataklık itibarı 0, oyunda onu yükseltebilecek hiçbir
+şey yok ve 200'e kapatılmış `swampchief standing` kalıcı olarak ulaşılamaz.**
+
+**Kaydın sürümü test olamaz ve zorluğun tamamı bu.** `save_load.js`'teki diğer her onarım
+`is_a_older_than_b(save_data["game version"], …)` ile kapatılmış ve burada bu başarısız oluyor:
+kayıt v0.7.25 okunuyor çünkü en son o zaman *yazıldı*; teslimler ise v0.7.21 bağışı eklemeden
+çok önce tamamlanmıştı. Bir sürüm, içeriğin ne zaman yapıldığı hakkında hiçbir şey söylemiyor.
+
+**Dolayısıyla test aritmetik.** `save_repairs.js`, tamamlanmış içeriğin bir bölgeye ne borçlu
+olduğunu hesaplayıp itibarla karşılaştırıyor. Altındaysa fark hiç ödenmemiş; üstünde ya da
+eşitse yapacak bir şey yok. Bu kuruluşu gereği idempotent — ikinci yükleme aynı tabanı
+hesaplayıp karşılanmış buluyor — yani uygulanmış onarımların defterine ihtiyacı yok ve iki kez
+ödeyemiyor. Sahibinin kaydında dört durumda ölçüldü: ilkinde +300, ikincisinde hiç, yeni bir
+oyunda hiç, 300'ü meşru şekilde kazanmış bir oyuncuda hiç.
+
+Yalnızca tamamlanmasını kaydın birebir tuttuğu kaynaklar sayılıyor — tamamlanmış işaretli tek
+seferlik bir girdi ya da sayacı olan tekrarlanabilir biri — ki bu toplamı bir taban olarak
+tutuyor. Negatif bağışlar da sayılıyor, çünkü bir ödül lonca yardımı karşılığında kenar
+mahalleden düşüyor.
+
+**Bilerek tek bir adlandırılmış bölgeye kapsandı ve bunu söyleyen şey ölçüm.** Oyundaki her
+kaynak toplandığında taban güvenilir bir alt sınır değil: sahibinin kaydında kasabanın gerçek
+itibarının **on üstüne** çıktı. Bu tam olarak aynı türden başka bir bağış olabilir ya da başka
+bir şey; her hâlükârda, açıklanamayan bir sayı üzerinden ikinci bir bölgeyi sessizce
+oynatmak onarım değildir. Kayıt defteri Swamp'ı, sürümünü ve onu doğuran bildirimi adıyla
+yazıyor.
+
+`process_rewards` üzerinden ödeniyor, yani onarılan bir itibar taze kazanılmış birinin yolunu
+izliyor; ve mesaj kaydında söyleniyor — Veri panelindeki bir sayının oturumlar arasında
+açıklamasız değişmesi, eksikten daha kötü.
+
+**İki muhafız, negatif test edildi.**
+
+`check_a_standing_gate_can_be_reached`, bunun statik bir kontrolün tutabileceği yarısını
+tutuyor: kapıları içeriğinin verebileceğinden fazlasını isteyen bir bölge, kimsenin
+açamayacağı içeriktir ve sıradan veri gibi okunur. **Onu yazmak yürüyücüyü iki kez yanlış
+buldu.** İlk geçiş yalnızca diyalog ve konum aksiyonu ödüllerini biliyordu ve Köy'de 400'e
+kapatılmış ihtiyarın muskasını ulaşılamaz ilan etti — gerçek bir kayıtta 460 var. Temizlenen
+bir bölge üç biçim daha ödüyor (`first_reward`, `repeatable_reward`,
+`rewards_with_clear_requirement`) ve görevler hem görevin kendisinde hem tek tek görev
+adımlarında ödüyor; Köy itibarının 260'ı tek bir görevden geliyor. Artık 46 bağış ve 5
+kapatılmış bölge var, her bölgenin en yüksek kapısı ulaşılabilir; unvanlar kapı olarak okunuyor,
+çünkü bir unvan itibarın açtığı bir şey. Toplamının üstüne çıkarılan bir kapı onu düşürüyor.
+
+`check_a_late_repair_still_finds_its_grants`, gönderilen hesabı, o bölgeye bağış yapan her
+kaynağın tamamlandığını söyleyen bir kayda karşı çalıştırıyor; çünkü hiçbir şey bulamayan bir
+onarım sessiz bir işlevsizliktir: hiçbir şey fırlatmıyor, hiçbir şey loglanmıyor ve geri
+getirmek için var olduğu itibar sıfırda kalıyor. Bağışları silmek onu düşürüyor. Ayrıca
+onarımın ödediğini tam yürüyüşün gördüğüyle karşılaştırıyor ve bu karşılaştırma kendi kendiyle
+hemfikir olmak yerine canlı: bir görev ödülüne eklenen bir Swamp bağışı — ki `save_repairs.js`
+görevleri yürümüyor — onu adıyla düşürüyor.
+
+**Ayrıca:** dışa aktarılan kayıtlar artık `playersaves/` içinde yaşıyor, git tarafından
+yoksayılıyor ve `npm run check:save` önce oraya bakıyor; yani çıplak bir dosya adı yeterli. Ve
+`dialogues.js`'teki bir yorum hâlâ oyunda hiçbir şeyin Swamp itibarı vermediğini söylüyordu, ki
+bu v0.7.21'de doğru olmaktan çıkmıştı.
 
 ### v0.7.26 - çanta en son gelene göre sıralanabiliyor
 

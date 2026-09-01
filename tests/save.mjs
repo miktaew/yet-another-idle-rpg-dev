@@ -32,13 +32,30 @@ const repo_root = path.resolve(import.meta.dirname, "..");
 const errors = [];
 const notes = [];
 function error(message) { errors.push(message); }
-const save_path = process.argv[2];
-if (!save_path) {
+/*
+    Exported saves live in playersaves/, which is gitignored - they are real character
+    data. A bare filename is looked up there, so the folder does not have to be typed;
+    a path that exists as given is used as it is.
+
+    The arguments are also tried joined, because an export is named with spaces in it
+    ("yet-another-idle-rpg 2026-09-01 18_06_03.txt") and a shell that drops the quotes
+    hands them over as three.
+*/
+const asked = process.argv.slice(2);
+if (asked.length === 0) {
     console.error("[check-save] usage: node tests/save.mjs \"<exported save>.txt\"");
+    console.error("[check-save] a bare filename is looked up in playersaves/");
     process.exit(2);
 }
-if (!fs.existsSync(save_path)) {
-    console.error(`[check-save] no such file: ${save_path}`);
+
+const candidates = [];
+for (const name of [asked[0], asked.join(" ")]) {
+    candidates.push(name, path.join(repo_root, "playersaves", name));
+}
+const save_path = candidates.find(candidate => fs.existsSync(candidate));
+if (!save_path) {
+    console.error(`[check-save] no such file: ${asked.join(" ")}`);
+    console.error(`[check-save] looked in the working directory and in playersaves/`);
     process.exit(2);
 }
 

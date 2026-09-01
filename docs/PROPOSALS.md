@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 114 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 115 -->
 
 # Proposals
 
@@ -730,57 +730,27 @@ is not something a name scan can see, unlike "called at all". The honest version
 pairs each panel with the state it reads and asks whether any writer of that state reaches
 its updater - which is a call-graph question, and the first one this project would have.
 
-### P-38 — Reputation already earned has to be credited backwards `open`
+### P-39 — Mark what has never been crafted, and filter to what can be `open`
 
-The owner's report, with a save to check it against
-(`yet-another-idle-rpg 2026-09-01 17_49_16.txt`): *"we added it to the swamp, but the quests
-are already finished - add a method that checks completed quests and updates the
-reputations"*. The screenshot shows the Data panel listing Village 460, Slums 200 and Town
-150, and no swamp row at all, taken while standing in the swamp tribe.
+The owner's request, in two parts: *"let us mark craftable but never-crafted items with an
+indicator, as discovered / not discovered. And add a checkbox on the crafting pages to filter
+to only the ones that can be made."*
 
-**Two facts measured before anything is designed.**
+**The two halves need different things.** "Can be made right now" is already computed - the
+crafting list greys out what the materials or the skill do not allow, so the filter is a
+predicate that exists and a checkbox that reads it. "Never crafted" is not: like the
+acquisition order in P-32, nothing records it, so it is a field that has to start existing and
+be written to the save.
 
-- **The missing row is not a display bug.** `update_displayed_reputation` shows a region
-  only while its value is above zero, and says so in a comment above itself. So the absence
-  of a swamp row is the panel reporting the truth: the standing really is nought.
-- **The reward exists and cannot be reached.** Five swamp deliveries grant between 50 and 70
-  Swamp each, added in v0.7.20. All five are one-time textlines, and this owner's save has
-  them finished - which is what makes the standing unearnable rather than merely unearned.
-  Nothing in the game can now give it.
+**What has to be decided.** Whether "discovered" means *crafted at least once* or *seen to be
+craftable at least once*. The first is a record of what the player has done and is the obvious
+reading of the request; the second turns the marker into a recipe-book tally, which is a
+different feature wearing the same word.
 
-**Measured against the owner's save (v0.7.25, checked with `npm run check:save` - every key
-resolves).** The save's swamp standing is exactly 0, and 300 is on offer across the five
-grants. At least 120 of it sits on textlines the save marks finished, which leaves 180
-earnable - against `swampchief standing`, which wants `{Swamp: {at_least: 200}}`. **So the
-chief's line is not merely unearned in this save, it is unreachable even after doing
-everything the region still offers.** That is the sharpest form of the problem and it is what
-makes a repair, rather than a patience, the answer.
-
-**Why this is a class and not one region.** Any reward attached to content a player has
-already finished has the same shape: the grant is written, the trigger is spent, and the
-player is permanently short of something the design says they have earned. The swamp is the
-instance that was noticed because a whole region's standing sat at zero.
-
-**Decided by the owner, and decided generally rather than for this one case:** *"when the
-game loads, when the page opens, the checks should run once. A save migration should be
-done. On a version increase - we added reputation to the swamp, for example - the user's save
-does not have that information. So when moving up to the higher version it should add it,
-check the existing save and apply the updates."*
-
-So: a migration keyed to the version, run once as the save is loaded. That is the pattern
-`save_load.js` already uses in a dozen places - `is_a_older_than_b(save_data["game version"],
-"v0.4.6.12")` and its kin - and the version comparison is what makes it run once and never
-again, with no need to record what was already paid.
-
-**What that turns the job into.** Not "credit the swamp" but a migration step that, for a
-save written before the version which added a reputation grant, works out what the finished
-content owes and pays it. The swamp is the first entry in that step; the machinery is what
-the next grant needs.
-
-**The guard has to hold the class.** A reward added to content that can already be finished,
-with no path that credits it afterwards. That is checkable: a one-time textline or quest that
-grants something, against whether anything reconciles that grant for a save where it is
-already spent.
+**Where it should live.** `item_log` already records what a player has obtained, best quality
+and total, and it is already drawn in the Discoveries panel. A crafted-at-least-once flag may
+belong beside it rather than in a new store - which would also make the marker mean the same
+thing in both panels.
 
 ---
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 98 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 99 -->
 
 # Changelog
 
@@ -20,6 +20,74 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.27 - standing earned before it counted is paid on loading
+
+P-38, reported with a save to check it against: *"we added it to the swamp, but the quests are
+already finished - add a method that checks completed quests and updates the reputations"*.
+
+**Measured first, and the first measurement was wrong.** A source scan attributed the five
+swamp grants to the nearest preceding `new Textline` and reported 120 lost of 300, leaving 180
+earnable. They are `new DialogueAction`s. Read against the right field, **all five are
+finished and the whole 300 is spent** - and the same scan had counted two `display_conditions`
+blocks as grants, inventing a 140-point shortfall in a region that had none, because
+`rewards:` sits four lines above `display_conditions:`. Everything below reads the live reward
+objects instead, where a grant is under `rewards` and a gate is under `display_conditions`,
+and neither can be mistaken for the other.
+
+So the real state of the owner's save: **swamp standing 0, nothing left in the game able to
+raise it, and `swampchief standing` gated at 200 permanently out of reach.**
+
+**The save's version cannot be the test, which is the whole difficulty.** Every other repair
+in `save_load.js` is gated on `is_a_older_than_b(save_data["game version"], …)`, and here that
+fails: the save reads v0.7.25 because that is when it was last *written*, while the deliveries
+were finished long before v0.7.21 added the grant. A version says nothing about when the
+content was done.
+
+**So the test is arithmetic.** `save_repairs.js` works out what the finished content owes a
+region and compares it with the standing. Below it, the difference was never paid; at or above
+it, there is nothing to do. That is idempotent by construction - the second load computes the
+same floor and finds it met - so it needs no ledger of applied repairs and cannot pay twice.
+Measured on the owner's save in four states: +300 the first time, nothing the second, nothing
+for a fresh game, nothing for a player who earned all 300 legitimately.
+
+Only sources whose completion the save records exactly are counted - a one-time entry marked
+finished, or a repeatable one with a count - which keeps the total a floor. Negative grants
+count too, since one reward subtracts from the slums for helping the guild.
+
+**Scoped to one named region, and that is the measurement talking.** Summed across every
+source in the game, the floor is not a reliable lower bound: for the owner's save it came out
+**ten above** the town's actual standing. That may be another grant of exactly this kind or
+something else; either way, quietly moving a second region on a number that cannot be
+explained is not a repair. The registry names Swamp, with the version and the report that
+caused it.
+
+Paid through `process_rewards`, so a repaired standing takes the path a freshly earned one
+does, and said in the message log - a number in the Data panel changing between sessions with
+no explanation is worse than the shortfall.
+
+**Two guards, negative-tested.**
+
+`check_a_standing_gate_can_be_reached` holds the half of this that a static check can hold: a
+region whose gates ask for more than its content can ever grant is content nobody can open,
+and it reads as ordinary data. **Writing it found the walker wrong twice.** The first sweep
+knew only dialogue and location-action rewards and called the elder's amulet, gated at 400
+with the village, unreachable - a real save has 460. A cleared zone pays in three more shapes
+(`first_reward`, `repeatable_reward`, `rewards_with_clear_requirement`), and quests pay on the
+quest and on individual tasks, 260 of the village's standing coming from one quest. 46 grants
+and 5 gated regions now, every highest gate reachable; titles are read as gates, since a title
+is something standing opens. A gate raised past its total fails it.
+
+`check_a_late_repair_still_finds_its_grants` runs the shipped calculation against a save built
+to say every source granting that region is finished, because a repair that finds nothing is a
+silent no-op: nothing throws, nothing logs, and the standing it exists to restore stays at
+nought. Deleting the grants fails it. It also compares what the repair pays against what the
+full walk sees, and that comparison is live rather than self-agreeing: a Swamp grant added to
+a quest reward - which `save_repairs.js` does not walk - fails it by name.
+
+**Also:** exported saves now live in `playersaves/`, gitignored, and `npm run check:save`
+looks there first, so a bare filename is enough. And a comment in `dialogues.js` still said
+nothing in the game grants a Swamp reputation, which stopped being true in v0.7.21.
 
 ### v0.7.26 - the bag can be sorted by what arrived last
 

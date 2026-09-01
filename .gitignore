@@ -17,8 +17,11 @@ _site/
 .dependency-cruiser.js
 dependency-graph.svg
 
-# Sample savegames dropped in the root for analysis. These are exported player
-# saves - real character data - and must never be committed.
+# Exported player saves, kept for analysis. Real character data, so never
+# committed. They live in playersaves/ and `npm run check:save` looks there
+# first, so a bare filename is enough. The root pattern stays for a save
+# dropped straight into the working directory before it has been filed.
+playersaves/
 yet-another-idle-rpg*.txt
 
 # Playwright MCP output. Page snapshots and console logs written into the repo
