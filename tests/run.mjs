@@ -86,6 +86,11 @@ import {
     check_the_unlock_repair_knows_every_kind,
 } from "./checks/reputation.mjs";
 import {
+    check_every_quest_can_be_started,
+    check_every_location_can_be_unlocked,
+} from "./checks/reachable.mjs";
+import { check_no_content_object_repeats_a_key } from "./checks/literals.mjs";
+import {
     check_duration_units_have_rows,
     check_interpolated_pairs,
     check_locales,
@@ -208,6 +213,9 @@ check_every_sort_button_is_understood();
 await check_a_standing_gate_can_be_reached();
 await check_a_late_repair_still_finds_its_grants();
 await check_the_unlock_repair_knows_every_kind();
+await check_every_quest_can_be_started();
+await check_every_location_can_be_unlocked();
+check_no_content_object_repeats_a_key();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

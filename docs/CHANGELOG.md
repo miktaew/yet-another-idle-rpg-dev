@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 101 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 102 -->
 
 # Changelog
 
@@ -20,6 +20,60 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.30 - the bay's last two quests are handed out
+
+P-40, from the owner's instruction: *"we add a quest, but if it is not connected to anything,
+we need to connect it properly to the right places."*
+
+**The fault, measured.** Nothing in the game granted `Out on the Ebb` or `One Unweighed Crate`,
+and `questManager.finishQuestTask` opens with `if(this.isQuestActive(quest_id))` - so the six
+actions and one dialogue line that advance their tasks were **inert**. A player could wade the
+flats, pay a boatman, walk the cargo deck, open the crate and take the description to the
+collector, and the journal would never mention any of it. Both are mine, from the Marrowmoth
+arc.
+
+**Where they belong, and it was already established.** The arc hands each quest over at the
+tallyman's answer: `lend a hand on the quay` opens *Forty Tons* from the work itself, and
+`tallyman last time` opens *A Stroke Through It* from what he tells you. So quest 3 opens at
+`tallyman what you found` - he answers the research, and the answer is the work - and quest 4
+at `tallyman the hold`, the line that counts the ebbs left and so turns going back into a
+plan. Two lines, two grants, no new machinery.
+
+**A second fault found while reading it.** `tallyman the hold` had **two `rewards:` blocks**,
+each with its own comment above it. JavaScript keeps the last key of a repeated name and drops
+the earlier ones silently, so the guild clerk's line - the one that whole exchange exists to
+open - was never granted by any version that shipped. Merged into one block.
+
+**A third thing found, and it was my error rather than the game's.** The first version of this
+fix also opened `The tidal flats`, on the reading that nothing reached them. Quest 2's own
+completion reward opens them, with a comment saying why; the grep that missed it had not
+thought to look in `quests.js`. **The check below is what caught it** - the fourth time in this
+region that a written diagnosis of mine was corrected by measurement - and the duplicate grant
+was removed rather than shipped.
+
+**Three guards, all negative-tested.**
+
+`check_every_quest_can_be_started` is the owner's instruction as a rule: every quest must be
+granted by something. It asks whether anything hands it out, not whether that thing is itself
+reachable - a full reachability walk would have to model combat clears, quest chains and
+unlock order, and a check that models the game is a check that disagrees with it. 23 quests,
+each granted.
+
+`check_every_location_can_be_unlocked` is the same failure in a different currency, and
+writing it taught the reward walk three shapes it did not know: `entrance_rewards`, paid for
+walking in, and a skill milestone's grants sitting one level down under `unlocks`. Without
+those it called four reachable quests unstartable. The rule is **unreachable content**, not
+unreachable emptiness: `Mages guild` is locked and granted by nothing, and holds no dialogue,
+trader, action, activity or bed - an empty room waiting for P-41, and opening it would give
+the player a room with nothing in it. Write anything into it without wiring a way in and the
+check fails, which is the moment it should. 71 locations, 54 locked, each granted or empty.
+
+`check_no_content_object_repeats_a_key` holds the duplicate: a repeated key in an object
+literal is a whole block of content deleted by a syntax the language accepts, invisible to
+everything else in the build. It reads constructor bodies - `new Textline({...})` and its
+kin - because that is where these objects are written hundreds of lines at a time, which is
+the length at which a second `rewards:` goes unnoticed. 1488 literals, none repeating.
 
 ### v0.7.29 - the bay opens, and so does everything else a finished job had promised
 

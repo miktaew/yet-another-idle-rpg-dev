@@ -2813,6 +2813,19 @@ class Textline {
                 lore_thread: "lore thread the Marrowmoth",
                 rewards: {
                     quest_progress: [{quest_id: "A Stroke Through It", task_index: 1}],
+                    /*
+                        And quest 3 opens here, the same way quest 2 opened from
+                        "tallyman last time": he answers, and the answer is the work. He
+                        does not send her - he tells her where the hull lies and when the
+                        water leaves it, and going out is hers to decide.
+
+                        The flats are NOT opened here: quest 2's own completion reward
+                        already opens them, with its own note saying why. Adding a second
+                        grant read like a fix and would have been a duplicate - the check
+                        below is what said so, after a grep that had not thought to look
+                        in quests.js.
+                    */
+                    quests: ["Out on the Ebb"],
                 },
                 locks_lines: ["tallyman what you found"],
             }),
@@ -2827,15 +2840,25 @@ class Textline {
                 is_unlocked: false,
                 lore: true,
                 lore_thread: "lore thread the Marrowmoth",
-                //He will not make it a guild matter. He says so, at length, and in saying
-                //so he tells the player that they can.
+                /*
+                    One rewards block, and it was two. An object literal keeps the last
+                    key of a repeated name and drops the rest without a word, so the
+                    guild clerk's line was never granted by the version that shipped -
+                    the second `rewards` overwrote the first (P-40).
+
+                    Both halves are his: he will not make it a guild matter, says so at
+                    length, and in saying so tells the player that they can. And he counts
+                    the ebbs left, which is what puts the crate itself on the table -
+                    knowing how long you have is what makes going back a decision.
+
+                    Quest 4 opens here for the same reason quest 3 opened from the last
+                    answer: the line that tells her how long she has is the line that
+                    makes going back into a plan.
+                */
                 rewards: {
                     textlines: [{dialogue: "guild clerk", lines: ["make it a matter"]}],
-                },
-                //He counts the ebbs left, and that is what puts the crate itself on the
-                //table: knowing how long you have is what makes going back a decision.
-                rewards: {
                     actions: [{location: "The lower hold", action: "open the crate"}],
+                    quests: ["One Unweighed Crate"],
                 },
                 locks_lines: ["tallyman the hold"],
             }),

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 48 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 49 -->
 
 # Status
 
@@ -211,6 +211,9 @@ but the ones that encode a bug that shipped:
 | `late repairs` | A repair for a reward added late that can no longer find what it replays, so it silently pays nothing. |
 | `export name` | An exported save whose filename does not say the version or the date that wrote it. |
 | `unlock repair` | An unlock a one-time line can grant that the save repair does not know about, so a player who finished it too early never gets it. 22 kinds. |
+| `quest starts` | A quest nothing hands out, which makes every reward that advances it inert. 23 quests. |
+| `location unlocks` | A locked location nothing unlocks that still holds content nobody can reach. 71 locations. |
+| `repeated keys` | A key written twice in one object literal, where the language keeps the last and drops the rest in silence. 1488 literals. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

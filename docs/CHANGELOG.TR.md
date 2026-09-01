@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 101 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 102 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,60 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.30 - körfezin son iki görevi artık veriliyor
+
+P-40, sahibinin talimatından: *"quest ekliyoruz ancak bir yere bağlanmıyorsa, onu uygun bir
+şekilde doğru yerlere bağlamamız gerek."*
+
+**Hata, ölçülmüş hâliyle.** Oyundaki hiçbir şey `Out on the Ebb` ya da `One Unweighed
+Crate`'i vermiyordu ve `questManager.finishQuestTask`, `if(this.isQuestActive(quest_id))` ile
+açılıyor — yani onların adımlarını ilerleten altı aksiyon ve bir diyalog repliği **işlevsizdi**.
+Bir oyuncu düzlükleri yürüyebilir, kayıkçıya para verebilir, kargo güvertesini geçebilir,
+sandığı açabilir ve tarifi antikacıya götürebilirdi; günlük bunların hiçbirinden söz etmezdi.
+İkisi de benim, Marrowmoth yayından.
+
+**Nereye ait oldukları ve bunun zaten yerleşik olduğu.** Yay her görevi saymanın cevabında
+devrediyor: `lend a hand on the quay`, *Forty Tons*'u işin kendisinden açıyor ve `tallyman last
+time`, *A Stroke Through It*'i onun söylediğinden. Dolayısıyla 3. görev `tallyman what you
+found`'da açılıyor — araştırmayı cevaplıyor ve cevap işin kendisi — ve 4. görev `tallyman the
+hold`'da, kalan suları sayan ve böylece geri dönmeyi bir plana çeviren replikte. İki replik,
+iki bağış, yeni makine yok.
+
+**Okurken bulunan ikinci hata.** `tallyman the hold`'da **iki `rewards:` bloğu** vardı, her
+birinin üzerinde kendi yorumu. JavaScript tekrarlanan bir adın son anahtarını tutup
+öncekileri sessizce düşürüyor; yani lonca kâtibinin repliği — o alışverişin var olma sebebi —
+gönderilen hiçbir sürümde verilmemişti. Tek blokta birleştirildi.
+
+**Bulunan üçüncü şey ve o oyunun değil benim hatamdı.** Bu düzeltmenin ilk hâli `The tidal
+flats`'i de açıyordu; oraya hiçbir şeyin ulaşmadığı okumasıyla. 2. görevin kendi tamamlanma
+ödülü onları açıyor ve nedenini söyleyen bir yorumu var; onu kaçıran grep `quests.js`'e
+bakmayı akıl etmemişti. **Yakalayan şey aşağıdaki kontrol** — bu bölgede yazılı bir teşhisimin
+ölçümle düzeltilmesinin dördüncü kez oluşu — ve kopya bağış gönderilmek yerine kaldırıldı.
+
+**Üç muhafız, hepsi negatif test edildi.**
+
+`check_every_quest_can_be_started`, sahibinin talimatının kural hâli: her görev bir şey
+tarafından veriliyor olmalı. Bir şeyin onu verip vermediğini soruyor, o şeyin kendisinin
+ulaşılabilir olup olmadığını değil — tam bir ulaşılabilirlik yürüyüşü savaş temizlemelerini,
+görev zincirlerini ve açılma sırasını modellemek zorunda kalırdı ve oyunu modelleyen bir
+kontrol, oyunla çelişen bir kontroldür. 23 görev, hepsi veriliyor.
+
+`check_every_location_can_be_unlocked`, aynı başarısızlığın farklı para birimindeki hâli ve
+onu yazmak ödül yürüyüşüne bilmediği üç biçim öğretti: içeri girmek için ödenen
+`entrance_rewards` ve bir beceri milestone'unun `unlocks` altında bir kat aşağıda duran
+bağışları. Onlar olmadan ulaşılabilir dört görevi başlatılamaz ilan etmişti. Kural
+**ulaşılamayan içerik**, ulaşılamayan boşluk değil: `Mages guild` kilitli ve hiçbir şey
+vermiyor, ama içinde diyalog, tüccar, aksiyon, faaliyet ya da yatak yok — P-41'i bekleyen boş
+bir oda ve onu açmak oyuncuya içi boş bir oda vermek olurdu. Oraya bir yol açmadan içine bir
+şey yazın, kontrol düşer; düşmesi gereken an da odur. 71 konum, 54'ü kilitli, her biri ya
+veriliyor ya boş.
+
+`check_no_content_object_repeats_a_key` kopyayı tutuyor: bir nesne literalinde tekrarlanan bir
+anahtar, dilin kabul ettiği bir sözdizimiyle silinmiş koca bir içerik bloğudur ve derlemedeki
+her şeye görünmez. Yapıcı gövdelerini okuyor — `new Textline({...})` ve akrabaları — çünkü bu
+nesneler orada, bir seferde yüzlerce satır olarak yazılıyor; ikinci bir `rewards:`'ın gözden
+kaçtığı uzunluk da tam olarak bu. 1488 literal, hiçbirinde tekrar yok.
 
 ### v0.7.29 - körfez açılıyor, tamamlanmış bir işin vaat ettiği her şeyle birlikte
 

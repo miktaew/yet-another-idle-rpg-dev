@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 117 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 118 -->
 
 # Proposals
 
@@ -751,38 +751,6 @@ different feature wearing the same word.
 and total, and it is already drawn in the Discoveries panel. A crafted-at-least-once flag may
 belong beside it rather than in a new store - which would also make the marker mean the same
 thing in both panels.
-
-### P-40 — Two quests nothing in the game can start `open`
-
-The owner's instruction: *"we add a quest, but if it is not connected to anything, we need to
-connect it properly to the right places."* Measured against every quest in the game, and the
-instinct was right about two of them.
-
-**Confirmed dead content: `Out on the Ebb` and `One Unweighed Crate`.** Nothing grants either
-one - no `rewards.quests`, no `startQuest` call, nothing in the skills. And
-`questManager.finishQuestTask` opens with `if(this.isQuestActive(quest_id))`, so **every
-`quest_progress` reward pointing at them is a no-op**: the player can work the whole bay, and
-neither quest ever appears in the journal, advances, or completes. Six actions across the bay
-and one dialogue line advance tasks that can never be advanced.
-
-Both are mine, from the Marrowmoth arc (Q-7 to Q-10). The content is written and reachable;
-only the thread that starts it is missing.
-
-**Two false alarms worth recording, so the next scan does not chase them.** `Lost memory` is
-started explicitly at `main.js:4458` as the game begins, and `Swimming/climbing unlock` is
-granted from `src/data/skills.js` - a scan that reads only dialogues and locations calls both
-unstarted, and both are fine.
-
-**Where they should connect.** The bay's own thread: the harbour tallyman's conversation is
-the region's entry point and already unlocks `read the departures`, which is where a quest
-about what leaves on the ebb belongs. `One Unweighed Crate` has a dialogue line advancing it
-at `dialogues.js:3271`, which points at who should hand it out.
-
-**The guard has to hold the class**, not these two: a quest nothing can start, and a
-`quest_progress` reward aimed at a quest no path activates. Both are silent - the second
-especially, since the reward looks exactly like every reward that works.
-
----
 
 ### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
 

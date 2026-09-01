@@ -140,8 +140,7 @@ function late_reputation_owed(save_data, reputation) {
  * skips money, xp, items and effects but explicitly does not skip reputation, so replaying a
  * whole rewards block on every load would be a reputation pump. Each unlock is therefore
  * applied on its own, as a reward object holding nothing but that one unlock. Quests are left
- * out as well: starting a quest that was never started is a decision about content, not a
- * repair (P-40).
+ * out as well: a quest nothing ever started is a content fault and was fixed as one (P-40).
  *
  * Re-unlocking something already unlocked, or already finished, changes nothing anywhere -
  * every availability test in the game is `is_unlocked && !is_finished` - so this is safe to
@@ -266,8 +265,9 @@ function unlocks_missed_by_finished_content({global_flags = null, stances = null
     through as an accident.
 */
 const unlock_kinds_left_alone = {
-    quests: "starting a quest that was never started is a decision about content rather than "
-        + "a repair - see P-40",
+    quests: "starting a quest nothing ever started is a content fault, and P-40 fixed it as "
+        + "one - the two bay quests were given the lines that hand them out, rather than "
+        + "being handed out by the loader. check_every_quest_can_be_started holds it now",
     quest_progress: "tasks finish in order, so replaying one out of sequence does nothing "
         + "and replaying the sequence would need the whole history",
     reputation: "repaired by late_reputation_owed, which tops standing up to a floor instead "

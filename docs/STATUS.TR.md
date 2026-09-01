@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 48 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 49 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -212,6 +212,9 @@ yayımlanmış bir hatayı kodlayanlar:
 | `late repairs` | Sonradan eklenmiş bir ödül için yazılmış ama tekrarladığı şeyi artık bulamayan bir onarım; sessizce hiçbir şey ödemiyor. |
 | `export name` | Dosya adı onu yazan sürümü ya da tarihi söylemeyen bir dışa aktarma. |
 | `unlock repair` | Tek seferlik bir repliğin verebildiği ama kayıt onarımının bilmediği bir kilit açma; onu çok erken bitiren oyuncu hiç alamıyor. 22 tür. |
+| `quest starts` | Hiçbir şeyin vermediği bir görev; onu ilerleten her ödül işlevsiz kalıyor. 23 görev. |
+| `location unlocks` | Hiçbir şeyin açmadığı, ama içinde kimsenin ulaşamadığı içerik duran kilitli bir konum. 71 konum. |
+| `repeated keys` | Tek bir nesne literalinde iki kez yazılmış bir anahtar; dil sonuncuyu tutup gerisini sessizce düşürüyor. 1488 literal. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |
