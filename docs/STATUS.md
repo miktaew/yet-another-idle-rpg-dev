@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 31 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 32 -->
 
 # Status
 
@@ -227,10 +227,10 @@ directive is recorded before it is worked on:
   or `Slums` 250. Phase 5 shipped as v0.7.4: the crate opens on being able to put it
   back, holds one band of an unnameable metal cut with the squares the collector
   described once, and pays no item on purpose. Phase 6, the systems pass, is under way:
-  two of its four pieces have shipped - v0.7.5 wired tier 5 to the flats and took the 36
-  unmakeable components to none, and v0.7.6 made four enemies react to the hero's stance
-  through the hooks that already existed. The money sink and standing-as-world-state are
-  open.
+  three of its four pieces have shipped - v0.7.5 wired tier 5 to the flats and took the
+  36 unmakeable components to none, v0.7.6 made four enemies react to the hero's stance
+  through the hooks that already existed, and v0.7.10 repriced the arc's money sink after
+  measuring the economy. Standing-as-world-state is the last one open.
 - **P-12, the metals above steel** - `partly done`. Tier 4 and tier 5 both ship, and
   the 36 white-steel and black-steel components are craftable from an ore dug on the
   tidal flats. One question is left: `roll_quality` reads

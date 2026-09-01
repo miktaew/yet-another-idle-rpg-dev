@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 78 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 79 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,48 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.10 - kayıkçı bir kilometre taşı gibi fiyatlanmış, bir hizmet gibi satılıyordu
+
+P-14 Faz 6'nın dört parçasından üçüncüsü: arc'ın para kuyusunun tahmine değil mevcut
+ekonomiye göre fiyatlanması. Tahmindi — 25.000; o an önümde duran quest ödüllerinin yanına
+konmuştu.
+
+**Ekonominin gerçekte ne tuttuğu**, hatırlanarak değil ölçülerek:
+
+- Beş queste yayılmış 43.500 tek seferlik quest parası.
+- Lonca faktörünün üç teslimatından 27.000 daha; hepsi `repeatable: false`.
+- Tek bir 30.000'lik kuyu, koleksiyoncunun; bu arc'tan önceki tek gerçek kuyu da o.
+- **Hiçbir yerde tekrarlanabilir para ödeyen aksiyon yok.** Üç yerleşim aksiyonu — 400
+  ödeyen terazi nöbeti, 260 ödeyen tellallık, 90 ödeyen güvercin kovalama — hepsi
+  `repeatable: false`. Birer kez ödüyorlar.
+
+Yani oyuncunun tekrarlayabildiği tek gelir ücretli bir iş ve onların en iyisi birim başına
+50 ödeyen devriye.
+
+Buna karşı *sefer başına* 25.000, 500 birim devriye ve bütün oyunda aşağı yukarı bir
+karşılanabilir yolculuk demek. Bu, pahalı yolu pahalı yapmıyor; onu "bir kez kullanıp bir
+daha dönmediğiniz" bir yola çeviriyor ve Faz 4'ün etrafına kurulduğu üç geçiş yolundan
+birini sessizce kaldırıyor. Artık 6.000: faktörün en küçük teslimatı, bir günlük iş
+parasına bir kayık yolculuğu, 120 birim devriye.
+
+**Bir muhafız yazıldı, sonra kaldırıldı; bunun daha faydalı yarısı da bu.**
+
+Kural şuydu: "tekrarlanabilir bir fiyat, en pahalı tek seferlik fiyatı aşmamalı." Kulağa
+iyi geliyor. 25.000'de geçiyor — çünkü 25.000, koleksiyoncunun 30.000'inden küçük. Yani
+kontrol, yakalamak için yazıldığı hatanın tam üzerinden yeşil geçerdi; hem de sonsuza
+kadar, kapsama gibi görünerek.
+
+Bunu yakalayan her versiyonu, birinin uydurduğu bir sabit istiyor: tekrarlanabilir fiyat,
+bir gelirin N katının altında olmalı ve N bir yargı. Asıl soru, bir fiyatın *oyunun o
+noktasındaki* mevcut paraya göre durumu; bu da ilerleyişin modellenmesini gerektiriyor ve
+bir değişmez değil, bir tasarım kararı.
+
+Bu yüzden kontrol yok; onun yerine sayılar yazıldı — öneriye ve kaynakta fiyatın yanına —
+böylece sonraki fiyat seçilmek yerine türetiliyor. Bu oturum artık iki kez düşemeyen bir
+kontrol yayınlamaya yaklaştı (yardım sayfasının itibar kontrolü, iki kez) ve ikisini de
+inanmadan önce negatif test ederek yakaladı. Hatayı onaylayan bir kontrol, hiç kontrol
+olmamasından kötü; üçüncüsünde fark etmek düzeltmekten ucuza geldi.
 
 ### v0.7.9 - satacak hiçbir şeyi olmayan iki kafe
 

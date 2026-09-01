@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 31 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 32 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -228,10 +228,11 @@ sayılmaz; koruma da hata geri konularak sınanır.
   v0.7.4 olarak yayınlandı: sandık, onu geri koyabilmek üzerine açılıyor; içinde
   koleksiyoncunun bir kez tarif ettiği karelerle oyulmuş, adı olmayan bir metalden tek
   bir halka var ve bilerek hiçbir eşya ödemiyor. Sistem geçişi olan Faz 6 başladı: dört
-  parçasından ikisi yayınlandı: v0.7.5, 5. kademeyi düzlüklere bağladı ve yapılamayan
-  36 bileşeni sıfıra indirdi; v0.7.6 ise dört yaratığı, zaten var olan kancalar
-  üzerinden kahramanın duruşuna tepki verir hâle getirdi. Para kuyusu ile dünya durumu
-  olarak itibar açık.
+  parçasından üçü yayınlandı: v0.7.5, 5. kademeyi düzlüklere bağladı ve yapılamayan
+  36 bileşeni sıfıra indirdi; v0.7.6 dört yaratığı, zaten var olan kancalar üzerinden
+  kahramanın duruşuna tepki verir hâle getirdi; v0.7.10 ise ekonomiyi ölçtükten sonra
+  arc'ın para kuyusunu yeniden fiyatladı. Açık kalan son parça, dünya durumu olarak
+  itibar.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe ikisi de
   yayında ve 36 beyaz/siyah çelik bileşeni, gelgit düzlüklerinde kazılan bir cevherden
   üretilebiliyor. Tek bir soru kaldı: `roll_quality`,

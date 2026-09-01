@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 86 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 87 -->
 
 # Proposals
 
@@ -405,9 +405,22 @@ shipped.
   `check_stance_reactions_name_real_stances` - a misspelt stance id compares false for
   every stance there is, so the reaction is written, translated, shipped and never once
   seen while the enemy behaves exactly as before.
-- **The arc's money sink priced against the existing economy.** `open`. The boatman's
-  25,000 is the only price this arc set, and it was set against quest rewards rather
-  than against the whole curve.
+- **The arc's money sink priced against the existing economy.** `done`, as **v0.7.10**.
+  Measured: 43,500 in one-off quest money, 27,000 more from the guild factor's three
+  deliveries, one 30,000 sink at the collector, and **no repeatable money-paying action
+  anywhere** - the three settlement actions pay once each. So the only income that can be
+  repeated is a paid job, and the best of those is patrolling at 50 a unit. The boatman
+  was 25,000 *per trip*, which is 500 units of patrolling and about one affordable ride in
+  the whole game: the dearer way across the mud was a way you took once. 6,000 now - the
+  factor's smallest delivery, one job's pay for one boat ride, 120 units.
+
+  **No guard, and that is the finding.** A rule was written and then removed: "a
+  repeatable price must not exceed the dearest one-off price". It passes at 25,000, because
+  25,000 is less than the collector's 30,000 - so it would have certified the exact fault
+  it was written for. Every version that does catch it needs an invented constant, because
+  the real question is a price against *income at that point in the game*, and that is a
+  judgement. The numbers above are written into the proposal and beside the price in the
+  source instead, so the next price is derived rather than picked.
 - **Standing consequences that read as world-state and not as punishment.** `open`.
 
 **Phase 7 — v0.8 groundwork, *Beyond the Lake*.** Not started before phase 6 is

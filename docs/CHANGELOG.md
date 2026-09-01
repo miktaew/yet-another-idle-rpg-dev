@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 78 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 79 -->
 
 # Changelog
 
@@ -20,6 +20,49 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.10 - the boatman was priced like a milestone and sold like a service
+
+P-14 phase 6's third of four pieces: the arc's money sink priced against the existing
+economy rather than against a guess. It was a guess - 25,000, set beside the quest rewards
+that were in front of me at the time.
+
+**What the economy actually holds**, measured rather than remembered:
+
+- 43,500 in one-off quest money across five quests.
+- 27,000 more from the guild factor's three deliveries, all `repeatable: false`.
+- One 30,000 sink, the collector's, and it was the only real one before this arc.
+- **No repeatable money-paying action anywhere.** The three settlement actions - minding
+  the scales at 400, crying the news at 260, chasing the pigeons at 90 - are all
+  `repeatable: false`. They pay once each.
+
+So the only income a player can repeat is a paid job, and the best of those is patrolling
+at 50 a unit.
+
+Against that, 25,000 *per trip* is 500 units of patrolling, and roughly one affordable
+ride in the entire game. That does not make the dearer way expensive; it makes it a way
+you take once and then never again, which quietly removes one of the three routes across
+the mud that phase 4 was built around. 6,000 now: the factor's smallest delivery, one
+job's pay for one boat ride, 120 units of patrolling.
+
+**A guard was written and then removed, and that is the more useful half of this.**
+
+The rule was "a repeatable price must not exceed the dearest one-off price". It reads well.
+It passes at 25,000 - because 25,000 is less than the collector's 30,000. So the check
+would have run green over the exact fault it was written to catch, and green over it
+forever, while looking like coverage.
+
+Every version of it that does catch this needs a constant somebody invented: a repeatable
+price must be under N times some income, and N is a judgement. The real question is a
+price against the money available *at that point in the game*, which needs progression
+modelled and is a design call rather than an invariant.
+
+So there is no check, and the numbers are written down instead - in the proposal and in a
+comment beside the price - so the next price is derived rather than picked. This session
+has twice now shipped a check that could not fail (the help page's standing check, twice
+over) and caught it both times by negative-testing before believing it. A check that
+certifies the bug is worse than no check, and the third time it was cheaper to notice than
+to fix.
 
 ### v0.7.9 - the two cafés that had nothing to sell
 

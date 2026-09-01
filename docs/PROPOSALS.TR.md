@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 86 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 87 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -426,9 +426,23 @@ yayınlandı.
   `check_stance_reactions_name_real_stances` — yanlış yazılmış bir stance kimliği, var
   olan her stance için yanlış döner; yani tepki yazılır, çevrilir, yayınlanır ve bir kez
   bile görülmez, yaratık ise tam eskisi gibi davranır.
-- **Arc'ın para kuyusunun mevcut ekonomiye göre fiyatlanması.** `open`. Kayıkçının
-  25.000'i bu arc'ın belirlediği tek fiyat ve bütün eğriye göre değil, quest ödüllerine
-  göre belirlendi.
+- **Arc'ın para kuyusunun mevcut ekonomiye göre fiyatlanması.** `bitti`, **v0.7.10**
+  olarak. Ölçüldü: tek seferlik quest parası 43.500, lonca faktörünün üç teslimatından
+  27.000 daha, koleksiyoncuda 30.000'lik bir kuyu ve **hiçbir yerde tekrarlanabilir para
+  ödeyen aksiyon yok** — üç yerleşim aksiyonu birer kez ödüyor. Yani tekrarlanabilen tek
+  gelir ücretli bir iş ve onların en iyisi birim başına 50 ödeyen devriye. Kayıkçı *sefer
+  başına* 25.000'di; bu 500 birim devriye ve bütün oyunda aşağı yukarı bir karşılanabilir
+  yolculuk demek: çamuru geçmenin pahalı yolu, bir kez kullandığınız bir yoldu. Artık
+  6.000 — faktörün en küçük teslimatı, bir günlük iş parasına bir kayık yolculuğu, 120
+  birim.
+
+  **Muhafız yok ve bulgu da bu.** Bir kural yazıldı, sonra kaldırıldı: "tekrarlanabilir
+  bir fiyat, en pahalı tek seferlik fiyatı aşmamalı." 25.000'de geçiyor, çünkü 25.000
+  koleksiyoncunun 30.000'inden küçük — yani yazıldığı hatanın tam kendisini onaylardı.
+  Yakalayan her versiyonu uydurulmuş bir sabit istiyor; çünkü asıl soru, bir fiyatın
+  *oyunun o noktasındaki gelire* göre durumu ve bu bir yargı. Bunun yerine yukarıdaki
+  sayılar öneriye ve kaynakta fiyatın yanına yazıldı; böylece sonraki fiyat seçilmek
+  yerine türetiliyor.
 - **İtibar sonuçlarının ceza değil, dünya durumu gibi okunması.** `open`.
 
 **Faz 7 — v0.8 hazırlığı, *Beyond the Lake*.** Faz 6 yeşile dönmeden başlamaz. Önce

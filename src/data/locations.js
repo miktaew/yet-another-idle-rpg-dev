@@ -2895,10 +2895,27 @@ function get_location_type_penalty(type, stage, stat, category) {
             success_text: "action pay a boatman success",
             is_unlocked: true,
             repeatable: true,
-            //Taken only when it works, and it always works: the dear way is dear, not
-            //a second gamble at a higher price.
+            /*
+                Taken only when it works, and it always works: the dear way is dear, not a
+                second gamble at a higher price.
+
+                6,000, and repriced from 25,000 once the economy was measured rather than
+                guessed at (P-14 phase 6). This is the game's only REPEATABLE money sink,
+                and 25,000 priced it against the collector's 30,000 - a one-off story
+                purchase and the largest number in the game. At that price a per-trip
+                service is affordable once and then never again, which makes "dearer"
+                mean "once" and quietly removes one of the three ways across.
+
+                6,000 is the guild factor's smallest delivery, so it reads as one job's
+                pay for one boat ride. Derived from what is in the file rather than picked.
+
+                The number that decided it: there is no repeatable money-paying ACTION in
+                the game at all - the three settlement ones pay once - so the only income
+                that can be repeated is a paid job, and the best of those is patrolling at
+                50 a unit. 25,000 was 500 units of patrolling per boat ride; 6,000 is 120.
+            */
             required: {
-                money: {number: 25000, remove_on_success: true},
+                money: {number: 6000, remove_on_success: true},
             },
             failure_texts: {
                 unable_to_begin: ["action pay a boatman fail unable_to_begin 1"],
