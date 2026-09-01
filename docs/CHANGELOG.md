@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 88 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 89 -->
 
 # Changelog
 
@@ -20,6 +20,63 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### "Can this be got at all" is asked of the whole registry now
+
+P-27, and it closes. Four hand-written items nothing could give a player; three are gone,
+one is written down with its reason, and the two checks that would have caught them exist.
+Maintenance: nothing a player could reach has changed, because nothing a player could reach
+was involved.
+
+**What was deleted, and why deleting was the safe half.** `White steel chainmail` and
+`Black steel chainmail` were byte-for-byte duplicates of `White chainmail` and `Black
+chainmail` - same class, same value 180, same `material_type` - and they shared their
+**display names** with them. v0.7.5 added the second pair rather than using these, because
+the component generator keys its material as `"white chainmail"`; that registry key is
+player data now and cannot be renamed, so the older pair is the one that goes.
+`Scraps of wolf rat meat` was the only item in the game with `material_type: "meat"`, and
+no recipe asks for that type - the wolf rats drop `Rat meat chunks`. Deleting is safe
+precisely *because* nothing ever produced them: no save can contain what no source ever
+made.
+
+`Basic spare parts` stays, on `known_unreachable_items` with the reason. Its description
+says what it is for - *"necessary for crafting equipment"* - and no recipe asks for it,
+which reads as an intent never wired rather than a leftover. Deleting it would throw the
+idea away; sourcing it would invent the system it implies.
+
+**Two checks, and each found something on its way in.**
+
+`check_items_can_be_got` is the third of the family. `check_components_can_be_made` asks
+"can this be got" of the 203 generated components and `check_books_can_be_got` of the
+books; nothing asked it of the 192 plain declarations. Reachable means named by a recipe,
+a trader, a drop, a reward or a gathering activity - or carrying `components` or a
+`component_type`, which is the other checks' business, since an assembled shield's
+inventory key is built from its parts rather than from its template's name.
+
+**And it found that the shared helper was neither shared nor complete.**
+`reachable_item_names()` was documented as *"shared by check_components_can_be_made and
+check_books_can_be_got... a new kind of source is taught to both here, once"* -
+and `check_components_can_be_made` still carried its own inline copy of the same eight
+patterns, so only one caller used it. Worse, the helper knew four kinds of source and there
+are **five**: nothing read a `LocationActivity`'s `resources`, which is where every ore,
+log, herb, wool and sand comes from - about a fifth of the plain registry. Neither of the
+first two callers had a gathered thing to ask about, so an incomplete set never showed.
+Both fixed; the helper has three callers and knows gathering.
+
+Reading `resources` needed depth counting rather than a lazy `[\s\S]*?\]`, because a
+resource carries `ammount: [[1,1], [1,3]]` and the first `]` is two levels in. That
+truncation hid every fish, which is how it announced itself.
+
+`check_no_two_items_share_a_name` is the other one. `check_item_name_collisions` compares
+an item's `name:` FIELD against other items' keys, which catches one shape and not this:
+two different keys whose `name <key>` rows resolve to the same string. The player then sees
+the same name twice, in the inventory, in a trade list and in Discoveries, with no way to
+tell which is which. It fired four times on the way in - the two chainmail pairs, in both
+locales - and 508 names across two locales pass now.
+
+**Negative-tested three ways**: a reachable item left on the excuse list (the stale-excuse
+branch), the helper made to forget gathering again (20 items reported), and two items given
+the same display name.
 
 ### v0.7.17 - the box under the box, and the calendar gains a moon
 

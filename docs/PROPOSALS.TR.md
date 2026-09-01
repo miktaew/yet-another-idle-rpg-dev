@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 97 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 98 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -548,6 +548,16 @@ olan bir şeyi öğretir ve zaten var olan bir yerden gelir. Uydurulmak yerine m
 - **Antika koleksiyoncusu** katalog tutuyor; **kenar mahallenin yaşlı kadını** bir liste
   tutuyor. İkisinin de bütün karakterizasyonu yazılı kayıt.
 
+**Sonradan ölçüldü ve kalan iki adayın da teslimi türetilmek yerine karara bağlanmayı
+gerektiriyor.** Loncanın Literacy nişi zaten dolu: `read the seal book`, Guild 50'de
+`skill_xp: {Literacy: 600}` veriyor; yani Literacy öğreten bir lonca kitabı aynı dersi iki
+kez vermek olurdu. Dağda ise ne tüccar ne NPC var — yaşlı zanaatkâr Köy'de — dolayısıyla
+bir dağ kitabının teslimi için bir aksiyon gerekiyor, ki bu mekanizmayı yeniden kullanmak
+değil icat etmek. Bugün oyundaki on iki kitabın hepsi bir tüccarın stok listesinden geliyor.
+
+Ayrıca ölçüldü: `BookData` üzerindeki `finish_reward` ve `required_skills` hiçbir şey
+tarafından okunmuyor (P-26); yani yeni bir kitap ikisine de yaslanmamalı.
+
 **Bunun yapmaması gereken.** Bir xp çarpanı dükkânına dönüşmemeli. Yalnızca çarpan veren
 bir kitap, `BookData`'nın yapabileceği en zayıf şey; mevcut en ilginç iki kitap *tarif*
 açıyor ve izlenecek şekil de bu.
@@ -663,46 +673,6 @@ alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her ala
 kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
 ve muhtemelen ikiden fazlasını bulur.
 
-
-### P-27 — Hiçbir şeyin veremediği dört eşya `open`
-
-P-25'in zemin işi ölçülürken bulundu. Elle yazılmış dört eşya şablonu, `src/` içinde
-hiçbir tarif sonucu, hiçbir tüccar stok listesi, hiçbir düşman ganimeti ve hiçbir ödül
-tarafından adlandırılmıyor:
-
-| eşya | ne olduğu |
-| --- | --- |
-| `White steel chainmail` | Material, değer 180, `material_type: "chainmail"` |
-| `Black steel chainmail` | Material, değer 180, `material_type: "chainmail"` |
-| `Scraps of wolf rat meat` | Material, değer 8, `material_type: "meat"` |
-| `Basic spare parts` | OtherItem |
-
-Dördünün de iki yerelde `desc item ...` satırı var; yani yazıldılar, çevrildiler,
-yayınlandılar ve hiçbir oyuncu birine sahip olamaz.
-
-**İlk ikisi ilginç olanlar.** 4. kademe çifti olan `Black iron chainmail`'in bir satır
-altında duruyorlar ve onun adlandırmasını birebir izliyorlar — külçeler white steel ve
-black steel, yani kuralın ürettiği ad `White steel chainmail`. v0.7.5, 5. kademeyi
-bağlarken onları kullanmak yerine yanlarına **`White chainmail` ve `Black chainmail`**
-ekledi. Yani bu, büyük olasılıkla upstream artığı değil, fork'un kendi işinin yanından
-geçtiği bir çift.
-
-**Olmaması gereken şey.** `White chainmail` v0.7.5'te yayınlandı ve bir kayıt onu
-tutabilir, dolayısıyla adı değiştirilemez — registry anahtarları oyuncu verisidir. Seçim,
-eski çifte bir kaynak vermekle onu silmek arasında; ve silmek yalnızca *hiçbir şeyin onları
-hiç üretmemiş olması sayesinde* güvenli: hiçbir kaynağın yapmadığı şeyi hiçbir kayıt
-içeremez.
-
-**Muhafız ve kaydın asıl noktası bu.** `check_components_can_be_made` ile
-`check_books_can_be_got`, "bu hiç elde edilebilir mi" sorusunu üretilmiş bileşenlere ve
-kitaplara zaten soruyor ve tek bir `reachable_item_names()` yardımcısını paylaşıyorlar.
-Aynı soruyu elle yazılmış eşyalara kimse sormuyor; dördünün orada öylece durmasının sebebi
-de bu. Soruyu bütün registry'ye sormak, var olan bir yardımcının küçük bir uzantısı ve bu
-teklif o var olana kadar bitmiş sayılmaz — yoksa beşincisi aynı yoldan gelir.
-
-**Neye ihtiyacı olacak.** `known_unmade` gibi bir mazeret listesi: bir eşyanın, onu veren
-içerik hâlâ yazılırken meşru biçimde kaynağı olmayabilir. Liste zaten mesele — sebebiyle
-yazılmış olmak, sessizce hoş görülmekten iyidir.
 
 
 ---

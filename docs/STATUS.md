@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 37 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 38 -->
 
 # Status
 
@@ -54,7 +54,7 @@ npm run check:bundle
 ```
 
 - `check` runs the content and consistency checks in `tests/checks/` (sixteen files,
-  ~6,100 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+  ~7,000 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 207 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -196,6 +196,8 @@ but the ones that encode a bug that shipped:
 | `tier ladder` | A component tier the station penalty has made not worth reaching. 30 tier/skill points. |
 | `display conditions` | A display_conditions written as an array, which every constructor wraps into a condition that is always met. 21 written. |
 | `moon phases` | A moon phase name getMoonPhaseName never returns, gating a window that then never opens. 4 phases. |
+| `items can be got` | A hand-written item no recipe, trader, drop, reward or gathering activity can give. 192 items, 1 excused. |
+| `item display names` | Two items whose name rows resolve to the same string, so the player cannot tell them apart. 508 names. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

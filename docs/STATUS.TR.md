@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 37 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 38 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on altı dosya, yardımcılarıyla ~6.100 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on altı dosya, yardımcılarıyla ~7.000 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 207 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -197,6 +197,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `tier ladder` | İstasyon cezasının ulaşmaya değmez hâle getirdiği bir bileşen kademesi. 30 kademe/beceri noktası. |
 | `display conditions` | Dizi olarak yazılmış bir display_conditions; her yapıcı onu sarmalayıp hep karşılanan bir koşula çeviriyor. 21 yazım. |
 | `moon phases` | getMoonPhaseName'in hiç döndürmediği bir ay evresi adı; kapıladığı pencere hiç açılmıyor. 4 evre. |
+| `items can be got` | Hiçbir tarifin, tüccarın, düşüşün, ödülün ya da toplama etkinliğinin veremediği elle yazılmış eşya. 192 eşya, 1 mazeretli. |
+| `item display names` | Ad satırları aynı dizgeye çözülen iki eşya; oyuncu onları ayırt edemiyor. 508 ad. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

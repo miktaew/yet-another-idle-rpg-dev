@@ -4953,22 +4953,22 @@ function add_gear() {
         material_type: "chainmail",
     });
 
-    item_templates["White steel chainmail"] = new Material({
-        description: "desc item White steel chainmail",
-        value: 180,
-        material_type: "chainmail",
-    });
-    item_templates["Black steel chainmail"] = new Material({
-        description: "desc item Black steel chainmail",
-        value: 180,
-        material_type: "chainmail",
-    });
+    /*
+        Three items were deleted here (P-27), because nothing in the game had ever been
+        able to give one to a player and so no save could hold one.
+
+        "White steel chainmail" and "Black steel chainmail" were byte-for-byte duplicates
+        of "White chainmail" and "Black chainmail" - same class, same value 180, same
+        material_type - and they shared their DISPLAY names with them, which is what the
+        player would have seen twice with no way to tell them apart. v0.7.5 added the
+        second pair rather than using these, because the component generator keys its
+        material as "white chainmail"; the registry key it shipped is player data now and
+        cannot be renamed, so the older pair is the one that goes.
+
+        "Scraps of wolf rat meat" was the only item in the game with material_type "meat",
+        and no recipe asks for that type. The wolf rats drop "Rat meat chunks".
+    */
 	
-    item_templates["Scraps of wolf rat meat"] = new Material({
-        description: "desc item Scraps of wolf rat meat",
-        value: 8,
-        material_type: "meat",
-    });
     item_templates["Processed rough wood"] = new Material({
         description: "desc item Processed rough wood",
         value: 6,

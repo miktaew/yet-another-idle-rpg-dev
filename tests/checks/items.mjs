@@ -2,9 +2,10 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { default_language, repo_root } from "../lib/context.mjs";
+import { default_language, locales_dir, repo_root } from "../lib/context.mjs";
 import { error, errors } from "../lib/report.mjs";
 import { load_generated_item_templates } from "../lib/generated-items.mjs";
+import { load_browser_free } from "../lib/browser-free-src.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 import { strip_comments } from "../lib/source.mjs";
 
@@ -199,12 +200,30 @@ const known_unmade = {
  * reachable generated component arrives by one of the first two, and hard-coding that
  * would fire falsely the day one becomes a quest reward.
  */
+/*
+    Plain items nothing gives, with the reason each one is allowed to stay.
+
+    The list is the point. An item nothing can give is either dead weight or an oversight
+    and the two look identical, so the difference has to be written down by somebody who
+    looked - which is what `known_unmade` above does for the generated components.
+*/
+const known_unreachable_items = {
+    /*
+        Its description says what it is for - "necessary for crafting equipment" - and no
+        recipe asks for it. That reads as an intent that was never wired rather than a
+        leftover, so it stays until somebody decides whether equipment should want a
+        binding and a screw. Deleting it would throw away the idea; sourcing it would
+        invent the system it implies.
+    */
+    "an intent that was never wired": ["Basic spare parts"],
+};
+
 /**
  * Every item name anything in the game can hand to the player.
  *
- * Shared by check_components_can_be_made and check_books_can_be_got, because "can this be
- * got at all" is one question that used to live inside one of them. A new kind of source
- * is taught to both here, once.
+ * Shared by check_components_can_be_made, check_books_can_be_got and
+ * check_items_can_be_got, because "can this be got at all" is one question that used to
+ * live inside one of them. A new kind of source is taught to all three here, once.
  */
 function reachable_item_names() {
     const read = (file) => strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"));
@@ -227,6 +246,41 @@ function reachable_item_names() {
             }
         }
     }
+
+    /*
+        Gathering, which this helper did not know about until a third caller asked it about
+        every item in the game rather than only components and books.
+
+        The doc above said all four kinds are read rather than assumed. There were five. A
+        LocationActivity names what it yields as `resources: [{name: "..."}]`, and that is
+        where every ore, log, herb, wool and sand in the game comes from - about a fifth of
+        the plain item registry. Neither of the first two callers had a gathered thing to
+        ask about, so an incomplete set never showed.
+    */
+    const location_source = read("src/data/locations.js");
+    for (const opener of location_source.matchAll(/resources:\s*\[/g)) {
+        /*
+            Depth-counted rather than matched with a lazy `[\s\S]*?\]`, which stops at
+            the first `]` - and a resource carries `ammount: [[1,1], [1,3]]`, so the first
+            `]` is two levels in. That truncation hid every fish.
+        */
+        const open = opener.index + opener[0].length - 1;
+        let depth = 0;
+        let close = -1;
+        for (let i = open; i < location_source.length; i++) {
+            if (location_source[i] === "[") { depth++; }
+            else if (location_source[i] === "]") {
+                depth--;
+                if (depth === 0) { close = i; break; }
+            }
+        }
+        if (close === -1) continue;
+
+        for (const name of names_in(location_source.slice(open, close), /name:\s*"([^"]+)"/g)) {
+            reachable.add(name);
+        }
+    }
+
     return reachable;
 }
 
@@ -295,26 +349,13 @@ async function check_components_can_be_made() {
         return;
     }
 
-    const read = (file) => strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"));
-    const names_in = (source, pattern) => [...source.matchAll(pattern)].map(match => match[1]);
-
-    const reachable = new Set([
-        ...names_in(read("src/crafting_recipes.js"), /result_id:\s*"([^"]+)"/g),
-        ...names_in(read("src/traders.js"), /item_name:\s*"([^"]+)"/g),
-        ...names_in(read("src/enemies.js"), /item_name:\s*"([^"]+)"/g),
-    ]);
-    //Rewards name an item either bare inside `items: [...]` or as `{item: "..."}`.
-    for (const file of ["src/data/dialogues.js", "src/data/locations.js", "src/quests.js"]) {
-        const source = read(file);
-        for (const name of names_in(source, /item:\s*"([^"]+)"/g)) {
-            reachable.add(name);
-        }
-        for (const group of source.matchAll(/items:\s*\[([^\]]*)\]/g)) {
-            for (const name of names_in(group[1], /"([^"]+)"/g)) {
-                reachable.add(name);
-            }
-        }
-    }
+    /*
+        The shared helper, which was documented as shared and had one caller: this
+        function kept its own copy of the same eight patterns. Three checks ask the
+        question now, so a copy is a copy that can fall behind - and the whole reason the
+        helper exists is that "a new kind of source is taught to both here, once".
+    */
+    const reachable = reachable_item_names();
 
     const excused = new Map();
     for (const [reason, names] of Object.entries(known_unmade)) {
@@ -358,8 +399,141 @@ async function check_components_can_be_made() {
         + ` ${keys.length}, ${unreachable} known unmade in ${groups} group${groups === 1 ? "" : "s"}`);
 }
 
+/**
+ * A hand-written item nothing can give you.
+ *
+ * The third of the "can this be got at all" family, and the one that covers what the other
+ * two do not. check_components_can_be_made asks it of the 203 generated components and
+ * check_books_can_be_got of the books; nothing asked it of the plain item declarations,
+ * and four of them had been sitting there since before this fork - written, priced,
+ * described in both languages, and reachable by nothing.
+ *
+ * What counts as reachable, and why each one is not this check's business:
+ *   - named as a recipe result, a trader's stock, an enemy's loot, or a reward;
+ *   - or it carries `components`, which means it is assembled and its parts are
+ *     check_components_can_be_made's business - the hand-written shields look orphaned
+ *     because an assembled shield's inventory key is built from its components rather
+ *     than from the template's own name;
+ *   - or it carries a `component_type`, so it IS a component;
+ *   - or it is a Book, which check_books_can_be_got covers in both directions.
+ *
+ * Anything left is either dead weight or an oversight, and the two have the same shape -
+ * which is why the excuse list carries a reason rather than just a name.
+ */
+async function check_items_can_be_got() {
+    const before = errors.length;
+
+    const [{ item_templates }] = await load_browser_free(
+        repo_root, ["src/items.js"]);
+
+    const reachable = reachable_item_names();
+
+    const excused = new Map();
+    for (const [reason, names] of Object.entries(known_unreachable_items)) {
+        for (const name of names) {
+            excused.set(name, reason);
+        }
+    }
+
+    let asked = 0;
+    for (const id of Object.keys(item_templates)) {
+        const item = item_templates[id];
+
+        //Somebody else's question.
+        if (item.components) continue;
+        if (item.component_type) continue;
+        if (item.tags?.book) continue;
+
+        asked++;
+        if (reachable.has(id)) {
+            if (excused.has(id)) {
+                error(`"${id}" is on the unreachable list as "${excused.get(id)}" and `
+                    + `something gives it after all. Take it off the list.`);
+            }
+            continue;
+        }
+        if (excused.has(id)) continue;
+
+        error(`nothing can give the player "${id}": no recipe makes it, no trader stocks `
+            + `it, nothing drops it and no reward hands it over. It is written, priced and `
+            + `described in both languages, and unreachable. Give it a source, delete it, `
+            + `or put it on known_unreachable_items with the reason.`);
+    }
+
+    if (asked === 0) {
+        error("no plain item declarations to ask about - this check is out of date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] items can be got: ${asked} plain items, `
+            + `${excused.size} excused, every other one reachable`);
+    }
+}
+
+/**
+ * Two items the player cannot tell apart.
+ *
+ * check_item_name_collisions compares an item's `name:` FIELD against other items' keys,
+ * which catches one shape and not this one: two different keys whose `name <key>` locale
+ * rows resolve to the same string. The player then sees the same name twice - in the
+ * inventory, in a trade list, in Discoveries - with no way to know which is which.
+ *
+ * It happened. `White chainmail` shipped in v0.7.5 with the display name "White steel
+ * chainmail", which is also the display name of `White steel chainmail`, an older item
+ * nothing has ever produced. Two entries, one name, and the collision check passed because
+ * neither item's `name:` field was the other's key.
+ */
+async function check_no_two_items_share_a_name() {
+    const before = errors.length;
+
+    const [{ item_templates }] = await load_browser_free(repo_root, ["src/items.js"]);
+    const names = fs.readdirSync(locales_dir)
+        .filter((file) => file.endsWith(".js"))
+        .map((file) => file.slice(0, -3));
+
+    let compared = 0;
+    for (const locale_name of names) {
+        const rows = await load_locale(locale_name);
+        if (!rows) continue;
+
+        const shown = new Map();
+        for (const id of Object.keys(item_templates)) {
+            /*
+                The row an item's own name resolves through. Only items that HAVE one are
+                compared: a generated component assembles its name from a pattern, which
+                check_generated_items verifies against the registry key already.
+            */
+            const row = rows[`name ${id}`];
+            if (!row) continue;
+            compared++;
+
+            if (shown.has(row)) {
+                error(`in locales/${locale_name}.js both "${shown.get(row)}" and "${id}" `
+                    + `display as "${row}". The player sees the same name twice with no `
+                    + `way to tell which is which - in the inventory, in a trade list and `
+                    + `in Discoveries.`);
+                continue;
+            }
+            shown.set(row, id);
+        }
+    }
+
+    if (compared === 0) {
+        error("no item resolves a name row - this check is out of date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] item display names: ${compared} names across `
+            + `${names.length} locales, none shared`);
+    }
+}
+
 export {
     check_books_can_be_got,
+    check_items_can_be_got,
+    check_no_two_items_share_a_name,
     check_components_can_be_made,
     check_generated_items,
     check_recipe_item_names,

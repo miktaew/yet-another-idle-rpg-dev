@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 88 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 89 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,63 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### "Bu hiç elde edilebilir mi" sorusu artık bütün registry'ye soruluyor
+
+P-27 ve kapanıyor. Oyuncuya hiçbir şeyin veremediği dört elle yazılmış eşya; üçü gitti,
+biri sebebiyle yazıldı ve onları yakalayacak iki kontrol artık var. Bakım işi: oyuncunun
+ulaşabileceği hiçbir şey değişmedi, çünkü işin içinde oyuncunun ulaşabileceği hiçbir şey
+yoktu.
+
+**Ne silindi ve silmenin neden güvenli yarı olduğu.** `White steel chainmail` ile
+`Black steel chainmail`, `White chainmail` ve `Black chainmail`'in bayt bayt kopyasıydı —
+aynı sınıf, aynı 180 değer, aynı `material_type` — ve **görünen adlarını** da onlarla
+paylaşıyorlardı. v0.7.5 bunları kullanmak yerine ikinci çifti ekledi, çünkü bileşen üreteci
+malzemesini `"white chainmail"` diye anahtarlıyor; o registry anahtarı artık oyuncu verisi
+ve adı değiştirilemez, dolayısıyla giden eski çift oluyor.
+`Scraps of wolf rat meat`, oyunda `material_type: "meat"` olan tek eşyaydı ve hiçbir tarif
+o türü istemiyor — kurt sıçanları `Rat meat chunks` düşürüyor. Silmek tam olarak *hiçbir
+şeyin onları hiç üretmemiş olması sayesinde* güvenli: hiçbir kaynağın yapmadığı şeyi hiçbir
+kayıt içeremez.
+
+`Basic spare parts` kalıyor; `known_unreachable_items` üzerinde, sebebiyle. Açıklaması ne
+için olduğunu söylüyor — *"teçhizat üretimi için gerekli"* — ve hiçbir tarif onu istemiyor;
+bu, artık kalmış bir şeyden çok bağlanmamış bir niyet gibi okunuyor. Silmek fikri çöpe
+atardı; kaynak vermek ise ima ettiği sistemi icat etmek olurdu.
+
+**İki kontrol ve her biri girerken bir şey buldu.**
+
+`check_items_can_be_got`, ailenin üçüncüsü. `check_components_can_be_made` "bu elde
+edilebilir mi" sorusunu 203 üretilmiş bileşene, `check_books_can_be_got` kitaplara soruyor;
+192 düz bildirime kimse sormuyordu. Erişilebilir olmak: bir tarifin, bir tüccarın, bir
+düşüşün, bir ödülün ya da bir toplama etkinliğinin adlandırması — ya da `components` veya
+`component_type` taşımak, ki o öteki kontrollerin işi; çünkü birleştirilmiş bir kalkanın
+envanter anahtarı, şablonunun adından değil parçalarından kuruluyor.
+
+**Ve paylaşılan yardımcının ne paylaşıldığını ne de tamam olduğunu buldu.**
+`reachable_item_names()`, *"check_components_can_be_made ve check_books_can_be_got
+tarafından paylaşılıyor… yeni bir kaynak türü buraya bir kez öğretiliyor"* diye
+belgelenmişti — ve `check_components_can_be_made` aynı sekiz desenin kendi gövde içi
+kopyasını hâlâ taşıyordu, yani tek çağıranı vardı. Daha kötüsü: yardımcı dört kaynak türü
+biliyordu, **beş** var. Bir `LocationActivity`'nin `resources`'unu hiçbir şey okumuyordu;
+oysa oyundaki her cevher, kütük, ot, yün ve kum oradan geliyor — düz registry'nin yaklaşık
+beşte biri. İlk iki çağıranın soracağı toplanmış bir şey olmadığı için eksik küme hiç
+görünmedi. İkisi de düzeltildi; yardımcının üç çağıranı var ve toplamayı biliyor.
+
+`resources`'u okumak, tembel bir `[\s\S]*?\]` yerine derinlik saymayı gerektirdi; çünkü
+bir kaynak `ammount: [[1,1], [1,3]]` taşıyor ve ilk `]` iki seviye içeride. O kırpma bütün
+balıkları gizliyordu; kendini böyle duyurdu.
+
+`check_no_two_items_share_a_name` ise öteki. `check_item_name_collisions`, bir eşyanın
+`name:` ALANINI başka eşyaların anahtarlarıyla karşılaştırıyor; bu bir şekli yakalıyor ama
+şunu yakalamıyor: `name <anahtar>` satırları aynı dizgeye çözülen iki farklı anahtar. Oyuncu
+o zaman aynı adı iki kez görüyor — envanterde, takas listesinde ve Keşifler'de — hangisinin
+hangisi olduğunu bilmenin yolu olmadan. Girerken dört kez düştü — iki zırh örgüsü çifti, iki
+yerelde — ve artık iki yerelde 508 ad geçiyor.
+
+**Üç yönden negatif test edildi**: mazeret listesinde bırakılmış erişilebilir bir eşya
+(bayat mazeret dalı), yardımcının toplamayı yeniden unutması (20 eşya bildirildi) ve iki
+eşyaya aynı görünen adın verilmesi.
 
 ### v0.7.17 - kutunun altındaki kutu ve takvime bir ay eklendi
 

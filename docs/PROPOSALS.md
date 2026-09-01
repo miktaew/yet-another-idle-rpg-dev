@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 97 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 98 -->
 
 # Proposals
 
@@ -527,6 +527,17 @@ Candidates measured against what is there rather than invented:
 - The **antique collector** catalogues; the **old woman of the slums** keeps a roster.
   Both are people whose whole characterisation is written records.
 
+**Measured since, and both remaining candidates need a delivery decided rather than
+derived.** The guild's Literacy niche is already filled: `read the seal book` grants
+`skill_xp: {Literacy: 600}` at Guild 50, so a guild book teaching Literacy would be the
+same lesson twice. And the mountain has neither a trader nor an NPC - the old craftsman is
+in the Village - so a mountain book needs an action as its delivery, which is inventing a
+mechanism rather than reusing one. Every one of the twelve books in the game today comes
+from a trader's stock list.
+
+Also measured: `finish_reward` and `required_skills` on `BookData` are read by nothing
+(P-26), so a new book must not lean on either.
+
 **What this must not do.** It must not become a shop of xp multipliers. A book that only
 multiplies is the weakest thing `BookData` can do; the two most interesting existing ones
 unlock *recipes*, and that is the shape to follow.
@@ -641,44 +652,6 @@ it is checkable: every field a data class declares should be named somewhere out
 own constructor. That is a broader check than this proposal and would probably find more
 than two.
 
-
-### P-27 — Four items nothing can give you `open`
-
-Found while measuring P-25's groundwork. Four hand-written item templates are named by no
-recipe result, no trader stock list, no enemy loot table and no reward anywhere in `src/`:
-
-| item | what it is |
-| --- | --- |
-| `White steel chainmail` | Material, value 180, `material_type: "chainmail"` |
-| `Black steel chainmail` | Material, value 180, `material_type: "chainmail"` |
-| `Scraps of wolf rat meat` | Material, value 8, `material_type: "meat"` |
-| `Basic spare parts` | OtherItem |
-
-All four have `desc item ...` rows in both locales, so they were written, translated and
-shipped, and no player can ever hold one.
-
-**The first two are the interesting ones.** They sit one line below `Black iron chainmail`,
-the tier-4 pair, and follow its naming exactly - the ingots are white steel and black
-steel, so `White steel chainmail` is what the convention produces. v0.7.5 wired tier 5 and
-added **`White chainmail` and `Black chainmail`** beside them instead of using them. So
-this is very likely a pair the fork's own work walked past rather than an upstream
-leftover.
-
-**What must not happen.** `White chainmail` shipped in v0.7.5 and a save can hold it, so it
-cannot be renamed - registry keys are player data. The choice is between giving the older
-pair a source and deleting it, and deleting is only safe *because* nothing has ever
-produced them: no save can contain what no source ever made.
-
-**Guard, and it is the point of the entry.** `check_components_can_be_made` and
-`check_books_can_be_got` already ask "can this be got at all" of generated components and
-of books, sharing one `reachable_item_names()` helper. Nothing asks it of hand-written
-items, which is why four of them have sat there. The same question over the whole registry
-is a small extension of a helper that exists, and this proposal is not finished until it
-exists - otherwise the fifth one arrives the same way.
-
-**What it will need.** An excuse list, like `known_unmade`: an item may legitimately have
-no source while the content that gives it is still being written. The list is the point -
-written down with a reason beats tolerated in silence.
 
 
 ---
