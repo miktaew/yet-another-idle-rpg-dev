@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 119 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 120 -->
 
 # Proposals
 
@@ -624,7 +624,7 @@ than two.
 
 
 
-### P-36 — The town square is thinner than the village `open`
+### P-36 — The town square is thinner than the village `partly done`
 
 The owner's request, in three parts and one comparison: the town square needs alternative
 ways to raise skills the way the village has, it should have a trader, and standing watch
@@ -653,10 +653,21 @@ where a player spends the middle of the game.
   patrolling at 50 a unit, so a second paid job changes the shape of every price that was
   set against it.
 
-**What needs deciding.** Whether the town square should be *as* rich as the village or
-differently rich. Making it a second village is the cheap answer and the wrong one; the
-square is a market and a crossroads, and what it should offer is what a market and a
-crossroads offer.
+**Decided, and settled by doing it (v0.7.32).** Not as rich as the village, differently rich.
+Two activities and not ten: the square is not meant to be a second village, it is meant not to
+be empty.
+
+**Done in v0.7.32 - skill practice and the paid watch**, which turned out to be one piece of
+work rather than two. `running` and `patrolling` at the square, each opened by the errand on
+the 50/150/250 standing ladder that earns it, the watch paying the same 50 the village patrol
+pays because it is the same work. Night work, 20:00 to 06:00, which is what makes it an
+alternative rather than a copy.
+
+**Still open: the trader.** P-25 settled the mechanism and P-19 the pricing - a trader needs a
+`market_region` and the square's is `Town`, which already exists. What it must not be is a
+fifth general shop; the two cafés went in at v0.7.9 precisely because they sell what nobody
+else does. That is the question this part has to answer: what does a market square sell that
+the four general traders do not.
 
 
 ### P-37 — Does every panel update when the thing it shows changes? `open`

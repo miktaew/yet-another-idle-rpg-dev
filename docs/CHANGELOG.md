@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 103 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 104 -->
 
 # Changelog
 
@@ -20,6 +20,47 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.32 - the town square gets something to do
+
+P-36, first of its three parts, from the owner: *"the square needs alternative ways to raise
+skills, like running. The village is richer in actions. There should be a trader. Standing
+watch should pay."*
+
+**Counted rather than remembered: ten activities at the village, nought at the square.** Two
+of the three parts are done here - the skill practice and the paid watch, which turned out to
+be the same piece of work. The trader is genuinely separate and stays open.
+
+**Two activities, deliberately, and not ten.** The square is not meant to be a second village;
+what it is meant to be is not empty. Both reuse an existing activity type rather than adding
+one, and that is not a shortcut: each location writes its own `starting_text`, so the mechanic
+is shared and the wording is local - which is why running at the square is not running at the
+village with a different name.
+
+**Each is opened by the errand that earns it**, on the 50/150/250 standing ladder the square's
+three actions already use. `chase the pigeons` opens **running** - having spent an afternoon
+running the square, running it on purpose is no longer strange. `settle the bread argument`,
+the top tier, opens the **watch** - being trusted to judge between two bakers is what buys it.
+
+**The watch pays 50, the same as the village patrol.** The request was to be able to earn at
+the square, not to earn more there, and a second rate would move every price that was set
+against the first (v0.7.10 measured that economy for the boatman). What makes it an
+alternative rather than a copy is that it is night work: 20:00 to 06:00, against the village's
+day patrol.
+
+**Guard: `check_a_timed_activity_can_ever_be_started`,** and it exists because this nearly
+shipped broken. Both branches of the availability check in `main.js` end in
+`availability_seasons?.includes(...)`, so an activity with hours and **no seasons** is refused
+at every hour of every day - while `display.js` goes on writing "available from 20 to 6" into
+its tooltip. The player is told when to come back and turned away when they do, and nothing
+else in the build can see it: the constructor is happy, and the symptom reads exactly like an
+activity nobody has unlocked.
+
+The square's watch is the first thing in the game to use the wrap-around branch at all.
+Measured hour by hour and season by season through main.js's own test - startable 20:00 to
+06:00 in all four seasons, refused 07:00 to 19:00 - and measured again with the seasons
+removed, where it is refused at every hour. 3 activities carry hours, 1 runs through the
+night, each naming its seasons; negative-tested on the new one and on the village's fieldwork.
 
 ### v0.7.31 - try again, where trying again would work
 

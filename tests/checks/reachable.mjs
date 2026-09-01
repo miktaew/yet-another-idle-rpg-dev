@@ -189,4 +189,57 @@ async function check_every_location_can_be_unlocked() {
         + `${reserved.length ? ` (${reserved.length} reserved and empty: ${reserved.join(", ")})` : ""}`);
 }
 
-export { check_every_quest_can_be_started, check_every_location_can_be_unlocked };
+/**
+ * An activity that names its hours also names its seasons.
+ *
+ * Both branches of the availability test in main.js end in the same line:
+ *
+ *     if(!selected_activity.availability_seasons?.includes(...)) { return false; }
+ *
+ * so an activity with `availability_time` and no `availability_seasons` is refused at every
+ * hour of every day, for ever - while `display.js` goes on writing "available from 20 to 6"
+ * into its tooltip. The player is told when to come back and is turned away when they do.
+ *
+ * Nothing else can see it. The constructor is happy, the build is happy, and the only symptom
+ * is an activity that never works, which reads exactly like an activity nobody has unlocked.
+ * The town square's night watch (P-36) is the first thing in the game to use the wrap-around
+ * branch at all, and writing it without the season list would have shipped precisely this.
+ *
+ * The other direction is fine: seasons without hours is a summer job, and that works.
+ */
+async function check_a_timed_activity_can_ever_be_started() {
+    const [locations_module] = await load_browser_free(repo_root, ["src/data/locations.js"]);
+
+    let timed = 0;
+    let through_the_night = 0;
+    for (const [name, place] of Object.entries(locations_module.locations)) {
+        for (const [key, activity] of Object.entries(place.activities || {})) {
+            if (!activity.availability_time) continue;
+            timed++;
+            if (activity.availability_time.end <= activity.availability_time.start) {
+                through_the_night++;
+            }
+            if (!activity.availability_seasons?.length) {
+                error(`"${name}/${key}" is available from ${activity.availability_time.start} `
+                    + `to ${activity.availability_time.end} and names no seasons. Every branch `
+                    + `of the availability check ends in availability_seasons.includes(...), `
+                    + `so it can never be started at all - and its tooltip still advertises `
+                    + `the hours.`);
+            }
+        }
+    }
+
+    if (timed === 0) {
+        error("no activity declares hours at all - this check is out of date.");
+        return;
+    }
+
+    console.log(`[check] timed activities: ${timed} with hours, ${through_the_night} running `
+        + `through the night, each naming its seasons`);
+}
+
+export {
+    check_every_quest_can_be_started,
+    check_every_location_can_be_unlocked,
+    check_a_timed_activity_can_ever_be_started,
+};

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 103 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 104 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,46 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.32 - kasaba meydanında yapılacak bir şey var artık
+
+P-36, üç parçasının ilki, sahibinden: *"kasaba meydanında koşu gibi farklı alternatif yetenek
+geliştirmelerine ihtiyaç var. köy daha zengin aksiyona sahip. kasaba meydanında tüccar olmalı.
+nöbet ile para kazanabilmeli."*
+
+**Hatırlanarak değil sayılarak: köyde on faaliyet, meydanda sıfır.** Üç parçanın ikisi burada
+bitti — beceri pratiği ve ücretli nöbet, ki ikisi aynı iş çıktı. Tüccar gerçekten ayrı bir iş
+ve açık kalıyor.
+
+**Bilerek iki tane, on değil.** Meydanın ikinci bir köy olması amaçlanmıyor; amaçlanan, boş
+olmaması. İkisi de yeni bir tür eklemek yerine var olanı kullanıyor ve bu bir kestirme değil:
+her konum kendi `starting_text`'ini yazıyor, yani mekanik ortak, sözler yerel — meydanda
+koşmayı köyde koşmanın başka adlı hâli olmaktan çıkaran da bu.
+
+**Her biri onu hak eden işle açılıyor**, meydanın üç aksiyonunun zaten kullandığı 50/150/250
+itibar merdiveninde. `chase the pigeons` **koşuyu** açıyor — bir öğleden sonrayı meydanı
+koşarak geçirdikten sonra, bunu bilerek yapmak artık tuhaf değil. En üst kademe olan `settle
+the bread argument` ise **nöbeti** açıyor: iki fırıncı arasında hakemlik edecek kadar
+güvenilmek, onu satın alan şey.
+
+**Nöbet 50 ödüyor, köy devriyesiyle aynı.** İstek meydanda para kazanabilmekti, orada daha
+fazla kazanmak değil; ikinci bir ücret, ilkine göre belirlenmiş her fiyatı oynatırdı (v0.7.10
+o ekonomiyi kayıkçının fiyatı için ölçmüştü). Onu kopya değil alternatif yapan şey gece işi
+olması: 20:00–06:00, köyün gündüz devriyesine karşı.
+
+**Muhafız: `check_a_timed_activity_can_ever_be_started`** ve var olma sebebi, bunun bozuk
+gönderilmesine ramak kalması. `main.js`'teki uygunluk kontrolünün iki dalı da
+`availability_seasons?.includes(...)` ile bitiyor; yani saati olup **mevsimi olmayan** bir
+faaliyet her günün her saatinde reddediliyor — `display.js` ise ipucunda "20'den 6'ya
+kullanılabilir" yazmaya devam ediyor. Oyuncuya ne zaman geleceği söyleniyor ve geldiğinde geri
+çevriliyor; derlemedeki başka hiçbir şey bunu göremiyor: yapıcı memnun ve belirti, kimsenin
+açmadığı bir faaliyetle birebir aynı okunuyor.
+
+Meydanın nöbeti, oyunda gece boyunca süren dalı kullanan ilk şey. `main.js`'in kendi testiyle
+saat saat ve mevsim mevsim ölçüldü — dört mevsimde 20:00–06:00 arası başlatılabilir, 07:00–19:00
+arası reddediliyor — ve mevsimleri kaldırılmış hâliyle yeniden ölçüldü: her saatte reddediliyor.
+3 faaliyet saat taşıyor, 1'i gece boyunca sürüyor, hepsi mevsimlerini adlandırıyor; hem yenisi
+hem köyün `fieldwork`'ü üzerinden negatif test edildi.
 
 ### v0.7.31 - tekrar dene, tekrar denemenin işe yarayacağı yerde
 

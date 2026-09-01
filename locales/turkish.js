@@ -2293,6 +2293,8 @@ const descriptions = {
 
     //LOCATIONS - activity buttons and their unlock messages.
     "activity Village fieldwork starting": "Tarlalarda çalış",
+    "activity Town square running starting": "Meydanı ve ondan çıkan sokakları koş",
+    "activity Town square patrolling starting": "Meydanda gece nöbetine dur",
     "activity Village running starting": "Köyün çevresinde koşuya çık",
     "activity Village weightlifting starting": "Birkaç tahıl çuvalı taşımayı dene",
     "activity Village swimming starting": "Nehirde yüz",

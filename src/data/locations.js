@@ -3622,6 +3622,48 @@ function get_location_type_penalty(type, stage, stat, category) {
         it knows you - and the last one is judging the bakers, because being trusted to
         settle an argument is what standing actually buys in a place like this.
     */
+    /*
+        The square had no activities at all - ten at the village against nought here,
+        counted rather than remembered (P-36). These are the two that belong in a market
+        and a crossroads rather than in a field, and each is opened by the errand on the
+        standing ladder that earns it, the same 50/150/250 shape the actions already use.
+
+        Deliberately two and not ten. The square is not meant to be a second village; what
+        it is meant to be is not empty.
+    */
+    locations["Town square"].activities = {
+        "running": new LocationActivity({
+            activity_name: "running",
+            starting_text: "activity Town square running starting",
+            skill_xp_per_tick: 1,
+            is_unlocked: false,
+        }),
+        "patrolling": new LocationActivity({
+            activity_name: "patrolling",
+            starting_text: "activity Town square patrolling starting",
+            /*
+                The same 50 the village pays. It is the same work, and the request was to
+                be able to earn at the square rather than to earn more there - a second
+                rate would move every price that was set against the first one (v0.7.10).
+            */
+            get_payment: () => {return 50},
+            is_unlocked: false,
+            working_period: 60*2,
+            /*
+                A night watch, which is what stops it being the village's patrol with a
+                different name: patrol the village by day, stand the square by night.
+
+                The seasons are not decoration. Both branches of the availability check in
+                main.js end in `availability_seasons?.includes(...)`, so an activity with
+                hours and no seasons is refused at every hour of every day while its
+                tooltip goes on advertising the hours.
+            */
+            availability_time: {start: 20, end: 6},
+            availability_seasons: ["Spring", "Summer", "Autumn", "Winter"],
+            skill_xp_per_tick: 1,
+        }),
+    };
+
     locations["Town square"].actions = {
         "chase the pigeons": new GameAction({
             action_id: "chase the pigeons",
@@ -3645,6 +3687,9 @@ function get_location_type_penalty(type, stage, stat, category) {
                 skill_xp: {
                     "Quick steps": 150,
                 },
+                //Having spent an afternoon running the square already, running it on
+                //purpose is no longer a strange thing to be seen doing.
+                activities: [{location: "Town square", activity: "running"}],
             },
         }),
         "cry the news": new GameAction({
@@ -3727,6 +3772,12 @@ function get_location_type_penalty(type, stage, stat, category) {
                     Cooking: 400,
                     Haggling: 200,
                 },
+                /*
+                    Being trusted to judge between two bakers is what buys the watch. It
+                    is the square's top tier at 250 standing, and paid work is what that
+                    tier should be worth.
+                */
+                activities: [{location: "Town square", activity: "patrolling"}],
             },
         }),
     };

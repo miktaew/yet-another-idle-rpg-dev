@@ -2427,6 +2427,8 @@ const descriptions = {
 
     //LOCATIONS - activity buttons and their unlock messages.
     "activity Village fieldwork starting": "Work on the fields",
+    "activity Town square running starting": "Run the square and the streets off it",
+    "activity Town square patrolling starting": "Stand the night watch over the square",
     "activity Village running starting": "Go for a run around the village",
     "activity Village weightlifting starting": "Try to carry some bags of grain",
     "activity Village swimming starting": "Swim in the river",

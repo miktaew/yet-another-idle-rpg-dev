@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 119 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 120 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -645,7 +645,7 @@ ve muhtemelen ikiden fazlasını bulur.
 
 
 
-### P-36 — Kasaba meydanı köyden daha ince `open`
+### P-36 — Kasaba meydanı köyden daha ince `partly done`
 
 Sahibinin isteği, üç parça ve bir karşılaştırma hâlinde: kasaba meydanının, köyünkine benzer
 alternatif beceri geliştirme yollarına ihtiyacı var, bir tüccarı olmalı ve nöbet tutmak para
@@ -673,9 +673,20 @@ kasabada geçiriyor.
   girdisi: oyundaki tek tekrarlanabilir gelir birim başına 50 ile devriye, yani ikinci bir
   ücretli iş, ona karşı belirlenmiş her fiyatın şeklini değiştiriyor.
 
-**Karar gerektiren şey.** Kasaba meydanının köy *kadar* mı zengin olması gerektiği, yoksa
-farklı biçimde mi zengin olması. Onu ikinci bir köy yapmak ucuz cevap ve yanlış cevap; meydan
-bir pazar ve bir kavşak, sunması gereken şey de bir pazarın ve bir kavşağın sunduğu şey.
+**Karar verildi ve yapılarak çözüldü (v0.7.32).** Köy kadar zengin değil, farklı biçimde
+zengin. On değil iki faaliyet: meydanın ikinci bir köy olması amaçlanmıyor, boş olmaması
+amaçlanıyor.
+
+**v0.7.32'de yapıldı — beceri pratiği ve ücretli nöbet**, ki ikisi iki iş değil tek iş çıktı.
+Meydanda `running` ve `patrolling`, her biri 50/150/250 itibar merdiveninde onu hak eden işle
+açılıyor; nöbet, aynı iş olduğu için köy devriyesinin ödediği 50'yi ödüyor. Gece işi,
+20:00–06:00, ki onu kopya değil alternatif yapan da bu.
+
+**Hâlâ açık: tüccar.** Mekanizmayı P-25, fiyatlandırmayı P-19 çözdü — bir tüccarın
+`market_region`'a ihtiyacı var ve meydanınki `Town`, o da zaten mevcut. Olmaması gereken şey
+beşinci bir genel dükkân; iki kafe v0.7.9'da tam olarak başka kimsenin satmadığını sattıkları
+için eklenmişti. Bu parçanın cevaplaması gereken soru da bu: bir pazar meydanı, dört genel
+tüccarın satmadığı neyi satar?
 
 
 ### P-37 — Her panel, gösterdiği şey değiştiğinde güncelleniyor mu? `open`
