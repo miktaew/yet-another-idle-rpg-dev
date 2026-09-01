@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 82 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 83 -->
 
 # Proposals
 
@@ -539,7 +539,7 @@ unlock *recipes*, and that is the shape to follow.
 obtainable - by trader, drop, reward or recipe - or be on a written list with a reason.
 Ten books and nothing checks that any of them can be reached today.
 
-### P-16 — Magic is scaffolding, and it is not wired to anything `blocked`
+### P-16 — Magic, as its own arc `open`
 
 The owner's observation, and it is correct and worse than it sounds. Measured:
 
@@ -557,41 +557,100 @@ So magic is exactly the shape tier 5 was before v0.7.5: a finished vocabulary wi
 content behind it. Two of the game's 64 skills can never be levelled by any means,
 because the weapons they scale do not exist.
 
-**What is not decidable from the code, and therefore blocks this: see Q-11.** The cost
-of the two answers differs by an order of magnitude and both are defensible, so it is a
-product decision rather than a measurement.
+**Q-11 is decided by the owner: magic is a third combat axis, and it is its own phase.**
+Not a family of weapons - the whole axis. Mana is a real resource spent during ordinary
+combat; spells carry damage and buff/debuff effects; `intuition` already exists and is
+the stat magic reads; magic power is a real stat that skills and equipment raise, and
+crossing thresholds of it adds properties. Mana-focused skills - regeneration and the
+like - are part of it. Planned as **its own phase and its own version series, after the
+current story**, which is the one thing both answers to Q-11 agreed on: it is a bigger
+change than the entire Marrowmoth arc and it does not belong inside another phase.
+
+Q-1's second revision is what makes this affordable: the fork diverges completely now, so
+new skills, new stats and new systems are in scope. It is no longer "commits to nothing"
+that decides.
+
+**Not started, and deliberately not started yet.** P-14 phase 6 has two pieces left and
+phase 7 has not begun; magic goes after the current story rather than beside it.
 
 **What is decidable, and holds under either answer:**
 
 - Whatever ships must make `Wands` and `Staffs` levellable, because a skill the player
   can see and can never raise is worse than no skill.
-- It must not add a fourth resource bar unless mana is genuinely used. The three mana
-  stats stay `//currently useless` until something reads them, and if nothing will, they
-  should be said to be vestigial rather than left looking pending.
+- The three mana stats stop being `//currently useless` - that comment goes when
+  something reads them, and under this answer something will.
 - No new region. Magic has to arrive through places and people that exist, the way tier 5
   arrived through the flats.
+- The existing combat formulas are not to be broken to fit it. `intuition` and the
+  `magic` damage type are already named; a third axis is built on those rather than beside
+  them.
+### P-19 — A trader in the town square, or somewhere off it `open`
 
-##### Q-11 — Is magic a third combat axis, or a family of weapons? **PROPOSED: a family of weapons first**
+The owner's request: a trader who sells in the town square or one of the places connected
+to it.
 
-P-16 cannot start without this, and the code does not decide it: two skills, three mana
-stats and a named `magic` damage type all exist, and nothing uses any of them.
+**Measured first, because the town may already have one.** Eight traders exist across
+seven stock lists, and the square itself has none - it has three standing actions, a
+fountain, pigeons, a crier and two bakers, and nothing to buy. The square is the town's
+centre of life and the only settlement centre with no shop.
 
-**A family of weapons.** Wands and staves become weapon items that scale off the two
-skills that already exist and deal the `magic` damage type. Cost: items, recipes, a
-trader row or two, and whatever reads a third damage type. It makes two dead skills live,
-commits to nothing, and is the same move v0.7.5 made for tier 5 - wire the scaffolding
-that is already there and stop.
+What that means for the design:
 
-**A third combat axis.** Mana becomes a real resource with a bar, spells become a
-selectable action with costs and cooldowns, and enemies get magic resistance that means
-something. Cost: a resource the whole combat loop has to respect, a spell registry, UI,
-and balance across 64 skills and every existing enemy. It is a bigger change than the
-entire Marrowmoth arc was.
+- The stock list is the decision, not the trader. Seven exist; a square trader should
+  read one that already exists or a new list assembled from items that do, the way the
+  bay's was. The anti-goal is a new tier of goods.
+- The square has a `market_region`; check it before adding, because `market_saturation`
+  is what stops a shop being a money printer and a new shop in an existing region
+  inherits that.
+- "Or somewhere off it" is the interesting half. The square connects to the guild and the
+  slums, and the slums have the shed with the scales and a standing ladder already. A
+  trader whose stock or prices read `Town` or `Slums` standing would spend a number the
+  game already has.
 
-**Proposed: the first, and say so out loud.** The three mana stats stay
-`//currently useless` and get a comment that says they are vestigial rather than pending,
-so the next reader is not misled the way this proposal's author was. If the axis is ever
-wanted, it is its own arc and its own version series - not a phase inside something else.
+### P-20 — Dev mode survives a reload and not a restart `open`
+
+The owner's request, and it is exactly one storage decision: `sessionStorage`. It survives
+a page reload and dies when the tab closes, which is the requested behaviour with no flag
+to manage and nothing written to the save.
+
+**Measured:** the dev console is opened by `enable_dev_console()` and documented in
+[DEV_CONSOLE.md](DEV_CONSOLE.md). Whatever it sets is currently in memory only, so a
+reload loses it - which is the half the owner wants changed - and nothing persists it,
+which is the half that must stay true across a restart.
+
+**What must not happen:** it must not go into the save. A save carrying "dev mode was on"
+is a save that behaves differently on someone else's machine, and the export is a file
+players share.
+
+### P-21 — The help page has fallen behind the game `open`
+
+Q-3 settled that `help.html` and `changelog.html` are both in scope for Turkish and both
+maintained rather than inherited. The changelog half is enforced - `npm run check` fails
+if either copy lacks an entry for the shipped `game_version` - and the help half is not,
+so it has drifted.
+
+**What v0.7.0 to v0.7.8 added that the help page does not explain:**
+
+- a season window, and that two of the four seasons change what the bay is
+- three ways across the tidal flats, and that one of them can fail and be retried
+- `Guild` as a fourth reputation region, which the character sheet will now show a row
+  for that the help page's account of standing does not mention
+- lore threads in the journal, which is a new grouping above a list the page does describe
+- tier 5 becoming craftable, and an ore that is dug rather than bought
+- stance reactions - the page explains stances as stat multipliers, which is now half the
+  story
+- fishing at the bay
+
+The map was updated with the two new places as they shipped, because a check demanded it.
+The **flow** was not, and that is what the owner is asking for: the page's order and
+emphasis, not just its lists.
+
+**Guard to consider:** the changelog symmetry works because a version bump forces an
+entry. There is no equivalent for the help page and probably cannot be a mechanical one -
+what a page should explain is a judgement. What can be checked is narrower: that every
+region and every reputation region the game declares is named somewhere on both help
+pages. The map check already does the first half for locations.
+
 
 ---
 

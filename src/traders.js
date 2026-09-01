@@ -11,6 +11,25 @@ import { is_marrowmoth_in_port } from "./data/marrowmoth.js";
 const traders = {};
 const inventory_templates = {};
 
+/**
+ * The name of the stock list a trader is using right now.
+ *
+ * `inventory_template` holds a NAME, or a function that derives one - the bay's shelf
+ * changes with the season (P-14, Q-10). Anything that wants to know what a trader sells
+ * has to go through here rather than indexing `inventory_templates` with the raw field,
+ * and that is not a style preference: the Discoveries index did index it raw, so the day
+ * the bay's became a function every item that trader sells silently vanished from the
+ * panel - white and black iron ore included, and the bay is the only place in the game
+ * that sells them. Nothing failed. The panel simply stopped knowing.
+ *
+ * check_trader_stock_lists holds every reader to this function for that reason.
+ */
+function stock_list_name_of(trader) {
+    return typeof trader?.inventory_template === "function"
+        ? trader.inventory_template()
+        : trader?.inventory_template;
+}
+
 
 class Trader extends InventoryHaver {
     constructor({
@@ -114,9 +133,7 @@ class Trader extends InventoryHaver {
      */
     get_inventory_from_template() {
         const inventory = {};
-        const template_name = typeof this.inventory_template === "function"
-            ? this.inventory_template()
-            : this.inventory_template;
+        const template_name = stock_list_name_of(this);
         const inventory_template = inventory_templates[template_name];
         if(!inventory_template) {
             //Loud rather than an empty shop: a name that resolves to nothing is a typo
@@ -560,6 +577,11 @@ class TradeItem {
 
             new TradeItem({item_name: "Healing balm", count: [1,3], chance: 0.3}),
             new TradeItem({item_name: "Healing powder", count: [1,3], chance: 0.3}),
+
+            //The region's only book, and the only place that sells it (P-15).
+            new TradeItem({item_name: "Nothing Bites Here", count: [1], chance: 0.5}),
+
+            //The region's only book, and the only place that sells it (P-15).
     ];
 	inventory_templates["Bay in port"] =
     [
@@ -598,6 +620,9 @@ class TradeItem {
 
             new TradeItem({item_name: "Healing balm", count: [2,5], chance: 0.7}),
             new TradeItem({item_name: "Healing powder", count: [2,5], chance: 0.7}),
+
+            new TradeItem({item_name: "Nothing Bites Here", count: [1], chance: 0.9}),
+
     ];
 	inventory_templates["Swamp plus"] = 
     [
@@ -657,4 +682,4 @@ class TradeItem {
     ]
 
 })();
-export { traders, inventory_templates, TradeItem };
+export { traders, inventory_templates, TradeItem, stock_list_name_of };

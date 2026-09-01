@@ -1212,6 +1212,19 @@ const translationManager = globalThis.__real_tm;
         placed.length === Object.keys(enemy_templates).length,
         `${placed.length}/${Object.keys(enemy_templates).length}`);
 
+    /*
+        The regression that made this worth a test at all: the bay trader's shelf became a
+        function in v0.7.5, the index kept indexing the raw field, and every item that
+        trader sells silently left the Discoveries panel - white and black iron ore among
+        them, from the only place in the game that sells either. Nothing threw. The panel
+        just stopped knowing where they come from.
+    */
+    for (const bay_only of ["White iron ore", "Black iron ore"]) {
+        const kinds = world.item_sources(bay_only).map(source => source.kind);
+        check(`${bay_only} still resolves to a trade source`, kinds.includes("trade"),
+            kinds.join(",") || "no sources at all");
+    }
+
     //And what comes back are locations, not names or ids.
     const a_zone = world.enemy_zones("Wolf rat")[0];
     check("a zone comes back as the location object itself",

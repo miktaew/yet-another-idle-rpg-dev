@@ -894,6 +894,29 @@ function check_trader_stock_lists() {
         favourites. Deriving it at refresh is the fix; this is what keeps it fixed, since
         one assignment anywhere would undo it and read as perfectly ordinary code.
     */
+    /*
+        And every reader goes through stock_list_name_of.
+
+        Indexing `inventory_templates` with the raw field is the other half of the same
+        problem as storing it. The field holds a name OR a function that derives one, and
+        the Discoveries index indexed it raw: the day the bay's shelf became seasonal,
+        every item that trader sells vanished from the panel - white and black iron ore
+        among them, from the only place in the game that sells them - and nothing threw,
+        so nothing said so. One resolver, and this keeps it the only one.
+    */
+    for (const relative of source_files(repo_root)) {
+        if (relative === "src/traders.js") continue;
+        const text = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        //The receiver can carry its own subscript - `traders[key]?.inventory_template` -
+        //so the pattern must cross an inner `]`. Anchored on the line instead.
+        for (const raw of text.matchAll(/inventory_templates\[[^;\n]*\.inventory_template/g)) {
+            error(`${relative} indexes inventory_templates with a raw .inventory_template.`
+                + " That field can be a function that derives the name, so this resolves to"
+                + " undefined for any trader whose shelf changes with the world - silently,"
+                + " with nothing thrown. Go through stock_list_name_of.");
+        }
+    }
+
     for (const relative of source_files(repo_root)) {
         const text = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
         /*

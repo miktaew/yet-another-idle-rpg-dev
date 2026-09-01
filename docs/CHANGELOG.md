@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 74 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 75 -->
 
 # Changelog
 
@@ -20,6 +20,58 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.8 - the bay gets a book, and Discoveries gets its answer back
+
+Two things, and the second was found by measuring the first.
+
+**P-15's first book.** Measured before writing it: ten books exist, and the Basic, Basic
+plus, Intermediate and Swamp plus stock lists all carry some while the two Bay lists
+carried none - in the one region whose entire trade is things that arrived from further
+away than the player can go. `BookData` already supports everything a new book could
+want, so no engine work was needed.
+
+*Nothing Bites Here* is the book somebody who spent a working life on this coast wrote:
+in order, every place along it where you will catch nothing at all. It is a much longer
+list than the other one would have been, and by the end of it you understand why he chose
+to write it that way round.
+
+It **unlocks** rather than multiplies, which is the shape P-15 records as the one to
+follow: six of the ten existing books are xp multipliers and the two most interesting -
+`A Glint On The Sand`, `Butchering and you` - hand over an activity and a skill. This one
+opens sea fishing at the bay, and that filled a hole worth noting on its own: **the
+harbour had no activity of any kind**, which is strange for the only region whose identity
+is work. It needed no new item either - Mackerel shark, Trout, Ratfish and Clam all exist,
+and the difference out here is which of them is worth waiting for. Clams had exactly one
+other source in the game.
+
+**`check_books_can_be_got`** is the guard, and it is `check_components_can_be_made`
+pointed at books: not "does this book name a real reward" but "can this book be got at
+all". A book is the cheapest teaching surface here - no location, no NPC, no combat - and
+that is exactly why one can be written, translated, given real rewards and never reach a
+player without anything failing. Both directions, like its sibling: reading data with no
+item is unreadable, and an item with no reading data reads instantly and teaches nothing.
+Negative-tested three ways, one per branch, because the first branch `continue`s and would
+have hidden the second. The reachability construction is now a helper both checks share,
+so a new kind of source is taught to both at once.
+
+**And the regression.** Measuring whether the new book was reachable turned up that it was
+not - and neither were **White iron ore** and **Black iron ore**. When the bay's shelf
+became a function in v0.7.5, `world_index.js` kept doing
+`inventory_templates[trader.inventory_template]`, which resolves to `undefined` for a
+function. Every item that trader sells silently left the Discoveries panel, including the
+two ores the bay is the only source of in the entire game. Nothing threw. The page simply
+had no answer, and a panel with no answer looks like an item with no source.
+
+One resolver now, `stock_list_name_of` in `traders.js`, used by `get_inventory_from_template`
+and by the index. `check_trader_stock_lists` already refused *assignments* to
+`inventory_template`; it now also refuses *reading* it raw, which is the same problem from
+the other side. The first pattern for that could not cross the inner `]` in
+`traders[key]?.inventory_template` and passed the negative test - fixed and re-tested.
+
+Two regression tests, on the two ores specifically, because the suite already had a test
+for trade sources and it passed throughout: it used a trader whose stock list is still a
+plain string.
 
 ### The owner's brief is in git, in both languages
 

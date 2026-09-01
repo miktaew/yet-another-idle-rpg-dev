@@ -3,7 +3,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { default_language, repo_root } from "../lib/context.mjs";
-import { error } from "../lib/report.mjs";
+import { error, errors } from "../lib/report.mjs";
 import { load_generated_item_templates } from "../lib/generated-items.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 import { strip_comments } from "../lib/source.mjs";
@@ -199,6 +199,95 @@ const known_unmade = {
  * reachable generated component arrives by one of the first two, and hard-coding that
  * would fire falsely the day one becomes a quest reward.
  */
+/**
+ * Every item name anything in the game can hand to the player.
+ *
+ * Shared by check_components_can_be_made and check_books_can_be_got, because "can this be
+ * got at all" is one question that used to live inside one of them. A new kind of source
+ * is taught to both here, once.
+ */
+function reachable_item_names() {
+    const read = (file) => strip_comments(fs.readFileSync(path.join(repo_root, file), "utf8"));
+    const names_in = (source, pattern) => [...source.matchAll(pattern)].map(match => match[1]);
+
+    const reachable = new Set([
+        ...names_in(read("src/crafting_recipes.js"), /result_id:\s*"([^"]+)"/g),
+        ...names_in(read("src/traders.js"), /item_name:\s*"([^"]+)"/g),
+        ...names_in(read("src/enemies.js"), /item_name:\s*"([^"]+)"/g),
+    ]);
+    //Rewards name an item either bare inside `items: [...]` or as `{item: "..."}`.
+    for (const file of ["src/data/dialogues.js", "src/data/locations.js", "src/quests.js"]) {
+        const source = read(file);
+        for (const name of names_in(source, /item:\s*"([^"]+)"/g)) {
+            reachable.add(name);
+        }
+        for (const group of source.matchAll(/items:\s*\[([^\]]*)\]/g)) {
+            for (const name of names_in(group[1], /"([^"]+)"/g)) {
+                reachable.add(name);
+            }
+        }
+    }
+    return reachable;
+}
+
+/**
+ * A book nothing sells, drops or hands over.
+ *
+ * A book is the cheapest teaching surface this game has - no location, no NPC, no combat -
+ * and that is exactly why one can be written, translated, given a `book_stats` entry with
+ * real rewards behind it, and never once reach a player. Nothing would fail: the item
+ * exists, the reading timer works, the reward fires if it is ever read. It just never is.
+ *
+ * All ten books before P-15 were sold by a trader, which is the shape to hold to. This is
+ * `check_components_can_be_made` pointed at books - not "does this book name a real
+ * reward" but "can this book be got at all".
+ *
+ * Both directions, like its sibling: reading data with no item is unreadable, and an item
+ * with no reading data reads instantly and teaches nothing, which looks like a bug to the
+ * player and to nobody else.
+ */
+function check_books_can_be_got() {
+    const before = errors.length;
+
+    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
+    const books = [...source.matchAll(/book_stats\["([^"]+)\"\]\s*=/g)].map(m => m[1]);
+    if (books.length === 0) {
+        error("src/items.js declares no book_stats entries - check_books_can_be_got is out"
+            + " of date.");
+        return;
+    }
+
+    const templated = new Set(
+        [...source.matchAll(/item_templates\["([^"]+)\"\]\s*=\s*new Book\(/g)]
+            .map(m => m[1]));
+    const reachable = reachable_item_names();
+
+    for (const book of books) {
+        if (!templated.has(book)) {
+            error(`book_stats has an entry for "${book}" and no \`new Book\` template names`
+                + " it. The reading data exists and there is no item to read, so nothing in"
+                + " the game can ever reach it.");
+            continue;
+        }
+        if (!reachable.has(book)) {
+            error(`the book "${book}" has no source: no trader stocks it, nothing drops it,`
+                + " no reward hands it over and no recipe makes it. It would be written,"
+                + " translated and unreadable, and nothing else would say so.");
+        }
+    }
+
+    for (const template of templated) {
+        if (!books.includes(template)) {
+            error(`"${template}" is a Book item with no book_stats entry, so it has no`
+                + " reading time and no reward. Give it one, or make it an ordinary item.");
+        }
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] books: ${books.length} books, all templated and all reachable`);
+    }
+}
+
 async function check_components_can_be_made() {
     const { generated, problem } = await load_generated_item_templates(repo_root);
     if (problem) {
@@ -270,6 +359,7 @@ async function check_components_can_be_made() {
 }
 
 export {
+    check_books_can_be_got,
     check_components_can_be_made,
     check_generated_items,
     check_recipe_item_names,

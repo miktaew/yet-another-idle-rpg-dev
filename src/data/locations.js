@@ -2535,6 +2535,39 @@ function get_location_type_penalty(type, stage, stat, category) {
         custom_text: "travel Go into [The salt house]", travel_time: 4});
 
     /*
+        The harbour had no activity of any kind, which is a strange thing for the only
+        region in the game whose identity is work. Sea fishing is the obvious one and it
+        needs no new item: the village pond already yields Ratfish, Minnow, Trout and the
+        occasional Mackerel shark, and the difference out here is which of those is worth
+        waiting for. Clams too, which had exactly one gather source in the game.
+
+        Locked, and opened by `Nothing Bites Here` off the salt house's shelf (P-15). A
+        harbour will not teach you where to stand; a book somebody wrote about this coast
+        will.
+    */
+    locations["The bay"].activities = {
+        "fishing": new LocationGatheringActivity({
+            activity_name: "fishing",
+            starting_text: "activity The bay fishing starting",
+            skill_xp_per_tick: 3,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [
+                    {name: "Mackerel shark", chance: [0.02, 0.25]},
+                    {name: "Clam", chance: [0.15, 0.4]},
+                    {name: "Trout", chance: [0.05, 0.25]},
+                    {name: "Ratfish", chance: [0.1, 0.2]},
+                ],
+                roll_quality: true,
+                time_period: [110, 30],
+                skill_required: [4, 24],
+            },
+            require_tool: true,
+            unlock_text: "activity The bay fishing unlock",
+        }),
+    };
+
+    /*
         The departures book, which is the region's answer and the whole of it.
 
         Mirrors "read the ground" on the plains: an action on the hub room, gated on

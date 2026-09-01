@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 74 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 75 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,57 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.8 - körfez bir kitap kazanıyor, Keşifler cevabını geri alıyor
+
+İki şey ve ikincisi, ilkini ölçerken bulundu.
+
+**P-15'in ilk kitabı.** Yazmadan önce ölçüldü: on kitap var ve Basic, Basic plus,
+Intermediate ile Swamp plus listelerinin hepsi kitap taşıyor, iki Bay listesi ise hiç
+taşımıyordu — hem de bütün ticareti, oyuncunun gidebileceğinden daha uzaktan gelen şeyler
+olan tek bölgede. `BookData` yeni bir kitabın isteyebileceği her şeyi zaten destekliyor,
+yani motor işi gerekmedi.
+
+*Burada Balık Vurmaz*, bu kıyıda bir ömür çalışmış birinin yazdığı kitap: kıyı boyunca
+hiçbir şey tutamayacağınız her yer, sırayla. Öteki liste ne olurdu bilinmez ama bu ondan
+çok daha uzun; sonuna geldiğinizde neden bu tarafından yazmayı seçtiğini anlıyorsunuz.
+
+Çarpmıyor, **açıyor**; P-15'in izlenecek şekil olarak kaydettiği de bu: mevcut on kitabın
+altısı xp çarpanı ve en ilginç ikisi — `A Glint On The Sand`, `Butchering and you` — bir
+aktivite ve bir yetenek veriyor. Bu kitap körfezde deniz balıkçılığını açıyor ve bu, kendi
+başına anılmaya değer bir boşluğu doldurdu: **limanın hiçbir türde aktivitesi yoktu**, ki
+kimliği iş olan tek bölge için tuhaf. Yeni eşya da gerekmedi — Mackerel shark, Trout,
+Ratfish ve Clam hepsi mevcut; buradaki fark hangisinin beklemeye değdiği. İstiridyenin
+oyunda tam olarak bir tek başka kaynağı vardı.
+
+**`check_books_can_be_got`** muhafız ve `check_components_can_be_made`'in kitaplara
+çevrilmiş hâli: "bu kitap gerçek bir ödül adlandırıyor mu" değil, "bu kitap hiç elde
+edilebilir mi". Kitap buradaki en ucuz öğretme yüzeyi — yer yok, NPC yok, dövüş yok — ve
+tam bu yüzden bir kitap yazılıp, çevrilip, gerçek ödüller verilip, hiçbir şey düşmeden hiç
+oyuncuya ulaşmayabilir. Kardeşi gibi iki yönlü: eşyası olmayan okuma verisi okunamaz,
+okuma verisi olmayan eşya ise anında okunup hiçbir şey öğretmez. Her dal için bir tane
+olmak üzere üç yönden negatif test edildi; çünkü ilk dal `continue` yapıyor ve ikincisini
+gizleyecekti. Ulaşılabilirlik kurulumu artık iki kontrolün paylaştığı bir yardımcı, yani
+yeni bir kaynak türü ikisine birden öğretiliyor.
+
+**Ve regresyon.** Yeni kitabın ulaşılabilir olup olmadığını ölçmek, ulaşılabilir
+olmadığını ortaya çıkardı — **Beyaz demir cevheri** ile **Siyah demir cevheri** de öyle.
+Körfezin rafı v0.7.5'te fonksiyona dönüştüğünde `world_index.js`,
+`inventory_templates[trader.inventory_template]` yapmaya devam etti; bu da bir fonksiyon
+için `undefined`'a çözülüyor. O tüccarın sattığı her şey Keşifler panelinden sessizce
+çıktı; körfezin bütün oyundaki tek kaynağı olduğu iki cevher dâhil. Hiçbir şey hata
+fırlatmadı. Sayfanın yalnızca cevabı yoktu ve cevabı olmayan bir panel, kaynağı olmayan bir
+eşya gibi görünüyor.
+
+Artık tek bir çözücü var: `traders.js` içindeki `stock_list_name_of`; hem
+`get_inventory_from_template` hem indeks onu kullanıyor. `check_trader_stock_lists`, bu
+alana yapılan *atamaları* zaten reddediyordu; artık onu *çıplak okumayı* da reddediyor —
+aynı problemin öteki yüzü. Bunun ilk kalıbı `traders[key]?.inventory_template` içindeki iç
+`]` işaretini geçemiyor ve negatif testi geçiyordu; düzeltilip yeniden test edildi.
+
+İki regresyon testi, özellikle o iki cevher üzerine; çünkü takımda ticaret kaynakları için
+bir test zaten vardı ve baştan sona geçiyordu: stok listesi hâlâ düz bir metin olan bir
+tüccarı kullanıyormuş.
 
 ### Sahibinin brief'i, iki dilde, git'te
 

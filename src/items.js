@@ -1525,6 +1525,46 @@ book_stats["Wood for Witches"] = new BookData({
     }
 });
 
+/*
+    P-15's first book, and it goes to the bay because the bay is the region with none.
+    Measured: the Basic, Basic plus, Intermediate and Swamp plus stock lists all carry
+    books and the two Bay lists carried nothing, in the one region whose whole trade is
+    things that arrived from further away than the player can go.
+
+    It unlocks rather than multiplies. Six of the ten existing books are xp multipliers
+    and the two most interesting ones - `A Glint On The Sand`, `Butchering and you` -
+    hand over an activity and a skill instead, which is the shape P-15 records as the one
+    to follow. This one unlocks sea fishing at the bay, an activity type that already
+    exists at the village and a hole that was worth filling on its own: the harbour had
+    no activity of any kind.
+*/
+/*
+    P-15's first book, and it goes to the bay because the bay is the region with none.
+    Measured: the Basic, Basic plus, Intermediate and Swamp plus stock lists all carry
+    books and the two Bay lists carried nothing, in the one region whose whole trade is
+    things that arrived from further away than the player can go.
+
+    It unlocks rather than multiplies. Six of the ten existing books are xp multipliers
+    and the two most interesting ones - `A Glint On The Sand`, `Butchering and you` -
+    hand over an activity and a skill instead, which is the shape P-15 records as the one
+    to follow. This one unlocks sea fishing at the bay, an activity type that already
+    exists at the village and a hole that was worth filling on its own: the harbour had
+    no activity of any kind.
+*/
+book_stats["Nothing Bites Here"] = new BookData({
+    required_time: 420,
+    required_skills: {literacy: 6},
+    literacy_xp_rate: 2,
+    bonuses: {
+        xp_multipliers: {
+            Fishing: 1.6,
+        }
+    },
+    rewards: {
+        activities: [{location: "The bay", activity: "fishing"}],
+    },
+});
+
 book_stats["Counting Mice"] = new BookData({
     required_time: 90,
     literacy_xp_rate: 1,
@@ -1583,6 +1623,11 @@ book_stats["Counting Mice"] = new BookData({
         name: "Wood for Witches",
         description: "desc item Wood for Witches",
         value: 2000
+    });
+    item_templates["Nothing Bites Here"] = new Book({
+        name: "Nothing Bites Here",
+        description: "desc item Nothing Bites Here",
+        value: 900
     });
     item_templates["Counting Mice"] = new Book({
         name: "Counting Mice",

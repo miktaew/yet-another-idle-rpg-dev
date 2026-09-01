@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 27 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 28 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,7 +59,7 @@ npm run check:bundle
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
   (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 199 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 201 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.
@@ -175,7 +175,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `imports resolve` | Dışa aktarmayan bir modülden içe aktarılan ad. 677 ad. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
-| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.039 kimlik. |
+| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.043 kimlik. |
 | `action button labels` | Düğmenin içine çizilen paragraf. 45 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
 | `documentation` | Geride kalmış çeviri ya da hiçbir yeri göstermeyen bağlantı. 18 dosya. |
@@ -191,6 +191,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 | `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. 1 iplik, 6 satır. |
+| `books` | Hiçbir şeyin satmadığı/düşürmediği/vermediği bir kitap ya da okuma verisi olmayan bir kitap eşyası. 11 kitap. |
 | `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 58 kullanım. |
 | `dead ends` | Questi kilitleyen başarısızlık: kazanma dalının dışındaki kilit ya da kaybedilen denemede yenen eşya. 18 aksiyon. |
 | `stance reactions` | Stance olmayan bir stance kimliğine tepki veren yaratık; hiç tetiklenmez. 10 kimlik, 7 stance. |

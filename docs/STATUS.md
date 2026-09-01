@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 27 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 28 -->
 
 # Status
 
@@ -56,7 +56,7 @@ npm run check:bundle
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 199 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 201 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.
@@ -174,7 +174,7 @@ but the ones that encode a bug that shipped:
 | `imports resolve` | A name imported from a module that does not export it. 864 names. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 141 names. |
-| `content text ids` | Player-facing text with no locale row. 2,039 ids. |
+| `content text ids` | Player-facing text with no locale row. 2,043 ids. |
 | `action button labels` | A paragraph rendered inside a button. 45 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
@@ -190,6 +190,7 @@ but the ones that encode a bug that shipped:
 | `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 25 names across 54 files. |
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 6 lines. |
+| `books` | A book nothing sells, drops or hands over, or a book item with no reading data. 11 books. |
 | `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
 | `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 18 actions. |
 | `stance reactions` | An enemy reacting to a stance id that is not a stance, which never fires. 10 ids, 7 stances. |

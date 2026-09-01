@@ -50,7 +50,7 @@ import {
     check_journal_panels_are_styled,
     check_seasons_go_through_the_accessor,
 } from "./checks/dom-text.mjs";
-import { check_components_can_be_made, check_generated_items, check_recipe_item_names } from "./checks/items.mjs";
+import { check_books_can_be_got, check_components_can_be_made, check_generated_items, check_recipe_item_names } from "./checks/items.mjs";
 import {
     check_interpolated_pairs,
     check_locales,
@@ -141,6 +141,7 @@ await check_required_items();
 await check_content_text_ids();
 await check_generated_items();
 await check_components_can_be_made();
+check_books_can_be_got();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

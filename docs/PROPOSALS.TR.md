@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 82 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 83 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -565,7 +565,7 @@ kapsadığı sınıfın aynısı: her `Book` eşyası ya elde edilebilir olmak z
 düşürme, ödül ya da tarif yoluyla — ya da gerekçesiyle yazılı bir listede durmak. On
 kitap var ve bugün hiçbirinin ulaşılabilir olduğunu hiçbir şey denetlemiyor.
 
-### P-16 — Büyü bir iskele ve hiçbir şeye bağlı değil `blocked`
+### P-16 — Büyü, kendi arc'ı olarak `open`
 
 Sahibinin tespiti; doğru ve kulağa geldiğinden kötü. Ölçüldü:
 
@@ -584,42 +584,101 @@ Yani büyü, v0.7.5'ten önceki 5. kademenin tam olarak aynı biçiminde: arkas�
 olmayan, bitmiş bir sözcük dağarcığı. Oyunun 64 yeteneğinden ikisi hiçbir yolla
 seviye atlayamıyor, çünkü ölçekledikleri silahlar mevcut değil.
 
-**Koddan karar verilemeyen ve bu yüzden bunu bloklayan şey: bkz. Q-11.** İki cevabın
-maliyeti bir büyüklük mertebesi farklı ve ikisi de savunulabilir; yani bu bir ölçüm
-değil, ürün kararı.
+**Q-11'i sahibi karara bağladı: büyü üçüncü bir savaş ekseni ve kendi fazı.** Bir silah
+ailesi değil — eksenin tamamı. Mana, olağan dövüş sırasında harcanan gerçek bir kaynak;
+büyüler hasar ve buff/debuff etkileri taşıyor; `intuition` zaten var ve büyünün okuduğu
+stat o; büyü gücü, yeteneklerin ve ekipmanın yükselttiği gerçek bir stat ve belli
+eşikleri geçmek özellikler ekliyor. Manaya odaklı yetenekler — yenilenme ve benzeri —
+bunun parçası. **Kendi fazı ve kendi sürüm serisi olarak, mevcut hikâyeden sonra**
+planlanıyor; Q-11'in iki cevabının da üzerinde anlaştığı tek şey buydu: bütün Marrowmoth
+arc'ından büyük bir değişiklik ve başka bir fazın içine ait değil.
+
+Bunu karşılanabilir kılan şey Q-1'in ikinci revizyonu: fork artık tamamen ayrışıyor, yani
+yeni yetenekler, yeni statlar ve yeni sistemler kapsam içinde. Kararı veren şey artık
+"hiçbir şeye bağlanmıyor" değil.
+
+**Başlanmadı ve bilerek henüz başlanmıyor.** P-14 Faz 6'nın iki parçası kaldı, Faz 7 ise
+hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
 
 **Karar verilebilen ve iki cevap altında da geçerli olan:**
 
 - Ne yayınlanırsa yayınlansın `Wands` ile `Staffs`'ı seviye atlanabilir kılmalı; çünkü
   oyuncunun gördüğü ama asla yükseltemediği bir yetenek, hiç olmayan bir yetenekten
   kötüdür.
-- Mana gerçekten kullanılmadıkça dördüncü bir kaynak çubuğu eklememeli. Üç mana statı,
-  onları okuyan bir şey olana kadar `//currently useless` kalır; hiç okunmayacaksa da
-  bekliyormuş gibi bırakılmak yerine körelmiş oldukları söylenmeli.
+- Üç mana statı `//currently useless` olmayı bırakıyor — o yorum, onları okuyan bir şey
+  olduğunda kalkar ve bu cevap altında olacak.
 - Yeni bölge yok. Büyü, 5. kademenin düzlükler üzerinden geldiği gibi, var olan yerler ve
   insanlar üzerinden gelmek zorunda.
+- Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
+  türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
+### P-19 — Kasaba meydanında ya da ona bağlı bir yerde bir tüccar `open`
 
-##### Q-11 — Büyü üçüncü bir savaş ekseni mi, bir silah ailesi mi? **ÖNERİ: önce bir silah ailesi**
+Sahibinin isteği: kasaba meydanında ya da ona bağlı yerlerden birinde satış yapabilen bir
+tüccar.
 
-P-16 bu olmadan başlayamaz ve kod bunu belirlemiyor: iki yetenek, üç mana statı ve adı
-konmuş bir `magic` hasar türü var, hiçbirini hiçbir şey kullanmıyor.
+**Önce ölçüldü, çünkü kasabanın zaten bir tüccarı olabilirdi.** Yedi stok listesine
+yayılmış sekiz tüccar var ve meydanın hiç tüccarı yok — üç itibar aksiyonu, bir çeşme,
+güvercinler, bir tellal ve iki fırıncı var; satın alınacak hiçbir şey yok. Meydan
+kasabanın yaşam merkezi ve dükkânı olmayan tek yerleşim merkezi.
 
-**Bir silah ailesi.** Değnekler ve asalar, zaten var olan iki yetenekten ölçeklenen ve
-`magic` hasar türü veren silah eşyalarına dönüşür. Maliyet: eşyalar, tarifler, bir iki
-tüccar satırı ve üçüncü bir hasar türünü okuyan her ne varsa. Ölü iki yeteneği canlandırır,
-hiçbir şeye bağlanmaz ve v0.7.5'in 5. kademe için yaptığı hamlenin aynısıdır — hâlihazırda
-duran iskeleyi bağla ve dur.
+Bunun tasarıma etkisi:
 
-**Üçüncü bir savaş ekseni.** Mana çubuğu olan gerçek bir kaynak olur, büyüler maliyeti ve
-bekleme süresi olan seçilebilir bir aksiyona dönüşür ve yaratıklar anlamı olan bir büyü
-direnci kazanır. Maliyet: bütün savaş döngüsünün saygı göstermesi gereken bir kaynak, bir
-büyü kayıt defteri, arayüz ve 64 yetenekle her mevcut yaratık boyunca denge. Bu, bütün
-Marrowmoth arc'ından daha büyük bir değişiklik.
+- Karar tüccar değil, stok listesi. Yedi liste var; meydan tüccarı ya var olan bir
+  listeyi okumalı ya da körfezinki gibi, var olan eşyalardan kurulmuş yeni bir listeyi.
+  Karşı-hedef yeni bir mal kademesi.
+- Meydanın bir `market_region`'ı var; eklemeden önce kontrol edilmeli, çünkü bir dükkânın
+  para basma makinesine dönüşmesini engelleyen şey `market_saturation` ve var olan bir
+  bölgedeki yeni dükkân onu miras alıyor.
+- "Ya da ona bağlı bir yer" ilginç olan yarısı. Meydan loncaya ve kenar mahalleye
+  bağlanıyor; kenar mahallede terazili baraka ve hazır bir itibar merdiveni zaten var.
+  Stoğu ya da fiyatları `Town` veya `Slums` itibarını okuyan bir tüccar, oyunun elinde
+  zaten bulunan bir sayıyı harcar.
 
-**Öneri: birincisi ve bunu açıkça söylemek.** Üç mana statı `//currently useless` kalır ve
-bekleyen değil körelmiş olduklarını söyleyen bir yorum alır; böylece sonraki okuyucu, bu
-önerinin yazarının yanıldığı gibi yanılmaz. Eksen bir gün istenirse, o kendi arc'ı ve
-kendi sürüm serisidir — başka bir şeyin içindeki bir faz değil.
+### P-20 — Dev modu yenilemeden sağ çıkar, yeniden açılıştan çıkmaz `open`
+
+Sahibinin isteği ve tam olarak tek bir depolama kararı: `sessionStorage`. Sayfa
+yenilemesinden sağ çıkıyor, sekme kapandığında ölüyor; yönetilecek bir bayrak olmadan ve
+kayda hiçbir şey yazılmadan istenen davranış bu.
+
+**Ölçüldü:** dev konsolu `enable_dev_console()` ile açılıyor ve
+[DEV_CONSOLE.md](DEV_CONSOLE.md) içinde belgeli. Şu anda ne ayarlıyorsa yalnızca bellekte,
+yani yenileme onu kaybediyor — sahibinin değişmesini istediği yarı bu — ve hiçbir şey onu
+kalıcı kılmıyor, ki yeniden açılışta doğru kalması gereken yarı da bu.
+
+**Olmaması gereken:** kayda girmemeli. "Dev modu açıktı" bilgisini taşıyan bir kayıt,
+başkasının makinesinde farklı davranan bir kayıttır ve export, oyuncuların paylaştığı bir
+dosya.
+
+### P-21 — Yardım sayfası oyunun gerisinde kaldı `open`
+
+Q-3, `help.html` ile `changelog.html`'in ikisinin de Türkçe kapsamında ve ikisinin de
+miras değil bakımı yapılan dosyalar olduğunu karara bağlamıştı. Changelog yarısı
+zorunlu kılınıyor — `npm run check`, iki kopyadan biri yayınlanan `game_version` için
+girdi taşımıyorsa düşüyor — yardım yarısı ise zorunlu değil, o yüzden kaydı.
+
+**v0.7.0 ile v0.7.8 arasında eklenip yardım sayfasının anlatmadıkları:**
+
+- bir mevsim penceresi ve dört mevsimden ikisinin körfezin ne olduğunu değiştirmesi
+- gelgit düzlüklerini geçmenin üç yolu ve birinin başarısız olup tekrarlanabilmesi
+- dördüncü reputation bölgesi olarak `Guild`; karakter sayfası artık, sayfanın itibar
+  anlatımında hiç anılmayan bir satır gösterecek
+- günlükteki lore iplikleri; sayfanın tarif ettiği bir listenin üstüne gelen yeni bir
+  gruplama
+- 5. kademenin üretilebilir hâle gelmesi ve satın alınan değil kazılan bir cevher
+- stance tepkileri — sayfa stance'ları stat çarpanı olarak anlatıyor, ki bu artık hikâyenin
+  yarısı
+- körfezde balıkçılık
+
+Harita, iki yeni yer yayınlandıkça güncellendi; çünkü bir kontrol bunu istiyordu. **Akış**
+güncellenmedi ve sahibinin istediği de bu: sayfanın sırası ve vurgusu, yalnızca listeleri
+değil.
+
+**Düşünülecek muhafız:** changelog simetrisi işliyor, çünkü sürüm artışı bir girdiyi
+zorunlu kılıyor. Yardım sayfası için eşdeğeri yok ve mekanik bir eşdeğeri olamaz da —
+bir sayfanın neyi anlatması gerektiği bir yargı. Kontrol edilebilecek olan daha dar:
+oyunun bildirdiği her bölgenin ve her reputation bölgesinin, iki yardım sayfasında da bir
+yerde adının geçmesi. Harita kontrolü, yerler için ilk yarısını zaten yapıyor.
+
 
 ---
 

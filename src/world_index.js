@@ -15,7 +15,7 @@
 
 import { locations } from "./data/locations.js";
 import { enemy_templates } from "./enemies.js";
-import { traders, inventory_templates } from "./traders.js";
+import { traders, inventory_templates, stock_list_name_of } from "./traders.js";
 import { recipes } from "./crafting_recipes.js";
 import { activities } from "./activities.js";
 import { dialogues } from "./data/dialogues.js";
@@ -73,10 +73,16 @@ function build_item_sources_index() {
         });
 
         as_list(location.traders).forEach(trader_key => {
-            //inventory_template holds the NAME of a stock list, not the list - the lists
-            //live in inventory_templates. Calling forEach on the name is what threw when
-            //this panel was first opened.
-            const stock = inventory_templates[traders[trader_key]?.inventory_template];
+            /*
+                Through stock_list_name_of, not by indexing the raw field. The field holds
+                a name OR a function that derives one, and indexing it raw is how this
+                panel silently lost every item the bay trader sells the day that shelf
+                started changing with the season - white and black iron ore included, from
+                the only place in the game that sells them. Nothing threw; the panel just
+                stopped knowing. Calling forEach on the name is what threw the first time,
+                which is the other half of the same lesson.
+            */
+            const stock = inventory_templates[stock_list_name_of(traders[trader_key])];
             as_list(stock).forEach(stocked => {
                 if(stocked.item_name) {
                     note(stocked.item_name, {kind: "trade", location_key, via: trader_key});
