@@ -823,6 +823,42 @@ const questManager = {
                 Guild: 40,
                 Town: 20,
             },
+            //The flats open here rather than from an action, because what puts them on
+            //the map is knowing there is a reason to walk out - the tallyman's "do it
+            //while she is on the mud" is the last line of this quest.
+            locations: [{location: "The tidal flats"}],
+        }
+    });
+    /*
+        P-14 quest 3. Two tasks and no combat, which is the phase's whole shape: the
+        obstacle is water and dark, not anything that fights back.
+
+        Task 0 has three advancers because there are three ways across the mud - wade
+        it, pay for it, or be walked out on the firm line by somebody who owes the row a
+        favour. A player who cannot do one of them can do another, which is the owner's
+        rule that a failed check never locks a quest, written into the content rather
+        than left to the guard to notice afterwards.
+    */
+    quests["Out on the Ebb"] = new Quest({
+        quest_name: "quest Out on the Ebb",
+        display_priority: 19,
+        getQuestDescription: ()=>{
+            if(quests["Out on the Ebb"].quest_tasks[0].is_finished) {
+                return "quest Out on the Ebb desc 2";
+            } else {
+                return "quest Out on the Ebb desc 1";
+            }
+        },
+        questline: "No Word Sent",
+        quest_tasks: [
+            new QuestTask({task_description: "quest Out on the Ebb task 1"}),
+            new QuestTask({task_description: "quest Out on the Ebb task 2"}),
+        ],
+        quest_rewards: {
+            xp: 80000,
+            reputation: {
+                Guild: 30,
+            },
         }
     });
     quests["A Fire in a Hollow"] = new Quest({

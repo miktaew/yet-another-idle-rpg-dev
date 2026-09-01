@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 68 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 69 -->
 
 # Changelog
 
@@ -20,6 +20,68 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.3 - *Out on the Ebb*: three ways across the same mud
+
+P-14 phase 4b. Two places and no more, per Q-9 - the tidal flats are the approach and
+the lower hold is the destination - with the anchorage and the cargo deck as actions on
+those two rather than rooms of their own. No combat anywhere in it: the obstacle is water
+and dark.
+
+**The tide is not a clock.** There is no time-of-day condition in this engine, and adding
+one would have been precisely the scheduler Q-10 put out of scope. So what gates the
+flats is the same season window the shelf, the quay's noise and the clerk's rumour all
+read: the only reason to walk out there is that she is lying on the mud. It is a
+`display_conditions` rather than an unlock, for the reason phase 2 gave - an unlock is
+one-way, and she comes back twice a year - and the walk back up to the bay carries no
+condition at all, so a player who is out there when the season turns can always come in.
+
+**Three ways across, and only one of them can fail.** This is the phase's own rule -
+every failure leaves another way, longer, dearer, or through standing - written into the
+content rather than left for a guard to notice afterwards:
+
+- **Wade it.** Equilibrium 18 to attempt, 42 to be certain. The bottom is not the same
+  twice and there is no path, only a way that works today. Failure is the water turning:
+  it does not rush, it just stops going out and starts coming in, and out there that is
+  the same as being told to leave. Free, retryable, and it costs nothing but the tide.
+- **Pay a boatman**, 25,000, taken only on success. The dear way is dear, not a second
+  gamble at a higher price - it cannot fail. He poles a flat-bottomed boat over four
+  inches of water, asks not one question the whole way, and will not wait.
+- **Ask for the firm line**, `Slums` 250. Harder than the investigation's 200 on purpose:
+  a porter talking is one favour and being shown where the bottom holds is a larger one.
+  In his prints, not beside them. He knows that line the way you know a staircase in the
+  dark, does not explain any of it, and stops at the hull: *"I am not going up there and
+  neither should you. You will anyway."*
+
+All three end at the same ladder and grant the same unlock, so nothing out here sits
+behind a skill the player does not have.
+
+**The hold** is heeled over onto the mud, so nothing down there is level and everything
+was lashed by people who assumed it would be. Climbing and Spatial awareness, in the
+dark, working out each hold-fast before trusting it. What is down there is what was on
+the page - barrels, coils, pigs of tin, hides - all of it lashed in the same competent,
+bored, professional way. And right aft, on its own, with four feet of clearance nothing
+else on that deck was given: one crate, lashed differently. Not better; differently, by
+somebody who was not doing it the way you do it a hundred times a season.
+
+The player does not touch it. Reaching it is phase 5's, and the arc is built on finishing
+with more questions than answers.
+
+**What the checks caught that the writing missed.** Four separate things, none of which
+would have been visible by reading the source: both new locations had no `name <location>`
+row, so the location header and every travel line would have shown the registry key;
+three travel-line ids were declared and not written; and both help pages' maps did not
+name either place, which the site check reports as *"the players who read the map will
+not know it exists"*. That last one is the kind of gap that would have shipped silently -
+a location is reachable and correct and simply absent from the printed map.
+
+No new guard: 4a's `check_no_dead_end_skill_gates` covers this, and the four new actions
+joined the class-level checks automatically. 17 quest-advancing actions, none lost on a
+failure; 69 actions can all explain failure; 36 location collections assigned once each.
+
+Recorded for the phases after this: 4a's guard reads `main.js`'s attempt resolver by the
+order of three call sites, so any rework of that resolver has to keep the lock on the
+winning side or say why.
 
 ### The dead-end guard does not say what the plan said it would
 

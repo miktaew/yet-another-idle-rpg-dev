@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 75 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 76 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -332,32 +332,34 @@ Faz 4'ün adlandırdığı çıkmaz sınıfı değil — sebebini söyleyerek re
 başarısız olan bir kontrol değildir — ve ayrım, Faz 4 yeniden türetmek zorunda kalmasın
 diye kayda geçirildi.
 
-**Faz 4 — v0.7.3, *Out on the Ebb*.** Cezir yaklaşımı. Q-9 uyarınca en fazla iki yeni
-yer; demirleme yeri ve güverte oda değil aksiyon olur. Combat değil, skill ve aksiyon
-kontrolleri. Her kapı var olan bir skill'i anar, her başarısızlık nedenini söyler ve
-başka bir yol bırakır — daha uzun, daha pahalı ya da itibar üzerinden. Kendinden önceki
-üç faz gibi bölündü.
+**Faz 4 — v0.7.3, *Out on the Ebb*.** `bitti`. Q-9 uyarınca iki yer, fazlası değil:
+düzlükler yaklaşım, ambar ise varış; demirleme yeri ile yük güvertesi de kendi odaları
+değil, bu ikisi üzerinde aksiyon. Combat yok — engel su ve karanlık.
 
-- **4a — muhafız.** `bitti`. `check_no_dead_end_skill_gates` var, ama bu önerinin
-  söylediği şeyi **söylemiyor**. Planlanan kural şuydu: "tek ilerleticisi skill'e bağlı
-  bir aksiyon olan bir task'ın ikinci bir ilerleticisi olmak zorundadır." İçeriğe karşı
-  ölçüldüğünde tam olarak böyle olan beş task var ve dördü birer bölgenin imzası —
-  ovada `read the ground`, körfezde `read the departures`, dağda `cut a flue`. Hiçbiri
-  çıkmaz değil, çünkü bu motorda başarısızlık, yeniden elde edilemeyecek hiçbir şeye mal
-  olmuyor: `lock_action` tek bir yerden ve yalnızca kazanınca çağrılıyor, yani başarısız
-  her deneme tekrarlanabiliyor. Planlanan cümleyi dayatmak, bilerek yazılmış dört
-  aksiyonu işaretler ve tekrarlanabilir bir kontrolün tuzak olduğunu öğretirdi. Muhafız
-  bunun yerine questi gerçekten kilitleyen şeyin etrafına, iki kuralla yazıldı:
-  başarısızlık aksiyonu kilitlememeli — ki bu her an tek bir düzenleme uzaklıkta ve beş
-  task'ı bir anda çıkmaza çevirirdi; ve quest ilerleten bir aksiyon, başarısız denemede
-  eşya yememeli. Bugün dört aksiyon her denemede tüketiyor — kamp malzemesi, halat
-  rulosu — ve hiçbiri quest ilerletmiyor; ikinci kuralın çizdiği çizgi de bu. 13 quest
-  ilerleten aksiyon, hiçbiri başarısızlıkta kaybedilmiyor. İki kural da negatif test
-  edildi: kilit kaybın altına taşındı ve `see the manifest`'e tüketilen bir halat
-  eklendi.
-- **4b — düzlükler ve ambar.** `open`. İki yer, gelgit, aksiyon olarak demirleme yeri
-  ve güverte, ve başarısız her kontrolün bırakmak zorunda olduğu alternatif yol. v0.7.3
-  olarak yayınlanacak olan bu.
+Gelgit bir saat değil. Bu motorda günün saatine bakan bir koşul yok ve bir tane eklemek,
+Q-10'un kapsam dışı bıraktığı zamanlayıcı olurdu; düzlükleri kapayan şey, arc'ın geri
+kalanının okuduğu aynı mevsim penceresi: oraya yürümenin tek sebebi teknenin çamurda
+yatıyor olması. Açılma değil `display_conditions`, Faz 2'nin gerekçesiyle — açılma tek
+yönlüdür — ve körfeze dönüş yolunda hiçbir koşul yok, yani mevsim dönerken orada olan
+kimse mahsur kalmıyor.
+
+Aynı çamurun üstünde üç yol; fazın kuralı bir muhafıza bırakılmak yerine içeriğe
+yazıldı: Equilibrium ile yürüyüp suya geri çevrilmek, kayıkçıya 25.000 ödemek ya da
+`Slums` 250'de sağlam hattan yürütülmek — soruşturmanın 200'ünden daha zor, çünkü
+zeminin nerede tuttuğunun gösterilmesi, bir hamalın konuşmasından daha büyük bir iyilik.
+Yalnızca bedava olan başarısız olabiliyor; diğer ikisi hiç başarısız olamıyor ve onun
+yerine paraya ya da itibara mal oluyor. Üçü de aynı merdivende bitiyor ve aynı açılmayı
+veriyor, yani burada oyuncunun sahip olmadığı bir skill'in arkasında hiçbir şey yok.
+
+Faz, sandığın görülüp dokunulmaması üzerine bitiyor — ona ulaşmak Faz 5'in işi ve arc,
+cevaptan çok soruyla bitirmek üzerine kurulu. Muhafız: 4a ile gelen
+`check_no_dead_end_skill_gates`; dört yeni aksiyon sınıf düzeyi kontrollere kendiliğinden
+katıldı ve kontroller yazının kaçırdıklarını yakaladı — iki yerin görünen adları, üç
+seyahat satırı kimliği ve iki yardım sayfasının harita girdileri.
+
+Sonraki fazlar için not: 4a'nın muhafızı `main.js` içindeki deneme çözümleyicisini üç
+çağrı yerinin sırasına bakarak okuyor. O çözümleyicide yapılacak her düzenleme, kilidi
+kazanan tarafta tutmak ya da niçin tutmadığını söylemek zorunda.
 
 **Faz 5 — v0.7.4, *One Unweighed Crate*.** Sandığa ulaşılır. Orman yolunda alınan
 objeyle aynı eli taşır — tek bir motif, tek bir metal, tek bir açıklanmamış malzeme

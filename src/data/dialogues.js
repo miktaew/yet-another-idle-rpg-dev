@@ -2726,6 +2726,19 @@ class Textline {
                 },
                 locks_lines: ["tallyman what you found"],
             }),
+            /*
+                After the hold. He does not ask what you did to get out there and he
+                does not offer to come. What he gives is the one piece of the timetable
+                that matters next: she goes out on the same water she came in on.
+            */
+            "tallyman the hold": new Textline({
+                name: "tallyman the hold",
+                text: "tallyman the hold answ",
+                is_unlocked: false,
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
+                locks_lines: ["tallyman the hold"],
+            }),
         }
     });
 

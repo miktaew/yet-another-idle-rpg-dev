@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 75 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 76 -->
 
 # Proposals
 
@@ -320,31 +320,35 @@ bought. That is not the dead-end class phase 4 names — a gate that refuses wit
 is not a check that fails — and the distinction is recorded so phase 4 does not have to
 re-derive it.
 
-**Phase 4 — v0.7.3, *Out on the Ebb*.** The low-tide approach. Two new places at most,
-per Q-9, with the anchorage and the cargo deck as actions rather than rooms. Skill and
-action checks, not combat. Every gate names a skill that exists and every failure says
-why and leaves another way — longer, dearer, or through standing. Split like the three
-phases before it.
+**Phase 4 — v0.7.3, *Out on the Ebb*.** `done`. Two places and no more, per Q-9: the
+flats are the approach and the hold is the destination, and the anchorage and the cargo
+deck are actions on those two rather than rooms of their own. No combat — the obstacle
+is water and dark.
 
-- **4a — the guard.** `done`. `check_no_dead_end_skill_gates`, and it does **not** say
-  what this proposal said it would. The planned rule was "a task whose only advancer is
-  a skill-gated action must have a second advancer"; measured against the content, five
-  tasks are exactly that and four of them are a region's signature — `read the ground`
-  on the plains, `read the departures` at the bay, `cut a flue` in the mountain. None is
-  a dead end, because in this engine a failure costs nothing that cannot be got again:
-  `lock_action` is called from one place and only on a win, so every failed attempt can
-  be retried. Enforcing the planned sentence would have flagged four deliberate actions
-  and taught that a retryable check is a trap. The guard is written around what actually
-  locks a quest instead, in two rules: failure must not lock the action, which is one
-  edit away at all times and would turn five tasks into dead ends at once; and a
-  quest-advancing action must not eat an item on a failed attempt. Four actions consume
-  on any attempt today — camping supplies, coils of rope — and not one of them advances
-  a quest, which is the line the second rule draws. 13 quest-advancing actions, none
-  lost on a failure. Negative-tested both rules: the lock moved below the loss, and a
-  consumed rope added to `see the manifest`.
-- **4b — the flats and the hold.** `open`. The two places, the tide, the anchorage and
-  the cargo deck as actions, and the alternative route every failed check has to leave.
-  This is what ships as v0.7.3.
+The tide is not a clock. There is no time-of-day condition in this engine and adding one
+would have been the scheduler Q-10 put out of scope, so what gates the flats is the same
+season window the rest of the arc reads: the only reason to walk out there is that she is
+lying on the mud. `display_conditions` rather than an unlock, for phase 2's reason — an
+unlock is one-way — and the walk back to the bay carries no condition, so nobody out
+there when the season turns can be stranded.
+
+Three ways across the same mud, which is the phase's rule made content rather than left
+to a guard: wade it on Equilibrium and be turned back by the water, pay a boatman
+25,000, or be walked out on the firm line at `Slums` 250 — harder than the investigation's
+200, because being shown where the bottom holds is a bigger favour than a porter talking.
+Only the free one can fail; the other two cannot fail at all and cost money or standing
+instead. All three end at the same ladder and grant the same unlock, so nothing out here
+is behind a skill the player does not have.
+
+The phase ends on the crate being seen and not touched — reaching it is phase 5's, and
+the arc is built on finishing with more questions than answers. Guard:
+`check_no_dead_end_skill_gates`, shipped with 4a; the four new actions joined the
+class-level checks automatically, and the checks caught what the writing missed — both
+locations' display names, three travel-line ids and both help-page map entries.
+
+Note for the phases after this: 4a's guard reads `main.js`'s attempt resolver by the
+order of three call sites. Any rework of that resolver has to keep the lock on the
+winning side or say why.
 
 **Phase 5 — v0.7.4, *One Unweighed Crate*.** The crate is reached. It carries the
 same hand as the object taken on the forest road — one motif, one metal, one

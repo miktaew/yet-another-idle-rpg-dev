@@ -2745,6 +2745,178 @@ function get_location_type_penalty(type, stage, stat, category) {
     };
 
 
+    /*
+        P-14 phase 4. Two places and no more, per Q-9: the flats are the approach and
+        the hold is the destination. The anchorage and the cargo deck are actions on
+        those two rather than rooms of their own - a corridor with nothing in it is a
+        location that costs the same as one with something in it and says less.
+
+        The tide is not a clock. There is no time-of-day condition in this engine and
+        adding one would be the scheduler Q-10 put out of scope; what gates the flats is
+        the same season window everything else in the arc reads, because the only reason
+        to walk out there is that she is lying on the mud. The crossing itself can fail
+        and be tried again - the water turns, you go back to the quay wet.
+
+        display_conditions rather than an unlock, for the reason phase 2 gave: "she is
+        not here" is a state of the world, and an unlock is one-way. The walk back to
+        the bay carries no condition, so a player who is out there when the season turns
+        can always come in.
+    */
+    locations["The tidal flats"] = new Location({
+        connected_locations: [{location: locations["The bay"],
+            custom_text: "travel Walk back up the hard to [The bay]", travel_time: 60}],
+        description: "desc location The tidal flats",
+        name: "The tidal flats",
+        is_unlocked: false,
+        unlock_text: "loc The tidal flats unlock",
+        display_conditions: {season: {yes: marrowmoth_seasons}},
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise The tidal flats 1"),
+                    translationManager.getText(language, "noise The tidal flats 2"),
+                    translationManager.getText(language, "noise The tidal flats 3"),
+                    translationManager.getText(language, "noise The tidal flats 4")];
+        },
+        //Colder than the quay and far more variable: wet ground, no shelter, and the
+        //wind comes off the water with nothing between.
+        temperature_modifier: 0.85,
+        temperature_range_modifier: 1.3,
+        is_under_roof: false,
+    });
+    locations["The bay"].connected_locations.push({location: locations["The tidal flats"],
+        custom_text: "travel Go down onto [The tidal flats]", travel_time: 60});
+
+    locations["The lower hold"] = new Location({
+        connected_locations: [{location: locations["The tidal flats"],
+            custom_text: "travel Climb back out onto [The tidal flats]", travel_time: 30}],
+        description: "desc location The lower hold",
+        name: "The lower hold",
+        is_unlocked: false,
+        unlock_text: "loc The lower hold unlock",
+        getBackgroundNoises: function() {
+            return [translationManager.getText(language, "noise The lower hold 1"),
+                    translationManager.getText(language, "noise The lower hold 2"),
+                    translationManager.getText(language, "noise The lower hold 3")];
+        },
+        is_under_roof: true,
+        is_temperature_static: true,
+        static_temperature: 9,
+        light_level: "dark",
+    });
+
+    /*
+        Three ways across the same mud, and the rule they exist for: a failed check
+        never locks a quest. The free one can fail and be tried again; the other two
+        cannot fail at all, and cost money or standing instead. All three end in the
+        same place, so nothing is behind a skill the player does not have.
+    */
+    locations["The tidal flats"].actions = {
+        "wade the flats": new GameAction({
+            action_id: "wade the flats",
+            action_name: "action wade the flats name",
+            starting_text: "action wade the flats starting",
+            description: "action wade the flats desc",
+            action_text: "action wade the flats during",
+            success_text: "action wade the flats success",
+            is_unlocked: true,
+            repeatable: true,
+            conditions: [
+                {skills: {Equilibrium: 18}},
+                {skills: {Equilibrium: 42}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action wade the flats fail conditional_loss 1"],
+                random_loss: ["action wade the flats fail random_loss 1"],
+            },
+            attempt_duration: 600,
+            success_chances: [0.35, 1],
+            rewards: {
+                skill_xp: {Equilibrium: 900, Swimming: 300},
+                locations: [{location: "The lower hold"}],
+                quest_progress: [{quest_id: "Out on the Ebb", task_index: 0}],
+            },
+        }),
+        "pay a boatman": new GameAction({
+            action_id: "pay a boatman",
+            action_name: "action pay a boatman name",
+            starting_text: "action pay a boatman starting",
+            description: "action pay a boatman desc",
+            action_text: "action pay a boatman during",
+            success_text: "action pay a boatman success",
+            is_unlocked: true,
+            repeatable: true,
+            //Taken only when it works, and it always works: the dear way is dear, not
+            //a second gamble at a higher price.
+            required: {
+                money: {number: 25000, remove_on_success: true},
+            },
+            failure_texts: {
+                unable_to_begin: ["action pay a boatman fail unable_to_begin 1"],
+            },
+            attempt_duration: 300,
+            success_chances: [1],
+            rewards: {
+                locations: [{location: "The lower hold"}],
+                quest_progress: [{quest_id: "Out on the Ebb", task_index: 0}],
+            },
+        }),
+        "ask for the firm line": new GameAction({
+            action_id: "ask for the firm line",
+            action_name: "action ask for the firm line name",
+            starting_text: "action ask for the firm line starting",
+            description: "action ask for the firm line desc",
+            action_text: "action ask for the firm line during",
+            success_text: "action ask for the firm line success",
+            is_unlocked: true,
+            repeatable: true,
+            required: {
+                reputation: {Slums: 250},
+            },
+            failure_texts: {
+                unable_to_begin: ["action ask for the firm line fail unable_to_begin 1"],
+            },
+            attempt_duration: 450,
+            success_chances: [1],
+            rewards: {
+                skill_xp: {"Spatial awareness": 500},
+                locations: [{location: "The lower hold"}],
+                quest_progress: [{quest_id: "Out on the Ebb", task_index: 0}],
+            },
+        }),
+    };
+
+    /*
+        The cargo deck, as an action rather than as a room. It ends on the crate being
+        seen and not opened: reaching it is phase 5's, and the whole arc is built on
+        finishing with more questions than answers.
+    */
+    locations["The lower hold"].actions = {
+        "go along the cargo deck": new GameAction({
+            action_id: "go along the cargo deck",
+            action_name: "action go along the cargo deck name",
+            starting_text: "action go along the cargo deck starting",
+            description: "action go along the cargo deck desc",
+            action_text: "action go along the cargo deck during",
+            success_text: "action go along the cargo deck success",
+            is_unlocked: true,
+            repeatable: true,
+            conditions: [
+                {skills: {Climbing: 15, "Spatial awareness": 12}},
+                {skills: {Climbing: 38, "Spatial awareness": 30}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action go along the cargo deck fail conditional_loss 1"],
+                random_loss: ["action go along the cargo deck fail random_loss 1"],
+            },
+            attempt_duration: 500,
+            success_chances: [0.4, 1],
+            rewards: {
+                skill_xp: {Climbing: 700, "Spatial awareness": 700, "Night vision": 300},
+                quest_progress: [{quest_id: "Out on the Ebb", task_index: 1}],
+                textlines: [{dialogue: "harbour tallyman", lines: ["tallyman the hold"]}],
+            },
+        }),
+    };
+
     locations["Longhouse"] = new Location({
         connected_locations: [{location: locations["Swampland tribe"], custom_text: "travel Go back out to the [Swampland tribe]", travel_time: 5}],
         description: "desc location Longhouse",

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 68 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 69 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,69 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.3 - *Out on the Ebb*: aynı çamurun üstünde üç yol
+
+P-14 Faz 4b. Q-9 uyarınca iki yer, fazlası değil — gelgit düzlükleri yaklaşım, alt ambar
+varış — ve demirleme yeri ile yük güvertesi de kendi odaları değil, bu ikisi üzerinde
+aksiyon. İçinde hiçbir yerde combat yok: engel su ve karanlık.
+
+**Gelgit bir saat değil.** Bu motorda günün saatine bakan bir koşul yok ve bir tane
+eklemek, tam olarak Q-10'un kapsam dışı bıraktığı zamanlayıcı olurdu. Bu yüzden
+düzlükleri kapayan şey, rafın, rıhtımın sesinin ve kâtibin söylentisinin okuduğu aynı
+mevsim penceresi: oraya yürümenin tek sebebi teknenin çamurda yatıyor olması. Açılma
+değil `display_conditions`; Faz 2'nin gerekçesiyle — açılma tek yönlüdür, tekne ise yılda
+iki kez geliyor — ve körfeze dönüş yolunda hiçbir koşul yok, yani mevsim dönerken orada
+olan bir oyuncu her zaman içeri gelebiliyor.
+
+**Üç yol ve yalnızca biri başarısız olabiliyor.** Bu, fazın kendi kuralı — her
+başarısızlık başka bir yol bırakır: daha uzun, daha pahalı ya da itibar üzerinden — ve
+bir muhafızın sonradan fark etmesine bırakılmak yerine içeriğe yazıldı:
+
+- **Yürümek.** Denemek için Equilibrium 18, kesinlik için 42. Zemin iki kez aynı değil ve
+  ortada patika yok; yalnızca bugün işe yarayan bir yol var. Başarısızlık, suyun
+  dönmesi: üstünüze gelmiyor, sadece çekilmeyi bırakıp yükselmeye başlıyor ve orada bu,
+  "çık" denmesiyle aynı şey. Bedava, tekrarlanabilir ve gelgitten başka hiçbir şeye mal
+  olmuyor.
+- **Kayıkçıya para vermek**, 25.000, yalnızca başarıda alınıyor. Pahalı yol pahalıdır,
+  daha yüksek fiyatlı ikinci bir kumar değil — başarısız olamıyor. Adam düz dipli kayığı
+  on santim suda sırıkla itiyor, yol boyunca tek soru sormuyor ve beklemiyor.
+- **Sağlam hattı istemek**, `Slums` 250. Soruşturmanın 200'ünden bilerek daha zor: bir
+  hamalın konuşması bir iyilik, zeminin nerede tuttuğunun gösterilmesi daha büyük bir
+  iyilik. Onun ayak izlerine basarak, yanına değil. O hattı, karanlıkta bir merdiveni
+  bildiğiniz gibi biliyor, hiçbirini açıklamıyor ve gövdenin dibinde duruyor:
+  *"Ben oraya çıkmıyorum, siz de çıkmayın. Yine de çıkacaksınız."*
+
+Üçü de aynı merdivende bitiyor ve aynı açılmayı veriyor; yani burada oyuncunun sahip
+olmadığı bir skill'in arkasında hiçbir şey durmuyor.
+
+**Ambar** çamura yan yatmış; yani aşağıda hiçbir şey düz değil ve her şey, düz olacağını
+varsayan insanlar tarafından bağlanmış. Karanlıkta Climbing ve Spatial awareness; her
+bağı güvenmeden önce ayrı ayrı sınayarak. Aşağıdaki şey sayfada yazan şey — fıçılar,
+rodalar, kalay külçeleri, deriler — hepsi aynı ehil, aynı sıkılmış, aynı profesyonel
+biçimde bağlanmış. Ve kıç tarafta, tek başına, o güvertede başka hiçbir şeye tanınmamış
+bir buçuk metrelik boşlukla: farklı bağlanmış bir sandık. Daha iyi değil; farklı — bunu
+bir mevsimde yüz kez yapan birinin yaptığı gibi değil.
+
+Oyuncu ona dokunmuyor. Ona ulaşmak Faz 5'in işi ve arc, cevaptan çok soruyla bitirmek
+üzerine kurulu.
+
+**Kontrollerin, yazının kaçırdığı neleri yakaladığı.** Dördü de kaynağı okuyarak
+görülemeyecek şeyler: iki yeni yerin de `name <yer>` satırı yoktu, yani yer başlığı ve
+her seyahat satırı registry anahtarını gösterirdi; üç seyahat satırı kimliği bildirilmiş
+ama yazılmamıştı; ve iki yardım sayfasının haritası da iki yerin hiçbirini
+adlandırmıyordu — site kontrolü bunu *"haritayı okuyan oyuncular onun var olduğunu
+bilmeyecek"* diye bildiriyor. Bu son madde sessizce yayına çıkacak türden bir boşluk: yer
+ulaşılabilir ve doğru, ama basılı haritada hiç yok.
+
+Yeni muhafız yok: 4a'nın `check_no_dead_end_skill_gates`'i bunu kapsıyor ve dört yeni
+aksiyon sınıf düzeyi kontrollere kendiliğinden katıldı. Quest ilerleten 17 aksiyon,
+hiçbiri başarısızlıkta kaybedilmiyor; 69 aksiyonun hepsi başarısızlığı açıklayabiliyor;
+36 yer koleksiyonu birer kez atanmış.
+
+Sonraki fazlar için kayda geçti: 4a'nın muhafızı `main.js` içindeki deneme
+çözümleyicisini üç çağrı yerinin sırasına bakarak okuyor; o çözümleyicideki her düzenleme
+kilidi kazanan tarafta tutmak ya da niçin tutmadığını söylemek zorunda.
 
 ### Çıkmaz muhafızı, planın söylediği şeyi söylemiyor
 
