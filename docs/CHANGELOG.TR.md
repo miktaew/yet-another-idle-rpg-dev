@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 96 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 97 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,45 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.25 - körfez saklamak yerine reddediyor
+
+P-30, iki kez bildirildi — körfezin kışın hiç aksiyon göstermemesi, sonra ilkbaharda da
+göstermemesi. **Teklif yol boyunca iki kez düzeltildi ve önemli olan ikinci düzeltme.**
+
+**İkinci ölçümün bulduğu şey.** Körfez varışta boş değil. Liman saymanının diyalogu açık ve
+orada listeli, `tallyman hello` hemen mevcut ve o konuşmanın üç repliği ilk aksiyonu açıyor —
+`hello`, `what leaves`, `that night`, `read the departures`. Yani "saymanın konuşması işlenene
+kadar her mevsimde boş" ifadesi sebep konusunda doğru, kelime konusunda yanlıştı: yapılacak
+bir konuşma var ve bir konuşma içeriktir. Q-9 körfezi bilerek oyunun en ince bölgesi yaptı;
+dört aksiyonlu üç yer, o kararın görüntüsü.
+
+**Gerçekten yanlış olan şey ve o daha küçük yarı.** Dört aksiyonun ikisi
+`display_conditions: {season: {yes: marrowmoth_seasons}}` taşıyordu, ki bu onları mevsimi
+dışında **saklıyor**. Kışın gelen biri o işin var olduğunu öğrenmiyordu. Bu, projenin Faz
+4'te yerleşim aksiyonları için yazılmış ve P-25'te yeniden ifade edilmiş kendi kuralına
+aykırı: bir aksiyon alınabilir olmadan önce görünür ve neden alınamadığını söyler; çünkü
+kimsenin göremediği kilitli bir kapı hedef değildir.
+
+**Düzeltme bir taşıma, yeni makine değil.** `required`, `display_conditions`'ın çalıştırdığı
+aynı koşul kümesini çalıştırıyor; yani mevsim birebir aynı okunuyor. Değişen şey, motorun
+düğmeyi çizmeden önce ikisinden hangisini sorduğu. Ardından
+`check_actions_can_explain_failure` reddetme metnini zorunlu kıldı — kontrolün tasarım işini
+yapması: *"İndirilen bir şey yok. Marrowmoth ilkbaharda ve sonbaharda çalışıyor; yılın
+kalanında rıhtım bir sıra depodan ibaret."*
+
+Dört mevsimde `can_be_started` üzerinden ölçüldü: her zaman görünüyor, ilkbahar ve sonbaharda
+başlatılabiliyor, yaz ve kışta sebebiyle reddediliyor.
+
+**Muhafız: `check_no_action_hides_on_a_recurring_condition`.** `season` ve `moon`, oyuncu
+hiçbir şey yapmadan kendiliğinden gelen iki koşul; onlarda saklanmayı yanlış yapan da bu —
+aksiyon **kesinlikle** kullanılabilir olacak ve oyuncuya geri gelmek için bir sebep
+verilmiyor. Bir beceri ya da bayrak zamanın geçmesi değildir ve bu kontrol onlar hakkında
+hiçbir şey söylemiyor.
+
+72 aksiyon, hiçbiri ikisinde saklanmıyor. **Textline'lar muaf ve üçü bunu kullanıyor**:
+geçerli olmayan bir replik sunulmamalı ve bir replikte sebebin konulacağı bir reddetme yolu
+yok. Manifesto'nun mevsimini eski yerine koyarak negatif test edildi.
 
 ### v0.7.24 - bir süre, birimlerini oyuncunun dilinde söylüyor
 

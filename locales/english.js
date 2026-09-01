@@ -3778,6 +3778,8 @@ const descriptions = {
     "action lend a hand success": "You work until the light goes.\n\nNobody counts you in and nobody counts you out. The man beside you has done this before and does not say so; twice he takes the low end without being asked, which is the same thing as saying it. At some point somebody puts bread and a cup of something into your hands and is gone before you can look up.\n\n*[Walking off the plank at the end of it]* \"You are not on the book,\" the tallyman says, not unkindly, not looking at you. \"Nobody is on the book.\"",
     "action lend a hand fail conditional_loss 1": "You get half a barrel down the plank and then the plank decides. You are not hurt, and you are not asked back onto it today.",
     "action lend a hand fail random_loss 1": "A rope comes tight across the plank ahead of you and everyone stops. By the time it slackens the light has gone and the hatch is shut.",
+    "action lend a hand fail unable_to_begin 1": "Nothing is being landed. The Marrowmoth works the ebb in spring and in autumn, and the quay is a row of sheds the rest of the year.",
+    "action see the manifest fail unable_to_begin 1": "There is no manifest to see. Nothing has come off a boat here since the last of the spring tides, and nothing will until the autumn ones.",
     "action see the manifest name": "Reading the manifest",
     "action see the manifest starting": "Get a look at her manifest",
     "action see the manifest desc": "The tally is nailed inside the shed door, where the tally is always done. Nobody guards a page.",

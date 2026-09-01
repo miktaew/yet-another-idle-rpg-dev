@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 96 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 97 -->
 
 # Changelog
 
@@ -20,6 +20,46 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.25 - the bay refuses instead of hiding
+
+P-30, reported twice - the bay showing no actions in winter, and then none in spring either.
+**The proposal was corrected twice on the way, and the second correction is the one that
+matters.**
+
+**What the second measurement found.** The bay is not empty on arrival. The harbour
+tallyman's dialogue is unlocked and listed there, `tallyman hello` is available immediately,
+and three lines of that conversation open the first action - `hello` to `what leaves` to
+`that night` to `read the departures`. So "empty in every season until the tallyman's
+conversation has been worked" was right about the cause and wrong about the word: there is a
+conversation to have, and a conversation is content. Q-9 made the bay the thinnest region in
+the game deliberately, and three places with four actions is what that decision looks like.
+
+**What was genuinely wrong, and it is the smaller half.** Two of the four actions carried
+`display_conditions: {season: {yes: marrowmoth_seasons}}`, which **hides** them out of
+season. A winter visitor did not learn the work exists. That contradicts the project's own
+rule, written for the settlement actions in phase 4 and restated in P-25: an action is
+visible before it can be taken and says why it cannot, because a locked door nobody can see
+is not a goal.
+
+**The fix is a move, not new machinery.** `required` runs the same condition set
+`display_conditions` did, so the season reads identically; what changes is which of the two
+the engine asks before drawing the button. And `check_actions_can_explain_failure` then
+forced the refusal text, which is the check doing the design work: *"Nothing is being landed.
+The Marrowmoth works the ebb in spring and in autumn, and the quay is a row of sheds the rest
+of the year."*
+
+Measured through `can_be_started` across all four seasons: shown always, startable in spring
+and autumn, refused with a reason in summer and winter.
+
+**Guard: `check_no_action_hides_on_a_recurring_condition`.** `season` and `moon` are the two
+conditions that come round without the player doing anything, and that is what makes hiding
+on them wrong - the action **will** become available and the player is given no reason to
+come back. A skill or a flag is not time passing, and this says nothing about those.
+
+72 actions, none hiding on either. **Textlines are exempt and three of them use it**: a line
+that does not apply should not be offered, and a textline has no refusal path to put a reason
+in. Negative-tested by putting the manifest's season back where it was.
 
 ### v0.7.24 - a duration says its units in the player's language
 

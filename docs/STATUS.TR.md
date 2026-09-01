@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 43 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 44 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -205,6 +205,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `item keys` | Ad satırı olmayan ve ad birleştirmeyen bir eşya; oyuncu registry anahtarını okuyor. 916 arama. |
 | `panel updaters` | Bir paneli çizen ve hiçbir şeyin çağırmadığı bir fonksiyon; panel hiç görünmüyor. 48 güncelleyici. |
 | `duration units` | Bir dilde onu söyleyecek kelimesi olmayan bir süre birimi. 5 birim. |
+| `recurring gates` | Bir mevsim ya da ayla saklanan aksiyon; açıklamasız kaybolup geri geliyor. 72 aksiyon. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

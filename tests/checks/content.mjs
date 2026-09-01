@@ -2052,6 +2052,70 @@ function check_a_reputation_region_opens_something() {
         + `something`);
 }
 
+/**
+ * An action hidden by a condition that comes round on its own.
+ *
+ * P-30, reported from play: the bay showed no actions in winter, and then none in spring
+ * either. Two of its four were `display_conditions: {season: {yes: [...]}}`, which HIDES
+ * them out of season, so a visitor did not learn they exist.
+ *
+ * The project has a rule about that, written for the settlement actions in phase 4 and
+ * restated in P-25: an action is visible before it can be taken and says why it cannot,
+ * because a locked door nobody can see is not a goal. `required` does exactly that -
+ * check_actions_can_explain_failure already forces an `unable_to_begin` line on anything
+ * that has one - while `display_conditions` says nothing at all.
+ *
+ * `season` and `moon` are the two conditions that come round without the player doing
+ * anything, which is what makes hiding on them wrong: the action WILL become available, and
+ * the player is given no reason to come back. A skill or a flag is different - it is not
+ * time passing - and this says nothing about those.
+ *
+ * Textlines are exempt and three of them use it. A line that does not apply should not be
+ * offered, and a textline has no refusal path to put a reason in.
+ */
+function check_no_action_hides_on_a_recurring_condition() {
+    const recurring = ["season", "moon"];
+    let checked = 0;
+
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js",
+                            "src/quests.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const opening of source.matchAll(
+            /"([^"]+)":\s*new (?:Game|Dialogue)Action\(\{/g)) {
+            const body = braced_body(source, opening.index + opening[0].length - 1);
+            if (body === null) continue;
+            checked++;
+
+            const field = /display_conditions:\s*\{/.exec(body);
+            if (!field) continue;
+            const conditions = braced_body(body, field.index + field[0].length - 1);
+            if (conditions === null) continue;
+
+            for (const { key } of object_entries(conditions)) {
+                if (!recurring.includes(key)) continue;
+                const line = source.slice(0, opening.index).split("\n").length;
+                error(`${relative}:${line} the action "${opening[1]}" hides itself on `
+                    + `"${key}", which comes round on its own. So it disappears, the player `
+                    + `is told nothing, and it reappears later with no explanation - and `
+                    + `the rule since phase 4 is that an action is visible before it can be `
+                    + `taken and says why it cannot. Put it in \`required\` with an `
+                    + `unable_to_begin line instead.`);
+            }
+        }
+    }
+
+    if (checked === 0) {
+        error("no actions to check - check_no_action_hides_on_a_recurring_condition is out "
+            + "of date.");
+        return;
+    }
+
+    console.log(`[check] recurring gates: ${checked} action(s), none hiding on a season or `
+        + `a moon`);
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -2078,4 +2142,5 @@ export {
     check_moon_phases_are_real,
     check_a_failed_attempt_keeps_what_it_needs,
     check_a_reputation_region_opens_something,
+    check_no_action_hides_on_a_recurring_condition,
 };

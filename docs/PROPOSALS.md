@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 110 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 111 -->
 
 # Proposals
 
@@ -622,64 +622,6 @@ it is checkable: every field a data class declares should be named somewhere out
 own constructor. That is a broader check than this proposal and would probably find more
 than two.
 
-
-
-### P-30 — The bay hides what it cannot offer instead of refusing it `open`
-
-Reported by the owner with a screenshot: standing in the bay in **Winter**, the region shows
-no actions at all - only travel.
-
-**Measured, and every piece is behaving as written.** The bay has four actions and one
-activity:
-
-| what | state |
-| --- | --- |
-| `read the departures` | `is_unlocked: false` - story progress |
-| `ask who carried it` | `is_unlocked: false` - story progress |
-| `lend a hand on the quay` | `display_conditions: {season: {yes: ["Spring","Autumn"]}}` |
-| `see the manifest` | same seasonal condition |
-| `fishing` | `is_unlocked: false` - the book *Nothing Bites Here* unlocks it |
-
-So in Winter the two seasonal actions are hidden, and the other three are waiting on things
-the player has not done. Nothing is broken. **The experience is still wrong**, and the
-project has already written down why.
-
-**Corrected by a second screenshot: it is empty in Spring too.** The seasonal conditions
-are the *second* layer, not the first. All four bay actions are `is_unlocked: false` and
-each is opened by the harbour tallyman's dialogue or by another action -
-`read the departures`, `lend a hand on the quay` and `ask who carried it` from
-`dialogues.js`, `see the manifest` from an action - and the fishing activity waits on a
-book. So the bay reads as empty in **every** season until the tallyman's conversation has
-been worked, and the seasonal gate only matters after that.
-
-Which makes the fix broader than moving one condition: the bay uses `is_unlocked` (invisible)
-where the settlements use visible-and-refused, and it is the thinnest region in the game. The
-question is whether this region should follow the settlement pattern instead - not whether
-`is_unlocked` is wrong everywhere, which it is not.
-
-**`display_conditions` hides; `required` refuses with a reason.** Phase 4's rule, restated
-in P-25: *"the settlement actions are visible before they are earned and refused with a
-reason, deliberately, because a locked door nobody can see is not a goal."* The seasonal
-bay actions use `display_conditions`, so a winter visitor does not learn they exist - and
-the bay is the thinnest region in the game on purpose, so hiding two of its four actions
-empties it.
-
-**The fix is a move, not new machinery.** `required` is a condition set like any other and
-`conditions.js` reads `season` in it, so the season can move from `display_conditions` to
-`required` with an `unable_to_begin` line saying which seasons the Marrowmoth works the
-ebb. The action then shows all year and says why it cannot be taken - which is also how the
-tidal flats already behave, since their actions are `is_unlocked: true` and the tide is in
-the text.
-
-**What needs deciding.** Whether a season belongs in `required` **generally**, or only
-where the region is thin enough that hiding empties it. The bay is the case that makes it
-obvious; a seasonal action in a region with twenty others is not the same problem.
-
-**Guard.** The class is "an action hidden by a condition the player could satisfy later,
-with nothing to tell them so". `check_actions_can_explain_failure` already holds every
-`required` to having an `unable_to_begin` line; the missing rule is the other direction - a
-`display_conditions` on something recurring and satisfiable, where a refusal would have
-been the honest choice.
 
 
 ### P-32 — An inventory sort by when you got it `open`

@@ -2711,12 +2711,28 @@ function get_location_type_penalty(type, stage, stat, category) {
             success_text: "action lend a hand success",
             is_unlocked: false,
             repeatable: true,
-            display_conditions: {season: {yes: marrowmoth_seasons}},
+            /*
+                P-30. The season was a display_condition, which HIDES the action out of
+                season - so a winter visitor did not learn it exists. It is a `required`
+                now, which refuses it with a reason instead.
+
+                That is the project's own rule, written for the settlement actions in phase
+                4 and restated in P-25: an action is visible before it can be taken and
+                says why it cannot, because a locked door nobody can see is not a goal. It
+                matters more here than anywhere: Q-9 made the bay the thinnest region in
+                the game on purpose, so hiding two of its four actions empties it.
+
+                `required` runs the same condition set `display_conditions` did, so the
+                season reads identically; what changes is which of the two the engine asks
+                before drawing the button.
+            */
+            required: {season: {yes: marrowmoth_seasons}},
             conditions: [
                 {skills: {Equilibrium: 6}},
                 {skills: {Equilibrium: 18}},
             ],
             failure_texts: {
+                unable_to_begin: ["action lend a hand fail unable_to_begin 1"],
                 conditional_loss: ["action lend a hand fail conditional_loss 1"],
                 random_loss: ["action lend a hand fail random_loss 1"],
             },
@@ -2778,12 +2794,16 @@ function get_location_type_penalty(type, stage, stat, category) {
             action_text: "action see the manifest during",
             success_text: "action see the manifest success",
             is_unlocked: false,
-            display_conditions: {season: {yes: marrowmoth_seasons}},
+            //P-30, as on `lend a hand on the quay` above: refused with a reason rather
+            //than hidden, because the bay is too thin to lose half its actions to a
+            //season nobody is told about.
+            required: {season: {yes: marrowmoth_seasons}},
             conditions: [
                 {skills: {Literacy: 8}},
                 {skills: {Literacy: 20}},
             ],
             failure_texts: {
+                unable_to_begin: ["action see the manifest fail unable_to_begin 1"],
                 conditional_loss: ["action see the manifest fail conditional_loss 1"],
                 random_loss: ["action see the manifest fail random_loss 1"],
             },

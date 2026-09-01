@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 110 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 111 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -643,64 +643,6 @@ alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her ala
 kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
 ve muhtemelen ikiden fazlasını bulur.
 
-
-
-### P-30 — Körfez, sunamadığı şeyi reddetmek yerine saklıyor `open`
-
-Sahibi ekran görüntüsüyle bildirdi: **Kış**'ta körfezde durunca bölge hiç aksiyon
-göstermiyor — yalnızca yolculuk.
-
-**Ölçüldü ve her parça yazıldığı gibi davranıyor.** Körfezde dört aksiyon ve bir etkinlik
-var:
-
-| ne | durum |
-| --- | --- |
-| `read the departures` | `is_unlocked: false` — hikâye ilerlemesi |
-| `ask who carried it` | `is_unlocked: false` — hikâye ilerlemesi |
-| `lend a hand on the quay` | `display_conditions: {season: {yes: ["Spring","Autumn"]}}` |
-| `see the manifest` | aynı mevsim koşulu |
-| `fishing` | `is_unlocked: false` — *Nothing Bites Here* kitabı açıyor |
-
-Yani kışta iki mevsimlik aksiyon saklanıyor, öteki üçü de oyuncunun yapmadığı şeyleri
-bekliyor. Kırık bir şey yok. **Deneyim yine de yanlış** ve projenin bunun nedenini yazdığı
-yer zaten var.
-
-**İkinci bir ekran görüntüsüyle düzeltildi: İlkbaharda da boş.** Mevsim koşulları
-*ikinci* katman, ilk değil. Körfezin dört aksiyonu da `is_unlocked: false` ve her biri
-liman saymanının diyaloguyla ya da başka bir aksiyonla açılıyor —
-`read the departures`, `lend a hand on the quay` ve `ask who carried it` `dialogues.js`'ten,
-`see the manifest` bir aksiyondan — balıkçılık etkinliği ise bir kitabı bekliyor. Yani
-körfez, saymanın konuşması işlenene kadar **her** mevsimde boş okunuyor ve mevsim kapısı
-ancak ondan sonra önem taşıyor.
-
-Bu da düzeltmeyi tek bir koşulu taşımaktan geniş kılıyor: körfez, yerleşimlerin
-görünür-ve-reddedilen desenini kullandığı yerde `is_unlocked` (görünmez) kullanıyor ve
-oyunun en ince bölgesi. Soru, bu bölgenin yerleşim desenini izlemesi gerekip gerekmediği —
-`is_unlocked`'ın her yerde yanlış olup olmadığı değil, ki değil.
-
-**`display_conditions` saklıyor; `required` sebebiyle reddediyor.** Faz 4'ün kuralı, P-25'te
-yeniden ifade edildiği hâliyle: *"Yerleşim aksiyonları kazanılmadan önce görünüyor ve
-sebebiyle reddediliyor; bilerek, çünkü kimsenin göremediği kilitli bir kapı hedef
-değildir."* Mevsimlik körfez aksiyonları `display_conditions` kullanıyor, dolayısıyla kışın
-gelen biri onların var olduğunu öğrenmiyor — ve körfez bilerek oyunun en ince bölgesi, yani
-dört aksiyonundan ikisini saklamak onu boşaltıyor.
-
-**Düzeltme bir taşıma, yeni makine değil.** `required` de her koşul kümesi gibi bir küme ve
-`conditions.js` onun içinde `season` okuyor; yani mevsim `display_conditions`'tan
-`required`'a taşınabilir ve Marrowmoth'un hangi mevsimlerde çalıştığını söyleyen bir
-`unable_to_begin` satırı eklenebilir. Aksiyon o zaman yıl boyu görünür ve neden
-alınamadığını söyler — gelgit düzlüklerinin zaten davrandığı gibi, çünkü onların aksiyonları
-`is_unlocked: true` ve gelgit metnin içinde.
-
-**Karar gerektiren şey.** Bir mevsimin **genel olarak** `required`'a mı ait olduğu, yoksa
-yalnızca bölgenin saklamanın onu boşaltacağı kadar ince olduğu yerlerde mi. Körfez, bunu
-apaçık kılan vaka; yirmi aksiyonu olan bir bölgedeki mevsimlik bir aksiyon aynı sorun değil.
-
-**Muhafız.** Sınıf şu: "oyuncunun sonradan karşılayabileceği bir koşulla saklanmış ve bunu
-ona söyleyen hiçbir şey olmayan bir aksiyon". `check_actions_can_explain_failure` her
-`required`'ı bir `unable_to_begin` satırına sahip olmaya zorluyor; eksik olan kural öteki
-yön — tekrarlayan ve karşılanabilir bir şey üzerinde, reddetmenin dürüst seçim olacağı bir
-`display_conditions`.
 
 
 ### P-32 — Envanteri edinme sırasına göre sıralama `open`
