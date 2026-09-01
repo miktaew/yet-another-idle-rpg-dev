@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 88 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 90 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -644,6 +644,146 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
   insanlar üzerinden gelmek zorunda.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
+
+### P-22 — Bir eşya tarifi, içine gireni çöpe atıyor `open`
+
+Oyun içinde bildirildi: balığın kalitesi pişirdikten sonra kayboluyor. Ölçüldü ve mesele
+balık değil.
+
+`src/crafting.js` içinde iki üretim yolu var ve kaliteyi farklı ele alıyorlar:
+
+- **Bileşenler ve ekipman**, `roll_quality(comp_quality_weighted, station_tier -
+  comp_tier_max)` çağırıyor. Bileşenlerin ağırlıklı kalitesi içeri giriyor, yani iyi bir
+  namludan iyi bir kılıç çıkıyor. Oyuncunun her yerde beklediği davranış da bu.
+- **Eşyalar**, `roll_quality(station_tier - result_tier)` çağırıyor. **Malzemelerle ilgili
+  hiçbir şey aktarılmıyor.** %90 bir alabalık ile %10 bir alabalık aynı dağılıma pişiyor
+  ve sonucu oynatan tek şey istasyon ile yetenek atışı.
+
+Yani bu, oyundaki her eşya tarifini kapsıyor — yemek, simya, eritme, cam ve kömür — tek
+bir yemeği değil. Balıkçılığın toplanan kaynaktaki `roll_quality: true` ayarının, balık
+tavaya girdiği an anlamsız gelmesinin sebebi de bu.
+
+**Varsayılmak yerine karar verilmesi gerekenler:**
+
+- Girdinin kalitesinin, bileşenin yaptığı gibi atışı ağırlıklandırması mı, onu
+  sınırlaması mı, yoksa tabanını mı kaydırması gerektiği. Bileşenin ağırlıklandırması
+  bariz emsal ve `roll_quality`'nin mevcut ilk parametresini yeniden kullanmak kodun
+  tamamı demek.
+- Farklı kalitelerde birkaç malzemesi olan bir tarifin ne yapacağı. Bileşenler bunu
+  ağırlıklı ortalamayla zaten cevaplıyor; eşyalar ikinci bir cevap uydurmamalı.
+- Tarifin bir kimlik değil bir eşya sınıfı adlandırdığı ve oyuncunun onun beş kalitesini
+  elinde tutabildiği `material_type` şartına ne olacağı. Hangisinin tüketileceği,
+  matematik olduğu kadar arayüz sorusu ve bugün hiçbir şey seçmiyor.
+- Mevcut dengenin bu davranışa bağlı olup olmadığı. %100 bir alabalığın %100 kızarmış
+  balığa dönüşmesi, bütün yemek tariflerine birden gelen düpedüz bir güçlendirme.
+
+**Muhafız.** İki yol bir daha ayrışamamalı: yayınlanan `roll_quality` üzerinden, yüksek
+kaliteli bir girdinin düşük kaliteliden daha iyi bir sonuç ürettiğini doğrulayan bir test;
+bir eşya tarifi ve bir bileşen tarifi için. Bugün o testin eşya yarısı düşüyor, ki mesele
+de bu.
+
+### P-23 — Koleksiyoncu bir kitap satıyor ve o bir yemek kitabı değil `open`
+
+Sahibinin isteği: koleksiyoncu çok özel bir kitap satabilir ve düşme oranlarını
+arttırabilir.
+
+**Neden doğru kişi o.** Satmıyor — *"İnsanlar soruyor, sonra kendi durumlarının neden
+farklı olduğunu açıklıyor, sonra gidiyorlar"* — ve P-14 Faz 5, ona özellikle bu oyuncu için
+bir istisna yapma sebebi verdi. Oyunda satmayı reddeden tek adamdan gelen bir kitap, aynı
+kitabın raftaki hâlinden değerlidir.
+
+**Ölçüldü:** on bir kitap var ve `BookData`, `bonuses.xp_multipliers`,
+`bonuses.multipliers` (karakter statları) ile `rewards` destekliyor. **`BookData` içinde
+düşme oranlarına dokunan hiçbir şey yok**, yani bu, motorun yeni bir şey öğrenmesini
+gerektiren ilk kitap olur. `enemies.js` içindeki `tags_for_droprate_modifier_skills` ve
+`enemy_tag_to_skill_mapping`, düşme oranının yeteneklere göre zaten ölçeklendiği yer;
+yanına ikinci bir mekanizma koymak yerine genişletilecek şekil de bu.
+
+**Ne olmaması gerektiği.** Düz bir "+%X düşme", yapabileceği en az ilginç şey ve bütün
+ganimet tablolarını birden şişirirdi. Mevcut düşme ölçeklemesi yaratık *etiketi* başına ve
+bu daha iyi bir emsal: tek bir yaratık türü hakkında ya da bir leşi okumak hakkında bir
+kitap, fiyatını hak eder ve oyunun geri kalanına dokunmaz.
+
+**Fiyat.** Koleksiyoncunun kendi emsali, çetele için 30.000 ve o sayı metinde
+gerekçelendirilmişti — *"Sayının kemikle ilgili olduğunu iddia etmeyeceğim."* Bu, onun
+şimdiye kadar sattığı ikinci şey; ilkinden pahalı olmalı ve v0.7.10'un ekonomi ölçümü de
+girdisi.
+
+### P-24 — Kilit açma ve kilitlenmeye değer bir şey `open`
+
+Sahibinin isteği: kilit açma olabilir, bir bölgede avlanırken düşük bir şansla sandık
+çıkabilir ve sandıkta altın ya da kıyafet — ya da bir tuzak — olabilir.
+
+**Ölçüldü, çünkü arc bunun tersini iki kez varsaydı.** Kilit açma yeteneği yok: P-14'ün
+kendi planlama notu bunu söylüyor ve Faz 4'ün başarısızlık metni tam da bu yüzden onunla
+şakalaşıyor. Q-1'in ikinci revizyonu altında yeni bir yetenek artık kapsam içinde, yani
+bu, bir yetenek eklemesine izin verilen ilk istek.
+
+**Üç parça ve ayrılabilirler:**
+
+1. **Yetenek.** Diğer 64'ün ölçeklendiği gibi ölçeklenen tek bir yeni yetenek ve onu
+   yükseltecek bir yer. Eğiticisi ve yeri olmayan bir yetenek, yine `Wands`/`Staffs`
+   problemi olur.
+2. **Buluş.** Bir bölgede toplarken ya da dövüşürken düşük bir şans.
+   `LocationGatheringActivity` zaten tik başına bir şans tablosuna karşı atıyor, `loot_list`
+   de öldürme başına atıyor; yani iki kanca da mevcut, soru sandığın hangisine ait olduğu.
+   Sahibi "avlanırken" dedi, ki bu `loot_list`'i ve yaratık etiketlerini işaret ediyor.
+3. **Sandık.** Altın, kıyafet ve bir tuzak. Tuzak, işin ilginç üçte biri ve kuralı olan
+   kısmı: **kilitli bir sandık asla çıkmaz olmamalı.** Faz 4'ün kendi kuralı olduğu gibi
+   geçerli — başarısız bir açma denemesi, yeniden elde edilemeyecek hiçbir şeye mal olmaz
+   ve sandık, açılana ya da bırakılana kadar durur. Sağlıktan götüren bir tuzak bir
+   maliyettir; sandığı tüketen bir tuzak, düşük yeteneğin cezasıdır.
+
+**Ne yapmaması gerektiği.** `loot_list`'in yanına ikinci bir ganimet sistemi olmamalı. Ve
+kıyafetler, yenilerine sebep olmadıkça var olan eşyalar olmalı — icat yerine geri kazanım;
+dosyada zaten 44 üretilmiş bileşen ve yapılamayan sekiz tanesi duruyor.
+
+
+### P-25 — İtibar, bir yerin ne kadara sattığını değil nasıl bir yer olduğunu değiştirir `open`
+
+Sahibinin isteği, dört parça hâlinde: NPC'ler yüksek ve düşük itibarda farklı konuşsun;
+bazı eşyalar yalnızca yüksek itibarda satılsın; bir arka oda olsun; ve kenar mahalle
+tarafında arada bir çıkan bir karaborsa olsun.
+
+**Ölçüldü ve bulgu şu: dördü de bu oyunun zaten sahip olduğu iki mekanizma.** Hiçbiri
+motor işi gerektirmiyor:
+
+- **Bir Textline üzerinde `display_conditions: {reputation: {...}}`.** Altı replik bunu
+  zaten kullanıyor — tedarikçinin, komisyoncunun, yaşlı kadının Slums 300'deki listesi.
+  Yüksek ve düşük itibarda farklı bir selamlama, zıt koşullu iki replik demek; ki
+  tedarikçinin `troubled` / `troubled unavailable` çiftinin kış için sahip olduğu şekil de
+  tam olarak bu.
+- **Bir Trader üzerinde türetilmiş `inventory_template`.** v0.7.5'ten beri alan bir
+  fonksiyon kabul ediyor, çünkü körfezin rafı mevsime göre değişiyor. *İtibara* göre
+  değişen bir raf, aynı çağrının içinde mevsim yerine `character.reputation` olması demek
+  ve `stock_list_name_of` her okuyucuyu zaten tek bir yerden geçiriyor.
+
+Yani arka oda bir oda değil, karaborsa da bir sistem değil. İkisi de ikinci bir stok
+listesi ve bir koşul; dördüncü madde de bunu açıkça gösteriyor: "arada bir çıkan
+karaborsa", itibara **ve** zamana bağlı bir stok listesi ve arc bu ikisinin de yarısını
+çoktan yayınladı.
+
+**Gerçekten karar gerektiren ve mekanik olmayan şeyler:**
+
+- **Düşük itibarın henüz bir dili yok.** Şimdiye kadar her şey itibarı geçilecek bir eşik
+  olarak okuyor; bir yerin sizi az beğendiğinde nasıl konuştuğunu kimse yazmadı. Q-4 hitap
+  kipini NPC bazında karara bağladı ve bunun hareket edeceği eksen de o — resmiyet, bu
+  oyunun mesafeyi söyleme biçimi.
+- **İtibar neredeyse yalnızca yükseliyor.** v0.7.11 eksilten ilk ödülü ekledi ve itibar
+  0'da tabanlandı. Dolayısıyla arc'ın o tek seçimini yapmamış her oyuncu için "düşük
+  itibar", *sevilmeyen* değil *yeni* demek. Oyunun etkin biçimde sevilmeme yolu isteyip
+  istemediği bir tasarım sorusu ve büyük bir soru — sayının ne anlama geldiğini
+  değiştiriyor.
+- **Oyuncunun göremediği bir raf ödül değildir.** Yerleşim aksiyonları kazanılmadan önce
+  görünüyor ve sebebiyle reddediliyor; bilerek, çünkü kimsenin göremediği kilitli bir kapı
+  hedef değildir. Oyuncunun var olduğunu hiç öğrenmediği bir arka oda bu kuralı bozar;
+  söylenip de henüz girilemeyen bir arka oda onu korur.
+
+**Ne yapmaması gerektiği.** İtibar kademesi başına bir tüccar eklememeli. Listesi
+türetilen tek bir tüccar mekanizmadır; bir odada üç tüccar, D-* direktiflerinin önlemek
+için var olduğu paralel sistemdir. Ve mallar, sebep olmadıkça var olan eşyalar olmalı —
+yapılamayan sekiz üretilmiş bileşen ile 5. kademe ailesi zaten elde duruyor.
+
 
 ---
 

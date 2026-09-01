@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 88 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 90 -->
 
 # Proposals
 
@@ -617,6 +617,144 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
 - The existing combat formulas are not to be broken to fit it. `intuition` and the
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
+
+### P-22 — An item recipe throws away what went into it `open`
+
+Reported in play: a fish's quality is gone after cooking it. Measured, and it is not
+about fish.
+
+`src/crafting.js` has two crafting paths and they treat quality differently:
+
+- **Components and equipment** call `roll_quality(comp_quality_weighted, station_tier -
+  comp_tier_max)`. The components' weighted quality goes in, so a good blade makes a good
+  sword. That is the behaviour a player expects everywhere.
+- **Items** call `roll_quality(station_tier - result_tier)`. **Nothing about the materials
+  is passed at all.** A 90% trout and a 10% trout cook into the same distribution, and the
+  only thing that moves the result is the station and the skill roll.
+
+So this covers every item recipe in the game - cooking, alchemy, smelting, the glass and
+the charcoal - not one dish. It is why fishing's `roll_quality: true` on the gathered
+resource feels pointless the moment the fish reaches a pan.
+
+**What this must decide rather than assume:**
+
+- Whether the input's quality should weight the roll the way a component's does, or cap
+  it, or shift its floor. A component's weighting is the obvious precedent, and reusing
+  `roll_quality`'s existing first parameter is the whole of the code.
+- What a recipe with several materials of different qualities does. Components already
+  answer this with a weighted average; items should not invent a second answer.
+- What happens to a `material_type` requirement, where the recipe names a class of item
+  rather than an id and the player may hold five qualities of it. Which one gets consumed
+  is a UI question as much as a maths one, and today nothing chooses.
+- Whether any existing balance depends on the current behaviour. A 100% trout becoming a
+  100% fried fish is a straightforward buff to every cooking recipe at once.
+
+**Guard.** The two paths should not be able to drift again: a test that a high-quality
+input produces a better result than a low-quality one, through the shipped
+`roll_quality`, for one item recipe and one component recipe. Today the item half of that
+test fails, which is the point.
+
+### P-23 — The collector sells one book, and it is not a cookbook `open`
+
+The owner's request: the collector could sell a very special book, and it could raise
+drop rates.
+
+**Why he is the right person.** He does not sell - *"People ask, and then they explain why
+their case is different, and then they leave"* - and P-14 phase 5 gave him a reason to make
+one exception for this player specifically. A book that comes from the one man in the game
+who refuses to sell is worth more than the same book on a shelf.
+
+**Measured:** eleven books exist and `BookData` supports `bonuses.xp_multipliers`,
+`bonuses.multipliers` (character stats), and `rewards`. **Nothing in `BookData` touches
+drop rates**, so this is the first book that would need the engine to learn something new.
+`tags_for_droprate_modifier_skills` and `enemy_tag_to_skill_mapping` in `enemies.js` are
+where droprate already scales off skills, which is the shape to extend rather than a
+second mechanism beside it.
+
+**What it must not be.** A flat "+X% drops" is the least interesting thing it could do and
+would inflate every loot table at once. The existing droprate scaling is per enemy *tag*,
+which is the better precedent: a book about one kind of creature, or about reading a
+carcass, earns its price and does not touch the rest of the game.
+
+**Price.** The collector's own precedent is 30,000 for the tally, and that number was
+argued in the text - *"I am not going to pretend the number is about the bone."* This is
+the second thing he has ever sold; it should cost more than the first, and v0.7.10's
+measurement of the economy is the input.
+
+### P-24 — Lockpicking, and something worth locking `open`
+
+The owner's request: lockpicking could exist, hunting in a region could turn up a chest at
+a low chance, and a chest could hold gold or clothes - or a trap.
+
+**Measured, because the arc has assumed the opposite twice.** There is no lockpicking
+skill: P-14's own planning note says so, and phase 4's failure text jokes about it
+precisely because the skill does not exist. Under Q-1's second revision a new skill is now
+in scope, so this is the first request that is allowed to add one.
+
+**Three pieces, and they are separable:**
+
+1. **The skill.** One new skill, scaling the way the other 64 do, with somewhere to level
+   it. A skill with no trainer and no place is the `Wands`/`Staffs` problem again.
+2. **The find.** A low chance while gathering or fighting in a region. `LocationGatheringActivity`
+   already rolls per tick against a chance table, and `loot_list` already rolls per kill,
+   so both hooks exist; the question is which one a chest belongs on. Hunting was what the
+   owner said, which points at `loot_list` and at enemy tags.
+3. **The chest.** Gold, clothes, and a trap. The trap is the interesting third of it and
+   the part with a rule attached: **a locked chest must never be a dead end.** Phase 4's
+   own rule applies unchanged - a failed pick loses nothing that cannot be got again, and
+   the chest stays until it is opened or abandoned. A trap that costs health is a cost; a
+   trap that consumes the chest is a punishment for having a low skill.
+
+**What this must not do.** It must not become a second loot system beside `loot_list`. And
+the clothes must be existing items unless there is a reason for new ones - reclamation
+over invention, and there are 44 generated components and eight unmade ones already in the
+file to draw on.
+
+
+### P-25 — Standing changes what a place is like, not only what it costs `open`
+
+The owner's request, in four parts: NPCs speak differently at high and at low standing;
+some items only sell at high standing; a back room; and a black market that turns up on
+the slums side.
+
+**Measured, and the finding is that all four are the two mechanisms this game already
+has.** Neither needs engine work:
+
+- **`display_conditions: {reputation: {...}}` on a Textline.** Six lines already use it -
+  the supplier's, the broker's, the old woman's roster at Slums 300. A different greeting
+  at high and at low standing is two textlines with opposite conditions, which is exactly
+  the shape the supplier's `troubled` / `troubled unavailable` pair already has for winter.
+- **A derived `inventory_template` on a Trader.** Since v0.7.5 the field takes a function,
+  because the bay's shelf changes with the season. A shelf that changes with *standing* is
+  the same call with `character.reputation` in it instead of the season, and
+  `stock_list_name_of` already funnels every reader through one place.
+
+So the back room is not a room and the black market is not a system. Both are a second
+stock list and a condition, which is what the fourth item makes obvious: "the black market
+that turns up occasionally" is a stock list gated on standing **and** on time, and the arc
+has already shipped both halves of that.
+
+**What actually needs deciding, and is not mechanical:**
+
+- **Low standing has no vocabulary yet.** Everything so far reads standing as a threshold
+  to pass; nobody has written what a place sounds like when it thinks little of you. Q-4
+  settled the address register per NPC, and that is the axis this would move along -
+  formality is already the game's way of saying distance.
+- **Standing can only go up, almost.** v0.7.11 added the first reward that subtracts, and
+  standing is floored at 0. "Low standing" therefore means *new*, not *disliked*, for
+  every player who has not made the arc's one choice. Whether the game wants a way to be
+  actively disliked is a design question and a large one - it changes what the number
+  means.
+- **A shelf the player cannot see is not a reward.** The settlement actions are visible
+  before they are earned and refused with a reason, deliberately, because a locked door
+  nobody can see is not a goal. A back room the player never learns exists breaks that
+  rule; one they are told about and cannot enter yet keeps it.
+
+**What this must not do.** It must not add a trader per tier of standing. One trader whose
+list is derived is the mechanism; three traders in one room is the parallel system D-*
+exists to prevent. And the goods must be existing items unless there is a reason - the
+eight unmade generated components and the tier-5 family are already there to draw on.
+
 
 ---
 
