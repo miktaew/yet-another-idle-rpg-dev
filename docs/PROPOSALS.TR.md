@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 92 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 93 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -131,47 +131,6 @@ deploy'u sessizce atlar.
 ---
 
 ## Öneriler
-
-### P-12 — Çeliğin üstündeki metalleri bağla `kısmen tamam`
-
-`crafting_component_filling.js`, hiçbir tarifin bugüne kadar üretmediği dört malzeme
-için 72 bileşen üretiyor: 4. kademede **beyaz demir** ve **siyah demir**, 5. kademede
-**beyaz çelik** ve **siyah çelik**. Silah başlıkları, saplar, kalkan tabanları ve beş
-zırh yuvasının tamamı için hem zincir zırh hem plaka dış katmanları. Başlığı boşluğu
-tek satırda açıklıyor: *"DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE
-SURE NAMES MATCH"*.
-
-**4. kademe tamam.** Cevher körfezdeki tuz evinde satılıyor, eritme tarifleri 15-25
-bandında ve on üç dövme bileşen tarifinin her birine iki satır eklendi. İhtiyaç
-duyduğu her şey zaten mevcuttu — cevherler, külçeler, zincir zırh ve iki dildeki
-adları ile açıklamaları.
-
-**5. kademe de v0.7.5 ile yayında.** 36 beyaz çelik ve siyah çelik bileşeninin hepsi
-üretilebiliyor: `Heavy sand` gelgit düzlüklerinde kazılıyor, iki çelik külçesi de
-Atratan cevherinin demirden çelik yaptığı gibi bu kumla ve kendi demir cevheriyle
-eritiliyor; eksik olan dört stok — `White chainmail`, `White plate` ve siyah çiftleri —
-artık var ve külçelerden dövülüyor. `check_components_can_be_made` 203'te 159'dan
-195'e çıktı ve 5. kademe grubu `known_unmade` listesinden tamamen kalktı. Satın alınan
-değil çıkarılan cevher, düzlüklerin kendi damarı; yani 3. madde henüz var olmayan bir
-bölgeden değil, P-14'ün açtığı bölgeden cevaplandı.
-
-> **Not.** Bu maddenin İngilizce yarısı bir tur önce yeniden ölçülüp düzeltilmişti,
-> Türkçe yarısı ise düzeltilmemiş "görünen ad eksik" engelini taşımaya devam ediyordu.
-> `doc-version` eşleşiyordu, çünkü o kontrol sürümlerin aynı olmasını denetliyor, aynı
-> şeyi söylediklerini değil (D-3 zaten böyle diyor). Bu tur birlikte düzeltildi.
-
-**Geriye kalan:**
-
-2. **3'ün üstünde bir istasyon.** `roll_quality`, `station_tier - component_tier`
-   okuyor; yani dağdaki bacada — oyunun en iyi ateşi, 3'te — dövülen 5. kademe
-   bileşenleri iki kademelik cezayla atılıyor. Her şey *yapılabilir* durumda; çözülmemiş
-   olan, hak ettiği kalitede çıkıp çıkmayacağı ve daha iyi bir ateşin nerede olacağı.
-   Bu eksik bir tarif değil, bir denge ve bir yer meselesi; ve tek başına iliştirilmiş
-   bir istasyondan çok, P-14 Faz 6'nın ekonomi yarısını yanında istiyor.
-
-**Bunun yapmaması gereken:** beşinci bir kademe uydurmak. Çeliğin ötesinde dört
-malzeme, bataklığın ötesindeki yazılı içerikten çoktan fazla; ve tavan hikâyenin
-önünde değil, onunla birlikte hareket etmeli.
 
 ### P-13 — Oturumun talepleri, tek tek `active`
 

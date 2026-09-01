@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 83 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 84 -->
 
 # Changelog
 
@@ -20,6 +20,80 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### No forge above three, and the check that says when that stops being true
+
+P-12's last open item, and the one it had been holding back for the economy half of P-14
+phase 6: *"a station above tier 3. `roll_quality` reads `station_tier - component_tier`, so
+tier-5 components forged at the mountain flue roll at a two-tier penalty. Everything is
+makeable; what is not settled is whether it should come out at the quality it is worth, and
+where a better fire would be."*
+
+**Measured, and the answer is that no better fire is needed.** Three measurements, in the
+order they were taken.
+
+**What the stations actually are.** Four crafting stations exist. Both of the two that
+matter compute their tiers in a **getter** behind a flag, so a fresh read of the module
+shows the Mountain camp at forging 0 and the village at 1 - which is what an unbuilt world
+looks like, not what the game is. With the flags set: the mountain flue is forging and
+smelting **3**, the village hearth **2**, and the Swampland tribe is the best *assembly*
+station at crafting **2**. There is no `crafting` tier at the mountain camp at all, so a
+tier-5 weapon is forged at minus two and then assembled at minus three.
+
+**What the penalty costs.** 15 quality points per tier for a component, 10 for an assembled
+piece - and the quality cap is `100 + 2` per skill level, which absorbs it from below. The
+component loss, measured through the shipped `get_quality_range`:
+
+| Forging | tier 3 at the flue | tier 5 at the flue | loss |
+| --- | --- | --- | --- |
+| 10 | [84,112] | [56,80] | 32 |
+| 20 | [116,140] | [84,112] | 28 |
+| 30 | [144,160] | [116,140] | 20 |
+| 40 | [176,180] | [144,172] | 8 |
+| 50 | [200,200] | [176,200] | **0** |
+
+The assembly loss is **0 at the top of the range at every level**: with components at 140
+the base is already above the equipment cap, so minus three only widens the range
+downward.
+
+**And it never inverts the ordering, which is the whole answer.** Attack comes mostly from
+a component's base stats and only secondarily from quality, so a tier-5 blade at its
+*penalised* quality beats a tier-3 blade at its *unpenalised* one. Assembled long swords,
+same handle, at the qualities the game's best stations can actually reach:
+
+| Forging / Crafting | t1 | t2 | t3 | t4 | t5 |
+| --- | --- | --- | --- | --- | --- |
+| 20 | 16 | 32 | 46 | 68 | **81** |
+| 40 | 34 | 67 | 96 | 141 | **178** |
+| 60 | 49 | 98 | 142 | 207 | **261** |
+
+Tier 5 is a 76% gain over tier 3 in the mid-game, penalty and all. So the penalty makes
+tier 5 a smaller upgrade than it could be; it does not make it a worse one. A tier-4
+station would fix a shortfall that closes by itself and move the gear ceiling ahead of the
+story - which is the one thing P-12 said it must not do.
+
+**Guard: `check_higher_tiers_are_still_worth_reaching`.** The decision is now a check
+rather than a paragraph. It derives the best station tier in the game from the locations -
+reading the flag names out of the source, so a third station cannot be added without it
+seeing one - then walks both weapon-head families up their tiers at Forging and Crafting
+20, 40 and 60, assembling each and comparing attack. Every step has to be an improvement.
+30 tier/skill points.
+
+**It is falsifiable, and that was verified rather than assumed** - three times now this
+project has written a check that could not fail. Quadrupling the tier coefficient from 15
+to 60, a plausible retune, takes the ladder at skills 20 to 16, 32, 46, 46, **24**: the
+tier-5 blade becomes worse than the tier-3 one and the check reports it by name.
+
+**Its honest limit, which is itself part of the answer.** Cutting the mountain flue from 3
+to 1 - so the best forge in the game becomes the village at 2, a whole tier worse than
+today - **does not fail it**. The check reads whatever the best station is and asks whether
+the ladder still climbs, and at three tiers of gap it still does. A game with a *worse*
+forge than this one would still order its tiers correctly, which is the strongest form of
+the argument against building a better one.
+
+P-12 leaves the backlog. What it shipped along the way: tier 4 wired to the bay's salt
+house, tier 5 to the tidal flats in v0.7.5, 36 components from unmakeable to makeable, and
+now the reason there is no tier-4 forge written down as something that can fail.
 
 ### v0.7.14 - the collector's second and last sale
 

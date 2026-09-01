@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 92 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 93 -->
 
 # Proposals
 
@@ -122,42 +122,6 @@ deployment.
 ---
 
 ## Proposals
-
-### P-12 — Wire the metals above steel `partly done`
-
-`crafting_component_filling.js` generates 72 components for four materials that no
-recipe has ever produced: **white iron** and **black iron** at tier 4, **white
-steel** and **black steel** at tier 5. Weapon heads, handles, shield bases, and both
-chainmail and plate exteriors for all five armour slots. Its header explains the gap
-in one line: *"DOES NOT AUTO-FILL CRAFTING RECIPES, DO IT MANUALLY AND MAKE SURE
-NAMES MATCH"*.
-
-**Tier 4 is done.** Ore sold at the bay's salt house, smelting recipes at 15-25, and
-two rows added to each of the thirteen forging component recipes. Everything it
-needed already existed - the ores, the ingots, the chainmail, and their names and
-descriptions in both languages.
-
-**Tier 5 ships too, in v0.7.5.** The 36 white-steel and black-steel components are
-all craftable: `Heavy sand` is dug on the tidal flats, the two steel ingots smelt from
-it and their own iron ore the way Atratan ore makes steel out of iron, and the four
-missing stocks - `White chainmail`, `White plate` and their black pair - exist and are
-forged from the ingots. `check_components_can_be_made` went from 159 of 203 to 195, and
-the tier-5 group came off `known_unmade` entirely. The ore that is mined rather than
-bought is the flats' own seam, which answers item 3 from the region P-14 opened rather
-than from a region that does not exist yet.
-
-**What is left:**
-
-2. **A station above tier 3.** `roll_quality` reads `station_tier - component_tier`, so
-   tier-5 components forged at the mountain flue - the best fire in the game, at 3 -
-   roll at a two-tier penalty. Everything is *makeable*; what is not settled is whether
-   it should come out at the quality it is worth, and where a better fire would be.
-   That is a balance and a place, not a missing recipe, and it wants the economy half of
-   P-14 phase 6 beside it rather than a station bolted on alone.
-
-**What this must not do:** invent a fifth tier. Four materials past steel is already
-more than the authored content past the swamp, and the ceiling should move with the
-story rather than ahead of it.
 
 ### P-13 — The session's requests, one at a time `active`
 

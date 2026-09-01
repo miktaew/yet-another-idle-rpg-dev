@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 83 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 84 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,76 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Üçün üstünde ocak yok ve bunun ne zaman değişeceğini söyleyen kontrol
+
+P-12'nin son açık maddesi; P-14 faz 6'nın ekonomi yarısını beklediği için tutulan madde:
+*"3. kademe üstü bir istasyon. `roll_quality`, `station_tier - component_tier` okuyor, yani
+dağ ocağında dövülen 5. kademe bileşenler iki kademe cezayla atıyor. Her şey yapılabilir
+durumda; karara bağlanmayan şey, hak ettiği kalitede çıkması gerekip gerekmediği ve daha
+iyi bir ateşin nerede olacağı."*
+
+**Ölçüldü ve cevap şu: daha iyi bir ateşe gerek yok.** Üç ölçüm, alınma sıralarıyla.
+
+**İstasyonlar gerçekte ne.** Dört üretim istasyonu var. Önemli olan ikisi de kademelerini
+bir bayrağın arkasındaki **getter** ile hesaplıyor; yani modülün taze okunuşu Dağ kampını
+forging 0, köyü 1 gösteriyor — ki bu, inşa edilmemiş bir dünyanın görüntüsü, oyunun kendisi
+değil. Bayraklar açıkken: dağ ocağı forging ve smelting **3**, köy ocağı **2** ve en iyi
+*montaj* istasyonu Swampland tribe, crafting **2**. Dağ kampında hiç `crafting` kademesi
+yok, dolayısıyla 5. kademe bir silah eksi ikide dövülüp sonra eksi üçte birleştiriliyor.
+
+**Cezanın bedeli.** Bileşen için kademe başına 15 kalite puanı, birleştirilmiş parça için
+10 — ve kalite tavanı beceri seviyesi başına `100 + 2`, yani cezayı aşağıdan yutuyor.
+Yayınlanan `get_quality_range` üzerinden ölçülen bileşen kaybı:
+
+| Forging | ocakta 3. kademe | ocakta 5. kademe | kayıp |
+| --- | --- | --- | --- |
+| 10 | [84,112] | [56,80] | 32 |
+| 20 | [116,140] | [84,112] | 28 |
+| 30 | [144,160] | [116,140] | 20 |
+| 40 | [176,180] | [144,172] | 8 |
+| 50 | [200,200] | [176,200] | **0** |
+
+Montaj kaybı ise **her seviyede, aralığın üst sınırında 0**: bileşenler 140'ta iken taban
+zaten teçhizat tavanının üstünde, yani eksi üç aralığı yalnızca aşağı doğru genişletiyor.
+
+**Ve sıralamayı hiç tersine çevirmiyor; bütün cevap da bu.** Saldırı çoğunlukla bileşenin
+temel statlarından, ancak ikincil olarak kaliteden geliyor; dolayısıyla *cezalı* kalitedeki
+5. kademe bir namlu, *cezasız* kalitedeki 3. kademeyi yeniyor. Aynı sapla birleştirilmiş
+uzun kılıçlar, oyunun en iyi istasyonlarının gerçekten ulaşabildiği kalitelerde:
+
+| Forging / Crafting | k1 | k2 | k3 | k4 | k5 |
+| --- | --- | --- | --- | --- | --- |
+| 20 | 16 | 32 | 46 | 68 | **81** |
+| 40 | 34 | 67 | 96 | 141 | **178** |
+| 60 | 49 | 98 | 142 | 207 | **261** |
+
+Oyunun ortasında 5. kademe, cezasıyla birlikte 3. kademeye göre %76 kazanç. Yani ceza, 5.
+kademeyi olabileceğinden küçük bir yükseltme yapıyor; kötü bir yükseltme yapmıyor. 4.
+kademe bir istasyon, kendiliğinden kapanan bir eksiği düzeltir ve teçhizat tavanını
+hikâyenin önüne geçirirdi — ki P-12'nin yapılmamalı dediği tek şey buydu.
+
+**Muhafız: `check_higher_tiers_are_still_worth_reaching`.** Karar artık bir paragraf değil,
+bir kontrol. Oyundaki en iyi istasyon kademesini lokasyonlardan türetiyor — bayrak adlarını
+kaynaktan okuyor, yani üçüncü bir istasyon o görmeden eklenemez — sonra iki silah başı
+ailesini Forging ve Crafting 20, 40 ve 60'ta kademeleri boyunca yürüyor, her birini
+birleştirip saldırıları karşılaştırıyor. Her adım bir iyileşme olmak zorunda. 30
+kademe/beceri noktası.
+
+**Düşebilir olduğu varsayılmadı, doğrulandı** — bu projede şimdiye kadar üç kez düşemeyen
+bir kontrol yazıldı. Kademe katsayısını 15'ten 60'a çıkarmak, ki makul bir yeniden ayar,
+20. seviyedeki merdiveni 16, 32, 46, 46, **24** yapıyor: 5. kademe namlu, 3. kademeden kötü
+hâle geliyor ve kontrol bunu adıyla bildiriyor.
+
+**Dürüst sınırı ki bu da cevabın bir parçası.** Dağ ocağını 3'ten 1'e düşürmek — yani
+oyundaki en iyi ocağın köydeki 2 olması, bugünden tam bir kademe kötü — **kontrolü
+düşürmüyor**. Kontrol, en iyi istasyon neyse onu okuyup merdivenin hâlâ tırmandığını
+soruyor ve üç kademe açıkta bile tırmanıyor. Bundan *daha kötü* bir ocağa sahip bir oyun da
+kademelerini doğru sıralardı; daha iyisini inşa etmeye karşı argümanın en güçlü hâli de bu.
+
+P-12 backlog'dan çıkıyor. Yol boyunca yayınladıkları: 4. kademe körfezin tuz evine, 5.
+kademe v0.7.5'te gelgit düzlüklerine bağlandı, 36 bileşen yapılamazdan yapılabilire geçti
+ve şimdi de 4. kademe bir ocağın neden olmadığı, düşebilen bir şey olarak yazıldı.
 
 ### v0.7.14 - koleksiyoncunun ikinci ve son satışı
 

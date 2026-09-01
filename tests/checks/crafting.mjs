@@ -518,8 +518,155 @@ function check_the_prediction_and_the_roll_share_one_source() {
         + `${callers.length} caller(s) sharing it`);
 }
 
+/**
+ * A component tier that is not worth reaching.
+ *
+ * `roll_quality` reads `station_tier - component_tier`, so a component made above the
+ * best station in the game rolls at a penalty: 15 quality points per tier for a
+ * component, 10 for an assembled piece. The game's best forge is 3 and components go to
+ * 5, so every tier-5 component is made at minus two - which is what P-12 asked about, and
+ * the question it asked was whether the answer is a better forge.
+ *
+ * Measured, and the answer is no. The penalty costs quality and never the ORDERING: at
+ * Forging and Crafting 20 the long-blade ladder runs 16, 32, 46, 68, 81 in attack, and at
+ * 60 it runs 49, 98, 142, 207, 261. A tier-5 blade at its penalised quality beats a
+ * tier-3 blade at its unpenalised one, because attack comes mostly from the component's
+ * base stats and only secondarily from quality. And the penalty closes on its own: the
+ * quality cap is 100 + 2 per skill level, so from Forging 50 the two ranges are identical.
+ *
+ * So no station above 3 is needed, and this check is what makes that answer keep being
+ * true rather than being a note in a document. It is falsifiable, which was verified
+ * rather than assumed: quadrupling the tier coefficient from 15 to 60 - a plausible
+ * retune - takes the ladder at skills 20 to 16, 32, 46, 46, **24**, and the tier-5 blade
+ * becomes worse than the tier-3 one. That is the day a better forge stops being optional,
+ * and this is what says so.
+ */
+async function check_higher_tiers_are_still_worth_reaching() {
+    const [{ recipes }, { item_templates, getItem }, { skills }, { locations }, main] =
+        await load_browser_free(repo_root, [
+            "src/crafting_recipes.js",
+            "src/items.js",
+            "src/data/skills.js",
+            "src/data/locations.js",
+            "src/main.js",
+        ]);
+
+    /*
+        Every station tier in the game sits behind a flag - the village hearth, the
+        mountain flue - so the ceiling is what a player who has built everything can
+        reach. The flag names are read out of the source rather than listed here, so a
+        third station cannot be added without this seeing it.
+    */
+    const location_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
+    for (const match of location_source.matchAll(/global_flags\.(\w+)/g)) {
+        main.global_flags[match[1]] = true;
+    }
+
+    let best_forging = 0;
+    let best_assembly = 0;
+    for (const key of Object.keys(locations)) {
+        const station = locations[key].crafting;
+        if (!station) continue;
+        best_forging = Math.max(best_forging, station.tiers.forging ?? 0);
+        best_assembly = Math.max(best_assembly, station.tiers.crafting ?? 0);
+    }
+
+    if (best_forging === 0 || best_assembly === 0) {
+        error(`tier ladder: read a best forging tier of ${best_forging} and a best `
+            + `assembly tier of ${best_assembly}; one of them is zero, so the station `
+            + `tiers are not being read - this check is out of date.`);
+        return;
+    }
+
+    const component_recipe = Object.values(recipes.forging?.components ?? {})[0];
+    const equipment_recipe = Object.values(recipes.crafting?.equipment ?? {})[0];
+    if (!component_recipe || !equipment_recipe) {
+        error("tier ladder: no component recipe or no equipment recipe - "
+            + "this check is out of date.");
+        return;
+    }
+
+    //The two weapon-head families, because attack is the stat that can be compared.
+    const families = {};
+    for (const id of Object.keys(item_templates)) {
+        const component = item_templates[id];
+        if ((component.component_type === "long blade"
+            || component.component_type === "short blade") && component.component_tier) {
+            const family = families[component.component_type] ??= {};
+            //One head per tier is enough; they share their tier's stats.
+            family[component.component_tier] ??= id;
+        }
+    }
+
+    const handles = {
+        "long blade": "Simple wooden long handle",
+        "short blade": "Simple wooden short handle",
+    };
+
+    let compared = 0;
+    for (const [type, by_tier] of Object.entries(families)) {
+        const handle = handles[type];
+        if (!item_templates[handle]) {
+            error(`tier ladder: "${handle}" is not an item, so the ${type} ladder cannot `
+                + `be assembled - this check is out of date.`);
+            continue;
+        }
+        const handle_tier = item_templates[handle].component_tier ?? 1;
+        const tiers = Object.keys(by_tier).map(Number).sort((a, b) => a - b);
+        if (tiers.length < 2) {
+            error(`tier ladder: the ${type} family has ${tiers.length} tier(s) - `
+                + `this check is out of date.`);
+            continue;
+        }
+
+        /*
+            Three points on the curve rather than all sixty: the penalty is worst at low
+            skill, half gone by 40 and absorbed by the cap from 50, so 20 / 40 / 60 covers
+            the shape. 20 is where an inversion shows up first.
+        */
+        for (const level of [20, 40, 60]) {
+            for (const skill of ["Forging", "Crafting"]) {
+                if (skills[skill]) { skills[skill].current_level = level; }
+            }
+
+            let previous = null;
+            for (const tier of tiers) {
+                const component_quality =
+                    component_recipe.get_quality_range(best_forging - tier)[1];
+                const assembled_quality = equipment_recipe.get_quality_range(
+                    best_assembly - Math.max(tier, handle_tier), component_quality)[1];
+
+                const weapon = getItem({
+                    components: { head: by_tier[tier], handle },
+                    quality: assembled_quality,
+                    equip_slot: "weapon",
+                    item_type: "EQUIPPABLE",
+                });
+                const attack = weapon.getAttack(assembled_quality);
+
+                if (previous && attack <= previous.attack) {
+                    error(`tier ladder: at Forging and Crafting ${level}, a `
+                        + `"${by_tier[tier]}" (tier ${tier}) makes a weapon of ${attack} `
+                        + `attack while a "${previous.head}" (tier ${previous.tier}) makes `
+                        + `${previous.attack}. The higher tier is not worth reaching, `
+                        + `which means the station penalty has grown past what the tier `
+                        + `gains - the game needs a better station, or a gentler penalty.`);
+                }
+                previous = { tier, attack, head: by_tier[tier] };
+                compared++;
+            }
+        }
+    }
+
+    console.log(`[check] tier ladder: ${compared} tier/skill points across `
+        + `${Object.keys(families).length} families, best forge ${best_forging}, best `
+        + `assembly ${best_assembly}, every tier still worth reaching`);
+}
+
 export {
     check_a_better_input_makes_a_better_result,
+    check_higher_tiers_are_still_worth_reaching,
     check_qualitied_materials_can_still_be_found,
     check_the_prediction_and_the_roll_share_one_source,
     check_inherited_quality_is_shown,

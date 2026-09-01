@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 35 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 36 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -194,6 +194,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `books` | Hiçbir şeyin satmadığı/düşürmediği/vermediği bir kitap ya da okuma verisi olmayan bir kitap eşyası. 12 kitap. |
 | `droprate tags` | Hiçbir düşmanın taşımadığı ya da düşmanları hiçbir şey düşürmeyen bir etikete yöneltilmiş düşme oranı yeteneği. 2 çift. |
 | `locked skills` | Kilitli başlayan ve hiçbir ödülün açmadığı bir yetenek. 3 kilitli. |
+| `tier ladder` | İstasyon cezasının ulaşmaya değmez hâle getirdiği bir bileşen kademesi. 30 kademe/beceri noktası. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

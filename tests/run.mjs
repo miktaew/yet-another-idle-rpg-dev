@@ -56,6 +56,7 @@ import { check_books_can_be_got, check_components_can_be_made, check_generated_i
 import {
     check_a_better_input_makes_a_better_result,
     check_crafting_passes_the_input_quality,
+    check_higher_tiers_are_still_worth_reaching,
     check_inherited_quality_is_shown,
     check_qualitied_materials_can_still_be_found,
     check_quality_rolls_take_an_input_quality,
@@ -162,6 +163,7 @@ check_quality_rolls_take_an_input_quality();
 check_crafting_passes_the_input_quality();
 await check_a_better_input_makes_a_better_result();
 await check_inherited_quality_is_shown();
+await check_higher_tiers_are_still_worth_reaching();
 await check_qualitied_materials_can_still_be_found();
 check_the_prediction_and_the_roll_share_one_source();
 
