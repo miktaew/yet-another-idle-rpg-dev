@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 86 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 87 -->
 
 # Changelog
 
@@ -20,6 +20,70 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.16 - the second box, and what is in it was measured
+
+P-25's second part: items sold only at high standing. The mechanism was settled by the
+proposal and by last round's groundwork; what took the measuring was **what a shelf like
+that should hold**, and the proposal's own two suggestions did not survive it.
+
+**What the proposal suggested, and why neither works.** *"The eight unmade generated
+components and the tier-5 family are already there to draw on."* Measured: the eight
+unmade are duplicates - five of them are `Turtle shellplate` armour pieces that duplicate
+the hand-written `Turtleshell *` ones the recipes actually name, and two are cloth shoes on
+materials whose recipes stop at the interior. Selling those is selling clutter. And the
+tier-5 family became craftable in v0.7.5 from the flats' own seam, so selling it would
+undercut the chain the arc had just built.
+
+**What the answer was, and it was already written down.** The bay trader carries a note
+from v0.7.8: a shelf should hold *"things the player has only ever had to make or hunt
+for, at a price that says somebody carried them a long way. Not new loot."* Counted
+against that: **22 distinct enemy drops that no trader anywhere sells.** Five of them are
+the dearest ends of that list, and four are the game's **50-to-1 butchering upgrades**:
+
+| item | how you get one otherwise |
+| --- | --- |
+| `Pristine mountain goat horn` | 50 goat horns, and a horn is a 2% drop - order of 2,500 kills |
+| `Sharp bear claw` | 50 bear claws |
+| `High quality wolf fang` | 50 wolf fangs |
+| `High quality boar tusk` | 50 boar tusks |
+| `Turtle shell` | a 0.5% drop, and a shellplate wants ten |
+
+These are the things a player grinds for weeks or does without. Somebody in that room
+already did the grinding, which is the whole fiction of a back room.
+
+**One trader, not two.** The list is built as `[...inventory_templates["Intermediate"],
+...]` - the back room is the same man, because the row does not get a second shopkeeper
+when it decides it likes you. That is the proposal's own rule and the thing it said this
+must not become.
+
+**Slums 300, derived.** The row's own mark: the standing at which the old woman says you
+are on the roster, *"the people we would get out of bed for"*. The back room opening at
+the same number is that fact from the other side of the street. Verified at the boundary -
+Intermediate at 299, the back room at 300.
+
+**Scarcity in the chance, not the price.** A profit margin is per trader and this is the
+same trader, so making it dear was never available - and it would have been the wrong
+lever. Chances of 0.12 to 0.25 against a four-day refresh mean he has these when he has
+them.
+
+**And she tells you.** P-25 is explicit that *"a shelf the player cannot see is not a
+reward"* - the settlement actions are visible before they are earned and refused with a
+reason, deliberately. So the old woman gets a line at the same 300, and it is not a
+signpost: she says he has always had the second box, that what changed is he took the lid
+off in front of you, and not to ask where any of it came from.
+
+The other half of being told is last round's groundwork paying for itself immediately:
+because a derived shelf now declares every list it can be, the Discoveries panel names
+those five as things the slums sells **before** the player can buy them there.
+
+**No new guard, and that is deliberate.** Last round's check already validated this
+trader's declaration the moment it existed - it went from one derived shelf to two with
+nothing to add - and the standing condition is covered by the three rules v0.7.15 shipped.
+A fourth rule here would be a rule about this shelf rather than about shelves.
+
+**P-25 has one part left**: the occasional black market. It is this shelf plus a time
+condition, and both halves now exist.
 
 ### Discoveries learns every shelf a trader can hold, not the one it is holding
 

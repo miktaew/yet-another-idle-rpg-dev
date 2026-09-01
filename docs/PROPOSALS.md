@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 95 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 96 -->
 
 # Proposals
 
@@ -618,8 +618,19 @@ The owner's request, in four parts: NPCs speak differently at high and at low st
 some items only sell at high standing; a back room; and a black market that turns up on
 the slums side.
 
-**The first of the four shipped as v0.7.15** - the broker in the town square answers a
-stranger and a regular differently - and it corrected this entry on the way.
+**Two of the four have shipped.** v0.7.15 - the broker in the town square answers a
+stranger and a regular differently - and v0.7.16, the man in the slums with a second box
+that opens at Slums 300. Both corrected this entry on the way.
+
+**And the suggestion below about what to stock did not survive measurement.** The eight
+unmade generated components are duplicates - five are `Turtle shellplate` armour pieces
+that duplicate the hand-written `Turtleshell *` ones the recipes name - and the tier-5
+family became craftable in v0.7.5, so selling it would undercut the chain the arc built.
+What the shelf holds instead came from the bay trader's own note: the five dearest of the
+22 enemy drops no trader sells, four of which are 50-to-1 butchering upgrades.
+
+**What is left is the black market**, which is this shelf plus a time condition - both
+halves now exist.
 
 **Measured, and the finding is that all four are the two mechanisms this game already
 has.** The line below saying neither needs engine work was **wrong about the first one**:

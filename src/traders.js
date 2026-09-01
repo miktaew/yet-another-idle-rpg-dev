@@ -259,7 +259,15 @@ class TradeItem {
     traders["suspicious trader 2"] = new Trader({
         name: "suspicious trader 2",
         display_name: "suspicious trader",
-        inventory_template: "Intermediate",
+        /*
+            Derived at every refresh and never stored, like the bay's - see the note on
+            the field. Slums 300 is not a number picked for feel: it is the row's own
+            mark, the standing at which the old woman says you are on the roster, "the
+            people we would get out of bed for". The back room opening at the same point
+            is that same fact from the other side of the street.
+        */
+        inventory_template: () => character.reputation.Slums >= 300 ? "Slums back room" : "Intermediate",
+        stock_lists: ["Slums back room", "Intermediate"],
         is_unlocked: false,
         profit_margin: 6,
     });
@@ -717,6 +725,42 @@ class TradeItem {
         new TradeItem({item_name: "Apple pie", count: [2,4]}),
         new TradeItem({item_name: "Carrot cake", count: [2,4]}),
     ]
+
+    /*
+        P-25's second part: a shelf that opens with standing rather than with money.
+
+        Built out of the Intermediate list rather than beside it, because the back room
+        is the same man - the row does not get a second shopkeeper when it decides it
+        likes you. That is the proposal's own rule: one trader whose list is derived, not
+        a trader per tier of standing.
+
+        WHAT is on it was measured rather than invented, from the note the bay trader
+        already carries: a shelf holds "things the player has only ever had to make or
+        hunt for... Not new loot." Counted: 22 distinct enemy drops that no trader
+        anywhere sells, and these are the five dearest ends of that list.
+
+        Four of them are the game's 50-to-1 butchering upgrades - fifty wolf fangs for one
+        high quality fang, fifty goat horns for one pristine horn, and a goat horn is a 2%
+        drop, so the horn is on the order of two and a half thousand kills. The fifth,
+        a turtle shell, is a 0.5% drop that a shellplate wants ten of. These are the things
+        a player grinds for weeks or does without. Somebody in this room already did the
+        grinding.
+
+        The scarcity is in the CHANCE, not the price. A profit margin is per trader and
+        this is the same trader, so making it dear was not available - and it would have
+        been the wrong lever anyway. He has these when he has them, which is what an
+        occasional black market is.
+    */
+    inventory_templates["Slums back room"] =
+    [
+        ...inventory_templates["Intermediate"],
+
+        new TradeItem({item_name: "Pristine mountain goat horn", count: [1], chance: 0.12}),
+        new TradeItem({item_name: "Sharp bear claw", count: [1], chance: 0.15}),
+        new TradeItem({item_name: "High quality wolf fang", count: [1,2], chance: 0.2}),
+        new TradeItem({item_name: "High quality boar tusk", count: [1,2], chance: 0.2}),
+        new TradeItem({item_name: "Turtle shell", count: [1], chance: 0.25}),
+    ];
 
 })();
 export { traders, inventory_templates, TradeItem, stock_list_name_of, stock_lists_of };

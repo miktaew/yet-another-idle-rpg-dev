@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 86 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 87 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,67 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.16 - ikinci kutu ve içindekiler ölçüldü
+
+P-25'in ikinci parçası: yalnızca yüksek itibarda satılan eşyalar. Mekanizmayı teklif ve
+geçen turun zemin işi çözmüştü; ölçüm gerektiren şey **böyle bir rafta ne olacağıydı** ve
+teklifin kendi iki önerisi ölçümden geçmedi.
+
+**Teklifin önerdiği ve ikisinin de neden olmadığı.** *"Yapılamayan sekiz üretilmiş bileşen
+ile 5. kademe ailesi zaten elde duruyor."* Ölçüldü: yapılamayan sekizi mükerrer — beşi,
+tariflerin gerçekten adlandırdığı elle yazılmış `Turtleshell *` parçalarını tekrarlayan
+`Turtle shellplate` zırh parçaları; ikisi ise tarifleri iç kısımda duran malzemelerde kumaş
+ayakkabılar. Onları satmak çöp satmaktır. 5. kademe ailesi ise v0.7.5'te düzlüklerin kendi
+damarından üretilebilir oldu; onu satmak arc'ın yeni kurduğu zinciri baltalardı.
+
+**Cevap neydi ve zaten yazılıydı.** Körfez tüccarı v0.7.8'den bir not taşıyor: bir raf,
+*"oyuncunun yalnızca yapmak ya da avlamak zorunda kaldığı şeyleri, birinin onları uzaktan
+taşıdığını söyleyen bir fiyatla"* tutmalı. *Yeni ganimet değil.* Buna karşı sayıldı:
+**hiçbir tüccarın satmadığı 22 farklı düşman ganimeti.** Beşi o listenin en pahalı uçları
+ve dördü oyunun **50-e-1 kasaplık yükseltmeleri**:
+
+| eşya | başka türlü nasıl elde edilir |
+| --- | --- |
+| `Pristine mountain goat horn` | 50 keçi boynuzu, ve boynuz %2 düşüyor — 2.500 öldürme mertebesi |
+| `Sharp bear claw` | 50 ayı pençesi |
+| `High quality wolf fang` | 50 kurt dişi |
+| `High quality boar tusk` | 50 yaban domuzu dişi |
+| `Turtle shell` | binde beş düşüyor ve bir shellplate on tane istiyor |
+
+Bunlar, bir oyuncunun haftalarca öğüttüğü ya da hiç sahip olmadığı şeyler. O odadaki biri
+öğütmeyi çoktan yapmış; bir arka odanın bütün kurgusu da bu.
+
+**Tek tüccar, iki değil.** Liste `[...inventory_templates["Intermediate"], ...]` olarak
+kuruluyor — arka oda aynı adam, çünkü sokak sizi beğenmeye karar verdiğinde ikinci bir
+dükkâncı edinmiyor. Teklifin kendi kuralı ve olmaması gerektiğini söylediği şey de buydu.
+
+**Slums 300, türetildi.** Sokağın kendi işareti: yaşlı kadının sizi listeye yazdığını
+söylediği itibar, *"yataktan kalkacağımız insanlar"*. Arka odanın aynı sayıda açılması, o
+gerçeğin sokağın öteki tarafından görünüşü. Sınırda doğrulandı — 299'da Intermediate,
+300'de arka oda.
+
+**Kıtlık fiyatta değil şansta.** Kâr marjı tüccar başına ve bu aynı tüccar, yani pahalı
+yapmak zaten mümkün değildi — ayrıca yanlış kol olurdu. Dört günlük tazelemeye karşı 0,12
+ile 0,25 arası şanslar, elinde olduğunda olduğu anlamına geliyor.
+
+**Ve kadın size söylüyor.** P-25 açıkça *"oyuncunun göremediği bir raf ödül değildir"*
+diyor — yerleşim aksiyonları kazanılmadan önce görünüyor ve sebebiyle reddediliyor, bilerek.
+Bu yüzden yaşlı kadın aynı 300'de bir replik alıyor ve bu bir tabela değil: adamda ikinci
+kutunun hep olduğunu, değişen şeyin kapağı sizin önünüzde açması olduğunu ve hiçbirinin
+nereden geldiğini sormamanızı söylüyor.
+
+Söylenmenin öteki yarısı, geçen turun zemin işinin hemen kendini ödemesi: türetilmiş bir raf
+artık olabileceği her listeyi beyan ettiği için, Keşifler paneli o beşini oyuncu oradan
+satın alabilmeden **önce** kenar mahallenin sattığı şeyler olarak adlandırıyor.
+
+**Yeni muhafız yok ve bu bilinçli.** Geçen turun kontrolü bu tüccarın beyanını var olduğu
+anda doğruladı — bir türetilmiş raftan ikiye çıktı ve eklenecek bir şey olmadı — ve itibar
+koşulu, v0.7.15'in yayınladığı üç kuralın kapsamında. Buraya dördüncü bir kural, raflar
+hakkında değil bu raf hakkında bir kural olurdu.
+
+**P-25'in bir parçası kaldı**: arada çıkan karaborsa. O, bu raf artı bir zaman koşulu ve
+ikisi de artık var.
 
 ### Discoveries, bir tüccarın tuttuğu rafı değil tutabileceği her rafı öğreniyor
 

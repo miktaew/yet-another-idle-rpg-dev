@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 95 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 96 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -640,8 +640,18 @@ Sahibinin isteği, dört parça hâlinde: NPC'ler yüksek ve düşük itibarda f
 bazı eşyalar yalnızca yüksek itibarda satılsın; bir arka oda olsun; ve kenar mahalle
 tarafında arada bir çıkan bir karaborsa olsun.
 
-**Dördün ilki v0.7.15 olarak yayınlandı** — kasaba meydanındaki komisyoncu bir yabancıyla
-bir müdavime aynı cevabı vermiyor — ve yol boyunca bu kaydı düzeltti.
+**Dördün ikisi yayınlandı.** v0.7.15 — kasaba meydanındaki komisyoncu bir yabancıyla bir
+müdavime aynı cevabı vermiyor — ve v0.7.16, kenar mahallede Slums 300'de açılan ikinci
+kutulu adam. İkisi de yol boyunca bu kaydı düzeltti.
+
+**Ve aşağıdaki, rafta ne olacağına dair öneri ölçümden geçmedi.** Yapılamayan sekiz
+üretilmiş bileşen mükerrer — beşi, tariflerin adlandırdığı elle yazılmış `Turtleshell *`
+parçalarını tekrarlayan `Turtle shellplate` zırh parçaları — ve 5. kademe ailesi v0.7.5'te
+üretilebilir oldu, yani onu satmak arc'ın kurduğu zinciri baltalardı. Rafın onun yerine
+tuttuğu şey körfez tüccarının kendi notundan geldi: hiçbir tüccarın satmadığı 22 ganimetin
+en pahalı beşi; dördü 50-e-1 kasaplık yükseltmesi.
+
+**Kalan, karaborsa**; o da bu raf artı bir zaman koşulu — iki yarı da artık var.
 
 **Ölçüldü ve bulgu şu: dördü de bu oyunun zaten sahip olduğu iki mekanizma.** Aşağıdaki
 "hiçbiri motor işi gerektirmiyor" ifadesi **ilki için yanlıştı**: `display_conditions`

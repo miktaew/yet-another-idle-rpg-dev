@@ -1354,6 +1354,25 @@ class Textline {
                 },
                 locks_lines: ["the matter"],
             }),
+            /*
+                P-25 again, and the half that keeps the shelf honest: the settlement
+                actions are visible before they are earned and refused with a reason,
+                deliberately, because a locked door nobody can see is not a goal. A back
+                room the player never learns exists breaks that rule. She is the one who
+                would mention it - it opens on the same 300 that puts you on her roster,
+                which is the same fact from the other side of the street.
+            */
+            "back room": new Textline({
+                lore: true,
+                name: "old back room",
+                text: "old back room answ",
+                is_unlocked: true,
+                display_conditions: {reputation: {Slums: {at_least: 300}}},
+                rewards: {
+                    xp: 700,
+                },
+                locks_lines: ["back room"],
+            }),
             "roster": new Textline({
                 lore: true, //carries the thread; see the lore panel
                 name: "old roster",
