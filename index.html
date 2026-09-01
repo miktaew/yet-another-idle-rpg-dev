@@ -179,9 +179,10 @@
                     <div id = "inventory_content_div"> </div>
 
                     <div id = "inventory_sorting_div" class="activable_buttons flex_wrap">
-                        <div id = "inventory_sort_by_name" class = "character_sorting_button active_selection_button" onclick='sortCharacterInventory("name")' data-translation="ui sort name"></div>
-                        <div id = "inventory_sort_by_price" class = "character_sorting_button" onclick='sortCharacterInventory("price")' data-translation="ui sort value"></div>
-                        <div id = "inventory_sort_by_type" class = "character_sorting_button" onclick='sortCharacterInventory("type")' data-translation="ui sort type"></div>
+                        <div id = "inventory_sort_by_name" class = "character_sorting_button active_selection_button" onclick='sortCharacterInventory("name")' data-translation="ui sort name" data-translation-title="ui sort name hint"></div>
+                        <div id = "inventory_sort_by_price" class = "character_sorting_button" onclick='sortCharacterInventory("price")' data-translation="ui sort value" data-translation-title="ui sort value hint"></div>
+                        <div id = "inventory_sort_by_type" class = "character_sorting_button" onclick='sortCharacterInventory("type")' data-translation="ui sort type" data-translation-title="ui sort type hint"></div>
+                        <div id = "inventory_sort_by_latest" class = "character_sorting_button" onclick='sortCharacterInventory("latest")' data-translation="ui sort latest" data-translation-title="ui sort latest hint"></div>
                     </div>
                     <div id = "inventory_control_div" class="activable_buttons flex_wrap">
                         <div id = "inventory_show_all" class = "inventory_control_button active_selection_button" onclick = "showAllItems()" data-translation="ui show all"></div>
@@ -620,9 +621,9 @@
 
                     <div id = "trade_div">
                         <div id = "trader_sorting_buttons" class="activable_buttons flex_wrap"> 
-                            <div id = "trader_sort_by_name" class = "trader_sorting_button active_selection_button" onclick='sortTraderInventory("name")' data-translation="ui sort name"></div>
-                            <div id = "trader_sort_by_price" class = "trader_sorting_button" onclick='sortTraderInventory("price")' data-translation="ui sort value"></div>
-                            <div id = "trader_sort_by_type" class = "trader_sorting_button" onclick='sortTraderInventory("type")' data-translation="ui sort type"></div>
+                            <div id = "trader_sort_by_name" class = "trader_sorting_button active_selection_button" onclick='sortTraderInventory("name")' data-translation="ui sort name" data-translation-title="ui sort name hint"></div>
+                            <div id = "trader_sort_by_price" class = "trader_sorting_button" onclick='sortTraderInventory("price")' data-translation="ui sort value" data-translation-title="ui sort value hint"></div>
+                            <div id = "trader_sort_by_type" class = "trader_sorting_button" onclick='sortTraderInventory("type")' data-translation="ui sort type" data-translation-title="ui sort type hint"></div>
                         </div>
                         <div id = "trader_category_buttons" class="activable_buttons flex_wrap">
                             <div id = "trader_category_all" class = "trader_category_button active_selection_button" onclick='showAllTraderItems()' data-translation="ui category all"></div>
@@ -655,9 +656,10 @@
 
                     <div id = "storage_div">
                         <div id = "storage_sorting_buttons" class="activable_buttons flex_wrap"> 
-                            <div id = "storage_sort_by_name" class = "storage_sorting_button active_selection_button" onclick='sortStorageInventory("name")' data-translation="ui sort name"></div>
-                            <div id = "storage_sort_by_price" class = "storage_sorting_button" onclick='sortStorageInventory("price")' data-translation="ui sort value"></div>
-                            <div id = "storage_sort_by_type" class = "storage_sorting_button" onclick='sortStorageInventory("type")' data-translation="ui sort type"></div>
+                            <div id = "storage_sort_by_name" class = "storage_sorting_button active_selection_button" onclick='sortStorageInventory("name")' data-translation="ui sort name" data-translation-title="ui sort name hint"></div>
+                            <div id = "storage_sort_by_price" class = "storage_sorting_button" onclick='sortStorageInventory("price")' data-translation="ui sort value" data-translation-title="ui sort value hint"></div>
+                            <div id = "storage_sort_by_type" class = "storage_sorting_button" onclick='sortStorageInventory("type")' data-translation="ui sort type" data-translation-title="ui sort type hint"></div>
+                            <div id = "storage_sort_by_latest" class = "storage_sorting_button" onclick='sortStorageInventory("latest")' data-translation="ui sort latest" data-translation-title="ui sort latest hint"></div>
                         </div>
                         <div id = "storage_category_buttons" class="activable_buttons flex_wrap">
                             <div id = "storage_category_all" class = "storage_category_button active_selection_button" onclick='switchStorageItemVisibility()' data-translation="ui category all"></div>
@@ -707,9 +709,9 @@
                                 <label for="options_hide_max_level_skills" data-translation="ui opt hide max skills"></label>
                             </div>
                             <div id="skill_sorting_buttons" class="activable_buttons flex_wrap">
-                                <div id="skill_sort_by_name" class="skill_sorting_button active_selection_button" onclick='sortSkills({sort_by:"name"})' . data-translation="ui sort name"></div>
-                                <div id="skill_sort_by_level" class="skill_sorting_button" onclick='sortSkills({sort_by:"level"})' data-translation="ui sort level"></div>
-                                <div id="skill_sort_by_progress" class="skill_sorting_button" onclick='sortSkills({sort_by:"progress"})' data-translation="ui sort progress"></div>
+                                <div id="skill_sort_by_name" class="skill_sorting_button active_selection_button" onclick='sortSkills({sort_by:"name"})' . data-translation="ui sort name" data-translation-title="ui sort name hint"></div>
+                                <div id="skill_sort_by_level" class="skill_sorting_button" onclick='sortSkills({sort_by:"level"})' data-translation="ui sort level" data-translation-title="ui sort level hint"></div>
+                                <div id="skill_sort_by_progress" class="skill_sorting_button" onclick='sortSkills({sort_by:"progress"})' data-translation="ui sort progress" data-translation-title="ui sort progress hint"></div>
                             </div>
                         </div>
                         <div id = "stance_list_div">

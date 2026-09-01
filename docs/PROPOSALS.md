@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 111 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 114 -->
 
 # Proposals
 
@@ -624,46 +624,6 @@ than two.
 
 
 
-### P-32 — An inventory sort by when you got it `open`
-
-The owner's request: a fourth sort button beside "by name", "by value" and "by type" -
-call it "latest" - putting the most recently obtained items at the top.
-
-**Measured, and the blocker is that nothing records when.** An inventory entry is
-`{item, count}` and that is all of it - `InventoryHaver.add_to_inventory` writes those two
-fields and nothing else. There is no acquisition order to sort by, so this is not a
-comparator, it is a field.
-
-**Which makes it a save question, not a display one.** A counter written only in memory
-resets on every load and the newest item becomes whatever the save happened to serialise
-first - which is exactly the shape of the bug that lost the owner's favourites (constraint 4
-in [STATUS.md](STATUS.md)). So the field has to be written to the save, and an old save
-arrives without it: every existing item has to sort *somewhere*, and "all equally old" is
-the only honest answer.
-
-**Cheapest field that works.** Not a timestamp - a monotonic counter, bumped once per
-addition and stored per entry. It costs one number per inventory key in the save, it is
-stable across loads, and it needs no clock. `current_game_time.day_count` is too coarse:
-everything picked up in one day would tie, and an idle session is mostly one day.
-
-**Three things to decide.**
-
-- **What counts as "getting" it.** Adding to a stack the player already has: does the stack
-  jump to the top, or keep its first-acquired order? The request says "most recently
-  obtained", which argues for the stack moving - but then a stack of arrows the player tops
-  up constantly never leaves the top.
-- **What happens to an old save.** Every entry tying at zero means the first sort by
-  "latest" looks like sort by nothing until new items arrive. That is honest and it is also
-  a bad first impression; the alternative is seeding the counter from the existing display
-  order, which invents a history.
-- **The other two inventories.** `sort_displayed_inventory` serves the character, the trader
-  and storage. A trader's shelf is regenerated on refresh so "latest" means nothing there;
-  storage is the player's and it does. The button should probably not appear for a trader.
-
-**Guard.** The class is "a field the display sorts by that the save does not keep", and
-`npm run check:save` already round-trips a real export. A check that every field
-`sort_displayed_inventory` reads is one `save_load.js` writes would hold it.
-
 ### P-34 — A repeatable action needs a "try again" beside "Finish" `open`
 
 The owner's request, from a failed lock: a **try again** button under the result, so a
@@ -743,6 +703,84 @@ differently rich. Making it a second village is the cheap answer and the wrong o
 square is a market and a crossroads, and what it should offer is what a market and a
 crossroads offer.
 
+
+### P-37 — Does every panel update when the thing it shows changes? `open`
+
+The owner's question, asked while P-32 was being built and pointing at the same class as
+P-31: *"have we checked that fields like the inventory and the data panels get updated?"*
+
+**What is already known, and it is only half.** `check_every_panel_updater_is_called`
+(v0.7.23) proves that every function which draws a panel has a caller. It says nothing about
+*when* that caller runs, which is exactly where P-31 lived: the Discoveries panel had five
+callers and none of them fired while the panel was open, so a count sat still while the
+player watched it.
+
+The inventory list itself is redrawn from `add_to_character_inventory` on every pickup, and
+v0.7.26 added a re-sort on stack top-ups while sorting by "latest". So the bag is not the
+worry. The question is which of the other panels showing a live number are wired to the
+thing they show.
+
+**What has to be measured, not reasoned about.** For each panel that displays a value which
+can change while it is on screen - character stats, money, active effects, quest progress,
+the crafting materials list, the bestiary counts - whether a redraw is called from the path
+that changes it. A panel drawn only on tab open is P-31 again.
+
+**Why a check is hard here and worth thinking about first.** "Called when the value changes"
+is not something a name scan can see, unlike "called at all". The honest version probably
+pairs each panel with the state it reads and asks whether any writer of that state reaches
+its updater - which is a call-graph question, and the first one this project would have.
+
+### P-38 — Reputation already earned has to be credited backwards `open`
+
+The owner's report, with a save to check it against
+(`yet-another-idle-rpg 2026-09-01 17_49_16.txt`): *"we added it to the swamp, but the quests
+are already finished - add a method that checks completed quests and updates the
+reputations"*. The screenshot shows the Data panel listing Village 460, Slums 200 and Town
+150, and no swamp row at all, taken while standing in the swamp tribe.
+
+**Two facts measured before anything is designed.**
+
+- **The missing row is not a display bug.** `update_displayed_reputation` shows a region
+  only while its value is above zero, and says so in a comment above itself. So the absence
+  of a swamp row is the panel reporting the truth: the standing really is nought.
+- **The reward exists and cannot be reached.** Five swamp deliveries grant between 50 and 70
+  Swamp each, added in v0.7.20. All five are one-time textlines, and this owner's save has
+  them finished - which is what makes the standing unearnable rather than merely unearned.
+  Nothing in the game can now give it.
+
+**Measured against the owner's save (v0.7.25, checked with `npm run check:save` - every key
+resolves).** The save's swamp standing is exactly 0, and 300 is on offer across the five
+grants. At least 120 of it sits on textlines the save marks finished, which leaves 180
+earnable - against `swampchief standing`, which wants `{Swamp: {at_least: 200}}`. **So the
+chief's line is not merely unearned in this save, it is unreachable even after doing
+everything the region still offers.** That is the sharpest form of the problem and it is what
+makes a repair, rather than a patience, the answer.
+
+**Why this is a class and not one region.** Any reward attached to content a player has
+already finished has the same shape: the grant is written, the trigger is spent, and the
+player is permanently short of something the design says they have earned. The swamp is the
+instance that was noticed because a whole region's standing sat at zero.
+
+**Decided by the owner, and decided generally rather than for this one case:** *"when the
+game loads, when the page opens, the checks should run once. A save migration should be
+done. On a version increase - we added reputation to the swamp, for example - the user's save
+does not have that information. So when moving up to the higher version it should add it,
+check the existing save and apply the updates."*
+
+So: a migration keyed to the version, run once as the save is loaded. That is the pattern
+`save_load.js` already uses in a dozen places - `is_a_older_than_b(save_data["game version"],
+"v0.4.6.12")` and its kin - and the version comparison is what makes it run once and never
+again, with no need to record what was already paid.
+
+**What that turns the job into.** Not "credit the swamp" but a migration step that, for a
+save written before the version which added a reputation grant, works out what the finished
+content owes and pays it. The swamp is the first entry in that step; the machinery is what
+the next grant needs.
+
+**The guard has to hold the class.** A reward added to content that can already be finished,
+with no path that credits it afterwards. That is checkable: a one-time textline or quest that
+grants something, against whether anything reconciles that grant for a save where it is
+already spent.
 
 ---
 

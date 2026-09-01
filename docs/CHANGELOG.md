@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 97 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 98 -->
 
 # Changelog
 
@@ -20,6 +20,75 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.26 - the bag can be sorted by what arrived last
+
+P-32, asked for as *"add one called latest next to by-name and by-type, ordering by
+acquisition date with the most recently obtained first"*.
+
+**Not a comparator - a field that had to start existing.** An inventory entry was
+`{item, count}` and that was the whole of it. Nothing on it said *when* it was got, so there
+was no acquisition date to sort by, and the work was in deciding where that number comes
+from, where it is written down, and what an old save that never recorded one should do.
+
+**One choke point.** `add_to_inventory` in `inventory_component.js` is the only place an
+entry is created or added to, for the character, the traders and the storage alike, so one
+counter there covers all three. It only ever goes up, and gaps in it are fine because only
+the order is read.
+
+**Topping up a stack moves it back to the top**, which is a decision rather than a detail: a
+stack you keep adding to is a stack you keep getting, and the sort is there to answer "what
+did I just pick up". That needed a second change to work at all - the list is re-sorted when
+something *new* appears, and adding to an existing stack is not new, so the order on the
+entry moved while the row stayed put. It re-sorts on every change now, but only while
+"latest" is the chosen sort.
+
+**The category rules are skipped for this one sort.** Equippables sit below plain items,
+components below those, books below those - and under "latest" all of that would answer the
+wrong question, burying a sword just found under every scrap of leather in the bag. The two
+rules above them stay for every sort, because they are about where a row *belongs* rather
+than how it compares: an equipped item is not really in the list, and a row queued for a
+trade belongs at the bottom of it.
+
+**Restored after loading rather than carried through it.** The load path fills its item list
+from nineteen separate push sites, most of them migration branches for saves far older than
+this field. Matching a saved key against the built inventory afterwards is one place instead
+of nineteen, and an entry whose key changed under a migration simply keeps what loading gave
+it.
+
+**Measured, and the measurement corrected the plan.** The proposal said an old save would
+have to tie every entry as "equally old". It does not: an object lists its string keys in the
+order they were inserted, and they were inserted as the items were first picked up - so an
+old save sorts correctly for free. Verified end to end: the order survives a reload in a
+different key order, a top-up moves a stack up, and the first item picked up after loading
+lands above everything the save carried. The shipped comparator was then run over stand-in
+rows, which is the only way to see an order rather than reason about one: newest first on the
+first click, reversed on the second, and alphabetical when everything ties.
+
+**Traders keep three buttons.** Their stock is generated when the player walks in, so the
+order it was generated in is not an order anybody obtained anything in.
+
+**Short labels, and the sentence moved to the tooltip.** Asked for while this was being
+built: four buttons reading "Sort by name" / "Sort by value" / "Sort by type" / "Sort by
+newest" is four sentences where four words will do. They read `Name` `Value` `Type` `Newest`
+now, with the full wording on hover through the existing `data-translation-title`, and the
+skills panel got the same treatment so the two do not disagree.
+
+**Two guards, both negative-tested in both directions.**
+
+`check_a_sorted_field_is_saved` holds the class this feature could have failed in silently: a
+sort that depends on a field the save does not keep. It looks like working code - the button
+sorts, the order is right - and then a reload throws the field away and the ordering becomes
+arbitrary with nothing reported anywhere. It reads which properties the display takes off an
+inventory entry, keeps the ones a comparator actually reads off a row, and requires each in
+**both** saved inventories, because a field added to the character's and forgotten in the
+storage's is the same bug half-fixed. Both halves were removed in turn and it named the right
+owner each time.
+
+`check_every_sort_button_is_understood` covers the other end: a sort is a bare string in an
+onclick, so a button whose name no branch matches reorders nothing and looks exactly like the
+three beside it. It runs both ways - a name nobody handles, and a branch nobody offers - and
+the unused-locale-row check turned out to fail alongside it from a third angle.
 
 ### v0.7.25 - the bay refuses instead of hiding
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 97 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 98 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,77 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.26 - çanta en son gelene göre sıralanabiliyor
+
+P-32; *"envanteri ada türe gibi yanına bir de son diye ekle, en son elde edilen eşyaları en
+başta gösterecek şekilde elde etme tarihine göre sırala"* diye istendi.
+
+**Bir karşılaştırıcı değil — var olmaya başlaması gereken bir alan.** Bir envanter girdisi
+`{item, count}`'tı ve hepsi bu kadardı. Üzerinde onun *ne zaman* elde edildiğini söyleyen
+hiçbir şey yoktu, yani sıralanacak bir elde etme tarihi de yoktu; iş, o sayının nereden
+geldiğine, nereye yazıldığına ve hiç böyle bir şey kaydetmemiş eski bir kaydın ne yapacağına
+karar vermekteydi.
+
+**Tek boğaz noktası.** `inventory_component.js` içindeki `add_to_inventory`, bir girdinin
+oluşturulduğu ya da üzerine eklendiği tek yer — karakter, tüccarlar ve depo için aynı şekilde
+— yani oradaki tek bir sayaç üçünü de kapsıyor. Sayaç yalnızca artıyor ve içindeki boşluklar
+sorun değil, çünkü okunan tek şey sıra.
+
+**Bir yığına eklemek onu yeniden en üste taşıyor**, ki bu bir ayrıntı değil bir karar:
+eklemeye devam ettiğiniz bir yığın, elde etmeye devam ettiğiniz bir yığındır ve sıralama "az
+önce ne aldım" sorusunu cevaplamak için var. Bunun çalışması için ikinci bir değişiklik
+gerekti — liste, *yeni* bir şey ortaya çıktığında yeniden sıralanıyor ve var olan bir yığına
+eklemek yeni değil, dolayısıyla girdideki sıra değişip satır yerinde kalıyordu. Artık her
+değişiklikte yeniden sıralanıyor, ama yalnızca seçili sıralama "son" iken.
+
+**Kategori kuralları bu tek sıralamada devre dışı.** Kuşanılabilirler düz eşyaların altında,
+bileşenler onların altında, kitaplar onların altında oturuyor — ve "son" altında bunların
+tamamı yanlış soruyu cevaplardı; yeni bulunmuş bir kılıcı çantadaki her deri parçasının
+altına gömerdi. Onların üzerindeki iki kural her sıralama için yerinde kalıyor, çünkü onlar
+bir satırın nasıl karşılaştırıldığıyla değil nereye *ait olduğuyla* ilgili: kuşanılmış bir
+eşya aslında listede değildir ve takas için sıraya girmiş bir satır listenin dibine aittir.
+
+**Yükleme sırasında taşınmak yerine yüklemeden sonra geri konuyor.** Yükleme yolu eşya
+listesini on dokuz ayrı push noktasından dolduruyor ve bunların çoğu bu alandan çok daha eski
+kayıtlar için göç dalları. Kaydedilmiş bir anahtarı sonradan kurulmuş envanterle eşleştirmek,
+on dokuz yer yerine tek bir yer; anahtarı bir göç sırasında değişmiş bir girdi de yüklemenin
+verdiği sırayı koruyor.
+
+**Ölçüldü ve ölçüm planı düzeltti.** Teklif, eski bir kaydın her girdiyi "eşit derecede eski"
+diye eşitlemek zorunda kalacağını söylüyordu. Kalmıyor: bir nesne dizge anahtarlarını
+eklendikleri sırayla listeliyor ve onlar eşyalar ilk alındıkça eklenmişti — yani eski bir
+kayıt bedavaya doğru sıralanıyor. Baştan sona doğrulandı: sıra, farklı bir anahtar düzeniyle
+yeniden yüklemeyi atlatıyor, bir yığına ekleme onu yukarı taşıyor ve yüklemeden sonra alınan
+ilk eşya kaydın taşıdığı her şeyin üstüne konuyor. Ardından gönderilen karşılaştırıcı
+temsilci satırlar üzerinde çalıştırıldı — bir sırayı akıl yürütmek yerine görmenin tek yolu:
+ilk tıklamada en yeni başta, ikincisinde ters, her şey eşitken alfabetik.
+
+**Tüccarlarda üç düğme kalıyor.** Onların stoğu oyuncu içeri girdiğinde üretiliyor, yani
+üretildiği sıra, kimsenin bir şey elde ettiği bir sıra değil.
+
+**Kısa etiketler ve cümlenin ipucu balonuna taşınması.** Bu yapılırken istendi: üzerinde
+"Ada göre sırala" / "Değere göre sırala" / "Türe göre sırala" / "Son eklenene göre sırala"
+yazan dört düğme, dört kelimenin yeteceği yerde dört cümle. Artık `Ad` `Değer` `Tür` `Son`
+okunuyorlar; tam ifade, mevcut `data-translation-title` üzerinden üzerine gelince görünüyor
+ve beceriler paneli de aynı işlemi gördü ki ikisi birbiriyle çelişmesin.
+
+**İki muhafız, ikisi de iki yönden negatif test edildi.**
+
+`check_a_sorted_field_is_saved`, bu özelliğin sessizce başarısız olabileceği sınıfı tutuyor:
+kaydın tutmadığı bir alana bağlı bir sıralama. Çalışan kod gibi görünüyor — düğme sıralıyor,
+düzen doğru — sonra bir yeniden yükleme alanı çöpe atıyor ve sıralama, hiçbir yerde hiçbir şey
+bildirilmeden keyfi hale geliyor. Ekranın bir envanter girdisinden aldığı özellikleri okuyor,
+bunlardan bir karşılaştırıcının gerçekten bir satırdan okuduklarını ayıklıyor ve her birini
+**iki** kayıtlı envanterde de zorunlu kılıyor; çünkü karakterin kaydına eklenip deponun
+kaydında unutulan bir alan, yarısı düzeltilmiş aynı hatadır. İki yarı sırayla kaldırıldı ve
+kontrol her seferinde doğru sahibi adıyla söyledi.
+
+`check_every_sort_button_is_understood` öteki ucu kapsıyor: bir sıralama, bir onclick içinde
+düz bir dizge, yani adını hiçbir dalın karşılamadığı bir düğme hiçbir şeyi yeniden dizmiyor ve
+tam olarak yanındaki üçü gibi görünüyor. İki yönde de çalışıyor — kimsenin işlemediği bir ad
+ve kimsenin sunmadığı bir dal — ve kullanılmayan yerel satır kontrolü de üçüncü bir açıdan
+onun yanında düşüyor.
 
 ### v0.7.25 - körfez saklamak yerine reddediyor
 

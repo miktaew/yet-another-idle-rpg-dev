@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 111 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 114 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -645,46 +645,6 @@ ve muhtemelen ikiden fazlasını bulur.
 
 
 
-### P-32 — Envanteri edinme sırasına göre sıralama `open`
-
-Sahibinin isteği: "Ada göre", "Değere göre" ve "Türe göre"nin yanına dördüncü bir düğme —
-adı "Son" olsun — en son elde edilen eşyaları en üstte gösterecek şekilde.
-
-**Ölçüldü ve engel şu: hiçbir şey "ne zaman"ı kaydetmiyor.** Bir envanter girdisi
-`{item, count}` ve hepsi bu — `InventoryHaver.add_to_inventory` bu iki alanı yazıyor,
-başka bir şey yazmıyor. Sıralanacak bir edinme sırası yok; yani bu bir karşılaştırıcı değil,
-bir alan.
-
-**Bu da onu bir gösterim sorusu değil, bir kayıt sorusu yapıyor.** Yalnızca bellekte tutulan
-bir sayaç her yüklemede sıfırlanır ve en yeni eşya, kaydın hangi sırayla serileştirdiğine
-bağlı olur — ki bu, sahibinin favorilerini kaybeden hatanın tam şekli ([STATUS.md](STATUS.md)
-kısıt 4). Yani alan kayda yazılmalı ve eski bir kayıt onsuz geliyor: var olan her eşyanın
-*bir yere* sıralanması gerekiyor ve "hepsi eşit derecede eski" tek dürüst cevap.
-
-**İşe yarayan en ucuz alan.** Zaman damgası değil — ekleme başına bir artan sayaç, girdi
-başına saklanan. Kayıtta envanter anahtarı başına bir sayı tutuyor, yüklemeler arasında
-kararlı ve saate ihtiyacı yok. `current_game_time.day_count` çok kaba: bir günde toplanan
-her şey eşitlenir ve bekleme oturumu çoğunlukla tek bir gün.
-
-**Karar gerektiren üç şey.**
-
-- **"Edinmek" ne sayılıyor.** Oyuncunun zaten sahip olduğu bir yığına ekleme: yığın en üste
-  mi atlıyor, yoksa ilk edinme sırasını mı koruyor? İstek "en son elde edilen" diyor, bu
-  yığının hareket etmesi lehine — ama o zaman sürekli takviye edilen bir ok yığını hiç
-  üstten inmiyor.
-- **Eski bir kayda ne oluyor.** Her girdinin sıfırda eşitlenmesi, "Son"a göre ilk
-  sıralamanın yeni eşyalar gelene kadar hiçbir şeye göre sıralama gibi görünmesi demek. Bu
-  dürüst ve aynı zamanda kötü bir ilk izlenim; alternatifi, sayacı mevcut gösterim
-  sırasından tohumlamak, ki o da bir geçmiş icat etmek olur.
-- **Öteki iki envanter.** `sort_displayed_inventory` karaktere, tüccara ve depoya hizmet
-  ediyor. Bir tüccarın rafı tazelemede yeniden üretiliyor, yani orada "Son" bir şey ifade
-  etmiyor; depo oyuncunun ve ediyor. Düğme büyük olasılıkla tüccarda görünmemeli.
-
-**Muhafız.** Sınıf şu: "gösterimin sıraladığı ama kaydın tutmadığı bir alan" ve
-`npm run check:save` gerçek bir dışa aktarımı zaten round-trip ediyor.
-`sort_displayed_inventory`'nin okuduğu her alanın `save_load.js`'in yazdığı bir alan olduğunu
-doğrulayan bir kontrol bunu tutar.
-
 ### P-34 — Tekrarlanabilir bir aksiyonun "Bitir"in yanında "Tekrar dene"ye ihtiyacı var `open`
 
 Sahibinin isteği, başarısız bir kilitten: sonucun altında bir **tekrar dene** düğmesi olsun;
@@ -763,6 +723,85 @@ kasabada geçiriyor.
 farklı biçimde mi zengin olması. Onu ikinci bir köy yapmak ucuz cevap ve yanlış cevap; meydan
 bir pazar ve bir kavşak, sunması gereken şey de bir pazarın ve bir kavşağın sunduğu şey.
 
+
+### P-37 — Her panel, gösterdiği şey değiştiğinde güncelleniyor mu? `open`
+
+Sahibinin sorusu, P-32 yapılırken sorulmuş ve P-31 ile aynı sınıfa işaret ediyor:
+*"envanter, veri gibi alanların güncellenmesini kontrol ettik mi?"*
+
+**Şu an bilinen şey ve bu yalnızca yarısı.** `check_every_panel_updater_is_called` (v0.7.23),
+bir paneli çizen her fonksiyonun bir çağıranı olduğunu kanıtlıyor. O çağıranın *ne zaman*
+çalıştığı hakkında hiçbir şey söylemiyor; P-31'in yaşadığı yer de tam olarak orasıydı:
+Keşifler panelinin beş çağıranı vardı ve hiçbiri panel açıkken tetiklenmiyordu, yani oyuncu
+bakarken bir sayı kımıldamıyordu.
+
+Envanter listesinin kendisi her toplamada `add_to_character_inventory`'den yeniden çiziliyor
+ve v0.7.26, "son" sıralaması aktifken yığın eklemelerinde yeniden sıralama ekledi. Yani çanta
+endişe değil. Soru, canlı bir sayı gösteren diğer panellerden hangilerinin gösterdikleri şeye
+bağlı olduğu.
+
+**Akıl yürütülmeyip ölçülmesi gereken şey.** Ekrandayken değişebilen bir değer gösteren her
+panel için — karakter statları, para, aktif etkiler, görev ilerlemesi, zanaat malzeme
+listesi, bestiary sayıları — o değeri değiştiren yoldan bir yeniden çizim çağrılıyor mu.
+Yalnızca sekme açılışında çizilen bir panel, yeniden P-31'dir.
+
+**Burada bir kontrolün neden zor olduğu ve önce düşünülmeye değdiği.** "Değer değiştiğinde
+çağrılıyor", "hiç çağrılıyor"un aksine bir ad taramasının görebileceği bir şey değil. Dürüst
+sürümü muhtemelen her paneli okuduğu durumla eşleştirip o durumu yazan herhangi bir yerin
+onun güncelleyicisine ulaşıp ulaşmadığını soruyor — ki bu bir çağrı grafiği sorusu ve bu
+projedeki ilki olurdu.
+
+### P-38 — Zaten kazanılmış itibar geriye dönük işlenmeli `open`
+
+Sahibinin bildirimi, karşı kontrol için bir kayıtla birlikte
+(`yet-another-idle-rpg 2026-09-01 17_49_16.txt`): *"bataklığa ekledik ama görevler
+tamamlandığı için görev tamamlamalara göre kontrol edip rep'leri güncelleyen bir metot
+ekleyelim"*. Ekran görüntüsü, Veri panelinde Köy 460, Kenar mahalle 200 ve Kasaba 150'yi
+listeliyor ve hiç bataklık satırı yok — hem de bataklık kabilesinde dururken alınmış.
+
+**Herhangi bir şey tasarlanmadan önce ölçülen iki olgu.**
+
+- **Eksik satır bir görüntü hatası değil.** `update_displayed_reputation` bir bölgeyi
+  yalnızca değeri sıfırın üzerindeyken gösteriyor ve bunu kendi üzerindeki yorumda
+  söylüyor. Yani bataklık satırının yokluğu, panelin doğruyu bildirmesi: itibar gerçekten
+  sıfır.
+- **Ödül var ve ulaşılamaz.** Beş bataklık teslimi her biri 50 ile 70 arası Swamp veriyor;
+  v0.7.20'de eklendi. Beşi de tek seferlik replikler ve bu sahibin kaydında hepsi
+  tamamlanmış — itibarı yalnızca kazanılmamış değil, kazanılamaz yapan şey de bu. Oyundaki
+  hiçbir şey artık onu veremiyor.
+
+**Sahibinin kaydına karşı ölçüldü (v0.7.25, `npm run check:save` ile kontrol edildi — her
+anahtar çözülüyor).** Kayıttaki bataklık itibarı tam olarak 0 ve beş bağış boyunca 300
+sunuluyor. Bunun en az 120'si kaydın tamamlanmış işaretlediği repliklerin üzerinde duruyor,
+yani kazanılabilir olarak 180 kalıyor — karşısında ise `{Swamp: {at_least: 200}}` isteyen
+`swampchief standing` var. **Yani reisin repliği bu kayıtta yalnızca kazanılmamış değil,
+bölgenin hâlâ sunduğu her şey yapıldıktan sonra bile ulaşılamaz.** Sorunun en keskin biçimi bu
+ve cevabın sabır değil bir onarım olmasını gerektiren de bu.
+
+**Bunun neden tek bir bölge değil bir sınıf olduğu.** Bir oyuncunun zaten bitirdiği içeriğe
+bağlanan her ödülün biçimi aynı: bağış yazılı, tetikleyici harcanmış ve oyuncu, tasarımın
+kazandığını söylediği bir şeyden kalıcı olarak yoksun. Bataklık, koca bir bölgenin itibarı
+sıfırda durduğu için fark edilen örnek.
+
+**Sahibi karar verdi ve bu tek durum için değil genel olarak karar verdi:** *"oyun
+yüklendiğinde, sayfa açıldığında kontroller bir kere çalışmalı. save migration yapılmalı.
+sürüm artışında örneğin swamp'a rep ekledik, ancak kullanıcının kaydında bu bilgi yok. bu
+durumda üst sürüme çıkarırken bunu eklemeli, mevcut kayıt kontrol edilmeli ve güncellemeleri
+yapılmalı."*
+
+Yani: sürüme bağlı, kayıt yüklenirken bir kez çalışan bir göç. Bu, `save_load.js`'in zaten bir
+düzine yerde kullandığı kalıp — `is_a_older_than_b(save_data["game version"], "v0.4.6.12")` ve
+akrabaları — ve bir kez çalışıp bir daha çalışmamasını sağlayan şey de sürüm karşılaştırması;
+neyin ödendiğini kaydetmeye gerek bırakmıyor.
+
+**Bunun işi neye dönüştürdüğü.** "Bataklığı işle" değil; bir itibar bağışını ekleyen sürümden
+önce yazılmış bir kayıt için, bitmiş içeriğin ne borçlu olduğunu hesaplayıp ödeyen bir göç
+adımı. Bataklık o adımın ilk maddesi; makine ise bir sonraki bağışın ihtiyaç duyacağı şey.
+
+**Muhafız sınıfı tutmalı.** Zaten bitirilebilir durumdaki içeriğe eklenmiş ve sonradan onu
+işleyen bir yolu olmayan bir ödül. Bu kontrol edilebilir: bir şey veren tek seferlik bir
+replik ya da görev, karşısında o bağışı zaten harcanmış bir kayıt için uzlaştıran herhangi
+bir şeyin olup olmadığı.
 
 ---
 

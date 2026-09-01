@@ -77,6 +77,10 @@ import {
     check_the_prediction_and_the_roll_share_one_source,
 } from "./checks/crafting.mjs";
 import {
+    check_a_sorted_field_is_saved,
+    check_every_sort_button_is_understood,
+} from "./checks/inventory.mjs";
+import {
     check_duration_units_have_rows,
     check_interpolated_pairs,
     check_locales,
@@ -193,6 +197,8 @@ await check_inherited_quality_is_shown();
 await check_higher_tiers_are_still_worth_reaching();
 await check_qualitied_materials_can_still_be_found();
 check_the_prediction_and_the_roll_share_one_source();
+check_a_sorted_field_is_saved();
+check_every_sort_button_is_understood();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

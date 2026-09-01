@@ -2,6 +2,56 @@
 
 import { getItem, getItemFromKey, item_templates } from "../items.js";
 
+/*
+    A counter that only ever goes up, handed out one number per addition to any inventory.
+
+    An inventory entry used to be {item, count} and that was all of it, which means there
+    was nothing on it that said WHEN it was got - so "show me what I picked up last" was not
+    a comparator waiting to be written, it was a field that had to start existing (P-32).
+
+    Shared across every InventoryHaver rather than one counter each, so the numbers stay
+    comparable if an item is ever moved between two of them. Gaps in the sequence are fine;
+    only the order matters.
+*/
+let next_obtained_order = 1;
+
+/**
+ * Keeps the counter above an order that came from somewhere else - a save, in practice.
+ *
+ * Without this, loading a game would hand the next picked-up item the number 1 and it would
+ * sort below everything the save already carried.
+ */
+function remember_obtained_order(order) {
+    if(order >= next_obtained_order) {
+        next_obtained_order = order + 1;
+    }
+}
+
+/**
+ * Puts the saved acquisition order back onto a freshly loaded inventory.
+ *
+ * Done after the inventory is built rather than carried through the load list, because that
+ * list is filled from nineteen different push sites - most of them migration branches for
+ * saves far older than this field - and matching a saved key against the built inventory is
+ * one place instead of nineteen.
+ *
+ * An entry whose key changed under a migration simply does not match and keeps the order it
+ * was handed while loading. Those are old saves, which have no order recorded anyway.
+ *
+ * @param {InventoryHaver} haver
+ * @param {Object} saved_inventory save_data.<owner>.inventory
+ */
+function restore_obtained_order(haver, saved_inventory) {
+    Object.keys(saved_inventory || {}).forEach(key => {
+        const order = saved_inventory[key]?.obtained_order;
+        if(!(order > 0) || !(key in haver.inventory)) {
+            return;
+        }
+        haver.inventory[key].obtained_order = order;
+        remember_obtained_order(order);
+    });
+}
+
 //extended by character and traders, as their inventories are supposed to work the same way
 class InventoryHaver {
     
@@ -37,7 +87,7 @@ class InventoryHaver {
                     items[i].count = 1;
                 }
                 const item = getItemFromKey(item_key);
-                this.inventory[item_key] = {item, count: items[i].count};
+                this.inventory[item_key] = {item, count: items[i].count, obtained_order: next_obtained_order++};
                 anything_new = true;
             } else { //in inventory
                 if(items[i].count === undefined) {
@@ -47,6 +97,14 @@ class InventoryHaver {
                 } else {
                     throw new TypeError(`Tried to add "${items[i].count}" items, which is not a valid number!`);
                 }
+
+                /*
+                    Topping up a stack counts as getting the item, so the stack moves back to
+                    the top of the "latest" sort. That is what was asked for - the most
+                    recently obtained items first - and a stack you keep adding to is a stack
+                    you keep getting.
+                */
+                this.inventory[item_key].obtained_order = next_obtained_order++;
             }
         }
         return anything_new;
@@ -80,4 +138,4 @@ class InventoryHaver {
     }
 }
 
-export {InventoryHaver};
+export {InventoryHaver, remember_obtained_order, restore_obtained_order};

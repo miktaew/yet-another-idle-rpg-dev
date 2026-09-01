@@ -185,36 +185,49 @@ function sort_displayed_inventory({sort_by, target = "character", change_directi
             return -1;
         }
 
-        //equippables below non-equippables
-        if(a.classList.contains("character_item_equippable") && !b.classList.contains("character_item_equippable")) {
-            return 1;
-        } else if(!a.classList.contains("character_item_equippable") && b.classList.contains("character_item_equippable")){
-            return -1;
-        } 
-        if(a.classList.contains("trader_item_equippable") && !b.classList.contains("trader_item_equippable")) {
-            return 1;
-        } else if(!a.classList.contains("trader_item_equippable") && b.classList.contains("trader_item_equippable")){
-            return -1;
-        } 
-        if(a.classList.contains("storage_item_equippable") && !b.classList.contains("storage_item_equippable")) {
-            return 1;
-        } else if(!a.classList.contains("storage_item_equippable") && b.classList.contains("storage_item_equippable")){
-            return -1;
-        } 
+        /*
+            The category rules below - and they are rules about WHAT a thing is, not when it
+            arrived - are skipped for "latest", which would otherwise answer the wrong
+            question: a sword just picked up would sit below every scrap of leather in the
+            bag, and the whole point of the sort is that the newest thing is at the top.
 
-        //components below non-components
-        if(a.children[0].children[0].children[0].innerText === "[Comp]" && b.children[0].children[0].children[0].innerText !== "[Comp]") {
-            return 1;
-        } else if(a.children[0].children[0].children[0].innerText !== "[Comp]" && b.children[0].children[0].children[0].innerText === "[Comp]") {
-            return -1;
+            The two rules above this stay in force for every sort, because they are about
+            where a row belongs rather than how it compares: an equipped item is not really
+            in the list, and a row queued for a trade belongs at the bottom of it.
+        */
+        if(sort_by !== "latest") {
+            //equippables below non-equippables
+            if(a.classList.contains("character_item_equippable") && !b.classList.contains("character_item_equippable")) {
+                return 1;
+            } else if(!a.classList.contains("character_item_equippable") && b.classList.contains("character_item_equippable")){
+                return -1;
+            } 
+            if(a.classList.contains("trader_item_equippable") && !b.classList.contains("trader_item_equippable")) {
+                return 1;
+            } else if(!a.classList.contains("trader_item_equippable") && b.classList.contains("trader_item_equippable")){
+                return -1;
+            } 
+            if(a.classList.contains("storage_item_equippable") && !b.classList.contains("storage_item_equippable")) {
+                return 1;
+            } else if(!a.classList.contains("storage_item_equippable") && b.classList.contains("storage_item_equippable")){
+                return -1;
+            } 
+
+            //components below non-components
+            if(a.children[0].children[0].children[0].innerText === "[Comp]" && b.children[0].children[0].children[0].innerText !== "[Comp]") {
+                return 1;
+            } else if(a.children[0].children[0].children[0].innerText !== "[Comp]" && b.children[0].children[0].children[0].innerText === "[Comp]") {
+                return -1;
+            }
+
+            //books below non-books
+            if(a.children[0].children[0].children[0].innerText === "[Book]" && b.children[0].children[0].children[0].innerText !== "[Book]") {
+                return 1;
+            } else if(a.children[0].children[0].children[0].innerText !== "[Book]" && b.children[0].children[0].children[0].innerText === "[Book]") {
+                return -1;
+            }
         }
 
-        //books below non-books
-        if(a.children[0].children[0].children[0].innerText === "[Book]" && b.children[0].children[0].children[0].innerText !== "[Book]") {
-            return 1;
-        } else if(a.children[0].children[0].children[0].innerText !== "[Book]" && b.children[0].children[0].children[0].innerText === "[Book]") {
-            return -1;
-        }
 
 
         const slot_a = a.dataset.item_slot;
@@ -281,7 +294,23 @@ function sort_displayed_inventory({sort_by, target = "character", change_directi
             //...otherwise, fall back to sorting by name in the parts below
         }
 
-        if(sort_by === "name" || sort_by === "type") {
+        if(sort_by === "latest") {
+            const order_a = Number.parseInt(a.dataset.obtained_order) || 0;
+            const order_b = Number.parseInt(b.dataset.obtained_order) || 0;
+
+            if(order_a !== order_b) {
+                /*
+                    Inverted against the others on purpose: the newest entry has the highest
+                    order and belongs first, so "asc" - which is what a fresh click on the
+                    button gives - reads as "latest first". Clicking again still flips it.
+                */
+                return order_a > order_b ? minus : plus;
+            }
+
+            //same order, so fall through to the name below and keep it stable
+        }
+
+        if(sort_by === "name" || sort_by === "type" || sort_by === "latest") {
             //These are rendered names, so both the case folding and the comparison
             //have to be locale aware. Plain toLowerCase turns Turkish "İ" into an
             //"i" followed by a combining dot instead of a plain "i", and a ">"
@@ -661,7 +690,13 @@ function update_displayed_character_inventory({item_key, equip_slot, character_s
         }
     }
     
-    if(was_anything_new_added && !skip_sorting) {
+    /*
+        Re-sorted when something new appeared - and also on every change while sorting by
+        "latest", because adding to a stack that is already there is not "anything new" and
+        yet it is exactly what that sort is meant to notice. Without this the order on the
+        entry moves and the row does not, until the next new item or a click on the button.
+    */
+    if((was_anything_new_added || character_inventory_sorting === "latest") && !skip_sorting) {
         sort_displayed_inventory({target: "character", sort_by: character_sorting, direction: sorting_direction});
     }
 }
@@ -714,7 +749,7 @@ function update_displayed_storage_inventory({item_key, sorting_direction="asc", 
 
     }
     
-    if(!item_key && was_anything_new_added) {
+    if(!item_key && (was_anything_new_added || storage_sorting === "latest")) {
         sort_displayed_inventory({target: "storage", direction: sorting_direction});
     }
 }
@@ -741,6 +776,12 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
     let target_item;
     let target_class_name;
     let item_class;
+    /*
+        When this entry was obtained, for sorting by "latest". Zero for the rows that have no
+        such thing: an equipped item, and the two trade lists, both of which the sort already
+        pins to the top or the bottom before it ever looks at this.
+    */
+    let obtained_order = 0;
     let options = {};
     let price_multiplier = 1;
     if(target === "trader") {
@@ -762,6 +803,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
             if(typeof trade_index === "undefined") {
                 target_item = character.inventory[key].item;
                 item_count = item_count || character.inventory[key].count;
+                obtained_order = character.inventory[key].obtained_order || 0;
             } else {
                 target_item = traders[current_trader].inventory[to_buy.items[trade_index].item_key].item;
                 item_count = item_count || to_buy.items[trade_index].count;
@@ -771,6 +813,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
             if(typeof trade_index === "undefined") {
                 target_item = traders[current_trader].inventory[key].item;
                 item_count = item_count || traders[current_trader].inventory[key].count;
+                obtained_order = traders[current_trader].inventory[key].obtained_order || 0;
             } else {
                 target_item = character.inventory[to_sell.items[trade_index].item_key].item;
                 item_count = item_count || to_sell.items[trade_index].count;
@@ -779,6 +822,7 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
         } else if(target === "storage") {
             target_item = player_storage.inventory[key].item;
             item_count = item_count || player_storage.inventory[key].count;
+            obtained_order = player_storage.inventory[key].obtained_order || 0;
             target_class_name = "storage_item";
         } else {
             throw new Error(`"${target}" is not a correct inventory owner`);
@@ -788,6 +832,8 @@ function create_inventory_item_div({key, item_count, target, is_equipped, trade_
     if(target_item.use_quality) {
         item_control_div.dataset.item_quality = target_item.quality;
     }
+
+    item_control_div.dataset.obtained_order = obtained_order;
 
     clear_HTML_content(item_name_div);
     let item_name_div_content = "";

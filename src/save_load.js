@@ -23,6 +23,7 @@ import { dialogues } from "./data/dialogues.js";
 import { favourite_locations, locations } from "./data/locations.js";
 import { skills } from "./data/skills.js";
 import { player_storage } from "./data/storage.js";
+import { restore_obtained_order } from "./components/inventory_component.js";
 import {
          change_completed_quest_visibility,
          format_money,
@@ -108,11 +109,18 @@ function create_save() {
         save_data.are_finished_quests_hidden = document.getElementById("quest_hiding_button").checked;
 
         Object.keys(character.inventory).forEach(key =>{
-            save_data["character"].inventory[key] = {count: character.inventory[key].count};
+            save_data["character"].inventory[key] = {
+                count: character.inventory[key].count,
+                //when it was got, for the "latest" sort - see inventory_component.js
+                obtained_order: character.inventory[key].obtained_order,
+            };
         });
         
         Object.keys(player_storage.inventory).forEach(key =>{
-            save_data["player_storage"].inventory[key] = {count: player_storage.inventory[key].count};
+            save_data["player_storage"].inventory[key] = {
+                count: player_storage.inventory[key].count,
+                obtained_order: player_storage.inventory[key].obtained_order,
+            };
         });
        
         //Object.keys(character.equipment).forEach(key =>{
@@ -964,6 +972,15 @@ function load(save_data) {
         }); //add all loaded items to list
         const skip_item_log = !is_a_older_than_b(save_data["game version"], "v0.5.5.9");
         add_to_character_inventory(item_list, skip_item_log); // and then to inventory
+        /*
+            Building the inventory handed every entry a fresh acquisition order in whatever
+            sequence the save happened to be written in, so put the saved one back.
+
+            An old save carries no order and every entry keeps what loading handed it, which
+            measures out as the right answer for free: an object lists its string keys in the
+            order they were inserted, and they were inserted as the items were first got.
+        */
+        restore_obtained_order(character, save_data.character.inventory);
 
         const storage_item_list = [];
         if(save_data.player_storage) {
@@ -1046,6 +1063,7 @@ function load(save_data) {
                 } //storage didn't exist before everything became stackable, so no need to check the other case
             }); //add all loaded items to list
             player_storage.add_to_inventory(storage_item_list); // and then to storage inventory
+            restore_obtained_order(player_storage, save_data.player_storage.inventory);
         }
 
         set_loading_screen_progress(translationManager.getText(language, "ui loading meowing"));
