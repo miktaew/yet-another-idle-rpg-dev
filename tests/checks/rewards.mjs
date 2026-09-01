@@ -383,7 +383,90 @@ function check_nothing_stamps_a_template_quality() {
 
     console.log(`[check] no template qualities stamped: ${scanned} files read the registry`);
 }
+/**
+ * A rolled reward set whose likeliest outcome is nothing.
+ *
+ * P-35, from the owner one version after the mechanism shipped: every chest gave the same
+ * wool scarf. The pool was two items at 35% and 25%, so the scarf was 1.4 per dagger -
+ * and, measured, **41% of opens gave nothing but the certain coin**, which was the largest
+ * single outcome in the box. Repetitive and empty at once, and no adjustment of two
+ * numbers fixes a pool of two things.
+ *
+ * That is checkable rather than a matter of taste: multiply the misses. If the chance of
+ * every item-bearing group failing at once is larger than the chance of any one of them
+ * hitting, the set's most likely result is that nothing came out of it, and the fix is a
+ * wider pool rather than a bigger number.
+ *
+ * Only groups granting `items` or `money` count. A set of effects is allowed to be mostly
+ * nothing - that is what a trap is - and a function-valued chance cannot be read
+ * statically, so those are skipped and named in the count.
+ */
+function check_a_rolled_set_is_not_mostly_nothing() {
+    let sets = 0;
+    let skipped = 0;
+
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js",
+                            "src/quests.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const opening of source.matchAll(/chance_of:\s*\[/g)) {
+            let depth = 0;
+            let close = -1;
+            for (let i = opening.index + opening[0].length - 1; i < source.length; i++) {
+                if (source[i] === "[") { depth++; }
+                else if (source[i] === "]") {
+                    depth--;
+                    if (depth === 0) { close = i; break; }
+                }
+            }
+            if (close === -1) continue;
+            sets++;
+
+            const chances = [];
+            for (const group of split_top_level(
+                source.slice(opening.index + opening[0].length, close))) {
+                const fields = entries_of(group.replace(/^\{/, "").replace(/\}$/, ""));
+                const chance = fields.find((field) => field.key === "chance");
+                const nested = fields.find((field) => field.key === "rewards");
+                if (!chance || !nested) continue;
+
+                //A derived chance cannot be read here; it is counted, not guessed at.
+                if (!/^[0-9.]+$/.test(chance.value)) { skipped++; continue; }
+                if (!/(?:^|[{,\s])(?:items|money):/.test(nested.value)) continue;
+
+                chances.push(Number(chance.value));
+            }
+
+            if (chances.length === 0) continue;
+
+            const nothing = chances.reduce((together, one) => together * (1 - one), 1);
+            const best = Math.max(...chances);
+
+            if (nothing > best) {
+                const line = source.slice(0, opening.index).split("\n").length;
+                error(`${relative}:${line} rolls ${chances.length} group(s) that grant `
+                    + `something, and they all miss ${(nothing * 100).toFixed(0)}% of the `
+                    + `time - more often than the likeliest of them hits `
+                    + `(${(best * 100).toFixed(0)}%). The most likely result is that `
+                    + `nothing came out, which reads as empty however good the contents `
+                    + `are. Widen the pool rather than raising a chance.`);
+            }
+        }
+    }
+
+    if (sets === 0) {
+        error("nothing rolls a reward set - "
+            + "check_a_rolled_set_is_not_mostly_nothing is out of date.");
+        return;
+    }
+
+    console.log(`[check] rolled sets: ${sets} set(s), none of them likelier to give `
+        + `nothing than something${skipped ? ` (${skipped} derived chance(s) skipped)` : ""}`);
+}
+
 export {
+    check_a_rolled_set_is_not_mostly_nothing,
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
     check_required_items,

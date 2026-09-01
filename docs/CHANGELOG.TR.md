@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 91 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 92 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,43 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.20 - sandık, birinin gömdüğü şeyi tutuyor
+
+P-35; mekanizmanın yayınlanmasından bir sürüm sonra bildirildi: her sandık aynı yün atkıyı
+veriyordu. Teklifi kapatıyor ve hata tam olarak yazılmaya değer, çünkü mekanizma doğruydu,
+içerik değildi.
+
+**Ölçüldü ve şikâyetin iki yarısı tek bir sebepti.** %35 ve %25'te iki eşya grubu, bağımsız
+atılıyor: atkı hançer başına 1,4 taneydi ve **açışların %41'i sikkeden başka hiçbir şey
+vermiyordu** — kutudaki en büyük tek sonuç. Aynı anda tekrarlı ve boş; ve iki sayının
+ayarlanması, iki şeylik bir havuzu düzeltmiyor.
+
+**Gömülmüş bir zulanın ne tuttuğu ve cevap oyunda zaten vardı.** Hiçbir tüccarın satmadığı
+22 düşman ganimetinden — P-24 için sayıldı — arka oda beş bitmiş olanı aldı; bunlar da
+altındaki hamlar: `Wolf fang`, `Boar tusk`, `Bear claw`, `Bear hide`,
+`Mountain goat horn`, `Frog hide` ve `Weak monster bone`; %2 ile %12 arası düşme oranlarıyla.
+Her biri, 50-e-1 bir kasaplık yükseltmesinin **elli** tanesini istediği şey; atkıdan farkı da
+bu: ikinci bir tılsım satış fiyatı kadar değerli, ikinci bir diş demeti ise bir nişanenin
+ellide biri. Kopyalar sorun değil, meselenin kendisi.
+
+Artık sekiz eşya grubu var, yedisi yığın. Açış başına beklenen 1,48 yığın ve yalnızca-sikke
+durumu **%41'den %19'a** düşüyor. Atkı %8'de kalıyor — eski şansının on ikide biri — çünkü
+kutudaki kişisel şey o.
+
+**Muhafız: `check_a_rolled_set_is_not_mostly_nothing`.** Bulgu mekanik, kural da öyle: eşya
+ya da para veren her grubun ıskalarını çarp; hepsi birlikte, en olası olanının isabet
+ettiğinden daha sık ıskalıyorsa, kümenin en olası sonucu hiçbir şeyin çıkmamasıdır. Yalnızca
+`items` ve `money` sayılıyor — etkilerden oluşan bir küme çoğunlukla hiçbir şey olabilir, ki
+tuzak odur — ve türetilmiş bir şans tahmin edilmek yerine atlanıp sayımda anılıyor.
+v0.7.19'un yayınladığı tam sayılara karşı negatif test edildi: %35'e karşı %41'i adıyla
+bildiriyor.
+
+**Ve ilk yazıldığında düşemiyordu**; bu, projede altıncı kez. İki regex, `$` (son çapası)
+gerekirken `\$` (düz dolar) taşıyordu; yani sayısal şans testi hiçbir şeyle eşleşmedi, her
+grup "türetilmiş" sayılıp atlandı ve kontrol hiçbir şey yapmadan geçti. Onu ele veren şey
+özet satırı oldu: tam olarak bir tane olduğu yerde on türetilmiş şansın atlandığını
+bildiriyordu.
 
 ### v0.7.19 - şans taşıyabilen bir ödül ve canı yakabilen bir ödül
 

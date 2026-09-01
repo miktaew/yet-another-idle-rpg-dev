@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 91 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 92 -->
 
 # Changelog
 
@@ -20,6 +20,43 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.20 - the chest holds what somebody buried
+
+P-35, reported one version after the mechanism shipped: every chest gave the same wool
+scarf. It closes the proposal, and the mistake is worth writing down precisely because the
+mechanism was right and the content was not.
+
+**Measured, and both halves of the complaint were one cause.** Two item groups at 35% and
+25%, rolled independently: the scarf was 1.4 per dagger, and **41% of opens gave the coin
+and nothing else** - the largest single outcome in the box. Repetitive and empty at the same
+time, and no adjustment of two numbers fixes a pool of two things.
+
+**What a buried cache holds, and the game already had the answer.** Of the 22 enemy drops no
+trader anywhere sells - counted for P-24 - the back room took the five finished ones, and
+these are the raw ones underneath: `Wolf fang`, `Boar tusk`, `Bear claw`, `Bear hide`,
+`Mountain goat horn`, `Frog hide` and `Weak monster bone`, at 2% to 12% drop rates. Each is
+what a 50-to-1 butchering upgrade wants **fifty** of, which is the difference from the
+scarf: a second amulet is worth its sale price and a second bundle of fangs is a fiftieth of
+a trophy. Duplicates are the point rather than the problem.
+
+Eight item groups now, seven of them stacks. Expected 1.48 stacks per open, and the
+coin-only case falls from **41% to 19%**. The scarf stays at 8% - a twelfth of its old
+chance - because it is the personal thing in the box.
+
+**Guard: `check_a_rolled_set_is_not_mostly_nothing`.** The finding is mechanical, so the
+rule is too: multiply the misses of every group that grants items or money, and if they all
+fail together more often than the likeliest one hits, the set's most likely result is that
+nothing came out. Only `items` and `money` count - a set of effects is allowed to be mostly
+nothing, which is what a trap is - and a derived chance is skipped and named in the count
+rather than guessed at. Negative-tested against the exact numbers v0.7.19 shipped: it
+reports 41% against 35% by name.
+
+**And it could not fail when first written**, which is the sixth time in this project. Two
+regexes carried `\$` where they needed `$` - a literal dollar instead of an end anchor - so
+the numeric-chance test matched nothing, every group was counted as "derived" and skipped,
+and the check passed while doing nothing at all. The summary line is what gave it away: it
+reported ten skipped derived chances where there is exactly one.
 
 ### v0.7.19 - a reward that can carry a chance, and one that can hurt
 

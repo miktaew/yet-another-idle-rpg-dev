@@ -92,6 +92,7 @@ import {
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
     check_required_items,
+    check_a_rolled_set_is_not_mostly_nothing,
     check_reward_keys,
 } from "./checks/rewards.mjs";
 import {
@@ -106,6 +107,7 @@ import {
 check_site();
 check_interpolated_pairs();
 check_reward_keys();
+check_a_rolled_set_is_not_mostly_nothing();
 check_location_types();
 check_content_is_reachable();
 check_money_requirements();

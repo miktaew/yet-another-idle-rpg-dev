@@ -4380,6 +4380,23 @@ function get_location_type_penalty(type, stage, stat, category) {
                 which is what `chance_of` exists for - before it an action had one success
                 path and every chest held the same scarf.
 
+                WHAT is in the pool was got wrong once and is measured now (P-35). The
+                first version held two items at 35% and 25%, so the scarf was 1.4 per
+                dagger and 41% of opens gave coin and nothing else: repetitive AND empty,
+                and no adjustment of two numbers fixes a pool of two things.
+
+                What a buried cache holds is what somebody put by, and the game already
+                had the answer: of the 22 enemy drops no trader anywhere sells, the back
+                room took the five finished ones and these are the raw ones underneath.
+                They are hides, fangs, tusks and bone at 2% to 12% drop rates, and each
+                is what a 50-to-1 butchering upgrade wants FIFTY of - so a duplicate is
+                not dead weight here, it is the point. That is the difference from the
+                scarf: a second amulet is worth its sale price and a second bundle of
+                fangs is a fiftieth of a trophy.
+
+                The scarf stays, at a twelfth of its old chance. It is the personal thing
+                in the box and it should be the rare one.
+
                 The trap's chance READS THE SKILL rather than being a constant: 30% at
                 Lockpicking 0 down to 6% at 30, because somebody who knows locks notices
                 the wire under the lid. It costs health for a while and never the chest -
@@ -4390,12 +4407,36 @@ function get_location_type_penalty(type, stage, stat, category) {
                 skill_xp: {Lockpicking: 260},
                 chance_of: [
                     {
-                        chance: 0.35,
-                        rewards: {items: [{item: "Wool scarf", quality: 90}]},
+                        chance: 0.3,
+                        rewards: {items: [{item: "Wolf fang", count: 6}]},
                     },
                     {
                         chance: 0.25,
-                        rewards: {items: [{item: "Cheap iron dagger", quality: 70}]},
+                        rewards: {items: [{item: "Boar tusk", count: 5}]},
+                    },
+                    {
+                        chance: 0.2,
+                        rewards: {items: [{item: "Bear claw", count: 4}]},
+                    },
+                    {
+                        chance: 0.2,
+                        rewards: {items: [{item: "Bear hide", count: 3}]},
+                    },
+                    {
+                        chance: 0.18,
+                        rewards: {items: [{item: "Mountain goat horn", count: 4}]},
+                    },
+                    {
+                        chance: 0.15,
+                        rewards: {items: [{item: "Frog hide", count: 3}]},
+                    },
+                    {
+                        chance: 0.12,
+                        rewards: {items: [{item: "Weak monster bone", count: 2}]},
+                    },
+                    {
+                        chance: 0.08,
+                        rewards: {items: [{item: "Wool scarf", quality: 90}]},
                     },
                     {
                         chance: 0.15,

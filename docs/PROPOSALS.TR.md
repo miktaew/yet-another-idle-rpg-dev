@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 105 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 106 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -761,6 +761,19 @@ Yani kışta iki mevsimlik aksiyon saklanıyor, öteki üçü de oyuncunun yapma
 bekliyor. Kırık bir şey yok. **Deneyim yine de yanlış** ve projenin bunun nedenini yazdığı
 yer zaten var.
 
+**İkinci bir ekran görüntüsüyle düzeltildi: İlkbaharda da boş.** Mevsim koşulları
+*ikinci* katman, ilk değil. Körfezin dört aksiyonu da `is_unlocked: false` ve her biri
+liman saymanının diyaloguyla ya da başka bir aksiyonla açılıyor —
+`read the departures`, `lend a hand on the quay` ve `ask who carried it` `dialogues.js`'ten,
+`see the manifest` bir aksiyondan — balıkçılık etkinliği ise bir kitabı bekliyor. Yani
+körfez, saymanın konuşması işlenene kadar **her** mevsimde boş okunuyor ve mevsim kapısı
+ancak ondan sonra önem taşıyor.
+
+Bu da düzeltmeyi tek bir koşulu taşımaktan geniş kılıyor: körfez, yerleşimlerin
+görünür-ve-reddedilen desenini kullandığı yerde `is_unlocked` (görünmez) kullanıyor ve
+oyunun en ince bölgesi. Soru, bu bölgenin yerleşim desenini izlemesi gerekip gerekmediği —
+`is_unlocked`'ın her yerde yanlış olup olmadığı değil, ki değil.
+
 **`display_conditions` saklıyor; `required` sebebiyle reddediyor.** Faz 4'ün kuralı, P-25'te
 yeniden ifade edildiği hâliyle: *"Yerleşim aksiyonları kazanılmadan önce görünüyor ve
 sebebiyle reddediliyor; bilerek, çünkü kimsenin göremediği kilitli bir kapı hedef
@@ -960,41 +973,38 @@ da koşulun DOM kurucusunun içinde değil, bir testin çağırabileceği bir fo
 gerektiği anlamına geliyor.
 
 
-### P-35 — Her sandıktan aynı yün atkı çıkıyor `open`
 
-Sahibi, v0.7.19'un atılan içerikleri yayınlamasından bir sürüm sonra bildirdi: sandık sürekli
-yün atkı veriyor.
+### P-36 — Kasaba meydanı köyden daha ince `open`
 
-**Ölçüldü ve sayılar bunu açıkça söylüyor.** Dört grup bağımsız atılıyor, yani açış başına:
-atkı %35, hançer %25, gizli dip %15 ve tuzak türetilmiş şansıyla. Atkı kutudaki en olası şey
-ve **her hançere karşılık 1,4 atkı**; on açışta aynı tılsımdan yaklaşık üç buçuk tane.
-Açışların %41'i ise sikke dışında hiçbir şey vermiyor; şikâyetin öteki yarısı da bu — kutu hem
-tekrarlı hem boş geliyor.
+Sahibinin isteği, üç parça ve bir karşılaştırma hâlinde: kasaba meydanının, köyünkine benzer
+alternatif beceri geliştirme yollarına ihtiyacı var, bir tüccarı olmalı ve nöbet tutmak para
+kazandırmalı.
 
-**Hata şansta değil, havuzda.** `chance_of` bağımsız atışlar veriyor, ki doğru genel
-mekanizma; ama iki eşyalık bir havuza yöneltildi. %35 ve %25'te iki eşya, sayılar ne olursa
-olsun çeşitli hissettiremez ve atkının tekrarlaması, iki sayıdan büyük olanının dediğini
-yapmasından ibaret.
+**Ölçüldü, çünkü "ince" kontrol edilebilir bir şey.** Yerleşim başına sayıldığında —
+aksiyonlar, etkinlikler ve tüccarlar — köy oyunun en zengin yeri ve kasaba meydanının bunun
+neredeyse hiçbiri yok. Bu bir kaza değil: köy, oyunun başladığı ve öğretici yüzeyinin
+yaşadığı yer. Yine de sahibinin işaret ettiği boşluk gerçek, çünkü oyuncu oyunun ortasını
+kasabada geçiriyor.
 
-**Üç düzeltme ve bunlar alternatif değil — ilki her hâlükârda gerekli.**
+**Her parçanın maliyeti.**
 
-1. **Daha geniş bir havuz.** Ölçülmüş kısa liste zaten yazılı: hiçbir tüccarın satmadığı 22
-   düşman ganimeti (P-24'ün kendi ölçümü), 4. ve 5. kademe giysi takımları ve üretilmiş
-   bileşenler. Gömülmüş bir kutu, birinin gömdüğü şeyi tutmalı; bu da üretim stoğu yerine
-   kişisel eşyalar ve aletler lehine bir argüman.
-2. **"Birini seç" anlamı.** Bağımsız atışlar, bir açışın her şeyi ya da hiçbir şeyi
-   verebilmesi demek. Ağırlıklı bir seçim — ağırlığa göre tam olarak bir girdi — bir ganimet
-   kutusunun genellikle olduğu şey ve aynı anda %41'lik boş durumu da ortadan kaldırıyor. Bu,
-   `chance_of`'un değişmesi değil onun yanında ikinci bir mekanizma ve birini eklemek
-   `chance_of`'un gördüğü özeni gerektiriyor: yükleme yolu onu atlamalı ve içeriği yüklemenin
-   atladığı şeyler olmalı.
-3. **Bir giyilebilirin kopyası ölü ağırlık.** Atkı bir Amulet: ikincisi satış fiyatı kadar
-   değerli, o kadar. Ya havuz çoğunlukla tüketilebilir ve malzeme tutmalı, ya da tekrarlar bir
-   şey ifade etmeli — ve birincisi çok daha ucuz.
+- **Beceri pratiği.** Köydeki koşu, ağırlık kaldırma ve meditasyon birer `LocationActivity`
+  — bir beceri, tik başına bir süre ve başka hiçbir şey. Kasaba meydanı yeni makine olmadan
+  kendi setine sahip olabilir; ilginç soru *hangi* beceriler olduğu: köyünkileri tekrarlamak
+  iki yeri birbirinin yerine geçirir ve kasabada tarla değil sokaklar, kalabalık ve bir pazar
+  var.
+- **Bir tüccar.** Mekanizmayı P-25, fiyatlamayı P-19 karara bağladı: bir tüccarın
+  `market_region`'a ihtiyacı var ve meydanın bölgesi `Town`, ki zaten var. Olmaması gereken
+  şey ikinci bir genel dükkân — oyunda dört tane var ve iki kafe v0.7.9'da tam olarak
+  başkasının satmadığını sattıkları için eklendi.
+- **Para kazandıran nöbet.** `Job` mevcut mekanizma ve meydan, kasabada ücretli işi olmayan
+  tek yer. v0.7.10, kayıkçının fiyatı için bütün para ekonomisini ölçtü ve o ölçüm buranın da
+  girdisi: oyundaki tek tekrarlanabilir gelir birim başına 50 ile devriye, yani ikinci bir
+  ücretli iş, ona karşı belirlenmiş her fiyatın şeklini değiştiriyor.
 
-**Olmaması gereken şey.** Şans sayılarının, kutu çoğunlukla boşalana kadar düşürülmesi. %41
-ile "sikkeden başka hiçbir şey" zaten en büyük tek sonuç; havuzu genişletmeden atkıyı
-seyreltmek kutuyu daha çeşitli değil daha kötü yapar.
+**Karar gerektiren şey.** Kasaba meydanının köy *kadar* mı zengin olması gerektiği, yoksa
+farklı biçimde mi zengin olması. Onu ikinci bir köy yapmak ucuz cevap ve yanlış cevap; meydan
+bir pazar ve bir kavşak, sunması gereken şey de bir pazarın ve bir kavşağın sunduğu şey.
 
 
 ---

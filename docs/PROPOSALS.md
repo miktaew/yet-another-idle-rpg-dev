@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 105 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 106 -->
 
 # Proposals
 
@@ -738,6 +738,19 @@ So in Winter the two seasonal actions are hidden, and the other three are waitin
 the player has not done. Nothing is broken. **The experience is still wrong**, and the
 project has already written down why.
 
+**Corrected by a second screenshot: it is empty in Spring too.** The seasonal conditions
+are the *second* layer, not the first. All four bay actions are `is_unlocked: false` and
+each is opened by the harbour tallyman's dialogue or by another action -
+`read the departures`, `lend a hand on the quay` and `ask who carried it` from
+`dialogues.js`, `see the manifest` from an action - and the fishing activity waits on a
+book. So the bay reads as empty in **every** season until the tallyman's conversation has
+been worked, and the seasonal gate only matters after that.
+
+Which makes the fix broader than moving one condition: the bay uses `is_unlocked` (invisible)
+where the settlements use visible-and-refused, and it is the thinnest region in the game. The
+question is whether this region should follow the settlement pattern instead - not whether
+`is_unlocked` is wrong everywhere, which it is not.
+
 **`display_conditions` hides; `required` refuses with a reason.** Phase 4's rule, restated
 in P-25: *"the settlement actions are visible before they are earned and refused with a
 reason, deliberately, because a locked door nobody can see is not a goal."* The seasonal
@@ -933,40 +946,40 @@ here is a test that the button is built only when `can_be_started` is true - whi
 condition has to live in a function that a test can call, not inline in the DOM builder.
 
 
-### P-35 — Every chest gives the same wool scarf `open`
 
-Reported by the owner one version after v0.7.19 shipped the rolled contents: the chest keeps
-producing a wool scarf.
+### P-36 — The town square is thinner than the village `open`
 
-**Measured, and the numbers say it outright.** The four groups roll independently, so per
-open: scarf 35%, dagger 25%, false bottom 15%, and the trap on its derived chance. The scarf
-is the likeliest thing in the box and it is **1.4 scarves for every dagger**; over ten opens
-it is about three and a half of the same amulet. And 41% of opens give coin and nothing
-else, which is the other half of the complaint - the box feels both repetitive and empty.
+The owner's request, in three parts and one comparison: the town square needs alternative
+ways to raise skills the way the village has, it should have a trader, and standing watch
+should pay.
 
-**The mistake is not the chance, it is the pool.** `chance_of` gives independent rolls,
-which is the right general mechanism, and it was pointed at a pool of two items. Two items
-at 35% and 25% cannot feel varied no matter what the numbers are, and the scarf repeating is
-just the larger of two numbers doing what it says.
+**Measured, because "thinner" is checkable.** Counted per settlement - actions, activities
+and traders - the village is the richest place in the game and the town square has almost
+none of it. That is not an accident: the village is where the game starts and where its
+tutorial surface lives. It is still the gap the owner is pointing at, because the town is
+where a player spends the middle of the game.
 
-**Three fixes, and they are not alternatives - the first is required either way.**
+**What each part costs.**
 
-1. **A wider pool.** The measured shortlist is already written down: 22 enemy drops no
-   trader sells (P-24's own measurement), the tier-4 and tier-5 clothing sets, and the
-   generated components. A buried box should hold what somebody buried, which argues for
-   personal things and tools rather than crafting stock.
-2. **One-of semantics.** Independent rolls mean an open can give everything or nothing. A
-   weighted pick - exactly one entry, chosen by weight - is what a loot box usually is, and
-   it removes the 41% empty case at the same time. That is a second mechanism beside
-   `chance_of` rather than a change to it, and adding one needs the same care `chance_of`
-   got: the load path must skip it and its contents must be things a load skips.
-3. **Duplicates of a wearable are dead weight.** The scarf is an Amulet: the second one is
-   worth its sale price and nothing else. Either the pool holds mostly consumables and
-   materials, or repeats have to be worth something - and the first is much cheaper.
+- **Skill practice.** The village's running, weightlifting and meditation are
+  `LocationActivity` entries - a skill, a time per tick, and nothing else. The town square
+  can have its own set with no new machinery, and the interesting question is *which*
+  skills: repeating the village's would make the two places interchangeable, and the town
+  has streets, crowds and a market rather than fields.
+- **A trader.** P-25 settled the mechanism and P-19 the pricing: a trader needs a
+  `market_region`, and the square's is `Town`, which already exists. What it must not be is
+  a second general shop - the game has four of those and the two cafés were added in v0.7.9
+  precisely because they sell what nobody else does.
+- **Watch work that pays.** `Job` is the existing mechanism and the square is the one place
+  in the town with no paid work. v0.7.10 measured the whole money economy for the boatman's
+  price and that measurement is the input here: the only repeatable income in the game is
+  patrolling at 50 a unit, so a second paid job changes the shape of every price that was
+  set against it.
 
-**What must not happen.** The chance numbers must not simply be lowered until the box is
-mostly empty. 41% giving nothing but coin is already the largest single outcome; making the
-scarf rarer without widening the pool makes the box worse, not more varied.
+**What needs deciding.** Whether the town square should be *as* rich as the village or
+differently rich. Making it a second village is the cheap answer and the wrong one; the
+square is a market and a crossroads, and what it should offer is what a market and a
+crossroads offer.
 
 
 ---
