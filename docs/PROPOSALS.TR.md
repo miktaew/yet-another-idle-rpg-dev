@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 73 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 74 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -312,32 +312,25 @@ kâtibi arasında uzanıyor; Q-8'in kendi örneği — tek konu, iki konuşan, a
 aylık yürüyüş. Muhafızlar: iki aksiyonun otomatik olarak dâhil olduğu mevcut sınıf
 düzeyi kontroller ve 2a'dan gelen `check_lore_threads_resolve`.
 
-**Faz 3 — v0.7.2, *A Stroke Through It*.** İtibara bağlı soruşturma — Q-7 uyarınca
-dördüncü bir reputation bölgesi olan `Guild` üzerinden — ve **aynı parçayı değil,
-farklı parçaları** veren üç yol: lonca kayıtları, liman işçisinin tanıklığı, eski
-manifestolar. Eşikler uydurulmaz; gerçekten kazanılabilen değerlerden (bugün 610
-Village, 350 Slums, 320 Town) ve mevcut yerleşim aksiyonlarının oturduğu yerlerden
-türetilir. Kendinden önceki iki faz gibi bölündü.
-
-- **3a — bölge.** `bitti`. `character.reputation` artık dördüncü bir anahtar taşıyor:
-  `Guild`; adı iki dilde de var ve muhafızı da. Maliyet Q-7'nin ölçtüğü kadar oldu,
-  fazlası değil: tek alan, iki satır, bir kontrol. Eski bir kayıt bu anahtar olmadan
-  geliyor ve bildirilen 0 kalıyor; `update_displayed_reputation` yalnızca 0'ın
-  üstündeki bölgeleri çiziyor, yani kimse kazanmadığı bir satırı görmüyor;
-  `market_saturation`'a dokunulmadı, çünkü hiçbir şeyi fiyatlamayan bir loncanın
-  market bölgesine ihtiyacı yok. Muhafız: `check_reputation_regions_have_names`; bir
-  bölge anahtarını okuyan ve hiçbiri kendiliğinden birbiriyle uyuşmayan üç yüzeyin
-  üçünü de kapsıyor — karakter sayfasının `getDisplayName`'i; bir `reputation:` ödülü,
-  ki `add_reputation` tanımadığı bölgede **hata fırlatıyor**; ve bir `reputation:`
-  koşulu, ki aynı yazım hatası orada undefined okuyup kapıyı hiçbir şey söylemeden
-  temelli kapatıyor. Henüz hiçbir şey lonca itibarı kazandırmıyor, yani satır hiç
-  çizilmiyor ve sürüm de yok.
-- **3b — üç yol.** `open`. Lonca kayıtları, liman işçisinin tanıklığı ve eski
-  manifestolar; her biri farklı bir parça veriyor. Lonca itibarının kazanılabilir hâle
-  geleceği yer de burası ve **arc'ın içinde** kazanılabilir olmak zorunda, yalnızca
-  hâlihazırdaki lonca işinden değil: bu sürümden önce *The Merchant's Word*'ü bitirmiş
-  bir kayıt, aksi hâlde lonca yolundan temelli dışlanırdı. v0.7.2 olarak yayınlanacak
-  olan bu.
+**Faz 3 — v0.7.2, *A Stroke Through It*.** `bitti`. Üç yol, üç itibar ekseni, üç farklı
+parça. Loncanın mühür defteri `Guild`'i 50'de, hamallar `Slums`'ı 200'de, faktörün eski
+suretleri `Town`'u 150'de okuyor — sokağın ve meydanın kendi orta kademeleri; mevcut
+aksiyonları zaten 100/200/300 ve 50/150/250 üzerinde oturuyor. Hiçbiri mevsime bağlı
+değil: evrak da insanlar da yıl boyu burada ve manifestoyu geç sonbaharda okuyan bir
+oyuncu, onun hakkında soru sormak için ilkbaharı beklememeli. Her yol kazanılmadan önce
+görünüyor ve sebebiyle birlikte reddediliyor; kendinden önceki altı yerleşim aksiyonu
+gibi. 2. quest üç görev yerine **üç ilerleticisi olan tek bir görev** taşıyor; böylece
+oyuncunun sahip olmadığı hiçbir itibar questi kilitleyemiyor. Kaybettiği şey diğer iki
+parça oluyor ve iplik de kısalarak bunu söylüyor. Lonca itibarı arc'ın içinde
+kazanılabilir hâle geldi — 1. quest 60 ödüyor, bu da mühür defterinin 50'sini o kadarını
+yapmış herkesin menziline sokuyor, yapmamış hiç kimsenin menziline sokmuyor — yani
+*The Merchant's Word*'ü erken bitirmiş hiçbir kayıt dışarıda kalmıyor. Muhafız: 3a ile
+gelen `check_reputation_regions_have_names`; burada ikinci bir muhafız borç değil. Karar
+verirken ölçüldü: ilerleticisi olan 61 görünür görevin 5'inde kapısız hiçbir ilerletici
+yok; beşi de eğitilebilen ya da satın alınabilen skill ve eşya kapılarına bağlı. Bu,
+Faz 4'ün adlandırdığı çıkmaz sınıfı değil — sebebini söyleyerek reddeden bir kapı,
+başarısız olan bir kontrol değildir — ve ayrım, Faz 4 yeniden türetmek zorunda kalmasın
+diye kayda geçirildi.
 
 **Faz 4 — v0.7.3, *Out on the Ebb*.** Cezir yaklaşımı. Q-9 uyarınca en fazla iki
 yeni yer; demirleme yeri ve güverte oda değil aksiyon olur. Combat değil, skill ve

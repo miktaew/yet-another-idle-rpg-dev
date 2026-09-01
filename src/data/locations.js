@@ -2542,6 +2542,75 @@ function get_location_type_penalty(type, stage, stat, category) {
         deliberately incomplete - a hull, a tide, and a name column somebody left
         empty. The plains keep the banished tribe open; the bay keeps who paid open.
     */
+    /*
+        Phase 3, path one of three, and the first thing in the game to read Guild
+        standing (Q-7). 50 is what one arc quest pays, so the path is open to anybody
+        who got this far and to nobody who did not - which is the point of adding a
+        region rather than reusing Town: the town square already reads Town at
+        50 / 150 / 250, and a second gate on the same number is the same gate.
+
+        Visible before it is earned and refused with a reason, like the slums' three
+        and the square's three. A locked door the player cannot see is not a goal.
+    */
+    locations["Adventurer's guild"].actions = {
+        "read the seal book": new GameAction({
+            action_id: "read the seal book",
+            action_name: "action read the seal book name",
+            starting_text: "action read the seal book starting",
+            description: "action read the seal book desc",
+            action_text: "action read the seal book during",
+            success_text: "action read the seal book success",
+            is_unlocked: false,
+            required: {
+                reputation: {Guild: 50},
+            },
+            failure_texts: {
+                unable_to_begin: ["action read the seal book fail unable_to_begin 1"],
+            },
+            attempt_duration: 300,
+            success_chances: [1],
+            keep_progress: true,
+            rewards: {
+                skill_xp: {Literacy: 600},
+                reputation: {Guild: 15},
+                quest_progress: [{quest_id: "A Stroke Through It", task_index: 0}],
+                textlines: [{dialogue: "harbour tallyman", lines: ["tallyman what you found"]}],
+            },
+        }),
+    };
+
+    /*
+        Phase 3, path three of three. The factor writes down what comes up the road, so
+        anything landed at the bay and bound inland passes his desk twice - and he keeps
+        the copies. Town standing at 150, the square's own middle tier: the number the
+        town uses to decide it knows you.
+    */
+    locations["Town outskirts"].actions = {
+        "look through the old copies": new GameAction({
+            action_id: "look through the old copies",
+            action_name: "action look through the old copies name",
+            starting_text: "action look through the old copies starting",
+            description: "action look through the old copies desc",
+            action_text: "action look through the old copies during",
+            success_text: "action look through the old copies success",
+            is_unlocked: false,
+            required: {
+                reputation: {Town: 150},
+            },
+            failure_texts: {
+                unable_to_begin: ["action look through the old copies fail unable_to_begin 1"],
+            },
+            attempt_duration: 400,
+            success_chances: [1],
+            keep_progress: true,
+            rewards: {
+                skill_xp: {Literacy: 600, Perception: 400},
+                quest_progress: [{quest_id: "A Stroke Through It", task_index: 0}],
+                textlines: [{dialogue: "harbour tallyman", lines: ["tallyman what you found"]}],
+            },
+        }),
+    };
+
     locations["The bay"].actions = {
         "read the departures": new GameAction({
             action_id: "read the departures",
@@ -2613,6 +2682,41 @@ function get_location_type_penalty(type, stage, stat, category) {
             },
         }),
 
+        /*
+            Phase 3, path two of three. Not season-gated, and none of the three are:
+            the paperwork and the people are here all year, and a player who read the
+            manifest in late autumn should not have to wait until spring to ask a
+            question about it. A quest that stalls for half a game-year is not a gate,
+            it is a wall.
+
+            Slums standing, because what this needs is not respectability - it is
+            knowing how to ask somebody to say a thing they were told not to say, and
+            the row is where that is learnt. 200 is the row's own middle tier, which
+            the district's three actions already sit on at 100 / 200 / 300.
+        */
+        "ask who carried it": new GameAction({
+            action_id: "ask who carried it",
+            action_name: "action ask who carried it name",
+            starting_text: "action ask who carried it starting",
+            description: "action ask who carried it desc",
+            action_text: "action ask who carried it during",
+            success_text: "action ask who carried it success",
+            is_unlocked: false,
+            required: {
+                reputation: {Slums: 200},
+            },
+            failure_texts: {
+                unable_to_begin: ["action ask who carried it fail unable_to_begin 1"],
+            },
+            attempt_duration: 300,
+            success_chances: [1],
+            keep_progress: true,
+            rewards: {
+                skill_xp: {"Presence sensing": 400},
+                quest_progress: [{quest_id: "A Stroke Through It", task_index: 0}],
+                textlines: [{dialogue: "harbour tallyman", lines: ["tallyman what you found"]}],
+            },
+        }),
         "see the manifest": new GameAction({
             action_id: "see the manifest",
             action_name: "action see the manifest name",

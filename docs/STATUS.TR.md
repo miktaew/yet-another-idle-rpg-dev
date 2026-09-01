@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 20 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 21 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -175,15 +175,15 @@ yayımlanmış bir hatayı kodlayanlar:
 | `imports resolve` | Dışa aktarmayan bir modülden içe aktarılan ad. 677 ad. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
-| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 1.949 kimlik. |
+| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 1.973 kimlik. |
 | `action button labels` | Düğmenin içine çizilen paragraf. 45 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
 | `documentation` | Geride kalmış çeviri ya da hiçbir yeri göstermeyen bağlantı. 18 dosya. |
 | `no raw control bytes` | Bayt olarak yazılmış NUL; grep'in dosyayı ikili saymasına yol açar. |
 | `no English written into the DOM` | Yereli atlayıp doğrudan yazılmış metin. 212 sabit. |
 | `hidden quest tasks` | İlerleyemeyen görev. 11 adım. |
-| `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 56 adım. |
-| `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 62 aksiyon. |
+| `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 61 adım. |
+| `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 65 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
 | `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 44'ü yapılamaz. |
 | `quest hints` | Listesini boşaltıp sonra hiçbir şey söylemeyen bir ipucu kurucusu. |
@@ -191,7 +191,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 | `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. 1 iplik, 3 satır. |
-| `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 51 kullanım. |
+| `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 58 kullanım. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -213,8 +213,10 @@ sayılmaz; koruma da hata geri konularak sınanır.
   şekilde v0.7.1 olarak yayınlandı: boşaltma ile manifesto, mevcut körfez üzerinde iki
   aksiyon; 1. quest kimsenin elinden değil işten açılıyor; arc'ın ilk lore ipliği de
   iki konuşan arasında uzanıyor. *A Stroke Through It* olan Faz 3 de aynı şekilde
-  bölündü: dördüncü reputation bölgesi `Guild`, adları ve muhafızı olan 3a girdi; üç
-  soruşturma yolu ile onları açan itibar olan 3b, v0.7.2 olarak yayınlanacak.
+  v0.7.2 olarak yayınlandı: üç itibar ekseni üzerinde üç soruşturma yolu — `Guild` 50,
+  `Slums` 200, `Town` 150 — her biri farklı bir parça veriyor ve 2. quest herhangi
+  birinden bitiyor. Sıradaki faz, *Out on the Ebb* olan Faz 4; Q-9'u harcayacak — en
+  fazla iki yeni yer.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.

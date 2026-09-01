@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 66 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 67 -->
 
 # Changelog
 
@@ -20,6 +20,63 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.2 - *A Stroke Through It*: three ways in, three different answers
+
+P-14 phase 3b. The brief's requirement was three information paths that give **different
+pieces rather than the same piece**, and that is the whole design problem: three ways to
+learn one fact is one path with three doors.
+
+**The three pieces.** The guild's seal book says the mark on that line is a house seal,
+cut out of good stock by somebody who has done it before, and belonging to a house that
+is not in the book and never was - the book being the record of every house seal in use
+in this town is exactly what makes its absence mean something. The porters say two men
+took it off a forty-ton hull, that it was light, and that it went south on a cart with
+its wheels wrapped in sacking, before the light went. The factor's old copies say the
+same empty line is there two springs back, with one letter begun in the destination
+column and stopped, under the ruling - so somebody knew where it was going for as long as
+it takes to write one letter. Who paid is in none of them, and that is the arc's
+one-layer rule holding.
+
+**The thresholds were derived, not invented.** The slums' three actions sit at 100 / 200
+/ 300 and the square's three at 50 / 150 / 250, against 350 Slums and 320 Town earnable
+across the story. The porters read Slums at 200 and the factor's shelf reads Town at 150
+- each district's own middle tier. The seal book reads Guild at 50, which is the region
+Q-7 added and which nothing read until now.
+
+**Guild standing had to become earnable inside the arc**, and that was the one decision
+here with a save behind it. Bolting it onto *The Merchant's Word* would have paid nobody
+who finished that quest before today, and the guild path would be shut for those players
+for good. So quest 1 pays 60 on completion: in reach for anyone who got that far, out of
+reach for anyone who did not, and independent of when they played.
+
+**Quest 2 has one task with three advancers rather than three tasks with one each.** A
+player with the row but not the town, or the guild and neither, still finishes it. What
+they lose is the other two pieces, and the lore thread says so by being shorter. That is
+the owner's rule that a failed check never locks a quest, applied to standing.
+
+Which raised the question of whether phase 4's `check_no_dead_end_skill_gates` should
+come forward, the way phase 1's and 2's guards did. Measured rather than assumed: of 61
+visible tasks with advancers, 5 have no advancer that is ungated - *The Infinite Rat
+Saga* #3, *Village expansion* #0 and #7, *A Fire in a Hollow* #1, and this one. None of
+them is a dead end, because every one of those gates refuses with a reason and can be met
+by training a skill or buying a tool. A gate that says why is not a check that fails, and
+that is the distinction phase 4's guard has to be written around. Bringing it forward
+would have flagged four innocent tasks and taught the wrong rule, so it stays where it
+was planned, with the measurement recorded so phase 4 does not repeat it.
+
+**Nothing here is season-gated**, which is a decision rather than an oversight. The
+paperwork and the people are on the coast all year. Gating the investigation on the
+window would mean a player who read the manifest in late autumn waits until spring to ask
+a question about it, and a quest that stalls for half a game-year is not a gate, it is a
+wall.
+
+No new guard is owed: phase 3's own is `check_reputation_regions_have_names`, which
+shipped with 3a and now covers 58 uses across 4 regions.
+
+Measured in the loaded game: three paths on three different regions at 50 / 200 / 150,
+quest 1 paying Guild 60 and quest 2 paying 40 more, and the Marrowmoth thread now
+standing at three beats across two speakers.
 
 ### Guild standing is a reputation region, and a region key can no longer be a typo
 

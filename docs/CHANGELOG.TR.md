@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 66 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 67 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,63 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.2 - *A Stroke Through It*: üç giriş, üç farklı cevap
+
+P-14 Faz 3b. Briefin şartı, **aynı parçayı değil, farklı parçaları** veren üç bilgi
+yoluydu; asıl tasarım problemi de tam olarak bu: tek bir olguyu öğrenmenin üç yolu, üç
+kapılı tek bir yoldur.
+
+**Üç parça.** Loncanın mühür defteri, o satırdaki işaretin bir hane mührü olduğunu
+söylüyor: iyi malzemeden, bu işi daha önce yapmış birinin kestiği bir mühür ve defterde
+olmayan, hiç de olmamış bir haneye ait — defterin, bu kasabada kullanımdaki her hane
+mührünün kaydı olması, onun yokluğunu anlamlı kılan şeyin ta kendisi. Hamallar, kırk
+tonluk bir tekneden iki adamın indirdiğini, hafif olduğunu ve tekerlekleri çuval bezine
+sarılı bir arabayla, ışık gitmeden güneye gittiğini söylüyor. Faktörün eski suretleri,
+aynı boş satırın iki ilkbahar öncesinde de durduğunu söylüyor; varış sütununda başlanıp
+bırakılmış tek bir harfle ve cetvel çizgisinin altında — yani birileri o sandığın nereye
+gittiğini tek bir harf yazacak kadar bir süre biliyormuş. Parayı kimin verdiği üçünde de
+yok; arc'ın "tek katman" kuralı burada tutuyor.
+
+**Eşikler türetildi, uydurulmadı.** Sokağın üç aksiyonu 100 / 200 / 300, meydanınki
+50 / 150 / 250 üzerinde oturuyor; hikâye boyunca kazanılabilen değerler ise 350 Slums ve
+320 Town. Hamallar Slums'ı 200'de, faktörün rafı Town'u 150'de okuyor — her semtin kendi
+orta kademesi. Mühür defteri ise Guild'i 50'de okuyor; Q-7'nin eklediği ve şimdiye kadar
+hiçbir şeyin okumadığı bölge.
+
+**Lonca itibarının arc'ın içinde kazanılabilir hâle gelmesi gerekiyordu** ve buradaki tek
+"arkasında kayıt olan" karar buydu. Onu *The Merchant's Word*'e iliştirmek, o questi
+bugünden önce bitirmiş hiç kimseye bir şey ödemezdi ve lonca yolu o oyuncular için
+temelli kapanırdı. Bu yüzden 1. quest tamamlandığında 60 ödüyor: o kadarını yapmış herkes
+için menzilde, yapmamış hiç kimse için değil ve ne zaman oynadığından bağımsız.
+
+**2. quest, her biri bir ilerleticili üç görev yerine üç ilerleticili tek bir görev
+taşıyor.** Sokağı olup kasabası olmayan ya da loncası olup ikisi de olmayan bir oyuncu
+yine de bitiriyor. Kaybettiği şey diğer iki parça oluyor ve lore ipliği de kısalarak
+bunu söylüyor. Bu, sahibin "başarısız kontrol questi kilitlemez" kuralının itibara
+uygulanmış hâli.
+
+Bu da Faz 4'ün `check_no_dead_end_skill_gates` muhafızının, Faz 1 ve 2'ninkiler gibi öne
+alınıp alınmayacağı sorusunu doğurdu. Varsayılmadı, ölçüldü: ilerleticisi olan 61 görünür
+görevin 5'inde kapısız hiçbir ilerletici yok — *The Infinite Rat Saga* #3, *Village
+expansion* #0 ve #7, *A Fire in a Hollow* #1 ve bu. Hiçbiri çıkmaz değil, çünkü o
+kapıların hepsi sebebini söyleyerek reddediyor ve bir skill eğitilerek ya da bir alet
+alınarak karşılanabiliyor. Sebebini söyleyen bir kapı, başarısız olan bir kontrol
+değildir; Faz 4'ün muhafızının etrafında yazılması gereken ayrım da bu. Öne almak dört
+masum görevi işaretler ve yanlış kuralı öğretirdi; o yüzden planlandığı yerde kalıyor ve
+ölçüm, Faz 4 tekrarlamasın diye kayda geçti.
+
+**Buradaki hiçbir şey mevsime bağlı değil**; bu bir gözden kaçırma değil, bir karar.
+Evrak da insanlar da yıl boyu kıyıda. Soruşturmayı pencereye bağlamak, manifestoyu geç
+sonbaharda okuyan bir oyuncunun onun hakkında soru sormak için ilkbaharı beklemesi
+demekti; oyun yılının yarısı boyunca duran bir quest ise kapı değil, duvardır.
+
+Yeni bir muhafız borç değil: Faz 3'ün kendi muhafızı 3a ile gelen
+`check_reputation_regions_have_names` ve artık 4 bölgede 58 kullanımı kapsıyor.
+
+Yüklü oyunda ölçüldü: üç farklı bölge üzerinde üç yol, 50 / 200 / 150 eşiklerinde;
+1. quest Guild 60, 2. quest 40 daha ödüyor; ve Marrowmoth ipliği artık iki konuşan
+üzerinde üç beat.
 
 ### Lonca itibarı bir reputation bölgesi oldu; bölge anahtarı artık yazım hatası olamıyor
 

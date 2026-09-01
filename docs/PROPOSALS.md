@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 73 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 74 -->
 
 # Proposals
 
@@ -301,30 +301,24 @@ thread runs across the tallyman and the guild clerk, which is Q-8's own case —
 subject, two speakers, a month's walk apart. Guards: the existing class-level checks,
 which the two actions joined automatically, plus `check_lore_threads_resolve` from 2a.
 
-**Phase 3 — v0.7.2, *A Stroke Through It*.** Investigation, gated on standing — with
-`Guild` as a fourth reputation region, per Q-7 — over three paths that give **different
-pieces rather than the same piece**: guild records, dock worker testimony, old
-manifests. Thresholds derived from what is actually earnable (610 Village, 350 Slums,
-320 Town today) and from where the existing settlement actions already sit, not
-invented. Split like the two phases before it.
-
-- **3a — the region.** `done`. `character.reputation` has a fourth key, `Guild`, its
-  name in both locales, and the guard. The cost was what Q-7 measured and no more: one
-  field, two rows, a check. An old save arrives without the key and keeps the declared
-  0; `update_displayed_reputation` draws only regions above 0, so nobody sees a row
-  they have not earned; `market_saturation` is untouched, because a guild that prices
-  nothing needs no market region. Guard: `check_reputation_regions_have_names`, over
-  all three surfaces that read a region key and none of which agree automatically — the
-  character sheet's `getDisplayName`, a `reputation:` reward, where `add_reputation`
-  **throws** on a region it does not know, and a `reputation:` condition, where the
-  same typo reads undefined and shuts the gate for good with nothing said. Nothing can
-  earn Guild standing yet, so the row never draws and there is no version.
-- **3b — the three paths.** `open`. Guild records, dock worker testimony and old
-  manifests, each giving a different piece. This is also where Guild standing becomes
-  earnable, and it has to be earnable **inside the arc** rather than only from the
-  guild work that already exists: a save that finished *The Merchant's Word* before
-  this shipped would otherwise be locked out of the guild path for good. This is what
-  ships as v0.7.2.
+**Phase 3 — v0.7.2, *A Stroke Through It*.** `done`. Three paths, three standing axes,
+three different pieces. The guild's seal book reads `Guild` at 50, the porters read
+`Slums` at 200 and the factor's old copies read `Town` at 150 — the row's and the
+square's own middle tiers, which their existing actions already sit on at 100/200/300
+and 50/150/250. None is season-gated: the paperwork and the people are here all year,
+and a player who read the manifest in late autumn should not wait until spring to ask
+about it. Each path is visible before it is earned and refused with a reason, like the
+six settlement actions before them. Quest 2 has one task with **three** advancers rather
+than three tasks, so no standing a player lacks can lock it; what they lose is the other
+two pieces, and the thread is shorter by saying so. Guild standing becomes earnable
+inside the arc — quest 1 pays 60, which puts the seal book's 50 in reach of anyone who
+got that far and of nobody who did not — so no save that finished *The Merchant's Word*
+early is shut out. Guard: `check_reputation_regions_have_names`, shipped with 3a; no
+second one is owed here. Measured while deciding: 61 visible tasks have advancers and
+5 have none that is ungated, all five gated on skills or items that can be trained or
+bought. That is not the dead-end class phase 4 names — a gate that refuses with a reason
+is not a check that fails — and the distinction is recorded so phase 4 does not have to
+re-derive it.
 
 **Phase 4 — v0.7.3, *Out on the Ebb*.** The low-tide approach. Two new places at
 most, per Q-9, with the anchorage and the cargo deck as actions rather than rooms.

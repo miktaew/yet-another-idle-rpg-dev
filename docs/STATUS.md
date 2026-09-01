@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 20 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 21 -->
 
 # Status
 
@@ -174,15 +174,15 @@ but the ones that encode a bug that shipped:
 | `imports resolve` | A name imported from a module that does not export it. 864 names. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 141 names. |
-| `content text ids` | Player-facing text with no locale row. 1,949 ids. |
+| `content text ids` | Player-facing text with no locale row. 1,973 ids. |
 | `action button labels` | A paragraph rendered inside a button. 45 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
 | `no raw control bytes` | A NUL written as a byte, which makes grep call a file binary. |
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
-| `visible quest tasks` | A task named in the journal with no way to finish it. 56 tasks. |
-| `actions can explain failure` | An action that fails with no reason shown. 62 actions. |
+| `visible quest tasks` | A task named in the journal with no way to finish it. 61 tasks. |
+| `actions can explain failure` | An action that fails with no reason shown. 65 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 | `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
 | `quest hints` | A hint builder that filters itself down to nothing and then says nothing. |
@@ -190,7 +190,7 @@ but the ones that encode a bug that shipped:
 | `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 25 names across 54 files. |
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 3 lines. |
-| `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 51 uses. |
+| `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -212,9 +212,10 @@ directive is recorded before it is worked on:
   *Forty Tons*, shipped as v0.7.1: the unloading and the manifest are two actions on
   the existing bay, quest 1 opens from the work rather than from anybody handing it
   out, and the arc's first lore thread runs across two speakers. Phase 3,
-  *A Stroke Through It*, is split the same way: 3a, `Guild` as a fourth reputation
-  region with its names and its guard, is in; 3b, the three investigation paths and
-  the standing that opens them, is what ships as v0.7.2.
+  *A Stroke Through It*, shipped as v0.7.2: three investigation paths on three standing
+  axes - `Guild` at 50, `Slums` at 200, `Town` at 150 - each giving a different piece,
+  and quest 2 finishable from any one of them. Phase 4, *Out on the Ebb*, is next, and
+  it spends Q-9: two new places at most.
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.

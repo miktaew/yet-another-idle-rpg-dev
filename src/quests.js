@@ -778,6 +778,50 @@ const questManager = {
             money: 12000,
             reputation: {
                 Town: 25,
+                /*
+                    The arc's own source of Guild standing, and the reason it is here
+                    rather than bolted onto the guild work that already exists: a save
+                    that finished The Merchant's Word before v0.7.2 would never have
+                    been paid for it, and the guild path would be shut for that player
+                    for good. A path that is closed depending on when you happened to
+                    play is not a path. 60 puts the seal book's 50 in reach of anybody
+                    who finished this quest and of nobody who did not.
+                */
+                Guild: 60,
+            },
+        }
+    });
+    /*
+        P-14 quest 2. Three ways in and one task, because the three give DIFFERENT
+        pieces rather than the same piece: the seal that belongs to no house, the two
+        men and the wrapped cartwheels, and the letter somebody started to write two
+        springs ago and did not finish. Any one of them advances it.
+
+        That is not a shortcut, it is the owner's rule that a failed check never locks a
+        quest, applied to standing instead of to a skill. A player with the row but not
+        the town, or the guild but neither, still finishes; what they lose is the other
+        two pieces, and the lore thread says so by being shorter.
+    */
+    quests["A Stroke Through It"] = new Quest({
+        quest_name: "quest A Stroke Through It",
+        display_priority: 18,
+        getQuestDescription: ()=>{
+            if(quests["A Stroke Through It"].quest_tasks[0].is_finished) {
+                return "quest A Stroke Through It desc 2";
+            } else {
+                return "quest A Stroke Through It desc 1";
+            }
+        },
+        questline: "No Word Sent",
+        quest_tasks: [
+            new QuestTask({task_description: "quest A Stroke Through It task 1"}),
+            new QuestTask({task_description: "quest A Stroke Through It task 2"}),
+        ],
+        quest_rewards: {
+            xp: 60000,
+            reputation: {
+                Guild: 40,
+                Town: 20,
             },
         }
     });

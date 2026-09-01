@@ -2698,8 +2698,33 @@ class Textline {
                 lore_thread: "lore thread the Marrowmoth",
                 rewards: {
                     quest_progress: [{quest_id: "Forty Tons", task_index: 2}],
+                    //Quest 2 opens from the answer, not from the tallyman offering
+                    //work. He offers nothing; he has just told you it happened twice.
+                    quests: ["A Stroke Through It"],
+                    actions: [
+                        {location: "The bay", action: "ask who carried it"},
+                        {location: "Adventurer's guild", action: "read the seal book"},
+                        {location: "Town outskirts", action: "look through the old copies"},
+                    ],
                 },
                 locks_lines: ["tallyman last time"],
+            }),
+            /*
+                Whichever of the three paths the player took, they bring it back here.
+                He does not put it together for them and he does not tell them to stop.
+                The one thing he does is refuse to be the person who writes to anybody,
+                which is the sentence the whole region was built around.
+            */
+            "tallyman what you found": new Textline({
+                name: "tallyman what you found",
+                text: "tallyman what you found answ",
+                is_unlocked: false,
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
+                rewards: {
+                    quest_progress: [{quest_id: "A Stroke Through It", task_index: 1}],
+                },
+                locks_lines: ["tallyman what you found"],
             }),
         }
     });
