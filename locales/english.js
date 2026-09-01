@@ -3524,6 +3524,7 @@ const descriptions = {
     "ui xp per gathering cycle": "Getting {v1} base xp per gathering cycle to {v2}",
     "ui realtime": "realtime",
     "ui finish activity": "Finish {v1}",
+    "ui try again": "Try again",
     "ui finish": "Finish",
     "ui earnings": "(earnings: {v1})",
     "ui sleeping": "Sleeping...",

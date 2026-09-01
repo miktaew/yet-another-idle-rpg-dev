@@ -1093,7 +1093,15 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         }
     }
 
-    update_game_action_finish_button();
+    /*
+        A dialogue's instant action drops straight back to the conversation below, so there
+        is no result screen for a second button to sit on.
+    */
+    const result_screen_stays = !dialogue_key || action.attempt_duration > 0;
+    update_game_action_finish_button({
+        can_retry: result_screen_stays && action.offers_a_retry(character),
+        action_key,
+    });
 
     if(!dialogue_key) {
         set_game_action_finish_text(result_message);
@@ -1104,6 +1112,21 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
             remove_from_content_stack(content_stack_removal_options.TOP);
         }
     }
+}
+
+/**
+ * Runs the same action again from its own result screen (P-34).
+ *
+ * Ends the finished attempt first so the content stack does not grow one action box per try;
+ * `current_dialogue` is untouched by that, so a dialogue's action repeats inside its
+ * conversation and a location's inside the location.
+ *
+ * Nothing is skipped or discounted - this is the same call the location list makes, so every
+ * requirement is checked and every cost charged exactly as on a first attempt.
+ */
+function retry_game_action(action_key) {
+    end_game_action();
+    start_game_action(action_key);
 }
 
 /**
@@ -4035,6 +4058,7 @@ window.travel_to = travel_to;
 window.end_activity = end_activity;
 
 window.start_game_action = start_game_action;
+window.retry_game_action = retry_game_action;
 window.end_game_action = end_game_action;
 
 window.start_sleeping = start_sleeping;

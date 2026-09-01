@@ -1421,6 +1421,99 @@ const translationManager = globalThis.__real_tm;
             entry.location === "Wet woods" && entry.action === "cut the standing flax") === true);
 }
 
+// --- P-34: a retry is offered only where it would work ---------------------
+{
+    /*
+        The class this holds is "a button offered for something that cannot be done". A
+        retry that fails the moment it is clicked is worse than no retry: the player is
+        told the attempt is repeatable and then refused.
+
+        The lock is the case the request came from, and it is the sharp one - it keeps its
+        chest on failure and spends it on success, so the same action answers differently
+        either side of one attempt.
+    */
+    const [locations_module, items_module, components] = await load_browser_free(repo_root,
+        ["src/data/locations.js", "src/items.js", "src/component_management.js"]);
+
+    /*
+        main.js grafts the shared availability methods on at startup and main.js is stubbed
+        here, so canBeStarted does not exist until this runs. Without it offers_a_retry
+        throws rather than answering - which is how this test found that the method it
+        depends on is not there until the game boots.
+    */
+    components.fill_availability_methods();
+
+    const lock = locations_module.locations["Village"]?.actions?.["work at the lock"];
+    check("the lock action is still there to be retried", lock !== undefined);
+
+    const chest = items_module.item_templates["Locked chest"];
+    const player = (inventory) => ({
+        inventory, money: 1e9, reputation: {}, stats: {},
+        xp: {current_level: 50}, skills: {}, equipment: {}, titles: {},
+    });
+    const holding_a_chest = player({[chest.getInventoryKey()]: {item: chest, count: 1}});
+    const empty_handed = player({});
+
+    if (lock) {
+        //A failed pick keeps the chest, which is exactly when the button should be there.
+        check("a failed attempt offers to try again",
+            lock.offers_a_retry(holding_a_chest) === true);
+        //A successful pick spends it, so there is nothing left to try again on.
+        check("a successful one does not, because the chest is gone",
+            lock.offers_a_retry(empty_handed) === false);
+
+        //And an action that has locked itself is over however full the bag is.
+        const status = lock.getAvailabilityComponent().getStatus();
+        const was_finished = status.is_finished;
+        lock.setFinished();
+        check("a finished action never offers a retry",
+            lock.offers_a_retry(holding_a_chest) === false);
+        lock.setStatus({is_finished: was_finished});
+    }
+}
+
+// --- P-34: the action box is told whether to offer it, and does not decide --
+{
+    /*
+        The decision has to stay in offers_a_retry, where the test above can reach it. A
+        builder that works the answer out for itself is a builder no test can disagree
+        with: it would keep drawing the button while the tests went on passing.
+
+        So update_game_action_finish_button must take the answer and never look at the
+        character or the action's state.
+    */
+    const display = fs.readFileSync(path.join(repo_root, "src/display.js"), "utf8");
+    const at = display.indexOf("function update_game_action_finish_button");
+    check("the action box's finish button is still built where this expects", at !== -1);
+
+    if (at !== -1) {
+        const next = display.indexOf("\nfunction ", at + 1);
+        const body = display.slice(at, next === -1 ? display.length : next);
+
+        //Past the signature, so the parameter's own name does not count as using it.
+        const inside = body.slice(body.indexOf("\n"));
+        /*
+            The CREATION of the button, not any mention of it: the first thing the function
+            does is remove a retry left over from the previous attempt, and matching that
+            line would have this pass while measuring nothing.
+        */
+        const builds_at = inside.indexOf("const action_retry_div = document.createElement");
+        const consults_at = inside.indexOf("can_retry");
+
+        check("it builds the retry button", builds_at !== -1);
+        /*
+            And asks before building. Dropping the guard and leaving the parameter in the
+            signature is the regression this exists for: the button would be drawn after
+            every attempt, including the ones where clicking it is refused.
+        */
+        check("it consults the decision before building the button",
+            consults_at !== -1 && consults_at < builds_at);
+        for (const decides of ["canBeStarted", "offers_a_retry", "character"]) {
+            check(`it does not work out "${decides}" for itself`, !body.includes(decides));
+        }
+    }
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

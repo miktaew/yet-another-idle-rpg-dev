@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 102 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 103 -->
 
 # Changelog
 
@@ -20,6 +20,52 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.31 - try again, where trying again would work
+
+P-34, from a failed lock: *"add a try again under the locks, so we can repeat without going
+back and forth."*
+
+**The whole design turned out to be one question**, and answering it settled both decisions
+the proposal had left open: **can the attempt be started right now?**
+
+- *Should it appear after a success too?* Only where starting again is genuinely possible. A
+  picked lock spent its chest, so the requirement fails and no button is drawn. A skill-gated
+  action that succeeded is still startable, and offering it there is the same two clicks the
+  player would otherwise make by hand.
+- *Should it carry the attempt's cost?* It is not an undo. The button calls
+  `start_game_action`, the identical path the location list uses, so every requirement is
+  checked and every cost charged exactly as on a first attempt.
+
+**`canBeStarted` rather than `can_be_started`**, and the difference matters here: the stricter
+one folds in unlocked and not-finished. A one-shot action locks itself on **success only**, so
+failing one still offers the retry - which is precisely the case the request came from.
+
+`retry_game_action` ends the finished attempt before starting the next, so the content stack
+does not grow one action box per try, and `current_dialogue` survives that - a conversation's
+action repeats inside the conversation.
+
+**Where the decision lives is the point.** `offers_a_retry` is a method on `GameAction`, not a
+condition inline in the DOM builder, because a builder that works the answer out for itself is
+a builder no test can disagree with: it would go on drawing the button while the tests went on
+passing. `update_game_action_finish_button` is handed a boolean and never looks at the
+character.
+
+**Guards, negative-tested three ways.** The behaviour half runs the real lock action through
+the three states - holding a chest, empty-handed, and finished - and the structural half reads
+the builder and requires that it consults the decision **before** creating the button and
+never computes one of its own.
+
+Both halves earned their keep. Loosening `offers_a_retry` to the conditions-only test failed
+all three behaviour checks. Moving the decision into the builder failed the structural ones.
+And dropping the guard while leaving the parameter in the signature - the regression that
+draws the button after every attempt - slipped past the first version of the check, which
+only asked whether `can_retry` was mentioned anywhere; it now measures against the button's
+creation, past the signature and past the line that clears the previous attempt's button.
+
+Writing the test also turned up something worth knowing: `canBeStarted` does not exist until
+`fill_availability_methods()` runs at startup, so anything testing it browser-free has to
+graft the methods on first.
 
 ### v0.7.30 - the bay's last two quests are handed out
 

@@ -3565,6 +3565,7 @@ const descriptions = {
     "ui xp per gathering cycle": "{v2} için her toplama turunda {v1} temel tecrübe",
     "ui realtime": "gerçek zamanda",
     "ui finish activity": "{v1} — bitir",
+    "ui try again": "Tekrar dene",
     "ui finish": "Bitir",
     "ui earnings": "(kazanç: {v1})",
     "ui sleeping": "Uyuyor...",

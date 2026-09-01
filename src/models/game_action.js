@@ -202,6 +202,30 @@ class GameAction{
     }
 
     /**
+     * Whether the screen showing this attempt's result should offer to run it again.
+     *
+     * The owner asked for a "try again" under a failed lock, so an attempt can be repeated
+     * without walking back out to the location list and clicking in again (P-34). The whole
+     * of the design turned out to be one question - **can it be started right now** - and
+     * that single test answers the two the proposal left open:
+     *
+     * - *Should it appear after a success too?* Only where starting again is genuinely
+     *   possible. A picked lock consumed its chest, so the requirement fails and no button
+     *   appears; a skill-gated action that succeeded is still startable, and offering it is
+     *   the same two clicks the player would otherwise make.
+     * - *Should it carry the cost?* It is not an undo. The button runs `start_game_action`,
+     *   the identical path the location list uses, so it charges exactly what starting
+     *   normally charges - nothing special to decide.
+     *
+     * The stricter `canBeStarted` rather than `can_be_started`, because it folds in unlocked
+     * and not-finished: a one-shot action locks itself on SUCCESS only, so failing one still
+     * offers the retry, which is exactly the case the request came from.
+     */
+    offers_a_retry(character) {
+        return this.canBeStarted(character);
+    }
+
+    /**
      * 
      * @returns  {Boolean} if display conditions are met
      */

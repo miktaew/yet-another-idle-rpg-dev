@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 118 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 119 -->
 
 # Proposals
 
@@ -621,51 +621,6 @@ Up* was written without one on purpose and says so where the field would have go
 it is checkable: every field a data class declares should be named somewhere outside its
 own constructor. That is a broader check than this proposal and would probably find more
 than two.
-
-
-
-### P-34 — A repeatable action needs a "try again" beside "Finish" `open`
-
-The owner's request, from a failed lock: a **try again** button under the result, so a
-repeatable attempt can be repeated without leaving the screen and coming back.
-
-**Measured, and the cost is small because the pieces exist.** When a `GameAction` finishes,
-`update_game_action_finish_button` writes one button - `action_end_div`, text `ui finish`,
-`onclick="end_activity()"`. There is no second button and no way back into the same action
-except finishing, returning to the location and clicking it again: two clicks and a screen
-change for every failed pick.
-
-Starting an action is already reachable from markup. `start_game_action` is on `window`
-(`main.js`) and the location list uses it directly:
-
-```js
-location_action_div.setAttribute("onclick", "start_game_action(this.getAttribute('data-location_action'));");
-```
-
-So a repeat button is that same call with the action id the box already knows, placed beside
-`action_end_div`.
-
-**When it should appear, and this is the whole of the design.** Only when repeating is
-actually possible, or it is a button that fails: the action must be `repeatable`, and its
-`required` must still be met - `can_be_started(character)` answers exactly that and is
-already on `GameAction`. For the lock both hold right after a failure by design, since
-`remove_on_success` keeps the chest; for a delivery that consumed its materials, neither
-holds and the button should not be there.
-
-**What needs deciding.**
-
-- **Whether it appears after a success too.** After a successful pick the chest is gone, so
-  `can_be_started` is false and the question answers itself - but for an action whose
-  requirement is a skill rather than an item, success leaves it startable, and offering
-  "again" immediately turns a considered action into a click-through.
-- **Whether it should also carry the attempt's cost.** The lock's cost is time, which
-  `keep_progress` preserves; an action that spends something on failure would be charging
-  again from a button that reads like undo.
-
-**Guard.** The class is "a button offered for something that cannot be done", which
-`check_onclick_names_are_reachable` covers for names and not for state. The honest guard
-here is a test that the button is built only when `can_be_started` is true - which means the
-condition has to live in a function that a test can call, not inline in the DOM builder.
 
 
 

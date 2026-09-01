@@ -2802,8 +2802,38 @@ function set_game_action_finish_text(text) {
     document.getElementById("action_status_div").innerText = text;
 }
 
-function update_game_action_finish_button() {
+/**
+ * Swaps the action box's button to "finish", and adds "try again" beside it when the attempt
+ * can simply be run again (P-34).
+ *
+ * The decision is NOT made here. It arrives as a boolean, worked out by
+ * `GameAction.offers_a_retry` where a test can reach it - a builder that decides for itself
+ * is a builder no test can disagree with.
+ *
+ * The retry sits as a sibling rather than inside the end button, because setting innerText on
+ * action_end_div replaces whatever is in it.
+ */
+function update_game_action_finish_button({can_retry = false, action_key} = {}) {
     document.getElementById("action_end_div").innerText = translationManager.getText(language, "ui finish");
+
+    //Never two of them: the box survives from one attempt to the next.
+    document.getElementById("action_retry_div")?.remove();
+    if(!can_retry || !action_key) {
+        return;
+    }
+
+    const action_retry_div = document.createElement("div");
+    action_retry_div.id = "action_retry_div";
+    action_retry_div.innerText = translationManager.getText(language, "ui try again");
+    /*
+        The key travels in a data attribute and the handler reads it back, which is how the
+        location list starts an action too. Interpolating it into the onclick string would
+        put content into JavaScript source at runtime.
+    */
+    action_retry_div.setAttribute("data-action_key", action_key);
+    action_retry_div.setAttribute("onclick",
+        "retry_game_action(this.getAttribute('data-action_key'))");
+    action_div.appendChild(action_retry_div);
 }
 
 /**

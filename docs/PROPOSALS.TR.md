@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 118 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 119 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -642,52 +642,6 @@ Verdikleri* bilerek onsuz yazıldı ve alanın olacağı yerde bunu söylüyor.
 alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her alan, kendi
 kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
 ve muhtemelen ikiden fazlasını bulur.
-
-
-
-### P-34 — Tekrarlanabilir bir aksiyonun "Bitir"in yanında "Tekrar dene"ye ihtiyacı var `open`
-
-Sahibinin isteği, başarısız bir kilitten: sonucun altında bir **tekrar dene** düğmesi olsun;
-böylece tekrarlanabilir bir deneme, ekrandan çıkıp geri dönmeden yeniden yapılabilsin.
-
-**Ölçüldü ve maliyet küçük, çünkü parçalar mevcut.** Bir `GameAction` bittiğinde
-`update_game_action_finish_button` tek bir düğme yazıyor — `action_end_div`, metni
-`ui finish`, `onclick="end_activity()"`. İkinci bir düğme yok ve aynı aksiyona geri dönmenin
-yolu yok; bitirmek, lokasyona dönmek ve yeniden tıklamak dışında: her başarısız açış için iki
-tıklama ve bir ekran değişimi.
-
-Bir aksiyonu başlatmak işaretlemeden zaten erişilebilir. `start_game_action`, `window`
-üzerinde (`main.js`) ve lokasyon listesi onu doğrudan kullanıyor:
-
-```js
-location_action_div.setAttribute("onclick", "start_game_action(this.getAttribute('data-location_action'));");
-```
-
-Yani tekrar düğmesi, kutunun zaten bildiği aksiyon kimliğiyle aynı çağrı; `action_end_div`'in
-yanına konmuş hâli.
-
-**Ne zaman görünmesi gerektiği ve tasarımın tamamı bu.** Yalnızca tekrarlamak gerçekten
-mümkün olduğunda; yoksa başarısız olan bir düğme olur: aksiyon `repeatable` olmalı ve
-`required`'ı hâlâ karşılanmalı — `can_be_started(character)` tam olarak bunu cevaplıyor ve
-`GameAction` üzerinde zaten var. Kilit için ikisi de başarısızlığın hemen ardından tasarım
-gereği geçerli, çünkü `remove_on_success` sandığı bırakıyor; malzemesini tüketmiş bir teslimat
-için ikisi de geçerli değil ve düğme orada olmamalı.
-
-**Karar gerektirenler.**
-
-- **Başarıdan sonra da görünüp görünmeyeceği.** Başarılı bir açıştan sonra sandık gitmiş
-  oluyor, yani `can_be_started` false ve soru kendini cevaplıyor — ama şartı eşya değil beceri
-  olan bir aksiyon için başarı onu başlatılabilir bırakıyor ve hemen "yine" sunmak, düşünülmüş
-  bir aksiyonu tıklama geçişine çeviriyor.
-- **Denemenin bedelini de taşıyıp taşımayacağı.** Kilidin bedeli zaman ve `keep_progress` onu
-  koruyor; başarısızlıkta bir şey harcayan bir aksiyon ise geri-al gibi okunan bir düğmeden
-  yeniden ücret keserdi.
-
-**Muhafız.** Sınıf şu: "yapılamayan bir şey için sunulmuş düğme"; bunu
-`check_onclick_names_are_reachable` adlar için kapsıyor, durum için kapsamıyor. Buradaki dürüst
-muhafız, düğmenin yalnızca `can_be_started` true iken kurulduğunu doğrulayan bir test — ki bu
-da koşulun DOM kurucusunun içinde değil, bir testin çağırabileceği bir fonksiyonda yaşaması
-gerektiği anlamına geliyor.
 
 
 

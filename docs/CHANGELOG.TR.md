@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 102 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 103 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,51 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.31 - tekrar dene, tekrar denemenin işe yarayacağı yerde
+
+P-34, başarısız bir kilitten: *"kilitler için altına tekrar dene ekle ve geri ileri yapmadan
+tekrarlayabilelim."*
+
+**Tasarımın tamamı tek bir soruya indi** ve o soruyu cevaplamak teklifin açık bıraktığı iki
+kararı da çözdü: **deneme şu anda başlatılabiliyor mu?**
+
+- *Başarıdan sonra da görünmeli mi?* Yalnızca yeniden başlatmanın gerçekten mümkün olduğu
+  yerde. Açılmış bir kilit sandığını harcadı, yani gereksinim karşılanmıyor ve düğme
+  çizilmiyor. Beceriyle kapatılmış, başarılı olmuş bir aksiyon hâlâ başlatılabilir durumda ve
+  onu orada sunmak, oyuncunun elle yapacağı aynı iki tıklama.
+- *Denemenin bedelini taşımalı mı?* Bu bir geri alma değil. Düğme `start_game_action`'ı
+  çağırıyor — konum listesinin kullandığı yolun aynısı — yani her gereksinim kontrol ediliyor
+  ve her bedel ilk denemedeki gibi ödeniyor.
+
+**`can_be_started` değil `canBeStarted`** ve fark burada önemli: katı olanı kilitli-olmama ve
+bitmemiş-olma durumlarını da katıyor. Tek seferlik bir aksiyon kendini **yalnızca başarıda**
+kilitliyor, yani başarısız olan biri hâlâ tekrar denemeyi sunuyor — ki isteğin geldiği durum
+tam olarak bu.
+
+`retry_game_action`, bir sonrakini başlatmadan önce biten denemeyi kapatıyor; böylece içerik
+yığını her deneme başına bir aksiyon kutusu büyümüyor ve `current_dialogue` bundan
+etkilenmiyor — bir konuşmanın aksiyonu konuşmanın içinde tekrarlanıyor.
+
+**Kararın nerede yaşadığı asıl mesele.** `offers_a_retry`, DOM kurucusunun içine gömülmüş bir
+koşul değil `GameAction` üzerinde bir metot; çünkü cevabı kendi bulan bir kurucu, hiçbir testin
+itiraz edemeyeceği bir kurucudur: testler geçmeye devam ederken düğmeyi çizmeye devam ederdi.
+`update_game_action_finish_button`'a bir boolean veriliyor ve karaktere hiç bakmıyor.
+
+**Muhafızlar üç yönden negatif test edildi.** Davranış yarısı gerçek kilit aksiyonunu üç
+durumda çalıştırıyor — sandık elde, eli boş ve bitmiş — yapısal yarısı ise kurucuyu okuyup
+kararı düğmeyi **yaratmadan önce** danışmasını ve kendi kararını hesaplamamasını şart koşuyor.
+
+İki yarı da hakkını verdi. `offers_a_retry`'ı yalnızca-koşullar testine gevşetmek üç davranış
+kontrolünü birden düşürdü. Kararı kurucunun içine taşımak yapısal olanları düşürdü. Ve
+parametreyi imzada bırakıp guard'ı kaldırmak — her denemeden sonra düğmeyi çizen regresyon —
+kontrolün ilk hâlinden kaçtı; o hâl yalnızca `can_retry`'ın herhangi bir yerde geçip
+geçmediğini soruyordu. Artık düğmenin yaratıldığı ana karşı ölçüyor: imzanın ve bir önceki
+denemenin düğmesini temizleyen satırın ötesinde.
+
+Testi yazmak bir şeyi daha ortaya çıkardı: `canBeStarted`, başlangıçta
+`fill_availability_methods()` çalışana kadar var olmuyor; yani onu tarayıcısız test eden her
+şeyin metotları önce graft etmesi gerekiyor.
 
 ### v0.7.30 - körfezin son iki görevi artık veriliyor
 
