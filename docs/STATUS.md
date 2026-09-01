@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 28 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 29 -->
 
 # Status
 
@@ -191,6 +191,7 @@ but the ones that encode a bug that shipped:
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 6 lines. |
 | `books` | A book nothing sells, drops or hands over, or a book item with no reading data. 11 books. |
+| `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
 | `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 18 actions. |
 | `stance reactions` | An enemy reacting to a stance id that is not a stance, which never fires. 10 ids, 7 stances. |

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 75 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 76 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,56 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Yardım sayfası oyunu yakalıyor ve bir kontrol artık yakalamadığını söylüyor
+
+P-21 ve sahibi listeleri değil akışı istedi. Ölçüldü: harita güncelmiş, çünkü
+`check_help_map_covers_the_world` her yer yayınlandığında bunu zorunlu kılıyor. Haritanın
+kapsamadığı her şey ise v0.7.0'dan beri kaymış.
+
+**Yanlış olanlar, ne kadar yanıltıcı olduklarına göre sıralı:**
+
+- *"Mevcut oyun içeriği nerede bitiyor?"* hâlâ **"Kasabaya girmek ve ikinci kapıyı açmak
+  henüz mümkün değil"** diyordu. Kasaba tüccar loncası üzerinden uzun süredir açık. Ayrıca
+  bataklıkta duruyor ve sahil yolunu, körfezi, tuz evini ya da onların ötesindeki hiçbir
+  şeyi anmıyordu — son dört sürümün içeriğini.
+- *"Büyü eklendi mi?"* "kasaba erişilebilir olduktan sonra gelecek" diyordu; o çoktan
+  oldu. Artık gerçekten doğru ve işe yarar olanı söylüyor: sözcük dağarcığı oyunda ve
+  görünür — Wands, Staffs, bir mana havuzu, sezgi — hiçbiri bir şeye bağlı değil, elde
+  edilecek bir asa ya da değnek yok ve dolayısıyla o iki yetenek hiç yükseltilemiyor. Ve
+  planın ne olduğunu söylüyor, Q-11 uyarınca: mevcut hikâyeden sonra kendi arc'ı, bir
+  şeyin içine sıkıştırılmış bir özellik değil.
+- **Dövüş duruşları**, dayanıklılık karşılığında buff ve ceza olarak anlatılıyordu.
+  v0.7.6'dan beri bazı yaratıklar duruşun kendisine tepki veriyor; birini seçmenin
+  sebebinin yarısı bu.
+- **Mevsimler**, "bazı etkinlikleri" sınırlıyor diye anlatılıyordu. Artık yerleri ve
+  insanları da kapatıyor: bir bölge yılda iki kez kendi kendine değişiyor ve hiçbir şey
+  duyurmuyor.
+- **İtibar** için fiyatlarla ilgili tek bir cümle vardı ve hiçbir bölge adı geçmiyordu —
+  yani `Guild` dördüncü bir bölge ve karakter sayfasında bir satır olarak geldi, sayfada
+  onu açıklayan hiçbir şey yokken.
+- Körfezin kendi açıklaması sattığı cevherde duruyordu.
+
+**Muhafız ve düşebilir hâle gelmesi üç denemeyi aldı.**
+`check_help_explains_standing`, `character.reputation`'ın her anahtarının, iki sayfada da,
+sayfanın itibar anlatımı içinde adlandırılmasını iki yönlü şart koşuyor.
+
+İlk hâli, bölgenin görünen adını sayfanın tamamında arıyordu. Ad silinmişken de geçti;
+çünkü "guild" kasabanın açıklamasında ve içeriğin nerede bittiği cevabında da geçiyor.
+İkincisi aramayı itibar paragrafına daralttı ve yine geçti; çünkü paragrafın kendi
+açıklama cümlesi "loncanın işini" diyor — Türkçede daha da kötü, çünkü dil ekleme yapıyor
+ve "loncanın" içinde "lonca" var.
+
+İkisi de düşemeyen kontrollerdi; bu, hiç kontrol olmamasından kötü: hiçbirini açıklamadığı
+hâlde dört bölgenin açıklandığını bildirirlerdi. Üçüncü hâli her bölgeyi işaretlemede
+`data-region="Village"` gibi işaretliyor — haritanın `data-location` ile zaten yaptığının
+aynısı — ve o kümeyi bildirilenle karşılaştırıyor. Böylece metin, her dilde nasıl okunuyorsa
+öyle okunmakta serbest; D-7'nin istediği de bu. Üç yönden negatif test edildi: Türkçe
+sayfadan bir işaret kaldırıldı, İngilizceden bir işaret kaldırıldı ve var olmayan bir
+bölgeyi adlandıran bir işaret kondu.
+
+Sürüm kuralı açısından bakım işi: yardım sayfası oyun içi changelog değil ve oyuncu yeni
+bir içerik görmüyor, dolayısıyla sürüm artmadı.
 
 ### v0.7.8 - körfez bir kitap kazanıyor, Keşifler cevabını geri alıyor
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 75 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 76 -->
 
 # Changelog
 
@@ -20,6 +20,54 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### The help page catches up with the game, and one check now says when it does not
+
+P-21, and the owner asked for the flow rather than the lists. Measured: the map was
+current, because `check_help_map_covers_the_world` demanded it every time a location
+shipped. Everything the map does not cover had drifted since v0.7.0.
+
+**What was wrong, in order of how misleading it was:**
+
+- *"Where does current game content end?"* still said **"It is not yet possible to enter
+  the town nor to open the second gate."** The town has been open through the merchant
+  guild for a long time. It also stopped at the swamp and never mentioned the coast road,
+  the bay, the salt house or anything past them - the last four versions of content.
+- *"Is magic implemented?"* said it would come "after the town becomes accessible", which
+  has already happened. It now says what is actually true and useful: the vocabulary is in
+  the game and visible - Wands, Staffs, a mana pool, intuition - none of it is wired to
+  anything, there is no wand or staff to be had, and those two skills therefore cannot be
+  raised at all. And it says what the plan is, per Q-11: its own arc after the current
+  story, not a feature dropped into one.
+- **Combat stances** were described as buffs and penalties in exchange for stamina. Since
+  v0.7.6 some enemies react to the stance itself, which is half the reason to pick one.
+- **Seasons** were described as limiting "certain activities". They gate places and people
+  now: one region changes twice a year on its own and announces nothing.
+- **Standing** had one sentence about prices and named no regions at all - so `Guild`
+  arrived as a fourth region, and a row on the character sheet, with nothing on the page
+  to explain it.
+- The bay's own blurb stopped at the ore it sells.
+
+**The guard, and it took three attempts to make it able to fail.**
+`check_help_explains_standing` requires every key of `character.reputation` to be named in
+the page's account of standing, on both pages, in both directions.
+
+The first version searched the whole page for the region's shown name. It passed with the
+name deleted, because "guild" appears in the town's description and in the answer about
+where content ends. The second narrowed the search to the standing paragraph and still
+passed, because the paragraph's own explanatory clause says "the guild's kind of work" -
+and in Turkish worse, since the language agglutinates and "loncanın" contains "lonca".
+
+Both were checks that could not fail, which is worse than no check: they would have
+reported four regions explained while explaining none. The third version marks each region
+in the markup with `data-region="Village"` and so on - exactly what the map already does
+with `data-location` - and compares that set to the declared one. The prose is then free
+to read however it reads in each language, which is what D-7 wants anyway. Negative-tested
+three ways: a marker removed from the Turkish page, a marker removed from the English one,
+and a marker naming a region that does not exist.
+
+Maintenance for the version rule: the help page is not the in-game changelog and the
+player sees no new content, so no version bump.
 
 ### v0.7.8 - the bay gets a book, and Discoveries gets its answer back
 

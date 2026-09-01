@@ -511,7 +511,7 @@
             </section>
             <section class="region" data-step="8">
                 <h3>The plains and the bay</h3>
-                <p>The far edge of what is written. White and black iron ore is sold here and nowhere else.</p>
+                <p>The far edge of what is written. White and black iron ore is sold here and nowhere else &mdash; and twice a year, when the tide is right and a certain hull is on the mud, the flats and what is under her deck can be walked to.</p>
                 <div class="places">
                     <span class="place unreached" data-location="The plains"><i class="kind"></i><b class="place_name">The plains</b><span class="clears"></span></span>
                     <span class="place unreached combat" data-location="Old hunting ground"><i class="kind"></i><b class="place_name">Old hunting ground</b><span class="clears"></span></span>
@@ -529,12 +529,20 @@
 
     <button type="button" class="collapsible">Where does current game content end?</button>
     <div class="content">
-        As of current game version, the final combat areas are as follows:
-        On the mountain: 'Gentle mountain slope'
-        In the caves: 'Writhing tunnel'
-        In the forest: 'Bear den' and 'Red ant nest'
-        Down the river: 'The swamplands'
-        It is not yet possible to enter the town nor to open the second gate.
+        The last combat areas are:
+        <ul>
+            <li>On the mountain: 'Gentle mountain slope'</li>
+            <li>In the caves: 'Writhing tunnel'</li>
+            <li>In the forest: 'Bear den' and 'Red ant nest'</li>
+            <li>Down the river: 'The swamplands'</li>
+        </ul>
+        Past the swamp the story keeps going without combat. The plains lead to the coast
+        road and the bay, and the bay is where the written content currently stops: a
+        harbour, a salt house, and &mdash; twice a year, while a certain ship is lying on
+        the mud &mdash; the tidal flats and what is below her cargo deck.
+        <br><br>
+        The town <b>is</b> open now, through the merchant guild. The second gate under the
+        village is still shut, and still not openable.
     </div>
 
     <button type="button" class="collapsible">I think I found a bug, what do I do?</button>
@@ -549,7 +557,16 @@
 
     <button type="button" class="collapsible">Is magic implemented?</button>
     <div class="content">
-        As you probably guessed, no. It will come in future, after the town becomes accessible.
+        Not yet. Some of its vocabulary is already in the game and you may have noticed it:
+        there are Wands and Staffs skills, your character sheet has a mana pool, and
+        intuition is the stat magic reads. None of it is wired to anything, and there is
+        no wand or staff to be had, so those two skills cannot currently be raised at all.
+        <br><br>
+        It is planned as its own arc rather than as a feature dropped into an existing one:
+        mana spent during ordinary combat, spells with damage and with buff and debuff
+        effects, magic power as a real stat that gear and skills raise. That is a larger
+        change than any single region has been, so it comes after the current story rather
+        than beside it.
     </div>
 
     <button type="button" class="collapsible">Economy</button>
@@ -570,6 +587,17 @@
                         Traders sell items for prices a lot higher than what they would pay for same item (they need to make a living, after all).
                         <br>"Haggling" skill slightly reduces price difference, at max level the value above 100% is cut in half (meaning 200% will turn into 150%, 300% will turn into 200%, etc)
                         <br>Reputation also reduces prices for traders in the area.  View your current reputation in the "Data" tab.
+                        <!--
+                            The regions are named inside this block on purpose, and
+                            check_help_explains_standing reads exactly this block. Naming
+                            them anywhere on the page would pass by accident: "guild"
+                            appears in the town's description and in the answer about where
+                            content ends, so a page-wide search proved nothing.
+                        -->
+                        <div class="standing_regions">
+                        Standing is not only a discount. Settlements spend it: six actions across the slums and the town square answer to it, and some doors open on it rather than on a skill. You will only see a region listed once you have earned something there.
+                        <br>Three of the four are places: <b data-region="Village">the Village</b>, <b data-region="Slums">the Slums</b> and <b data-region="Town">the Town</b>. The fourth is <b data-region="Guild">the merchant Guild</b>, which is not a place at all &mdash; you earn it by doing the guild's kind of work rather than by being seen in a district.
+                        </div>
                     </li>
                 </ul>
             </li>
@@ -680,6 +708,13 @@
                         Provide different buffs and penalties, being helpful in different situations, in exchange for higher stamina costs.
                     </li>
                     <li>
+                        Some enemies react to how you are standing, not just to your numbers. A swarm
+                        that you meet with a point closes in on you and one you meet with a broad
+                        stance goes backwards; a frog's toxins care how much of you is in front of
+                        them; a stinger finds a body that has committed to a swing. Reading the enemy
+                        is part of picking the stance.
+                    </li>
+                    <li>
                         Switching stance mid-combat will reset your attack bar (no cheesing allowed).
                     </li>
                 </ul>
@@ -692,6 +727,13 @@
         <ul>
             <li>
                 Certain activities are limited by the time of the day or by the season.
+            </li>
+            <li>
+                Some <i>places</i> and some <i>people</i> are seasonal too. One region changes
+                twice a year on its own, without telling you: the shelf it sells from is
+                different, the things you overhear there are different, and somewhere inland a
+                clerk has something to say about it. Nothing announces any of that. If a place
+                feels different from how you remember it, look at the date.
             </li>
             <li>
                 During night (20 to 4) in normal areas, and whole time in dark areas (e.g. caves), character receives additional penalties to hit/evasion chance.

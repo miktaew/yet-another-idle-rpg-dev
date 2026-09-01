@@ -511,7 +511,7 @@
             </section>
             <section class="region" data-step="8">
                 <h3>Ova ve körfez</h3>
-                <p>Yazılmış olanın en uç noktası. Beyaz ve siyah demir cevheri yalnızca burada satılıyor.</p>
+                <p>Yazılmış olanın en uç noktası. Beyaz ve siyah demir cevheri yalnızca burada satılıyor &mdash; ve yılda iki kez, gelgit uygun olup belli bir tekne çamurun üstünde yatarken, düzlüklere ve o teknenin güvertesinin altına yürünebiliyor.</p>
                 <div class="places">
                     <span class="place unreached" data-location="The plains"><i class="kind"></i><b class="place_name">The plains</b><span class="clears"></span></span>
                     <span class="place unreached combat" data-location="Old hunting ground"><i class="kind"></i><b class="place_name">Old hunting ground</b><span class="clears"></span></span>
@@ -529,12 +529,20 @@
 
     <button type="button" class="collapsible">Mevcut oyun içeriği nerede bitiyor?</button>
     <div class="content">
-        Mevcut oyun sürümü itibarıyla son dövüş bölgeleri şunlar:
-        Dağda: 'Yumuşak dağ yamacı'
-        Mağaralarda: 'Kıvranan tünel'
-        Ormanda: 'Ayı ini' ve 'Kırmızı karınca yuvası'
-        Nehrin aşağısında: 'Bataklıklar'
-        Kasabaya girmek ve ikinci kapıyı açmak henüz mümkün değil.
+        Son dövüş bölgeleri şunlar:
+        <ul>
+            <li>Dağda: 'Yumuşak dağ yamacı'</li>
+            <li>Mağaralarda: 'Kıvranan tünel'</li>
+            <li>Ormanda: 'Ayı ini' ve 'Kırmızı karınca yuvası'</li>
+            <li>Nehrin aşağısında: 'Bataklıklar'</li>
+        </ul>
+        Bataklığın ötesinde hikâye dövüşsüz devam ediyor. Ovalar sahil yoluna ve körfeze
+        çıkıyor; yazılmış içeriğin şu an durduğu yer de körfez: bir liman, bir tuz evi ve
+        &mdash; yılda iki kez, belli bir tekne çamurun üstünde yatarken &mdash; gelgit
+        düzlükleri ile o teknenin yük güvertesinin altındaki yer.
+        <br><br>
+        Kasaba artık <b>açık</b>, tüccar loncası üzerinden. Köyün altındaki ikinci kapı
+        hâlâ kapalı ve hâlâ açılabilir değil.
     </div>
 
     <button type="button" class="collapsible">Sanırım bir hata buldum, ne yapmalıyım?</button>
@@ -549,7 +557,17 @@
 
     <button type="button" class="collapsible">Büyü eklendi mi?</button>
     <div class="content">
-        Tahmin ettiğin gibi, hayır. İleride, kasaba erişilebilir hâle geldikten sonra gelecek.
+        Henüz değil. Sözcük dağarcığının bir kısmı oyunda çoktan var ve fark etmiş
+        olabilirsin: Wands ve Staffs yetenekleri duruyor, karakter sayfanda bir mana havuzu
+        var ve büyünün okuduğu stat sezgi. Hiçbiri bir şeye bağlı değil ve elde edilebilecek
+        bir asa ya da değnek de yok; yani o iki yetenek şu anda hiçbir şekilde
+        yükseltilemiyor.
+        <br><br>
+        Mevcut bir şeyin içine sıkıştırılmış bir özellik olarak değil, kendi arc'ı olarak
+        planlanıyor: olağan dövüş sırasında harcanan mana, hasar veren ve buff/debuff etkisi
+        olan büyüler, ekipmanın ve yeteneklerin yükselttiği gerçek bir stat olarak büyü gücü.
+        Bu, şimdiye kadarki hiçbir bölgeden küçük olmayan bir değişiklik; o yüzden mevcut
+        hikâyenin yanına değil sonrasına geliyor.
     </div>
 
     <button type="button" class="collapsible">Ekonomi</button>
@@ -570,6 +588,17 @@
                         Tüccarlar eşyaları, aynı eşya için ödeyeceklerinden çok daha yüksek fiyata satar (nihayetinde onların da geçinmesi gerekiyor).
                         <br>"Pazarlık" becerisi fiyat farkını biraz azaltır; azami seviyede %100'ün üzerindeki değer yarıya iner (yani %200 %150 olur, %300 %200 olur, vb.)
                         <br>İtibar da bölgedeki tüccarların fiyatlarını düşürür. Mevcut itibarını "Veri" sekmesinden görebilirsin.
+                        <!--
+                            Bölgeler bilerek bu bloğun içinde adlandırılıyor;
+                            check_help_explains_standing tam olarak bu bloğu okuyor.
+                            Sayfanın herhangi bir yerinde adlandırmak kazara geçerdi:
+                            "lonca" kasabanın açıklamasında ve içeriğin nerede bittiği
+                            cevabında da geçiyor.
+                        -->
+                        <div class="standing_regions">
+                        İtibar yalnızca bir indirim değil. Yerleşimler onu harcıyor: kenar mahalle ile kasaba meydanına yayılmış altı aksiyon ona bakıyor ve bazı kapılar bir yeteneğe değil ona açılıyor. Bir bölgeyi listede ancak orada bir şey kazandıktan sonra görürsün.
+                        <br>Dördünün üçü yer: <b data-region="Village">Köy</b>, <b data-region="Slums">Kenar mahalle</b> ve <b data-region="Town">Kasaba</b>. Dördüncüsü <b data-region="Guild">tüccar Loncası</b>; o hiç yer değil &mdash; onu bir semtte görülerek değil, loncanın işini yaparak kazanıyorsun.
+                        </div>
                     </li>
                 </ul>
             </li>
@@ -680,6 +709,13 @@
                         Daha yüksek dayanıklılık maliyeti karşılığında farklı güçlendirmeler ve cezalar verir; farklı durumlarda işe yarar.
                     </li>
                     <li>
+                        Bazı yaratıklar yalnızca sayılarına değil, nasıl durduğuna da tepki
+                        veriyor. Ucunla karşıladığın bir sürü üstüne kapanır, geniş bir duruşla
+                        karşıladığın sürü geri gider; kurbağanın zehri önünde ne kadarının
+                        durduğunu önemser; iğne, bir savuruşa kendini vermiş bedeni bulur.
+                        Duruşu seçmenin bir parçası da yaratığı okumak.
+                    </li>
+                    <li>
                         Dövüş ortasında duruş değiştirmek saldırı çubuğunu sıfırlar (kurnazlığa izin yok).
                     </li>
                 </ul>
@@ -692,6 +728,13 @@
         <ul>
             <li>
                 Bazı etkinlikler günün saatiyle ya da mevsimle sınırlıdır.
+            </li>
+            <li>
+                Bazı <i>yerler</i> ve bazı <i>insanlar</i> da mevsimlik. Bir bölge yılda iki kez
+                kendi kendine değişiyor ve bunu sana söylemiyor: sattığı raf farklı oluyor, orada
+                kulağına çalınanlar farklı oluyor ve iç bölgede bir kâtibin bu konuda söyleyecekleri
+                oluyor. Bunların hiçbiri duyurulmuyor. Bir yer hatırladığından farklı geliyorsa
+                tarihe bak.
             </li>
             <li>
                 Normal alanlarda geceleyin (20 ile 4 arası) ve karanlık alanlarda (örneğin mağaralarda) her zaman, karakter isabet/kaçınma şansına ek ceza alır.

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 83 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 84 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -648,37 +648,6 @@ kalıcı kılmıyor, ki yeniden açılışta doğru kalması gereken yarı da bu
 **Olmaması gereken:** kayda girmemeli. "Dev modu açıktı" bilgisini taşıyan bir kayıt,
 başkasının makinesinde farklı davranan bir kayıttır ve export, oyuncuların paylaştığı bir
 dosya.
-
-### P-21 — Yardım sayfası oyunun gerisinde kaldı `open`
-
-Q-3, `help.html` ile `changelog.html`'in ikisinin de Türkçe kapsamında ve ikisinin de
-miras değil bakımı yapılan dosyalar olduğunu karara bağlamıştı. Changelog yarısı
-zorunlu kılınıyor — `npm run check`, iki kopyadan biri yayınlanan `game_version` için
-girdi taşımıyorsa düşüyor — yardım yarısı ise zorunlu değil, o yüzden kaydı.
-
-**v0.7.0 ile v0.7.8 arasında eklenip yardım sayfasının anlatmadıkları:**
-
-- bir mevsim penceresi ve dört mevsimden ikisinin körfezin ne olduğunu değiştirmesi
-- gelgit düzlüklerini geçmenin üç yolu ve birinin başarısız olup tekrarlanabilmesi
-- dördüncü reputation bölgesi olarak `Guild`; karakter sayfası artık, sayfanın itibar
-  anlatımında hiç anılmayan bir satır gösterecek
-- günlükteki lore iplikleri; sayfanın tarif ettiği bir listenin üstüne gelen yeni bir
-  gruplama
-- 5. kademenin üretilebilir hâle gelmesi ve satın alınan değil kazılan bir cevher
-- stance tepkileri — sayfa stance'ları stat çarpanı olarak anlatıyor, ki bu artık hikâyenin
-  yarısı
-- körfezde balıkçılık
-
-Harita, iki yeni yer yayınlandıkça güncellendi; çünkü bir kontrol bunu istiyordu. **Akış**
-güncellenmedi ve sahibinin istediği de bu: sayfanın sırası ve vurgusu, yalnızca listeleri
-değil.
-
-**Düşünülecek muhafız:** changelog simetrisi işliyor, çünkü sürüm artışı bir girdiyi
-zorunlu kılıyor. Yardım sayfası için eşdeğeri yok ve mekanik bir eşdeğeri olamaz da —
-bir sayfanın neyi anlatması gerektiği bir yargı. Kontrol edilebilecek olan daha dar:
-oyunun bildirdiği her bölgenin ve her reputation bölgesinin, iki yardım sayfasında da bir
-yerde adının geçmesi. Harita kontrolü, yerler için ilk yarısını zaten yapıyor.
-
 
 ---
 

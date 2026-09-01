@@ -3,6 +3,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { error } from "../lib/report.mjs";
+import { load_locale } from "../lib/locale-files.mjs";
 import { repo_root, site_dir, version } from "../lib/context.mjs";
 import { strip_comments } from "../lib/source.mjs";
 
@@ -169,6 +170,81 @@ function check_help_map_covers_the_world() {
         + ` ${checked} entries across both pages`);
 }
 
+/**
+ * A reputation region the help page never mentions.
+ *
+ * The map check covers places, and P-21 measured what it does not: the help page's account
+ * of standing had said "reputation reduces prices" and named no regions at all, so `Guild`
+ * arrived as a fourth region and a row on the character sheet that the page could not
+ * explain. That is the whole class - the page can fall behind the game in ways the map
+ * check cannot see.
+ *
+ * It is deliberately narrow. What a page *should* explain is a judgement and cannot be
+ * checked; that every region the game declares is at least named on both pages can be.
+ * The changelog symmetry works because a version bump forces an entry; there is no
+ * equivalent for help, and this is the closest honest thing to one.
+ *
+ * Matched on a `data-region` attribute rather than on the visible words, the same way the
+ * map is matched on `data-location`. Two earlier versions of this check searched for the
+ * shown name as a substring and could not fail: "guild" appears in the town's description
+ * and in the answer about where content ends, and Turkish agglutinates - "loncanın" contains
+ * "lonca". A check that cannot fail is worse than no check, so the markup carries the
+ * registry key and the prose is free to read however it reads in each language.
+ */
+async function check_help_explains_standing() {
+    const character = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/character.js"), "utf8"));
+    const declaration = /this\.reputation\s*=\s*\{([^}]*)\}/.exec(character);
+    if (!declaration) {
+        error("src/character.js no longer declares `this.reputation = {...}` -"
+            + " check_help_explains_standing is out of date.");
+        return;
+    }
+    const regions = [...declaration[1].matchAll(/(\w+):\s*-?\d+/g)].map(m => m[1]);
+    if (regions.length === 0) {
+        error("character.reputation declares no regions - this check is out of date.");
+        return;
+    }
+
+    const pages = {"help.html": "english", "help.tr.html": "turkish"};
+    let named = 0;
+    for (const [page, locale_name] of Object.entries(pages)) {
+        const full = path.join(repo_root, page);
+        if (!fs.existsSync(full)) {
+            error(`${page} is missing.`);
+            continue;
+        }
+        const whole = fs.readFileSync(full, "utf8");
+        const block = /<div class="standing_regions">([\s\S]*?)<\/div>/.exec(whole);
+        if (!block) {
+            error(`${page} has no <div class="standing_regions"> block. That block is the`
+                + " page's account of what standing is, and this check reads it; without it"
+                + " a new reputation region can arrive with nothing explaining it.");
+            continue;
+        }
+        const marked = new Set(
+            [...block[1].matchAll(/data-region="([^"]+)"/g)].map(match => match[1]));
+        for (const region of regions) {
+            named++;
+            if (!marked.has(region)) {
+                error(`${page}'s account of standing never names the reputation region`
+                    + ` "${region}". A player earns it, sees a row for it on the character`
+                    + " sheet, and finds nothing on the help page that says what it is."
+                    + " Mark it with data-region in the standing_regions block.");
+            }
+        }
+        for (const region of marked) {
+            if (!regions.includes(region)) {
+                error(`${page} explains a reputation region "${region}", which`
+                    + " character.reputation does not have any more.");
+            }
+        }
+    }
+
+    console.log(`[check] help explains standing: ${regions.length} regions named across`
+        + ` both pages (${named} checked)`);
+}
+
 function check_changelogs_cover_version() {
     for (const file of ["changelog.html", "changelog.tr.html"]) {
         const html = fs.readFileSync(path.join(repo_root, file), "utf8");
@@ -228,6 +304,7 @@ function check_changelogs_cover_version() {
 
 export {
     check_changelogs_cover_version,
+    check_help_explains_standing,
     check_help_map_covers_the_world,
     check_language_switch_repaints,
     check_site,

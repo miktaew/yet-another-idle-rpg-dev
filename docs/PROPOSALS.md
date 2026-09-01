@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 83 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 84 -->
 
 # Proposals
 
@@ -621,36 +621,6 @@ which is the half that must stay true across a restart.
 **What must not happen:** it must not go into the save. A save carrying "dev mode was on"
 is a save that behaves differently on someone else's machine, and the export is a file
 players share.
-
-### P-21 — The help page has fallen behind the game `open`
-
-Q-3 settled that `help.html` and `changelog.html` are both in scope for Turkish and both
-maintained rather than inherited. The changelog half is enforced - `npm run check` fails
-if either copy lacks an entry for the shipped `game_version` - and the help half is not,
-so it has drifted.
-
-**What v0.7.0 to v0.7.8 added that the help page does not explain:**
-
-- a season window, and that two of the four seasons change what the bay is
-- three ways across the tidal flats, and that one of them can fail and be retried
-- `Guild` as a fourth reputation region, which the character sheet will now show a row
-  for that the help page's account of standing does not mention
-- lore threads in the journal, which is a new grouping above a list the page does describe
-- tier 5 becoming craftable, and an ore that is dug rather than bought
-- stance reactions - the page explains stances as stat multipliers, which is now half the
-  story
-- fishing at the bay
-
-The map was updated with the two new places as they shipped, because a check demanded it.
-The **flow** was not, and that is what the owner is asking for: the page's order and
-emphasis, not just its lists.
-
-**Guard to consider:** the changelog symmetry works because a version bump forces an
-entry. There is no equivalent for the help page and probably cannot be a mechanical one -
-what a page should explain is a judgement. What can be checked is narrower: that every
-region and every reputation region the game declares is named somewhere on both help
-pages. The map check already does the first half for locations.
-
 
 ---
 
