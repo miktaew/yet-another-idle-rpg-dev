@@ -4147,6 +4147,42 @@ function rank_equippable(template, quality) {
     }
     return template.getBaseValue({quality});
 }
+/*
+    The dev console across a reload, and only across a reload.
+
+    sessionStorage is the whole mechanism, and it is the mechanism because its lifetime is
+    exactly the behaviour that was asked for: it survives a refresh and dies when the tab
+    closes. No flag to clear, no timer, and nothing to get out of step with anything.
+
+    It must NOT be in the save, and that is not a style preference. The export is a file
+    players hand to each other and paste into the import box; a save that carried "dev mode
+    was on" would turn it on for somebody who never asked for it, on a machine where the
+    console was never opened. check_dev_console_is_not_saved holds that line.
+
+    Every access is wrapped: sessionStorage throws outright in some privacy modes rather
+    than returning null, and a dev convenience must never be the reason the game fails to
+    boot.
+*/
+const dev_console_session_key = "dev_console_on";
+
+function remember_dev_console() {
+    try {
+        sessionStorage.setItem(dev_console_session_key, "true");
+    } catch {
+        //Blocked storage. The console still works for this page; it just will not come
+        //back after a refresh, which is the lesser half of the feature.
+    }
+}
+
+/** Whether this tab had the dev console on before it was reloaded. */
+function was_dev_console_on() {
+    try {
+        return sessionStorage.getItem(dev_console_session_key) === "true";
+    } catch {
+        return false;
+    }
+}
+
 function enable_dev_console() {
     const list = (registry) => Object.keys(registry).sort();
 
@@ -4296,8 +4332,9 @@ function enable_dev_console() {
 
     Object.keys(helpers).forEach(name => { window[name] = helpers[name]; });
     show_game_speed_controls();
+    remember_dev_console();
 
-    console.log("dev console on. Not saved - a reload turns it off.");
+    console.log("dev console on. Survives a reload, gone when you close the tab. Not saved.");
     console.log("game speed buttons are now in the bottom panel; set_speed(1|2|5|10) also works.");
     console.log(Object.keys(helpers).join("(), ") + "()");
     return Object.keys(helpers);
@@ -4400,6 +4437,15 @@ if(config.use_racial_bonuses) {
 
 if(config.use_height_bonuses) {
     character.stats.add_height_bonus();
+}
+
+/*
+    Turn it back on if this tab had it on. Last in the boot sequence on purpose: the panel
+    it reveals is DOM, and the helpers it hands out close over registries that the load
+    above fills.
+*/
+if(was_dev_console_on()) {
+    enable_dev_console();
 }
 
 function add_stuff_for_testing() {

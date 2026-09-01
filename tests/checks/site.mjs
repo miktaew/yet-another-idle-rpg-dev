@@ -5,7 +5,7 @@ import * as path from "node:path";
 import { error } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 import { repo_root, site_dir, version } from "../lib/context.mjs";
-import { strip_comments } from "../lib/source.mjs";
+import { source_files, strip_comments } from "../lib/source.mjs";
 
 function check_site() {
     if (!fs.existsSync(site_dir)) {
@@ -245,6 +245,76 @@ async function check_help_explains_standing() {
         + ` both pages (${named} checked)`);
 }
 
+/**
+ * The dev console leaking out of its tab.
+ *
+ * P-20 asked for it to survive a reload and not a restart, which is `sessionStorage` and
+ * nothing else. Two ways that goes wrong, and both are silent:
+ *
+ *  - **`localStorage` instead.** One word different, and the console is on for good on
+ *    that machine - including for whoever the browser belongs to next.
+ *  - **The save.** The export is a file players hand to each other and paste into the
+ *    import box. A save carrying "dev mode was on" turns it on for somebody who never
+ *    opened the console, on a machine where it was never enabled. That is the one that
+ *    would be found by a player rather than by us.
+ *
+ * So the key is required to appear only beside `sessionStorage`, and never in the save
+ * modules at all.
+ */
+function check_dev_console_is_not_saved() {
+    const main = strip_comments(fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+    const declared = /const (\w+_session_key)\s*=\s*"([^"]+)"/.exec(main);
+    if (!declared) {
+        error("src/main.js no longer declares a `*_session_key` for the dev console -"
+            + " check_dev_console_is_not_saved cannot tell what to look for.");
+        return;
+    }
+    const [, constant, key] = declared;
+
+    let uses = 0;
+    for (const relative of source_files(repo_root)) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        const lines = source.split("\n");
+        lines.forEach((line, index) => {
+            if (!line.includes(constant) && !line.includes(`"${key}"`)) {
+                return;
+            }
+            //The declaration itself is not an access.
+            if (line.includes(`const ${constant}`)) {
+                return;
+            }
+            uses++;
+            if (!line.includes("sessionStorage")) {
+                error(`${relative}:${index + 1} touches the dev console's session key`
+                    + " outside a sessionStorage call. It survives a reload and dies with"
+                    + " the tab because of sessionStorage specifically - localStorage would"
+                    + " leave it on for good, and the save would turn it on for whoever the"
+                    + " export is sent to.");
+            }
+        });
+    }
+
+    for (const relative of ["src/save_load.js", "src/game_state.js"]) {
+        const full = path.join(repo_root, relative);
+        if (!fs.existsSync(full)) continue;
+        const source = strip_comments(fs.readFileSync(full, "utf8"));
+        if (source.includes(key) || source.includes(constant)) {
+            error(`${relative} mentions the dev console's session key. The save must not`
+                + " carry it: an export is a file players send each other, and this would"
+                + " turn the console on for the person who imports it.");
+        }
+    }
+
+    if (uses === 0) {
+        error("nothing reads or writes the dev console's session key - this check is out of"
+            + " date, or the feature is gone.");
+        return;
+    }
+
+    console.log(`[check] dev console: ${uses} accesses to "${key}", all through`
+        + " sessionStorage and none in the save");
+}
+
 function check_changelogs_cover_version() {
     for (const file of ["changelog.html", "changelog.tr.html"]) {
         const html = fs.readFileSync(path.join(repo_root, file), "utf8");
@@ -304,6 +374,7 @@ function check_changelogs_cover_version() {
 
 export {
     check_changelogs_cover_version,
+    check_dev_console_is_not_saved,
     check_help_explains_standing,
     check_help_map_covers_the_world,
     check_language_switch_repaints,

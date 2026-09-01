@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 76 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 77 -->
 
 # Changelog
 
@@ -20,6 +20,45 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### The dev console survives a reload and not a restart
+
+P-20, the owner's request, and it is one storage decision rather than a feature: the
+console's lifetime should be the tab's. `sessionStorage` is exactly that - it survives a
+refresh and dies when the tab closes - so there is no flag to clear, no timer, and nothing
+that can get out of step with anything else.
+
+`enable_dev_console()` writes the key on the way out and the boot sequence reads it on the
+way in, last of all, because the panel it reveals is DOM and the helpers it hands out
+close over registries that the load fills first. Every access is wrapped in try/catch:
+`sessionStorage` throws outright in some privacy modes rather than returning null, and a
+dev convenience must never be the reason the game fails to boot. With storage blocked the
+console still works for the page it was opened on; it just does not come back.
+
+The line it prints changed too, because it was documenting the old behaviour: it said
+*"Not saved - a reload turns it off."* It now says it survives a reload, is gone when you
+close the tab, and is still not saved.
+
+**`check_dev_console_is_not_saved`** guards the two ways this goes wrong, both silent:
+
+- **`localStorage` instead of `sessionStorage`.** One word different, and the console is
+  on for good on that machine - including for whoever the browser belongs to next.
+- **The save.** An export is a file players hand to each other and paste into the import
+  box. A save carrying "dev mode was on" would turn it on for somebody who never opened
+  the console, on a machine where it was never enabled. That is the one a player would
+  find rather than us.
+
+So the key is required to appear only on lines that also say `sessionStorage`, and never
+in `save_load.js` or `game_state.js` at all. The check reads the key out of the constant's
+declaration rather than holding its own copy.
+
+Negative-tested three ways: `localStorage` swapped in, and the key put into `save_load.js`
+- first as a comment, which correctly did *not* fire, because `strip_comments` blanks
+comments before the check reads them and a comment mentioning a key carries nothing. As
+real code it fired twice, once per rule, which is the right answer for one line that
+breaks both.
+
+Maintenance: the dev console is not player-facing, so no version bump.
 
 ### The help page catches up with the game, and one check now says when it does not
 

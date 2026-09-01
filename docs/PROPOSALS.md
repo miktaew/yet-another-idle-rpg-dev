@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 84 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 85 -->
 
 # Proposals
 
@@ -606,21 +606,6 @@ What that means for the design:
   slums, and the slums have the shed with the scales and a standing ladder already. A
   trader whose stock or prices read `Town` or `Slums` standing would spend a number the
   game already has.
-
-### P-20 — Dev mode survives a reload and not a restart `open`
-
-The owner's request, and it is exactly one storage decision: `sessionStorage`. It survives
-a page reload and dies when the tab closes, which is the requested behaviour with no flag
-to manage and nothing written to the save.
-
-**Measured:** the dev console is opened by `enable_dev_console()` and documented in
-[DEV_CONSOLE.md](DEV_CONSOLE.md). Whatever it sets is currently in memory only, so a
-reload loses it - which is the half the owner wants changed - and nothing persists it,
-which is the half that must stay true across a restart.
-
-**What must not happen:** it must not go into the save. A save carrying "dev mode was on"
-is a save that behaves differently on someone else's machine, and the export is a file
-players share.
 
 ---
 

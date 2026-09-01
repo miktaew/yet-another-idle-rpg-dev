@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 76 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 77 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,44 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Dev konsolu yenilemeden sağ çıkıyor, yeniden açılıştan çıkmıyor
+
+P-20, sahibinin isteği ve bir özellikten çok tek bir depolama kararı: konsolun ömrü
+sekmenin ömrü olmalı. `sessionStorage` tam olarak bu — yenilemeden sağ çıkıyor, sekme
+kapandığında ölüyor — yani temizlenecek bir bayrak, bir zamanlayıcı ve başka bir şeyle
+uyumsuz düşebilecek hiçbir şey yok.
+
+`enable_dev_console()` çıkarken anahtarı yazıyor, boot dizisi de girerken okuyor; en
+sonda, çünkü açtığı panel DOM ve dağıttığı yardımcılar, yüklemenin önce doldurduğu
+registry'lerin üzerine kapanıyor. Her erişim try/catch içinde: `sessionStorage` bazı
+gizlilik modlarında null döndürmek yerine doğrudan hata fırlatıyor ve bir geliştirici
+kolaylığı, oyunun açılmama sebebi olamaz. Depolama engelliyse konsol, açıldığı sayfa için
+çalışmaya devam ediyor; sadece geri gelmiyor.
+
+Yazdığı satır da değişti, çünkü eski davranışı belgeliyordu: *"Kaydedilmiyor — yenileme
+onu kapatır"* diyordu. Artık yenilemeden sağ çıktığını, sekmeyi kapatınca gittiğini ve
+hâlâ kaydedilmediğini söylüyor.
+
+**`check_dev_console_is_not_saved`**, bunun bozulduğu iki yolu koruyor; ikisi de sessiz:
+
+- **`sessionStorage` yerine `localStorage`.** Tek kelime fark ve konsol o makinede
+  temelli açık kalıyor — tarayıcı sonra kimin olursa onun için de.
+- **Kayıt.** Export, oyuncuların birbirine verdiği ve içe aktarma kutusuna yapıştırdığı bir
+  dosya. "Dev modu açıktı" bilgisini taşıyan bir kayıt, konsolu hiç açmamış birinde, hiç
+  etkinleştirilmemiş bir makinede onu açardı. Bunu bizden önce bir oyuncu bulurdu.
+
+Bu yüzden anahtarın yalnızca `sessionStorage` da geçen satırlarda görünmesi ve
+`save_load.js` ile `game_state.js` içinde hiç geçmemesi şart. Kontrol, anahtarı kendi
+kopyasında tutmak yerine sabitin bildiriminden okuyor.
+
+Üç yönden negatif test edildi: `localStorage` yerine kondu ve anahtar `save_load.js` içine
+yerleştirildi — ilk olarak yorum olarak, ki bu haklı olarak *tetiklenmedi*, çünkü
+`strip_comments` yorumları kontrol okumadan önce temizliyor ve bir anahtarı anan yorum
+hiçbir şey taşımıyor. Gerçek kod olarak iki kez tetikledi, kural başına bir kez; iki kuralı
+birden bozan tek bir satır için doğru cevap da bu.
+
+Bakım işi: dev konsolu oyuncuya dönük değil, dolayısıyla sürüm artmadı.
 
 ### Yardım sayfası oyunu yakalıyor ve bir kontrol artık yakalamadığını söylüyor
 

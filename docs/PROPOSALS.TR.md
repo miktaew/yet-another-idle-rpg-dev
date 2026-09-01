@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 84 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 85 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -633,21 +633,6 @@ Bunun tasarıma etkisi:
   bağlanıyor; kenar mahallede terazili baraka ve hazır bir itibar merdiveni zaten var.
   Stoğu ya da fiyatları `Town` veya `Slums` itibarını okuyan bir tüccar, oyunun elinde
   zaten bulunan bir sayıyı harcar.
-
-### P-20 — Dev modu yenilemeden sağ çıkar, yeniden açılıştan çıkmaz `open`
-
-Sahibinin isteği ve tam olarak tek bir depolama kararı: `sessionStorage`. Sayfa
-yenilemesinden sağ çıkıyor, sekme kapandığında ölüyor; yönetilecek bir bayrak olmadan ve
-kayda hiçbir şey yazılmadan istenen davranış bu.
-
-**Ölçüldü:** dev konsolu `enable_dev_console()` ile açılıyor ve
-[DEV_CONSOLE.md](DEV_CONSOLE.md) içinde belgeli. Şu anda ne ayarlıyorsa yalnızca bellekte,
-yani yenileme onu kaybediyor — sahibinin değişmesini istediği yarı bu — ve hiçbir şey onu
-kalıcı kılmıyor, ki yeniden açılışta doğru kalması gereken yarı da bu.
-
-**Olmaması gereken:** kayda girmemeli. "Dev modu açıktı" bilgisini taşıyan bir kayıt,
-başkasının makinesinde farklı davranan bir kayıttır ve export, oyuncuların paylaştığı bir
-dosya.
 
 ---
 

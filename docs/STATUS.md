@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 29 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 30 -->
 
 # Status
 
@@ -192,6 +192,7 @@ but the ones that encode a bug that shipped:
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 6 lines. |
 | `books` | A book nothing sells, drops or hands over, or a book item with no reading data. 11 books. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
+| `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
 | `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 18 actions. |
 | `stance reactions` | An enemy reacting to a stance id that is not a stance, which never fires. 10 ids, 7 stances. |
