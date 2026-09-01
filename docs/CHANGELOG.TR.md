@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 64 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 65 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,79 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.1 - *Forty Tons*: birinin iki kez boş yazdığı bir satır
+
+P-14 Faz 2b ve arc'ın cevap veren değil soru soran ilk içeriği. Mevcut körfez üzerinde
+iki aksiyon, bir quest ve ilk gerçek lore ipliği.
+
+**İki aksiyon da açılıp yeniden kilitlenmek yerine mevsime bakan `display_conditions`
+ile gösteriliyor.** "Tekne burada değil" oyuncunun değil dünyanın durumu ve bu fark
+teorik değil: açılma tek yönlüdür, yani tekne ikinci kez geldiğinde aksiyonların bir
+şey tarafından yeniden açılması gerekirdi ve bunu yapacak bir şey yok. Mevsim koşulu ise
+sadece eşleşmeyi bırakıp yeniden eşleşmeye başlıyor; ikisinin de okuduğu şey Faz 1'in
+penceresi.
+
+**Boşaltma hiç para vermiyor** ve bu bir tasarım değil, bir düzeltmeydi. İlk taslak bir
+günlük iş için 900 veriyordu; oysa bu, oyuncunun rıhtımda zaten kulak misafiri olduğu
+bir satırla çelişiyor: *"Hamalların parasını kim veriyor?" "Kimse vermiyor."* Geçen
+sürümde yazılmış kanon, bu sürümde yazılmış bir ödülden üstündür; o yüzden para
+kaldırıldı. Geriye Equilibrium ve Weightlifting deneyimi, siz başınızı kaldırmadan
+gidiveren birinin elinize tutuşturduğu ekmekle bir tas, ve saymanın *"Deftere yazılı
+değilsiniz. Kimse deftere yazılı değil."*i kalıyor. Ödenmemiş olması zaten meselenin
+kendisi.
+
+**Manifesto**, Q-8'in şart koştuğu gibi, yeni bir arayüz değil aksiyonun başarı metni.
+Altı sütun — yük, ağırlık, menşe, varış, mühür, durum — beş tam satır ve en altta,
+altısının dördü boş yazılmış bir satır. Ne bulaşmış ne düzeltilmiş: altındaki cetvel
+çizgisi kesintisiz. Durum sütunu onun o tekneden indiğini söylüyor. Biri bu kadarını
+yazmış ve durmuş.
+
+Manifestoyu okumak bilerek ikinci adım. Bir yabancı gidip deponun kapısındaki çeteleyi
+okumaz; bir gün boyunca o teknenin tahtasından yük indirmiş biri okur ve kimse onu
+durdurmaz. Literacy kapıyı 8'de açıyor, 20'de kesinleştiriyor; `read the departures`
+Perception'ı nasıl okuyorsa öyle.
+
+**Sayman bunu açıklamıyor, çünkü açıklayamıyor.** Çetelenin ne olduğunu söylüyor: bir
+şey tartıldığında ağırlığı sütuna yazılır, o tartılmadı, dolayısıyla oraya yazılacak bir
+şey yok. Sonra bunun ikinci kez olduğunu söylüyor — aralarında iki ilkbahar var, iki
+satır da kendi elinden çıkmış ve sayfayı tuttuğu on bir yılda böyle olan bir tek onlar
+var. Aynı sandık olduğunu söylemiyor. İkisini de tartmadı, ikisini de açmadı; yani
+bildiği şey satırın aynı olduğu. Ona tartmamasını kimin söylediği bu oyunda henüz yok ve
+arc'ın "tek katman" kuralı da tam burada tutuyor.
+
+**İplik.** `lore thread the Marrowmoth`, saymanın rıhtımdaki iki repliği ile bir aylık
+yürüyüş uzaklıktaki lonca kâtibinin söylentisi arasında uzanıyor. Bu Q-8'in kendi
+örneği — tek konu, iki konuşan — ve yalnızca konuşan bazlı listede bakıldığında birbiriyle
+alakasız iki konuşma gibi okunuyor. v0.7.0'da gelen kâtip repliğine ayrıca `lore: true`
+gerekti: dünyada hiçbir şeyi değiştirmiyor, dolayısıyla türetilmiş kural onu elerdi ve
+iplik yine tek konuşanlı kalırdı.
+
+**1. quest işten açılıyor.** Üç görev, hiç dövüş yok ve sonuncusu bir soru. Kimse elden
+vermiyor: oyuncu, günlük tekneden bahsetmeden önce zaten tahtada oluyor. Arc'ın tamamı
+bu kural üzerine kurulu.
+
+Kaynağı okuyarak görülemeyecek iki şeyi kontroller yakaladı:
+
+- `data/locations.js` içinde `marrowmoth_seasons` kullanılmış ama yalnızca
+  `is_marrowmoth_in_port` import edilmişti. esbuild çözülmemiş bir tanımlayıcıyı runtime
+  global sayar; yani derleme de paket de sorunsuz görünürdü ve körfez, bir oyuncu oraya
+  ilk adımını attığında hata fırlatırdı.
+- İki aksiyon önce `locations["The bay"].actions["id"] = ...` biçiminde, ayrı ayrı
+  atamalarla yazılmıştı. `check_action_branches` tek bildirim yerini okuyor, dolayısıyla
+  iki aksiyon da ona görünmez oldu — "bir şey şu aksiyonu açıyor ama orada bildirilmemiş"
+  dedi. Artık ikisi de mevcut nesne değişmezinin içinde; kontrolün varsaydığı gibi tek
+  bir bildirim yeri.
+
+Bir şeyi de testler yakaladı: 2a'nın "hiçbir birim iplik iddia etmiyor" taban varsayımı,
+içerik iplik iddia ettiği anda haklı olarak düştü. Artık gerçek olanı doğruluyor —
+Marrowmoth ipliğinin birden fazla beat'te ve birden fazla konuşan tarafından
+bildirildiğini ve içinden bir şey duyulmadan hiçbir ipliğin çizilmediğini; ki panelin,
+oyuncunun gerçekten ne bildiği konusunda dürüst kalmasını sağlayan da bu.
+
+Sayfadan okunmadı, yüklü oyunda ölçüldü: iki aksiyon da körfezde, İlkbahar/Sonbahar
+koşuluyla; quest, kaydın tutacağı kimlik altında üç göreve sahip; manifesto ile ipliğin
+adı iki dilde de eksik metin olmadan çözülüyor.
 
 ### Bir soruşturma tek bir ipliktir, üç ayrı konuşma değil
 

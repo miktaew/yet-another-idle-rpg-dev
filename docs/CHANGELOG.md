@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 64 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 65 -->
 
 # Changelog
 
@@ -20,6 +20,79 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.1 - *Forty Tons*: a line somebody wrote empty, twice
+
+P-14 phase 2b, and the arc's first content that asks a question rather than answering
+one. Two actions on the existing bay, one quest, and the first real lore thread.
+
+**Both actions are shown by `display_conditions` on the season** rather than unlocked
+and locked again. "She is not here" is a state of the world, not a state of the player,
+and the difference is not academic: an unlock is one-way, so the second time she came in
+the actions would have had to be unlocked again by something, and there is nothing to
+do it. A season condition simply stops matching and starts matching, and the phase-1
+window is what both read.
+
+**The unloading pays nothing**, and that was a correction rather than a design. The
+first draft gave 900 for a day's work, which contradicts a line the player has already
+overheard on the quay - *"Who is paying the porters?" "Nobody is paying the porters."*
+Canon written last version outranks a reward written this one, so the pay came out. What
+is left is Equilibrium and Weightlifting xp, bread and a cup of something from somebody
+who is gone before you look up, and the tallyman's *"You are not on the book. Nobody is
+on the book."* The unpaid part is the point.
+
+**The manifest** is action success text, no new interface, exactly as Q-8 required. Six
+columns - cargo, weight, origin, destination, seal, status - five complete lines, and at
+the foot of it one line with four of the six written empty. Not smudged and not
+corrected: the ruling underneath is unbroken. The status column says it came off her.
+Somebody wrote that much and stopped.
+
+Reading it is the second step on purpose. A stranger does not walk up to the shed door
+and read the tally; somebody who spent a day carrying cargo down her plank does, and
+nobody stops him. Literacy gates it at 8 and makes it certain at 20, mirroring how
+`read the departures` reads Perception.
+
+**The tallyman does not explain it, because he cannot.** He says what a tally is: a
+weight goes in the column when a thing is weighed, that one was not, so there is nothing
+to put there. Then he says it is the second time - two springs apart, both lines in his
+own hand, and the only two like it in eleven years of keeping the page. He will not say
+it is the same crate. He did not weigh either and did not open either, so what he knows
+is that the line was the same. Who told him not to weigh it is not in this game yet, and
+that is the arc's one-layer rule holding.
+
+**The thread.** `lore thread the Marrowmoth` runs across the tallyman's two lines on the
+quay and the guild clerk's rumour a month's walk inland. That is Q-8's own case - one
+subject, two speakers - and under the by-speaker list alone it reads as two unrelated
+conversations. The clerk's line, which shipped in v0.7.0, needed `lore: true` as well:
+it changes nothing in the world, so the derived rule would have dropped it and the
+thread would have been one speaker after all.
+
+**Quest 1 opens from the work.** Three tasks, no combat, and the last one is a question.
+Nobody hands it out: the player is already on the plank before the journal mentions her,
+which is the rule the whole arc is built on.
+
+Two things the checks caught that reading the source would not have:
+
+- `marrowmoth_seasons` was used in `data/locations.js` and only `is_marrowmoth_in_port`
+  was imported. esbuild treats an unresolved identifier as a runtime global, so the
+  build and the bundle would both have been fine and the bay would have thrown the first
+  time a player walked onto it.
+- The two actions were first written as `locations["The bay"].actions["id"] = ...`, one
+  assignment each. `check_action_branches` reads the single declaration site, so both
+  actions were invisible to it - it reported that something unlocks an action "which is
+  not declared there". They are entries in the existing literal now, one declaration
+  site as the check assumes.
+
+And one the tests caught: 2a's baseline assertion that no unit claims a thread failed,
+correctly, the moment content claimed one. It now asserts the real thing instead - that
+the Marrowmoth thread is declared on more than one beat and by more than one speaker,
+and that a thread is not drawn until something in it is heard, which is what keeps the
+panel honest about what the player actually knows.
+
+Measured in the loaded game rather than read off the page: both actions are on the bay
+with the Spring/Autumn condition, the quest has three tasks under the id the save will
+hold, and the manifest and the thread's name resolve in both languages with no missing
+text.
 
 ### An investigation is one thread, not three conversations
 

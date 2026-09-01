@@ -11,7 +11,7 @@ import { global_flags, language } from "../main.js";
 import { translationManager } from "../translation.js";
 import { clamp, slerp } from "../misc.js";
 import { registries } from "../registries.js";
-import { is_marrowmoth_in_port } from "./marrowmoth.js";
+import { is_marrowmoth_in_port, marrowmoth_seasons } from "./marrowmoth.js";
 const locations = {}; //contains all the created locations
 //Published for conditions.js, which must not import this module: the extra edge
 //reorders module evaluation and breaks the bundle. See src/registries.js.
@@ -2566,7 +2566,80 @@ function get_location_type_penalty(type, stage, stat, category) {
                 quest_progress: [{quest_id: "A Good Place to Leave", task_index: 3}],
             },
         }),
+
+        /*
+            Phase 2 of the Marrowmoth arc: the unloading, and the page that records it.
+
+            Both hang off `display_conditions` rather than being unlocked and locked again,
+            because "she is not here" is a state of the world and not a state of the player.
+            Out of season the quay simply has nothing to help with, and the actions come back
+            by themselves next time she is in - which is the whole reason the window is a
+            season and not a flag (Q-10).
+
+            Reading the manifest is deliberately the second step. A stranger does not walk up
+            to the shed door and read the tally; somebody who spent a day carrying cargo down
+            her plank does, and nobody stops him.
+        */
+        "lend a hand on the quay": new GameAction({
+            action_id: "lend a hand on the quay",
+            action_name: "action lend a hand name",
+            starting_text: "action lend a hand starting",
+            description: "action lend a hand desc",
+            action_text: "action lend a hand during",
+            success_text: "action lend a hand success",
+            is_unlocked: false,
+            repeatable: true,
+            display_conditions: {season: {yes: marrowmoth_seasons}},
+            conditions: [
+                {skills: {Equilibrium: 6}},
+                {skills: {Equilibrium: 18}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action lend a hand fail conditional_loss 1"],
+                random_loss: ["action lend a hand fail random_loss 1"],
+            },
+            attempt_duration: 400,
+            success_chances: [0.5, 1],
+            rewards: {
+                skill_xp: {Equilibrium: 500, Weightlifting: 500},
+                //No money. The quay's own noise asks who is paying the porters and answers
+                //itself: nobody is. Paying the hero for the same work would contradict the
+                //line the player has already overheard, and the unpaid part is the point.
+                //The quest opens from the work, not the other way round: the player is
+                //already on the quay before anything in the journal mentions her.
+                quests: ["Forty Tons"],
+                quest_progress: [{quest_id: "Forty Tons", task_index: 0}],
+                actions: [{location: "The bay", action: "see the manifest"}],
+            },
+        }),
+
+        "see the manifest": new GameAction({
+            action_id: "see the manifest",
+            action_name: "action see the manifest name",
+            starting_text: "action see the manifest starting",
+            description: "action see the manifest desc",
+            action_text: "action see the manifest during",
+            success_text: "action see the manifest success",
+            is_unlocked: false,
+            display_conditions: {season: {yes: marrowmoth_seasons}},
+            conditions: [
+                {skills: {Literacy: 8}},
+                {skills: {Literacy: 20}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action see the manifest fail conditional_loss 1"],
+                random_loss: ["action see the manifest fail random_loss 1"],
+            },
+            attempt_duration: 200,
+            success_chances: [0.4, 1],
+            rewards: {
+                skill_xp: {Literacy: 900},
+                quest_progress: [{quest_id: "Forty Tons", task_index: 1}],
+                textlines: [{dialogue: "harbour tallyman", lines: ["tallyman the crate"]}],
+            },
+        }),
     };
+
 
     locations["Longhouse"] = new Location({
         connected_locations: [{location: locations["Swampland tribe"], custom_text: "travel Go back out to the [Swampland tribe]", travel_time: 5}],

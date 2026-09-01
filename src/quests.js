@@ -745,6 +745,42 @@ const questManager = {
         every tier-4 and tier-5 component they already own come out at the quality it
         was always worth.
     */
+    /*
+        P-14 quest 1. It opens from a day's work on the quay rather than from anybody
+        handing it out, which is the rule the arc is built on: the player learns the
+        Marrowmoth is back from the world, and the journal catches up afterwards.
+
+        Three tasks and no combat. The last one is a question, and its answer is the
+        thing the arc is actually about - a line somebody wrote empty on purpose, twice.
+    */
+    quests["Forty Tons"] = new Quest({
+        quest_name: "quest Forty Tons",
+        display_priority: 17,
+        getQuestDescription: ()=>{
+            if(quests["Forty Tons"].quest_tasks[2].is_finished) {
+                return "quest Forty Tons desc 4";
+            } else if(quests["Forty Tons"].quest_tasks[1].is_finished) {
+                return "quest Forty Tons desc 3";
+            } else if(quests["Forty Tons"].quest_tasks[0].is_finished) {
+                return "quest Forty Tons desc 2";
+            } else {
+                return "quest Forty Tons desc 1";
+            }
+        },
+        questline: "No Word Sent",
+        quest_tasks: [
+            new QuestTask({task_description: "quest Forty Tons task 1"}),
+            new QuestTask({task_description: "quest Forty Tons task 2"}),
+            new QuestTask({task_description: "quest Forty Tons task 3"}),
+        ],
+        quest_rewards: {
+            xp: 45000,
+            money: 12000,
+            reputation: {
+                Town: 25,
+            },
+        }
+    });
     quests["A Fire in a Hollow"] = new Quest({
         quest_name: "quest A Fire in a Hollow",
         display_priority: 16,

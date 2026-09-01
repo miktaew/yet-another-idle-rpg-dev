@@ -1001,11 +1001,24 @@ const translationManager = globalThis.__real_tm;
     const [world, dialogue_data] = await load_browser_free(repo_root,
         ["src/world_index.js", "src/data/dialogues.js"]);
 
-    //The baseline, and the reason it comes first: while nothing is threaded, the panel
-    //has to show exactly what it showed before this field existed.
-    check("nothing in the game is threaded yet", world.lore_threads(true).length === 0);
-    check("and no unit claims a thread",
-        world.lore_all_units().every(unit => world.lore_thread_of(unit) === null));
+    /*
+        The arc's own thread, in the real content rather than injected. It was written
+        across two speakers on purpose - the tallyman on the quay and the guild clerk a
+        month's walk inland - which is exactly the case Q-8 was written for and the one
+        the by-speaker list gets wrong.
+    */
+    const marrowmoth_beats = world.lore_all_units()
+        .filter(unit => world.lore_thread_of(unit) === "lore thread the Marrowmoth");
+    check("the Marrowmoth thread is declared on more than one beat",
+        marrowmoth_beats.length >= 2, `${marrowmoth_beats.length}`);
+    check("and by more than one speaker",
+        new Set(marrowmoth_beats.map(unit => unit.dialogue)).size >= 2,
+        [...new Set(marrowmoth_beats.map(unit => unit.dialogue))].join());
+
+    //Declaring a thread is not the same as having heard any of it: a fresh save draws
+    //no threads at all, which is what keeps the panel honest about what the player knows.
+    check("a thread is not drawn until something in it is heard",
+        world.lore_threads(true).length === 0);
 
     const heard = (dialogue, line, thread) => {
         const textline = dialogue_data.dialogues[dialogue].textlines[line];

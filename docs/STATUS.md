@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 18 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 19 -->
 
 # Status
 
@@ -56,7 +56,7 @@ npm run check:bundle
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 173 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 174 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.
@@ -174,7 +174,7 @@ but the ones that encode a bug that shipped:
 | `imports resolve` | A name imported from a module that does not export it. 864 names. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 141 names. |
-| `content text ids` | Player-facing text with no locale row. 1,918 ids. |
+| `content text ids` | Player-facing text with no locale row. 1,949 ids. |
 | `action button labels` | A paragraph rendered inside a button. 45 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
@@ -182,14 +182,14 @@ but the ones that encode a bug that shipped:
 | `no English written into the DOM` | Hardcoded strings bypassing the locale. 212 literals. |
 | `hidden quest tasks` | A quest that cannot advance. 11 tasks. |
 | `visible quest tasks` | A task named in the journal with no way to finish it. 56 tasks. |
-| `actions can explain failure` | An action that fails with no reason shown. 59 actions. |
+| `actions can explain failure` | An action that fails with no reason shown. 62 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 | `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
 | `quest hints` | A hint builder that filters itself down to nothing and then says nothing. |
 | `markdown rules` | A `---` written under a paragraph, which renders that paragraph as a heading. 62 breaks. |
 | `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 25 names across 54 files. |
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
-| `lore threads` | A thread that draws as a heading with nothing under it. |
+| `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 3 lines. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -208,9 +208,11 @@ directive is recorded before it is worked on:
   against the phase that spends it. Phase 1, *No Word Sent*, shipped as v0.7.0: the
   Marrowmoth is in port in Spring and Autumn, and the salt house's shelf, the quay's
   ambient lines and the guild clerk's rumour all read that one window. Phase 2,
-  *Forty Tons*, is split the same way: 2a, `Textline`'s optional `lore_thread` and the
-  lore panel's thread grouping, is in; 2b, the manifest and the arc's first real
-  thread, is what ships as v0.7.1.
+  *Forty Tons*, shipped as v0.7.1: the unloading and the manifest are two actions on
+  the existing bay, quest 1 opens from the work rather than from anybody handing it
+  out, and the arc's first lore thread runs across two speakers. Phase 3,
+  *A Stroke Through It*, is next, and it spends Q-7 - `Guild` as a fourth reputation
+  region.
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.

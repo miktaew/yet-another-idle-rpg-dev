@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 71 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 72 -->
 
 # Proposals
 
@@ -287,27 +287,19 @@ see through a derived template name and to refuse any assignment to
 opens from none of it: that is phase 2's, and it opens from the discovery rather than
 the other way round.
 
-**Phase 2 — v0.7.1, *Forty Tons*.** Unloading, as actions on the existing bay, with a
-manifest read as cargo / weight / origin / destination / seal / status. Every normal
-line is complete. One is not, and the same crate went unweighed last time too, which
-is stated and not explained. No new UI: the manifest is action success text and a
-lore thread, per Q-8. Split the same way phase 1 was, and for the same reason — the
-surface Q-8 asked for is testable on its own and the player cannot see it until
-something is threaded.
-
-- **2a — the thread.** `done`. `Textline` takes an optional `lore_thread`, a text id
-  naming the thread; `world_index.js` groups units by it; the lore panel draws the
-  threads above the by-speaker list and a threaded beat appears in its thread and
-  nowhere else, because the same six facts on the page twice is not what Q-8 asked
-  for. One optional field and one branch, no save impact, and reusable by the banished
-  tribe and the Rat God — which was Q-8's own test of whether the abstraction earns
-  itself. Guard: `check_lore_threads_resolve`, brought forward from phase 5, on the
-  three ways a thread renders as an empty heading. Nothing is threaded yet, so the
-  panel is unchanged and there is no version.
-- **2b — the manifest.** `open`. The unloading actions, the six-field manifest, the
-  one line that is not complete, and the arc's first real thread. Quest 1 opens from
-  the discovery here. This is what ships as v0.7.1. Guard: covered by the existing
-  class-level checks, which new actions join automatically.
+**Phase 2 — v0.7.1, *Forty Tons*.** `done`. Two actions on the existing bay, both
+shown by `display_conditions` on the season rather than unlocked and locked again,
+because "she is not here" is a state of the world and not a state of the player. A day
+on the plank unpaid — the quay's own noise asks who is paying the porters and answers
+itself, so paying the hero would contradict a line already overheard — and then the
+tally nailed inside the shed door: six columns, five complete lines, and one where four
+of the six were written empty with the ruling underneath unbroken. The tallyman says
+why there is no weight in the weight column, and that it is the second time, two springs
+apart, in his own hand. He will not say it is the same crate: he did not weigh or open
+either. Quest 1 opens from the work, not the other way round. The arc's first lore
+thread runs across the tallyman and the guild clerk, which is Q-8's own case — one
+subject, two speakers, a month's walk apart. Guards: the existing class-level checks,
+which the two actions joined automatically, plus `check_lore_threads_resolve` from 2a.
 
 **Phase 3 — v0.7.2, *A Stroke Through It*.** Investigation, gated on standing — with `Guild`
 as a fourth reputation region, per Q-7 — over three

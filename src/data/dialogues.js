@@ -2667,6 +2667,39 @@ class Textline {
                 name: "tallyman after",
                 text: "tallyman after answ",
                 is_unlocked: false,
+                //Region 3's quest ends here, and this is where the arc picks up: the
+                //player now knows the hull's name, so the quay has work to offer them
+                //the next time she is alongside.
+                rewards: {
+                    actions: [{location: "The bay", action: "lend a hand on the quay"}],
+                },
+            }),
+            /*
+                The manifest's empty line, asked about. He does not explain it, because
+                he cannot: what he knows is that he wrote it, and that he wrote the same
+                line the last time. Who told him to is not in this game yet.
+            */
+            "tallyman the crate": new Textline({
+                name: "tallyman the crate",
+                text: "tallyman the crate answ",
+                is_unlocked: false,
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
+                rewards: {
+                    textlines: [{dialogue: "harbour tallyman", lines: ["tallyman last time"]}],
+                },
+                locks_lines: ["tallyman the crate"],
+            }),
+            "tallyman last time": new Textline({
+                name: "tallyman last time",
+                text: "tallyman last time answ",
+                is_unlocked: false,
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
+                rewards: {
+                    quest_progress: [{quest_id: "Forty Tons", task_index: 2}],
+                },
+                locks_lines: ["tallyman last time"],
             }),
         }
     });
@@ -2870,6 +2903,11 @@ class Textline {
             "marrowmoth": new Textline({
                 name: "clerk marrowmoth",
                 text: "clerk marrowmoth answ",
+                //The thread's third beat, and the one that makes it a thread rather
+                //than a conversation: the same subject from a second speaker, in a
+                //different town, months of walking away from the quay.
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
                 display_conditions: {
                     season: {
                         yes: marrowmoth_seasons,
