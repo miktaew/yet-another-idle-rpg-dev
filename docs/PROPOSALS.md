@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 98 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 99 -->
 
 # Proposals
 
@@ -593,10 +593,23 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
 
-### P-24 — Lockpicking, and something worth locking `open`
+### P-24 — Lockpicking, and something worth locking `partly done`
 
 The owner's request: lockpicking could exist, hunting in a region could turn up a chest at
 a low chance, and a chest could hold gold or clothes - or a trap.
+
+**Two of the three shipped as v0.7.18** - the skill and the find, with a lock at the
+village that is entirely existing machinery: the two-set condition ramp for the skill
+gradient, `remove_on_success` alone for "never a dead end", and `loot_list` for the find.
+
+**What is left is the trap, and it needs a mechanism rather than data.** An action has one
+success path and its `rewards` fire only on success, with no chance attached to any of
+them, so "sometimes the chest bites" cannot be expressed. `recovery_chances` on a
+`UsableItem` is the engine's only chance-based yield and it is gated behind an effect
+actually applying - `use_item` processes recoveries only if `add_active_effect` returned
+true - and consults no skill. **Varied contents have the same shape**: every successful pick
+gives the same coin and the same scarf, because rewards cannot roll. Both want one thing, a
+reward that can carry a chance, which is one mechanism and not two.
 
 **Measured, because the arc has assumed the opposite twice.** There is no lockpicking
 skill: P-14's own planning note says so, and phase 4's failure text jokes about it

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 98 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 99 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -614,10 +614,23 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
-### P-24 — Kilit açma ve kilitlenmeye değer bir şey `open`
+### P-24 — Kilit açma ve kilitlenmeye değer bir şey `kısmen tamam`
 
 Sahibinin isteği: kilit açma olabilir, bir bölgede avlanırken düşük bir şansla sandık
 çıkabilir ve sandıkta altın ya da kıyafet — ya da bir tuzak — olabilir.
+
+**Üçün ikisi v0.7.18 olarak yayınlandı** — beceri ve bulunma; köyde, tamamen mevcut
+makineden kurulu bir kilitle: beceri gradyanı için iki-set koşul rampası, "asla çıkmaz
+sokak değil" için tek başına `remove_on_success` ve bulunma için `loot_list`.
+
+**Kalan şey tuzak ve o, veri değil bir mekanizma istiyor.** Bir aksiyonun tek başarı yolu
+var ve `rewards`'ı yalnızca başarıda tetikleniyor, hiçbirine bağlı bir şans yok; yani
+"sandık bazen ısırır" ifade edilemiyor. `UsableItem` üzerindeki `recovery_chances`, motorun
+şansa bağlı tek verimi ve o da bir etkinin gerçekten uygulanmasına bağlı — `use_item`, ancak
+`add_active_effect` true döndürürse geri kazanımları işliyor — ve hiçbir beceriye bakmıyor.
+**Çeşitli içerikler de aynı şekle sahip**: her başarılı açış aynı sikkeyi ve aynı atkıyı
+veriyor, çünkü ödüller zar atamıyor. İkisi de tek bir şey istiyor — şans taşıyabilen bir
+ödül — ki bu iki mekanizma değil bir mekanizma.
 
 **Ölçüldü, çünkü arc bunun tersini iki kez varsaydı.** Kilit açma yeteneği yok: P-14'ün
 kendi planlama notu bunu söylüyor ve Faz 4'ün başarısızlık metni tam da bu yüzden onunla

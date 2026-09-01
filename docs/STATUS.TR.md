@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 38 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 39 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -76,7 +76,7 @@ npm run check:bundle
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
 | `display.js` | 3.815 | Bütün DOM güncellemeleri. Altı kesmede 7.057'den indi. |
-| `data/skills.js` | 5.756 | 65 yetenek, kilometre taşları ve rütbe adları. |
+| `data/skills.js` | 5.797 | 66 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
 | `data/locations.js` | 4.684 | 69 yer, aksiyonları ve bağlantıları. |
@@ -152,7 +152,7 @@ Kayıt defterlerinden ve kontrollerden ölçüldü:
 - Bu yerlere dağılmış **45 aksiyon** ve **46 etkinlik**.
 - **70 adım** taşıyan **19 görev**; adımların 11'i gizli ve 6 göreve dağılmış, her gizli
   adımın bir ilerleticisi var.
-- **65 yetenek**, 59'unda birden fazla rütbe adı, ayrıca kilometre taşları.
+- **66 yetenek**, 60'ında birden fazla rütbe adı, ayrıca kilometre taşları.
 - **32 yaratık**.
 - 7 dalda **142 tarif** ve üç plaka malzemesi; tarif eşya adlarının tamamı **453 eşya
   şablonuna** karşı çözülüyor.
@@ -199,6 +199,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `moon phases` | getMoonPhaseName'in hiç döndürmediği bir ay evresi adı; kapıladığı pencere hiç açılmıyor. 4 evre. |
 | `items can be got` | Hiçbir tarifin, tüccarın, düşüşün, ödülün ya da toplama etkinliğinin veremediği elle yazılmış eşya. 192 eşya, 1 mazeretli. |
 | `item display names` | Ad satırları aynı dizgeye çözülen iki eşya; oyuncu onları ayırt edemiyor. 508 ad. |
+| `failed attempts` | Başarısız olabilen ve başarısızlıkta istediği eşyayı yiyen bir aksiyon; düşük beceri yükseltilemez hâle gelir. 4 aksiyon. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

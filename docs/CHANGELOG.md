@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 89 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 90 -->
 
 # Changelog
 
@@ -20,6 +20,71 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.18 - a locked chest, and the skill the game had joked about twice
+
+P-24's first two thirds. The arc had assumed lockpicking away twice - P-14's planning note
+says there is no such skill, and the tidal flats' failure text jokes about it precisely
+because there was none - and Q-1's second revision put a new skill in scope.
+
+**Almost none of this is new machinery, which was the finding.** Every piece the request
+needs already existed and the measuring was about which existing piece:
+
+- **The skill gradient** is the two-set condition ramp. `process_conditions` returns a
+  fraction between `conditions[0]` and `conditions[1]`, and `get_success_chance` reads it as
+  `chances[0] + (chances[1] - chances[0]) * status`. So `[{skills: {Lockpicking: 0}},
+  {skills: {Lockpicking: 30}}]` against `success_chances: [0.2, 0.9]` gives 22% at level 0,
+  46% at 10, 69% at 20 and 90% from 30 - measured through the shipped formula, with nothing
+  written to compute it. The skill's max level is 30 because that is where the ramp stops,
+  so it is finished exactly when the lock stops improving.
+- **"A locked chest must never be a dead end"** is phase 4's rule and it comes free.
+  `main.js` reads `remove_on_success && is_won || remove_on_fail && !is_won`, so
+  `remove_on_success` alone means a failed pick keeps the chest; `keep_progress` means the
+  time already spent stays spent on it. A failure costs the attempt and nothing else -
+  which is also how the skill is learned, since the xp is on the success and a fifth of
+  attempts succeed from level 0.
+- **The find** is `loot_list`, because P-24's own rule is that this must not become a
+  second loot system beside it. Four enemies across four regions at 0.4%: the forest bear,
+  the warthog, the mountain goat and the alligator. What you find is not off the animal,
+  and the description says so.
+
+**The skill is unlocked from the start**, unlike Butchering and Shellwork which a book
+teaches. The only thing that could teach this one is the lock, and the lock requires the
+skill: a locked skill whose sole trainer needs it is a circle. `visibility_treshold` hides
+it until the first attempt instead.
+
+**One lock, one place - the village.** Actions live on locations, and the village is the
+hub and the home region of the first chest source. The chest is also sellable at 300,
+a fraction of what is usually inside, so somebody who does not want the skill can take the
+certain small thing over the uncertain larger one. That is a choice rather than a loss.
+
+**Two checks earned their keep on the way in.**
+
+`check_actions_can_explain_failure` refused the action for having success conditions and no
+`conditional_loss` line. The path is unreachable - the ramp's floor is Lockpicking 0 and a
+skill cannot fall below it - but `check_conditions_on_finish` re-checks at the end, and an
+unreachable path with no text is a missing-text marker waiting for the day somebody raises
+the floor. Written.
+
+And a new one. `check_no_dead_end_skill_gates` enforces phase 4's rule for
+**quest-advancing** actions only, and the other half had nothing behind it because until
+now no action in the game both required an item and could fail - all eleven that require
+items have `success_chances[0]` of 1. Measured while writing the check, there are four that
+can fail once the lock is in: the lock, `climb the mountain`, `cut a flue` and
+`rappel waterfall`, and none of them eats its input.
+`check_a_failed_attempt_keeps_what_it_needs` holds that: an action that can fail must not
+set `remove_on_fail` on anything its `required` names, because a chest consumed by a failed
+pick is not a cost, it is a punishment for being bad at the thing the attempt is how you
+get good at. Negative-tested by adding the flag.
+
+**What P-24 still holds: the trap**, and it needs engine work rather than data. An action
+has one success path and its `rewards` fire only on success, with no chance attached to any
+of them - so "sometimes the chest bites" cannot be expressed. `recovery_chances` on a
+`UsableItem` is the engine's only chance-based yield, and it is gated behind an effect
+actually applying (`use_item` only processes recoveries if `add_active_effect` returned
+true) and consults no skill. Varied contents have the same shape: every successful pick
+currently gives the same coin and the same scarf, because rewards cannot roll. Both want
+the same thing - a reward that can carry a chance - which is one mechanism rather than two.
 
 ### "Can this be got at all" is asked of the whole registry now
 

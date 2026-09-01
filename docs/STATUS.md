@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 38 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 39 -->
 
 # Status
 
@@ -73,7 +73,7 @@ npm run check:bundle
 | File | Lines | What it holds |
 | --- | ---: | --- |
 | `display.js` | 3,815 | Every DOM update. Down from 7,057 across six cuts. |
-| `data/skills.js` | 5,756 | 65 skills, their milestones and rank names. |
+| `data/skills.js` | 5,797 | 66 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
 | `data/locations.js` | 4,684 | 69 locations, their actions and connections. |
@@ -149,7 +149,7 @@ Measured from the registries and the checks:
 - **45 actions** and **46 activities** spread over those places.
 - **19 quests** holding **70 tasks**, 11 of them hidden across 6 quests; every hidden
   task has an advancer.
-- **65 skills**, 59 of them with more than one rank name, plus milestones.
+- **66 skills**, 60 of them with more than one rank name, plus milestones.
 - **32 enemies**.
 - **142 recipes** in 7 disciplines, plus three plate materials; recipe item names all
   resolve against **453 item templates**.
@@ -198,6 +198,7 @@ but the ones that encode a bug that shipped:
 | `moon phases` | A moon phase name getMoonPhaseName never returns, gating a window that then never opens. 4 phases. |
 | `items can be got` | A hand-written item no recipe, trader, drop, reward or gathering activity can give. 192 items, 1 excused. |
 | `item display names` | Two items whose name rows resolve to the same string, so the player cannot tell them apart. 508 names. |
+| `failed attempts` | An action that can fail and eats a required item on failure, so a low skill cannot be raised. 4 actions. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

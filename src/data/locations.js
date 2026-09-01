@@ -4325,6 +4325,65 @@ function get_location_type_penalty(type, stage, stat, category) {
             all day and a man who has wanted this for longer than the player has been
             alive. What is left is whether you can supply it.
         */
+        /*
+            P-24's lock, and every part of it is machinery that already existed.
+
+            The skill gradient is the two-set condition ramp: process_conditions returns a
+            fraction between conditions[0] and conditions[1], and get_success_chance reads
+            it as `success_chances[0] + (chances[1]-chances[0]) * status`. So Lockpicking 0
+            opens one in five and Lockpicking 30 opens nine in ten, with nothing new
+            written to compute it.
+
+            "A locked chest must never be a dead end" is phase 4's rule and it comes free:
+            remove_on_success means a failed attempt keeps the chest, and keep_progress
+            means the time already spent is not lost either. A failure costs the attempt
+            and nothing else - which is also how the skill is learned, since the xp is on
+            the success and a fifth of attempts succeed from the very start.
+
+            At the village because that is where the game's hub is and where the first
+            chest source lives - the boar in the forest clearing. One lock, one place.
+        */
+        "work at the lock": new GameAction({
+            action_id: "work at the lock",
+            action_name: "action work at the lock name",
+            starting_text: "action work at the lock starting",
+            description: "action work at the lock desc",
+            action_text: "action work at the lock during",
+            success_text: "action work at the lock success",
+            is_unlocked: true,
+            repeatable: true,
+            keep_progress: true,
+            required: {
+                items_by_id: {
+                    "Locked chest": {count: 1, remove_on_success: true},
+                },
+            },
+            conditions: [
+                {skills: {Lockpicking: 0}},
+                {skills: {Lockpicking: 30}},
+            ],
+            failure_texts: {
+                unable_to_begin: ["action work at the lock fail unable_to_begin 1"],
+                random_loss: ["action work at the lock fail random_loss 1"],
+                /*
+                    Unreachable in practice - the floor of the ramp is Lockpicking 0 and a
+                    skill cannot fall below it - but check_conditions_on_finish re-checks
+                    at the end, and an unreachable path with no text is still a
+                    missing-text marker waiting for the day somebody raises the floor.
+                */
+                conditional_loss: ["action work at the lock fail conditional_loss 1"],
+            },
+            attempt_duration: 180,
+            success_chances: [0.2, 0.9],
+            rewards: {
+                money: 1400,
+                skill_xp: {Lockpicking: 260},
+                items: [
+                    {item: "Wool scarf", quality: 90},
+                ],
+            },
+        }),
+
         "build a hearth": new GameAction({
             action_id: "build a hearth",
             action_name: "action build a hearth name",

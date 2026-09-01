@@ -1918,6 +1918,64 @@ function check_moon_phases_are_real() {
         + `of them real`);
 }
 
+/**
+ * An attempt that eats what you need to try again.
+ *
+ * Phase 4 wrote the rule and check_no_dead_end_skill_gates enforces half of it: a
+ * quest-advancing action must not lose progress on a failed attempt. The other half had
+ * nothing behind it, because until P-24 no action in the game both required an item and
+ * could fail - every one of the eleven that require items has success_chances[0] of 1.
+ *
+ * The lock is the first. A chest consumed by a failed pick is not a cost, it is a
+ * punishment for having a low skill, and the skill can only be raised by picking. So: an
+ * action that can fail must not set remove_on_fail on anything its `required` names.
+ * main.js reads `remove_on_success && is_won || remove_on_fail && !is_won`, so
+ * remove_on_fail is the only way to spend the input on a failure.
+ */
+function check_a_failed_attempt_keeps_what_it_needs() {
+    let checked = 0;
+
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const opening of source.matchAll(/"([^"]+)":\s*new (?:Game|Dialogue)Action\(\{/g)) {
+            const body = braced_body(source, opening.index + opening[0].length - 1);
+            if (body === null || !/items_by_id/.test(body)) continue;
+
+            /*
+                A single-element success_chances is a guarantee; a first element below 1 is
+                an attempt that can fail. A conditions ramp only ever scales BETWEEN the
+                two chances, so the first element is what decides whether failure is
+                possible at all.
+            */
+            const chances = /success_chances:\s*\[([^\]]*)\]/.exec(body);
+            const worst = chances ? Number(chances[1].split(",")[0]) : 1;
+            if (!(worst < 1)) continue;
+
+            checked++;
+            if (/remove_on_fail:\s*true/.test(body)) {
+                const line = source.slice(0, opening.index).split("\n").length;
+                error(`${relative}:${line} the action "${opening[1]}" can fail and takes a `
+                    + `required item on failure. That is not a cost, it is a punishment for `
+                    + `being bad at the thing the attempt is how you get good at - and the `
+                    + `rule since phase 4 is that a failed attempt loses nothing that `
+                    + `cannot be got again.`);
+            }
+        }
+    }
+
+    if (checked === 0) {
+        error("no action both requires an item and can fail - "
+            + "check_a_failed_attempt_keeps_what_it_needs is out of date and guards "
+            + "nothing.");
+        return;
+    }
+
+    console.log(`[check] failed attempts: ${checked} action(s) that require an item and `
+        + `can fail, none of them eating it`);
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -1942,4 +2000,5 @@ export {
     check_locked_skills_can_be_unlocked,
     check_display_conditions_are_not_wrapped_twice,
     check_moon_phases_are_real,
+    check_a_failed_attempt_keeps_what_it_needs,
 };

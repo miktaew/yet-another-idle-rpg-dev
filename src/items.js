@@ -5032,6 +5032,21 @@ function add_gear() {
 //spare parts
 (function(){
     //currently not in use and not obtainable
+    /*
+        P-24. Not a container the engine knows about - there is no container type - but the
+        one thing a locked box needs to be: something you can carry to somewhere you can
+        work on it. The lock is a GameAction at the village; this is its key requirement.
+
+        Sellable, at a fraction of what is usually inside. Somebody who does not want to
+        learn the skill should be able to take the certain small thing over the uncertain
+        larger one, and that is a choice rather than a loss.
+    */
+    item_templates["Locked chest"] = new OtherItem({
+        name: "Locked chest",
+        description: "desc item Locked chest",
+        value: 300,
+    });
+
     item_templates["Basic spare parts"] = new OtherItem({
         name: "Basic spare parts",
         description: "desc item Basic spare parts",

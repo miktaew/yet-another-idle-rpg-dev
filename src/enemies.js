@@ -386,6 +386,7 @@ const enemy_abilites = {
         size: enemy_sizes.MEDIUM,
         stats: {health: 600, attack: 120, agility: 100, dexterity: 60, magic: 0, intuition: 60, attack_speed: 0.5, defense: 50},
         loot_list: [
+            {item_name: "Locked chest", chance: 0.004},
             {item_name: "Mountain goat hide", chance: 0.04},
             {item_name: "Goat meat", chance: 0.02},
             {item_name: "Mountain goat horn", chance: 0.02},
@@ -404,6 +405,7 @@ const enemy_abilites = {
             {item_name: "Bear hide", chance: 0.05},
             {item_name: "Bear claw", chance: 0.1},
             {item_name: "Sharp bear claw", chance: 0.002},
+            {item_name: "Locked chest", chance: 0.004},
         ],
         size: enemy_sizes.LARGE,
     });
@@ -579,6 +581,7 @@ const enemy_abilites = {
         tags: ["living", "beast", "aquatic"],
         stats: {health: 16750, attack: 830, agility: 250, dexterity: 350, intuition: 120, magic: 0, attack_speed: 1.6, defense: 545},
         loot_list: [
+            {item_name: "Locked chest", chance: 0.004},
             {item_name: "Alligator meat", chance: 0.02},
             {item_name: "Alligator skin", chance: 0.01},
         ]
@@ -698,6 +701,7 @@ const enemy_abilites = {
         tags: ["living", "beast"],
         stats: {health: 12000, attack: 600, agility: 80, dexterity: 800, intuition: 100, magic: 0, attack_speed: 0.6, defense: 600},
         loot_list: [
+            {item_name: "Locked chest", chance: 0.004},
             {item_name: "Boar hide", chance: 0.08},
             {item_name: "Boar meat", chance: 0.1},
             {item_name: "Boar tusk", chance: 0.05},

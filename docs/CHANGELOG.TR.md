@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 89 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 90 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,72 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.18 - kilitli bir sandık ve oyunun iki kez şakasını yaptığı beceri
+
+P-24'ün ilk üçte ikisi. Arc kilit açmayı iki kez yok saymıştı — P-14'ün planlama notu böyle
+bir beceri olmadığını yazıyor ve gelgit düzlüklerinin başarısızlık metni tam da olmadığı
+için onunla şaka yapıyor — ve Q-1'in ikinci revizyonu yeni bir beceriyi kapsama aldı.
+
+**Bunun neredeyse hiçbiri yeni makine değil; bulgu da bu.** İsteğin ihtiyaç duyduğu her
+parça zaten vardı ve ölçüm hangi mevcut parça olduğuyla ilgiliydi:
+
+- **Beceri gradyanı**, iki-set koşul rampası. `process_conditions`, `conditions[0]` ile
+  `conditions[1]` arasında bir kesir döndürüyor ve `get_success_chance` onu
+  `chances[0] + (chances[1] - chances[0]) * status` olarak okuyor. Yani
+  `[{skills: {Lockpicking: 0}}, {skills: {Lockpicking: 30}}]` ile
+  `success_chances: [0.2, 0.9]`, 0. seviyede %22, 10'da %46, 20'de %69 ve 30'dan itibaren
+  %90 veriyor — yayınlanan formül üzerinden ölçüldü, hesaplamak için tek satır yazılmadan.
+  Becerinin azami seviyesi 30, çünkü rampa orada duruyor; yani kilit iyileşmeyi bıraktığı
+  anda beceri de bitiyor.
+- **"Kilitli bir sandık asla çıkmaz sokak olmamalı"**, Faz 4'ün kuralı ve bedavaya geliyor.
+  `main.js`, `remove_on_success && is_won || remove_on_fail && !is_won` okuyor; yani
+  yalnızca `remove_on_success`, başarısız bir denemenin sandığı bıraktığı anlamına geliyor.
+  `keep_progress` ise o ana kadar harcanan zamanın onun üstünde kaldığı anlamına geliyor.
+  Başarısızlık yalnızca denemeye mal oluyor — beceri de böyle öğreniliyor, çünkü tecrübe
+  başarıda ve 0. seviyeden itibaren denemelerin beşte biri başarılı.
+- **Bulunma**, `loot_list` üzerinden; çünkü P-24'ün kendi kuralı, bunun onun yanında ikinci
+  bir ganimet sistemine dönüşmemesi. Dört bölgede dört düşman, %0,4: orman ayısı, yaban
+  domuzu, dağ keçisi ve timsah. Bulduğunuz şey hayvanın üstünden değil ve açıklama bunu
+  söylüyor.
+
+**Beceri baştan açık**; bir kitabın öğrettiği Butchering ve Shellwork'ün aksine. Bunu
+öğretebilecek tek şey kilit ve kilit de beceriyi istiyor: tek eğitmeni kendisini isteyen
+kilitli bir beceri bir kısırdöngü. Onun yerine `visibility_treshold`, ilk denemeye kadar
+onu gizliyor.
+
+**Tek kilit, tek yer — köy.** Aksiyonlar lokasyonlarda yaşıyor; köy hem merkez hem ilk
+sandık kaynağının bölgesi. Sandık ayrıca 300'e satılabiliyor — içindekinin genellikle
+ettiğinin bir kısmı — yani beceriyi istemeyen biri kesin küçük olanı belirsiz büyük olana
+tercih edebiliyor. Bu bir kayıp değil, bir seçim.
+
+**İki kontrol girerken hakkını verdi.**
+
+`check_actions_can_explain_failure`, aksiyonu başarı koşulu olup `conditional_loss` metni
+olmadığı için reddetti. O yol erişilemez — rampanın tabanı Lockpicking 0 ve bir beceri
+altına düşemez — ama `check_conditions_on_finish` sonda yeniden bakıyor ve metni olmayan
+erişilemez bir yol, birinin tabanı yükselttiği günü bekleyen bir eksik-metin işareti.
+Yazıldı.
+
+Ve bir yenisi. `check_no_dead_end_skill_gates`, Faz 4'ün kuralını yalnızca **görev
+ilerleten** aksiyonlar için uyguluyor; öteki yarının arkasında hiçbir şey yoktu, çünkü
+bugüne kadar oyunda hem eşya isteyen hem başarısız olabilen bir aksiyon yoktu — eşya
+isteyen on birinin hepsinin `success_chances[0]`'ı 1. Kontrolü yazarken ölçüldü: kilit
+girince başarısız olabilen dört tane var — kilit, `climb the mountain`, `cut a flue` ve
+`rappel waterfall` — ve hiçbiri girdisini yemiyor.
+`check_a_failed_attempt_keeps_what_it_needs` bunu tutuyor: başarısız olabilen bir aksiyon,
+`required`'ının adlandırdığı hiçbir şeye `remove_on_fail` koyamaz; çünkü başarısız bir
+denemenin yediği sandık bir maliyet değil, o denemenin sizi iyileştirdiği şeyde kötü
+olmanın cezası. Bayrağı ekleyerek negatif test edildi.
+
+**P-24'te kalan: tuzak** ve o, veri değil motor işi istiyor. Bir aksiyonun tek başarı yolu
+var ve `rewards`'ı yalnızca başarıda tetikleniyor, hiçbirine bağlı bir şans yok — yani
+"sandık bazen ısırır" ifade edilemiyor. `UsableItem` üzerindeki `recovery_chances`, motorun
+şansa bağlı tek verimi ve o da bir etkinin gerçekten uygulanmasına bağlı (`use_item`,
+`add_active_effect` true döndürmezse geri kazanımları işlemiyor) ve hiçbir beceriye
+bakmıyor. Çeşitli içerikler de aynı şekle sahip: şu an her başarılı açış aynı sikkeyi ve
+aynı atkıyı veriyor, çünkü ödüller zar atamıyor. İkisi de aynı şeyi istiyor — şans
+taşıyabilen bir ödül — ki bu iki mekanizma değil bir mekanizma.
 
 ### "Bu hiç elde edilebilir mi" sorusu artık bütün registry'ye soruluyor
 

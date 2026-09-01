@@ -5659,6 +5659,47 @@ function format_skill_rewards(milestone){
 
 //miscellaneous skills
 (function(){
+    /*
+        P-24. The first skill this fork adds that the game had assumed away twice: P-14's
+        planning note says there is no lockpicking, and the tidal flats' failure text jokes
+        about it precisely because there was none. Q-1's second revision put a new skill in
+        scope.
+
+        Unlocked from the start rather than taught, unlike Butchering and Shellwork, because
+        the only thing that teaches it is the lock itself - a locked skill whose sole trainer
+        requires the skill is a circle. visibility_treshold hides it until the first attempt,
+        so nobody sees a skill for a thing they have not met.
+
+        max_level 30, which is not a feel: it is the ceiling the lock's own condition ramp
+        names, so the skill is finished exactly when the lock stops improving.
+    */
+    skills["Lockpicking"] = new Skill({
+        skill_id: "Lockpicking",
+        names: {0: "Lockpicking", 10: "Picklock", 20: "Master picklock"},
+        description: "desc skill Lockpicking",
+        category: "Character",
+        base_xp_cost: 120,
+        max_level: 30,
+        xp_scaling: 1.6,
+        get_effect_description: () => {
+            return translationManager.getText(language, "skill effect Lockpicking",
+                {v1: get_total_skill_level("Lockpicking")});
+        },
+        milestones: {
+            5: {
+                stats: {dexterity: {flat: 1}},
+            },
+            10: {
+                stats: {dexterity: {flat: 1}, intuition: {flat: 1}},
+            },
+            20: {
+                stats: {dexterity: {multiplier: 1.05}},
+            },
+            30: {
+                stats: {dexterity: {flat: 2}, intuition: {flat: 1}},
+            },
+        },
+    });
     skills["Haggling"] = new Skill({
         names: {0: "Haggling", 10: "Sharp tongue", 20: "Silver tongue"},
         description: "desc skill Haggling",
