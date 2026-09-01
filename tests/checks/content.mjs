@@ -1976,6 +1976,82 @@ function check_a_failed_attempt_keeps_what_it_needs() {
         + `can fail, none of them eating it`);
 }
 
+/**
+ * A reputation region nothing opens.
+ *
+ * P-28 named this trap while asking for the fifth region: *"a number with nothing behind it
+ * is a number... the tribe would need gates - a shelf, a line, a place - or it is a row that
+ * only goes up and never opens anything."* And check_reputation_regions_have_names passes
+ * either way, which is what makes it a trap rather than a mistake.
+ *
+ * So: every region `character.reputation` declares has to be named by at least one
+ * condition - a `display_conditions` or a `required` - somewhere in the content. Earning it
+ * has to change something, or the row is a score with no game behind it.
+ *
+ * Rewards do not count. A region every quest pays into and nothing ever reads is exactly
+ * the shape being refused here.
+ */
+function check_a_reputation_region_opens_something() {
+    const character_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/character.js"), "utf8"));
+    const declaration = /this\s*\.\s*reputation\s*=\s*\{([^}]*)\}/.exec(character_source);
+    if (!declaration) {
+        error("src/character.js no longer declares `this.reputation = {...}` - "
+            + "check_a_reputation_region_opens_something cannot tell a region from a typo.");
+        return;
+    }
+    const regions = [...declaration[1].matchAll(/(\w+):\s*-?\d+/g)].map((m) => m[1]);
+    if (regions.length === 0) {
+        error("character.reputation declares no regions - this check is out of date.");
+        return;
+    }
+
+    /*
+        A gate is a reputation block inside a display_conditions or a required. Both are
+        read to their matching brace, so a nested {at_least, at_most} does not cut the
+        body short - and the bounded form is exactly what a standing gate looks like since
+        P-25.
+    */
+    const gated = new Set();
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js",
+                            "src/quests.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const opener of source.matchAll(/(?:display_conditions|required):\s*\{/g)) {
+            const body = braced_body(source, opener.index + opener[0].length - 1);
+            if (body === null) continue;
+
+            for (const inner of body.matchAll(/reputation:\s*\{/g)) {
+                const block = braced_body(body, inner.index + inner[0].length - 1);
+                if (block === null) continue;
+                for (const entry of object_entries(block)) {
+                    gated.add(entry.key);
+                }
+            }
+        }
+    }
+
+    if (gated.size === 0) {
+        error("no condition anywhere gates on a reputation region - "
+            + "this check is out of date and guards nothing.");
+        return;
+    }
+
+    for (const region of regions) {
+        if (!gated.has(region)) {
+            error(`nothing gates on the reputation region "${region}": no `
+                + `display_conditions and no required names it anywhere, so earning it `
+                + `changes nothing and the row on the character sheet is a score with no `
+                + `game behind it. Give it a line, a shelf or a door - or do not give it a `
+                + `number.`);
+        }
+    }
+
+    console.log(`[check] reputation gates: ${regions.length} region(s), each opening `
+        + `something`);
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -2001,4 +2077,5 @@ export {
     check_display_conditions_are_not_wrapped_twice,
     check_moon_phases_are_real,
     check_a_failed_attempt_keeps_what_it_needs,
+    check_a_reputation_region_opens_something,
 };

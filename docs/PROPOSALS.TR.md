@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 106 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 107 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -643,69 +643,6 @@ alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her ala
 kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
 ve muhtemelen ikiden fazlasını bulur.
 
-
-
-### P-28 — Bataklık, itibarı olmayan bir yerleşim `open`
-
-Sahibi bildirdi: karakter sayfasında kasaba, köy ve kenar mahalle için itibar satırı var,
-bataklık kabilesi için hiçbir şey yok.
-
-**Ölçüldü ve sayfa doğruyu söylüyor.** `character.reputation` dört bölge tanımlıyor —
-`Village`, `Slums`, `Town` ve `Guild` — ve `Swamp` yok. Kabilede bir reis, bir aşçı, bir
-terzi, bir tabak, bir izci ve iki tüccar var ve oyunun, bunların size dair ne hissettiğine
-ilişkin bir sayısı yok.
-
-**Dördünün nasıl arttığı, ki sorunun öteki yarısı buydu.** Oyundaki her itibar puanı bir
-replik, bir aksiyon ya da bir görev üzerindeki `reputation:` ödülünden geliyor. Sayıldı:
-
-| bölge | kaynak | kazanılabilir toplam |
-| --- | --- | --- |
-| Town | 23 | 1.860 |
-| Slums | 12 | 1.720 |
-| Village | 17 | 1.260 |
-| Guild | 7 | 305 |
-
-Bu şekilden iki şey çıkıyor. `update_displayed_reputation` bir bölgeyi ancak **0'ın
-üstündeyse** çiziyor; yani Guild, ilk 15 puan kazanılana kadar görünmez — bu bilinçli ve
-kimsenin başlamadığı bir satırı görmemesinin sebebi. Ve Guild'in 305'i, Town'un 1.860'ına
-karşı bir gözden kaçma değil: v0.7.2'de tek bir arc için eklendi ve tek bir arc'lık kaynağı
-oldu.
-
-**Beşinci bir bölge için tesisatın çoğu zaten duruyor.**
-
-- **`Swamp` adında bir pazar bölgesi var.** `market_region_mapping` onu köyün komşusu olarak
-  listeliyor ve kabilede `market_region: "Swamp"` tanımlı; yani oradaki fiyatların kendi
-  tezgâhı çoktan var. İtibar ve pazar bölgeleri ayrı haritalar, dolayısıyla bu kabileye
-  itibar vermiyor — ama kabilenin oyunun kendi terimleriyle çoktan bir *bölge* olduğu
-  anlamına geliyor.
-- **Onu taşıyacak beş teslimat aksiyonu.** `swampcook deliver`, `swamptailor deliver`,
-  `swamptanner deliver 1` ve `2`, ve `swampscout help` — ölçüldü: görev ilerlemesi, replik
-  ve tarif veriyorlar ve **hiçbiri itibar vermiyor**. `swampscout help` ise hiçbir şey
-  vermiyor.
-
-**Yani maliyet, Q-7'nin Guild için ölçtüğü şey**: `character.reputation` üzerinde bir alan,
-dil başına bir `name Swamp` satırı ve bir kontrol. `load()`, kayıttaki anahtarları yürüyor
-ve tanımadığı bir bölgede uyarıyor; yani eski bir kayıt `Swamp` olmadan geliyor ve tanımlı 0
-geçerli kalıyor.
-
-**Türetilmek yerine karar gerektirenler.**
-
-- **Kabilenin itibarı ne için.** Guild'in itibarı, P-14 faz 3'ün üçüncü bir bilgi yolu
-  istemesi yüzünden var. Arkasında hiçbir şey olmayan bir sayı, sadece bir sayıdır: kabilenin
-  kapılara ihtiyacı olurdu — bir raf, bir replik, bir yer — yoksa yalnızca yükselen ve hiçbir
-  şey açmayan bir satır olur. `check_reputation_regions_have_names` her iki hâlde de geçer;
-  tuzak da bu.
-- **Beş teslimatın doğru kaynaklar olup olmadığı.** Bariz olanlar onlar ve hepsi tek seferlik
-  görev adımı; yani sabit bir toplam verip duracaklar, Guild'in 305'i gibi. Kabilenin
-  tekrarlanabilir bir kaynağı olmalı mı sorusu, v0.7.10'un para için sorup geliri ölçerek
-  cevapladığı soruyla aynı.
-- **`swampscout help` hiçbir şey vermiyor.** Bu ya ayrı bir hata ya da bağlanacak ilk
-  kaynak; her iki hâlde de bakılmalı.
-
-**Ne yapmaması gerektiği.** Simetri için beşinci bir bölgeye dönüşmemeli. Q-7'nin Guild
-lehine argümanı, oyuncunun yükselişini izleyebildiği bir sayının bir yolu yol gibi
-hissettirdiğiydi — sonucu da şu: arkasında yol olmayan bir sayı, hiç sayı olmamasından
-kötüdür.
 
 
 ### P-29 — Bir süre Türkçede "2 days 15 hours" diyor `open`

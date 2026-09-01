@@ -380,6 +380,8 @@ const dialogues = {
     "swampchief accept": "Bu armağanla beni şereflendiriyorsunuz.",
     "swampchief accept answ": "Senin gibi müttefiklerimiz olsaydı belki... In halkımızdan biri olursan onur duyarım -- yani kendini benim adamlarımdan say. Zanaatkârlarımıza, dilersen atölyelerini seninle paylaşmalarını buyururum. Uzun evimizde dinlenmen de hoş karşılanır. Yalnızca içeride dinlenen genç kadına dikkat etmeni rica ederim.",
     "swampchief generic": "Kabilede işler nasıl gidiyor?",
+    "swampchief standing": "Kabile bana eskisinden daha rahat görünüyor.",
+    "swampchief standing answ": "*[Karşı çıkmıyor, onaylamıyor da. Üzerinde çalıştığı kazığı yontmayı sürdürüyor.]*\n\nAşçıya istediğini getirdin. Tabağa derilerini iki kez getirdin ve ikincisinde söylenmesine gerek kalmadı. İzci dönüp, hattı onunla yürüdüğünü ve sudan şikâyet etmediğini söyledi.\n\n*[Kazığı çeviriyor]* Biz böyle bir şeyi yüksek sesle söyleyen bir halk değiliz. Onun yerine yaptığımız şey, ayağını nereye bastığını izlemeyi bırakmak. Bunun olduğunu fark etmemiş olacaksın; gerçek olduğunu da bundan biliyorsun.\n\nKarşılığında alınacak bir şey yok. O tür bir şey değil.",
     "swampchief generic answ": "Çetin, muhterem dostum, bu sert ve tehlikeli zamanlarda. Ama hep birlikte omuz verirsek belki üstesinden gelebiliriz.",
 
     /*
@@ -1578,6 +1580,7 @@ const names = {
     "name Shack": "Baraka",
     "name Guild": "Lonca",
     "name Slums": "Kenar mahalle",
+    "name Swamp": "Bataklık kabilesi",
     "name Small flat area in mountains": "Dağlarda küçük bir düzlük",
     "name Sparring with the village guard (heavy)": "Köy muhafızıyla idman (ağır)",
     "name Sparring with the village guard (quick)": "Köy muhafızıyla idman (hızlı)",

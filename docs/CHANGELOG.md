@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 92 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 93 -->
 
 # Changelog
 
@@ -20,6 +20,56 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.21 - the swampland tribe has standing
+
+P-28, reported from play: *"we finished the swamp quests and earned no standing"*, and the
+character sheet had a row for the town, the village and the slums and nothing for the tribe.
+
+**The sheet was telling the truth.** `character.reputation` declared four regions and there
+was no `Swamp`, while the tribe has a chief, a cook, a tailor, a tanner, a scout, two traders
+and a market region of its own.
+
+**Measured before adding it, because Q-7's argument cuts both ways.** Q-7 made the Guild a
+region rather than a set of flags on the grounds that *"a number the player can watch rise is
+exactly what makes a third path feel like a third path"* - and the corollary is that a
+region duplicating something the content already says buys nothing. The tribe **does**
+already say it: the tanner's lines are named `unknown`, `known` and `liked`, and the tailor
+has a `liked` too, driven by dialogue unlocks. So this is not a place with nothing to say
+about you. It is a place whose progress the player could not see, and the number is what
+makes it visible.
+
+**Five sources, 300 in total**, which is the Guild's shape rather than the Town's: a single
+settlement whose sources are one-off. `swampcook deliver` 60, `swamptailor deliver` 60,
+`swamptanner deliver 1` 50, `swamptanner deliver 2` 70, `swampscout help` 60.
+
+**And `swampscout help` rewarded nothing at all** - measured: no xp, no quest progress, no
+standing, for an errand the player completes. It is the tribe's fifth delivery and the only
+one that gave nothing back, which is why it got a reward rather than an adjustment.
+
+**One gate, because P-28 named the trap itself**: *"a number with nothing behind it is a
+number... or it is a row that only goes up and never opens anything."* The chief has a line
+at Swamp 200 - four of the five deliveries - and it is deliberately not a reward. He says the
+tribe does not announce a thing like that, and what it does instead is stop watching where
+you put your feet.
+
+**The cost was what Q-7 measured**: one field, one name row per language, and a check.
+`load()` walks the keys in the save and warns past a region it does not know, so an old save
+arrives with no `Swamp` and the declared 0 stands - the same path the Guild took in v0.7.2.
+
+**Two checks, and one of them was mine from three versions ago.**
+
+`check_help_explains_standing` - written for P-14 phase 6 - refused the build until the help
+page named the fifth region, in **both** languages. That is the check doing exactly what it
+was written for: a player earns a row and finds nothing on the help page that says what it
+is. Help says four of five are places now.
+
+And a new one. `check_a_reputation_region_opens_something` holds every region
+`character.reputation` declares to being named by at least one `display_conditions` or
+`required` somewhere in the content. Rewards do not count: a region every quest pays into
+and nothing ever reads is precisely the shape P-28 warned about, and
+`check_reputation_regions_have_names` passes either way, which is what made it a trap rather
+than a mistake. All five pass; removing the chief's gate fails it by name.
 
 ### v0.7.20 - the chest holds what somebody buried
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 92 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 93 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,57 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.21 - bataklık kabilesinin itibarı var
+
+P-28, oyundan bildirildi: *"bataklıktaki görevleri tamamladık ama bir rep kazanamadık"*; ve
+karakter sayfasında kasaba, köy ve kenar mahalle için satır varken kabile için hiçbir şey
+yoktu.
+
+**Sayfa doğruyu söylüyordu.** `character.reputation` dört bölge tanımlıyordu ve `Swamp` yoktu;
+oysa kabilede bir reis, bir aşçı, bir terzi, bir tabak, bir izci, iki tüccar ve kendi pazar
+bölgesi var.
+
+**Eklemeden önce ölçüldü, çünkü Q-7'nin argümanı iki yönlü keser.** Q-7, Guild'i bayrak
+kümesi değil bölge yapmıştı; gerekçesi *"oyuncunun yükselişini izleyebildiği bir sayı, üçüncü
+bir yolu yol gibi hissettiren şeyin ta kendisi"*. Sonucu da şu: içeriğin zaten söylediği bir
+şeyi tekrarlayan bir bölge hiçbir şey kazandırmaz. Ve kabile bunu **zaten** söylüyor:
+tabağın replikleri `unknown`, `known` ve `liked` diye adlandırılmış, terzinin de bir `liked`'ı
+var; diyalog kilitleriyle yürüyorlar. Yani bu, hakkınızda söyleyecek şeyi olmayan bir yer
+değil. Bu, ilerlemesini oyuncunun göremediği bir yer ve sayı da onu görünür kılan şey.
+
+**Beş kaynak, toplam 300**; Town'un değil Guild'in şekli: kaynakları tek seferlik olan tek bir
+yerleşim. `swampcook deliver` 60, `swamptailor deliver` 60, `swamptanner deliver 1` 50,
+`swamptanner deliver 2` 70, `swampscout help` 60.
+
+**Ve `swampscout help` hiçbir şey vermiyordu** — ölçüldü: oyuncunun tamamladığı bir iş için ne
+tecrübe, ne görev ilerlemesi, ne itibar. Kabilenin beşinci teslimatı ve karşılığında hiçbir
+şey vermeyen tek olanı; ayarlama değil ödül almasının sebebi de bu.
+
+**Tek kapı, çünkü tuzağı P-28'in kendisi adlandırmıştı**: *"arkasında hiçbir şey olmayan bir
+sayı, sadece bir sayıdır… yoksa yalnızca yükselen ve hiçbir şey açmayan bir satır olur."*
+Reisin Swamp 200'de bir repliği var — beş teslimatın dördü — ve bilerek bir ödül değil.
+Kabilenin böyle bir şeyi ilan etmediğini, onun yerine yaptığı şeyin ayağınızı nereye
+bastığınızı izlemeyi bırakmak olduğunu söylüyor.
+
+**Maliyet, Q-7'nin ölçtüğü şeydi**: bir alan, dil başına bir ad satırı ve bir kontrol.
+`load()`, kayıttaki anahtarları yürüyor ve tanımadığı bir bölgede uyarıyor; yani eski bir
+kayıt `Swamp` olmadan geliyor ve tanımlı 0 geçerli kalıyor — Guild'in v0.7.2'de izlediği
+yolun aynısı.
+
+**İki kontrol ve biri üç sürüm önce benim yazdığım.**
+
+`check_help_explains_standing` — P-14 faz 6 için yazılmıştı — yardım sayfası beşinci bölgeyi
+**iki dilde** adlandırana kadar derlemeyi reddetti. Bu, kontrolün tam olarak yazıldığı işi
+yapması: bir oyuncu bir satır kazanıyor ve yardım sayfasında onun ne olduğunu söyleyen hiçbir
+şey bulamıyor. Yardım artık "beşinin dördü yer" diyor.
+
+Ve bir yenisi. `check_a_reputation_region_opens_something`, `character.reputation`'ın
+tanımladığı her bölgeyi, içerikte en az bir `display_conditions` ya da `required` tarafından
+adlandırılmaya zorluyor. Ödüller saymıyor: her görevin içine ödeme yaptığı ve hiçbir şeyin
+okumadığı bir bölge, tam olarak P-28'in uyardığı şekil; ve
+`check_reputation_regions_have_names` her iki hâlde de geçiyor, ki onu hata değil tuzak yapan
+şey buydu. Beşi de geçiyor; reisin kapısını kaldırmak onu adıyla düşürüyor.
 
 ### v0.7.20 - sandık, birinin gömdüğü şeyi tutuyor
 

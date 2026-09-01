@@ -133,6 +133,29 @@ class Hero extends Person {
                         Slums: 0,
                         Town: 0,
                         /*
+                            P-28. The tribe is a settlement with a chief, a cook, a tailor,
+                            a tanner, a scout, two traders and a market region of its own,
+                            and it was the only one the character sheet had no row for -
+                            reported from play as "we finished the swamp quests and earned
+                            no standing".
+
+                            Measured before adding it, because Q-7's argument cuts both
+                            ways. The tribe ALREADY expresses being known and liked: the
+                            tanner's lines are named `unknown`, `known` and `liked` and the
+                            tailor has a `liked` too, driven by dialogue unlocks rather
+                            than by a number. So this is not a place with nothing to say
+                            about you - it is a place whose progress the player could not
+                            see. The number is what makes it visible and what the sheet can
+                            draw, and the five deliveries that were already there are what
+                            raises it.
+
+                            The cost is what Q-7 measured: one field, one name row per
+                            language, and a check. load() walks the keys in the save and
+                            warns past a region it does not know, so an old save arrives
+                            with no Swamp and this declared 0 stands.
+                        */
+                        Swamp: 0,
+                        /*
                             Standing with the guild rather than with a place, and the
                             fourth region rather than a flag because P-14 phase 3 wants
                             three information paths that differ, and two of the three

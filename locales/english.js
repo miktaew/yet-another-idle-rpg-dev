@@ -398,6 +398,8 @@ const dialogues = {
         +"I will send word that our artisans are to share their workhuts with you, if you wish to avail yourself to them. "
         +"You are welcome to rest in our longhouse. I would only ask that you be mindful of the young woman resting within.",
 	"swampchief generic": "How are things among the tribe?",
+    "swampchief standing": "The tribe seems easier around me than it was.",
+    "swampchief standing answ": "*[He does not disagree and he does not agree either. He goes on shaping the stake he is working on.]*\n\nYou brought the cook what she asked for. You brought the tanner his hides twice, and the second time you did not need telling. The scout came back and said you had walked the line with him and not complained about the water.\n\n*[He turns the stake over]* We are not a people who say a thing like that out loud. What we do instead is stop watching where you put your feet. You will not have noticed it happening, which is how you know it is real.\n\nThere is nothing to collect for it. It is not that kind of thing.",
     "swampchief generic answ": "Challenging, honored friend, in these harsh and dangerous times. But maybe we can make it through if we all band together.",
 	//
     "swampcook description 1": "As you get closer to the cook's workhut, you're met with a distinctive tune bellowed loudly and an acrid smell emanating from inside. Bracing your nose, you approach to find a short fellow nearly obscured by hanging meats, moving between a rack larger than he is housing thin cuts suspended between grated slats and a large cauldron build into a workbench covered in large slabs of rough leather in various stages of processing. You're surprised to find that he was the source of the singing. Noticing your approach, he stops his song and turns to address you with a smile on his face.", //before accepted task
@@ -1528,6 +1530,7 @@ const names = {
     "name Shack": "Shack",
     "name Guild": "Guild",
     "name Slums": "Slums",
+    "name Swamp": "Swampland tribe",
     "name Small flat area in mountains": "Small flat area in mountains",
     "name Sparring with the village guard (heavy)": "Sparring with the village guard (heavy)",
     "name Sparring with the village guard (quick)": "Sparring with the village guard (quick)",

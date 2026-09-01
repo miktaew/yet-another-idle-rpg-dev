@@ -1721,6 +1721,24 @@ class Textline {
                 },
                 locks_lines: ["swampchief plains"],
             }),
+            /*
+                P-28's gate, and the reason the region is not a bare number: 200 of the
+                300 the five deliveries carry, so four of the five reach it. The tribe
+                already had a vocabulary for this - the tanner's `unknown`, `known` and
+                `liked` - and this is the chief saying the same thing about the whole
+                settlement rather than about one workshop.
+            */
+            "swampchief standing": new Textline({
+                lore: true,
+                name: "swampchief standing",
+                text: "swampchief standing answ",
+                is_unlocked: true,
+                display_conditions: {reputation: {Swamp: {at_least: 200}}},
+                rewards: {
+                    xp: 1500,
+                },
+                locks_lines: ["swampchief standing"],
+            }),
             "swampchief generic": new Textline({
                 name: "swampchief generic",
                 text: "swampchief generic answ",
@@ -2240,6 +2258,7 @@ class Textline {
                 attempt_duration: 0,
                 success_chances: [1],
                 rewards: {
+                    reputation: {Swamp: 60},
                     quest_progress: [{quest_id: "In Times of Need", task_index: 2}],
                     textlines: [
                         {dialogue: "swampland cook", lines: ["swampcook know", "swampcook kazoku"]},
@@ -2396,6 +2415,7 @@ class Textline {
                 attempt_duration: 0,
                 success_chances: [1],
                 rewards: {
+                    reputation: {Swamp: 60},
                     quest_progress: [{quest_id: "In Times of Need", task_index: 5}], 
                     textlines: [{dialogue: "swampland tailor", lines: ["swamptailor liked"]}],
                     recipes: [{category: "crafting", subcategory: "items", recipe_id: "Linen cloth"}],
@@ -2469,6 +2489,7 @@ class Textline {
                 attempt_duration: 0,
                 success_chances: [1],
                 rewards: {
+                    reputation: {Swamp: 50},
                     quest_progress: [{quest_id: "In Times of Need", task_index: 7}], 
                     textlines: [{dialogue: "swampland tanner", lines: ["swamptanner known"]}],
                 },
@@ -2489,6 +2510,7 @@ class Textline {
                 attempt_duration: 0,
                 success_chances: [1],
                 rewards: {
+                    reputation: {Swamp: 70},
                     quest_progress: [{quest_id: "In Times of Need", task_index: 9}],
                     textlines: [{dialogue: "swampland tanner", lines: ["swamptanner liked"]}, {dialogue: "swampland chief", lines: ["swampchief report"]}],
                     recipes: [
@@ -2622,6 +2644,12 @@ class Textline {
             }),
         },
         actions: {
+            /*
+                P-28: this action rewarded NOTHING - no xp, no progress, no standing. It
+                is the tribe's fifth delivery and the only one that gave the player
+                nothing for doing it, which is why it is the one that got a reward rather
+                than an adjustment.
+            */
             "swampscout help": new DialogueAction({
                 action_id: "swampscout help",
                 starting_text: "swampscout help",
@@ -2637,6 +2665,10 @@ class Textline {
                 },
                 attempt_duration: 0,
                 success_chances: [1],
+            rewards: {
+                reputation: {Swamp: 60},
+                xp: 400,
+            },
             }),
         },
         getDescription: ()=>{

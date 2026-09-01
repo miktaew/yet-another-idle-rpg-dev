@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 39 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 40 -->
 
 # Status
 
@@ -199,6 +199,8 @@ but the ones that encode a bug that shipped:
 | `items can be got` | A hand-written item no recipe, trader, drop, reward or gathering activity can give. 192 items, 1 excused. |
 | `item display names` | Two items whose name rows resolve to the same string, so the player cannot tell them apart. 508 names. |
 | `failed attempts` | An action that can fail and eats a required item on failure, so a low skill cannot be raised. 4 actions. |
+| `rolled sets` | A rolled reward set likelier to give nothing than any one of its groups. 1 set. |
+| `reputation gates` | A standing region nothing gates on, so earning it changes nothing. 5 regions. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |
