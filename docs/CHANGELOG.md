@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 71 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 72 -->
 
 # Changelog
 
@@ -20,6 +20,61 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.6 - how you are standing changes what things do to you
+
+P-14 phase 6's second of four pieces: stance choice made to matter through `on_hit` and
+`on_damaged` rather than through a second set of stat multipliers.
+
+**No new abstraction and no new enemy.** P-14 measured that `Enemy` already takes
+`on_hit`, `on_damaged` and `on_death` and that four enemies use them, and concluded there
+was no case for a second mechanism. That holds: every reaction here went into a hook that
+already existed, or beside one on an enemy of the same family. And no fight was added,
+because the arc itself has no combat and phase 4 said so - a stance pass that needed a
+new enemy would have been a different phase wearing this one's name.
+
+**Four reactions, and each is the fiction saying what the stats already imply:**
+
+- **Red ant swarm.** Putting your point through the middle of a swarm does not stop the
+  rest of it arriving, and what arrives gets up your sleeves - `Irritation`, a quarter of
+  the time. Unless you are sweeping: Broad Arc, Berserker's Stride and Flowing Water all
+  put a line through it and they go backwards instead. The `target_count` multiplier
+  already made those stances kill a swarm faster; this is what makes picking one feel
+  like the right answer rather than the arithmetically better one.
+- **Frog.** The splash does not care how hard you hit, it cares how much of you is in
+  front of it. Berserker's Stride drops block and agility to 0.4 and Broad Arc commits
+  both arms, so twice as much lands; Defensive Measures halves it, which is the one
+  stance whose whole purpose is having something between you and this.
+- **Huge dragonfly** and **Dragonfly queen.** A stinger finds a body that has committed
+  to a swing and misses one that has not stopped moving: half again as likely in the open
+  stances, and down to 0.6 in Quick Steps or Flowing Water.
+
+**The honest limit**, written into the file rather than left to be discovered: a hook can
+only reach `add_active_effect` and the log. So a reaction is always "how you are standing
+changes what this gets to do to you", never the enemy changing its own state. Nothing
+here grows a state machine.
+
+**`check_stance_reactions_name_real_stances`** is the guard, and it is the same silent
+class as the season and region checks: a misspelt stance id compares false for every
+stance there is, so the reaction is written, translated, shipped and never once seen,
+while the enemy behaves exactly as it did before. That is the most convincing way for a
+bug to look like a design decision. The ids come out of `combat_stances.js` rather than
+being written down again, and both shapes are read - the named groupings and any inline
+list. 10 ids against 7 stances. Negative-tested three ways: a misspelt id in a grouping,
+a misspelt id in an inline list, and an empty list.
+
+**A test-harness bug fell out of this.** `browser-free-src.mjs` stubbed `current_stance`
+as the string `"normal"`, where `main.js` holds `stances["normal"]` - a Stance object.
+Nothing had read a field off it, so the simplification was invisible; the moment a
+reaction read `.id` it would have been `undefined` and every test of the mechanism would
+have passed by agreeing that nothing ever matches. The stub is shaped like the real thing
+now, and mutable, so a test can stand the hero differently and ask what changes.
+
+Fifteen tests cover the decision the reactions turn on - which is the only part a
+browser-free load can observe, since `add_active_effect` and the log are both stubbed
+away - plus that all four reactions run without throwing in two stances with and without
+a weapon, 400 calls. Negative-tested by comparing the stance object instead of its id,
+which is the exact mistake the stub was hiding: five checks fail.
 
 ### v0.7.5 - tier 5 can be made, and the ore is dug rather than bought
 

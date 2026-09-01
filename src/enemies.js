@@ -2,7 +2,7 @@
 
 import { get_total_skill_coefficient } from "./character.js";
 import { log_message } from "./display.js";
-import { add_active_effect, language } from "./main.js";
+import { add_active_effect, current_stance, language } from "./main.js";
 import { translationManager } from "./translation.js";
 
 let enemy_templates = {};
@@ -139,6 +139,37 @@ class Enemy {
 
         return droprate_modifier;
     }
+}
+
+/*
+    P-14 phase 6: stance choice made to matter through what the enemy does to you,
+    rather than through a second set of stat multipliers.
+
+    The hooks can only reach the character - `add_active_effect` and the log - so a
+    reaction is always "how you are standing changes what this thing gets to do to you".
+    That is enough, and it is the honest limit of `on_hit` / `on_damaged`: no enemy here
+    grows a state machine, and nothing needed a new abstraction (P-14 measured that
+    already).
+
+    Three groupings, named once so a reaction reads as a sentence and the ids live in one
+    place. check_stance_reactions_name_real_stances holds them to the stance list: an id
+    that is not a stance compares false forever, which is a reaction that silently never
+    happens - the same silent shape as a season that never comes round.
+*/
+const SWEEPING_STANCES = ["wide", "berserk", "flowing water"];
+const OPEN_STANCES = ["berserk", "wide"];
+const GUARDED_STANCES = ["defensive"];
+
+/**
+ * Whether the hero is currently standing one of the listed ways.
+ *
+ * Exported for the tests rather than for any caller outside this file: a reaction can
+ * only reach `add_active_effect` and the log, and a browser-free load stubs both away,
+ * so the decision is the only part of the mechanism that can be measured rather than
+ * argued about.
+ */
+function standing(stance_ids) {
+    return stance_ids.includes(current_stance?.id);
 }
 
 const enemy_abilites = {
@@ -381,13 +412,20 @@ const enemy_abilites = {
                 enemy_abilites.bufotoxin(10);
             }
         },
+        /*
+            The splash does not care how hard you hit; it cares how much of you is in
+            front of it. Berserker's Stride drops block and agility to 0.4 and Broad Arc
+            commits both arms, so twice as much lands; Defensive Measures is the one
+            stance whose whole purpose is having something between you and this.
+        */
         on_damaged: (character) => {
+            const exposure = standing(OPEN_STANCES) ? 2 : (standing(GUARDED_STANCES) ? 0.5 : 1);
             const roll = Math.random();
-            if (character.equipment.weapon == null && roll < 0.1) {
+            if (character.equipment.weapon == null && roll < 0.1 * exposure) {
                 log_message(translationManager.getText(language, "log frog toxins bare hands"), "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }
-            else if (character.equipment.weapon != null && roll < 0.05) {
+            else if (character.equipment.weapon != null && roll < 0.05 * exposure) {
                 log_message(translationManager.getText(language, "log frog toxins splash"), "hero_attacked");
                 enemy_abilites.bufotoxin(10);
             }
@@ -408,6 +446,23 @@ const enemy_abilites = {
             {item_name: "Belmart leaf", chance: 0.005},
             {item_name: "Wood log", chance: 0.002},
         ],
+        /*
+            A swarm is the clearest case there is. Hitting it in one place does not stop
+            the rest of it arriving, and the ones that arrive get inside your clothes;
+            a broad stance sweeps a line through it and they go backwards instead. The
+            target_count multiplier already made wide and berserk kill it faster - this
+            is what makes choosing them feel like the right answer rather than the
+            arithmetically better one.
+        */
+        on_damaged: () => {
+            if(standing(SWEEPING_STANCES)) {
+                return;
+            }
+            if(Math.random() < 0.25) {
+                log_message(translationManager.getText(language, "log ant swarm closes in"), "hero_attacked");
+                add_active_effect("Irritation", 20);
+            }
+        },
     });
 
     enemy_templates["Red ant queen"] = new Enemy({
@@ -428,9 +483,12 @@ const enemy_abilites = {
         tags: ["living", "insect"],
         stats: {health: 300, attack: 40, agility: 200, dexterity: 150, intuition: 100, magic: 0, attack_speed: 1.5, defense: 5},
         size: enemy_sizes.SMALL,
+        //A stinger finds a body that has committed to a swing and misses one that has
+        //not stopped moving. Quick Steps and Flowing Water both raise attack speed,
+        //which is the same thing said in stats; this is it said in the fiction.
         on_hit: () => {
             const roll = Math.random();
-            if(roll < 0.2) {
+            if(roll < 0.2 * (standing(OPEN_STANCES) ? 1.5 : (standing(["quick", "flowing water"]) ? 0.6 : 1))) {
                 log_message(translationManager.getText(language, "log dragonfly stinger"), "hero_attacked");
                 add_active_effect("Dragonfly venom", 10);
             }
@@ -447,7 +505,7 @@ const enemy_abilites = {
         size: enemy_sizes.SMALL,
         on_hit: () => {
             const roll = Math.random();
-            if(roll < 0.2) {
+            if(roll < 0.2 * (standing(OPEN_STANCES) ? 1.5 : (standing(["quick", "flowing water"]) ? 0.6 : 1))) {
                 log_message(translationManager.getText(language, "log dragonfly queen stinger"), "hero_attacked");
                 add_active_effect("Dragonfly queen venom", 10);
             }
@@ -639,4 +697,5 @@ const enemy_abilites = {
     });
 
 
-export {Enemy, enemy_templates, enemy_killcount, tags_for_droprate_modifier_skills, enemy_tag_to_skill_mapping, droplist};
+export {Enemy, enemy_templates, enemy_killcount, tags_for_droprate_modifier_skills, enemy_tag_to_skill_mapping, droplist,
+    standing, SWEEPING_STANCES, OPEN_STANCES, GUARDED_STANCES};

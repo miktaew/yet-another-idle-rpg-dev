@@ -727,6 +727,76 @@ function check_no_dead_end_skill_gates() {
     }
 }
 
+/**
+ * A stance reaction that can never fire.
+ *
+ * P-14 phase 6 makes stance choice matter through what an enemy does to you rather than
+ * through a second set of stat multipliers, and the whole mechanism is a comparison
+ * against `current_stance.id`. A misspelt id compares false for every stance there is,
+ * so the reaction is written, translated, shipped and never once seen - and the enemy
+ * behaves exactly as it did before, which is the most convincing way for a bug to look
+ * like a design decision.
+ *
+ * The ids come out of `combat_stances.js` rather than being written down again, so this
+ * cannot drift from the stance list. Both shapes are read: the named groupings at the
+ * top of enemies.js, and any inline list handed to `standing(...)`.
+ */
+function check_stance_reactions_name_real_stances() {
+    const before = errors.length;
+
+    const stance_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/combat_stances.js"), "utf8"));
+    const stances = new Set(
+        [...stance_source.matchAll(/stances\["([^"]+)\"\]\s*=/g)].map(match => match[1]));
+    if (stances.size === 0) {
+        error("src/combat_stances.js declares no stances - check_stance_reactions_name_real"
+            + "_stances is out of date.");
+        return;
+    }
+
+    let named = 0;
+    for (const relative of source_files(repo_root)) {
+        if (relative === "src/combat_stances.js") continue;
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        const lists = [
+            //const SWEEPING_STANCES = ["wide", ...]
+            ...source.matchAll(/(?:const|let|var)\s+\w*STANCES\s*=\s*\[([^\]]*)\]/g),
+            //standing(["quick", ...]) - the inline form
+            ...source.matchAll(/standing\(\s*\[([^\]]*)\]/g),
+        ];
+
+        for (const list of lists) {
+            const values = [...list[1].matchAll(/"([^"]*)"/g)].map(match => match[1]);
+            if (values.length === 0) {
+                error(`${relative} hands a stance reaction an empty list of stances, which`
+                    + " matches nothing and makes the reaction unreachable.");
+                continue;
+            }
+            for (const value of values) {
+                named++;
+                if (!stances.has(value)) {
+                    error(`${relative} reacts to stance "${value}", which is not a stance.`
+                        + " The comparison is false for every stance there is, so the"
+                        + " reaction never fires and the enemy behaves exactly as it did"
+                        + ` before. Stances are ${[...stances].join(", ")}.`);
+                }
+            }
+        }
+    }
+
+    if (named === 0) {
+        error("nothing reacts to a stance anywhere - check_stance_reactions_name_real"
+            + "_stances is out of date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] stance reactions: ${named} stance ids named against`
+            + ` ${stances.size} stances, all of them real`);
+    }
+}
+
 function check_lore_threads_resolve() {
     const before = errors.length;
     const source = strip_comments(
@@ -1362,4 +1432,5 @@ export {
     check_lore_threads_resolve,
     check_reputation_regions_have_names,
     check_no_dead_end_skill_gates,
+    check_stance_reactions_name_real_stances,
 };

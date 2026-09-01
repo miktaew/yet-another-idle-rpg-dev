@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 25 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 26 -->
 
 # Status
 
@@ -56,7 +56,7 @@ npm run check:bundle
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 174 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 189 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.
@@ -191,7 +191,8 @@ but the ones that encode a bug that shipped:
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 6 lines. |
 | `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
-| `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 17 actions. |
+| `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 18 actions. |
+| `stance reactions` | An enemy reacting to a stance id that is not a stance, which never fires. 10 ids, 7 stances. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -222,9 +223,10 @@ directive is recorded before it is worked on:
   or `Slums` 250. Phase 5 shipped as v0.7.4: the crate opens on being able to put it
   back, holds one band of an unnameable metal cut with the squares the collector
   described once, and pays no item on purpose. Phase 6, the systems pass, is under way:
-  the first of its four pieces shipped as v0.7.5, wiring tier 5 to the flats and taking
-  the 36 unmakeable components to none. Its other three - stances through `on_hit`, the
-  money sink, and standing as world-state - are open.
+  two of its four pieces have shipped - v0.7.5 wired tier 5 to the flats and took the 36
+  unmakeable components to none, and v0.7.6 made four enemies react to the hero's stance
+  through the hooks that already existed. The money sink and standing-as-world-state are
+  open.
 - **P-12, the metals above steel** - `partly done`. Tier 4 and tier 5 both ship, and
   the 36 white-steel and black-steel components are craftable from an ore dug on the
   tidal flats. One question is left: `roll_quality` reads

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 25 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 26 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,7 +59,7 @@ npm run check:bundle
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
   (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 174 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 189 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.
@@ -192,7 +192,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 | `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. 1 iplik, 6 satır. |
 | `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 58 kullanım. |
-| `dead ends` | Questi kilitleyen başarısızlık: kazanma dalının dışındaki kilit ya da kaybedilen denemede yenen eşya. 17 aksiyon. |
+| `dead ends` | Questi kilitleyen başarısızlık: kazanma dalının dışındaki kilit ya da kaybedilen denemede yenen eşya. 18 aksiyon. |
+| `stance reactions` | Stance olmayan bir stance kimliğine tepki veren yaratık; hiç tetiklenmez. 10 kimlik, 7 stance. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -223,9 +224,10 @@ sayılmaz; koruma da hata geri konularak sınanır.
   v0.7.4 olarak yayınlandı: sandık, onu geri koyabilmek üzerine açılıyor; içinde
   koleksiyoncunun bir kez tarif ettiği karelerle oyulmuş, adı olmayan bir metalden tek
   bir halka var ve bilerek hiçbir eşya ödemiyor. Sistem geçişi olan Faz 6 başladı: dört
-  parçasının ilki v0.7.5 olarak yayınlandı; 5. kademeyi düzlüklere bağladı ve
-  yapılamayan 36 bileşeni sıfıra indirdi. Diğer üçü — `on_hit` üzerinden stance'lar,
-  para kuyusu ve dünya durumu olarak itibar — açık.
+  parçasından ikisi yayınlandı: v0.7.5, 5. kademeyi düzlüklere bağladı ve yapılamayan
+  36 bileşeni sıfıra indirdi; v0.7.6 ise dört yaratığı, zaten var olan kancalar
+  üzerinden kahramanın duruşuna tepki verir hâle getirdi. Para kuyusu ile dünya durumu
+  olarak itibar açık.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe ikisi de
   yayında ve 36 beyaz/siyah çelik bileşeni, gelgit düzlüklerinde kazılan bir cevherden
   üretilebiliyor. Tek bir soru kaldı: `roll_quality`,

@@ -78,8 +78,15 @@ const REAL_ENOUGH = {
     active_effects: "{}",
     current_enemies: "[]",
     current_location: "null",
-    current_stance: '"normal"',
-    selected_stance: '"normal"',
+    /*
+        main.js holds `stances["normal"]`, which is a Stance object - these were plain
+        strings, which was invisible while nothing read a field off them and stopped
+        being invisible when the stance reactions in enemies.js started reading `.id`.
+        Shaped like the real thing now, and mutable, so a test can stand the hero
+        differently and ask what changes.
+    */
+    current_stance: '{id: "normal", getStats: () => ({})}',
+    selected_stance: '{id: "normal", getStats: () => ({})}',
     faved_stances: "{}",
     favourite_items: "{}",
     favourite_consumables: "{}",

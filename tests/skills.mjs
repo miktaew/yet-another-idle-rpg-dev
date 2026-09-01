@@ -495,6 +495,69 @@ const registries = {
 }
 
 // ===========================================================================
+// src/enemies.js - stance reactions
+// ===========================================================================
+/*
+    P-14 phase 6: stance choice matters through what an enemy does to you rather than
+    through a second set of stat multipliers. A reaction can only reach add_active_effect
+    and the log, and a browser-free load stubs both away, so what is measured here is the
+    decision every reaction turns on.
+
+    Both modules go into ONE graph, because the stance lives in main.js and the reaction
+    reads it from there - two loads are two unrelated copies of src/ and would prove
+    nothing.
+*/
+{
+    const [enemies, main_stub] = await load_browser_free(repo_root,
+        ["src/enemies.js", "src/main.js"]);
+
+    check("the loader's stance is shaped like a Stance",
+        typeof main_stub.current_stance?.id === "string",
+        `got ${typeof main_stub.current_stance}`);
+
+    const standing_in = (stance_id, list) => {
+        main_stub.current_stance.id = stance_id;
+        return enemies.standing(list);
+    };
+
+    //A swarm is swept by a broad stance and closes in against a point.
+    check("a broad arc counts as sweeping", standing_in("wide", enemies.SWEEPING_STANCES));
+    check("berserker's stride counts as sweeping", standing_in("berserk", enemies.SWEEPING_STANCES));
+    check("flowing water counts as sweeping", standing_in("flowing water", enemies.SWEEPING_STANCES));
+    check("crushing force does not", !standing_in("heavy", enemies.SWEEPING_STANCES));
+    check("neither does normal", !standing_in("normal", enemies.SWEEPING_STANCES));
+
+    //Open and guarded are the frog's two ends, and they must not overlap.
+    check("berserker's stride is open", standing_in("berserk", enemies.OPEN_STANCES));
+    check("defensive measures is guarded", standing_in("defensive", enemies.GUARDED_STANCES));
+    check("defensive measures is not open", !standing_in("defensive", enemies.OPEN_STANCES));
+    check("no stance is both open and guarded",
+        enemies.OPEN_STANCES.every(id => !enemies.GUARDED_STANCES.includes(id)));
+
+    //The four enemies that react, and that calling them does not throw - the frog's
+    //on_damaged reads character.equipment.weapon, which is the shape most likely to be
+    //broken by an edit elsewhere.
+    const hero = { equipment: { weapon: null } };
+    let called = 0;
+    for (const name of ["Red ant swarm", "Frog", "Huge dragonfly", "Dragonfly queen"]) {
+        const enemy = enemies.enemy_templates[name];
+        check(`${name} still exists`, Boolean(enemy));
+        if (!enemy) continue;
+        main_stub.current_stance.id = "berserk";
+        for (let i = 0; i < 50; i++) {
+            enemy.on_hit(hero);
+            enemy.on_damaged(hero);
+            called += 2;
+        }
+        hero.equipment.weapon = hero.equipment.weapon ? null : {};
+    }
+    check("every reaction runs without throwing, in both stances and with and without a weapon",
+        called === 400, `${called} calls`);
+
+    main_stub.current_stance.id = "normal";
+}
+
+// ===========================================================================
 // src/translation.js — the lookup and the fallback
 // ===========================================================================
 // The Turkish locale is deliberately partial, so the fallback is what keeps the

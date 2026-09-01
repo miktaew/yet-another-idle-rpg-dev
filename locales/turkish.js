@@ -3218,6 +3218,7 @@ const descriptions = {
     "log finished a quest": "Görev tamamlandı: \"{v1}\"",
     "log finished a quest task": "Görev adımı tamamlandı: \"{v1}\"",
     "log quest progress": "Görevde ilerleme kaydedildi: \"{v1}\"",
+    "log ant swarm closes in": "Ucunu tam ortasına saplıyorsunuz ve geri kalanı yine de geliyor — kollarınızın içine, açıkta kalan her boşluğa.",
     "log frog sticky tongue": "Kurbağanın uzun dili seni yapış yapış salyaya buluyor!",
     "log frog toxins on hit": "Kurbağanın saldırısı üzerinde biraz toksin bırakıyor!",
     "log frog toxins bare hands": "Kurbağaya çıplak elle dokunmak ellerini toksine buluyor!",

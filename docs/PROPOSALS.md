@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 78 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 79 -->
 
 # Proposals
 
@@ -394,7 +394,17 @@ shipped.
   its own. 36 components went from unmakeable to makeable and the tier-5 group came off
   `known_unmade`. What P-12 still carries is the station question, not a recipe.
 - **Stance choice made to matter through `on_hit` / `on_damaged`** rather than through
-  stat bonuses. `open`.
+  stat bonuses. `done`, as **v0.7.6**. Four enemies react and none of them gained a stat
+  line: a swarm closes in against a point and is swept back by a broad stance, a frog's
+  splash scales with how much of you is presented rather than with how hard you hit, and
+  both dragonflies' stingers find a body that has committed to a swing. Written into the
+  hooks that already existed, which is what P-14 measured - no second abstraction, and
+  no new enemy, because the arc itself has no combat and phase 4 said so. The honest
+  limit is that a hook can only reach `add_active_effect` and the log, so a reaction is
+  always "how you are standing changes what this gets to do to you". Guard:
+  `check_stance_reactions_name_real_stances` - a misspelt stance id compares false for
+  every stance there is, so the reaction is written, translated, shipped and never once
+  seen while the enemy behaves exactly as before.
 - **The arc's money sink priced against the existing economy.** `open`. The boatman's
   25,000 is the only price this arc set, and it was set against quest rewards rather
   than against the whole curve.

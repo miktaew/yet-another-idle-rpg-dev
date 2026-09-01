@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 71 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 72 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,63 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.6 - nasıl durduğunuz, şeylerin size ne yaptığını değiştiriyor
+
+P-14 Faz 6'nın dört parçasından ikincisi: stance seçiminin, ikinci bir stat çarpanı
+kümesiyle değil `on_hit` ve `on_damaged` üzerinden anlam kazanması.
+
+**Yeni soyutlama yok, yeni yaratık yok.** P-14, `Enemy`'nin zaten `on_hit`, `on_damaged`
+ve `on_death` aldığını ve dört yaratığın bunları kullandığını ölçmüş, ikinci bir
+mekanizma için gerekçe olmadığı sonucuna varmıştı. Bu geçerli: buradaki her tepki, zaten
+var olan bir kancanın içine ya da aynı aileden bir yaratıkta onun yanına yazıldı. Ve
+hiçbir dövüş eklenmedi, çünkü arc'ın kendisinde combat yok ve Faz 4 bunu söylemişti —
+yeni bir yaratık gerektiren bir stance geçişi, bu fazın adını taşıyan başka bir faz
+olurdu.
+
+**Dört tepki ve her biri, statların zaten ima ettiği şeyi kurgunun söylemesi:**
+
+- **Kırmızı karınca sürüsü.** Ucunuzu sürünün ortasına saplamak, geri kalanının
+  gelmesini engellemiyor; gelen de kollarınızın içine giriyor — dörtte bir olasılıkla
+  `Irritation`. Tabii geniş bir yay çizmiyorsanız: Broad Arc, Berserker's Stride ve
+  Flowing Water sürünün içinden bir hat geçiriyor ve onlar geri gidiyor. `target_count`
+  çarpanı o duruşların sürüyü daha hızlı öldürmesini zaten sağlıyordu; bu ise birini
+  seçmeyi aritmetik olarak daha iyi değil, doğru cevap gibi hissettiren şey.
+- **Kurbağa.** Sıçrama ne kadar sert vurduğunuzu önemsemiyor, önünde ne kadarınızın
+  durduğunu önemsiyor. Berserker's Stride blok ve çevikliği 0.4'e düşürüyor, Broad Arc
+  iki kolu birden veriyor; yani iki katı isabet ediyor. Defensive Measures ise yarıya
+  indiriyor — bütün varlık sebebi sizinle bunun arasına bir şey koymak olan tek duruş.
+- **Dev yusufçuk** ve **Yusufçuk kraliçesi.** İğne, bir savuruşa kendini vermiş bir
+  bedeni buluyor, kımıldamayı bırakmamış olanı ıskalıyor: açık duruşlarda bir buçuk kat,
+  Quick Steps ya da Flowing Water'da 0.6 kat.
+
+**Dürüst sınır**, sonradan keşfedilmeye bırakılmak yerine dosyaya yazıldı: bir kanca
+yalnızca `add_active_effect`'e ve log'a ulaşabiliyor. Yani tepki her zaman "nasıl
+durduğunuz, bunun size ne yapabileceğini değiştirir" oluyor; yaratığın kendi durumunu
+değiştirmesi değil. Burada hiçbir şey bir durum makinesine dönüşmüyor.
+
+**`check_stance_reactions_name_real_stances`** muhafız ve mevsim ile bölge
+kontrollerindeki aynı sessiz sınıf: yanlış yazılmış bir stance kimliği, var olan her
+stance için yanlış döner; yani tepki yazılır, çevrilir, yayınlanır ve bir kez bile
+görülmez, yaratık ise tam eskisi gibi davranır. Bir hatanın tasarım kararı gibi
+görünmesinin en inandırıcı yolu bu. Kimlikler yeniden yazılmak yerine
+`combat_stances.js` içinden geliyor ve iki biçim de okunuyor — adlandırılmış gruplar ve
+satır içi listeler. 7 stance'a karşı 10 kimlik. Üç yönden negatif test edildi: bir grupta
+yanlış yazılmış kimlik, satır içi listede yanlış yazılmış kimlik ve boş bir liste.
+
+**Bundan bir test altyapısı hatası da çıktı.** `browser-free-src.mjs`, `current_stance`'ı
+`"normal"` metni olarak taklit ediyordu; oysa `main.js` bir Stance nesnesi olan
+`stances["normal"]`'ı tutuyor. Üzerinden hiçbir alan okunmadığı için bu basitleştirme
+görünmezdi; bir tepki `.id` okuduğu anda değer `undefined` olurdu ve mekanizmayı
+sınayan her test, hiçbir şeyin hiç eşleşmediğini onaylayarak geçerdi. Stub artık gerçeğin
+biçiminde ve değiştirilebilir; yani bir test kahramanı farklı durdurup neyin değiştiğini
+sorabiliyor.
+
+On beş test, tepkilerin dayandığı kararı kapsıyor — tarayıcısız bir yüklemenin
+gözlemleyebildiği tek kısım da o, çünkü `add_active_effect` de log da taklit ediliyor —
+artı dört tepkinin de iki duruşta, silahlı ve silahsız hâlde hata fırlatmadan çalıştığını:
+400 çağrı. Negatif test, stance kimliği yerine stance nesnesinin karşılaştırılmasıyla
+yapıldı; stub'ın sakladığı hatanın tam kendisi: beş kontrol düşüyor.
 
 ### v0.7.5 - 5. kademe yapılabiliyor ve cevher satın alınmıyor, kazılıyor
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 78 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 79 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -414,7 +414,18 @@ yayınlandı.
   grubu `known_unmade` listesinden kalktı. P-12'de kalan şey istasyon sorusu, bir tarif
   değil.
 - **Stance seçiminin stat bonusuyla değil `on_hit` / `on_damaged` üzerinden anlam
-  kazanması.** `open`.
+  kazanması.** `bitti`, **v0.7.6** olarak. Dört yaratık tepki veriyor ve hiçbiri bunun
+  için bir stat satırı kazanmadı: sürü, bir noktaya karşı üstünüze kapanıyor ve geniş
+  bir duruşla geri süpürülüyor; kurbağanın sıçraması ne kadar sert vurduğunuzla değil
+  önünde ne kadarınızın durduğuyla ölçekleniyor; iki yusufçuğun iğnesi de bir savuruşa
+  kendini vermiş bedeni buluyor. Hepsi zaten var olan kancaların içine yazıldı; P-14'ün
+  ölçtüğü şey de buydu — ikinci bir soyutlama yok ve yeni bir yaratık da yok, çünkü
+  arc'ın kendisinde combat yok ve Faz 4 bunu söylemişti. Dürüst sınır şu: bir kanca
+  yalnızca `add_active_effect`'e ve log'a ulaşabiliyor, dolayısıyla tepki her zaman
+  "nasıl durduğunuz, bunun size ne yapabileceğini değiştirir" oluyor. Muhafız:
+  `check_stance_reactions_name_real_stances` — yanlış yazılmış bir stance kimliği, var
+  olan her stance için yanlış döner; yani tepki yazılır, çevrilir, yayınlanır ve bir kez
+  bile görülmez, yaratık ise tam eskisi gibi davranır.
 - **Arc'ın para kuyusunun mevcut ekonomiye göre fiyatlanması.** `open`. Kayıkçının
   25.000'i bu arc'ın belirlediği tek fiyat ve bütün eğriye göre değil, quest ödüllerine
   göre belirlendi.
