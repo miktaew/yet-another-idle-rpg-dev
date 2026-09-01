@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 105 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 106 -->
 
 # Changelog
 
@@ -20,6 +20,53 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.34 - a panel is not drawn just before the value it shows changes
+
+P-37, the owner's question: *"have we checked that fields like the inventory and the data
+panels get updated?"*
+
+**The answer is yes, and it took eleven corrections to be able to say so.** Every audit of
+this shape produced confident findings, and the first thirteen of them were faults in the
+audit rather than in the game. Written down because the next person will build the same tool:
+
+- pairing state to a panel **by hand** put the bestiary against the combat enemy list and the
+  effect registry against the stat bonus table - so the pairing is derived by asking the
+  panels what they read;
+- naming the enclosing function as "the last one that started before this line" attributed a
+  new game's opening purse to a dev-console helper, because that function had already closed;
+- taking "the next `{` after the name" as a function's body puts the span inside a
+  destructured parameter list - `function process_rewards({rewards = {}, ...})` - and ends it
+  before its own first statement;
+- a bare registry name matched inside longer paths, and a default in a signature read as a
+  write;
+- excluding a leading dot from a call search hid `ReputationManager.add_reputation(...)`
+  entirely, so a function whose caller refreshes on the very next line looked cold;
+- walking only **upwards** to callers missed `unlock_location`, which draws nothing itself and
+  calls `change_location`, which rebuilds everything;
+- and `create_new_bestiary_entry` and `create_bestiary_entry_content` draw as surely as any
+  `update_` function does.
+
+**What was actually wrong, and reachability could never have found it.** `unlock_location`
+rebuilt the player's location - which draws the fast travel list out of `unlocked_beds` - and
+then registered the newly unlocked bed on the line after. Every measure of "is a redraw on
+this path" says yes. The panel was still built from the old value, and nothing drew it again,
+so a bed you had just earned was missing from the list until you happened to go somewhere.
+
+Two lines, moved. The write is still outside the `if`, because unlocking a place that is
+already unlocked has to register its bed either way; the reload is now gated on an actual
+unlock, which it always meant to be.
+
+**Guard: `check_a_panel_is_not_redrawn_before_the_value_changes`.** Order, not reachability -
+that is the half a static check can answer honestly. Every write to a value some panel reads
+must have a redraw of that panel somewhere after it. Per write, not per function: `kill_enemy`
+writes and redraws in one arm of an `if` and again in the other, and comparing the extremes
+called that wrong too.
+
+16 pieces of state read by a panel, 8 functions that both write one and redraw it, none out of
+order. The load and character-creation paths are excused because they fill everything in and
+then draw everything; the dev console is excused because a flag set from a console is not a
+path a player takes. Negative-tested by putting the bed back where it shipped.
 
 ### v0.7.33 - a stall on the square, and P-36 closes
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 52 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 53 -->
 
 # Status
 
@@ -217,6 +217,7 @@ but the ones that encode a bug that shipped:
 | `retry button` | A "try again" offered for an attempt that cannot be started, or a builder deciding for itself whether to draw it. |
 | `timed activities` | An activity that names its hours and not its seasons, which the availability check refuses at every hour. 3 timed. |
 | `trader unlocks` | A trader that starts shut and that nothing opens, so its location draws no trade button at all. 9 traders, 7 shut. |
+| `panel ordering` | A panel redrawn just before the value it shows is written, so it is built from the old one. 16 pieces of state. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

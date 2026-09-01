@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 105 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 106 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,52 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.34 - bir panel, gösterdiği değer değişmeden hemen önce çizilmiyor
+
+P-37, sahibinin sorusu: *"envanter, veri gibi alanların güncellenmesini kontrol ettik mi?"*
+
+**Cevap evet ve bunu söyleyebilmek on bir düzeltme aldı.** Bu biçimdeki her denetim kendinden
+emin bulgular üretti ve ilk on üçü oyunun değil denetimin kusurlarıydı. Yazılıyor, çünkü aynı
+aracı bir sonraki kişi de kuracak:
+
+- durumu panele **elle** eşleştirmek bestiary'yi savaş listesiyle, efekt kayıt defterini stat
+  bonus tablosuyla karşı karşıya getirdi — bu yüzden eşleştirme, panellere ne okuduklarını
+  sorarak türetiliyor;
+- çevreleyen fonksiyonu "bu satırdan önce başlayan sonuncu" diye adlandırmak, yeni bir oyunun
+  açılış kesesini bir dev-konsol yardımcısına yükledi; çünkü o fonksiyon çoktan kapanmıştı;
+- bir fonksiyonun gövdesi olarak "addan sonraki ilk `{`"i almak, aralığı destructure edilmiş
+  parametre listesinin içine sokuyor — `function process_rewards({rewards = {}, ...})` — ve
+  fonksiyonu kendi ilk ifadesinden önce bitiriyor;
+- çıplak bir registry adı daha uzun yolların içinde eşleşiyordu ve imzadaki bir varsayılan
+  yazma sayılıyordu;
+- çağrı aramasında baştaki noktayı dışlamak `ReputationManager.add_reputation(...)`'ı tamamen
+  gizledi; yani çağıranı bir sonraki satırda yenileyen bir fonksiyon soğuk göründü;
+- yalnızca **yukarı**, çağıranlara yürümek `unlock_location`'ı kaçırdı: kendisi hiçbir şey
+  çizmiyor, her şeyi yeniden kuran `change_location`'ı çağırıyor;
+- ve `create_new_bestiary_entry` ile `create_bestiary_entry_content`, herhangi bir `update_`
+  fonksiyonu kadar kesin biçimde çiziyor.
+
+**Gerçekte yanlış olan şey ve ulaşılabilirliğin onu asla bulamayacağı.** `unlock_location`
+oyuncunun konumunu yeniden kuruyordu — ki bu hızlı seyahat listesini `unlocked_beds`'ten çizer
+— ve yeni açılan yatağı bir sonraki satırda kaydediyordu. "Bu yolda bir yeniden çizim var mı"
+diyen her ölçüt evet der. Panel yine de eski değerden kuruluyordu ve onu bir daha çizen
+olmuyordu; yani az önce hak ettiğiniz bir yatak, siz bir yere gidene kadar listede yoktu.
+
+İki satır, yer değiştirdi. Yazma hâlâ `if`'in dışında, çünkü zaten açık bir yeri açmak da
+yatağını kaydetmeli; yeniden yükleme ise artık gerçek bir açılma koşuluna bağlı, ki en baştan
+kastedilen de buydu.
+
+**Muhafız: `check_a_panel_is_not_redrawn_before_the_value_changes`.** Ulaşılabilirlik değil
+sıra — statik bir kontrolün dürüstçe cevaplayabileceği yarı bu. Bir panelin okuduğu bir
+değere yapılan her yazmanın, kendisinden sonra o paneli çizen bir şey olmalı. Fonksiyon başına
+değil yazma başına: `kill_enemy` bir `if`'in bir kolunda yazıp çiziyor, öteki kolunda yine
+yazıp çiziyor ve uçları karşılaştırmak bunu da yanlış saydı.
+
+Bir panelin okuduğu 16 durum parçası, bunlardan birini hem yazıp hem çizen 8 fonksiyon,
+sırası bozuk olan yok. Yükleme ve karakter yaratma yolları muaf; ikisi de her şeyi doldurup
+sonra her şeyi çiziyor. Dev konsolu da muaf: konsoldan set edilen bir bayrak, oyuncunun
+izlediği bir yol değil. Yatağı gönderildiği yere geri koyarak negatif test edildi.
 
 ### v0.7.33 - meydanda bir tezgâh ve P-36 kapanıyor
 

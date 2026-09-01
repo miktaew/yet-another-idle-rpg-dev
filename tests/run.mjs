@@ -92,6 +92,7 @@ import {
     check_every_trader_can_be_opened,
 } from "./checks/reachable.mjs";
 import { check_no_content_object_repeats_a_key } from "./checks/literals.mjs";
+import { check_a_panel_is_not_redrawn_before_the_value_changes } from "./checks/panels.mjs";
 import {
     check_duration_units_have_rows,
     check_interpolated_pairs,
@@ -219,6 +220,7 @@ await check_every_quest_can_be_started();
 await check_every_location_can_be_unlocked();
 await check_a_timed_activity_can_ever_be_started();
 await check_every_trader_can_be_opened();
+check_a_panel_is_not_redrawn_before_the_value_changes();
 check_no_content_object_repeats_a_key();
 
 for (const message of warnings) {

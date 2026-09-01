@@ -3038,15 +3038,28 @@ function unlock_location({location, skip_message}) {
             log_message(message, "location_unlocked");
         }
 
-        //reloads the current location just in case it needs the new unlock to be added to current display
-        //current action check most probably unnecessary
-        if(current_location && !current_dialogue && !current_game_action) {
-            change_location({location_id: current_location.id, skip_travel_time: true});
-        }
     }
 
+    /*
+        Before the reload below, and that order is the whole point (P-37). The fast travel
+        list is built by reading unlocked_beds, so registering the bed AFTER the display has
+        been rebuilt left a newly unlocked bed off the list until something else happened to
+        redraw it.
+
+        Outside the `if` on purpose, as it always was: unlocking a location that is already
+        unlocked still has to register its bed.
+    */
     if(location.housing?.is_unlocked) {
         unlocked_beds[location.id] = true;
+    }
+
+    /*
+        Reloads the current location just in case it needs the new unlock to be added to
+        current display. Only on an actual unlock - the current action check is most
+        probably unnecessary.
+    */
+    if(was_unlocked && current_location && !current_dialogue && !current_game_action) {
+        change_location({location_id: current_location.id, skip_travel_time: true});
     }
 
     return was_unlocked;

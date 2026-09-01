@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 121 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 122 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -644,33 +644,6 @@ kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından
 ve muhtemelen ikiden fazlasını bulur.
 
 
-
-### P-37 — Her panel, gösterdiği şey değiştiğinde güncelleniyor mu? `open`
-
-Sahibinin sorusu, P-32 yapılırken sorulmuş ve P-31 ile aynı sınıfa işaret ediyor:
-*"envanter, veri gibi alanların güncellenmesini kontrol ettik mi?"*
-
-**Şu an bilinen şey ve bu yalnızca yarısı.** `check_every_panel_updater_is_called` (v0.7.23),
-bir paneli çizen her fonksiyonun bir çağıranı olduğunu kanıtlıyor. O çağıranın *ne zaman*
-çalıştığı hakkında hiçbir şey söylemiyor; P-31'in yaşadığı yer de tam olarak orasıydı:
-Keşifler panelinin beş çağıranı vardı ve hiçbiri panel açıkken tetiklenmiyordu, yani oyuncu
-bakarken bir sayı kımıldamıyordu.
-
-Envanter listesinin kendisi her toplamada `add_to_character_inventory`'den yeniden çiziliyor
-ve v0.7.26, "son" sıralaması aktifken yığın eklemelerinde yeniden sıralama ekledi. Yani çanta
-endişe değil. Soru, canlı bir sayı gösteren diğer panellerden hangilerinin gösterdikleri şeye
-bağlı olduğu.
-
-**Akıl yürütülmeyip ölçülmesi gereken şey.** Ekrandayken değişebilen bir değer gösteren her
-panel için — karakter statları, para, aktif etkiler, görev ilerlemesi, zanaat malzeme
-listesi, bestiary sayıları — o değeri değiştiren yoldan bir yeniden çizim çağrılıyor mu.
-Yalnızca sekme açılışında çizilen bir panel, yeniden P-31'dir.
-
-**Burada bir kontrolün neden zor olduğu ve önce düşünülmeye değdiği.** "Değer değiştiğinde
-çağrılıyor", "hiç çağrılıyor"un aksine bir ad taramasının görebileceği bir şey değil. Dürüst
-sürümü muhtemelen her paneli okuduğu durumla eşleştirip o durumu yazan herhangi bir yerin
-onun güncelleyicisine ulaşıp ulaşmadığını soruyor — ki bu bir çağrı grafiği sorusu ve bu
-projedeki ilki olurdu.
 
 ### P-39 — Hiç craft edilmemişi işaretle, yapılabilire göre filtrele `open`
 

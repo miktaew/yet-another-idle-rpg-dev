@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 121 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 122 -->
 
 # Proposals
 
@@ -623,32 +623,6 @@ own constructor. That is a broader check than this proposal and would probably f
 than two.
 
 
-
-### P-37 — Does every panel update when the thing it shows changes? `open`
-
-The owner's question, asked while P-32 was being built and pointing at the same class as
-P-31: *"have we checked that fields like the inventory and the data panels get updated?"*
-
-**What is already known, and it is only half.** `check_every_panel_updater_is_called`
-(v0.7.23) proves that every function which draws a panel has a caller. It says nothing about
-*when* that caller runs, which is exactly where P-31 lived: the Discoveries panel had five
-callers and none of them fired while the panel was open, so a count sat still while the
-player watched it.
-
-The inventory list itself is redrawn from `add_to_character_inventory` on every pickup, and
-v0.7.26 added a re-sort on stack top-ups while sorting by "latest". So the bag is not the
-worry. The question is which of the other panels showing a live number are wired to the
-thing they show.
-
-**What has to be measured, not reasoned about.** For each panel that displays a value which
-can change while it is on screen - character stats, money, active effects, quest progress,
-the crafting materials list, the bestiary counts - whether a redraw is called from the path
-that changes it. A panel drawn only on tab open is P-31 again.
-
-**Why a check is hard here and worth thinking about first.** "Called when the value changes"
-is not something a name scan can see, unlike "called at all". The honest version probably
-pairs each panel with the state it reads and asks whether any writer of that state reaches
-its updater - which is a call-graph question, and the first one this project would have.
 
 ### P-39 — Mark what has never been crafted, and filter to what can be `open`
 
