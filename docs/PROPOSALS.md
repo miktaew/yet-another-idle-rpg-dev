@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 81 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 82 -->
 
 # Proposals
 
@@ -592,29 +592,6 @@ entire Marrowmoth arc was.
 `//currently useless` and get a comment that says they are vestigial rather than pending,
 so the next reader is not misled the way this proposal's author was. If the axis is ever
 wanted, it is its own arc and its own version series - not a phase inside something else.
-
-### P-17 — `docs/TODO.md` becomes a tracked bilingual pair `open`
-
-The owner's instruction, and it reverses an arrangement this file and the development
-loop both describe: `docs/TODO.md` has been deliberately untracked, and the loop's own
-notes say so and say not to commit it. That is now overridden - it is to be tracked, with
-the Turkish original as `docs/TODO.TR.md` and a canonical English `docs/TODO.md` beside
-it.
-
-**What that costs, measured.** The file is 975 lines of Turkish prose. D-3 makes the
-English half canonical, so this is a full translation and not a header change, and
-`check_docs_are_paired` will hold the pair to a matching `doc-version` from the moment
-either is staged - `git ls-files` reads the index, so staging is what makes it ours.
-
-**Consequences to carry, not to discover later:**
-
-- The loop's instruction file says `docs/TODO.md` is untracked and must not be committed.
-  It is in `.claude/`, which is ignored, so it cannot be fixed by a commit - it has to be
-  edited locally in the same change or the next session will act on a false statement.
-- Once tracked, the brief stops being "context, not a queue" in the mechanical sense that
-  it was: the reason it was excluded was that it has no checkboxes and was already
-  measured into P-14. That reasoning is unchanged and should be written into the file
-  itself rather than left to a convention nobody can see any more.
 
 ---
 

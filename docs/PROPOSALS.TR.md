@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 81 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 82 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -620,30 +620,6 @@ Marrowmoth arc'ından daha büyük bir değişiklik.
 bekleyen değil körelmiş olduklarını söyleyen bir yorum alır; böylece sonraki okuyucu, bu
 önerinin yazarının yanıldığı gibi yanılmaz. Eksen bir gün istenirse, o kendi arc'ı ve
 kendi sürüm serisidir — başka bir şeyin içindeki bir faz değil.
-
-### P-17 — `docs/TODO.md` izlenen iki dilli bir çifte dönüşür `open`
-
-Sahibinin talimatı ve bu dosyanın da geliştirme döngüsünün de tarif ettiği bir düzeni
-tersine çeviriyor: `docs/TODO.md` bilerek izlem dışıydı, döngünün notları da bunu söylüyor
-ve commit etmemeyi söylüyor. Bu artık geçersiz kılındı — izlenecek; Türkçe özgün metin
-`docs/TODO.TR.md`, yanında da kanonik bir İngilizce `docs/TODO.md` olacak.
-
-**Bunun maliyeti, ölçülmüş hâliyle.** Dosya 975 satır Türkçe metin. D-3 İngilizce yarıyı
-kanonik kıldığı için bu bir başlık değişikliği değil, tam bir çeviri; ve
-`check_docs_are_paired`, ikisinden biri stage'lendiği andan itibaren çifti aynı
-`doc-version`'a bağlayacak — `git ls-files` indeksi okuyor, yani onu bizim yapan şey
-stage'lemek.
-
-**Sonradan keşfedilmek yerine taşınacak sonuçlar:**
-
-- Döngünün talimat dosyası `docs/TODO.md`'nin izlem dışı olduğunu ve commit
-  edilmemesi gerektiğini söylüyor. O dosya, yok sayılan `.claude/` içinde; yani bir
-  commit'le düzeltilemiyor — aynı değişiklikte yerelde düzenlenmesi gerekiyor, yoksa bir
-  sonraki oturum yanlış bir ifadeye göre davranacak.
-- İzlenmeye başladığı anda brief, mekanik anlamda "kuyruk değil bağlam" olmayı bırakıyor:
-  dışarıda tutulmasının sebebi checkbox'ı olmaması ve zaten P-14 içine ölçülmüş olmasıydı.
-  O gerekçe değişmedi ve artık kimsenin göremediği bir teamüle bırakılmak yerine dosyanın
-  kendi içine yazılmalı.
 
 ---
 

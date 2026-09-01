@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 73 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 74 -->
 
 # Changelog
 
@@ -20,6 +20,48 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### The owner's brief is in git, in both languages
+
+P-17. `docs/TODO.md` has been deliberately untracked since the loop began, and both this
+file and the loop's own instructions said so and said not to commit it. The owner has
+reversed that: it is tracked now, as `docs/TODO.TR.md` - the Turkish original, kept whole
+- and a canonical English `docs/TODO.md` beside it, at a matching `doc-version`, which is
+what D-3 requires of every tracked markdown file.
+
+**Why it was excluded, and why that reasoning survives being tracked.** The brief has no
+checkboxes and nothing in it is ticked; the work is tracked in `PROPOSALS.md`, where the
+brief was measured against the code and turned into numbered proposals. That distinction
+is not bookkeeping. Parts of the brief assume things the code does not have - it names a
+lockpicking skill, a navigation skill and guild standing, and when it was written none of
+the three existed. Working straight from it would re-derive settled decisions and act on
+assumptions that have since been measured and corrected.
+
+So the reasoning is now written into the top of both halves rather than living in a
+convention nobody outside this repository could see. The file says what it is: context,
+not a queue, and the proposals are where the work is.
+
+The argument for tracking it is simpler: a brief nobody can see is a brief nobody can
+check the work against. Six versions of the Marrowmoth arc have shipped against this
+document, and until today a reader could compare them only to a summary of it.
+
+Three consequences were carried rather than discovered:
+
+- **The loop's instruction file said the opposite** and would have had the next session
+  act on a false statement. `.claude/` is ignored, so it cannot be fixed by a commit; it
+  was edited locally in the same change. It also now says the reverse of what it said
+  about itself: `docs/TODO.md` is a pair and passes D-3, while `.loop.md` is one agent's
+  working orders in Turkish and is the wrong shape for an English-canonical pair, so it
+  stays ignored.
+- **`git add docs/` is still wrong**, for a different reason now. The hazard it used to
+  carry - sweeping in an untracked brief and breaking `check_docs_are_paired` on the next
+  run, which happened once today - is gone, but naming paths explicitly is what made that
+  visible in the first place.
+- **The English half is a translation, not a rewrite.** The brief's own structure is kept,
+  including its run of top-level headings, because it is the owner's document and its
+  shape is part of what was said.
+
+`check_docs_are_paired` now reports 10 pairs across 20 files, up from 9 across 18.
 
 ### v0.7.7 - a tooltip that runs off the bottom opens upwards
 

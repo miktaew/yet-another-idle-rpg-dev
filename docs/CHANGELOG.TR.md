@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 73 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 74 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,49 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Sahibinin brief'i, iki dilde, git'te
+
+P-17. `docs/TODO.md`, döngü başladığından beri bilerek izlem dışıydı; hem bu dosya hem
+döngünün kendi talimatları bunu söylüyor ve commit edilmemesini söylüyordu. Sahibi bunu
+tersine çevirdi: artık izleniyor — Türkçe özgün metin bütün hâliyle `docs/TODO.TR.md`,
+yanında da kanonik İngilizce `docs/TODO.md`; ikisi aynı `doc-version` başlığında, ki D-3
+izlenen her markdown dosyasından bunu istiyor.
+
+**Neden dışarıda tutuluyordu ve o gerekçe izlenmeye başlayınca neden hâlâ geçerli.**
+Brief'in checkbox'ı yok ve hiçbir maddesi işaretlenmiyor; iş `PROPOSALS.md` içinde
+izleniyor, brief orada koda karşı ölçülüp numaralı önerilere dönüştürüldü. Bu ayrım
+muhasebe değil. Brief'in bazı varsayımları kodda yok — bir lockpicking skill'i, bir
+navigation skill'i ve lonca itibarı anıyor; yazıldığında üçü de mevcut değildi. Doğrudan
+ondan çalışmak, kapanmış kararları yeniden türetmek ve o zamandan beri ölçülüp
+düzeltilmiş varsayımlara göre davranmak olurdu.
+
+Bu yüzden gerekçe artık, bu repository'nin dışından kimsenin göremeyeceği bir teamülde
+yaşamak yerine iki yarının da başına yazıldı. Dosya ne olduğunu kendisi söylüyor: kuyruk
+değil bağlam; iş ise önerilerde.
+
+İzlenmesinin gerekçesi daha basit: kimsenin göremediği bir brief, kimsenin işi karşısında
+denetleyemediği bir brief demek. Marrowmoth arc'ının altı sürümü bu belgeye karşı
+yayınlandı ve bugüne kadar bir okuyucu onları yalnızca belgenin özetiyle
+karşılaştırabiliyordu.
+
+Sonradan keşfedilmek yerine taşınan üç sonuç:
+
+- **Döngünün talimat dosyası bunun tersini söylüyordu** ve bir sonraki oturumu yanlış bir
+  ifadeye göre davrandıracaktı. `.claude/` yok sayılıyor, yani bir commit'le
+  düzeltilemiyor; aynı değişiklikte yerelde düzenlendi. Ayrıca kendisi hakkında da tersini
+  söylüyor artık: `docs/TODO.md` bir çift ve D-3'ü geçiyor; `.loop.md` ise tek bir
+  agent'ın Türkçe çalışma emri ve İngilizce-kanonik bir çift olacak şekil değil, o yüzden
+  yok sayılmaya devam ediyor.
+- **`git add docs/` hâlâ yanlış**, ama artık başka sebeple. Eskiden taşıdığı tehlike —
+  izlenmeyen bir brief'i süpürüp bir sonraki koşuda `check_docs_are_paired`'i kırmak; ki
+  bugün bir kez oldu — ortadan kalktı, ama bunu görünür kılan şey adlandırılmış yolları
+  yazmaktı.
+- **İngilizce yarı bir çeviri, yeniden yazım değil.** Brief'in kendi yapısı, arka arkaya
+  gelen üst düzey başlıkları dâhil korundu; çünkü bu sahibinin belgesi ve şekli de
+  söylenenin bir parçası.
+
+`check_docs_are_paired` artık 20 dosyada 10 çift bildiriyor; öncesinde 18 dosyada 9'du.
 
 ### v0.7.7 - alta taşan tooltip yukarı doğru açılıyor
 
