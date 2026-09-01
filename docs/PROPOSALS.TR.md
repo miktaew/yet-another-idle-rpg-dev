@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 74 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 75 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -332,13 +332,32 @@ Faz 4'ün adlandırdığı çıkmaz sınıfı değil — sebebini söyleyerek re
 başarısız olan bir kontrol değildir — ve ayrım, Faz 4 yeniden türetmek zorunda kalmasın
 diye kayda geçirildi.
 
-**Faz 4 — v0.7.3, *Out on the Ebb*.** Cezir yaklaşımı. Q-9 uyarınca en fazla iki
-yeni yer; demirleme yeri ve güverte oda değil aksiyon olur. Combat değil, skill ve
-aksiyon kontrolleri. Her kapı var olan bir skill'i anar, her başarısızlık nedenini
-söyler ve başka bir yol bırakır — daha uzun, daha pahalı ya da itibar üzerinden.
-Muhafız: `check_no_dead_end_skill_gates` — tek ilerleticisi skill'e bağlı bir
-aksiyon olan bir task'ın ikinci bir ilerleticisi olmak zorundadır. Bu, sahibin
-"başarısız kontrol questi kilitlemez" kuralının mekanik hâlidir.
+**Faz 4 — v0.7.3, *Out on the Ebb*.** Cezir yaklaşımı. Q-9 uyarınca en fazla iki yeni
+yer; demirleme yeri ve güverte oda değil aksiyon olur. Combat değil, skill ve aksiyon
+kontrolleri. Her kapı var olan bir skill'i anar, her başarısızlık nedenini söyler ve
+başka bir yol bırakır — daha uzun, daha pahalı ya da itibar üzerinden. Kendinden önceki
+üç faz gibi bölündü.
+
+- **4a — muhafız.** `bitti`. `check_no_dead_end_skill_gates` var, ama bu önerinin
+  söylediği şeyi **söylemiyor**. Planlanan kural şuydu: "tek ilerleticisi skill'e bağlı
+  bir aksiyon olan bir task'ın ikinci bir ilerleticisi olmak zorundadır." İçeriğe karşı
+  ölçüldüğünde tam olarak böyle olan beş task var ve dördü birer bölgenin imzası —
+  ovada `read the ground`, körfezde `read the departures`, dağda `cut a flue`. Hiçbiri
+  çıkmaz değil, çünkü bu motorda başarısızlık, yeniden elde edilemeyecek hiçbir şeye mal
+  olmuyor: `lock_action` tek bir yerden ve yalnızca kazanınca çağrılıyor, yani başarısız
+  her deneme tekrarlanabiliyor. Planlanan cümleyi dayatmak, bilerek yazılmış dört
+  aksiyonu işaretler ve tekrarlanabilir bir kontrolün tuzak olduğunu öğretirdi. Muhafız
+  bunun yerine questi gerçekten kilitleyen şeyin etrafına, iki kuralla yazıldı:
+  başarısızlık aksiyonu kilitlememeli — ki bu her an tek bir düzenleme uzaklıkta ve beş
+  task'ı bir anda çıkmaza çevirirdi; ve quest ilerleten bir aksiyon, başarısız denemede
+  eşya yememeli. Bugün dört aksiyon her denemede tüketiyor — kamp malzemesi, halat
+  rulosu — ve hiçbiri quest ilerletmiyor; ikinci kuralın çizdiği çizgi de bu. 13 quest
+  ilerleten aksiyon, hiçbiri başarısızlıkta kaybedilmiyor. İki kural da negatif test
+  edildi: kilit kaybın altına taşındı ve `see the manifest`'e tüketilen bir halat
+  eklendi.
+- **4b — düzlükler ve ambar.** `open`. İki yer, gelgit, aksiyon olarak demirleme yeri
+  ve güverte, ve başarısız her kontrolün bırakmak zorunda olduğu alternatif yol. v0.7.3
+  olarak yayınlanacak olan bu.
 
 **Faz 5 — v0.7.4, *One Unweighed Crate*.** Sandığa ulaşılır. Orman yolunda alınan
 objeyle aynı eli taşır — tek bir motif, tek bir metal, tek bir açıklanmamış malzeme

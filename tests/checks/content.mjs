@@ -642,6 +642,91 @@ async function check_reputation_regions_have_names() {
     }
 }
 
+/**
+ * A failed check that locks a quest.
+ *
+ * P-14 phase 4 asked for this as "a task whose only advancer is a skill-gated action
+ * must have a second advancer". Measured against the content, that rule is wrong here
+ * and would have taught the wrong lesson: five tasks are advanced only by a
+ * skill-checked action, and four of them are a region's signature - `read the ground`
+ * on the plains, `read the departures` at the bay, `cut a flue` in the mountain. None
+ * is a dead end, because in this engine a failure costs nothing that cannot be got
+ * again. So the guard is written around what actually locks a quest rather than around
+ * the shape the plan guessed at.
+ *
+ * Two rules, and they are the two ways a retry can stop being possible:
+ *
+ *  1. **Failure must not lock the action.** `lock_action` is called from exactly one
+ *     place, inside the win branch of the attempt resolver. Move it below the loss and
+ *     every skill-checked advancer in the game becomes one-shot at once - five tasks
+ *     turn into dead ends in a single edit, and nothing else in the suite would say so.
+ *  2. **A quest-advancing action must not eat an item on a failed attempt.** Items in
+ *     `conditions[0].items_by_id` marked `remove` are taken whether the attempt is won
+ *     or lost, and `required.items_by_id` can be marked `remove_on_fail` outright. Four
+ *     actions consume on any attempt today - camping supplies, coils of rope - and not
+ *     one of them advances a quest. That is the line: an action may cost you something
+ *     to fail at, or it may be the only way to finish a task, and not both.
+ */
+function check_no_dead_end_skill_gates() {
+    const before = errors.length;
+
+    /*
+        Rule 1, read out of main.js. The order of the two call sites is the whole of it:
+        the lock has to happen on the winning side of the branch that picks between the
+        success text and the random-loss text.
+    */
+    const main_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+    const lock_call = main_source.indexOf("lock_action({");
+    const loss_call = main_source.indexOf('pick_failure_text(action, "random_loss")');
+    const win_text = main_source.indexOf("getResolvedSuccessText({character})");
+
+    if (lock_call < 0 || loss_call < 0 || win_text < 0) {
+        error("src/main.js no longer resolves an action attempt the way"
+            + " check_no_dead_end_skill_gates reads it: it looks for a lock_action call,"
+            + " a random_loss failure text and the success text, and one of the three is"
+            + " gone. Re-read the resolver before trusting this check again.");
+        return;
+    }
+    if (!(win_text < lock_call && lock_call < loss_call)) {
+        error("src/main.js locks an action outside the winning branch of the attempt"
+            + " resolver. A failure that locks the action makes every skill-checked"
+            + " advancer one-shot, and a task whose only advancer is one of those becomes"
+            + " unfinishable - which is exactly the rule P-14 phase 4 exists to keep.");
+    }
+
+    //Rule 2, read out of the content: what an action takes when the attempt goes wrong.
+    const quest_advancing = new Set();
+    for (const relative of ["src/data/locations.js", "src/data/dialogues.js"]) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        for (const opening of source.matchAll(/"([^"]+)":\s*new GameAction\(\{/g)) {
+            const body = braced_body(source, opening.index + opening[0].length - 1);
+            if (body === null) continue;
+            if (!/quest_progress:/.test(body)) continue;
+            quest_advancing.add(opening[1]);
+            const eats_on_failure = /remove_on_fail:\s*true/.test(body)
+                || /items_by_id:\s*\{[^}]*remove:\s*true/.test(body);
+            if (eats_on_failure) {
+                error(`action "${opening[1]}" advances a quest task and takes an item on a`
+                    + " failed attempt. An action may cost something to fail at, or it may"
+                    + " be the only way to finish a task, but not both: a player who runs"
+                    + " out has no way back (P-14 phase 4).");
+            }
+        }
+    }
+
+    if (quest_advancing.size === 0) {
+        error("no action advances a quest task - check_no_dead_end_skill_gates is out of"
+            + " date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] dead ends: ${quest_advancing.size} quest-advancing actions,`
+            + " none of them lost on a failed attempt");
+    }
+}
+
 function check_lore_threads_resolve() {
     const before = errors.length;
     const source = strip_comments(
@@ -1276,4 +1361,5 @@ export {
     check_seasonal_content_is_reachable,
     check_lore_threads_resolve,
     check_reputation_regions_have_names,
+    check_no_dead_end_skill_gates,
 };

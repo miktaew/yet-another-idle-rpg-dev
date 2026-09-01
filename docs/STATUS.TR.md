@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 21 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 22 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -192,6 +192,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 | `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. 1 iplik, 3 satır. |
 | `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 58 kullanım. |
+| `dead ends` | Questi kilitleyen başarısızlık: kazanma dalının dışındaki kilit ya da kaybedilen denemede yenen eşya. 13 aksiyon. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -215,8 +216,10 @@ sayılmaz; koruma da hata geri konularak sınanır.
   iki konuşan arasında uzanıyor. *A Stroke Through It* olan Faz 3 de aynı şekilde
   v0.7.2 olarak yayınlandı: üç itibar ekseni üzerinde üç soruşturma yolu — `Guild` 50,
   `Slums` 200, `Town` 150 — her biri farklı bir parça veriyor ve 2. quest herhangi
-  birinden bitiyor. Sıradaki faz, *Out on the Ebb* olan Faz 4; Q-9'u harcayacak — en
-  fazla iki yeni yer.
+  birinden bitiyor. *Out on the Ebb* olan Faz 4 de aynı şekilde bölündü: çıkmaz muhafızı
+  olan 4a girdi — planın tahmin ettiği kuralın değil, questi gerçekten kilitleyen şeyin
+  etrafına yazılmış hâliyle; düzlükler ve ambar olan 4b ise v0.7.3 olarak yayınlanacak
+  ve Q-9'u harcayacak.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.

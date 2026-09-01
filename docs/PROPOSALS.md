@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 74 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 75 -->
 
 # Proposals
 
@@ -320,13 +320,31 @@ bought. That is not the dead-end class phase 4 names — a gate that refuses wit
 is not a check that fails — and the distinction is recorded so phase 4 does not have to
 re-derive it.
 
-**Phase 4 — v0.7.3, *Out on the Ebb*.** The low-tide approach. Two new places at
-most, per Q-9, with the anchorage and the cargo deck as actions rather than rooms.
-Skill and action checks, not combat. Every gate names a skill that exists and every
-failure says why and leaves another way — longer, dearer, or through standing. Guard:
-`check_no_dead_end_skill_gates` — a task whose only advancer is a skill-gated action
-must have a second advancer. This is the mechanical form of the owner's rule that a
-failed check never locks a quest.
+**Phase 4 — v0.7.3, *Out on the Ebb*.** The low-tide approach. Two new places at most,
+per Q-9, with the anchorage and the cargo deck as actions rather than rooms. Skill and
+action checks, not combat. Every gate names a skill that exists and every failure says
+why and leaves another way — longer, dearer, or through standing. Split like the three
+phases before it.
+
+- **4a — the guard.** `done`. `check_no_dead_end_skill_gates`, and it does **not** say
+  what this proposal said it would. The planned rule was "a task whose only advancer is
+  a skill-gated action must have a second advancer"; measured against the content, five
+  tasks are exactly that and four of them are a region's signature — `read the ground`
+  on the plains, `read the departures` at the bay, `cut a flue` in the mountain. None is
+  a dead end, because in this engine a failure costs nothing that cannot be got again:
+  `lock_action` is called from one place and only on a win, so every failed attempt can
+  be retried. Enforcing the planned sentence would have flagged four deliberate actions
+  and taught that a retryable check is a trap. The guard is written around what actually
+  locks a quest instead, in two rules: failure must not lock the action, which is one
+  edit away at all times and would turn five tasks into dead ends at once; and a
+  quest-advancing action must not eat an item on a failed attempt. Four actions consume
+  on any attempt today — camping supplies, coils of rope — and not one of them advances
+  a quest, which is the line the second rule draws. 13 quest-advancing actions, none
+  lost on a failure. Negative-tested both rules: the lock moved below the loss, and a
+  consumed rope added to `see the manifest`.
+- **4b — the flats and the hold.** `open`. The two places, the tide, the anchorage and
+  the cargo deck as actions, and the alternative route every failed check has to leave.
+  This is what ships as v0.7.3.
 
 **Phase 5 — v0.7.4, *One Unweighed Crate*.** The crate is reached. It carries the
 same hand as the object taken on the forest road — one motif, one metal, one

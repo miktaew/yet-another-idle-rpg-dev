@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 21 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 22 -->
 
 # Status
 
@@ -191,6 +191,7 @@ but the ones that encode a bug that shipped:
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 3 lines. |
 | `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
+| `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 13 actions. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -214,8 +215,10 @@ directive is recorded before it is worked on:
   out, and the arc's first lore thread runs across two speakers. Phase 3,
   *A Stroke Through It*, shipped as v0.7.2: three investigation paths on three standing
   axes - `Guild` at 50, `Slums` at 200, `Town` at 150 - each giving a different piece,
-  and quest 2 finishable from any one of them. Phase 4, *Out on the Ebb*, is next, and
-  it spends Q-9: two new places at most.
+  and quest 2 finishable from any one of them. Phase 4, *Out on the Ebb*, is split the
+  same way: 4a, the dead-end guard, is in - written around what actually locks a quest
+  rather than around the rule the plan guessed at; 4b, the flats and the hold, is what
+  ships as v0.7.3 and spends Q-9.
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.

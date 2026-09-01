@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 67 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 68 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,52 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Çıkmaz muhafızı, planın söylediği şeyi söylemiyor
+
+P-14 Faz 4a. Öneri `check_no_dead_end_skill_gates`'i istiyor ve kuralı da açıkça
+yazıyordu: *tek ilerleticisi skill'e bağlı bir aksiyon olan bir task'ın ikinci bir
+ilerleticisi olmak zorundadır.* İçeriğe karşı ölçüldüğünde bu kural burada yanlış ve onu
+dayatmak, kontrolü hiç yazmamaktan daha kötü olurdu.
+
+Beş görünür task yalnızca skill kontrollü bir aksiyonla ilerliyor. Dördü birer bölgenin
+imzası: ovada `read the ground`, körfezde `read the departures`, dağda `cut a flue` ve
+ovanın yeri okuyan quest adımı. Beşincisi ise iki sürüm önce yayınlanan
+`see the manifest`. Planlanan cümleyi kontrole yazmak beşini birden işaretlerdi ve
+çıkış yolları yalnızca şunlar olurdu: bilerek tek yönlü yazılmış dört aksiyona ikinci
+bir ilerletici iliştirmek, ya da bir istisna listesi tutmak — ki bu, kendine inanmayı
+bırakmış bir kontroldür.
+
+**Questi asıl kilitleyen şey**, varsayılarak değil çözümleyiciden okunarak:
+`lock_action`, `main.js` içinde tam olarak tek bir yerden ve denemenin kazanma dalının
+içinden çağrılıyor. Başarısız bir deneme asla kilitlenmiyor. Yani skill kontrolü burada
+bir tuzak değil — bir tekrar ve skill de eğitilebiliyor. Planın kuralı, bu motorun sahip
+olmadığı bir tehlikeye karşı yazılmıştı.
+
+Sahip olduğu iki tehlike var ve muhafız da onlar:
+
+1. **Kazanma dalının dışındaki bir kilit.** Bu, her an tek bir düzenleme uzaklıkta.
+   `lock_action`'ı `pick_failure_text(action, "random_loss")` satırının altına taşıyın
+   ve oyundaki skill kontrollü her ilerletici aynı anda tek kullanımlık olur — beş task
+   birlikte çıkmaza döner ve takımdaki başka hiçbir şey bunu fark etmez. Kontrol üç
+   çağrı yerini okuyor ve kilidin, başarı metni ile kayıp metni arasında durmasını şart
+   koşuyor.
+2. **Başarısız denemede yenen bir eşya.** `conditions[0].items_by_id` içinde `remove`
+   işaretli eşyalar, deneme kazanılsa da kaybedilse de alınıyor; `required.items_by_id`
+   ise doğrudan `remove_on_fail` kabul ediyor. Bugün dört aksiyon her denemede tüketiyor
+   — iki yerde kamp malzemesi, iki yerde daha halat rulosu — ve hiçbiri quest
+   ilerletmiyor. Çizgi de bu: bir aksiyon ya başarısız olmanın size bir şeye mal olduğu
+   bir aksiyondur ya da bir task'ı bitirmenin tek yoludur; ikisi birden değil.
+
+Quest ilerleten 13 aksiyon, hiçbiri başarısızlıkta kaybedilmiyor. İki kural da negatif
+test edildi: kilit kayıp dalına taşındı ve `see the manifest`'in koşullarına tüketilen
+bir halat rulosu eklendi. Her biri kendi gerekçesiyle adlandırıldı.
+
+Öneri artık düzeltilmiş kuralı ve arkasındaki ölçümü taşıyor; çünkü "Faz 4'ün istediği
+muhafız"ı okuyacak bir sonraki kişi, kendi tarifiyle sessizce uyuşmayan bir kontrol
+değil, ne yapıldığını ve neden farklı olduğunu bulmalı.
+
+Sürüm artmadı: oyuncu bunların hiçbirini görmüyor.
 
 ### v0.7.2 - *A Stroke Through It*: üç giriş, üç farklı cevap
 

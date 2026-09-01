@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 67 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 68 -->
 
 # Changelog
 
@@ -20,6 +20,52 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### The dead-end guard does not say what the plan said it would
+
+P-14 phase 4a. The proposal asked for `check_no_dead_end_skill_gates` and stated the
+rule outright: *a task whose only advancer is a skill-gated action must have a second
+advancer*. Measured against the content, that rule is false here, and enforcing it would
+have been worse than not having the check at all.
+
+Five visible tasks are advanced only by a skill-checked action. Four of them are a
+region's signature: `read the ground` on the plains, `read the departures` at the bay,
+`cut a flue` in the mountain, and the plains' quest step that reads the ground. The
+fifth is `see the manifest`, shipped two versions ago. Writing the planned sentence into
+a check would have flagged all five, and the only ways out would have been to bolt a
+second advancer onto four deliberate one-way actions or to keep an allow-list of
+exceptions - which is a check that has stopped believing itself.
+
+**What actually locks a quest**, read out of the resolver rather than assumed:
+`lock_action` is called from exactly one place in `main.js`, inside the win branch of
+the attempt. A failed attempt is never locked out. So a skill check is not a trap here -
+it is a retry, and the skill can be trained. The plan's rule was written against a
+danger this engine does not have.
+
+There are two dangers it does have, and the guard is those:
+
+1. **A lock outside the win branch.** It is one edit away at all times. Move
+   `lock_action` below `pick_failure_text(action, "random_loss")` and every
+   skill-checked advancer in the game becomes one-shot in the same instant - five tasks
+   turn into dead ends together, and nothing else in the suite would notice. The check
+   reads the three call sites and requires the lock to sit between the success text and
+   the loss text.
+2. **An item eaten on a failed attempt.** Items in `conditions[0].items_by_id` marked
+   `remove` are taken whether the attempt is won or lost, and `required.items_by_id`
+   takes `remove_on_fail` outright. Four actions consume on any attempt today - camping
+   supplies at two sites, coils of rope at two more - and not one of them advances a
+   quest. That is the line: an action may cost you something to fail at, or it may be
+   the only way to finish a task, and not both.
+
+13 quest-advancing actions, none of them lost on a failure. Negative-tested both rules:
+the lock moved into the loss branch, and a consumed coil of rope added to
+`see the manifest`'s conditions. Each was named on its own terms.
+
+The proposal now carries the corrected rule and the measurement behind it, because the
+next person to read "the guard phase 4 asks for" should find what was built and why it
+differs, rather than a check quietly not matching its own description.
+
+No version bump: the player sees none of this.
 
 ### v0.7.2 - *A Stroke Through It*: three ways in, three different answers
 

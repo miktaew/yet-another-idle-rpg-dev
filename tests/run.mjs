@@ -28,6 +28,7 @@ import {
     check_seasonal_content_is_reachable,
     check_lore_threads_resolve,
     check_reputation_regions_have_names,
+    check_no_dead_end_skill_gates,
 } from "./checks/content.mjs";
 import {
     check_creation_panel_values,
@@ -130,6 +131,7 @@ check_trader_stock_lists();
 check_seasonal_content_is_reachable();
 check_lore_threads_resolve();
 await check_reputation_regions_have_names();
+check_no_dead_end_skill_gates();
 check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();
