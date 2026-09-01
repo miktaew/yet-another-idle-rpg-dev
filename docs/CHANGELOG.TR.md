@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 104 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 105 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,52 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.33 - meydanda bir tezgâh ve P-36 kapanıyor
+
+P-36'nın üç parçasının sonuncusu: *"kasaba meydanında tüccar olmalı"*.
+
+**Açık soru ne satacağıydı ve cevabı ölçüm verdi.** Town pazar bölgesinde iki tüccar vardı ve
+ikisi de aynı on yemeklik menüyü işleten kafelerdi; yani oyunun ortasındaki bir oyuncu başka
+her şey için köye geri yürüyor ya da kenar mahalleye iniyordu. Ama beşinci bir genel dükkân
+yanlış cevap — iki kafe v0.7.9'da tam olarak başka kimsenin satmadığını sattıkları için
+eklenmişti.
+
+Oyundaki her stok listesi boyunca sayıldı: **hiçbir tüccarın satmadığı 94 hammadde** ve bir
+alet yuvası — olta kamışı — ki diğer her alet türü bir yerde bir rafta duruyor, bu ise hiçbir
+yerde yoktu; üstelik üç bölgenin sunduğu bir faaliyet için.
+
+Yani tezgâh yün ve keten ile onlardan yapılan kumaşı, odun kömürünü, tuğlayı, iç yağını,
+siniri, özsuyu ve biçilmiş keresteyi satıyor; bir de ucuz iki olta kamışını. On iki kalem ve
+**hiçbiri başka bir rafta yok** — mesele de bu: ticareti taşımıyor, ekliyor.
+
+**Bilerek hammadde, component değil.** 175 component de satılmıyor ve onları satmak oyuncunun
+zanaat merdivenini tamamen atlamasına izin verirdi. Kumaş, iplik, yakıt ve kereste satan bir
+pazar o merdivenin yerine geçmiyor, onu besliyor. Yün ile yün kumaşın taban değeri aynı; yani
+tezgâh marjını aldıktan sonra eğirmek hâlâ hesaplı olan yol. Meydanın component'ler konusunda
+ne yapacağı ilerlemeyi değiştirir ve bir tezgâhın vereceği karar değildir.
+
+Meydanın kendi 50/150/250 itibar merdiveninin orta basamağı olan `cry the news` açıyor: bir
+sabahı tezgâhların omzunda geçirmek, tezgâh tutan kişiyi tanımanın yolu. Marj 8; köyün 4'ü ile
+kafelerin 18'i arasında — bir pazar, pazar olarak rekabetçidir.
+
+**İki kontrol hakkını verdi, bir kural ise vermedi.**
+
+`check_trader_market_regions`, tüccar yazıldıktan bir dakika sonra meydandaki eksik
+`market_region`'ı yakaladı — o olmayan bir dükkânın pazar doygunluğunda sayacı olmuyor ve
+`verifier.js` bunu çalışma anında reddediyor.
+
+**Ve yazmak üzere olduğum muhafız yanlış çıktı.** "Her dükkân, başka hiçbir dükkânın satmadığı
+bir şey satar", projenin teklifte alıntılanan kendi tasarım kuralı — ve dokuz tüccar boyunca
+ölçüldüğünde **dördü kendine ait hiçbir şey satmıyor**: iki kafe menüyü bilerek paylaşıyor ve
+kademeli listeler tasarımı gereği birbirinin üst kümesi. Onu kodlamak, gönderilmiş ve bilerek
+yapılmış içeriği düşürürdü. Bu, döngünün kendini bir cümleden — bir sayımdan değil — kural
+uydururken yakalamasının beşinci kezi.
+
+**Dürüst olan muhafız: `check_every_trader_can_be_opened`.** Dokuz tüccarın yedisi kapalı
+geliyor; yani bir dükkân da diğerleri gibi bir kapı ve hiçbir şeyin açmadığı bir kapı hiç
+ticaret düğmesi çizmiyor — bu da bir arıza gibi değil, tüccarı olmayan bir yer gibi okunuyor.
+Tezgâhtarın tek açma satırını ya da körfez tüccarınınkini kaldırmak onu adıyla düşürüyor.
 
 ### v0.7.32 - kasaba meydanında yapılacak bir şey var artık
 

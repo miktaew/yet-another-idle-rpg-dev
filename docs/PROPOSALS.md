@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 120 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 121 -->
 
 # Proposals
 
@@ -622,52 +622,6 @@ it is checkable: every field a data class declares should be named somewhere out
 own constructor. That is a broader check than this proposal and would probably find more
 than two.
 
-
-
-### P-36 — The town square is thinner than the village `partly done`
-
-The owner's request, in three parts and one comparison: the town square needs alternative
-ways to raise skills the way the village has, it should have a trader, and standing watch
-should pay.
-
-**Measured, because "thinner" is checkable.** Counted per settlement - actions, activities
-and traders - the village is the richest place in the game and the town square has almost
-none of it. That is not an accident: the village is where the game starts and where its
-tutorial surface lives. It is still the gap the owner is pointing at, because the town is
-where a player spends the middle of the game.
-
-**What each part costs.**
-
-- **Skill practice.** The village's running, weightlifting and meditation are
-  `LocationActivity` entries - a skill, a time per tick, and nothing else. The town square
-  can have its own set with no new machinery, and the interesting question is *which*
-  skills: repeating the village's would make the two places interchangeable, and the town
-  has streets, crowds and a market rather than fields.
-- **A trader.** P-25 settled the mechanism and P-19 the pricing: a trader needs a
-  `market_region`, and the square's is `Town`, which already exists. What it must not be is
-  a second general shop - the game has four of those and the two cafés were added in v0.7.9
-  precisely because they sell what nobody else does.
-- **Watch work that pays.** `Job` is the existing mechanism and the square is the one place
-  in the town with no paid work. v0.7.10 measured the whole money economy for the boatman's
-  price and that measurement is the input here: the only repeatable income in the game is
-  patrolling at 50 a unit, so a second paid job changes the shape of every price that was
-  set against it.
-
-**Decided, and settled by doing it (v0.7.32).** Not as rich as the village, differently rich.
-Two activities and not ten: the square is not meant to be a second village, it is meant not to
-be empty.
-
-**Done in v0.7.32 - skill practice and the paid watch**, which turned out to be one piece of
-work rather than two. `running` and `patrolling` at the square, each opened by the errand on
-the 50/150/250 standing ladder that earns it, the watch paying the same 50 the village patrol
-pays because it is the same work. Night work, 20:00 to 06:00, which is what makes it an
-alternative rather than a copy.
-
-**Still open: the trader.** P-25 settled the mechanism and P-19 the pricing - a trader needs a
-`market_region` and the square's is `Town`, which already exists. What it must not be is a
-fifth general shop; the two cafés went in at v0.7.9 precisely because they sell what nobody
-else does. That is the question this part has to answer: what does a market square sell that
-the four general traders do not.
 
 
 ### P-37 — Does every panel update when the thing it shows changes? `open`

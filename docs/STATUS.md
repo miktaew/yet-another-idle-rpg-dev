@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 51 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 52 -->
 
 # Status
 
@@ -216,6 +216,7 @@ but the ones that encode a bug that shipped:
 | `repeated keys` | A key written twice in one object literal, where the language keeps the last and drops the rest in silence. 1488 literals. |
 | `retry button` | A "try again" offered for an attempt that cannot be started, or a builder deciding for itself whether to draw it. |
 | `timed activities` | An activity that names its hours and not its seasons, which the availability check refuses at every hour. 3 timed. |
+| `trader unlocks` | A trader that starts shut and that nothing opens, so its location draws no trade button at all. 9 traders, 7 shut. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

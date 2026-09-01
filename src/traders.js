@@ -318,6 +318,31 @@ class TradeItem {
         is_unlocked: false,
         profit_margin: 20, //it's the kind of place where you pay for the company as much as for the food
     });
+    /*
+        The town's only trade in anything but a cooked meal. Measured before it was
+        written: the Town market region held two traders and both were cafes selling the
+        same ten dishes, so a player in the middle of the game had to walk back to the
+        village or down into the slums for anything else (P-36).
+
+        What it must NOT be is a fifth general shop. What it sells instead comes out of
+        the same measurement: 94 materials that no trader in the game stocks, and a tool
+        slot - the fishing pole - where every other kind of tool is on a shelf somewhere
+        and this one is on none.
+
+        Materials rather than components, deliberately. 175 components are unsold too,
+        and selling those would let a player skip the crafting ladder entirely; a market
+        that sells cloth, thread, fuel and planks feeds that ladder instead of replacing
+        it. What the square does with components is a decision about progression and
+        belongs to whoever makes it, not to a stall.
+    */
+    traders["square stallholder"] = new Trader({
+        name: "square stallholder",
+        inventory_template: "Town market",
+        is_unlocked: false,
+        //Between the village's and the cafes'. A market is competitive by being a market.
+        profit_margin: 8,
+    });
+
     traders["cat cafe trader"] = new Trader({
         name: "cat cafe trader",
         inventory_template: "Cat cafe",
@@ -705,6 +730,41 @@ class TradeItem {
             new TradeItem({item_name: "Silver thistle", count: [1,3], chance: 0.1}),
             new TradeItem({item_name: "Golmoon leaf", count: [1,3], chance: 0.1}),
             new TradeItem({item_name: "Belmart leaf", count: [1,3], chance: 0.1}),
+    ];
+
+    /*
+        A market square's stall: what the stalls in one actually hold. Every entry here is
+        a material or a tool that no other trader in the game sells, so this adds trade
+        rather than moving it - and every one of them is an INPUT to crafting, which is
+        why it does not undercut the workshops.
+    */
+    inventory_templates["Town market"] =
+    [
+        //Cloth and the thread it is made from. A market sells both; the fleece is
+        //cheaper than the cloth once the stall has taken its margin, so spinning it
+        //yourself is still the thrifty way round.
+        new TradeItem({item_name: "Wool", count: [6, 14]}),
+        new TradeItem({item_name: "Flax", count: [6, 14]}),
+        new TradeItem({item_name: "Wool cloth", count: [3, 8]}),
+        new TradeItem({item_name: "Linen cloth", count: [3, 8]}),
+
+        //The everyday stuff a town runs on, and none of it sold anywhere until now.
+        new TradeItem({item_name: "Charcoal", count: [8, 20]}),
+        new TradeItem({item_name: "Stone brick", count: [4, 12]}),
+        new TradeItem({item_name: "Animal fat", count: [2, 6]}),
+        new TradeItem({item_name: "Sinew", count: [4, 10]}),
+        new TradeItem({item_name: "Tree sap", count: [4, 10]}),
+        new TradeItem({item_name: "Processed rough wood", count: [4, 10]}),
+
+        /*
+            And the tool slot nobody stocked. Pickaxes, axes, sickles and shovels are all
+            on a shelf somewhere and a fishing pole was on none, so the one tool a player
+            could not buy was the one for the activity three regions offer.
+
+            The two cheap ones only. The ash and hickory poles stay something you make.
+        */
+        new TradeItem({item_name: "Makeshift fishing pole", count: [1, 2], chance: 0.9}),
+        new TradeItem({item_name: "Wooden fishing pole", count: [1], chance: 0.5}),
     ];
 
     inventory_templates["Cat cafe"] = 

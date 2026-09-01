@@ -238,8 +238,46 @@ async function check_a_timed_activity_can_ever_be_started() {
         + `through the night, each naming its seasons`);
 }
 
+/**
+ * Every trader that starts shut is opened by something.
+ *
+ * Seven of the game's nine traders ship locked, so the shop is a door like any other and a
+ * door nothing opens is a shop nobody can walk into. The symptom is not an error: the
+ * location draws no trade button, which reads exactly like a place that simply has no trader.
+ *
+ * The same class as the quests and locations above, and found the same way - the square's
+ * stallholder is opened by `cry the news`, the middle rung of that square's standing ladder,
+ * and dropping that one line would have left the town's only general trade permanently shut
+ * with nothing anywhere reporting it (P-36).
+ */
+async function check_every_trader_can_be_opened() {
+    const {blocks} = await every_reward_block();
+    const [traders_module] = await load_browser_free(repo_root, ["src/traders.js"]);
+    const granted = granted_names(blocks, "traders", "trader");
+
+    const names = Object.keys(traders_module.traders);
+    if (names.length === 0) {
+        error("no traders at all - check_every_trader_can_be_opened is out of date.");
+        return;
+    }
+
+    let locked = 0;
+    for (const name of names) {
+        if (traders_module.traders[name].is_unlocked) continue;
+        locked++;
+        if (granted.has(name)) continue;
+        error(`nothing in the game unlocks the trader "${name}", and it does not start `
+            + `unlocked. Its location draws no trade button at all, which reads exactly like `
+            + `a place with no trader rather than like a fault.`);
+    }
+
+    console.log(`[check] trader unlocks: ${names.length} trader(s), ${locked} shut at the `
+        + `start, each of those opened by something`);
+}
+
 export {
     check_every_quest_can_be_started,
     check_every_location_can_be_unlocked,
     check_a_timed_activity_can_ever_be_started,
+    check_every_trader_can_be_opened,
 };

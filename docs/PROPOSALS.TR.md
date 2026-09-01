@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 120 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 121 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -643,50 +643,6 @@ alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her ala
 kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
 ve muhtemelen ikiden fazlasını bulur.
 
-
-
-### P-36 — Kasaba meydanı köyden daha ince `partly done`
-
-Sahibinin isteği, üç parça ve bir karşılaştırma hâlinde: kasaba meydanının, köyünkine benzer
-alternatif beceri geliştirme yollarına ihtiyacı var, bir tüccarı olmalı ve nöbet tutmak para
-kazandırmalı.
-
-**Ölçüldü, çünkü "ince" kontrol edilebilir bir şey.** Yerleşim başına sayıldığında —
-aksiyonlar, etkinlikler ve tüccarlar — köy oyunun en zengin yeri ve kasaba meydanının bunun
-neredeyse hiçbiri yok. Bu bir kaza değil: köy, oyunun başladığı ve öğretici yüzeyinin
-yaşadığı yer. Yine de sahibinin işaret ettiği boşluk gerçek, çünkü oyuncu oyunun ortasını
-kasabada geçiriyor.
-
-**Her parçanın maliyeti.**
-
-- **Beceri pratiği.** Köydeki koşu, ağırlık kaldırma ve meditasyon birer `LocationActivity`
-  — bir beceri, tik başına bir süre ve başka hiçbir şey. Kasaba meydanı yeni makine olmadan
-  kendi setine sahip olabilir; ilginç soru *hangi* beceriler olduğu: köyünkileri tekrarlamak
-  iki yeri birbirinin yerine geçirir ve kasabada tarla değil sokaklar, kalabalık ve bir pazar
-  var.
-- **Bir tüccar.** Mekanizmayı P-25, fiyatlamayı P-19 karara bağladı: bir tüccarın
-  `market_region`'a ihtiyacı var ve meydanın bölgesi `Town`, ki zaten var. Olmaması gereken
-  şey ikinci bir genel dükkân — oyunda dört tane var ve iki kafe v0.7.9'da tam olarak
-  başkasının satmadığını sattıkları için eklendi.
-- **Para kazandıran nöbet.** `Job` mevcut mekanizma ve meydan, kasabada ücretli işi olmayan
-  tek yer. v0.7.10, kayıkçının fiyatı için bütün para ekonomisini ölçtü ve o ölçüm buranın da
-  girdisi: oyundaki tek tekrarlanabilir gelir birim başına 50 ile devriye, yani ikinci bir
-  ücretli iş, ona karşı belirlenmiş her fiyatın şeklini değiştiriyor.
-
-**Karar verildi ve yapılarak çözüldü (v0.7.32).** Köy kadar zengin değil, farklı biçimde
-zengin. On değil iki faaliyet: meydanın ikinci bir köy olması amaçlanmıyor, boş olmaması
-amaçlanıyor.
-
-**v0.7.32'de yapıldı — beceri pratiği ve ücretli nöbet**, ki ikisi iki iş değil tek iş çıktı.
-Meydanda `running` ve `patrolling`, her biri 50/150/250 itibar merdiveninde onu hak eden işle
-açılıyor; nöbet, aynı iş olduğu için köy devriyesinin ödediği 50'yi ödüyor. Gece işi,
-20:00–06:00, ki onu kopya değil alternatif yapan da bu.
-
-**Hâlâ açık: tüccar.** Mekanizmayı P-25, fiyatlandırmayı P-19 çözdü — bir tüccarın
-`market_region`'a ihtiyacı var ve meydanınki `Town`, o da zaten mevcut. Olmaması gereken şey
-beşinci bir genel dükkân; iki kafe v0.7.9'da tam olarak başka kimsenin satmadığını sattıkları
-için eklenmişti. Bu parçanın cevaplaması gereken soru da bu: bir pazar meydanı, dört genel
-tüccarın satmadığı neyi satar?
 
 
 ### P-37 — Her panel, gösterdiği şey değiştiğinde güncelleniyor mu? `open`

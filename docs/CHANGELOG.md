@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 104 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 105 -->
 
 # Changelog
 
@@ -20,6 +20,53 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.33 - a stall on the square, and P-36 closes
+
+The last of P-36's three parts: *"there should be a trader"*.
+
+**The open question was what it sells, and the measurement answered it.** The Town market
+region held two traders and both were cafes running the same ten-dish menu, so a player in the
+middle of the game walked back to the village or down into the slums for anything else. But a
+fifth general shop is the wrong answer - the two cafes went in at v0.7.9 precisely because
+they sell what nobody else does.
+
+Counted across every stock list in the game: **94 materials that no trader anywhere sells**,
+and a tool slot - the fishing pole - where every other kind of tool is on a shelf somewhere and
+this one was on none, for an activity three regions offer.
+
+So the stall sells wool and flax and the cloth they make, charcoal, brick, tallow, sinew, sap
+and sawn planks, and the two cheap fishing poles. Twelve entries, **none of them on any other
+shelf**, which is the point: it adds trade rather than moving it.
+
+**Materials and not components, deliberately.** 175 components are unsold too, and selling
+those would let a player skip the crafting ladder entirely. A market that sells cloth, thread,
+fuel and planks feeds that ladder instead of replacing it. Wool and wool cloth carry the same
+base value, so once the stall has taken its margin, spinning it is still the thrifty way round.
+What the square should do about components changes progression and is not a stall's decision
+to make.
+
+Opened by `cry the news`, the middle rung of the square's own 50/150/250 standing ladder: a
+morning spent at the stalls' shoulder is how you come to know the person keeping one. Margin
+8, between the village's 4 and the cafes' 18 - a market is competitive by being a market.
+
+**Two checks earned their keep and one rule did not.**
+
+`check_trader_market_regions` caught the missing `market_region` on the square within a minute
+of the trader being written - a shop without one has no counter in market saturation, and
+`verifier.js` refuses it at runtime.
+
+**And the guard I was about to write turned out to be false.** "Every shop sells something no
+other shop sells" is the project's own stated design rule, quoted in the proposal - and
+measured across the nine traders, **four of them sell nothing of their own**: the two cafes
+share one menu on purpose, and the tiered lists are supersets by design. Encoding it would have
+failed on shipped, deliberate content. That is the fifth rule this loop has caught itself
+about to invent from a sentence rather than from a count.
+
+**The guard that is honest: `check_every_trader_can_be_opened`.** Seven of the nine traders
+ship shut, so a shop is a door like any other, and a door nothing opens draws no trade button
+at all - which reads exactly like a place that has no trader rather than like a fault. Dropping
+the stallholder's one unlock line, or the bay trader's, fails it by name.
 
 ### v0.7.32 - the town square gets something to do
 

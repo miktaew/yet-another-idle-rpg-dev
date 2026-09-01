@@ -3054,6 +3054,7 @@ const descriptions = {
     "name suspicious trader": "suspicious trader",
     "name swampland trader": "swampland trader",
     "name nekomimi cafe trader": "nekomimi cafe trader",
+    "name square stallholder": "square stallholder",
     "name cat cafe trader": "cat cafe trader",
 
     //LOADING SCREEN. These are jokes, not progress reports; the Turkish keeps

@@ -89,6 +89,7 @@ import {
     check_every_quest_can_be_started,
     check_every_location_can_be_unlocked,
     check_a_timed_activity_can_ever_be_started,
+    check_every_trader_can_be_opened,
 } from "./checks/reachable.mjs";
 import { check_no_content_object_repeats_a_key } from "./checks/literals.mjs";
 import {
@@ -217,6 +218,7 @@ await check_the_unlock_repair_knows_every_kind();
 await check_every_quest_can_be_started();
 await check_every_location_can_be_unlocked();
 await check_a_timed_activity_can_ever_be_started();
+await check_every_trader_can_be_opened();
 check_no_content_object_repeats_a_key();
 
 for (const message of warnings) {

@@ -1746,6 +1746,11 @@ function get_location_type_penalty(type, stage, stat, category) {
         description: "desc location Town square",
         dialogues: ["square broker"],
         name: "Town square",
+        //The town's only trade in anything but a cooked meal - see traders.js.
+        traders: ["square stallholder"],
+        //The region the two cafes already trade in; a shop without one has no counter in
+        //market saturation, which verifier.js refuses at runtime.
+        market_region: "Town",
         is_unlocked: false,
         getBackgroundNoises: function() {
             let noises = [
@@ -3725,6 +3730,12 @@ function get_location_type_penalty(type, stage, stat, category) {
             rewards: {
                 money: 260,
                 reputation: {Town: 20},
+                /*
+                    Crying the news is a morning spent at the stalls' shoulder, so the
+                    stallholder is somebody the player has met by the end of it. The
+                    middle rung of the square's 50/150/250 ladder.
+                */
+                traders: [{trader: "square stallholder"}],
                 skill_xp: {
                     Literacy: 350,
                     "Presence sensing": 150,

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 51 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 52 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -217,6 +217,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `repeated keys` | Tek bir nesne literalinde iki kez yazılmış bir anahtar; dil sonuncuyu tutup gerisini sessizce düşürüyor. 1488 literal. |
 | `retry button` | Başlatılamayacak bir deneme için sunulan "tekrar dene" ya da onu çizip çizmeyeceğine kendi karar veren bir kurucu. |
 | `timed activities` | Saatini adlandırıp mevsimini adlandırmayan bir faaliyet; uygunluk kontrolü onu her saatte reddediyor. 3 zamanlı. |
+| `trader unlocks` | Kapalı başlayan ve hiçbir şeyin açmadığı bir tüccar; konumu hiç ticaret düğmesi çizmiyor. 9 tüccar, 7'si kapalı. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |
