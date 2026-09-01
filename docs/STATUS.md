@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 15 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 16 -->
 
 # Status
 
@@ -56,7 +56,7 @@ npm run check:bundle
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 143 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 157 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.
@@ -187,6 +187,7 @@ but the ones that encode a bug that shipped:
 | `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
 | `quest hints` | A hint builder that filters itself down to nothing and then says nothing. |
 | `markdown rules` | A `---` written under a paragraph, which renders that paragraph as a heading. 62 breaks. |
+| `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 23 names. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -202,7 +203,9 @@ directive is recorded before it is worked on:
   code rather than against the brief that asked for it, in eight phases that each ship
   on their own. Phase 0, the ground, is green: its four design decisions - Q-7 to Q-10
   - are answered and have moved out of Open decisions into the proposal itself, each
-  against the phase that spends it. Phase 1, *No Word Sent*, is next.
+  against the phase that spends it. Phase 1, *No Word Sent*, is split: 1a, the season
+  window and the guard over it, is in; 1b, the three surfaces that read it, is what
+  ships as v0.7.0.
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.

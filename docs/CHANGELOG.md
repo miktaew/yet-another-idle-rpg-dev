@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 61 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 62 -->
 
 # Changelog
 
@@ -20,6 +20,48 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### The season condition can name two seasons, and a misspelt one can no longer ship
+
+Groundwork for P-14 phase 1, which is where the Marrowmoth comes back into port twice
+a year. Q-10 settled that as two seasons and no scheduler: seasons come round on their
+own, so a recurring window costs nothing but a condition that can name both halves of
+it. `season: {yes}` and `season: {not}` could name exactly one.
+
+They now take a season or a list of them. Widened rather than replaced, for two
+reasons. The string shape is what the content already uses - the supplier's `troubled`
+and `troubled unavailable` lines are a `not: "Winter"` / `yes: "Winter"` pair, and a
+condition other content depends on is the wrong thing to change out from under it. And
+a list is already how this project names several seasons: an Activity's
+`availability_seasons` has been one since before the fork. Inventing a third spelling
+for the same idea would have been the parallel system every directive here exists to
+prevent.
+
+Fourteen tests pin both shapes down, in the `src/conditions.js` section of the suite,
+which had no season coverage at all - the stub there carried a `current_game_time`
+with a `season` property and no `getSeason()`, so any season gate would have thrown.
+Negative-tested by putting the single-season comparison back: five of the fourteen
+fail, including both halves of the twice-a-year window and the one-item list.
+
+`check_seasonal_content_is_reachable` is the phase's own guard, brought forward
+because it is what makes the rest of phase 1 measurable. A season name is a string
+compared against `getSeason()`, so a typo fails silently and in two different
+directions: a misspelt `yes` is content that is authored, translated, shipped and
+never once reachable, while a misspelt `not` excludes nothing and leaves the gate open
+forever. `availability_seasons` is the same mistake under another name - it quietly
+makes a job available all year - so it is read too. The season list comes out of
+`game_time.js` rather than being written down again, so the check cannot drift from
+the game. 23 season names across three files, all real.
+
+Negative-tested four ways across two files, because one typo in one place would only
+prove the instance: a misspelt `yes`, a misspelt `not`, a misspelt
+`availability_seasons` entry, and an empty list. All four were named, and the summary
+line no longer claims everything is fine while errors are standing.
+
+No version bump: no content names two seasons yet, and every existing single-season
+gate behaves exactly as it did. Phase 1 is split in the backlog to say so - 1a is this,
+1b is the salt house's shelf, the bay's ambient lines and the guild's rumour, which is
+what the player sees and what ships as v0.7.0.
 
 ### The Marrowmoth's four decisions moved into the proposal that asked them
 

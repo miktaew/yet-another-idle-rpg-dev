@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 61 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 62 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,50 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Mevsim koşulu iki mevsim adlandırabiliyor, yanlış yazılmış mevsim artık yayına çıkamıyor
+
+P-14'ün Faz 1'i için zemin işi; Marrowmoth'un yılda iki kez limana döndüğü faz.
+Q-10 bunu iki mevsim ve sıfır zamanlayıcı olarak karara bağlamıştı: mevsimler
+kendiliğinden dönüyor, dolayısıyla tekrarlayan bir pencere, pencerenin iki yarısını da
+adlandırabilen bir koşuldan başka hiçbir şeye mal olmuyor. `season: {yes}` ve
+`season: {not}` ise tam olarak bir mevsim adlandırabiliyordu.
+
+Artık tek bir mevsim ya da mevsim listesi alıyorlar. Değiştirilmedi, genişletildi;
+iki sebeple. Tek metinli biçim, içeriğin hâlihazırda kullandığı biçim — tedarikçinin
+`troubled` ve `troubled unavailable` replikleri bir `not: "Winter"` / `yes: "Winter"`
+çifti — ve başka içeriğin dayandığı bir koşulu altından çekip almak yanlış iş
+olurdu. İkincisi, birden çok mevsimi adlandırmanın yolu bu projede zaten liste: bir
+Activity'nin `availability_seasons` alanı fork'tan da eski. Aynı fikir için üçüncü bir
+yazım uydurmak, buradaki her direktifin önlemek için var olduğu paralel sistem olurdu.
+
+On dört test iki biçimi de sabitliyor; testler takımın `src/conditions.js`
+bölümünde, ki orada hiç mevsim kapsamı yoktu — oradaki stub `season` özelliği olan
+ama `getSeason()` metodu olmayan bir `current_game_time` taşıyordu, yani herhangi bir
+mevsim kapısı hata fırlatırdı. Tek mevsim karşılaştırması geri konarak negatif test
+edildi: on dördün beşi düşüyor, aralarında yılda iki kez penceresinin iki yarısı ve
+tek elemanlı liste de var.
+
+`check_seasonal_content_is_reachable` fazın kendi muhafızı; fazın geri kalanını
+ölçülebilir kılan şey o olduğu için öne alındı. Mevsim adı, `getSeason()` ile
+karşılaştırılan bir metin; yani bir yazım hatası sessizce ve iki ayrı yönde
+bozuyor: yanlış yazılmış bir `yes`, yazılmış, çevrilmiş, yayınlanmış ve bir kez bile
+ulaşılamamış içerik demek; yanlış yazılmış bir `not` ise hiçbir şeyi dışarıda
+bırakmıyor ve kapıyı sonsuza kadar açık tutuyor. `availability_seasons` aynı hatanın
+başka adlı hâli — bir işi sessizce yılın tamamında açık bırakıyor — o da okunuyor.
+Mevsim listesi yeniden yazılmak yerine `game_time.js` içinden geliyor, böylece kontrol
+denetlediği oyundan uzaklaşamıyor. Üç dosyada 23 mevsim adı, hepsi gerçek.
+
+Negatif test iki dosyada dört yönden yapıldı, çünkü tek yerdeki tek yazım hatası
+yalnızca örneği kanıtlardı: yanlış yazılmış bir `yes`, yanlış yazılmış bir `not`,
+yanlış yazılmış bir `availability_seasons` girdisi ve boş bir liste. Dördü de
+adlandırıldı; ayrıca özet satırı artık ortada hata dururken her şeyin yolunda
+olduğunu iddia etmiyor.
+
+Sürüm artmadı: henüz hiçbir içerik iki mevsim adlandırmıyor ve mevcut tek mevsimli
+kapıların hepsi eskisi gibi davranıyor. İş listesinde Faz 1 bunu söylemek için ikiye
+bölündü: 1a bu; 1b ise tuz evinin rafı, körfezin fon replikleri ve loncanın
+söylentisi — oyuncunun gördüğü ve v0.7.0 olarak yayınlanacak olan kısım.
 
 ### Marrowmoth'un dört kararı, onları soran önerinin içine taşındı
 

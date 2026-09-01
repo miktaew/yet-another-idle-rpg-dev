@@ -913,6 +913,97 @@ function check_content_is_reachable() {
         + ` ${[...declared.values()].filter(Boolean).length} locked, ${unlocked.size} unlocks`);
 }
 
+/**
+ * A season nothing can ever be is content that never happens.
+ *
+ * `season: {yes}` is how a textline or an action says "only while it is this time of
+ * year", and P-14's arc rests on it: the Marrowmoth is in port twice a year, which is
+ * two seasons and no scheduler (Q-10). The failure is silent in both directions. A
+ * misspelt `yes` shuts the gate for good - `getSeason()` can never return it, so the
+ * content is authored, translated, shipped, and unreachable. A misspelt `not` is
+ * worse, because it opens the gate always and looks like it works.
+ *
+ * `availability_seasons` on an Activity is the same mistake with a different name, so
+ * it is read here too: that one silently makes a job available all year.
+ *
+ * The season list is read out of `src/game_time.js` rather than written down here, so
+ * the check cannot drift from the game it is checking.
+ */
+function check_seasonal_content_is_reachable() {
+    const time_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/game_time.js"), "utf8"));
+    const declared = /const seasons\s*=\s*\[([^\]]*)\]/.exec(time_source);
+    if (!declared) {
+        error("src/game_time.js no longer declares `const seasons = [...]` -"
+            + " check_seasonal_content_is_reachable cannot tell a real season from a typo.");
+        return;
+    }
+    const seasons = new Set([...declared[1].matchAll(/"([^"]*)"/g)].map(m => m[1]));
+    if (seasons.size === 0) {
+        error("src/game_time.js declares an empty season list - this check is out of date.");
+        return;
+    }
+
+    const files = ["src/data/locations.js", "src/data/dialogues.js", "src/traders.js"];
+    let named = 0;
+    const before = errors.length;
+
+    for (const relative of files) {
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        //season: { yes: ... } / { not: ... } - a season or a list of them.
+        for (const block of source.matchAll(/season:\s*\{([^}]*)\}/g)) {
+            for (const side of block[1].matchAll(/(yes|not):\s*(\[[^\]]*\]|"[^"]*")/g)) {
+                const values = [...side[2].matchAll(/"([^"]*)"/g)].map(m => m[1]);
+                if (values.length === 0) {
+                    error(`${relative} has a season condition whose \`${side[1]}\` names no`
+                        + " season at all. An empty list shuts the gate for every season"
+                        + " there is, so the content behind it can never be reached.");
+                    continue;
+                }
+                for (const value of values) {
+                    named++;
+                    if (!seasons.has(value)) {
+                        error(`${relative} gates content on season "${value}", which`
+                            + ` getSeason() never returns. Seasons are ${[...seasons].join(", ")}.`
+                            + (side[1] === "yes"
+                                ? " A `yes` that names no real season is content that never appears."
+                                : " A `not` that names no real season never excludes anything,"
+                                    + " so the gate is always open."));
+                    }
+                }
+            }
+        }
+
+        //availability_seasons: [...] on an Activity - the same mistake, another name.
+        for (const block of source.matchAll(/availability_seasons:\s*\[([^\]]*)\]/g)) {
+            const values = [...block[1].matchAll(/"([^"]*)"/g)].map(m => m[1]);
+            if (values.length === 0) {
+                error(`${relative} has an activity with an empty availability_seasons list,`
+                    + " which makes it available in no season at all.");
+                continue;
+            }
+            for (const value of values) {
+                named++;
+                if (!seasons.has(value)) {
+                    error(`${relative} makes an activity available in "${value}", which`
+                        + ` getSeason() never returns. Seasons are ${[...seasons].join(", ")}.`);
+                }
+            }
+        }
+    }
+
+    if (named === 0) {
+        error("no season is named anywhere in the content - this check is out of date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] seasonal content: ${named} season names across ${files.length}`
+            + ` files, all of them seasons the game can be in`);
+    }
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -928,4 +1019,5 @@ export {
     check_global_flags,
     check_location_types,
     check_trader_market_regions,
+    check_seasonal_content_is_reachable,
 };

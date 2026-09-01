@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 68 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 69 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -284,8 +284,24 @@ hatırlanan üç bilginin yerine ölçülmüş üçünü koyarak yaptı.
 bildiriminden değil dünyadan öğrenir: tuz evinin rafı değişir, körfezin fon
 replikleri değişir, loncada bir söylenti dolaşır. Q-10 uyarınca mevsim koşulu ve
 türetilmiş tüccar şablonu üzerine kurulur. 1. quest keşiften açılır, tersi değil.
-Muhafız: `check_seasonal_content_is_reachable` — tek kaynağı mevsimsel bir pencere
-olan hiçbir şey, her yıl gerçekleşmeyen bir pencereye bağlanamaz.
+Faz ikiye bölündü: pencere ile ona asılan içerik ayrı ayrı test edilebiliyor ve
+oyuncunun gördüğü yalnızca ikinci yarı.
+
+- **1a — pencere.** `bitti`. `season: {yes}` ve `season: {not}` artık tek bir mevsim
+  ya da mevsim listesi alıyor; "yılda iki kez" için gereken de bundan ibaret: mevsimler
+  kendiliğinden dönüyor, dolayısıyla iki mevsim, hiçbir zamanlayıcıya mal olmayan
+  tekrarlayan bir pencere demek. Birden çok mevsimi adlandırmanın yolu bu projede
+  zaten liste — bir Activity'nin `availability_seasons` alanı başından beri öyle — bu
+  yüzden metin biçimi değiştirilmedi, genişletildi; tedarikçinin iki kış repliği
+  eskisi gibi okunuyor. Muhafız: `check_seasonal_content_is_reachable`, fazdan öne
+  alındı, çünkü 1b'yi ölçülebilir kılan şey o. Mevsim listesini kendi kopyasında
+  tutmak yerine `game_time.js` içinden okuyor ve `availability_seasons` alanını da
+  kapsıyor; orada yanlış yazılmış bir mevsim, bir işi sessizce yılın tamamında
+  açık bırakıyor. Oyuncunun göreceği bir şey yok, dolayısıyla sürüm de yok.
+- **1b — üç yüzey.** `open`. Tuz evinin rafı, körfezin fon replikleri ve loncanın
+  söylentisi; üçü de aynı pencereyi okuyor. Rafta Q-10'un işaret ettiği tehlike var:
+  şablon yenilenme anında türetilir, asla saklanmaz. v0.7.0 olarak yayınlanacak olan
+  bu.
 
 **Faz 2 — v0.7.1, *Forty Tons*.** Boşaltma işi, mevcut körfez üzerinde aksiyonlar
 olarak; manifesto kargo / ağırlık / menşe / varış / mühür / durum olarak okunur.

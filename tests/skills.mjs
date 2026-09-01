@@ -291,6 +291,7 @@ class InventoryHaver {
 // evaluation time, and the tests below mutate their properties.
 globalThis.__test_levels = {};
 globalThis.__test_flags = { is_mofu_mofu_enabled: true };
+globalThis.__test_season = "Summer";
 
 const { process_conditions } = await load_with_stubs(
     "src/conditions.js",
@@ -298,7 +299,8 @@ const { process_conditions } = await load_with_stubs(
      "./registries.js"],
     `
 const get_total_skill_level = (id) => __levels[id] || 0;
-const current_game_time = { season: "Summer", hour: 12, day: 1, month: 1, year: 1 };
+const current_game_time = { season: "Summer", hour: 12, day: 1, month: 1, year: 1,
+    getSeason: () => globalThis.__test_season };
 const global_flags = __flags;
 const height_values = { "very short": 145, short: 155, average: 170, tall: 180, "very tall": 190 };
 const playable_races = {};
@@ -400,6 +402,62 @@ const registries = {
         !process_conditions(wrap({ quests_completed: ["No such quest"] }), hero()));
     check("an unknown quest key shuts an unfinished gate too",
         !process_conditions(wrap({ quests_not_completed: ["No such quest"] }), hero()));
+}
+
+{
+    /*
+        Season gates. `yes` and `not` each take a season or a LIST of seasons, which is
+        what "twice a year" needs and the whole of what it needs: two seasons come round
+        on their own, so a recurring window costs no scheduler (P-14, Q-10).
+
+        The single-string shape is the older one and is still what the supplier's two
+        winter lines use, so both shapes are pinned here - widening a condition that
+        content already depends on is exactly the change that breaks quietly.
+    */
+    const hero = () => ({ reputation: {}, money: 0, personal: {} });
+    const wrap = (declared) => [declared];
+    const in_season = (season, gate) => {
+        globalThis.__test_season = season;
+        return Boolean(process_conditions(gate, hero()));
+    };
+
+    const one_yes = wrap({ season: { yes: "Winter" } });
+    check("a single-season yes opens in that season", in_season("Winter", one_yes));
+    check("a single-season yes shuts in another", !in_season("Summer", one_yes));
+
+    const one_not = wrap({ season: { not: "Winter" } });
+    check("a single-season not shuts in that season", !in_season("Winter", one_not));
+    check("a single-season not opens in another", in_season("Summer", one_not));
+
+    //Two seasons is the twice-a-year window the Marrowmoth arc is built on.
+    const twice = wrap({ season: { yes: ["Spring", "Autumn"] } });
+    check("a two-season yes opens in the first", in_season("Spring", twice));
+    check("a two-season yes opens in the second", in_season("Autumn", twice));
+    check("a two-season yes shuts between them", !in_season("Summer", twice));
+    check("a two-season yes shuts after them", !in_season("Winter", twice));
+
+    const twice_not = wrap({ season: { not: ["Spring", "Autumn"] } });
+    check("a two-season not shuts in the first", !in_season("Spring", twice_not));
+    check("a two-season not shuts in the second", !in_season("Autumn", twice_not));
+    check("a two-season not opens outside them", in_season("Summer", twice_not));
+
+    //A list of one is a list, not a special case.
+    const listed_one = wrap({ season: { yes: ["Winter"] } });
+    check("a one-item yes list behaves like the bare string", in_season("Winter", listed_one));
+    check("a one-item yes list shuts elsewhere", !in_season("Autumn", listed_one));
+
+    /*
+        An empty list shuts in every season there is. That is the honest reading - no
+        season is listed, so no season matches - and it is unreachable content, which is
+        why check_seasonal_content_is_reachable refuses to let one ship rather than this
+        being fixed up at runtime.
+    */
+    const empty = wrap({ season: { yes: [] } });
+    check("an empty yes list shuts in every season",
+        !in_season("Spring", empty) && !in_season("Summer", empty)
+        && !in_season("Autumn", empty) && !in_season("Winter", empty));
+
+    globalThis.__test_season = "Summer";
 }
 
 // ===========================================================================

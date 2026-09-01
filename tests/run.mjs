@@ -25,6 +25,7 @@ import {
     check_global_flags,
     check_location_types,
     check_trader_market_regions,
+    check_seasonal_content_is_reachable,
 } from "./checks/content.mjs";
 import {
     check_creation_panel_values,
@@ -124,6 +125,7 @@ check_hidden_tasks_can_be_hinted();
 check_location_collections_assigned_once();
 check_skill_rank_levels();
 check_trader_stock_lists();
+check_seasonal_content_is_reachable();
 check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();

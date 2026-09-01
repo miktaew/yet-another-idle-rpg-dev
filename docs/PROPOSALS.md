@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 68 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 69 -->
 
 # Proposals
 
@@ -274,8 +274,24 @@ remembered facts with three measured ones.
 the world, never from a quest notification: the salt house's shelf changes, the bay's
 ambient lines change, and the guild has a rumour. Built on the season condition and a
 derived trader template, per Q-10. Quest 1 opens from the discovery, not the other
-way round. Guard: `check_seasonal_content_is_reachable` — anything whose only source
-is a seasonal window must occur in every year.
+way round. Split in two, because the window and the content hanging off it are
+separately testable and only the second half is anything the player sees.
+
+- **1a — the window.** `done`. `season: {yes}` and `season: {not}` each take a season
+  or a list of them, which is the whole of what "twice a year" needs: seasons come
+  round on their own, so two of them is a recurring window that costs no scheduler. A
+  list is already how this project names several seasons — an Activity's
+  `availability_seasons` has been one all along — so the string shape was widened
+  rather than replaced, and the supplier's two winter lines read exactly as before.
+  Guard: `check_seasonal_content_is_reachable`, brought forward from the phase because
+  it is what makes 1b measurable. It reads the season list out of `game_time.js`
+  instead of keeping its own copy, and covers `availability_seasons` too, where a
+  misspelt season silently makes a job available all year. Nothing the player can see,
+  so no version.
+- **1b — the three surfaces.** `open`. The salt house's shelf, the bay's ambient
+  lines and the guild's rumour, all reading the one window. The shelf carries the
+  hazard Q-10 names: the template is derived at refresh, never stored. This is what
+  ships as v0.7.0.
 
 **Phase 2 — v0.7.1, *Forty Tons*.** Unloading, as actions on the existing bay, with a
 manifest read as cargo / weight / origin / destination / seal / status. Every normal

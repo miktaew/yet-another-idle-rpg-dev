@@ -55,9 +55,9 @@ import { registries } from "./registries.js";
 
         quests_completed: [String] //quest keys that must be finished
         quests_not_completed: [String] //quest keys that must NOT be finished
-        season: { //either season that needs to be active or season that CAN'T be active
-            not: String,
-            yes: String,
+        season: { //either season(s) that need to be active or season(s) that CAN'T be active
+            not: String | [String],
+            yes: String | [String],
         }
 
         flags: [String] //global flags required
@@ -286,14 +286,25 @@ const process_conditions = (conditions, character) => {
             }
         }
     }
-    //checks season
+    /*
+        Season. `yes` and `not` each take a season or a list of them.
+
+        The list is what a thing that happens twice a year needs, and it is all it
+        needs: seasons come round on their own, so two of them is a recurring window
+        and no scheduler has to exist to open it (P-14, Q-10). The single string is
+        the older shape and still the common one, so this widens rather than replaces
+        it - and a list is already the project's way of naming several seasons, since
+        an Activity's `availability_seasons` has been one all along.
+    */
     if(conditions[0].season) {
+        const season = current_game_time.getSeason();
+        const listed = (declared) => Array.isArray(declared) ? declared : [declared];
         if(conditions[0].season.yes) {
-            if(current_game_time.getSeason() !== conditions[0].season.yes) {
+            if(!listed(conditions[0].season.yes).includes(season)) {
                 met = 0;
             }
         } else if(conditions[0].season.not) {
-            if(current_game_time.getSeason() === conditions[0].season.not) {
+            if(listed(conditions[0].season.not).includes(season)) {
                 met = 0;
             }
         }
