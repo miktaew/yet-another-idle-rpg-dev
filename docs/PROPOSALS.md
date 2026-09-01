@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 69 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 70 -->
 
 # Proposals
 
@@ -270,28 +270,22 @@ reads every tracked markdown file for the class rather than that line. This is t
 phase that made the following ones measurable, and it did that by replacing three
 remembered facts with three measured ones.
 
-**Phase 1 — v0.7.0, *No Word Sent*.** The player learns the Marrowmoth is back from
-the world, never from a quest notification: the salt house's shelf changes, the bay's
-ambient lines change, and the guild has a rumour. Built on the season condition and a
-derived trader template, per Q-10. Quest 1 opens from the discovery, not the other
-way round. Split in two, because the window and the content hanging off it are
-separately testable and only the second half is anything the player sees.
-
-- **1a — the window.** `done`. `season: {yes}` and `season: {not}` each take a season
-  or a list of them, which is the whole of what "twice a year" needs: seasons come
-  round on their own, so two of them is a recurring window that costs no scheduler. A
-  list is already how this project names several seasons — an Activity's
-  `availability_seasons` has been one all along — so the string shape was widened
-  rather than replaced, and the supplier's two winter lines read exactly as before.
-  Guard: `check_seasonal_content_is_reachable`, brought forward from the phase because
-  it is what makes 1b measurable. It reads the season list out of `game_time.js`
-  instead of keeping its own copy, and covers `availability_seasons` too, where a
-  misspelt season silently makes a job available all year. Nothing the player can see,
-  so no version.
-- **1b — the three surfaces.** `open`. The salt house's shelf, the bay's ambient
-  lines and the guild's rumour, all reading the one window. The shelf carries the
-  hazard Q-10 names: the template is derived at refresh, never stored. This is what
-  ships as v0.7.0.
+**Phase 1 — v0.7.0, *No Word Sent*.** `done`. Three surfaces say the Marrowmoth is
+back and not one of them is a notification: the salt house holds a landing rather than
+the leavings of one, the quay gains four lines it does not have the rest of the year,
+and the guild clerk has an opinion about a forty-ton hull that ties up and posts no
+work. The window is Spring and Autumn — the equinoxes, where the year's biggest tidal
+ranges fall, which is the only pair a hull that can only work the ebb could keep, and
+the same pair phase 4's approach has to be timed against. It lives in
+`src/data/marrowmoth.js`, which imports nothing, because all three surfaces have to
+agree about it and the copy that drifted would fail silently. The shelf is derived at
+every refresh and never stored, per Q-10. Guards: `check_seasonal_content_is_reachable`
+from 1a, now reading every file under `src/` and every named season list rather than
+three files and one condition shape; and `check_trader_stock_lists` extended twice, to
+see through a derived template name and to refuse any assignment to
+`inventory_template` at all — which is Q-10's do-not-store rule made mechanical. Quest 1
+opens from none of it: that is phase 2's, and it opens from the discovery rather than
+the other way round.
 
 **Phase 2 — v0.7.1, *Forty Tons*.** Unloading, as actions on the existing bay, with a
 manifest read as cargo / weight / origin / destination / seal / status. Every normal

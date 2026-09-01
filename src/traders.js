@@ -6,6 +6,7 @@ import { character, get_total_level_bonus } from "./character.js";
 import { current_game_time } from "./game_time.js";
 import { InventoryHaver } from "./components/inventory_component.js";
 import { item_templates, getItem} from "./items.js";
+import { is_marrowmoth_in_port } from "./data/marrowmoth.js";
 
 const traders = {};
 const inventory_templates = {};
@@ -65,6 +66,14 @@ class Trader extends InventoryHaver {
         
         this.inventory_template = inventory_template;
         //a template for the trader to use, so multiple traders can have same predefined item selection (but still separate and with certain randomness)
+        /*
+            It may also be a FUNCTION returning a template name, which is how a shelf
+            that changes with the world is done here. It has to be derived rather than
+            stored: this field is not written to the save, so a template swapped onto a
+            trader at runtime survives until the tab is closed and then quietly reverts,
+            with nothing failing to say so (P-14, Q-10). Resolving it at every refresh
+            means the world decides, every time, and the save never has an opinion.
+        */
 
         this.profit_margin = profit_margin;
         //how much more expensive are the trader's items than their actual value, with default being 2 (so 2x more)
@@ -105,7 +114,16 @@ class Trader extends InventoryHaver {
      */
     get_inventory_from_template() {
         const inventory = {};
-        const inventory_template = inventory_templates[this.inventory_template];
+        const template_name = typeof this.inventory_template === "function"
+            ? this.inventory_template()
+            : this.inventory_template;
+        const inventory_template = inventory_templates[template_name];
+        if(!inventory_template) {
+            //Loud rather than an empty shop: a name that resolves to nothing is a typo
+            //in content, and an empty shelf is indistinguishable from a bad roll.
+            console.error(`Trader "${this.name}" asked for stock list "${template_name}", which does not exist.`);
+            return inventory;
+        }
 
         for (let i = 0; i < inventory_template.length; i++) {
             if (inventory_template[i].chance >= Math.random()) {
@@ -217,7 +235,10 @@ class TradeItem {
     */
     traders["bay trader"] = new Trader({
         name: "bay trader",
-        inventory_template: "Bay",
+        //Derived at every refresh, never stored - see the note on the field. In the two
+        //seasons the Marrowmoth can work the ebb, the shed is holding what she landed;
+        //the rest of the year it is down to what is left of it.
+        inventory_template: () => is_marrowmoth_in_port(current_game_time.getSeason()) ? "Bay in port" : "Bay",
         is_unlocked: false,
         //Higher than the swamp and the slums both. Everything here has been on a
         //boat, and the price says so.
@@ -539,6 +560,44 @@ class TradeItem {
 
             new TradeItem({item_name: "Healing balm", count: [1,3], chance: 0.3}),
             new TradeItem({item_name: "Healing powder", count: [1,3], chance: 0.3}),
+    ];
+	inventory_templates["Bay in port"] =
+    [
+            /*
+                The same shed, with a hull alongside it.
+
+                Nothing here is new: the whole list is "Bay" with the far-away half
+                turned certain. That is the point of the change and the reason it can
+                be read without a word of explanation - the player who walked up here
+                in summer and found two sacks of white iron ore at a third of a chance
+                comes back in autumn and finds the floor covered in it. A shelf saying
+                a ship came in is worth more than a notification saying so, and it is
+                the only thing at the bay that says it out loud.
+
+                Prices are untouched. The bay's profit margin is already the highest in
+                the game because everything here has been on a boat; a glut does not
+                make the carriage cheaper, it only means there is some.
+            */
+            new TradeItem({item_name: "Cooking herbs", count: [12,20]}),
+            new TradeItem({item_name: "Wild garlic", count: [12,20]}),
+            new TradeItem({item_name: "Wild onion", count: [12,20]}),
+            new TradeItem({item_name: "Snake jerky", count: [6,10]}),
+            new TradeItem({item_name: "Turtle jerky", count: [6,10]}),
+
+            new TradeItem({item_name: "Iron ingot", count: [8,16]}),
+            new TradeItem({item_name: "Steel ingot", count: [5,10]}),
+            new TradeItem({item_name: "Piece of iron ore", count: [12,24]}),
+
+            new TradeItem({item_name: "Piece of leather", count: [9,16]}),
+            new TradeItem({item_name: "Piece of rough leather", count: [9,16]}),
+
+            //The two ores nothing in this country mines. Out of season the shed has
+            //what is left of the last landing; in season it has the landing.
+            new TradeItem({item_name: "White iron ore", count: [8,16]}),
+            new TradeItem({item_name: "Black iron ore", count: [8,16]}),
+
+            new TradeItem({item_name: "Healing balm", count: [2,5], chance: 0.7}),
+            new TradeItem({item_name: "Healing powder", count: [2,5], chance: 0.7}),
     ];
 	inventory_templates["Swamp plus"] = 
     [

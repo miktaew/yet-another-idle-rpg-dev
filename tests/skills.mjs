@@ -461,6 +461,40 @@ const registries = {
 }
 
 // ===========================================================================
+// src/data/marrowmoth.js - the one hull's timetable
+// ===========================================================================
+// Imports nothing, so it is imported for real rather than stubbed. Three modules
+// read this window - the salt house's shelf, the quay's noise and the guild clerk's
+// rumour - and the whole reason it is a module instead of three inline literals is
+// that a copy that drifted would fail silently: a season gate that never opens looks
+// exactly like content nobody has reached yet.
+
+{
+    const marrowmoth = await import(
+        pathToFileURL(path.join(repo_root, "src/data/marrowmoth.js")).href);
+
+    check("the window is exactly two seasons",
+        marrowmoth.marrowmoth_seasons.length === 2,
+        `got ${marrowmoth.marrowmoth_seasons.length}: ${marrowmoth.marrowmoth_seasons.join(", ")}`);
+
+    //Spring and Autumn rather than any other two: the equinoxes are where the year's
+    //biggest tidal ranges fall, and she can only work the ebb.
+    check("she is in port in Spring", marrowmoth.is_marrowmoth_in_port("Spring"));
+    check("she is in port in Autumn", marrowmoth.is_marrowmoth_in_port("Autumn"));
+    check("she is gone in Summer", !marrowmoth.is_marrowmoth_in_port("Summer"));
+    check("she is gone in Winter", !marrowmoth.is_marrowmoth_in_port("Winter"));
+
+    //Twice a year has to mean twice: a window covering three seasons is a hull that
+    //is mostly there, which is not what the tallyman's book says.
+    check("the window leaves two seasons empty",
+        ["Spring", "Summer", "Autumn", "Winter"]
+            .filter(s => !marrowmoth.is_marrowmoth_in_port(s)).length === 2);
+
+    check("a season that does not exist is not in port",
+        !marrowmoth.is_marrowmoth_in_port("Harvest"));
+}
+
+// ===========================================================================
 // src/translation.js — the lookup and the fallback
 // ===========================================================================
 // The Turkish locale is deliberately partial, so the fallback is what keeps the

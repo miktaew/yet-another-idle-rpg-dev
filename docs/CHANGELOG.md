@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 62 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 63 -->
 
 # Changelog
 
@@ -20,6 +20,84 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.0 - *No Word Sent*: three surfaces and no notification
+
+P-14 phase 1. The brief's rule was that the player learns the Marrowmoth is back from
+the world rather than from a quest log, so the whole of the phase is three things
+changing and nothing announcing that they have.
+
+**The window is Spring and Autumn**, and which two seasons was not a coin toss. She
+goes out on the ebb and comes back on it, so she needs the year's biggest tidal ranges,
+and those fall around the equinoxes. It is the same pair phase 4's low-tide approach
+has to be timed against, so the choice pays for itself twice.
+
+It lives in `src/data/marrowmoth.js`, which imports nothing. Three modules read it -
+`traders.js` for the shelf, `data/locations.js` for the quay, `data/dialogues.js` for
+the rumour - and all three already sit in a graph that is circular by design, so a
+constant read from a leaf costs no edge at all. That is the same reason `registries.js`
+exists. The alternative was three inline copies of the same two-season list, and the
+copy that drifted would have failed silently: a season gate that never opens looks
+exactly like content nobody has reached yet. It is one hull's timetable and not a
+world-event framework, which Q-10 put out of scope.
+
+**The shelf.** `inventory_templates["Bay in port"]` is the same list as `"Bay"` with the
+far-away half turned certain: the white and black iron ore nothing in this country mines
+goes from a third of a chance and three sacks to a certainty and up to sixteen, and the
+ingots and leather roughly double. Nothing new is sold, which is the point - the player
+who walked up here in summer and found two sacks at the back comes back in autumn and
+finds the floor covered. Prices are untouched; a glut does not make the carriage cheaper.
+
+The hazard Q-10 named is in that sentence's tense. `inventory_template` is **not**
+written to the save, so a list swapped onto the trader would survive until the tab
+closed and then quietly revert - the same silent shape as the bug that lost the owner's
+favourite items. So the field now takes a function as well as a name, and the bay's
+derives the list from the season at every refresh. The world decides, every time, and
+the save never has an opinion.
+
+**The quay.** Four ambient lines in season, mixed into the ordinary six rather than
+replacing them, because a harbour with a forty-ton hull alongside is the same harbour
+with more going on in it. None of the four names her: a hull warping in past the last
+bollard, someone saying *forty, on this bottom*, two people failing to work out who is
+taking the cargo off, and the gulls all moved to one side of the water. Added rather
+than swapped because a player who has never stood here in autumn has nothing to compare
+against, so the change has to read as more rather than as different.
+
+**The rumour.** The guild clerk, who is the only one of the three that says the name,
+so a player who has seen the other two arrives with a question instead of being handed
+one. She has no work off a hull that lands twice a year and posts nothing, she has
+stopped writing it down, and she would like to know who to send the bill to. No
+`locks_lines`: a rumour is on the board while she is in and gone when she is not, and
+the season gate is the whole of that mechanism. It starts no quest - quest 1 opens from
+the discovery, not the other way round, and that is phase 2's.
+
+**Two guards grew rather than two being added.** Both had quietly stopped covering what
+they were for, which is the failure this project keeps finding:
+
+- `check_trader_stock_lists` read one written-out template name and nothing else, so the
+  moment the bay's became a function the count went from 8 traders to 7 and the check
+  still passed. It now reads the whole value expression however it is written - a
+  ternary naming two lists is two names - and it refuses **any** assignment to
+  `inventory_template` anywhere in `src/`, with the constructor's own named as the one
+  exception. That is Q-10's do-not-store rule made mechanical rather than remembered.
+  The first pattern for it was anchored on a bare identifier and walked straight past an
+  assignment through a subscript, which the negative test caught.
+- `check_seasonal_content_is_reachable` read three named files and one condition shape.
+  The arc's own window is a constant in a fourth file, so the one place that actually
+  decides when any of this happens was the one place unchecked. It now reads every file
+  under `src/` and every named season list - a `*seasons` declaration or a `*seasons:`
+  property, which is what `availability_seasons` already was. 25 season names across 54
+  files.
+
+Negative-tested three ways at once, in three different files: a misspelt season in
+`marrowmoth.js`, a stock list that does not exist inside the derived template function,
+and a store of a template onto a trader. All three were named. Seven tests cover the
+window itself, including that it leaves exactly two seasons empty, because twice a year
+has to mean twice.
+
+Measured rather than reasoned about: the two stock lists exist with fourteen rows each,
+the trader's field really is a function, and the predicate answers true for Spring and
+Autumn and false for the other two.
 
 ### The season condition can name two seasons, and a misspelt one can no longer ship
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 69 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 70 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -280,28 +280,22 @@ ki markdown bunu o cümlenin üstüne çekilmiş setext başlığı olarak okuyo
 dosyalarını okuyarak koruyor. Sonraki fazları ölçülebilir kılan faz buydu; bunu da
 hatırlanan üç bilginin yerine ölçülmüş üçünü koyarak yaptı.
 
-**Faz 1 — v0.7.0, *No Word Sent*.** Oyuncu Marrowmoth'un döndüğünü quest
-bildiriminden değil dünyadan öğrenir: tuz evinin rafı değişir, körfezin fon
-replikleri değişir, loncada bir söylenti dolaşır. Q-10 uyarınca mevsim koşulu ve
-türetilmiş tüccar şablonu üzerine kurulur. 1. quest keşiften açılır, tersi değil.
-Faz ikiye bölündü: pencere ile ona asılan içerik ayrı ayrı test edilebiliyor ve
-oyuncunun gördüğü yalnızca ikinci yarı.
-
-- **1a — pencere.** `bitti`. `season: {yes}` ve `season: {not}` artık tek bir mevsim
-  ya da mevsim listesi alıyor; "yılda iki kez" için gereken de bundan ibaret: mevsimler
-  kendiliğinden dönüyor, dolayısıyla iki mevsim, hiçbir zamanlayıcıya mal olmayan
-  tekrarlayan bir pencere demek. Birden çok mevsimi adlandırmanın yolu bu projede
-  zaten liste — bir Activity'nin `availability_seasons` alanı başından beri öyle — bu
-  yüzden metin biçimi değiştirilmedi, genişletildi; tedarikçinin iki kış repliği
-  eskisi gibi okunuyor. Muhafız: `check_seasonal_content_is_reachable`, fazdan öne
-  alındı, çünkü 1b'yi ölçülebilir kılan şey o. Mevsim listesini kendi kopyasında
-  tutmak yerine `game_time.js` içinden okuyor ve `availability_seasons` alanını da
-  kapsıyor; orada yanlış yazılmış bir mevsim, bir işi sessizce yılın tamamında
-  açık bırakıyor. Oyuncunun göreceği bir şey yok, dolayısıyla sürüm de yok.
-- **1b — üç yüzey.** `open`. Tuz evinin rafı, körfezin fon replikleri ve loncanın
-  söylentisi; üçü de aynı pencereyi okuyor. Rafta Q-10'un işaret ettiği tehlike var:
-  şablon yenilenme anında türetilir, asla saklanmaz. v0.7.0 olarak yayınlanacak olan
-  bu.
+**Faz 1 — v0.7.0, *No Word Sent*.** `bitti`. Üç yüzey Marrowmoth'un döndüğünü
+söylüyor ve hiçbiri bildirim değil: tuz evi bir öncekinden kalanı değil, az önce
+boşaltılanı tutuyor; rıhtım yılın geri kalanında olmayan dört replik kazanıyor; lonca
+kâtibinin de yanaşıp tek bir iş ilanı asmayan kırk tonluk bir tekne hakkında
+söyleyecekleri var. Pencere İlkbahar ile Sonbahar — ekinokslar, yani yılın en büyük
+gelgit farklarının düştüğü yer; yalnızca cezirle çalışabilen bir teknenin
+tutabileceği tek çift bu ve Faz 4'ün yaklaşımının da zamanlanacağı çift aynısı.
+Pencere hiçbir şey import etmeyen `src/data/marrowmoth.js` içinde yaşıyor, çünkü üç
+yüzeyin de aynı şeyi söylemesi gerekiyor ve kayan kopya sessizce bozardı. Raf her
+yenilemede türetiliyor, asla saklanmıyor — Q-10 böyle diyor. Muhafızlar: 1a'dan gelen
+`check_seasonal_content_is_reachable`, artık üç dosya ve tek koşul biçimi yerine
+`src/` altındaki her dosyayı ve adlandırılmış her mevsim listesini okuyor; bir de iki
+kez genişletilen `check_trader_stock_lists`, hem türetilmiş şablon adını görüyor hem
+de `inventory_template` alanına yapılan her atamayı reddediyor — Q-10'un "saklama"
+kuralının mekanik hâli. 1. quest bunların hiçbirinden açılmıyor; o Faz 2'nin işi ve
+tersi değil, keşiften açılıyor.
 
 **Faz 2 — v0.7.1, *Forty Tons*.** Boşaltma işi, mevcut körfez üzerinde aksiyonlar
 olarak; manifesto kargo / ağırlık / menşe / varış / mühür / durum olarak okunur.

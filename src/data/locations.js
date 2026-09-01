@@ -11,6 +11,7 @@ import { global_flags, language } from "../main.js";
 import { translationManager } from "../translation.js";
 import { clamp, slerp } from "../misc.js";
 import { registries } from "../registries.js";
+import { is_marrowmoth_in_port } from "./marrowmoth.js";
 const locations = {}; //contains all the created locations
 //Published for conditions.js, which must not import this module: the extra edge
 //reorders module evaluation and breaks the bundle. See src/registries.js.
@@ -2455,13 +2456,34 @@ function get_location_type_penalty(type, stage, stat, category) {
             custom_text: "travel Start the long walk back south to the [Town outskirts]", travel_time: 300}],
         description: "desc location The bay",
         dialogues: ["harbour tallyman"],
+        /*
+            The quay says it before anyone does.
+
+            Four extra lines in the two seasons the Marrowmoth can work the ebb, mixed
+            into the ordinary six rather than replacing them, because a harbour with a
+            forty-ton hull alongside is the same harbour with more going on in it. The
+            player is never told she is in - they overhear it, the way they overhear
+            everything else here, and none of the four names her.
+
+            Added rather than swapped for the same reason the shelf keeps its old list:
+            a player who has never stood here in autumn has nothing to compare against,
+            so the change has to read as more, not as different.
+        */
         getBackgroundNoises: function() {
-            return [translationManager.getText(language, "noise The bay 1"),
+            const ordinary = [translationManager.getText(language, "noise The bay 1"),
                     translationManager.getText(language, "noise The bay 2"),
                     translationManager.getText(language, "noise The bay 3"),
                     translationManager.getText(language, "noise The bay 4"),
                     translationManager.getText(language, "noise The bay 5"),
                     translationManager.getText(language, "noise The bay 6")];
+            if(!is_marrowmoth_in_port(current_game_time.getSeason())) {
+                return ordinary;
+            }
+            return ordinary.concat([
+                    translationManager.getText(language, "noise The bay in port 1"),
+                    translationManager.getText(language, "noise The bay in port 2"),
+                    translationManager.getText(language, "noise The bay in port 3"),
+                    translationManager.getText(language, "noise The bay in port 4")]);
         },
         name: "The bay",
         is_unlocked: false,

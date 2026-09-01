@@ -3,6 +3,7 @@
 import DialogueAction from "../models/dialogue_action.js";
 import { language } from "../main.js";
 import { translationManager } from "../translation.js";
+import { marrowmoth_seasons } from "./marrowmoth.js";
 
 const dialogues = {};
 
@@ -2836,6 +2837,26 @@ class Textline {
                 is_unlocked: false,
                 text: "clerk board answ",
                 locks_lines: ["board"],
+            }),
+            /*
+                The rumour. The third of the three things that say the Marrowmoth is
+                back, and the only one that says her name - the shelf and the quay both
+                stop short of it, so the player who has seen those arrives here with a
+                question rather than being handed one.
+
+                No locks_lines on purpose. A rumour is not a fact you are told once: it
+                is on the board while she is in and gone when she is not, and the season
+                gate is the whole of that. Nothing is unlocked by it and no quest starts
+                from it - quest 1 opens from the discovery, not the other way round.
+            */
+            "marrowmoth": new Textline({
+                name: "clerk marrowmoth",
+                text: "clerk marrowmoth answ",
+                display_conditions: {
+                    season: {
+                        yes: marrowmoth_seasons,
+                    }
+                },
             }),
             //Unlocked by the robber's confession, which happens long before the
             //town is reachable. The line simply waits here until the player

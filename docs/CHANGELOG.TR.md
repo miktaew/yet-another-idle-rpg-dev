@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 62 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 63 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,83 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.0 - *No Word Sent*: üç yüzey ve hiç bildirim yok
+
+P-14 Faz 1. Briefin kuralı, oyuncunun Marrowmoth'un döndüğünü görev günlüğünden değil
+dünyadan öğrenmesiydi; dolayısıyla fazın tamamı, değişen üç şey ve değiştiklerini
+duyuran hiçbir şey.
+
+**Pencere İlkbahar ile Sonbahar** ve hangi iki mevsim olduğu yazı tura değildi. Tekne
+cezirle çıkıp cezirle dönüyor, yani yılın en büyük gelgit farklarına ihtiyacı var;
+onlar da ekinoksların çevresine düşüyor. Faz 4'ün cezir yaklaşımının zamanlanacağı çift
+de aynısı, yani seçim kendini iki kez ödüyor.
+
+Pencere, hiçbir şey import etmeyen `src/data/marrowmoth.js` içinde. Üç modül onu
+okuyor — raf için `traders.js`, rıhtım için `data/locations.js`, söylenti için
+`data/dialogues.js` — ve üçü de zaten tasarım gereği döngüsel bir grafiğin içinde
+oturuyor; bir yapraktan sabit okumak hiçbir kenar eklemiyor. `registries.js` de tam
+bunun için var. Alternatif, aynı iki mevsimlik listenin üç ayrı kopyasıydı ve kayan
+kopya sessizce bozardı: hiç açılmayan bir mevsim kapısı, kimsenin henüz ulaşmadığı
+içerikle birebir aynı görünüyor. Bu bir dünya-olayı çatısı değil, tek bir teknenin
+tarifesi; Q-10 çatıyı kapsam dışı bırakmıştı.
+
+**Raf.** `inventory_templates["Bay in port"]`, `"Bay"` listesinin uzaktan gelen
+yarısının kesinleşmiş hâli: bu ülkede kimsenin çıkarmadığı beyaz ve siyah demir cevheri
+üçte bir ihtimal ve üç çuvaldan kesinliğe ve on altıya çıkıyor; külçeler ile deri ise
+aşağı yukarı ikiye katlanıyor. Satılan yeni hiçbir şey yok, mesele de bu: yazın buraya
+kadar yürüyüp en arkada iki çuval bulan oyuncu, sonbaharda gelip yerin tamamını kaplı
+buluyor. Fiyatlara dokunulmadı; bolluğun nakliyeyi ucuzlattığı yok.
+
+Q-10'un işaret ettiği tehlike tam da burada. `inventory_template` kayda **yazılmıyor**,
+yani tüccara geçirilen bir liste sekme kapanana kadar yaşar, sonra sessizce eski hâline
+dönerdi — sahibin sevdiği eşyaları kaybettiren hatanın aynı biçimi. Bu yüzden alan
+artık ad kadar fonksiyon da kabul ediyor ve körfezinki listeyi her yenilemede mevsimden
+türetiyor. Kararı her seferinde dünya veriyor, kaydın ise konuyla ilgili hiçbir fikri
+olmuyor.
+
+**Rıhtım.** Mevsiminde dört fon repliği; mevcut altısının yerine geçmiyor, aralarına
+karışıyor, çünkü yanında kırk tonluk bir tekne olan liman aynı liman, sadece içinde
+daha çok şey dönüyor. Dördünün hiçbiri tekneyi adıyla anmıyor: en dipteki babadan
+öteye halatla yanaşan bir tekne; *kırk, bu dipte* diyen biri; yükü kimin indireceğini
+çözemeyen iki kişi; ve hep birden suyun bir yakasına geçmiş martılar. Yerine konmak
+yerine eklendi, çünkü buraya sonbaharda hiç gelmemiş bir oyuncunun kıyaslayacağı bir
+şey yok; değişikliğin "farklı" değil "daha çok" diye okunması gerekiyor.
+
+**Söylenti.** Lonca kâtibi, üçü içinde adı söyleyen tek yüzey; böylece diğer ikisini
+görmüş olan oyuncu buraya cevap almaya değil, soruyla geliyor. Yılda iki kez yanaşıp
+hiçbir şey asmayan bir tekneden çıkacak işi yok, yazmayı bırakmış ve hesabı kime
+göndereceğini merak ediyor. `locks_lines` yok, bilerek: söylenti, tekne limandayken
+panoda duran, gittiğinde kaybolan bir şey; mekanizmanın tamamı mevsim kapısı. Hiçbir
+quest başlatmıyor — 1. quest keşiften açılıyor, tersi değil, ve o Faz 2'nin işi.
+
+**İki muhafız eklenmedi, büyütüldü.** İkisi de var oldukları şeyi sessizce kapsamayı
+bırakmıştı; bu proje en sık bu arızayı buluyor:
+
+- `check_trader_stock_lists` yalnızca açıkça yazılmış tek bir şablon adı okuyordu;
+  körfezinki fonksiyona dönünce sayı 8 tüccardan 7'ye düştü ve kontrol yine geçti.
+  Artık değer ifadesinin tamamını nasıl yazılmış olursa olsun okuyor — iki liste
+  adlandıran bir ternary, iki ad demek — ve `src/` altında `inventory_template` alanına
+  yapılan **her** atamayı reddediyor; tek istisna olarak kurucununki adıyla anılıyor.
+  Bu, Q-10'un "saklama" kuralının hatırlanan değil mekanik hâli. İlk kalıp çıplak bir
+  tanımlayıcı üzerine demirlenmişti ve köşeli parantezle yapılan bir atamanın yanından
+  geçip gidiyordu; negatif test bunu yakaladı.
+- `check_seasonal_content_is_reachable` üç adlı dosya ve tek bir koşul biçimi okuyordu.
+  Arc'ın kendi penceresi ise dördüncü bir dosyadaki bir sabit; yani bütün bunların ne
+  zaman olacağına karar veren tek yer, denetlenmeyen tek yerdi. Artık `src/` altındaki
+  her dosyayı ve adlandırılmış her mevsim listesini okuyor: bir `*seasons` bildirimi ya
+  da bir `*seasons:` özelliği — ki `availability_seasons` zaten oydu. 54 dosyada 25
+  mevsim adı.
+
+Negatif test tek seferde üç yönden, üç ayrı dosyada yapıldı: `marrowmoth.js` içinde
+yanlış yazılmış bir mevsim, türetilmiş şablon fonksiyonunun içinde var olmayan bir stok
+listesi ve bir tüccara saklanan bir şablon. Üçü de adlandırıldı. Pencerenin kendisini
+yedi test kapsıyor; aralarında tam olarak iki mevsimi boş bıraktığı da var, çünkü yılda
+iki kez, iki kez demek zorunda.
+
+Akıl yürütülmedi, ölçüldü: iki stok listesi de on dörder satırla yerinde, tüccarın
+alanı gerçekten bir fonksiyon ve yüklem İlkbahar ile Sonbaharda doğru, diğer ikisinde
+yanlış dönüyor.
 
 ### Mevsim koşulu iki mevsim adlandırabiliyor, yanlış yazılmış mevsim artık yayına çıkamıyor
 

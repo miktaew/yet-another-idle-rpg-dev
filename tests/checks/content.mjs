@@ -2,7 +2,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { braced_body, strip_comments, top_level_keys } from "../lib/source.mjs";
+import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { default_language, repo_root } from "../lib/context.mjs";
 import { error, errors } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
@@ -506,27 +506,101 @@ function check_skill_rank_levels() {
 
     console.log(`[check] skill rank names: ${ranked} of ${checked} skills rank up`);
 }
+/**
+ * The value expression that starts at `from`, up to the comma that ends it.
+ *
+ * Splitting on commas is not enough once a value can be a function: an arrow returning
+ * a ternary holds no comma, but one holding an argument list or an object would, and
+ * the first comma inside a bracket is not the end of anything. So brackets are counted
+ * and quotes are skipped over.
+ */
+function value_expression(source, from) {
+    let depth = 0;
+    let quote = null;
+    for (let i = from; i < source.length; i++) {
+        const c = source[i];
+        if (quote) {
+            if (c === "\\") i++;
+            else if (c === quote) quote = null;
+            continue;
+        }
+        if (c === '"' || c === "'" || c === "`") { quote = c; continue; }
+        if ("([{".includes(c)) depth++;
+        else if (")]}".includes(c)) {
+            if (depth === 0) return source.slice(from, i);
+            depth--;
+        } else if (c === "," && depth === 0) return source.slice(from, i);
+    }
+    return source.slice(from);
+}
+
 function check_trader_stock_lists() {
     const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/traders.js"), "utf8"));
 
     const lists = new Set([...source.matchAll(/inventory_templates\["([^"]+)"\]\s*=/g)]
         .map(match => match[1]));
 
+    /*
+        The value may be a name or a function deriving one, because the bay's shelf
+        changes with the season (P-14 phase 1). Reading only `inventory_template: "X"`
+        stopped covering that trader the moment it did - silently, since the count is
+        the only thing that moved: 8 traders became 7 and the check still passed.
+
+        So the whole value expression is read, however it is written, and every quoted
+        name in it is held to the same rule. A ternary naming two lists is two names.
+    */
     let checked = 0;
-    for (const match of source.matchAll(/inventory_template:\s*"([^"]+)"/g)) {
-        checked++;
-        if (!lists.has(match[1])) {
-            error(`a trader stocks "${match[1]}", which is not an inventory template.`
-                + ` Its shop would be empty and would throw when opened.`);
+    for (const match of source.matchAll(/inventory_template:\s*/g)) {
+        const value = value_expression(source, match.index + match[0].length);
+        const names = [...value.matchAll(/"([^"]*)"/g)].map(m => m[1]);
+        if (names.length === 0) {
+            error(`a trader's inventory_template names no stock list at all:`
+                + ` \`${value.trim().slice(0, 60)}\`. Its shop would be empty.`);
+            continue;
+        }
+        for (const name of names) {
+            checked++;
+            if (!lists.has(name)) {
+                error(`a trader stocks "${name}", which is not an inventory template.`
+                    + ` Its shop would be empty and would throw when opened.`);
+            }
+        }
+    }
+
+    /*
+        And nobody writes the template down.
+
+        `inventory_template` is not saved (P-14, Q-10). A shelf swapped onto a trader at
+        runtime therefore survives until the tab closes and then reverts, with nothing
+        failing to say so - the same silent shape as the bug that lost the owner's
+        favourites. Deriving it at refresh is the fix; this is what keeps it fixed, since
+        one assignment anywhere would undo it and read as perfectly ordinary code.
+    */
+    for (const relative of source_files(repo_root)) {
+        const text = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        /*
+            The receiver is not always a bare name - `traders[key].inventory_template = x`
+            is the same store through a subscript, and a pattern anchored on \w+ walks
+            straight past it. So the assignment is matched on the property and the one
+            legitimate write, the constructor's own, is named exactly.
+        */
+        for (const assignment of text.matchAll(/([^\s;{}]*)\s*\.\s*inventory_template\s*=\s*([^=][^;\n]*)/g)) {
+            const is_the_constructor = relative === "src/traders.js"
+                && assignment[1] === "this" && assignment[2].trim() === "inventory_template";
+            if (is_the_constructor) continue;
+            error(`${relative} assigns to ${assignment[1]}.inventory_template. That field is`
+                + " not written to the save, so a stock list stored on a trader reverts on"
+                + " the next session and nothing fails - derive it at refresh instead"
+                + " (P-14, Q-10).");
         }
     }
 
     if (checked === 0 || lists.size === 0) {
-        error(`found ${checked} traders and ${lists.size} stock lists - this check is out of date.`);
+        error(`found ${checked} stock names and ${lists.size} stock lists - this check is out of date.`);
         return;
     }
 
-    console.log(`[check] trader stock: ${checked} traders across ${lists.size} lists`);
+    console.log(`[check] trader stock: ${checked} stock names across ${lists.size} lists`);
 }
 function check_every_enemy_has_a_home() {
     const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
@@ -923,8 +997,10 @@ function check_content_is_reachable() {
  * content is authored, translated, shipped, and unreachable. A misspelt `not` is
  * worse, because it opens the gate always and looks like it works.
  *
- * `availability_seasons` on an Activity is the same mistake with a different name, so
- * it is read here too: that one silently makes a job available all year.
+ * `availability_seasons` on an Activity is the same mistake with a different name, and
+ * so is any other named list of seasons - the arc's own window is a constant in a module
+ * of its own. All three shapes are read: a season condition, a `*seasons` declaration and
+ * a `*seasons:` property.
  *
  * The season list is read out of `src/game_time.js` rather than written down here, so
  * the check cannot drift from the game it is checking.
@@ -944,12 +1020,43 @@ function check_seasonal_content_is_reachable() {
         return;
     }
 
-    const files = ["src/data/locations.js", "src/data/dialogues.js", "src/traders.js"];
+    /*
+        Every file under src/, not a list of the three that happened to name a season
+        when this was written. The arc's own two seasons moved into src/data/marrowmoth.js
+        the day after, and a hand-kept list would have stopped covering the one file that
+        matters most without saying so.
+    */
+    const files = source_files(repo_root);
     let named = 0;
     const before = errors.length;
 
     for (const relative of files) {
+        //game_time.js is where the list comes from; checking it against itself proves nothing.
+        if (relative === "src/game_time.js") continue;
         const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        /*
+            A named list of seasons - `const marrowmoth_seasons = [...]`, or any property
+            whose name ends in `seasons`, which is what `availability_seasons` already is.
+            The arc's own window is a constant in a module of its own rather than a
+            condition written inline, and a check that only read conditions would have
+            covered every copy of the window except the one they are all copied from.
+        */
+        for (const block of source.matchAll(/(?:(?:const|let|var)\s+\w*seasons\s*=|\w*seasons:)\s*\[([^\]]*)\]/g)) {
+            const values = [...block[1].matchAll(/"([^"]*)"/g)].map(m => m[1]);
+            if (values.length === 0) {
+                error(`${relative} declares a list of seasons with no season in it, which`
+                    + " is a window that never opens.");
+                continue;
+            }
+            for (const value of values) {
+                named++;
+                if (!seasons.has(value)) {
+                    error(`${relative} names the season "${value}", which getSeason() never`
+                        + ` returns. Seasons are ${[...seasons].join(", ")}.`);
+                }
+            }
+        }
 
         //season: { yes: ... } / { not: ... } - a season or a list of them.
         for (const block of source.matchAll(/season:\s*\{([^}]*)\}/g)) {
@@ -975,22 +1082,6 @@ function check_seasonal_content_is_reachable() {
             }
         }
 
-        //availability_seasons: [...] on an Activity - the same mistake, another name.
-        for (const block of source.matchAll(/availability_seasons:\s*\[([^\]]*)\]/g)) {
-            const values = [...block[1].matchAll(/"([^"]*)"/g)].map(m => m[1]);
-            if (values.length === 0) {
-                error(`${relative} has an activity with an empty availability_seasons list,`
-                    + " which makes it available in no season at all.");
-                continue;
-            }
-            for (const value of values) {
-                named++;
-                if (!seasons.has(value)) {
-                    error(`${relative} makes an activity available in "${value}", which`
-                        + ` getSeason() never returns. Seasons are ${[...seasons].join(", ")}.`);
-                }
-            }
-        }
     }
 
     if (named === 0) {

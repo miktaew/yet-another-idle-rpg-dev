@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 16 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 17 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,7 +59,7 @@ npm run check:bundle
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
   (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 157 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 164 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.
@@ -188,7 +188,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 44'ü yapılamaz. |
 | `quest hints` | Listesini boşaltıp sonra hiçbir şey söylemeyen bir ipucu kurucusu. |
 | `markdown rules` | Paragrafın hemen altına yazılmış `---`; o paragrafı başlığa çeviriyor. 62 çizgi. |
-| `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 23 ad. |
+| `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
+| `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -204,9 +205,10 @@ sayılmaz; koruma da hata geri konularak sınanır.
   değil koda karşı planlandı, her biri tek başına yayınlanabilir sekiz faz hâlinde.
   Zemin fazı olan Faz 0 yeşil: dört tasarım kararı — Q-7 ile Q-10 — cevaplandı ve
   Bekleyen kararlar'dan çıkıp önerinin kendi içine, her biri onu harcayan fazın
-  karşısına taşındı. *No Word Sent* olan Faz 1 ikiye bölündü: mevsim penceresi ve
-  onu koruyan muhafız olan 1a girdi; onu okuyan üç yüzey olan 1b, v0.7.0 olarak
-  yayınlanacak.
+  karşısına taşındı. *No Word Sent* olan Faz 1, v0.7.0 olarak yayınlandı: Marrowmoth
+  İlkbahar ve Sonbaharda limanda ve tuz evinin rafı, rıhtımın fon replikleri ile lonca
+  kâtibinin söylentisi hep o tek pencereyi okuyor. Sıradaki faz, *Forty Tons* olan
+  Faz 2.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.
