@@ -5,7 +5,7 @@ import { current_location, language, language_tags } from "./main.js";
 import { Armor, Shield, Weapon, item_log, item_templates } from "./items.js";
 import { clear_HTML_content, insert_HTML, is_element_above_x, remove_class_from_all,
          set_HTML, toggle_exclusive_class } from "./ui_helpers.js";
-import { find_recipe_material, recipes } from "./crafting_recipes.js";
+import { was_ever_crafted, find_recipe_material, recipes } from "./crafting_recipes.js";
 import { translationManager } from "./translation.js";
 import { create_item_tooltip, create_recipe_tooltip_content } from "./item_tooltips.js";
 import { action_div, update_displayed_normal_location } from "./display.js";
@@ -167,6 +167,7 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
     recipe_div.append(recipe_name_span);
     recipe_div.classList.add("recipe_div");
     recipe_div.dataset.recipe_id = recipe_id;
+    mark_if_never_crafted(recipe_div, recipe_id);
 
     if(subcategory === "items") {
         recipe_name_span.classList.add("recipe_item_name");
@@ -322,6 +323,22 @@ function create_craft_amount_buttons() {
  * updates all displayed recipes; 
  * needs to be called whenever something is crafted (in case some recipe became unavailable due to lack of materials) and/or whenever a crafting-related skill levels up
  */
+/**
+ * Marks a recipe row the player has never actually made.
+ *
+ * A class rather than anything written into the row: the row's contents are assembled
+ * differently in each of the three subcategories - the items branch rebuilds its first child
+ * outright - so anything inserted here would survive on one page and be wiped on another.
+ * The mark is drawn by CSS from the class, and clears itself the first time the recipe is
+ * used because the list is refreshed after a craft.
+ */
+function mark_if_never_crafted(recipe_div, recipe_id) {
+    if(!recipe_div) {
+        return;
+    }
+    recipe_div.classList.toggle("recipe_never_crafted", !was_ever_crafted(recipe_id));
+}
+
 function update_displayed_crafting_recipes() {
     Object.keys(recipes).forEach(recipe_category => {
         Object.keys(recipes[recipe_category]).forEach(recipe_subcategory => {
@@ -349,6 +366,13 @@ function update_displayed_crafting_recipes() {
 function update_displayed_crafting_recipe({category, subcategory, recipe_id}) {
     const recipe_div = crafting_pages[category][subcategory].querySelector(`[data-recipe_id="${recipe_id}"]`);
     const recipe = recipes[category][subcategory][recipe_id];
+
+    /*
+        Outside the subcategory branching on purpose. Only the items branch does anything at
+        all below - the component and equipment ones are commented out - and a marker that
+        appeared on one page in three would be worse than none.
+    */
+    mark_if_never_crafted(recipe_div, recipe_id);
 
     if(subcategory === "items") {
         if(recipe.get_availability().available_ammount) {

@@ -45,6 +45,36 @@ function get_crafting_quality_caps(skill_name) {
     }
 }
 
+/*
+    Which recipes the player has ever actually made.
+
+    Asked for as a discovered / not-discovered marker on the crafting pages: "craftable but
+    never crafted" is not something anything recorded, so like the acquisition order in P-32
+    this is a field that had to start existing and start being saved (P-39).
+
+    Keyed by recipe id and NOT by category/subcategory/id, deliberately. Nine ids appear in
+    two or three categories - a Short hilt can be made by crafting, by forging or by
+    woodworking - and the question the marker answers is "have I ever made one of these",
+    not "have I ever made one of these this particular way".
+
+    Not folded into item_log, which was the first idea: that is keyed by ITEM, and a
+    component recipe's item depends on the material it is made from, so "Short hilt" has no
+    single item to hang a flag on.
+*/
+const crafted_recipes = {};
+
+/** Records that a recipe has been used successfully at least once. */
+function mark_recipe_crafted(recipe_id) {
+    if(recipe_id) {
+        crafted_recipes[recipe_id] = true;
+    }
+}
+
+/** Whether this recipe has ever been made. */
+function was_ever_crafted(recipe_id) {
+    return Boolean(crafted_recipes[recipe_id]);
+}
+
 class Recipe {
     constructor({
         name,
@@ -2199,4 +2229,5 @@ Object.keys(recipes).forEach(recipe_category => {
     });
 });
 
-export { recipes, find_recipe_material, get_consumed_quality, get_recipe_xp_value, get_crafting_quality_caps, get_component_stats, ItemRecipe }
+export {
+    crafted_recipes, mark_recipe_crafted, was_ever_crafted, recipes, find_recipe_material, get_consumed_quality, get_recipe_xp_value, get_crafting_quality_caps, get_component_stats, ItemRecipe }

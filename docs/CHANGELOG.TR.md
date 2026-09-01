@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 106 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 107 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,49 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.35 - hiç yapmadığınız bir tarif bunu söylüyor
+
+P-39'un ilk yarısı, sahibinden: *"craft edilebilir ama hiç craft edilmemiş eşyaları bir
+belirteçle keşfedildi/keşfedilmedi şeklinde işaretleyelim."*
+
+**Açık soru, isteğin kendisinden cevaplandı.** İstenen şey "hiç craft edilmemiş" — yani
+belirteç, oyuncunun ne yaptığını kaydediyor, ona ne gösterildiğini değil. Teklifteki ikinci
+okuma, "yapılabilir olduğu görülmüş", aynı kelimeyi giyen bir tarif defteri sayacı.
+
+**Bilerek tarif kimliğine göre, kategori/altkategori/kimliğe göre değil.** Ölçüldü: 148 tarif
+136 ayrı kimlik taşıyor ve dokuzu iki ya da üç kategoride birden görünüyor — bir Short hilt
+crafting, forging ya da woodworking ile yapılabiliyor. Halkanın cevapladığı soru "bunlardan
+hiç yaptım mı", "bunu tam olarak bu yolla hiç yaptım mı" değil.
+
+**`item_log`'a katılmadı, ki ilk fikir ve teklifin kendi önerisi oydu.** O depo EŞYA'ya göre
+anahtarlı ve bir component tarifinin eşyası yapıldığı malzemeye bağlı — "Short hilt"in bayrak
+asılacak tek bir eşyası yok.
+
+İşaret, satırdaki bir sınıf ve CSS'ten çizilen bir halka; markup'a yazılan bir şey değil:
+eşya sayfası, craft adedi düğmelerini eklerken ilk çocuğunu baştan kuruyor, yani araya
+konulan bir şey bir sayfada yaşar öteki sayfada silinirdi. Aynı sebeple alt kategori
+dallanmasının dışında uygulanıyor — `update_displayed_crafting_recipe`'in yalnızca eşya dalı
+bir şey yapıyor, diğer ikisi yorumda; üç sayfanın birinde beliren bir belirteç ise hiç
+olmamasından kötü olurdu.
+
+**Muhafız: `check_every_craft_records_that_it_happened` ve kendini anında çıkardı.** Üç
+eklememden ikisinin aynı teslim noktasına düştüğünü ve ekipman dalının boş kaldığını buldu —
+ki bu, oyuncu kaç tane döverse dövsün her ekipman parçasını "hiç yapılmamış" işaretli
+bırakırdı. Sonucu verip kaydetmeyen bir dal hiçbir şey bildirmiyor: craft çalışıyor, eşya
+geliyor, yalnızca halka hiç sönmüyor.
+
+Toplamları karşılaştırmak yerine her teslim ile bir sonraki arasında bir kayıt arıyor; çünkü
+tek bir dala tıkıştırılmış üç kayıt bir sayımı memnun ederdi. Üç daldan ikisi üzerinden
+negatif test edildi. Deponun kendisini dokuz davranış testi kapsıyor: kayıt turu ve alandan
+önceki bir kayıt dahil.
+
+**Hâlâ açık: filtre.** Teklif "filtre, var olan bir yüklem" diyordu ve ölçüm bunu düzeltiyor:
+`get_availability` `ItemRecipe` üzerinde tanımlı ve component tarifleri onu miras alıyor,
+`EquipmentRecipe extends Recipe` ise hiç taşımıyor — üç sayfanın ikisinde soluklaştırmanın
+yorumda olmasının sebebi de bu. "Yalnızca yapılabilirler" onay kutusu, önce o yüklemin ekipman
+için yazılmasını gerektiriyor; ekipmanda ise soru anlam kazanmadan önce bir malzeme ve
+bileşenlerinin seçilmiş olması gerekiyor.
 
 ### v0.7.34 - bir panel, gösterdiği değer değişmeden hemen önce çizilmiyor
 

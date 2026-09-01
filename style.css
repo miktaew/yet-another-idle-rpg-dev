@@ -1511,6 +1511,19 @@ input[type=checkbox], input[type=radio] {
 	color: gray;
 }
 
+/*
+    A recipe the player has never actually made (P-39). An empty ring, drawn after the name
+    rather than inserted into the row: the items page rebuilds its first child outright when
+    it adds the craft-amount buttons, so anything put in the markup would survive on one page
+    and be wiped on another. currentColor, so it greys out with the row when the materials
+    are not there.
+*/
+.recipe_never_crafted .recipe_item_name::after,
+.recipe_never_crafted .recipe_name::after {
+	content: " ○";
+	opacity: 0.7;
+}
+
 .recipe_hidden {
 	display: none;
 }

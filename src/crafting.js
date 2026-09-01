@@ -13,7 +13,7 @@
 
 import { character, add_to_character_inventory, remove_from_character_inventory,
     update_character_stats, get_skill_xp_gain } from "./character.js";
-import { recipes, get_consumed_quality, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
+import { mark_recipe_crafted, recipes, get_consumed_quality, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
 import { skills, crafting_skill_xp_gains_cap } from "./data/skills.js";
 import {
          log_message,
@@ -167,6 +167,9 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                         : item_templates[result_id].getInventoryKey();
 
                     add_to_character_inventory([{item_key: result_key, count: final_count}]);
+                    //Made at least once now, so the crafting page can stop marking it as
+                    //something never tried (P-39).
+                    mark_recipe_crafted(recipe_id);
                     const made = item_templates[result_id].getDisplayName();
                     const tried = count * attempted_crafting_ammount;
                     log_message((attempted_crafting_ammount > 1 || scale_results)
@@ -314,6 +317,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                         to_add.push({item_key: new_key, count: all_crafted[crafted_qualities[i]]});
                     }
                     add_to_character_inventory(to_add);
+                    mark_recipe_crafted(recipe_id);
 
                     //remove used mats
                     remove_from_character_inventory([{item_key: material_1_key, item_count: recipe_material.count*ammount_that_can_be_crafted}]);
@@ -430,6 +434,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 to_add.push({item_key: new_key, count: all_crafted[crafted_qualities[i]]});
             }
             add_to_character_inventory(to_add);
+            mark_recipe_crafted(recipe_id);
 
             //remove used mats
             for (let i in comp) {

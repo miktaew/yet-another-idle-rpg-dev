@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 122 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 124 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -614,7 +614,7 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
-### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `open`
+### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `blocked`
 
 P-23 ölçülürken bulundu. `BookData`, bir kitabın taşıyabileceği altı şey tanımlıyor ve
 **ikisi `src/` içinde hiçbir yerde okunmuyor**:
@@ -645,27 +645,30 @@ ve muhtemelen ikiden fazlasını bulur.
 
 
 
-### P-39 — Hiç craft edilmemişi işaretle, yapılabilire göre filtrele `open`
+### P-39 — Hiç craft edilmemişi işaretle, yapılabilire göre filtrele `partly done`
 
 Sahibinin isteği, iki parça: *"craft edilebilir ama hiç craft edilmemiş eşyaları bir belirteçle
 keşfedildi/keşfedilmedi şeklinde işaretleyelim. craft sayfalarında sadece yapılabilirleri
 filtrelemek için bir checkbox ekleyelim."*
 
-**İki yarı farklı şeylere ihtiyaç duyuyor.** "Şu anda yapılabilir" zaten hesaplanıyor —
-zanaat listesi malzemenin ya da becerinin izin vermediğini soluklaştırıyor, yani filtre var
-olan bir yüklem ve onu okuyan bir onay kutusu. "Hiç craft edilmemiş" ise değil: P-32'deki
-edinme sırası gibi, bunu hiçbir şey kaydetmiyor; yani var olmaya başlaması ve kayda yazılması
-gereken bir alan.
+**Belirteç yapıldı (v0.7.35).** "Hiç craft edilmemiş" okumasını isteğin kendisi çözdü, yani
+oyuncunun ne yaptığını kaydediyor. Kategori/altkategori/kimliğe göre değil tarif kimliğine
+göre anahtarlı; çünkü 136 kimliğin dokuzu iki ya da üç kategoride birden görünüyor ve soru
+"bunlardan hiç yaptım mı". Bu teklifin önerdiği `item_log`'a konmadı: o eşyaya göre anahtarlı
+ve bir component tarifinin eşyası malzemesine bağlı.
 
-**Karar verilmesi gerekenler.** "Keşfedildi"nin *en az bir kez craft edilmiş* mi yoksa *en az
-bir kez yapılabilir olduğu görülmüş* mü anlamına geldiği. Birincisi oyuncunun yaptığının kaydı
-ve isteğin bariz okuması; ikincisi belirteci bir tarif defteri sayacına dönüştürüyor, ki bu
-aynı kelimeyi giyen farklı bir özellik.
+**Hâlâ açık: filtre ve teklifin ucuz olduğu iddiası yanlıştı.** "Şu anda yapılabilir" her yerde
+hesaplanmıyor. `get_availability` `ItemRecipe` üzerinde ve component tarifleri onu miras
+alıyor; `EquipmentRecipe extends Recipe` ve hiç taşımıyor — component ve ekipman sayfalarında
+soluklaştırmanın yorumda olmasının sebebi tam olarak bu.
 
-**Nerede yaşamalı.** `item_log` bir oyuncunun elde ettiğini, en iyi kaliteyi ve toplamı zaten
-kaydediyor ve Keşifler panelinde zaten çiziliyor. En-az-bir-kez-craft-edildi bayrağı yeni bir
-deponun içinde değil onun yanında olabilir — ki bu da belirtecin iki panelde aynı şeyi
-söylemesini sağlar.
+Yani onay kutusu önce o yüklemin ekipman için yazılmasını gerektiriyor ve orada soru bir
+eşyadakinden zor: bir ekipman tarifinin "bu yapılabilir mi" sorusunun anlam kazanması için
+önce bir malzeme VE bir bileşen kümesi seçilmiş olmalı. Dürüst seçenekler, onu düzgün yazmak
+ya da filtreyi yalnızca eşya sayfasında sunup bunu söylemek.
+
+`.recipe_hidden { display: none }` stil dosyasında zaten var, yani yüklem hazır olduğunda
+saklama yarısı bedava.
 
 ### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
 
@@ -826,6 +829,29 @@ kendiliğinden dönüşüyor. Kalan şey, bir kez emirsel olarak kurulup bir dah
 Her biri `option_language` içinde açık bir yeniden çizim alıyor ve biri eksik
 olursa `npm run check` düşüyor; böylece liste sessizce büyüyemiyor. Yeniden yükleme
 yok ve hiçbir şeyin bölünmesi gerekmedi.
+
+### Q-11 — Bir kitap, okunmak için beceri isteyebilmeli mi? **ÖNERİ: hayır, iki alan da silinsin**
+
+P-26, `src/` içinde hiçbir şeyin okumadığı iki `BookData` alanı buldu: bir kitabın
+okunabilmesine kapı gibi görünen `required_skills` ve bitirmeye ödül gibi görünen
+`finish_reward`. Ölçüm ne yapılacağını çözmüyor; bu madde de çözmüyor, zaten burada olmasının
+sebebi bu.
+
+**`finish_reward` aslında bir soru değil.** Hiçbir kitap onu ayarlamıyor ve hiçbir şey
+okumuyor; silmek bir tuzağı kaldırıyor ve hiçbir şey kaybettirmiyor.
+
+**Asıl soru `required_skills`,** çünkü *Nothing Bites Here* `{literacy: 6}` bildiriyor ve oyun
+bunu hep yok saydı. Şimdi uygulamak, **oyuncuların bugün okuyabildiği bir kitabı geriye dönük
+kilitlemek** olur — mevcut içerikte bir davranış değişikliği, bir düzeltme değil.
+
+**ÖNERİ: ikisi de silinsin.** Hiç çalışmamış bir kapı, elden alınan bir özellik değildir; ve
+onun dürüst hâli bir alandan fazlası: bu projenin kendi kuralı, kimsenin göremediği kilitli bir
+kapının hedef olmadığını söylüyor. Yani henüz okuyamadığınız bir kitabın bunu ve nedenini
+söylemesi gerekir — bir reddetme metni, ne istediğini öğrenmenin bir yolu ve geri gelmeye
+değmesinin bir sebebi. Bu, açılacak bir alan değil tasarlanacak bir özellik.
+
+Kapılı kitaplar isteniyorsa alan, yanında o reddetme metniyle geri gelir ve *Nothing Bites
+Here* başlangıç noktasıdır.
 
 ---
 

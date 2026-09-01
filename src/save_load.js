@@ -18,7 +18,7 @@ import { activities } from "./activities.js";
 import { add_to_character_inventory, character, equip_item, update_character_stats } from "./character.js";
 import { stances } from "./combat_stances.js";
 import { config } from "./config.js";
-import { recipes } from "./crafting_recipes.js";
+import { crafted_recipes, mark_recipe_crafted, recipes } from "./crafting_recipes.js";
 import { dialogues } from "./data/dialogues.js";
 import { favourite_locations, locations } from "./data/locations.js";
 import { skills } from "./data/skills.js";
@@ -318,6 +318,11 @@ function create_save() {
 
         save_data["enemy_killcount"] = enemy_killcount;
         save_data["item_log"] = item_log.items;
+        /*
+            A list rather than the object of trues it is kept in: the save only has to say
+            which recipes have ever been made, and a name per entry is the whole of that.
+        */
+        save_data["crafted_recipes"] = Object.keys(crafted_recipes);
 
         save_data["loot_sold_count"] = loot_sold_count;
 
@@ -780,6 +785,13 @@ function load(save_data) {
         if(character.equipment.weapon === null) {
             equip_item(null, true);
         }
+
+        /*
+            A save from before v0.7.35 has none, and every recipe then reads as never made -
+            which is true of what the save can say, and the marker clears the first time one
+            is crafted.
+        */
+        (save_data.crafted_recipes || []).forEach(recipe_id => mark_recipe_crafted(recipe_id));
 
         if(save_data.item_log) {
             item_log.items = save_data.item_log;

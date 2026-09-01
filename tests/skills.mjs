@@ -1514,6 +1514,50 @@ const translationManager = globalThis.__real_tm;
     }
 }
 
+// --- P-39: the never-crafted marker ---------------------------------------
+{
+    /*
+        The marker is drawn from `was_ever_crafted`, so what it says is only as good as
+        what the store remembers across a save. Same shape as the acquisition order in
+        P-32: a field that had to start existing and start being written down.
+    */
+    const [recipes_module] = await load_browser_free(repo_root, ["src/crafting_recipes.js"]);
+    const {crafted_recipes, mark_recipe_crafted, was_ever_crafted, recipes} = recipes_module;
+
+    const one = Object.keys(recipes.crafting?.items ?? {})[0];
+    const other = Object.keys(recipes.forging?.components ?? {})[0];
+    check("there are recipes to mark", Boolean(one) && Boolean(other));
+
+    if (one && other) {
+        check("a fresh game has made nothing", was_ever_crafted(one) === false);
+
+        mark_recipe_crafted(one);
+        check("crafting one marks it", was_ever_crafted(one) === true);
+        check("and leaves the others alone", was_ever_crafted(other) === false);
+
+        mark_recipe_crafted(one);
+        check("crafting it twice is the same as once",
+            Object.keys(crafted_recipes).length === 1);
+
+        //What the save carries, wiped, and read back the way save_load does it.
+        const saved = Object.keys(crafted_recipes);
+        for (const key of Object.keys(crafted_recipes)) delete crafted_recipes[key];
+        check("wiping it forgets", was_ever_crafted(one) === false);
+        saved.forEach(id => mark_recipe_crafted(id));
+        check("loading the save remembers again", was_ever_crafted(one) === true);
+
+        //A save from before the field carries nothing, and that has to be harmless.
+        for (const key of Object.keys(crafted_recipes)) delete crafted_recipes[key];
+        (undefined || []).forEach(id => mark_recipe_crafted(id));
+        check("an older save simply has made nothing yet", was_ever_crafted(one) === false);
+
+        //And nothing is not a recipe.
+        mark_recipe_crafted(undefined);
+        mark_recipe_crafted("");
+        check("marking nothing records nothing", Object.keys(crafted_recipes).length === 0);
+    }
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

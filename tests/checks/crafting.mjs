@@ -664,6 +664,52 @@ async function check_higher_tiers_are_still_worth_reaching() {
         + `assembly ${best_assembly}, every tier still worth reaching`);
 }
 
+/**
+ * Every craft that hands over its result records that it was made.
+ *
+ * The crafting pages mark a recipe the player has never actually made (P-39), and the mark
+ * clears when `mark_recipe_crafted` is called. A branch that adds the result to the inventory
+ * without that call leaves the recipe marked "never made" for ever - and nothing reports it,
+ * because the craft works: the item arrives, the xp is granted, only the ring beside the name
+ * never goes out.
+ *
+ * `use_recipe` has three of those branches - items, components, equipment - and they are far
+ * enough apart in one long function that a fourth would very easily be written without it.
+ */
+function check_every_craft_records_that_it_happened() {
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src", "crafting.js"), "utf8"));
+
+    const hands_over = [...source.matchAll(/add_to_character_inventory\s*\(/g)];
+    const records = [...source.matchAll(/mark_recipe_crafted\s*\(/g)];
+
+    if (hands_over.length === 0) {
+        error("crafting.js hands the player nothing - check_every_craft_records_that_it_happened "
+            + "is out of date.");
+        return;
+    }
+
+    /*
+        Each handover needs a record after it and before the next handover. Counting them and
+        comparing the totals would pass on three records crammed against one branch.
+    */
+    let unrecorded = 0;
+    for (let i = 0; i < hands_over.length; i++) {
+        const from = hands_over[i].index;
+        const to = i + 1 < hands_over.length ? hands_over[i + 1].index : source.length;
+        if (!records.some(r => r.index > from && r.index < to)) {
+            unrecorded++;
+            const line = source.slice(0, from).split("\n").length;
+            error(`crafting.js:${line} hands the player a crafted item and never calls `
+                + `mark_recipe_crafted, so that recipe stays marked as one they have never `
+                + `made however many they craft.`);
+        }
+    }
+
+    console.log(`[check] crafted marks: ${hands_over.length} craft path(s) handing over a `
+        + `result, ${hands_over.length - unrecorded} recording it`);
+}
+
 export {
     check_a_better_input_makes_a_better_result,
     check_higher_tiers_are_still_worth_reaching,
@@ -671,5 +717,6 @@ export {
     check_the_prediction_and_the_roll_share_one_source,
     check_inherited_quality_is_shown,
     check_crafting_passes_the_input_quality,
+    check_every_craft_records_that_it_happened,
     check_quality_rolls_take_an_input_quality,
 };

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 122 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 124 -->
 
 # Proposals
 
@@ -593,7 +593,7 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
 
-### P-26 — Two BookData fields that are read by nothing `open`
+### P-26 — Two BookData fields that are read by nothing `blocked`
 
 Found while measuring P-23. `BookData` declares six things a book can carry, and **two of
 them are never read anywhere in `src/`**:
@@ -624,27 +624,30 @@ than two.
 
 
 
-### P-39 — Mark what has never been crafted, and filter to what can be `open`
+### P-39 — Mark what has never been crafted, and filter to what can be `partly done`
 
 The owner's request, in two parts: *"let us mark craftable but never-crafted items with an
 indicator, as discovered / not discovered. And add a checkbox on the crafting pages to filter
 to only the ones that can be made."*
 
-**The two halves need different things.** "Can be made right now" is already computed - the
-crafting list greys out what the materials or the skill do not allow, so the filter is a
-predicate that exists and a checkbox that reads it. "Never crafted" is not: like the
-acquisition order in P-32, nothing records it, so it is a field that has to start existing and
-be written to the save.
+**The marker is done (v0.7.35).** "Never crafted" was the reading the request itself settled -
+*hiç craft edilmemiş* - so it records what the player has done. Keyed by recipe id rather than
+by category/subcategory/id, because nine of the 136 ids appear in two or three categories and
+the question is "have I ever made one of these". Not in `item_log`, which this proposal
+suggested: that is keyed by item, and a component recipe's item depends on its material.
 
-**What has to be decided.** Whether "discovered" means *crafted at least once* or *seen to be
-craftable at least once*. The first is a record of what the player has done and is the obvious
-reading of the request; the second turns the marker into a recipe-book tally, which is a
-different feature wearing the same word.
+**Still open: the filter, and the proposal was wrong about it being cheap.** "Can be made right
+now" is NOT already computed everywhere. `get_availability` lives on `ItemRecipe` and is
+inherited by component recipes; `EquipmentRecipe extends Recipe` and has none, which is
+exactly why the greying-out is commented out on the component and equipment pages.
 
-**Where it should live.** `item_log` already records what a player has obtained, best quality
-and total, and it is already drawn in the Discoveries panel. A crafted-at-least-once flag may
-belong beside it rather than in a new store - which would also make the marker mean the same
-thing in both panels.
+So the checkbox needs that predicate written for equipment first, and there the question is
+harder than for an item: an equipment recipe needs a material AND a set of components chosen
+before "can this be made" means anything at all. The honest options are to write it properly,
+or to offer the filter only on the items page and say so.
+
+`.recipe_hidden { display: none }` already exists in the stylesheet, so the hiding half costs
+nothing once the predicate does.
 
 ### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
 
@@ -804,6 +807,29 @@ imperatively once and never redrawn: the character bio, and the hero creation
 panel. Each gets an explicit repaint in `option_language`, and `npm run check`
 fails if one of them is missing, so the list cannot silently grow. No reload, and
 nothing had to be split.
+
+### Q-11 — Should a book be able to require a skill to read it? **PROPOSED: no, delete both fields**
+
+P-26 found two `BookData` fields that nothing in `src/` reads: `required_skills`, which looks
+like a gate on being able to read a book, and `finish_reward`, which looks like a reward on
+finishing one. The measurement does not settle what to do; this does not either, which is why
+it is here.
+
+**`finish_reward` is not really a question.** No book sets it and nothing reads it, so
+deleting it removes a trap and loses nothing.
+
+**`required_skills` is the question,** because *Nothing Bites Here* declares
+`{literacy: 6}` and the game has always ignored it. Enforcing it now would **retroactively
+lock a book players can read today** - a behaviour change to existing content, not a fix.
+
+**PROPOSED: delete both.** A gate that has never worked is not a feature being taken away, and
+the honest version of it is more than a field: this project's own rule says a locked door
+nobody can see is not a goal, so a book you cannot read yet has to say so and say why - a
+refusal text, a way to find out what it wants, and a reason it is worth coming back for. That
+is a feature to design, not a field to switch on.
+
+If gated books are wanted, the field comes back with that refusal text beside it, and *Nothing
+Bites Here* is where it starts.
 
 ---
 

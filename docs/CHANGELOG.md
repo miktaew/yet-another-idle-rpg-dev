@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 106 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 107 -->
 
 # Changelog
 
@@ -20,6 +20,50 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.35 - a recipe you have never made says so
+
+P-39's first half, from the owner: *"let us mark craftable but never-crafted items with an
+indicator, as discovered / not discovered."*
+
+**The open question answered itself out of the request.** "Never crafted" is what was asked
+for - *hiç craft edilmemiş* - so the marker records what the player has done, not what they
+have been shown. The second reading in the proposal, "seen to be craftable", is a recipe-book
+tally wearing the same word.
+
+**Keyed by recipe id and not by category/subcategory/id, deliberately.** Measured: 148 recipes
+carry 136 distinct ids, and nine of them appear in two or three categories - a Short hilt can
+be made by crafting, by forging or by woodworking. The question the ring answers is "have I
+ever made one of these", not "have I ever made one this particular way".
+
+**Not folded into `item_log`, which was the first idea and the proposal's own suggestion.**
+That store is keyed by ITEM, and a component recipe's item depends on the material it is made
+from - "Short hilt" has no single item to hang a flag on.
+
+The mark is a class on the row and a ring drawn from CSS, not anything written into the
+markup: the items page rebuilds its first child outright when it adds the craft-amount
+buttons, so anything inserted would survive on one page and be wiped on another. It is applied
+outside the subcategory branching for the same reason - only the items branch of
+`update_displayed_crafting_recipe` does anything at all, the other two being commented out,
+and a marker that appeared on one page in three would be worse than none.
+
+**Guard: `check_every_craft_records_that_it_happened`, and it earned itself immediately.** It
+found that of my three insertions, two had landed against the same handover and the equipment
+branch had none - which would have left every piece of equipment marked as never made however
+many the player forged. A branch that hands over the result without recording it reports
+nothing: the craft works, the item arrives, only the ring never goes out.
+
+It requires a record between each handover and the next rather than comparing totals, because
+three records crammed against one branch would satisfy a count. Negative-tested on two of the
+three branches. Nine behaviour tests cover the store itself, including the save round-trip and
+a save from before the field.
+
+**Still open: the filter.** The proposal said "the filter is a predicate that exists", and the
+measurement corrects that: `get_availability` is defined on `ItemRecipe` and inherited by
+component recipes, and `EquipmentRecipe extends Recipe` has none - which is why the greying
+out is commented out on two of the three pages. A checkbox for "only what can be made" needs
+that predicate written for equipment first, and equipment needs a material and its components
+chosen before the question even means anything.
 
 ### v0.7.34 - a panel is not drawn just before the value it shows changes
 
