@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 72 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 73 -->
 
 # Proposals
 
@@ -301,14 +301,30 @@ thread runs across the tallyman and the guild clerk, which is Q-8's own case —
 subject, two speakers, a month's walk apart. Guards: the existing class-level checks,
 which the two actions joined automatically, plus `check_lore_threads_resolve` from 2a.
 
-**Phase 3 — v0.7.2, *A Stroke Through It*.** Investigation, gated on standing — with `Guild`
-as a fourth reputation region, per Q-7 — over three
-paths that give **different pieces rather than the same piece**: guild records, dock
-worker testimony, old manifests. Thresholds derived from what is actually earnable
-(610 Village, 350 Slums, 320 Town today) and from where the existing settlement
-actions already sit, not invented. Guard: `check_reputation_regions_have_names` -
-every key of `character.reputation` resolves to a display name in every locale;
-negative-tested with a nameless region.
+**Phase 3 — v0.7.2, *A Stroke Through It*.** Investigation, gated on standing — with
+`Guild` as a fourth reputation region, per Q-7 — over three paths that give **different
+pieces rather than the same piece**: guild records, dock worker testimony, old
+manifests. Thresholds derived from what is actually earnable (610 Village, 350 Slums,
+320 Town today) and from where the existing settlement actions already sit, not
+invented. Split like the two phases before it.
+
+- **3a — the region.** `done`. `character.reputation` has a fourth key, `Guild`, its
+  name in both locales, and the guard. The cost was what Q-7 measured and no more: one
+  field, two rows, a check. An old save arrives without the key and keeps the declared
+  0; `update_displayed_reputation` draws only regions above 0, so nobody sees a row
+  they have not earned; `market_saturation` is untouched, because a guild that prices
+  nothing needs no market region. Guard: `check_reputation_regions_have_names`, over
+  all three surfaces that read a region key and none of which agree automatically — the
+  character sheet's `getDisplayName`, a `reputation:` reward, where `add_reputation`
+  **throws** on a region it does not know, and a `reputation:` condition, where the
+  same typo reads undefined and shuts the gate for good with nothing said. Nothing can
+  earn Guild standing yet, so the row never draws and there is no version.
+- **3b — the three paths.** `open`. Guild records, dock worker testimony and old
+  manifests, each giving a different piece. This is also where Guild standing becomes
+  earnable, and it has to be earnable **inside the arc** rather than only from the
+  guild work that already exists: a save that finished *The Merchant's Word* before
+  this shipped would otherwise be locked out of the guild path for good. This is what
+  ships as v0.7.2.
 
 **Phase 4 — v0.7.3, *Out on the Ebb*.** The low-tide approach. Two new places at
 most, per Q-9, with the anchorage and the cargo deck as actions rather than rooms.

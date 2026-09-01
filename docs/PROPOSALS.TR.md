@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 72 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 73 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -314,12 +314,30 @@ düzeyi kontroller ve 2a'dan gelen `check_lore_threads_resolve`.
 
 **Faz 3 — v0.7.2, *A Stroke Through It*.** İtibara bağlı soruşturma — Q-7 uyarınca
 dördüncü bir reputation bölgesi olan `Guild` üzerinden — ve **aynı parçayı değil,
-farklı parçaları** veren üç yol: lonca kayıtları, liman işçisinin tanıklığı,
-eski manifestolar. Eşikler uydurulmaz; gerçekten kazanılabilen değerlerden (bugün
-610 Village, 350 Slums, 320 Town) ve mevcut yerleşim aksiyonlarının oturduğu
-yerlerden türetilir. Muhafız: `check_reputation_regions_have_names` —
-`character.reputation` içindeki her anahtar her dilde bir görünen ada çözülür;
-adsız bir bölgeyle negatif test edilir.
+farklı parçaları** veren üç yol: lonca kayıtları, liman işçisinin tanıklığı, eski
+manifestolar. Eşikler uydurulmaz; gerçekten kazanılabilen değerlerden (bugün 610
+Village, 350 Slums, 320 Town) ve mevcut yerleşim aksiyonlarının oturduğu yerlerden
+türetilir. Kendinden önceki iki faz gibi bölündü.
+
+- **3a — bölge.** `bitti`. `character.reputation` artık dördüncü bir anahtar taşıyor:
+  `Guild`; adı iki dilde de var ve muhafızı da. Maliyet Q-7'nin ölçtüğü kadar oldu,
+  fazlası değil: tek alan, iki satır, bir kontrol. Eski bir kayıt bu anahtar olmadan
+  geliyor ve bildirilen 0 kalıyor; `update_displayed_reputation` yalnızca 0'ın
+  üstündeki bölgeleri çiziyor, yani kimse kazanmadığı bir satırı görmüyor;
+  `market_saturation`'a dokunulmadı, çünkü hiçbir şeyi fiyatlamayan bir loncanın
+  market bölgesine ihtiyacı yok. Muhafız: `check_reputation_regions_have_names`; bir
+  bölge anahtarını okuyan ve hiçbiri kendiliğinden birbiriyle uyuşmayan üç yüzeyin
+  üçünü de kapsıyor — karakter sayfasının `getDisplayName`'i; bir `reputation:` ödülü,
+  ki `add_reputation` tanımadığı bölgede **hata fırlatıyor**; ve bir `reputation:`
+  koşulu, ki aynı yazım hatası orada undefined okuyup kapıyı hiçbir şey söylemeden
+  temelli kapatıyor. Henüz hiçbir şey lonca itibarı kazandırmıyor, yani satır hiç
+  çizilmiyor ve sürüm de yok.
+- **3b — üç yol.** `open`. Lonca kayıtları, liman işçisinin tanıklığı ve eski
+  manifestolar; her biri farklı bir parça veriyor. Lonca itibarının kazanılabilir hâle
+  geleceği yer de burası ve **arc'ın içinde** kazanılabilir olmak zorunda, yalnızca
+  hâlihazırdaki lonca işinden değil: bu sürümden önce *The Merchant's Word*'ü bitirmiş
+  bir kayıt, aksi hâlde lonca yolundan temelli dışlanırdı. v0.7.2 olarak yayınlanacak
+  olan bu.
 
 **Faz 4 — v0.7.3, *Out on the Ebb*.** Cezir yaklaşımı. Q-9 uyarınca en fazla iki
 yeni yer; demirleme yeri ve güverte oda değil aksiyon olur. Combat değil, skill ve

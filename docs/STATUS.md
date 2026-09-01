@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 19 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 20 -->
 
 # Status
 
@@ -190,6 +190,7 @@ but the ones that encode a bug that shipped:
 | `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 25 names across 54 files. |
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 3 lines. |
+| `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 51 uses. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -211,8 +212,9 @@ directive is recorded before it is worked on:
   *Forty Tons*, shipped as v0.7.1: the unloading and the manifest are two actions on
   the existing bay, quest 1 opens from the work rather than from anybody handing it
   out, and the arc's first lore thread runs across two speakers. Phase 3,
-  *A Stroke Through It*, is next, and it spends Q-7 - `Guild` as a fourth reputation
-  region.
+  *A Stroke Through It*, is split the same way: 3a, `Guild` as a fourth reputation
+  region with its names and its guard, is in; 3b, the three investigation paths and
+  the standing that opens them, is what ships as v0.7.2.
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.

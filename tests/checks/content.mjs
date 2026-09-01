@@ -3,7 +3,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
-import { default_language, repo_root } from "../lib/context.mjs";
+import { default_language, locales_dir, repo_root } from "../lib/context.mjs";
 import { error, errors } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 
@@ -558,6 +558,90 @@ function value_expression(source, from) {
  * That is enough here: every rule above is about what is written, not about what the
  * player has heard.
  */
+/**
+ * A reputation region nobody can name, and a region that is not one.
+ *
+ * `character.reputation` is a plain object of region keys, and three separate things
+ * read those keys - none of them agreeing automatically:
+ *
+ *  - The character sheet draws each region above zero through `getDisplayName`, so a
+ *    region with no `name <region>` row renders the placeholder in the one panel the
+ *    player has open all game. P-14 phase 3 adds a fourth region, `Guild` (Q-7), which
+ *    is the first time that has happened since the fork began.
+ *  - A `reputation:` REWARD names a region, and `add_reputation` THROWS on one it does
+ *    not know. That is a crash, in front of a player, at the moment a quest pays out -
+ *    the worst place for it and the hardest to reach in testing.
+ *  - A `reputation:` CONDITION names a region too, and that one fails the other way:
+ *    `character.reputation[typo]` is undefined, every comparison against it is false,
+ *    and the gate is shut for good with nothing said anywhere.
+ *
+ * One scan covers the last two, because rewards and conditions are the same literal.
+ */
+async function check_reputation_regions_have_names() {
+    const before = errors.length;
+
+    const character_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/character.js"), "utf8"));
+    const declaration = /this\.reputation\s*=\s*\{([^}]*)\}/.exec(character_source);
+    if (!declaration) {
+        error("src/character.js no longer declares `this.reputation = {...}` -"
+            + " check_reputation_regions_have_names cannot tell a region from a typo.");
+        return;
+    }
+    const regions = [...declaration[1].matchAll(/(\w+):\s*-?\d+/g)].map(match => match[1]);
+    if (regions.length === 0) {
+        error("character.reputation declares no regions - this check is out of date.");
+        return;
+    }
+
+    //Every language, not just the reference one: a region earned by a Turkish player
+    //draws from the Turkish file or it draws the placeholder.
+    const names = fs.readdirSync(locales_dir)
+        .filter(file => file.endsWith(".js"))
+        .map(file => file.slice(0, -3));
+
+    for (const locale_name of names) {
+        const rows = await load_locale(locale_name);
+        if (!rows) continue;
+        for (const region of regions) {
+            if (!rows[`name ${region}`]) {
+                error(`reputation region "${region}" has no "name ${region}" row in`
+                    + ` locales/${locale_name}.js. The character sheet resolves it through`
+                    + " getDisplayName, so the player would read the id instead of a name.");
+            }
+        }
+    }
+
+    const known = new Set(regions);
+    let named = 0;
+    for (const relative of source_files(repo_root)) {
+        if (relative === "src/character.js") continue;
+        const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        for (const literal of source.matchAll(/reputation:\s*\{([^}]*)\}/g)) {
+            for (const entry of literal[1].matchAll(/(\w+):\s*-?\d+/g)) {
+                named++;
+                if (!known.has(entry[1])) {
+                    error(`${relative} names reputation region "${entry[1]}", which`
+                        + " character.reputation does not have. As a reward add_reputation"
+                        + " throws; as a condition the gate reads undefined and stays shut"
+                        + ` for good. Regions are ${regions.join(", ")}.`);
+                }
+            }
+        }
+    }
+
+    if (named === 0) {
+        error("no reputation region is named anywhere outside character.js - this check is"
+            + " out of date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] reputation regions: ${regions.length} regions named in`
+            + ` ${names.length} locales, ${named} uses all resolving`);
+    }
+}
+
 function check_lore_threads_resolve() {
     const before = errors.length;
     const source = strip_comments(
@@ -1191,4 +1275,5 @@ export {
     check_trader_market_regions,
     check_seasonal_content_is_reachable,
     check_lore_threads_resolve,
+    check_reputation_regions_have_names,
 };

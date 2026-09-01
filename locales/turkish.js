@@ -1561,6 +1561,7 @@ const names = {
     "name Riverbank": "Nehir kıyısı",
     "name Riverbank shore": "Nehir kumsalı",
     "name Shack": "Baraka",
+    "name Guild": "Lonca",
     "name Slums": "Kenar mahalle",
     "name Small flat area in mountains": "Dağlarda küçük bir düzlük",
     "name Sparring with the village guard (heavy)": "Köy muhafızıyla idman (ağır)",

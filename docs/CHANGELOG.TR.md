@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 65 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 66 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,60 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Lonca itibarı bir reputation bölgesi oldu; bölge anahtarı artık yazım hatası olamıyor
+
+P-14 Faz 3a; Q-7'nin koda dökülmüş hâli. Faz 3, birbirinden farklı üç bilgi yolu
+istiyor ve üç eksenin ikisi zaten harcanmıştı: kasaba meydanı Town'u 50 / 150 / 250'de,
+sokak ise Slums'ı 100 / 200 / 300'de okuyor; yani bu ikisinden çıkacak üçüncü bir yol,
+aynı yolun tekrarı olurdu. Üçüncü yolun üçüncü yol gibi hissettirmesini sağlayan şey
+dördüncü bir bölge — oyuncunun yükselişini izleyebildiği bir sayı; alternatif olan
+bayrak-ve-quest-durumu ise daha az koda mal olup hiçbir şey kazandırmıyordu.
+
+Maliyet Q-7'nin ölçtüğü kadar oldu, fazlası değil. `character.reputation` dördüncü bir
+anahtar taşıyor: `Guild`; iki dilde de bir `name Guild` satırı var. Başka hiçbir şey
+kımıldamadı:
+
+- Eski bir kayıt bu anahtar olmadan geliyor. `load()`, **kayıttaki** anahtarları
+  dolaşıyor ve tanımadığı birinde uyarı verip geçiyor; yani eksik anahtar, bildirilen
+  0'ı yerinde bırakıyor. Varsayılmadı, gerçek bir v0.6.54 export'una karşı doğrulandı:
+  içindeki her anahtar hâlâ çözülüyor.
+- `update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri çiziyor, yani kimse
+  kazanmadığı bir satırı görmüyor — bunun sürümsüz yayınlanmasının sebebi de bu. Henüz
+  hiçbir şey lonca itibarı kazandırmıyor, dolayısıyla satır hiç çizilmiyor ve oyuncu
+  hiçbir değişiklik görmüyor.
+- `market_saturation` ayrı bir harita ve ona dokunulmadı. Hiçbir şeyi fiyatlamayan bir
+  loncanın market bölgesine ihtiyacı yok.
+
+**`check_reputation_regions_have_names`**, adının söylediğinden fazlasını kapsıyor;
+çünkü bir bölge anahtarını üç şey okuyor ve hiçbiri kendiliğinden diğeriyle uyuşmuyor:
+
+- Karakter sayfası onu `getDisplayName` ile çözüyor; yani `name <bölge>` satırı olmayan
+  bir bölge, oyuncunun bütün oyun boyunca açık tuttuğu tek panelde kendi kimliğini
+  çiziyor. Yalnızca referans dil değil, her dil kontrol ediliyor: Türkçe oynayan bir
+  oyuncunun kazandığı bölge ya Türkçe dosyadan çizilir ya da yer tutucudan.
+- Bir `reputation:` **ödülü** bölge adlandırıyor ve `add_reputation` tanımadığı bölgede
+  *hata fırlatıyor*. Bu, bir quest ödülü verirken oyuncunun gözü önünde çökme demek —
+  olabileceği en kötü yer ve oynayarak ulaşılması en zor yer.
+- Bir `reputation:` **koşulu** da bölge adlandırıyor ve ters yönde bozuluyor:
+  `character.reputation[yazım_hatası]` undefined oluyor, ona karşı yapılan her
+  karşılaştırma yanlış dönüyor ve kapı hiçbir yerde bir şey söylemeden temelli
+  kapanıyor.
+
+Son ikisi aynı değişmez olduğu için `src/` altındaki her dosyayı tarayan tek bir geçiş
+ikisini de kapsıyor. 4 bölge, 2 dil, 51 kullanım.
+
+Negatif test üç dosyada üç yönden yapıldı: Türkçe `name Guild` satırı silindi, bir quest
+ödülünde bölge adı yanlış yazıldı ve bir diyalog ödülünde bölge adı yanlış yazıldı. Üçü
+de adlandırıldı; eksik satır iki kez adlandırıldı — biri, yalnızca bir anahtarın eksik
+olduğunu söyleyebilen mevcut dil eşleşme kontrolü tarafından; diğeri, neyin bozulduğunu
+ve oyuncunun bunu nerede göreceğini söyleyen bu kontrol tarafından.
+
+Düzeltilmeyip kayda geçirilen bir şey var, çünkü 3b'ye ait: lonca itibarının
+**arc'ın içinde** kazanılabilir hâle gelmesi gerekiyor, yalnızca hâlihazırdaki lonca
+işinden değil. Bu sürümden önce *The Merchant's Word*'ü bitirmiş bir kayıt, aksi hâlde
+lonca yolundan temelli dışlanırdı; ne zaman oynadığınıza göre kapalı olan bir yol da yol
+sayılmaz.
 
 ### v0.7.1 - *Forty Tons*: birinin iki kez boş yazdığı bir satır
 

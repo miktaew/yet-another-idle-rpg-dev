@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 19 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 20 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -191,6 +191,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 | `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. 1 iplik, 3 satır. |
+| `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 51 kullanım. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -211,8 +212,9 @@ sayılmaz; koruma da hata geri konularak sınanır.
   kâtibinin söylentisi hep o tek pencereyi okuyor. *Forty Tons* olan Faz 2 de aynı
   şekilde v0.7.1 olarak yayınlandı: boşaltma ile manifesto, mevcut körfez üzerinde iki
   aksiyon; 1. quest kimsenin elinden değil işten açılıyor; arc'ın ilk lore ipliği de
-  iki konuşan arasında uzanıyor. Sıradaki faz, *A Stroke Through It* olan Faz 3; Q-7'yi
-  harcayacak — dördüncü reputation bölgesi olarak `Guild`.
+  iki konuşan arasında uzanıyor. *A Stroke Through It* olan Faz 3 de aynı şekilde
+  bölündü: dördüncü reputation bölgesi `Guild`, adları ve muhafızı olan 3a girdi; üç
+  soruşturma yolu ile onları açan itibar olan 3b, v0.7.2 olarak yayınlanacak.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.

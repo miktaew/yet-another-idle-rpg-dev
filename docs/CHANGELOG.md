@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 65 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 66 -->
 
 # Changelog
 
@@ -20,6 +20,57 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### Guild standing is a reputation region, and a region key can no longer be a typo
+
+P-14 phase 3a, and Q-7 put into code. Phase 3 wants three information paths that differ,
+and two of the three axes were already spent: the town square reads Town at 50 / 150 /
+250 and the row reads Slums at 100 / 200 / 300, so a third path off either of those is
+the same path twice. A fourth region is what makes a third path feel like one - a number
+the player can watch rise, rather than the flags-and-quest-state alternative, which costs
+less code and buys nothing.
+
+The cost was what Q-7 measured and no more. `character.reputation` has a fourth key,
+`Guild`, and both locales have a `name Guild` row. Nothing else moved:
+
+- An old save simply arrives without the key. `load()` walks the keys **in the save**
+  and warns past one it does not know, so a missing key leaves the declared 0 standing.
+  Verified against a real v0.6.54 export rather than assumed: every key in it still
+  resolves.
+- `update_displayed_reputation` draws only regions above 0, so nobody sees a row they
+  have not earned - which is also why this ships without a version. Nothing can earn
+  Guild standing yet, so the row never draws and the player sees no change at all.
+- `market_saturation` is a separate map and is untouched. A guild that prices nothing
+  does not need a market region.
+
+**`check_reputation_regions_have_names`** covers more than its name says, because a
+region key is read by three things and none of them agree automatically:
+
+- The character sheet resolves it through `getDisplayName`, so a region with no
+  `name <region>` row draws the id in the one panel the player has open all game. Every
+  locale is checked, not just the reference one: a region earned by a Turkish player
+  draws from the Turkish file or it draws the placeholder.
+- A `reputation:` **reward** names a region, and `add_reputation` *throws* on one it
+  does not know. That is a crash in front of a player at the moment a quest pays out -
+  the worst place for it and the hardest to reach by playing.
+- A `reputation:` **condition** names one too, and fails the opposite way:
+  `character.reputation[typo]` is undefined, every comparison against it is false, and
+  the gate is shut for good with nothing said anywhere.
+
+The last two are the same literal, so one scan over every file under `src/` covers both.
+4 regions, 2 locales, 51 uses.
+
+Negative-tested three ways in three files: the Turkish `name Guild` row deleted, a
+misspelt region in a quest reward, and a misspelt region in a dialogue reward. All three
+were named, and the missing row was named twice - once by the existing locale-parity
+check, which can only say a key is missing, and once by this one, which says what
+breaks and where the player would see it.
+
+One thing recorded rather than fixed, because it belongs to 3b: Guild standing has to
+become earnable **inside the arc** and not only from the guild work that already exists.
+A save that finished *The Merchant's Word* before this shipped would otherwise be locked
+out of the guild path for good, and a path that is closed depending on when you played
+is not a path.
 
 ### v0.7.1 - *Forty Tons*: a line somebody wrote empty, twice
 

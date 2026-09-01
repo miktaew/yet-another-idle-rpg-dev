@@ -132,6 +132,22 @@ class Hero extends Person {
                         Village: 0,
                         Slums: 0,
                         Town: 0,
+                        /*
+                            Standing with the guild rather than with a place, and the
+                            fourth region rather than a flag because P-14 phase 3 wants
+                            three information paths that differ, and two of the three
+                            axes are already spent - the town square reads Town and the
+                            row reads Slums, so a third path off either is the same path
+                            twice (Q-7).
+
+                            An old save simply arrives without it: load() walks the keys
+                            IN THE SAVE and warns past one it does not know, so a missing
+                            key leaves this declared 0. update_displayed_reputation shows
+                            only regions above 0, so nobody sees a row they have not
+                            earned. market_saturation is a separate map and is not
+                            touched - a guild that prices nothing needs no market region.
+                        */
+                        Guild: 0,
                 };
                 this.bonus_skill_levels = {
                         full: {

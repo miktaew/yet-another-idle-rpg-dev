@@ -1510,6 +1510,7 @@ const names = {
     "name Riverbank": "Riverbank",
     "name Riverbank shore": "Riverbank shore",
     "name Shack": "Shack",
+    "name Guild": "Guild",
     "name Slums": "Slums",
     "name Small flat area in mountains": "Small flat area in mountains",
     "name Sparring with the village guard (heavy)": "Sparring with the village guard (heavy)",
