@@ -15,9 +15,29 @@ const enemy_sizes = {
     LARGE: "large",
 }
 
-//tag: skill
+/*
+    tag: skill. The skill's level multiplies the droprate of anything carrying the tag,
+    through get_droprate_modifier below.
+
+    `aquatic` is the second entry and P-23 chose it by measurement rather than by theme.
+    Every tag with loot worth scaling was counted: `beast` carries 23 of the 32 enemies
+    and 2.93 of the 2.94 total drop weight in the game, which is why it was the first and
+    why a second entry on it would be a general buff wearing a book's clothes. `aquatic`
+    is 6 enemies, 5 of them with loot, 7 distinct items and 1.14 of the weight - narrow
+    enough to be a specialisation and heavy enough to be worth one.
+
+    `insect` was the intuitive answer and the measurement killed it: three of its four
+    enemies have an EMPTY loot list and the fourth drops herbs at half a percent. A book
+    that multiplied that would have been sold for a great deal of money and done nothing.
+
+    All six aquatic enemies are also beasts, so Shellwork stacks with Butchering on them
+    and on nothing else. That is the design and not an oversight: you already know how to
+    butcher, and the monograph teaches you what a shell does. Its coefficient is capped
+    lower than Butchering's for exactly that reason.
+*/
 const droprate_modifier_skills_for_tags = {
     "beast": "Butchering",
+    "aquatic": "Shellwork",
 }
 
 //tag: [skills], since some skills might be tag-specific and some might affect multiple tags

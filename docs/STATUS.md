@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 34 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 35 -->
 
 # Status
 
@@ -73,7 +73,7 @@ npm run check:bundle
 | File | Lines | What it holds |
 | --- | ---: | --- |
 | `display.js` | 3,815 | Every DOM update. Down from 7,057 across six cuts. |
-| `data/skills.js` | 5,702 | 64 skills, their milestones and rank names. |
+| `data/skills.js` | 5,756 | 65 skills, their milestones and rank names. |
 | `items.js` | 5,231 | Item templates and the generated-item machinery. |
 | `main.js` | 4,501 | Entry point: game loop, actions, combat, rewards, options. |
 | `data/locations.js` | 4,684 | 69 locations, their actions and connections. |
@@ -149,7 +149,7 @@ Measured from the registries and the checks:
 - **45 actions** and **46 activities** spread over those places.
 - **19 quests** holding **70 tasks**, 11 of them hidden across 6 quests; every hidden
   task has an advancer.
-- **64 skills**, 58 of them with more than one rank name, plus milestones.
+- **65 skills**, 59 of them with more than one rank name, plus milestones.
 - **32 enemies**.
 - **142 recipes** in 7 disciplines, plus three plate materials; recipe item names all
   resolve against **453 item templates**.
@@ -190,7 +190,9 @@ but the ones that encode a bug that shipped:
 | `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 25 names across 54 files. |
 | `trader stock` | A stock list that does not exist, or a shelf stored on a trader instead of derived. 9 names, 8 lists. |
 | `lore threads` | A thread that draws as a heading with nothing under it. 1 thread, 6 lines. |
-| `books` | A book nothing sells, drops or hands over, or a book item with no reading data. 11 books. |
+| `books` | A book nothing sells, drops or hands over, or a book item with no reading data. 12 books. |
+| `droprate tags` | A droprate skill pointed at a tag no enemy carries, or at one whose enemies drop nothing. 2 pairs. |
+| `locked skills` | A skill that starts locked and that no reward ever unlocks. 3 locked. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

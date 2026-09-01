@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 34 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 35 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -76,7 +76,7 @@ npm run check:bundle
 | Dosya | Satır | İçeriği |
 | --- | ---: | --- |
 | `display.js` | 3.815 | Bütün DOM güncellemeleri. Altı kesmede 7.057'den indi. |
-| `data/skills.js` | 5.702 | 64 yetenek, kilometre taşları ve rütbe adları. |
+| `data/skills.js` | 5.756 | 65 yetenek, kilometre taşları ve rütbe adları. |
 | `items.js` | 5.231 | Eşya şablonları ve üretilen eşya düzeneği. |
 | `main.js` | 4.501 | Giriş noktası: oyun döngüsü, aksiyonlar, dövüş, ödüller, seçenekler. |
 | `data/locations.js` | 4.684 | 69 yer, aksiyonları ve bağlantıları. |
@@ -152,7 +152,7 @@ Kayıt defterlerinden ve kontrollerden ölçüldü:
 - Bu yerlere dağılmış **45 aksiyon** ve **46 etkinlik**.
 - **70 adım** taşıyan **19 görev**; adımların 11'i gizli ve 6 göreve dağılmış, her gizli
   adımın bir ilerleticisi var.
-- **64 yetenek**, 58'inde birden fazla rütbe adı, ayrıca kilometre taşları.
+- **65 yetenek**, 59'unda birden fazla rütbe adı, ayrıca kilometre taşları.
 - **32 yaratık**.
 - 7 dalda **142 tarif** ve üç plaka malzemesi; tarif eşya adlarının tamamı **453 eşya
   şablonuna** karşı çözülüyor.
@@ -191,7 +191,9 @@ yayımlanmış bir hatayı kodlayanlar:
 | `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
 | `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. 1 iplik, 6 satır. |
-| `books` | Hiçbir şeyin satmadığı/düşürmediği/vermediği bir kitap ya da okuma verisi olmayan bir kitap eşyası. 11 kitap. |
+| `books` | Hiçbir şeyin satmadığı/düşürmediği/vermediği bir kitap ya da okuma verisi olmayan bir kitap eşyası. 12 kitap. |
+| `droprate tags` | Hiçbir düşmanın taşımadığı ya da düşmanları hiçbir şey düşürmeyen bir etikete yöneltilmiş düşme oranı yeteneği. 2 çift. |
+| `locked skills` | Kilitli başlayan ve hiçbir ödülün açmadığı bir yetenek. 3 kilitli. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

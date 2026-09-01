@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 91 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 92 -->
 
 # Proposals
 
@@ -618,33 +618,6 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
 
-### P-23 — The collector sells one book, and it is not a cookbook `open`
-
-The owner's request: the collector could sell a very special book, and it could raise
-drop rates.
-
-**Why he is the right person.** He does not sell - *"People ask, and then they explain why
-their case is different, and then they leave"* - and P-14 phase 5 gave him a reason to make
-one exception for this player specifically. A book that comes from the one man in the game
-who refuses to sell is worth more than the same book on a shelf.
-
-**Measured:** eleven books exist and `BookData` supports `bonuses.xp_multipliers`,
-`bonuses.multipliers` (character stats), and `rewards`. **Nothing in `BookData` touches
-drop rates**, so this is the first book that would need the engine to learn something new.
-`tags_for_droprate_modifier_skills` and `enemy_tag_to_skill_mapping` in `enemies.js` are
-where droprate already scales off skills, which is the shape to extend rather than a
-second mechanism beside it.
-
-**What it must not be.** A flat "+X% drops" is the least interesting thing it could do and
-would inflate every loot table at once. The existing droprate scaling is per enemy *tag*,
-which is the better precedent: a book about one kind of creature, or about reading a
-carcass, earns its price and does not touch the rest of the game.
-
-**Price.** The collector's own precedent is 30,000 for the tally, and that number was
-argued in the text - *"I am not going to pretend the number is about the bone."* This is
-the second thing he has ever sold; it should cost more than the first, and v0.7.10's
-measurement of the economy is the input.
-
 ### P-24 — Lockpicking, and something worth locking `open`
 
 The owner's request: lockpicking could exist, hunting in a region could turn up a chest at
@@ -718,6 +691,36 @@ has already shipped both halves of that.
 list is derived is the mechanism; three traders in one room is the parallel system D-*
 exists to prevent. And the goods must be existing items unless there is a reason - the
 eight unmade generated components and the tier-5 family are already there to draw on.
+
+
+### P-26 — Two BookData fields that are read by nothing `open`
+
+Found while measuring P-23. `BookData` declares six things a book can carry, and **two of
+them are never read anywhere in `src/`**:
+
+- `required_skills`, which looks like a gate on being able to read the book. *Nothing
+  Bites Here* declares `{literacy: 6}` and the game does not enforce it; the book can be
+  read at literacy 0.
+- `finish_reward`, which looks like a reward that fires on finishing. Nothing consumes it,
+  and no book sets it - so nobody has been bitten yet.
+
+The second is a trap and the first is already a small lie in the data. P-15's own text
+claims "`BookData` already supports everything a new book could want" and lists both,
+which is how a future book would come to declare a requirement that is not one.
+
+**Two honest ways out, and they are not equal.** Wiring `required_skills` up is a real
+feature - a book you cannot read yet has to say so, and say why, or it is a locked door
+nobody can see, which this project has a directive about. Deleting both fields is smaller
+and loses nothing that exists. The measurement does not settle which; the owner's appetite
+for gated books does.
+
+**What must not happen** is a third book declaring `required_skills`. *What the Water Gives
+Up* was written without one on purpose and says so where the field would have gone.
+
+**Guard.** Whichever way it goes, the class is "a declared field that nothing reads", and
+it is checkable: every field a data class declares should be named somewhere outside its
+own constructor. That is a broader check than this proposal and would probably find more
+than two.
 
 
 ---

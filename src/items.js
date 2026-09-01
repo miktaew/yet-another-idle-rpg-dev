@@ -1553,6 +1553,27 @@ book_stats["Nothing Bites Here"] = new BookData({
     },
 });
 
+/*
+    P-23. The collector's second and last sale. The reward is a locked skill rather than a
+    multiplier, which is the shape "Butchering and you" set: a book that only multiplies
+    is the weakest thing BookData can do.
+
+    The longest read in the game, because it is also the dearest thing anybody sells.
+*/
+book_stats["What the Water Gives Up"] = new BookData({
+    required_time: 600,
+    /*
+        No required_skills, deliberately. BookData declares the field and NOTHING in src/
+        ever reads it - the same is true of finish_reward - so the {literacy: 6} on
+        "Nothing Bites Here" is a requirement the game does not enforce. Writing a second
+        one would be adding data that reads as a rule and is not one. Recorded as P-26.
+    */
+    literacy_xp_rate: 3,
+    rewards: {
+        skills: ["Shellwork"],
+    },
+});
+
 book_stats["Counting Mice"] = new BookData({
     required_time: 90,
     literacy_xp_rate: 1,
@@ -1616,6 +1637,13 @@ book_stats["Counting Mice"] = new BookData({
         name: "Nothing Bites Here",
         description: "desc item Nothing Bites Here",
         value: 900
+    });
+    item_templates["What the Water Gives Up"] = new Book({
+        name: "What the Water Gives Up",
+        description: "desc item What the Water Gives Up",
+        //Worth a great deal and sold for a great deal more; the collector says as much
+        //about his prices. Traders buy below value, so there is no arbitrage in it.
+        value: 12000
     });
     item_templates["Counting Mice"] = new Book({
         name: "Counting Mice",

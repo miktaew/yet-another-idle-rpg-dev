@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 82 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 83 -->
 
 # Changelog
 
@@ -20,6 +20,82 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.14 - the collector's second and last sale
+
+P-23, from the owner's request: the collector could sell a very special book, and it could
+raise drop rates. The design was decided by measurement twice, and the intuitive answer
+was wrong both times.
+
+**Where droprate already lives.** `droprate_modifier_skills_for_tags` in `enemies.js` maps
+an enemy tag to the skill whose level multiplies that tag's drops, and it had exactly one
+entry: `beast: "Butchering"`. `Enemy.get_droprate_modifier` walks the enemy's tags and
+multiplies by the skill coefficient for each one it finds. So the shape to extend was one
+line of data, not a new mechanism - which is what P-23 asked for.
+
+**The first wrong answer: a general boost.** P-23 had already ruled out a flat "+X% drops",
+and the measurement says why in numbers: `beast` carries 23 of the game's 32 enemies and
+**2.93 of the 2.94 total drop weight**. Anything pointed at beasts, or at the whole game,
+is the same buff twice.
+
+**The second wrong answer: `insect`.** It was the obvious narrow tag - the arc's own
+enemies are ants and dragonflies - and the measurement killed it outright. Three of its
+four enemies have an **empty loot list**, and the fourth drops herbs at half a percent.
+Total drop weight **0.02**. A book sold for a great deal of money to multiply that would
+have worked perfectly and done nothing.
+
+**`aquatic`, measured against every alternative.** 6 enemies, 5 of them with loot, 7
+distinct items, drop weight 1.14 - the narrowest tag in the game with something real on
+the other side of the multiplication. Crab meat at 2%, crab claw at 1%, giant crab claw
+and turtle shell at 0.5%, alligator skin at 1%: the swamp crafting chain, and every one of
+them a drop the player currently waits a long time for.
+
+Every aquatic enemy is also a beast, so the new skill **stacks with Butchering on those six
+and on nothing else**. That is the design rather than an oversight - you already know how
+to butcher, and the monograph teaches you what a shell does - and it is why three of
+Butchering's numbers are lowered for it: max level 40 rather than 60, coefficient 1.5
+rather than 2, base xp cost 60 rather than 40. Measured through the shipped
+`get_droprate_modifier`: at level 40 Butchering alone gives 1.587 on a crab, both together
+give 2.381, and a wolf rat stays at 1.587 either way.
+
+**Shellwork is Butchering's sibling in every respect that matters**: locked until a book
+teaches it, parented to `Crafting mastery`, read by the same table. `Butchering and you`
+unlocking `Butchering` is the precedent and it is exact, including the part that matters
+for saves - a finished book re-applies its rewards on load with `only_unlocks: true`, and
+`rewards.skills` is not one of the kinds that flag skips. Verified rather than assumed.
+
+**The book.** *What the Water Gives Up*, 600 minutes - the longest read in the game -
+literacy xp rate 3, and its whole reward is the skill. No xp multiplier: P-15's rule is
+that a book which only multiplies is the weakest thing `BookData` can do.
+
+**40,000, derived.** The 17 money rewards in the game total **84,740** and there are two
+sinks: this man's 30,000 for the tally and the boatman's 6,000 a trip. v0.7.10 repriced the
+boatman because a *repeatable* price is a toll and 25,000 a trip was 500 units of
+patrolling; this is bought once and blocks nothing, so it is allowed to be a goal. At
+40,000 the two one-off sinks take 70,000 of the 84,740, and everything the player sells is
+on top of that. It is offered from his `other` line - after the whole exchange, which is
+the only point at which a second exception would ring true.
+
+**Guards, three negative tests, and one check that could not fail.**
+
+- `check_droprate_tags_are_worth_scaling`: every tag in the table is carried by a real
+  enemy, points at a real skill, and has loot worth multiplying. **Its first version could
+  not fail.** The floor was 0.01 and `insect` is 0.02, so the check would have certified
+  the exact mistake it was written to catch - found by putting the trap back before
+  believing it. It is two conditions now, most of the tagged enemies dropping something and
+  a floor of 0.1, with two orders of magnitude between `insect` and `aquatic` so the floor
+  is not delicate.
+- `check_locked_skills_can_be_unlocked`: every skill with `is_unlocked: false` is named in
+  a `skills: [...]` reward somewhere. Three are, and all three are taught. A missed reward
+  leaves a skill that never appears, never takes xp, and reads as level 0 to everything
+  that asks - including the droprate table.
+- Negative-tested by pointing the skill at `insect`, by misspelling the skill id, and by
+  taking the reward off the book. Each fails the intended check with the intended message.
+
+**Help now explains drop rates**, which it never did: the per-item chances, the two skills
+that multiply a whole kind of creature, that the bestiary shows drops with your skills
+already applied, and the thing nothing anywhere told the player - fighting a group lowers
+what each enemy in it drops.
 
 ### v0.7.13 - the fix v0.7.12 needed, and a tooltip that means it
 

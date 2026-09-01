@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 82 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 83 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,83 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.14 - koleksiyoncunun ikinci ve son satışı
+
+P-23, sahibinin isteğinden: koleksiyoncu çok özel bir kitap satabilir ve düşme oranlarını
+arttırabilir. Tasarım iki kez ölçümle karara bağlandı ve sezgisel cevap iki kez de
+yanlıştı.
+
+**Düşme oranı zaten nerede yaşıyor.** `enemies.js` içindeki
+`droprate_modifier_skills_for_tags`, bir düşman etiketini o etiketin düşüşlerini seviyesiyle
+çarpan yeteneğe eşliyor ve tek bir kaydı vardı: `beast: "Butchering"`.
+`Enemy.get_droprate_modifier`, düşmanın etiketlerini yürüyüp bulduğu her biri için yetenek
+katsayısıyla çarpıyor. Yani genişletilecek şekil tek satır veriydi, yeni bir mekanizma
+değil — P-23'ün istediği de buydu.
+
+**İlk yanlış cevap: genel bir güçlendirme.** P-23 sabit bir "+%X düşüş"ü zaten
+dışlamıştı; ölçüm nedenini sayıyla söylüyor: `beast`, oyunun 32 düşmanından 23'ünü ve
+**2,94 toplam düşme ağırlığının 2,93'ünü** taşıyor. Hayvanlara ya da bütün oyuna
+yöneltilen her şey, aynı güçlendirmenin ikinci kez yapılması.
+
+**İkinci yanlış cevap: `insect`.** Bariz dar etiket buydu — arc'ın kendi düşmanları
+karıncalar ve yusufçuklar — ve ölçüm onu tümden öldürdü. Dört düşmanından üçünün loot
+listesi **boş**, dördüncüsü de binde beşle ot düşürüyor. Toplam düşme ağırlığı **0,02**.
+Bunu çarpmak için bir hayli paraya satılan bir kitap kusursuz çalışır ve hiçbir şey
+yapmazdı.
+
+**`aquatic`, bütün alternatiflere karşı ölçüldü.** 6 düşman, 5'i ganimetli, 7 farklı eşya,
+1,14 düşme ağırlığı — çarpmanın öteki tarafında gerçek bir şey olan, oyundaki en dar
+etiket. %2 yengeç eti, %1 yengeç kıskacı, binde beş dev yengeç kıskacı ve kaplumbağa
+kabuğu, %1 timsah derisi: bataklık üretim zinciri ve hepsi oyuncunun şu an uzun süre
+beklediği düşüşler.
+
+Her `aquatic` düşman aynı zamanda `beast`, yani yeni yetenek **o altısında Kasaplıkla
+birlikte, başka hiçbir yerde değil** çalışıyor. Bu bir gözden kaçma değil tasarım —
+kasaplığı zaten biliyorsun, monografi ise sana kabuğun ne yaptığını öğretiyor — ve
+Kasaplığın üç sayısının onun için düşürülmesinin sebebi de bu: azami seviye 60 değil 40,
+katsayı 2 değil 1,5, temel tecrübe maliyeti 40 değil 60. Yayınlanan
+`get_droprate_modifier` üzerinden ölçüldü: 40. seviyede Kasaplık tek başına bir yengeçte
+1,587 veriyor, ikisi birlikte 2,381, kurt sıçanı ise iki hâlde de 1,587'de kalıyor.
+
+**Kabuk işi, önemli olan her bakımdan Kasaplığın kardeşi**: bir kitap öğretene kadar
+kilitli, `Crafting mastery`'ye bağlı, aynı tablodan okunuyor. `Butchering and you`'nun
+`Butchering`'i açması emsal ve birebir; kayıtlar açısından önemli olan kısım dahil —
+bitmiş bir kitap yüklemede ödüllerini `only_unlocks: true` ile yeniden uyguluyor ve
+`rewards.skills`, o bayrağın atladığı türlerden değil. Varsayılmadı, doğrulandı.
+
+**Kitap.** *Suyun Geri Verdikleri*, 600 dakika — oyundaki en uzun okuma — okuryazarlık
+tecrübe oranı 3 ve bütün ödülü o yetenek. Tecrübe çarpanı yok: P-15'in kuralı, yalnızca
+çarpan veren bir kitabın `BookData`'nın yapabileceği en zayıf şey olduğu.
+
+**40.000, türetildi.** Oyundaki 17 para ödülü toplamda **84.740** ve iki kuyu var: bu
+adamın plaka için istediği 30.000 ve kayıkçının sefer başına 6.000'i. v0.7.10 kayıkçıyı
+yeniden fiyatlandırdı çünkü *tekrarlanan* bir fiyat bir geçiş ücretidir ve sefer başına
+25.000, 500 birim devriye demekti; bu ise bir kez alınıyor ve hiçbir şeyi kapatmıyor,
+dolayısıyla bir hedef olmasına izin var. 40.000'de iki tek seferlik kuyu 84.740'ın
+70.000'ini alıyor ve oyuncunun sattığı her şey bunun üstüne geliyor. Teklif onun `other`
+repliğinden geliyor — bütün alışverişin ardından, ki ikinci bir istisnanın inandırıcı
+olacağı tek nokta da orası.
+
+**Muhafızlar, üç negatif test ve düşemeyen bir kontrol.**
+
+- `check_droprate_tags_are_worth_scaling`: tablodaki her etiket gerçek bir düşman
+  tarafından taşınıyor, gerçek bir yeteneği gösteriyor ve çarpmaya değer ganimeti var.
+  **İlk hâli düşemiyordu.** Taban 0,01'di ve `insect` 0,02 — yani kontrol, yakalamak için
+  yazıldığı hatanın tam kendisini onaylardı; tuzağı geri koyup inanmadan önce test ederek
+  bulundu. Artık iki koşul: etiketli düşmanların çoğunun bir şey düşürmesi ve 0,1 tabanı;
+  `insect` ile `aquatic` arasında iki büyüklük mertebesi olduğu için taban hassas değil.
+- `check_locked_skills_can_be_unlocked`: `is_unlocked: false` olan her yetenek bir yerde
+  bir `skills: [...]` ödülünde adlandırılıyor. Üçü öyle ve üçü de öğretiliyor. Atlanmış bir
+  ödül; hiç görünmeyen, hiç tecrübe almayan ve soran her şeye — düşme oranı tablosu dahil —
+  0. seviye diye okunan bir yetenek bırakır.
+- Yeteneği `insect`'e yönelterek, yetenek kimliğini yanlış yazarak ve ödülü kitaptan
+  alarak negatif test edildi. Her biri hedeflenen kontrolü hedeflenen mesajla düşürüyor.
+
+**Yardım artık düşme oranlarını anlatıyor**, ki hiç anlatmıyordu: eşya başına şanslar, bir
+yaratık türünün tamamını çarpan iki yetenek, bestiary'nin düşüşleri yetenekleriniz
+uygulanmış hâlde gösterdiği ve hiçbir yerin oyuncuya söylemediği şey — bir grupla dövüşmek
+içindeki her düşmanın düşürdüğünü azaltıyor.
 
 ### v0.7.13 - v0.7.12'nin ihtiyacı olan düzeltme ve sözünü tutan bir ipucu
 

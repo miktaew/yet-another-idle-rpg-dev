@@ -5,6 +5,7 @@ import * as path from "node:path";
 import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { default_language, locales_dir, repo_root } from "../lib/context.mjs";
 import { error, errors } from "../lib/report.mjs";
+import { load_browser_free } from "../lib/browser-free-src.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 
 async function check_content_text_ids() {
@@ -1476,6 +1477,153 @@ function check_seasonal_content_is_reachable() {
     }
 }
 
+/**
+ * A droprate skill that multiplies nothing.
+ *
+ * `droprate_modifier_skills_for_tags` maps an enemy tag to the skill whose level
+ * multiplies that tag's drops. Every part of it can be wrong silently: a misspelt tag
+ * matches no enemy, a misspelt skill id resolves to undefined, and either way the skill
+ * is written, translated, levelled and shipped while drops never change. The book that
+ * teaches one costs 40,000.
+ *
+ * The third rule is the one worth the most, because it is the mistake P-23 nearly made.
+ * `insect` was the intuitive tag for the collector's monograph and the measurement killed
+ * it: three of its four enemies have an empty loot list and the fourth drops herbs at half
+ * a percent. Total drop weight 0.02 against `beast`'s 2.93. Multiplying that would have
+ * been a perfect, testable, invisible waste of a player's money - so a tag has to have
+ * something to multiply before a skill may point at it.
+ */
+async function check_droprate_tags_are_worth_scaling() {
+    const [{ enemy_templates }, { skills }] = await load_browser_free(
+        repo_root, ["src/enemies.js", "src/data/skills.js"]);
+
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/enemies.js"), "utf8"));
+    const anchor = "const droprate_modifier_skills_for_tags = {";
+    const at = source.indexOf(anchor);
+    //braced_body takes the index of the `{`, not the text before it.
+    const table = at === -1 ? null : braced_body(source, at + anchor.length - 1);
+    if (table === null) {
+        error("droprate tags: could not read droprate_modifier_skills_for_tags - "
+            + "this check is out of date.");
+        return;
+    }
+
+    const pairs = [...table.matchAll(/"([^"]+)"\s*:\s*"([^"]+)"/g)]
+        .map((match) => ({ tag: match[1], skill: match[2] }));
+
+    if (pairs.length === 0) {
+        error("droprate tags: droprate_modifier_skills_for_tags is empty - "
+            + "this check is out of date and has stopped guarding anything.");
+        return;
+    }
+
+    /*
+        Two conditions, because the first version of this check had one and it was 0.01 -
+        which `insect`, at 0.02, passes. A check that cannot fail on the case it was
+        written for is worse than no check, and this one was caught by putting the trap
+        back before believing it.
+
+        So: most of the tagged enemies have to drop something at all, AND the tag's total
+        drop weight has to be worth a multiplier. `insect` fails both - 1 of 4 enemies has
+        a loot list, totalling 0.02 - while `aquatic`, the narrowest tag anything points
+        at, is 5 of 6 and 1.14. The measured spread between them is two orders of
+        magnitude, so the exact floor is not delicate.
+    */
+    const worth_scaling = 0.1;
+
+    for (const { tag, skill } of pairs) {
+        if (!skills[skill]) {
+            error(`droprate tags: "${tag}" points at the skill "${skill}", which does not `
+                + `exist - so its drops are multiplied by nothing and no error is raised.`);
+            continue;
+        }
+
+        const tagged = Object.keys(enemy_templates)
+            .filter((id) => enemy_templates[id].tags?.[tag]);
+
+        if (tagged.length === 0) {
+            error(`droprate tags: no enemy carries the tag "${tag}", so "${skill}" `
+                + `multiplies nothing. A misspelt tag compares false against every enemy `
+                + `there is and behaves exactly like a skill that does not work.`);
+            continue;
+        }
+
+        const with_loot = tagged.filter(
+            (id) => (enemy_templates[id].loot_list ?? []).length > 0);
+        const weight = tagged.reduce((total, id) => total
+            + (enemy_templates[id].loot_list ?? []).reduce(
+                (sum, entry) => sum + (entry.chance ?? 0), 0), 0);
+
+        if (with_loot * 2 < tagged.length || weight < worth_scaling) {
+            error(`droprate tags: "${skill}" multiplies the drops of ${tagged.length} `
+                + `enemy/enemies tagged "${tag}", of which ${with_loot.length} drop `
+                + `anything at all, for a total drop weight of ${weight.toFixed(3)}. `
+                + `There is nothing there to multiply - point the skill at a tag that `
+                + `carries loot, or give these enemies some.`);
+        }
+    }
+
+    console.log(`[check] droprate tags: ${pairs.length} tag/skill pair(s), each on `
+        + `enemies that drop something`);
+}
+
+/**
+ * A skill that starts locked and that nothing unlocks.
+ *
+ * `is_unlocked: false` is how a skill waits to be taught, and `rewards: {skills: [...]}`
+ * is the only thing that turns it on. Miss the reward, or misspell it, and the skill is
+ * unreachable forever: it never appears, it never takes xp, and anything reading its
+ * level - `droprate_modifier_skills_for_tags`, a milestone, a stat bonus - quietly reads
+ * zero. Nothing fails.
+ *
+ * Which makes it the exact shape of the money at stake in P-23: the collector's monograph
+ * is 40,000 and its whole reward is one skill name in one array.
+ */
+function check_locked_skills_can_be_unlocked() {
+    const skills_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/data/skills.js"), "utf8"));
+
+    const locked = [];
+    for (const match of skills_source.matchAll(/skills\["([^"]+)"\]\s*=\s*new Skill\(\{/g)) {
+        const body = braced_body(skills_source, match.index + match[0].length - 1);
+        if (body !== null && /is_unlocked:\s*false/.test(body)) {
+            locked.push(match[1]);
+        }
+    }
+
+    if (locked.length === 0) {
+        error("locked skills: no skill declares is_unlocked: false - "
+            + "this check is out of date and has stopped guarding anything.");
+        return;
+    }
+
+    //Every skill named in a `skills: [...]` reward, wherever that reward lives.
+    const taught = new Set();
+    //source_files takes the repo root and returns repo-relative paths under src/.
+    for (const file of source_files(repo_root)) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, file), "utf8"));
+        for (const group of source.matchAll(/skills:\s*\[([^\]]*)\]/g)) {
+            for (const name of group[1].matchAll(/"([^"]+)"/g)) {
+                taught.add(name[1]);
+            }
+        }
+    }
+
+    for (const skill of locked) {
+        if (!taught.has(skill)) {
+            error(`locked skills: "${skill}" starts locked and nothing names it in a `
+                + `skills: [...] reward, so it can never be unlocked. It will never show, `
+                + `never take xp, and everything that reads its level will read zero `
+                + `without complaining.`);
+        }
+    }
+
+    console.log(`[check] locked skills: ${locked.length} locked, all of them taught by `
+        + `something`);
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -1496,4 +1644,6 @@ export {
     check_reputation_regions_have_names,
     check_no_dead_end_skill_gates,
     check_stance_reactions_name_real_stances,
+    check_droprate_tags_are_worth_scaling,
+    check_locked_skills_can_be_unlocked,
 };

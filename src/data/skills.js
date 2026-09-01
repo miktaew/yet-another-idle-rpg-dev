@@ -4599,6 +4599,60 @@ function format_skill_rewards(milestone){
             let value = get_total_skill_coefficient({skill_id:"Butchering",scaling_type:"multiplicative"});
             return translationManager.getText(language, "skill effect Butchering", {v1: Math.round(value*100)/100});},
     });
+    /*
+        P-23. Butchering's sibling, and shaped like it on purpose: locked until a book
+        teaches it, parented to Crafting mastery, and read by
+        droprate_modifier_skills_for_tags rather than by any new mechanism.
+
+        Three numbers differ from Butchering's and each is because this one stacks with
+        it - every aquatic enemy is also a beast:
+          - max_level 40 rather than 60, because it covers six creatures and not 23;
+          - max_level_coefficient 1.5 rather than 2, so the two together cap at 3x on the
+            six rather than 4x;
+          - base_xp_cost 60 rather than 40, because there is less to practise on.
+
+        Measured against what it actually multiplies: aquatic drops run from 0.5% (a
+        turtle shell, a giant crab claw) to 5% (crab meat). Butchering alone takes those
+        to 1% and 10%; with this at its cap they reach 1.5% and 15%.
+    */
+    skills["Shellwork"] = new Skill({
+        skill_id: "Shellwork",
+        names: {0: "Shellwork", 15: "Shell-cutter", 30: "Master shell-cutter"},
+        description: "desc skill Shellwork",
+        milestones: {
+            5: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            15: {
+                stats: {
+                    dexterity: {flat: 1},
+                },
+            },
+            25: {
+                stats: {
+                    dexterity: {multiplier: 1.05},
+                },
+            },
+            40: {
+                stats: {
+                    dexterity: {flat: 2},
+                },
+            },
+        },
+        category: skill_category_crafting,
+        parent_skill: "Crafting mastery",
+        base_xp_cost: 60,
+        xp_scaling: 1.5,
+        max_level_coefficient: 1.5,
+        max_level: 40,
+        is_unlocked: false,
+        visibility_treshold: 0,
+        get_effect_description: () => {
+            let value = get_total_skill_coefficient({skill_id:"Shellwork",scaling_type:"multiplicative"});
+            return translationManager.getText(language, "skill effect Shellwork", {v1: Math.round(value*100)/100});},
+    });
     skills["Woodworking"] = new Skill({
         skill_id: "Woodworking", 
         names: {0: "Woodworking", 20: "Adept woodworker", 40: "Master woodworker"}, 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 91 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 92 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -645,33 +645,6 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
-### P-23 — Koleksiyoncu bir kitap satıyor ve o bir yemek kitabı değil `open`
-
-Sahibinin isteği: koleksiyoncu çok özel bir kitap satabilir ve düşme oranlarını
-arttırabilir.
-
-**Neden doğru kişi o.** Satmıyor — *"İnsanlar soruyor, sonra kendi durumlarının neden
-farklı olduğunu açıklıyor, sonra gidiyorlar"* — ve P-14 Faz 5, ona özellikle bu oyuncu için
-bir istisna yapma sebebi verdi. Oyunda satmayı reddeden tek adamdan gelen bir kitap, aynı
-kitabın raftaki hâlinden değerlidir.
-
-**Ölçüldü:** on bir kitap var ve `BookData`, `bonuses.xp_multipliers`,
-`bonuses.multipliers` (karakter statları) ile `rewards` destekliyor. **`BookData` içinde
-düşme oranlarına dokunan hiçbir şey yok**, yani bu, motorun yeni bir şey öğrenmesini
-gerektiren ilk kitap olur. `enemies.js` içindeki `tags_for_droprate_modifier_skills` ve
-`enemy_tag_to_skill_mapping`, düşme oranının yeteneklere göre zaten ölçeklendiği yer;
-yanına ikinci bir mekanizma koymak yerine genişletilecek şekil de bu.
-
-**Ne olmaması gerektiği.** Düz bir "+%X düşme", yapabileceği en az ilginç şey ve bütün
-ganimet tablolarını birden şişirirdi. Mevcut düşme ölçeklemesi yaratık *etiketi* başına ve
-bu daha iyi bir emsal: tek bir yaratık türü hakkında ya da bir leşi okumak hakkında bir
-kitap, fiyatını hak eder ve oyunun geri kalanına dokunmaz.
-
-**Fiyat.** Koleksiyoncunun kendi emsali, çetele için 30.000 ve o sayı metinde
-gerekçelendirilmişti — *"Sayının kemikle ilgili olduğunu iddia etmeyeceğim."* Bu, onun
-şimdiye kadar sattığı ikinci şey; ilkinden pahalı olmalı ve v0.7.10'un ekonomi ölçümü de
-girdisi.
-
 ### P-24 — Kilit açma ve kilitlenmeye değer bir şey `open`
 
 Sahibinin isteği: kilit açma olabilir, bir bölgede avlanırken düşük bir şansla sandık
@@ -746,6 +719,36 @@ karaborsa", itibara **ve** zamana bağlı bir stok listesi ve arc bu ikisinin de
 türetilen tek bir tüccar mekanizmadır; bir odada üç tüccar, D-* direktiflerinin önlemek
 için var olduğu paralel sistemdir. Ve mallar, sebep olmadıkça var olan eşyalar olmalı —
 yapılamayan sekiz üretilmiş bileşen ile 5. kademe ailesi zaten elde duruyor.
+
+
+### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `open`
+
+P-23 ölçülürken bulundu. `BookData`, bir kitabın taşıyabileceği altı şey tanımlıyor ve
+**ikisi `src/` içinde hiçbir yerde okunmuyor**:
+
+- `required_skills`; kitabı okuyabilmenin önündeki bir kapı gibi görünüyor. *Nothing Bites
+  Here* `{literacy: 6}` beyan ediyor ve oyun bunu uygulamıyor; kitap 0 okuryazarlıkla
+  okunabiliyor.
+- `finish_reward`; bitirince tetiklenen bir ödül gibi görünüyor. Hiçbir şey onu tüketmiyor
+  ve hiçbir kitap onu ayarlamıyor — yani henüz kimse yanmadı.
+
+İkincisi bir tuzak, birincisi ise veride zaten küçük bir yalan. P-15'in kendi metni
+"`BookData` yeni bir kitabın isteyebileceği her şeyi zaten destekliyor" diyor ve ikisini de
+sayıyor; ileride bir kitabın kural olmayan bir şartı beyan etmesi de böyle olurdu.
+
+**İki dürüst çıkış yolu var ve eşit değiller.** `required_skills`'i bağlamak gerçek bir
+özellik — henüz okuyamadığınız bir kitap bunu ve sebebini söylemek zorunda, yoksa kimsenin
+göremediği kilitli bir kapı olur; bu projenin bu konuda bir direktifi var. İki alanı da
+silmek daha küçük ve var olan hiçbir şeyi kaybetmiyor. Ölçüm hangisi olacağını
+belirlemiyor; sahibinin kapılı kitaplara iştahı belirler.
+
+**Olmaması gereken şey**, üçüncü bir kitabın `required_skills` beyan etmesi. *Suyun Geri
+Verdikleri* bilerek onsuz yazıldı ve alanın olacağı yerde bunu söylüyor.
+
+**Muhafız.** Hangi yol seçilirse seçilsin sınıf şu: "hiçbir şeyin okumadığı, beyan edilmiş
+alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her alan, kendi
+kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
+ve muhtemelen ikiden fazlasını bulur.
 
 
 ---

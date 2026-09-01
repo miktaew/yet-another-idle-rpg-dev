@@ -3181,6 +3181,10 @@ class Textline {
                     reputation: {Town: 60},
                     quest_progress: [{quest_id: "Nothing but Pants", task_index: 2}],
                     textlines: [{dialogue: "guild factor", lines: ["road north"]}],
+                    //P-23. He has already broken his own rule once for this player. The
+                    //monograph is offered only after the whole exchange is finished,
+                    //which is also the only point at which it would ring true.
+                    actions: [{dialogue: "antique collector", action: "buy the monograph"}],
                 },
                 locks_lines: ["other"],
             }),
@@ -3210,6 +3214,41 @@ class Textline {
                     textlines: [{dialogue: "antique collector", lines: ["other"]}],
                 },
                 locks_lines: ["buy back the tally"],
+            }),
+            /*
+                P-23, and it follows the tally's shape exactly: a money requirement with
+                remove_on_success, an item in the rewards, and one refusal line for when
+                the money is not there.
+
+                40,000, derived rather than picked. The 17 money rewards in the game total
+                84,740 and there are two sinks: this man's 30,000 for the tally and the
+                boatman's 6,000 a trip. v0.7.10 repriced the boatman because a REPEATABLE
+                price is a toll, and 25,000 a trip was 500 units of patrolling. This is
+                bought once and blocks nothing - the tally is a quest step and this is not
+                - so it is allowed to be a goal. At 40,000 the two one-off sinks take
+                70,000 of the 84,740, and everything the player sells is on top of that.
+            */
+            "buy the monograph": new DialogueAction({
+                action_id: "buy the monograph",
+                is_unlocked: false,
+                starting_text: "collector monograph",
+                description: "",
+                action_text: "",
+                success_text: "collector monograph answ",
+                repeatable: false,
+                failure_texts: {
+                    unable_to_begin: ["collector monograph not"],
+                },
+                required: {
+                    money: {number: 40000, remove_on_success: true},
+                },
+                attempt_duration: 0,
+                success_chances: [1],
+                rewards: {
+                    items: ["What the Water Gives Up"],
+                    xp: 2000,
+                },
+                locks_lines: ["buy the monograph"],
             }),
         },
     });
