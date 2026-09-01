@@ -4375,11 +4375,39 @@ function get_location_type_penalty(type, stage, stat, category) {
             },
             attempt_duration: 180,
             success_chances: [0.2, 0.9],
+            /*
+                What is certain: the coin and the practice. Everything else is rolled,
+                which is what `chance_of` exists for - before it an action had one success
+                path and every chest held the same scarf.
+
+                The trap's chance READS THE SKILL rather than being a constant: 30% at
+                Lockpicking 0 down to 6% at 30, because somebody who knows locks notices
+                the wire under the lid. It costs health for a while and never the chest -
+                a cost, not a punishment, which is the same rule the failed pick follows.
+            */
             rewards: {
                 money: 1400,
                 skill_xp: {Lockpicking: 260},
-                items: [
-                    {item: "Wool scarf", quality: 90},
+                chance_of: [
+                    {
+                        chance: 0.35,
+                        rewards: {items: [{item: "Wool scarf", quality: 90}]},
+                    },
+                    {
+                        chance: 0.25,
+                        rewards: {items: [{item: "Cheap iron dagger", quality: 70}]},
+                    },
+                    {
+                        chance: 0.15,
+                        rewards: {money: 2600, messages: ["log the chest had a false bottom"]},
+                    },
+                    {
+                        chance: () => Math.max(0.06, 0.3 - 0.008 * get_total_skill_level("Lockpicking")),
+                        rewards: {
+                            effects: [{effect: "Weak necrotizing venom", duration: 40}],
+                            messages: ["log the chest was trapped"],
+                        },
+                    },
                 ],
             },
         }),

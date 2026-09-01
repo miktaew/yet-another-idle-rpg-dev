@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 99 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 100 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -614,49 +614,6 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
-### P-24 — Kilit açma ve kilitlenmeye değer bir şey `kısmen tamam`
-
-Sahibinin isteği: kilit açma olabilir, bir bölgede avlanırken düşük bir şansla sandık
-çıkabilir ve sandıkta altın ya da kıyafet — ya da bir tuzak — olabilir.
-
-**Üçün ikisi v0.7.18 olarak yayınlandı** — beceri ve bulunma; köyde, tamamen mevcut
-makineden kurulu bir kilitle: beceri gradyanı için iki-set koşul rampası, "asla çıkmaz
-sokak değil" için tek başına `remove_on_success` ve bulunma için `loot_list`.
-
-**Kalan şey tuzak ve o, veri değil bir mekanizma istiyor.** Bir aksiyonun tek başarı yolu
-var ve `rewards`'ı yalnızca başarıda tetikleniyor, hiçbirine bağlı bir şans yok; yani
-"sandık bazen ısırır" ifade edilemiyor. `UsableItem` üzerindeki `recovery_chances`, motorun
-şansa bağlı tek verimi ve o da bir etkinin gerçekten uygulanmasına bağlı — `use_item`, ancak
-`add_active_effect` true döndürürse geri kazanımları işliyor — ve hiçbir beceriye bakmıyor.
-**Çeşitli içerikler de aynı şekle sahip**: her başarılı açış aynı sikkeyi ve aynı atkıyı
-veriyor, çünkü ödüller zar atamıyor. İkisi de tek bir şey istiyor — şans taşıyabilen bir
-ödül — ki bu iki mekanizma değil bir mekanizma.
-
-**Ölçüldü, çünkü arc bunun tersini iki kez varsaydı.** Kilit açma yeteneği yok: P-14'ün
-kendi planlama notu bunu söylüyor ve Faz 4'ün başarısızlık metni tam da bu yüzden onunla
-şakalaşıyor. Q-1'in ikinci revizyonu altında yeni bir yetenek artık kapsam içinde, yani
-bu, bir yetenek eklemesine izin verilen ilk istek.
-
-**Üç parça ve ayrılabilirler:**
-
-1. **Yetenek.** Diğer 64'ün ölçeklendiği gibi ölçeklenen tek bir yeni yetenek ve onu
-   yükseltecek bir yer. Eğiticisi ve yeri olmayan bir yetenek, yine `Wands`/`Staffs`
-   problemi olur.
-2. **Buluş.** Bir bölgede toplarken ya da dövüşürken düşük bir şans.
-   `LocationGatheringActivity` zaten tik başına bir şans tablosuna karşı atıyor, `loot_list`
-   de öldürme başına atıyor; yani iki kanca da mevcut, soru sandığın hangisine ait olduğu.
-   Sahibi "avlanırken" dedi, ki bu `loot_list`'i ve yaratık etiketlerini işaret ediyor.
-3. **Sandık.** Altın, kıyafet ve bir tuzak. Tuzak, işin ilginç üçte biri ve kuralı olan
-   kısmı: **kilitli bir sandık asla çıkmaz olmamalı.** Faz 4'ün kendi kuralı olduğu gibi
-   geçerli — başarısız bir açma denemesi, yeniden elde edilemeyecek hiçbir şeye mal olmaz
-   ve sandık, açılana ya da bırakılana kadar durur. Sağlıktan götüren bir tuzak bir
-   maliyettir; sandığı tüketen bir tuzak, düşük yeteneğin cezasıdır.
-
-**Ne yapmaması gerektiği.** `loot_list`'in yanına ikinci bir ganimet sistemi olmamalı. Ve
-kıyafetler, yenilerine sebep olmadıkça var olan eşyalar olmalı — icat yerine geri kazanım;
-dosyada zaten 44 üretilmiş bileşen ve yapılamayan sekiz tanesi duruyor.
-
-
 ### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `open`
 
 P-23 ölçülürken bulundu. `BookData`, bir kitabın taşıyabileceği altı şey tanımlıyor ve
@@ -686,6 +643,69 @@ alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her ala
 kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
 ve muhtemelen ikiden fazlasını bulur.
 
+
+
+### P-28 — Bataklık, itibarı olmayan bir yerleşim `open`
+
+Sahibi bildirdi: karakter sayfasında kasaba, köy ve kenar mahalle için itibar satırı var,
+bataklık kabilesi için hiçbir şey yok.
+
+**Ölçüldü ve sayfa doğruyu söylüyor.** `character.reputation` dört bölge tanımlıyor —
+`Village`, `Slums`, `Town` ve `Guild` — ve `Swamp` yok. Kabilede bir reis, bir aşçı, bir
+terzi, bir tabak, bir izci ve iki tüccar var ve oyunun, bunların size dair ne hissettiğine
+ilişkin bir sayısı yok.
+
+**Dördünün nasıl arttığı, ki sorunun öteki yarısı buydu.** Oyundaki her itibar puanı bir
+replik, bir aksiyon ya da bir görev üzerindeki `reputation:` ödülünden geliyor. Sayıldı:
+
+| bölge | kaynak | kazanılabilir toplam |
+| --- | --- | --- |
+| Town | 23 | 1.860 |
+| Slums | 12 | 1.720 |
+| Village | 17 | 1.260 |
+| Guild | 7 | 305 |
+
+Bu şekilden iki şey çıkıyor. `update_displayed_reputation` bir bölgeyi ancak **0'ın
+üstündeyse** çiziyor; yani Guild, ilk 15 puan kazanılana kadar görünmez — bu bilinçli ve
+kimsenin başlamadığı bir satırı görmemesinin sebebi. Ve Guild'in 305'i, Town'un 1.860'ına
+karşı bir gözden kaçma değil: v0.7.2'de tek bir arc için eklendi ve tek bir arc'lık kaynağı
+oldu.
+
+**Beşinci bir bölge için tesisatın çoğu zaten duruyor.**
+
+- **`Swamp` adında bir pazar bölgesi var.** `market_region_mapping` onu köyün komşusu olarak
+  listeliyor ve kabilede `market_region: "Swamp"` tanımlı; yani oradaki fiyatların kendi
+  tezgâhı çoktan var. İtibar ve pazar bölgeleri ayrı haritalar, dolayısıyla bu kabileye
+  itibar vermiyor — ama kabilenin oyunun kendi terimleriyle çoktan bir *bölge* olduğu
+  anlamına geliyor.
+- **Onu taşıyacak beş teslimat aksiyonu.** `swampcook deliver`, `swamptailor deliver`,
+  `swamptanner deliver 1` ve `2`, ve `swampscout help` — ölçüldü: görev ilerlemesi, replik
+  ve tarif veriyorlar ve **hiçbiri itibar vermiyor**. `swampscout help` ise hiçbir şey
+  vermiyor.
+
+**Yani maliyet, Q-7'nin Guild için ölçtüğü şey**: `character.reputation` üzerinde bir alan,
+dil başına bir `name Swamp` satırı ve bir kontrol. `load()`, kayıttaki anahtarları yürüyor
+ve tanımadığı bir bölgede uyarıyor; yani eski bir kayıt `Swamp` olmadan geliyor ve tanımlı 0
+geçerli kalıyor.
+
+**Türetilmek yerine karar gerektirenler.**
+
+- **Kabilenin itibarı ne için.** Guild'in itibarı, P-14 faz 3'ün üçüncü bir bilgi yolu
+  istemesi yüzünden var. Arkasında hiçbir şey olmayan bir sayı, sadece bir sayıdır: kabilenin
+  kapılara ihtiyacı olurdu — bir raf, bir replik, bir yer — yoksa yalnızca yükselen ve hiçbir
+  şey açmayan bir satır olur. `check_reputation_regions_have_names` her iki hâlde de geçer;
+  tuzak da bu.
+- **Beş teslimatın doğru kaynaklar olup olmadığı.** Bariz olanlar onlar ve hepsi tek seferlik
+  görev adımı; yani sabit bir toplam verip duracaklar, Guild'in 305'i gibi. Kabilenin
+  tekrarlanabilir bir kaynağı olmalı mı sorusu, v0.7.10'un para için sorup geliri ölçerek
+  cevapladığı soruyla aynı.
+- **`swampscout help` hiçbir şey vermiyor.** Bu ya ayrı bir hata ya da bağlanacak ilk
+  kaynak; her iki hâlde de bakılmalı.
+
+**Ne yapmaması gerektiği.** Simetri için beşinci bir bölgeye dönüşmemeli. Q-7'nin Guild
+lehine argümanı, oyuncunun yükselişini izleyebildiği bir sayının bir yolu yol gibi
+hissettirdiğiydi — sonucu da şu: arkasında yol olmayan bir sayı, hiç sayı olmamasından
+kötüdür.
 
 
 ---

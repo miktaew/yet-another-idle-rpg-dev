@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 90 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 91 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,59 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.19 - şans taşıyabilen bir ödül ve canı yakabilen bir ödül
+
+P-24'ün son üçte biri ve teklifi kapatıyor. Tuzak ile çeşitli içeriklerin **iki değil bir
+mekanizma** olduğu ortaya çıktı — v0.7.18'in kaydettiği bulgu buydu, bu sürüm de onu
+uyguluyor.
+
+**Önünde ne duruyordu.** Bir aksiyonun tek başarı yolu var ve `rewards`'ı yalnızca başarıda
+tetikleniyor; yirmi dört türden hiçbirine bağlı bir şans yok. Yani bir sandık her seferinde
+aynı sikkeyi ve aynı atkıyı veriyordu ve "bazen ısırır" hiç yazılamıyordu. `UsableItem`
+üzerindeki `recovery_chances`, motorun şansa bağlı tek verimi ve o da bir etkinin gerçekten
+uygulanmasına bağlı — `use_item`, ancak `add_active_effect` true döndürürse geri kazanımları
+işliyor — ve hiçbir beceriye bakmıyor.
+
+**İki ödül türü, ikisi de genel.**
+
+`rewards.effects: [{effect, duration}]` — bir aktif etki; yemeğin, düşmanların ve dev
+konsolunun kullandığı aynı `add_active_effect` üzerinden. Yirmi dört türün her biri bir şey
+*veriyor*; bu, alabilen ilk tür. Sandık kapağındaki tuzak bir süre için bir debuff ve bu bir
+**maliyet** — açtığınız şey yine sizin.
+
+`rewards.chance_of: [{chance, rewards}]` — bağımsız atılan ödül grupları. `chance` bir sayı
+**ya da onu türeten bir fonksiyon** olabilir; bir tüccarın `inventory_template`'inin zaten
+aldığı şekil ve aynı sebeple: kilitten anlayanın daha sık fark ettiği bir tuzağın, atıldığı
+anda beceriyi okuması gerekiyor ve hesaplanmış bir şansı saklamak, Q-10'un karara bağladığı
+"türet, saklama" hatası olurdu. Yayınlanan fonksiyon üzerinden ölçüldü: Kilit açma 0'da %30,
+10'da %22, 20'de %14, 30'dan itibaren %6.
+
+**Sandık artık**: sikke ve pratik kesin; %35 atkı, %25 hançer, %15 altında 2.600 daha olan
+gizli dip ve türetilmiş şansta iğne.
+
+**Üç muhafız, üç negatif test ve düşemeyen bir kontrol.**
+
+`check_reward_keys` iki yeni türü de reddetti; haklı olarak — **listesi elle yazılmıştı**,
+oysa kendi yorumu "main.js'in okuduğundan alındı" diyordu. `reachable_item_names()`'in
+paylaşıldığı yazılıp tek çağıranı olmasıyla aynı şekil. Artık türetiliyor: main.js'ten
+`rewards.<anahtar>`, 26 anahtar; ayrıca bir taban öne sürülüyor, böylece hiçbir şey bulmayan
+bir tarama her şeyi kabul edemiyor.
+
+Ve atılan bir grup, yalnızca yüklemenin atladığı şeyleri tutabiliyor. Bitmiş bir kitap
+ödüllerini her yüklemede yeniden uyguluyor; yani şansa bağlı bir *kilit açma* yeniden
+atılırdı — bir yüklemede verilir, ötekinde eksik, ve hiçbir şey düşmez. Güvenli türler de
+türetiliyor: main.js'in `!only_unlocks` **ya da** `!is_from_loading` arkasına aldığı türler.
+Yalnızca ilk bayrağı okumak `messages`'ı güvensiz sayıyordu, oysa bir kütük satırı tam da
+atılan bir grubun isteyeceği şey.
+
+**Kuralın ilk hâli kendi iki negatif testinin ikisini de geçemiyordu**; bu, projede beşinci
+kez. `top_level_keys` kullanıyordu, ki satır tabanlı ve satır başına tek anahtar döndürüyor;
+yani bir satıra başka bir anahtarın yanına konmuş kilit türü doğrudan geçti. Ayrıca `chance`
+kelimesini grup grup değil bütün `chance_of` dizisinde arıyordu, dolayısıyla bir grubun
+şansını silmek yine geçiyordu. Üst seviye virgüllere göre ayıracak ve her grubu kendi başına
+okuyacak şekilde yeniden yazıldı — artık bir kilit türü, eksik bir şans ve ödülsüz bir grup
+adıyla düşüyor.
 
 ### v0.7.18 - kilitli bir sandık ve oyunun iki kez şakasını yaptığı beceri
 

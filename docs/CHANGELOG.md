@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 90 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 91 -->
 
 # Changelog
 
@@ -20,6 +20,58 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.19 - a reward that can carry a chance, and one that can hurt
+
+P-24's last third, and it closes the proposal. The trap and the varied contents turned out
+to be **one mechanism, not two** - which was the finding v0.7.18 recorded and this version
+acts on.
+
+**What was in the way.** An action has a single success path and its `rewards` fire only on
+success, with no chance attached to any of the twenty-four kinds. So a chest was the same
+coin and the same scarf every time, and "sometimes it bites" could not be written at all.
+`recovery_chances` on a `UsableItem` is the engine's only chance-based yield and it is
+gated behind an effect actually applying - `use_item` processes recoveries only if
+`add_active_effect` returned true - and consults no skill.
+
+**Two reward kinds, both general.**
+
+`rewards.effects: [{effect, duration}]` - an active effect, through the same
+`add_active_effect` that food, enemies and the dev console use. Every one of the
+twenty-four kinds *gives* something; this is the first that can take. A trap in a chest lid
+is a debuff for a while, and that is a **cost** - the thing you opened is still yours.
+
+`rewards.chance_of: [{chance, rewards}]` - reward groups rolled independently. `chance` may
+be a number **or a function deriving one**, the shape a trader's `inventory_template`
+already takes and for the same reason: a trap a skilled picker spots more often has to read
+the skill at the moment it is rolled, and storing a computed chance is the "derive, do not
+store" mistake Q-10 settled. Measured through the shipped function: 30% at Lockpicking 0,
+22% at 10, 14% at 20, 6% from 30.
+
+**The chest now**: coin and the practice certain; a scarf at 35%, a dagger at 25%, a false
+bottom with 2,600 more under it at 15%, and the needle on the derived chance.
+
+**Three guards, three negative tests, and a check that could not fail.**
+
+`check_reward_keys` rejected both new kinds, correctly - **its list was hand-written**,
+while its own comment said it was "taken from what main.js reads". Same shape as
+`reachable_item_names()` being documented as shared while having one caller. It is derived
+now: `rewards.<key>` out of main.js, 26 keys, with a floor asserted so a scan that finds
+nothing cannot accept everything.
+
+And a rolled group may only hold what a load skips. A finished book re-applies its rewards
+on every load, so a chance-gated *unlock* would be re-rolled - granted on one load and
+missing the next, with nothing failing. The safe kinds are derived too, from what main.js
+guards behind `!only_unlocks` **or** `!is_from_loading`: reading only the first flag called
+`messages` unsafe, and a log line is exactly what a rolled group wants.
+
+**The rule's first version could not fail either of its own negative tests**, which is the
+fifth time this project has written one. It used `top_level_keys`, which is line-oriented
+and returns one key per line, so an unlock kind planted beside another on one line went
+straight through; and it tested the whole `chance_of` array for the word `chance` rather
+than each group, so removing one group's chance still passed. Rewritten to split on
+top-level commas and read each group on its own - and now an unlock kind, a missing chance
+and a group with no rewards each fail by name.
 
 ### v0.7.18 - a locked chest, and the skill the game had joked about twice
 

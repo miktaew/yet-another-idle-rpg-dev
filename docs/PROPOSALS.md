@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 99 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 100 -->
 
 # Proposals
 
@@ -593,49 +593,6 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
 
-### P-24 — Lockpicking, and something worth locking `partly done`
-
-The owner's request: lockpicking could exist, hunting in a region could turn up a chest at
-a low chance, and a chest could hold gold or clothes - or a trap.
-
-**Two of the three shipped as v0.7.18** - the skill and the find, with a lock at the
-village that is entirely existing machinery: the two-set condition ramp for the skill
-gradient, `remove_on_success` alone for "never a dead end", and `loot_list` for the find.
-
-**What is left is the trap, and it needs a mechanism rather than data.** An action has one
-success path and its `rewards` fire only on success, with no chance attached to any of
-them, so "sometimes the chest bites" cannot be expressed. `recovery_chances` on a
-`UsableItem` is the engine's only chance-based yield and it is gated behind an effect
-actually applying - `use_item` processes recoveries only if `add_active_effect` returned
-true - and consults no skill. **Varied contents have the same shape**: every successful pick
-gives the same coin and the same scarf, because rewards cannot roll. Both want one thing, a
-reward that can carry a chance, which is one mechanism and not two.
-
-**Measured, because the arc has assumed the opposite twice.** There is no lockpicking
-skill: P-14's own planning note says so, and phase 4's failure text jokes about it
-precisely because the skill does not exist. Under Q-1's second revision a new skill is now
-in scope, so this is the first request that is allowed to add one.
-
-**Three pieces, and they are separable:**
-
-1. **The skill.** One new skill, scaling the way the other 64 do, with somewhere to level
-   it. A skill with no trainer and no place is the `Wands`/`Staffs` problem again.
-2. **The find.** A low chance while gathering or fighting in a region. `LocationGatheringActivity`
-   already rolls per tick against a chance table, and `loot_list` already rolls per kill,
-   so both hooks exist; the question is which one a chest belongs on. Hunting was what the
-   owner said, which points at `loot_list` and at enemy tags.
-3. **The chest.** Gold, clothes, and a trap. The trap is the interesting third of it and
-   the part with a rule attached: **a locked chest must never be a dead end.** Phase 4's
-   own rule applies unchanged - a failed pick loses nothing that cannot be got again, and
-   the chest stays until it is opened or abandoned. A trap that costs health is a cost; a
-   trap that consumes the chest is a punishment for having a low skill.
-
-**What this must not do.** It must not become a second loot system beside `loot_list`. And
-the clothes must be existing items unless there is a reason for new ones - reclamation
-over invention, and there are 44 generated components and eight unmade ones already in the
-file to draw on.
-
-
 ### P-26 — Two BookData fields that are read by nothing `open`
 
 Found while measuring P-23. `BookData` declares six things a book can carry, and **two of
@@ -665,6 +622,68 @@ it is checkable: every field a data class declares should be named somewhere out
 own constructor. That is a broader check than this proposal and would probably find more
 than two.
 
+
+
+### P-28 — The swamp is a settlement with no standing `open`
+
+Reported by the owner: the character sheet has a standing row for the town, the village and
+the slums, and nothing at all for the swampland tribe.
+
+**Measured, and the sheet is telling the truth.** `character.reputation` declares four
+regions - `Village`, `Slums`, `Town` and `Guild` - and there is no `Swamp`. The tribe has a
+chief, a cook, a tailor, a tanner, a scout and two traders, and the game has no number for
+how any of them feel about you.
+
+**How the four are raised, since that was the other half of the question.** Every point of
+standing in the game comes from a `reputation:` reward on a textline, an action or a quest.
+Counted:
+
+| region | sources | total earnable |
+| --- | --- | --- |
+| Town | 23 | 1,860 |
+| Slums | 12 | 1,720 |
+| Village | 17 | 1,260 |
+| Guild | 7 | 305 |
+
+Two things follow from that shape. `update_displayed_reputation` draws a region only once
+it is **above 0**, so Guild is invisible until the first 15 points are earned - which is
+deliberate and is why nobody sees a row they have not started. And the Guild's 305 against
+the Town's 1,860 is not an oversight: it was added in v0.7.2 for one arc and has had one
+arc's worth of sources.
+
+**The wiring for a fifth region is mostly there already.**
+
+- **A market region called `Swamp` exists.** `market_region_mapping` lists it as the
+  village's neighbour and `market_region: "Swamp"` is declared on the tribe, so prices
+  there already have a counter of their own. Standing and market regions are separate maps,
+  so this does not give the tribe standing - but it does mean the tribe is already a
+  *region* in the game's own terms.
+- **Five delivery actions that would carry it.** `swampcook deliver`,
+  `swamptailor deliver`, `swamptanner deliver 1` and `2`, and `swampscout help` - measured,
+  they reward quest progress, textlines and recipes, and **not one of them rewards
+  standing**. `swampscout help` rewards nothing at all.
+
+**So the cost is what Q-7 measured for the Guild**: one field on `character.reputation`,
+one `name Swamp` row per language, and a check. `load()` walks the keys in the save and
+warns past a region it does not know, so an old save arrives with no `Swamp` and the
+declared 0 stands.
+
+**What needs deciding rather than deriving.**
+
+- **What the tribe's standing is for.** The Guild's exists because P-14 phase 3 wanted a
+  third information path. A number with nothing behind it is a number: the tribe would need
+  gates - a shelf, a line, a place - or it is a row that only goes up and never opens
+  anything. `check_reputation_regions_have_names` would pass either way, which is the trap.
+- **Whether the five deliveries are the right sources.** They are the obvious ones and they
+  are all one-off quest steps, so they would give a fixed total and then stop, like the
+  Guild's 305. Whether the tribe should have a repeatable source is the same question
+  v0.7.10 asked about money and answered by measuring income.
+- **`swampscout help` rewards nothing.** That is either a separate bug or the first source
+  to wire, and it should be looked at either way.
+
+**What this must not do.** It must not become a fifth region for symmetry. Q-7's argument
+for the Guild was that a number the player can watch rise is what makes a path feel like a
+path - and the corollary is that a number with no path behind it is worse than no number.
 
 
 ---

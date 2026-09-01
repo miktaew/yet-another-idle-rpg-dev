@@ -87,17 +87,100 @@ function check_money_requirements() {
  * src/rewards.js - that document is missing `global_activities` and `skills`, so
  * trusting it would reject two working keys.
  */
-const reward_keys = [
-    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
-    "housing", "items", "locations", "locks", "messages", "money", "move_to",
-    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills",
-    "stances", "textlines", "titles", "traders", "xp",
-];
+/*
+    Top-level `key: value` entries of an object literal body, and the top-level members of
+    an array literal body. Both split on commas at depth zero.
+
+    top_level_keys is line-oriented and returns one key per line, which is why the first
+    version of the rolled-reward rule below could not fail: a group written
+    `rewards: {items: [...], flags: [...]}` on one line reported only `items`, so the
+    unlock kind planted in a negative test went straight through. Found by planting it.
+*/
+function split_top_level(body) {
+    const parts = [];
+    let depth = 0;
+    let start = 0;
+
+    for (let i = 0; i < body.length; i++) {
+        const character = body[i];
+        if ("{[(".includes(character)) { depth++; }
+        else if ("}])".includes(character)) { depth--; }
+        else if (character === "," && depth === 0) {
+            parts.push(body.slice(start, i));
+            start = i + 1;
+        }
+    }
+    parts.push(body.slice(start));
+    return parts.map((part) => part.trim()).filter(Boolean);
+}
+
+/** The `key: value` pairs of an object literal body, nested commas ignored. */
+function entries_of(body) {
+    const entries = [];
+    for (const part of split_top_level(body)) {
+        const match = /^(\w+)\s*:\s*([\s\S]*)$/.exec(part);
+        if (match) { entries.push({ key: match[1], value: match[2].trim() }); }
+    }
+    return entries;
+}
+
+/*
+    Read out of main.js rather than written down, which the comment above already claimed
+    and the list did not do. It was hand-maintained, so two reward kinds added in the same
+    change as this comment were rejected as unknown - the same shape as
+    reachable_item_names() being documented as shared while having one caller.
+
+    `rewards.<key>`, not `<something>.rewards`, so `book.rewards` and `action.rewards` do
+    not leak in. A floor is asserted below, because a scan that finds nothing would
+    otherwise accept every key there is.
+*/
+function reward_keys_read_by_main() {
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+    return [...new Set([...source.matchAll(/(?<![.\w])rewards\.(\w+)/g)]
+        .map((match) => match[1]))].sort();
+}
+
+/*
+    And the kinds a rolled reward group may hold: the ones the LOAD PATH skips.
+
+    A finished book re-applies its rewards on every load with only_unlocks and
+    is_from_loading both set, so a kind guarded by EITHER flag is skipped then and is safe
+    to roll. Everything else is state that load path re-applies, and a rolled outcome must
+    not be state: it would be re-rolled on every load, granted once and missing the next
+    time, with nothing failing.
+
+    Both flags, because reading only one of them called `messages` unsafe - it is guarded
+    by !is_from_loading rather than !only_unlocks, and a log line is exactly the kind of
+    thing a rolled group wants. Derived from main.js for the same reason as the list above.
+*/
+function reward_keys_not_reapplied_on_load() {
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+    return new Set([...source.matchAll(/if\s*\(rewards\.(\w+)[^)]*?!(?:only_unlocks|is_from_loading)/g)]
+        .map((match) => match[1]));
+}
+
+const reward_keys = reward_keys_read_by_main();
 
 const lock_keys = ["actions", "dialogues", "locations", "quests", "textlines", "traders"];
 
 function check_reward_keys() {
+    if (reward_keys.length < 20) {
+        error(`only ${reward_keys.length} reward keys could be read out of main.js `
+            + `- the scan is out of date and would accept anything.`);
+        return;
+    }
+
+    const rollable = reward_keys_not_reapplied_on_load();
+    if (rollable.size === 0) {
+        error("no reward kind is guarded by !only_unlocks or !is_from_loading in "
+            + "main.js - "
+            + "the rolled-reward rule below cannot be checked.");
+    }
+
     let blocks = 0;
+    let rolled = 0;
     for (const file of ["src/data/locations.js", "src/data/dialogues.js", "src/quests.js", "src/enemies.js"]) {
         const full_path = path.join(repo_root, file);
         if (!fs.existsSync(full_path)) {
@@ -122,6 +205,70 @@ function check_reward_keys() {
                 }
             }
 
+            /*
+                A rolled group may only hold what the load path does not re-apply. See
+                reward_keys_not_reapplied_on_load: anything else would be granted or not
+                depending on a die roll every time a save is loaded.
+
+                Every group is read on its own rather than the whole array at once, and
+                its keys are split on top-level commas rather than by line - both because
+                the first version of this rule did neither and so could not fail either of
+                the two negative tests written for it.
+            */
+            for (const opening of body.matchAll(/chance_of:\s*\[/g)) {
+                let depth = 0;
+                let close = -1;
+                for (let i = opening.index + opening[0].length - 1; i < body.length; i++) {
+                    if (body[i] === "[") { depth++; }
+                    else if (body[i] === "]") {
+                        depth--;
+                        if (depth === 0) { close = i; break; }
+                    }
+                }
+                if (close === -1) {
+                    error(`${file} has a chance_of that never closes - this check is out `
+                        + `of date.`);
+                    continue;
+                }
+
+                const groups = split_top_level(
+                    body.slice(opening.index + opening[0].length, close));
+                if (groups.length === 0) {
+                    error(`${file} has an empty chance_of, which rolls nothing.`);
+                    continue;
+                }
+
+                for (const group of groups) {
+                    rolled++;
+                    const fields = entries_of(group.replace(/^\{/, "").replace(/\}$/, ""));
+                    const chance = fields.find((field) => field.key === "chance");
+                    const nested = fields.find((field) => field.key === "rewards");
+
+                    if (!chance) {
+                        error(`${file} has a rolled reward group that names no chance, so `
+                            + `it rolls against undefined and never happens: `
+                            + `\`${group.replace(/\s+/g, " ").slice(0, 70)}\`.`);
+                    }
+                    if (!nested) {
+                        error(`${file} has a rolled reward group with no rewards in it: `
+                            + `\`${group.replace(/\s+/g, " ").slice(0, 70)}\`.`);
+                        continue;
+                    }
+
+                    for (const field of entries_of(
+                        nested.value.replace(/^\{/, "").replace(/\}$/, ""))) {
+                        if (!rollable.has(field.key)) {
+                            error(`${file} rolls a reward group holding "${field.key}", `
+                                + `which the load path does not skip - so a finished `
+                                + `book's load path re-applies it and the roll would be `
+                                + `repeated on every load, granted once and missing the `
+                                + `next time. A rolled reward may only hold `
+                                + `${[...rollable].sort().join(", ")}.`);
+                        }
+                    }
+                }
+            }
+
             const locks = body.match(/(?<![A-Za-z0-9_])locks:\s*\{/);
             if (locks) {
                 const lock_body = braced_body(body, locks.index + locks[0].length - 1);
@@ -137,7 +284,8 @@ function check_reward_keys() {
     if (blocks === 0) {
         error("found no reward objects to check - this check is out of date.");
     }
-    console.log(`[check] reward objects: ${blocks} checked`);
+    console.log(`[check] reward objects: ${blocks} checked, ${reward_keys.length} keys read `
+        + `from main.js, ${rolled} rolled group(s) holding only what a load skips`);
 }
 
 /**

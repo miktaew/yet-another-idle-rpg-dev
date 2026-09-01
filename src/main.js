@@ -2890,6 +2890,31 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         //shouldn't need any display updates
     }
 
+    /*
+        An active effect as a reward, which the twenty-three kinds above could not express.
+
+        Every one of them gives something; a reward that takes has to go through
+        add_active_effect, which is how food, enemies and the dev console already apply
+        one. A trap in a chest lid is a debuff for a while, and that is a COST - the thing
+        you opened is still yours. Nothing else in the game could say that.
+
+        It does not log; add_active_effect is silent. Pair it with `messages` so the player
+        knows what bit them.
+    */
+    if(rewards.effects && !only_unlocks && !is_from_loading) {
+        for(let i = 0; i < rewards.effects.length; i++) {
+            const entry = rewards.effects[i];
+            if(!effect_templates[entry.effect]) {
+                console.error(`No such effect as "${entry.effect}" - reward skipped.`);
+                continue;
+            }
+            add_active_effect(entry.effect, entry.duration);
+        }
+        update_displayed_effects();
+        character.stats.add_active_effect_bonus();
+        update_character_stats();
+    }
+
     if(rewards.move_to && !only_unlocks) {
         if(source_type !== "action") {
             change_location({location_id: rewards.move_to.location});
@@ -2898,6 +2923,43 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         }
     } else if(is_current_location_reload_needed) {
         change_location({location_id: current_location.id});
+    }
+
+    /*
+        Reward groups that only sometimes happen, rolled independently of each other.
+
+        Every reward above is certain, which is why a chest could hold exactly one thing:
+        an action has a single success path and nothing on it could carry a chance. So a
+        chest was the same coin and the same scarf every time, and "sometimes it bites"
+        could not be written at all (P-24).
+
+        `chance` may be a NUMBER or a function deriving one, the same shape a trader's
+        inventory_template takes and for the same reason: a trap a skilled picker spots
+        more often has to read the skill at the moment it is rolled, and storing a
+        computed chance would be the "derive, do not store" mistake Q-10 settled.
+
+        Skipped entirely when only_unlocks or is_from_loading, and
+        check_chance_rewards_are_not_unlocks refuses unlock kinds inside one. Both halves
+        of the same hazard: a finished book re-applies its rewards on every load, so a
+        chance-gated unlock would be re-rolled - granted on one load and missing on the
+        next, with nothing failing.
+    */
+    if(rewards.chance_of && !only_unlocks && !is_from_loading) {
+        for(let i = 0; i < rewards.chance_of.length; i++) {
+            const group = rewards.chance_of[i];
+            const chance = typeof group.chance === "function" ? group.chance() : group.chance;
+
+            if(Math.random() < chance) {
+                process_rewards({
+                    rewards: group.rewards,
+                    source_type,
+                    source_name,
+                    is_first_clear,
+                    inform_overall,
+                    inform_textline,
+                });
+            }
+        }
     }
 }
 

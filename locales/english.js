@@ -3838,6 +3838,8 @@ const descriptions = {
     "action work at the lock fail unable_to_begin 1": "You have nothing locked to work at.",
     "action work at the lock fail random_loss 1": "The wire slips, straightens, and has to be bent back. The chest is exactly as shut as it was, which is the only good thing about it.",
     "action work at the lock fail conditional_loss 1": "Your hands are not steady enough for this today.",
+    "log the chest had a false bottom": "The bottom of the chest is not the bottom of the chest.",
+    "log the chest was trapped": "Something under the lid goes into your hand as it opens - a needle, set there on purpose, and not a clean one.",
     "action build a hearth fail unable_to_begin 1": "A hundred and twenty bricks, six bars of iron, and charcoal to light it with. The mill boys are already standing about looking hopeful, which is worse than if they were not.",
     "craftsman hearth": "There's a hearth behind the well now.",
     "craftsman hearth answ": "Ahh. *[He is quiet for long enough that you wonder whether he heard.]*\n\nI asked you to bring me something you made up on that mountain. You have brought me somewhere to stand instead, which is more than I asked for and I am going to be gracious about it for exactly one more sentence.\n\n*[He is already getting up]* Right. The boy will be blowing it wrong. They always blow it wrong - hard and then nothing, like a bellows is a thing you beat. Steady is the whole of it. Steady and boring, forever.\n\nI have forty years of telling people that and nowhere to tell them it. *[At the door]* Do not wait for me, I know where the well is.",

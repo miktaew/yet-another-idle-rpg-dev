@@ -3879,6 +3879,8 @@ const descriptions = {
     "action work at the lock fail unable_to_begin 1": "Uğraşacak kilitli bir şeyiniz yok.",
     "action work at the lock fail random_loss 1": "Tel kayıyor, düzleşiyor ve yeniden bükülmesi gerekiyor. Sandık tam olarak eskisi kadar kapalı; iyi tarafı da yalnızca bu.",
     "action work at the lock fail conditional_loss 1": "Elleriniz bugün bu iş için yeterince sabit değil.",
+    "log the chest had a false bottom": "Sandığın dibi, sandığın dibi değil.",
+    "log the chest was trapped": "Kapak açılırken altındaki bir şey elinize giriyor — bir iğne, oraya bilerek konmuş ve temiz de değil.",
     "action build a hearth fail unable_to_begin 1": "Yüz yirmi tuğla, altı külçe demir ve yakmak için kömür. Değirmen çocukları çoktan etrafta umutla dikiliyor; bu, dikilmemelerinden daha kötü.",
     "craftsman hearth": "Kuyunun arkasında artık bir ocak var.",
     "craftsman hearth answ": "Ahh. *[Duyup duymadığını merak edecek kadar sessiz kalıyor.]*\n\nSana o dağda yaptığın bir şeyi getirmeni söylemiştim. Sen bana onun yerine durabileceğim bir yer getirdin; istediğimden fazlası; bunun kıymetini tam bir cümle boyunca bileceğim, sonrasını bekleme.\n\n*[Çoktan kalkıyor]* Pekâlâ. Çocuk yanlış üfürüyordur. Hep yanlış üfürürler — sert, sonra hiç; körük dövülecek bir şeymiş gibi. Meselenin tamamı düzenli olmak. Düzenli ve sıkıcı, sonsuza kadar.\n\nKırk yıldır bunu insanlara anlatıyorum ve anlatacak bir yerim hiç olmadı. *[Kapıda]* Beni bekleme, kuyunun nerede olduğunu biliyorum.",
