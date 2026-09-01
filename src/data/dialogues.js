@@ -3035,11 +3035,46 @@ class Textline {
         is_unlocked: true,
         description: "broker description",
         textlines: {
+            /*
+                P-25's first piece: an NPC who speaks differently at low and at high
+                standing, built from the two things the game already had - a Textline's
+                display_conditions and, as of this version, a reputation ceiling.
+
+                His own text is why he is the one. "Bring me a quantity and I will give
+                you a number. Bring me a story and I will give you nothing" is a
+                STRANGER's answer, and it was the only answer he had. It keeps every word;
+                it just stops being the answer once he knows what you are worth.
+
+                150 is the town's first gate - where the gate guard stops reciting the
+                rule and looks at you properly - so it is where the broker warms up too,
+                and it sits well below his own 250 line so the two are separate beats.
+                at_most is inclusive, hence 149: the two windows meet exactly, which
+                matters more than it looks. A gap would leave him with no greeting at all
+                for a band of standing, and nothing would report it.
+
+                Nothing is stranded by the condition: `hello` unlocks nothing and only
+                locks itself.
+            */
             "hello": new Textline({
                 lore: true, //carries the thread; see the lore panel
                 name: "broker hello",
+                display_conditions: {reputation: {Town: {at_most: 149}}},
                 text: "broker hello answ",
                 locks_lines: ["hello"],
+            }),
+            //The same man, the same trade, once the square has told him who you are.
+            "hello known": new Textline({
+                //Also lore, because the panel records what you HEARD. Which of the two
+                //you heard depends on when you first came, and that is the feature.
+                lore: true,
+                name: "broker hello known",
+                text: "broker hello known answ",
+                is_unlocked: true,
+                display_conditions: {reputation: {Town: {at_least: 150}}},
+                rewards: {
+                    xp: 300,
+                },
+                locks_lines: ["hello known"],
             }),
             "confront": new Textline({
                 name: "broker confront",

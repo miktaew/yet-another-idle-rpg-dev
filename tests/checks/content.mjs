@@ -578,6 +578,38 @@ function value_expression(source, from) {
  *
  * One scan covers the last two, because rewards and conditions are the same literal.
  */
+/**
+ * The `key: value` entries of an object literal body, split on top-level commas.
+ *
+ * A regex cannot do this since P-25: a reputation condition's value may itself be an
+ * object - `{Town: {at_most: 149}}` - so `([^}]*)` stops at the wrong brace and
+ * `(\w+):\s*-?\d+` then reads `at_most: 149` as a region name. And top_level_keys is
+ * line-oriented, which drops every entry after the first on `{Guild: 60, Town: 20}`.
+ */
+function object_entries(body) {
+    const parts = [];
+    let depth = 0;
+    let start = 0;
+
+    for (let i = 0; i < body.length; i++) {
+        const character = body[i];
+        if ("{[(".includes(character)) { depth++; }
+        else if ("}])".includes(character)) { depth--; }
+        else if (character === "," && depth === 0) {
+            parts.push(body.slice(start, i));
+            start = i + 1;
+        }
+    }
+    parts.push(body.slice(start));
+
+    const entries = [];
+    for (const part of parts) {
+        const match = /^\s*(\w+)\s*:\s*([\s\S]*?)\s*$/.exec(part);
+        if (match) { entries.push({ key: match[1], value: match[2] }); }
+    }
+    return entries;
+}
+
 async function check_reputation_regions_have_names() {
     const before = errors.length;
 
@@ -615,17 +647,59 @@ async function check_reputation_regions_have_names() {
 
     const known = new Set(regions);
     let named = 0;
+    let bounded = 0;
     for (const relative of source_files(repo_root)) {
         if (relative === "src/character.js") continue;
         const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
-        for (const literal of source.matchAll(/reputation:\s*\{([^}]*)\}/g)) {
-            for (const entry of literal[1].matchAll(/(\w+):\s*-?\d+/g)) {
+        for (const match of source.matchAll(/reputation:\s*\{/g)) {
+            const body = braced_body(source, match.index + match[0].length - 1);
+            if (body === null) continue;
+
+            for (const { key: region, value } of object_entries(body)) {
                 named++;
-                if (!known.has(entry[1])) {
-                    error(`${relative} names reputation region "${entry[1]}", which`
+                if (!known.has(region)) {
+                    error(`${relative} names reputation region "${region}", which`
                         + " character.reputation does not have. As a reward add_reputation"
                         + " throws; as a condition the gate reads undefined and stays shut"
                         + ` for good. Regions are ${regions.join(", ")}.`);
+                    continue;
+                }
+
+                /*
+                    A bare number is a floor. The bounded form is {at_least, at_most},
+                    and it is worth checking because both ways of getting it wrong are
+                    silent: an unknown key inside it is simply ignored by
+                    process_conditions, so a gate meant to close never closes, and an
+                    at_most below 0 can never be satisfied by standing that starts at 0
+                    and is floored there - the line is written, translated, shipped and
+                    never once shown.
+                */
+                if (!value.startsWith("{")) continue;
+                bounded++;
+
+                const bounds = {};
+                for (const bound of object_entries(value.slice(1, -1))) {
+                    if (bound.key !== "at_least" && bound.key !== "at_most") {
+                        error(`${relative} bounds reputation "${region}" with `
+                            + `"${bound.key}", which process_conditions does not read. `
+                            + `It is at_least and at_most, like location_clears - an `
+                            + `unrecognised key is ignored, so the gate simply never `
+                            + `closes.`);
+                        continue;
+                    }
+                    bounds[bound.key] = Number(bound.value);
+                }
+
+                if ("at_most" in bounds && bounds.at_most < 0) {
+                    error(`${relative} bounds reputation "${region}" at_most `
+                        + `${bounds.at_most}. Standing starts at 0 and is floored there, `
+                        + `so nothing can ever satisfy that and the line can never show.`);
+                }
+                if ("at_least" in bounds && "at_most" in bounds
+                    && bounds.at_least > bounds.at_most) {
+                    error(`${relative} bounds reputation "${region}" between `
+                        + `${bounds.at_least} and ${bounds.at_most}, which is an empty `
+                        + `window - the line can never show.`);
                 }
             }
         }
@@ -635,6 +709,43 @@ async function check_reputation_regions_have_names() {
         error("no reputation region is named anywhere outside character.js - this check is"
             + " out of date.");
         return;
+    }
+
+    /*
+        And a floor and a ceiling on the same region inside one dialogue have to MEET.
+        Two lines meant to be the stranger's and the regular's are written as
+        {at_most: N} and {at_least: N + 1}; get that wrong by one in the other direction
+        and there is a band of standing where both show, or - far worse - a band where
+        neither does and the speaker silently has no line at all.
+    */
+    const dialogue_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/data/dialogues.js"), "utf8"));
+    const floors = new Map();
+    const ceilings = new Map();
+
+    for (const match of dialogue_source.matchAll(/reputation:\s*\{/g)) {
+        const body = braced_body(dialogue_source, match.index + match[0].length - 1);
+        if (body === null) continue;
+        for (const { key: region, value } of object_entries(body)) {
+            if (!value.startsWith("{")) continue;
+            for (const bound of object_entries(value.slice(1, -1))) {
+                const into = bound.key === "at_most" ? ceilings : floors;
+                if (!into.has(region)) { into.set(region, new Set()); }
+                into.get(region).add(Number(bound.value));
+            }
+        }
+    }
+
+    for (const [region, region_ceilings] of ceilings) {
+        for (const ceiling of region_ceilings) {
+            const region_floors = floors.get(region) ?? new Set();
+            if (!region_floors.has(ceiling + 1)) {
+                error(`src/data/dialogues.js caps a line at ${region} ${ceiling} and no `
+                    + `line opens at ${ceiling + 1}. A ceiling without the floor that `
+                    + `meets it leaves a band of standing with nothing to say, and `
+                    + `nothing reports an NPC who has run out of lines.`);
+            }
+        }
     }
 
     if (errors.length === before) {
@@ -1624,6 +1735,47 @@ function check_locked_skills_can_be_unlocked() {
         + `something`);
 }
 
+/**
+ * A display_conditions written as an array, which silently applies nothing.
+ *
+ * All three constructors that take one - Textline, Location, Combat_zone, through
+ * AvailabilityComponent - store it as `[display_conditions]`, and process_conditions
+ * reads `conditions[0].reputation` and the rest off that. Pass an object and it works.
+ * Pass an ARRAY and it becomes `[[...]]`: `conditions[0]` is an array, every key on it is
+ * undefined, and the condition is met unconditionally. The line shows always, the gate
+ * never closes, and nothing anywhere reports it.
+ *
+ * This was written after falling into it: P-25's two broker greetings were written as
+ * arrays, shipped through the build and every other check, and both showed at every
+ * standing. Only measuring the rendered condition caught it. The Location constructor
+ * also declared its default as `[]`, which is what made the array look right.
+ */
+function check_display_conditions_are_not_wrapped_twice() {
+    let checked = 0;
+
+    for (const relative of source_files(repo_root)) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const match of source.matchAll(/display_conditions:\s*\[/g)) {
+            const line = source.slice(0, match.index).split("\n").length;
+            error(`${relative}:${line} writes display_conditions as an array. Every `
+                + `constructor wraps it, so an array becomes [[...]] and `
+                + `process_conditions reads nothing off it - the condition is met `
+                + `always. Pass the object itself.`);
+        }
+        checked += [...source.matchAll(/display_conditions:/g)].length;
+    }
+
+    if (checked === 0) {
+        error("no display_conditions is written anywhere - this check is out of date "
+            + "and has stopped guarding anything.");
+        return;
+    }
+
+    console.log(`[check] display conditions: ${checked} written, none double-wrapped`);
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -1646,4 +1798,5 @@ export {
     check_stance_reactions_name_real_stances,
     check_droprate_tags_are_worth_scaling,
     check_locked_skills_can_be_unlocked,
+    check_display_conditions_are_not_wrapped_twice,
 };

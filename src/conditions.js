@@ -60,6 +60,15 @@ import { registries } from "./registries.js";
             yes: String | [String],
         }
 
+        reputation: { //standing in a region
+            region: Number //at least this much - the shape every gate used before P-25
+            //  ...or, to bound it on either side or both:
+            region: {
+                at_least: Number,
+                at_most: Number, //inclusive, like location_clears
+            }
+        }
+
         flags: [String] //global flags required
 
         relative_height: { //short / average / tall, relative to race
@@ -320,14 +329,47 @@ const process_conditions = (conditions, character) => {
         }
     }
 
-    //checks reputation
+    /*
+        Standing, as a floor and - since P-25 - optionally as a ceiling.
+
+        A bare number is a floor and stays one, which is what all six gates written
+        before this were. The bounded form is {at_least, at_most}, borrowed verbatim from
+        location_clears rather than invented: at_most is inclusive there and is inclusive
+        here.
+
+        A ceiling is what "low standing" needs and what the game could not say. Every
+        gate until now read standing as a threshold to pass, so a place could only get
+        warmer; nothing could be written that a stranger hears and a regular does not.
+        Note what that means here specifically: standing is floored at 0 and almost
+        nothing subtracts from it, so a ceiling reads as *new*, not as *disliked*.
+
+        The two-set ramp - conditions[1] scaling `met` between a floor and a ceiling for
+        an action's success chance - only ever made sense for the numeric form, and is
+        left to it.
+    */
     if(conditions[0].reputation) {
         Object.keys(conditions[0].reputation).forEach(rep_region => {
-            if(character.reputation[rep_region] < conditions[0].reputation[rep_region]) {
+            const wanted = conditions[0].reputation[rep_region];
+            //Declared regions all exist; the fallback is so an absent one reads as 0
+            //rather than making every comparison against undefined quietly false.
+            const standing = character.reputation[rep_region] ?? 0;
+
+            const at_least = typeof wanted === "number" ? wanted : wanted.at_least;
+            const at_most = typeof wanted === "number" ? undefined : wanted.at_most;
+
+            if(at_least !== undefined && standing < at_least) {
                 met = 0;
-                return met;
-            } else if(conditions[1]?.reputation && conditions[1].reputation[rep_region] > conditions[0].reputation[rep_region] && character.reputation[rep_region] < conditions[1].reputation[rep_region]) {
-                met *= (1 + character.reputation[rep_region] - conditions[0].reputation[rep_region])/(conditions[1].reputation[rep_region] - conditions[0].reputation[rep_region]);
+                return;
+            }
+            if(at_most !== undefined && standing > at_most) {
+                met = 0;
+                return;
+            }
+
+            const ramp_ceiling = conditions[1]?.reputation?.[rep_region];
+            if(typeof wanted === "number" && typeof ramp_ceiling === "number"
+                && ramp_ceiling > wanted && standing < ramp_ceiling) {
+                met *= (1 + standing - wanted)/(ramp_ceiling - wanted);
             }
         });
     }

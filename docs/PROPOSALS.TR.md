@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 93 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 94 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -634,14 +634,22 @@ kıyafetler, yenilerine sebep olmadıkça var olan eşyalar olmalı — icat yer
 dosyada zaten 44 üretilmiş bileşen ve yapılamayan sekiz tanesi duruyor.
 
 
-### P-25 — İtibar, bir yerin ne kadara sattığını değil nasıl bir yer olduğunu değiştirir `open`
+### P-25 — İtibar, bir yerin ne kadara sattığını değil nasıl bir yer olduğunu değiştirir `kısmen tamam`
 
 Sahibinin isteği, dört parça hâlinde: NPC'ler yüksek ve düşük itibarda farklı konuşsun;
 bazı eşyalar yalnızca yüksek itibarda satılsın; bir arka oda olsun; ve kenar mahalle
 tarafında arada bir çıkan bir karaborsa olsun.
 
-**Ölçüldü ve bulgu şu: dördü de bu oyunun zaten sahip olduğu iki mekanizma.** Hiçbiri
-motor işi gerektirmiyor:
+**Dördün ilki v0.7.15 olarak yayınlandı** — kasaba meydanındaki komisyoncu bir yabancıyla
+bir müdavime aynı cevabı vermiyor — ve yol boyunca bu kaydı düzeltti.
+
+**Ölçüldü ve bulgu şu: dördü de bu oyunun zaten sahip olduğu iki mekanizma.** Aşağıdaki
+"hiçbiri motor işi gerektirmiyor" ifadesi **ilki için yanlıştı**: `display_conditions`
+yalnızca bir TABAN ifade edebiliyordu. Oyundaki altı itibar kapısının hepsi taban,
+`conditions[1]` bir tavan değil başarı şansı rampası; yani bir yer ısınabiliyor ama asla
+soğuk olamıyordu. v0.7.15, koşula `location_clears`'ın zaten sahip olduğu
+`{at_least, at_most}` şeklini kazandırdı ve söz dağarcığının ikinci yarısı artık var. Geriye
+kalan üç parça motor işi gerektirmiyor; iddianın tutan yarısı da bu:
 
 - **Bir Textline üzerinde `display_conditions: {reputation: {...}}`.** Altı replik bunu
   zaten kullanıyor — tedarikçinin, komisyoncunun, yaşlı kadının Slums 300'deki listesi.

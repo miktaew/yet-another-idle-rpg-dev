@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 93 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 94 -->
 
 # Proposals
 
@@ -612,14 +612,22 @@ over invention, and there are 44 generated components and eight unmade ones alre
 file to draw on.
 
 
-### P-25 — Standing changes what a place is like, not only what it costs `open`
+### P-25 — Standing changes what a place is like, not only what it costs `partly done`
 
 The owner's request, in four parts: NPCs speak differently at high and at low standing;
 some items only sell at high standing; a back room; and a black market that turns up on
 the slums side.
 
+**The first of the four shipped as v0.7.15** - the broker in the town square answers a
+stranger and a regular differently - and it corrected this entry on the way.
+
 **Measured, and the finding is that all four are the two mechanisms this game already
-has.** Neither needs engine work:
+has.** The line below saying neither needs engine work was **wrong about the first one**:
+`display_conditions` could only ever express a FLOOR. All six standing gates in the game
+are floors, `conditions[1]` is a success-chance ramp rather than a cap, and so a place
+could get warmer and never be cold. v0.7.15 gave the condition the `{at_least, at_most}`
+shape `location_clears` already had, and the second half of the vocabulary exists now. The
+three parts that remain need no engine work, which is the half of the claim that held:
 
 - **`display_conditions: {reputation: {...}}` on a Textline.** Six lines already use it -
   the supplier's, the broker's, the old woman's roster at Slums 300. A different greeting

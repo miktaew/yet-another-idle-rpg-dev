@@ -3266,6 +3266,8 @@ const descriptions = {
     "broker description": "Yeşil bir tentenin altında ağır bir adam; numunelerle dolu bir masanın arkasında kılını kıpırdatmadan oturuyor. Bir kâsede tahıl, bir başkasında yün, bir taşla bastırılmış bir şerit deri. Hiçbir yeri acele etmiyor.",
     "broker hello": "Alıp satıyor musun?",
     "broker hello answ": "Alıyorum. Satmak yanımdaki adamın işi ve onu da kötü yapıyor. *[Bakmadan bir tutam tahılı avucunda çevirir]* Bana bir miktar getir, sana bir sayı veririm. Bana bir hikâye getirirsen hiçbir şey vermem.",
+    "broker hello known": "Yine satacaklarım var.",
+    "broker hello known answ": "*[Elini çoktan teraziye atmış.]*\n\nBırak öyleyse. *[Miktarlarla ilgili kuralı tekrarlamıyor; seninle bunu yapmayı bıraktı]* Bana dokuz yük getirdin ve hiçbiri eksik değildi; bu, buradaki insanların çoğunun gördüğünden uzun bir konuşma ve seninle onu bir kez bile yapmak zorunda kalmadım.\n\n*[Tartıyor, taşa işaretliyor ve sayıyı yorumsuz uzatıyor]* Bir de şu var; seni tanımıyormuş gibi yapma kısmını geçtiğimize göre. Bu meydanda kulağına yanlış gelen bir fiyat duyarsan, kimseye söylemeden önce bana söyle. Ben hikâye ticareti yapmıyorum. Hikâyeleri kontrol ediyorum.",
     "broker confront": "Orman yolunda bir yolcu vardı. Soyulup ölüme bırakıldı.",
     "broker confront answ": "*[Eli tahılın içinde durur. Başını kaldırmaz ve anlamamış gibi de yapmaz.]*\n\nO bir işti. *[Başka biri havadan söz ederken kullanacağı tonla söylüyor]* Peşin ödendi, teslimde yarısı daha. Adamlarım o yolu bir hafta tuttu ve aranacak tek bir şey söylendi.\n\nKimseyi soluk alırken bırakmamaları söylenmemişti. O kısma kendileri karar verdi ve benim farklı yapardım dediğim tek kısım o.",
     "broker who": "Sana kim ödeme yaptı?",

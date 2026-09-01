@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 84 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 85 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,65 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.15 - itibar bir tavan olabiliyor ve komisyoncu kuralı tekrarlamayı bırakıyor
+
+P-25'in dört parçasından ilki: yüksek ve düşük itibarda farklı konuşan NPC'ler. Teklif,
+dört parçanın da oyunun sahip olduğu iki mekanizma olduğunu — bir Textline üzerinde
+`display_conditions` ve bir Trader üzerinde türetilmiş `inventory_template` — ve ilkinin
+*"zıt koşullu iki replik"* olduğunu zaten ölçmüştü. Yazmadan önce yeniden ölçüldü ve zıt
+koşul diye bir şey yoktu.
+
+**İtibar yalnızca bir taban olabiliyordu.** `conditions.js`,
+`character.reputation[region] < conditions[0].reputation[region]` okuyup altında
+düşürüyordu; `conditions[1]` ise bir aksiyonun başarı şansını iki sayı arasında ölçekleyen
+yumuşak bir rampa, sert bir tavan değil. Oyundaki altı itibar kapısının hepsi taban.
+Dolayısıyla bir yer ısınabiliyor ama asla soğuk olamıyordu ve bir yabancının duyup bir
+müdavimin duymadığı hiçbir şey yazılamıyordu.
+
+**Şekil zaten dosyanın içindeydi.** `location_clears` `{at_least, at_most}` alıyor, boy
+koşulları `{at_least, exactly, at_most}` alıyor; yani itibar da `{at_least, at_most}`
+alıyor — icat değil, ödünç, ve `at_most` iki yerde de kapsayıcı. Çıplak bir sayı hâlâ
+taban, ki mevcut altı kapının hepsi öyle, ve iki-set rampası sayısal forma bırakıldı. Her
+iki form ve her sınır ölçüldü: `at_least: 100` 99'da düşüyor 100'de geçiyor, `at_most: 100`
+100'de geçiyor 101'de düşüyor, pencere çalışıyor, olmayan bir bölge 0 okunuyor ve rampa
+100 ile 200 arasında 150 itibarda hâlâ 0,51 döndürüyor.
+
+**Ne söylediği ve neden komisyoncu olduğu.** *"Bana miktar getir, sana bir sayı vereyim.
+Bana hikâye getirirsen sana hiçbir şey vermem"*, bir **yabancıya** verilen cevap ve
+elindeki tek cevap buydu. Her kelimesi duruyor; yalnızca Town 150'de cevap olmayı
+bırakıyor — kasabanın ilk kapısı, kapı muhafızının kuralı tekrarlamayı bırakıp size düzgün
+baktığı yer — ki bu, adamın kendi 250 repliğinin epey altında, yani ikisi ayrı vuruş olarak
+kalıyor. İki yarı da `lore: true` taşıyor; çünkü panel duyduğunuzu kaydediyor ve ikisinden
+hangisini duyduğunuz ilk ne zaman geldiğinize bağlı.
+
+Hiçbir şey mahsur kalmıyor: önce ölçüldü, `hello` hiçbir şey açmıyor ve yalnızca kendini
+kilitliyor.
+
+**Üç muhafız, dört negatif test ve yolda düşülen bir tuzak.**
+
+Önce tuzak, çünkü işe yarayan kısım o. `display_conditions` alan her yapıcı onu
+`[display_conditions]` olarak saklıyor. İki yeni selamlama dizi olarak yazılmıştı — ki
+*doğru görünüyor* ve Location yapıcısının kendi `display_conditions = []` varsayılanı bunu
+etkin biçimde öneriyordu — böylece `[[...]]` oldular, `process_conditions` `conditions[0]`
+üzerinden hiçbir şey okumadı ve **iki replik de her itibarda göründü**. Derleme geçti.
+Bütün kontroller geçti. Yalnızca koşulu yedi farklı itibarda çizdirmek yakaladı.
+
+- `check_display_conditions_are_not_wrapped_twice`, nesne olması gereken yerde diziyi
+  reddediyor; `src/` genelinde. 21 yazım, hiçbiri sarmalanmamış. `locations.js`'teki iki
+  yanıltıcı `[]` varsayılanı artık nesne.
+- `check_reputation_regions_have_names` sınırlı şekli öğrendi — `at_most`'u bölge adı diye
+  okuyordu, kendini böyle duyurdu — ve artık `process_conditions`'ın okumadığı bir sınır
+  anahtarını, itibarın asla karşılayamayacağı 0 altı bir `at_most`'u ve boş bir pencereyi
+  de reddediyor.
+- Ve bir tavan bir tabanla buluşmak zorunda. `{at_most: 149}` ile `{at_least: 150}` tam
+  oturuyor; bir birim öbür yöne kaydırın, konuşmacının hiç repliği olmadığı bir itibar
+  bandı oluşuyor ve bunu başka hiçbir şey bildirmiyor.
+
+**P-25'te kalanlar.** Üç parça: yalnızca yüksek itibarda satılan eşyalar, bir arka oda ve
+kenar mahalle tarafında bir karaborsa. Üçü de *öteki* mekanizma — saklanmak yerine türetilen
+bir Trader `inventory_template`'i, ki v0.7.5 körfezin mevsimlik rafı için onu zaten
+fonksiyon hâline getirmişti. Bu sürümün eklediği söz dağarcığı, eksik olan yarısı.
 
 ### Üçün üstünde ocak yok ve bunun ne zaman değişeceğini söyleyen kontrol
 

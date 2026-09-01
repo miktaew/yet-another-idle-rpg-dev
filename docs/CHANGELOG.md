@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 84 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 85 -->
 
 # Changelog
 
@@ -20,6 +20,66 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.15 - standing can be a ceiling, and the broker stops reciting the rule
+
+P-25's first of four parts: NPCs who speak differently at high and at low standing. The
+proposal had already measured that all four parts are two mechanisms the game owns -
+`display_conditions` on a Textline and a derived `inventory_template` on a Trader - and
+that the first is *"two textlines with opposite conditions"*. Measured again before
+writing, and the opposite condition did not exist.
+
+**Standing could only ever be a floor.** `conditions.js` read
+`character.reputation[region] < conditions[0].reputation[region]` and failed below it;
+`conditions[1]` is a soft ramp that scales an action's success chance between two numbers,
+not a hard cap. All six standing gates in the game are floors. So a place could get warmer
+and never be cold, and nothing could be written that a stranger hears and a regular does
+not.
+
+**The shape was already in the file.** `location_clears` takes `{at_least, at_most}` and
+the height conditions take `{at_least, exactly, at_most}`, so reputation takes
+`{at_least, at_most}` too - borrowed, not invented, and `at_most` is inclusive in both
+places. A bare number is still a floor, which is what all six existing gates are, and the
+two-set ramp is left to the numeric form. Verified across both forms and every boundary:
+`at_least: 100` fails at 99 and passes at 100, `at_most: 100` passes at 100 and fails at
+101, a window works, an absent region reads as 0, and the ramp still returns 0.51 at
+standing 150 between 100 and 200.
+
+**What it says, and why it is the broker.** *"Bring me a quantity and I will give you a
+number. Bring me a story and I will give you nothing"* is a **stranger's** answer, and it
+was the only answer he had. It keeps every word and simply stops being the answer at Town
+150 - the town's first gate, where the gate guard stops reciting the rule and looks at you
+properly - which is well below his own 250 line, so the two stay separate beats. Both
+halves carry `lore: true`, because the panel records what you heard, and which of the two
+you heard depends on when you first came.
+
+Nothing is stranded: measured first, `hello` unlocks nothing and only locks itself.
+
+**Three guards, four negative tests, and a trap fallen into on the way.**
+
+The trap first, because it is the useful part. Every constructor that takes a
+`display_conditions` stores it as `[display_conditions]`. The two new greetings were
+written as arrays - which *looks* right, and which the Location constructor's own
+`display_conditions = []` default actively suggested - so they became `[[...]]`,
+`process_conditions` read nothing off `conditions[0]`, and **both lines showed at every
+standing**. The build passed. Every check passed. Only rendering the condition at seven
+different standings caught it.
+
+- `check_display_conditions_are_not_wrapped_twice` refuses an array where an object
+  belongs, across all of `src/`. 21 written, none wrapped. The two misleading `[]`
+  defaults in `locations.js` are objects now.
+- `check_reputation_regions_have_names` learned the bounded shape - it was reading
+  `at_most` as a region name, which is how it announced itself - and now also refuses a
+  bound key `process_conditions` does not read, an `at_most` below 0 that standing can
+  never satisfy, and an empty window.
+- And a ceiling has to meet a floor. `{at_most: 149}` with `{at_least: 150}` is exact; get
+  it wrong by one the other way and there is a band of standing where the speaker has no
+  line at all, which nothing else would report.
+
+**What P-25 still holds.** Three parts: items sold only at high standing, a back room, and
+a black market on the slums side. All three are the *other* mechanism - a Trader's
+`inventory_template` derived rather than stored, which v0.7.5 already made a function for
+the bay's seasonal shelf. The vocabulary this version adds is the half that was missing.
 
 ### No forge above three, and the check that says when that stops being true
 

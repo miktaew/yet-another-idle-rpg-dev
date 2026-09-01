@@ -46,7 +46,9 @@ class Location {
                 temperature_modifier = 0,
                 is_under_roof = false,
                 entrance_rewards, //rewards gained on entering it, to be used for unlocks
-                display_conditions = [], //same shape as on a Textline; checked at render time, so a runtime flag works
+                //An OBJECT, not an array: the constructor wraps it below, so an array
+                //here becomes [[...]] and process_conditions reads nothing off it.
+                display_conditions = {}, //same shape as on a Textline; checked at render time, so a runtime flag works
                 //The message shown when this place is unlocked. Combat_zone has always
                 //taken it and Location never did, so nine places carried an authored
                 //unlock line that was dropped on the floor and replaced by the generic
@@ -163,7 +165,7 @@ class Combat_zone {
                  temperature_range_modifier = 1,
                  temperature_modifier = 0,
                  is_under_roof = false,
-                 display_conditions = [], //see the Location constructor; Combat_zone is a separate class, not a subclass
+                 display_conditions = {}, //see the Location constructor; Combat_zone is a separate class, not a subclass
                 }) {
 
         this.name = name;
