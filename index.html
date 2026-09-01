@@ -1801,11 +1801,19 @@
                             document.documentElement.style.setProperty(variable, `${viewport_position / fixed_offset_zoom}px`);
                         };
 
-                        if(event.clientY > bottom_edge_position) {
-                            place(top_variable, bottom_edge_position);
-                        } else {
-                            place(top_variable, event.clientY + tooltip_shift);
-                        }
+                        /*
+                            Above the cursor when there is no room below, rather than
+                            pinned to the bottom edge. Pinning keeps a tall tooltip on
+                            screen but slides it up over the row being pointed at, so the
+                            thing you are reading about ends up behind the thing you are
+                            reading. The arithmetic is in ui_helpers.js because an inline
+                            script in this file is the one thing no test can reach.
+                        */
+                        place(top_variable, place_tooltip_vertically(
+                            event.clientY,
+                            tooltip_height,
+                            get_bottom_edge_position(0),
+                            tooltip_shift));
 
                         if(event.clientX > right_edge_position && !left_side) {
                             place(left_variable, right_edge_position);
@@ -1865,6 +1873,28 @@
                 const location_name_div = document.getElementById("location_name_div");
 
                 const elements_with_restricted_tooltips = [
+                    {
+                        /*
+                            Restricted, not unrestricted, and that was the bug: this entry
+                            has always carried `target_classes` and `break_classes` - the
+                            two fields ONLY move_restricted_tooltip reads - while being
+                            handed to move_unrestricted_tooltip, which reads neither and
+                            clamps nothing. The comment below has said "unclamped, a tall
+                            one then ran off the bottom of the page" the whole time; it was
+                            describing the state the entry was still in.
+
+                            The classes matter because the hovered element is whatever
+                            child the pointer is over - an icon, a label - and the search
+                            for a tooltip inside it finds nothing, so the mover returns
+                            before positioning and the tooltip keeps coordinates from an
+                            earlier hover. These are the two row classes that own one.
+                        */
+                        element: location_actions_div,
+                        top_variable: '--job_tooltip_top',
+                        left_variable: '--job_tooltip_left',
+                        target_classes: ["activity_div", "location_action_div"],
+                        break_classes: ["location_actions_div"],
+                    },
                     {
                         element: crafting_window,
                         top_variable: "--recipe_tooltip_top",
@@ -1941,21 +1971,6 @@
                         element: temperature_div,
                         top_variable: '--temperature_tooltip_top',
                         left_variable: '--temperature_tooltip_left',
-                    },
-                    {
-                        element: location_actions_div,
-                        top_variable: '--job_tooltip_top',
-                        left_variable: '--job_tooltip_left',
-                        /*
-                            Without these, the hovered element is whatever child the
-                            pointer is over - an icon, a label - and the search for a
-                            tooltip inside it finds nothing, so the mover returned before
-                            positioning and the tooltip kept coordinates from an earlier
-                            hover. Unclamped, a tall one then ran off the bottom of the
-                            page. These are the two row classes that own a tooltip.
-                        */
-                        target_classes: ["activity_div", "location_action_div"],
-                        break_classes: ["location_actions_div"],
                     },
                     {
                         element: location_name_div,

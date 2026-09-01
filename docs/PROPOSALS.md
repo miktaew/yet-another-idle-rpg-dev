@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 80 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 81 -->
 
 # Proposals
 
@@ -616,7 +616,6 @@ either is staged - `git ls-files` reads the index, so staging is what makes it o
   measured into P-14. That reasoning is unchanged and should be written into the file
   itself rather than left to a convention nobody can see any more.
 
-
 ---
 
 ## Open decisions
@@ -626,7 +625,32 @@ at. What is left here is project-wide; a question asked by one proposal moves in
 that proposal once it is answered, which is where Q-7 to Q-10 went — see
 [Decisions carried into the phases](#decisions-carried-into-the-phases) inside P-14.
 
-### Q-1 — Does this fork diverge in content? **REVISED: diverge in content, converge in code**
+### Q-1 — Does this fork diverge in content? **REVISED AGAIN: diverge completely**
+
+**2026-09-01, the owner.** The work that was going upstream has gone: the pull requests
+are open and nothing further is owed to them. The fork is no longer holding itself to
+upstream's shape, and that includes the engine - **new skills, new systems and new
+mechanics are all in scope now, not only new content.**
+
+What that changes in practice:
+
+- The line "our refactors should move toward upstream's layout" is lifted. Where their
+  shape is better it is still worth copying, on its merits, but it is no longer a
+  constraint.
+- P-15 and P-16 stop being limited to what already exists. P-16's Q-11 in particular was
+  argued partly on "commits to nothing", and that argument is weaker now: a third combat
+  axis is no longer out of character for the fork, only expensive.
+- Nothing about D-3, D-5 or D-7 changes. The translation layer, the locale rule and the
+  Turkish standard were never upstream's and are not affected.
+- What does not change either: **reclamation over invention** stays the first question.
+  Being free to add a system is not a reason to add one where extending an existing one
+  would do, and the last six versions are the argument for that.
+
+The previous answer is kept below because commits and changelog entries refer to it.
+
+---
+
+### Q-1 (previous) — **REVISED: diverge in content, converge in code**
 
 New areas, items and dialogue are in scope, as before. What has changed is the
 second half: **upstream is not abandoned.** Take what is worth taking from it,

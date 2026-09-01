@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 72 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 73 -->
 
 # Changelog
 
@@ -20,6 +20,49 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.7 - a tooltip that runs off the bottom opens upwards
+
+Reported in play with a screenshot: the slums action tooltip drawn below the cursor on the
+last row of the action list, with half of it past the bottom of the window.
+
+**The cause is not what the symptom suggests.** There are two tooltip movers in the inline
+script in `index.html`. `move_restricted_tooltip` measures the tooltip with `scrollHeight`,
+works out where the bottom edge is and keeps it on screen. `move_unrestricted_tooltip` sets
+`top` to `clientY + shift` and clamps nothing at all.
+
+The action rows were in `elements_with_unrestricted_tooltips` - **while carrying
+`target_classes` and `break_classes`, the two fields only the restricted mover reads.** The
+entry had the fields of the clamping mover and was being handed to the one that does not
+clamp, so those two fields did nothing whatsoever. And its own comment said *"unclamped, a
+tall one then ran off the bottom of the page"* the entire time: it was not explaining a
+past problem, it was describing the state the entry was still in. That is the most
+expensive kind of comment there is.
+
+**Fixed in two parts, because clamping is not what was asked for and is not right
+either.** Pinning a tall tooltip to the bottom edge keeps it on screen and slides it up
+over the row being pointed at, so the thing you are reading about ends up behind the thing
+you are reading. The vertical rule is now: below the cursor by default; **above** it when
+there is no room below; and only when it fits in neither direction, clamped - to the top,
+because a tooltip read from its first line is worth more than one read from its last.
+
+That applies to every restricted tooltip, not only the action rows, which is the right
+scope: none of them wanted to be pinned over their own row either.
+
+**The guard is where the arithmetic now lives.** An inline `<script>` in `index.html` is
+the one part of this codebase no test can reach, and it was the part that was wrong. The
+maths moved into `place_tooltip_vertically` in `ui_helpers.js` - pure, no DOM - and is
+handed to the inline script through `window`, the way `main.js` already hands over a dozen
+other functions. Ten tests, including the reported case written as the assertion that the
+tooltip does not cover the row it describes. Negative-tested by taking the flip out: three
+fail, and the third one is the screenshot - *"and it does not cover the row it describes:
+600 vs 560"*.
+
+One thing the checks caught on the way: `main.js` did not import `ui_helpers.js` at all, so
+the first version of this referenced `place_tooltip_vertically` as a bare name. esbuild
+treats an unresolved identifier as a runtime global, so the build and the bundle would both
+have been clean and the game would have thrown on load. The import went on the end of
+main.js's list, where a new edge goes.
 
 ### v0.7.6 - how you are standing changes what things do to you
 

@@ -558,6 +558,62 @@ const registries = {
 }
 
 // ===========================================================================
+// src/ui_helpers.js - where a tooltip goes
+// ===========================================================================
+/*
+    The tooltip movers live in an inline <script> in index.html, which no test can reach,
+    so the arithmetic was moved here where it can be asked questions. It is also the part
+    that was wrong: the action rows were handed the mover that clamps nothing, and the
+    clamping mover pinned a tall tooltip to the bottom edge rather than flipping it above
+    the cursor - which slides it over the row being pointed at.
+
+    Loaded through the browser-free loader rather than imported directly: ui_helpers.js
+    reads `language` from main.js for the three helpers that case or sort text, so a plain
+    import pulls in main.js and dies on the first DOM handle it reaches for.
+*/
+{
+    const { place_tooltip_vertically: place } =
+        await load_browser_free(repo_root, "src/ui_helpers.js");
+
+    //Room below: straight under the pointer, shift included.
+    check("a tooltip with room below sits under the cursor",
+        place(100, 80, 800, 10) === 110, String(place(100, 80, 800, 10)));
+
+    //Exactly enough room below is still below - the boundary belongs to the default.
+    check("a tooltip that exactly fits below stays below",
+        place(710, 80, 800, 10) === 720, String(place(710, 80, 800, 10)));
+
+    //One pixel more than fits: flip.
+    check("one pixel too tall for below flips above",
+        place(711, 80, 800, 10) === 711 - 10 - 80, String(place(711, 80, 800, 10)));
+
+    //The reported case: near the bottom of the window with a tall tooltip.
+    const flipped = place(560, 180, 600, 10);
+    check("a tall tooltip near the bottom opens upwards", flipped === 560 - 10 - 180,
+        String(flipped));
+    check("and it is fully on screen", flipped >= 0 && flipped + 180 <= 600,
+        `${flipped}..${flipped + 180}`);
+    check("and it does not cover the row it describes", flipped + 180 <= 560,
+        `${flipped + 180} vs 560`);
+
+    //Near the top with no room above: below is still the answer.
+    check("no room above means it stays below", place(5, 80, 800, 10) === 15,
+        String(place(5, 80, 800, 10)));
+
+    //Taller than the window: clamped, and clamped to the top so the first line shows.
+    const huge = place(300, 900, 600, 10);
+    check("a tooltip taller than the window is clamped to the top", huge === 0, String(huge));
+
+    //Fits neither way but not taller than the window: as much as there is room for.
+    const tight = place(500, 550, 600, 10);
+    check("a tooltip that fits neither way is pushed on screen",
+        tight >= 0 && tight + 550 <= 600, `${tight}..${tight + 550}`);
+
+    //A zero shift is the degenerate case and must not move anything.
+    check("no shift means no gap", place(100, 80, 800) === 100, String(place(100, 80, 800)));
+}
+
+// ===========================================================================
 // src/translation.js — the lookup and the fallback
 // ===========================================================================
 // The Turkish locale is deliberately partial, so the fallback is what keeps the

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 72 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 73 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,48 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.7 - alta taşan tooltip yukarı doğru açılıyor
+
+Oyun içinde ekran görüntüsüyle bildirildi: kenar mahalle aksiyon tooltip'i, aksiyon
+listesinin son satırında imlecin altına çizilmiş ve yarısı pencerenin altını aşmış.
+
+**Sebep, belirtinin düşündürdüğü şey değil.** `index.html` içindeki satır içi script'te iki
+tooltip yerleştirici var. `move_restricted_tooltip`, tooltip'i `scrollHeight` ile ölçüyor,
+alt kenarın nerede olduğunu hesaplıyor ve onu ekranda tutuyor. `move_unrestricted_tooltip`
+ise `top` değerini `clientY + shift` yapıyor ve hiçbir şey kırpmıyor.
+
+Aksiyon satırları `elements_with_unrestricted_tooltips` içindeydi — **üstelik yalnızca
+kırpan yerleştiricinin okuduğu iki alanı, `target_classes` ve `break_classes`'ı
+taşıyarak.** Girdi, kırpan yerleştiricinin alanlarına sahipti ve kırpmayanına veriliyordu;
+yani o iki alan hiçbir şey yapmıyordu. Kendi yorumu da bu süre boyunca *"kırpılmazsa, uzun
+olanı sayfanın altından taşıyordu"* diyordu: geçmiş bir sorunu açıklamıyordu, girdinin
+hâlâ içinde bulunduğu durumu tarif ediyordu. Var olan en pahalı yorum türü bu.
+
+**İki parça hâlinde düzeltildi; çünkü kırpmak ne istenen şey ne de doğrusu.** Uzun bir
+tooltip'i alt kenara sabitlemek onu ekranda tutuyor ve işaret edilen satırın üzerine
+kaydırıyor; böylece hakkında okuduğunuz şey, okuduğunuz şeyin arkasında kalıyor. Dikey
+kural artık şu: varsayılan olarak imlecin altı; altta yer yoksa **üstü**; ve yalnızca iki
+yöne de sığmadığında kırpma — üstten, çünkü ilk satırından okunan bir tooltip, son
+satırından okunandan değerlidir.
+
+Bu yalnızca aksiyon satırlarına değil, kırpılan her tooltip'e uygulanıyor; doğru kapsam da
+bu: hiçbiri kendi satırının üzerine sabitlenmek istemiyordu.
+
+**Muhafız, aritmetiğin artık yaşadığı yer.** `index.html` içindeki satır içi bir `<script>`,
+bu kod tabanında hiçbir testin ulaşamadığı tek yer ve yanlış olan kısım da orasıydı.
+Matematik, `ui_helpers.js` içindeki `place_tooltip_vertically`'ye taşındı — saf, DOM yok —
+ve satır içi script'e `window` üzerinden veriliyor; `main.js` zaten bir düzine fonksiyonu
+böyle veriyor. On test; aralarında bildirilen durum, "tooltip, tarif ettiği satırın üzerini
+kapatmaz" doğrulaması olarak yazıldı. Kaydırma çıkarılarak negatif test edildi: üçü düşüyor
+ve üçüncüsü tam olarak ekran görüntüsü — *"ve tarif ettiği satırın üzerini kapatmıyor:
+600'e karşı 560"*.
+
+Yol üstünde kontrollerin yakaladığı bir şey: `main.js`, `ui_helpers.js`'i hiç import
+etmiyordu; dolayısıyla bunun ilk hâli `place_tooltip_vertically`'yi çıplak bir ad olarak
+kullanıyordu. esbuild çözülmemiş bir tanımlayıcıyı runtime global sayar; yani derleme de
+paket de temiz görünür ve oyun yüklenirken hata fırlatırdı. Import, yeni bir kenarın
+gittiği yere — main.js'in listesinin sonuna — eklendi.
 
 ### v0.7.6 - nasıl durduğunuz, şeylerin size ne yaptığını değiştiriyor
 

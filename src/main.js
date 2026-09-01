@@ -147,6 +147,9 @@ import { create_new_skill_bar, skill_category_order, skill_list, sort_displayed_
 import { sort_displayed_inventory, update_displayed_character_inventory,
          update_displayed_storage_inventory, update_displayed_trader_inventory } from "./inventory_display.js";
 import { is_title_earned, titles } from "./data/titles.js";
+//At the end of the list on purpose: main.js's import order is load-bearing and a
+//new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
+import { place_tooltip_vertically } from "./ui_helpers.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
 const backup_key = "backup save";
@@ -3935,6 +3938,8 @@ function run() {
     }
 }
 
+//The tooltip movers are in an inline script in index.html, which cannot import.
+window.place_tooltip_vertically = place_tooltip_vertically;
 window.equip_item = character_equip_item;
 window.unequip_item = character_unequip_item;
 

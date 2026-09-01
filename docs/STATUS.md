@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 26 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 27 -->
 
 # Status
 
@@ -56,7 +56,7 @@ npm run check:bundle
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 189 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 199 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.

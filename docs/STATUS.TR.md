@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 26 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 27 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,7 +59,7 @@ npm run check:bundle
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
   (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 189 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 199 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.

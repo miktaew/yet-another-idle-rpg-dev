@@ -134,6 +134,48 @@ function matches_search(display_name, query) {
     return fold_for_search(display_name).includes(fold_for_search(query));
 }
 
+/**
+ * Where a tooltip's top edge goes, given where the cursor is.
+ *
+ * Below the cursor by default, because that is where a pointer expects it. When there
+ * is not room below, **above the cursor** rather than pinned to the bottom edge: pinning
+ * keeps a tooltip on screen but slides it up over the row the player is pointing at, so
+ * the thing they are reading about is behind the thing they are reading. Flipping keeps
+ * both visible, which is the whole point of the tooltip.
+ *
+ * Only when it fits in neither direction does it clamp, and it clamps to whichever edge
+ * leaves more of it visible. A tooltip taller than the window is a content problem rather
+ * than a placement one, and this is not the place to pretend otherwise.
+ *
+ * Pure, and separate from the DOM on purpose: the tooltip movers live in an inline script
+ * in index.html, which no test can reach. The arithmetic is the part that was wrong and
+ * the part worth checking, so it lives here where `npm test` can ask it questions.
+ *
+ * Everything is in viewport pixels. The caller scales.
+ *
+ * @param {Number} cursor viewport y of the pointer
+ * @param {Number} height the tooltip's height
+ * @param {Number} viewport the usable height, scrollbar already subtracted
+ * @param {Number} shift the gap between pointer and tooltip
+ * @returns {Number} viewport y for the tooltip's top edge
+ */
+function place_tooltip_vertically(cursor, height, viewport, shift = 0) {
+    const below = cursor + shift;
+    if(below + height <= viewport) {
+        return below;
+    }
+
+    const above = cursor - shift - height;
+    if(above >= 0) {
+        return above;
+    }
+
+
+    //Fits neither way. Show as much of it as there is room for, from the top, because a
+    //tooltip read from its first line is worth more than one read from its last.
+    return Math.max(0, Math.min(below, viewport - height));
+}
+
 export {
     set_HTML,
     insert_HTML,
@@ -145,4 +187,5 @@ export {
     remove_class_from_all,
     is_element_above_x,
     matches_search,
+    place_tooltip_vertically,
 };

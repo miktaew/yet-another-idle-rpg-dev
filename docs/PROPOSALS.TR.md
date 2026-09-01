@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 80 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 81 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -645,7 +645,6 @@ stage'lemek.
   O gerekçe değişmedi ve artık kimsenin göremediği bir teamüle bırakılmak yerine dosyanın
   kendi içine yazılmalı.
 
-
 ---
 
 ## Bekleyen kararlar
@@ -656,7 +655,32 @@ kayda geçiriliyorlar. Burada kalanlar projenin tamamını ilgilendiriyor; tek b
 oraya gitti — bkz. P-14 içindeki
 [Fazlara taşınan kararlar](#fazlara-taşınan-kararlar).
 
-### Q-1 — Bu fork içerik olarak ayrışacak mı? **GÜNCELLENDİ: içerikte ayrış, kodda yakınlaş**
+### Q-1 — Bu fork içerik olarak ayrışacak mı? **YENİDEN GÜNCELLENDİ: tamamen ayrış**
+
+**2026-09-01, sahibi.** Upstream'e gidecek olan iş gitti: pull request'ler açık ve onlara
+borçlu olunan başka bir şey yok. Fork artık kendini upstream'in şekline tutmuyor ve buna
+motor da dâhil — **yeni yetenekler, yeni sistemler ve yeni mekanikler artık kapsam
+içinde; yalnızca yeni içerik değil.**
+
+Pratikte değişenler:
+
+- "Kendi refactor'larımız upstream'in yerleşimine doğru gitmeli" maddesi kalktı. Onların
+  şekli daha iyi olduğu yerde kopyalamaya yine değer, kendi meziyeti üzerinden; ama artık
+  bir kısıt değil.
+- P-15 ve P-16 artık var olanla sınırlı değil. Özellikle P-16'nın Q-11'i kısmen "hiçbir
+  şeye bağlanmıyor" üzerinden savunulmuştu; o argüman artık daha zayıf: üçüncü bir savaş
+  ekseni fork için artık karakter dışı değil, yalnızca pahalı.
+- D-3, D-5 ve D-7 hakkında hiçbir şey değişmiyor. Çeviri katmanı, yerelleştirme kuralı ve
+  Türkçe standardı zaten upstream'in değildi ve bundan etkilenmiyor.
+- Değişmeyen bir şey daha: **icat yerine geri kazanım** ilk soru olmayı sürdürüyor. Bir
+  sistem ekleyebilir olmak, mevcut birini genişletmenin yeteceği yerde yenisini eklemek
+  için gerekçe değil; son altı sürüm de bunun kanıtı.
+
+Önceki cevap aşağıda korunuyor, çünkü commit'ler ve changelog girdileri ona atıf yapıyor.
+
+---
+
+### Q-1 (önceki) — **GÜNCELLENDİ: içerikte ayrış, kodda yakınlaş**
 
 Yeni bölgeler, item'lar ve dialogue eskisi gibi kapsam dahilinde. Değişen şey
 ikinci yarısı: **upstream terk edilmiyor.** Ondan alınmaya değer olanı al, kodu
