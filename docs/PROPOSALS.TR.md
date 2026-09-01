@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 79 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 80 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -522,6 +522,129 @@ isterse, soyutlama kendini o zaman hak etmiş olur.
 Beşinci bir bölge, ikinci bir soruşturma arayüzü, bir zamanlayıcı çatısı, bir
 lockpicking skill'i ya da bir gizemin cevabı uydurmak. Yazılmış içerik bir anı
 zaten karşılıyorsa, paralelini yazmak yerine onu bağlayın.
+
+### P-15 — Kitaplar ve hiçbir şeyin öğretmediği yetenekler `open`
+
+Sahibinin isteği: yeni kitaplar. Planlamadan önce ölçüldü; çünkü burada bir kitap ucuza
+geliyor ve tam bu yüzden dikkatsizce eklenmemeli.
+
+**Var olan.** On kitap; hepsi `src/items.js` içinde `Book` eşyası ve karşılığında bir
+`book_stats` girdisi. `BookData`, yeni bir kitabın isteyebileceği her şeyi zaten
+destekliyor ve hiçbir motor işi gerekmiyor: `required_time`, `required_skills`,
+`literacy_xp_rate`, `bonuses.xp_multipliers` (yetenek başına ya da `all`),
+`bonuses.multipliers` (karakter statları), `rewards` (tarifler ve diğer açılma türleri)
+ve `finish_reward`. On kitap şunlar: *ABC for kids* (tüm xp ×1.2), *Old combat manual*
+(Combat), *Twist liek a snek* (Evasion artı çeviklik), *Medicine for dummies* (üç
+simya tarifi), *Butchering and you*, *Ode to Whimsy*, *A Glint On The Sand*,
+*Shellfish desires*, *Wood for Witches* ve *Counting Mice*.
+
+**Boşluk asıl olarak ne.** "Kitap sayısı az" değil — en yeni üç bölgenin hiç kitabı
+olmaması ve oyunda on kitaba karşı 64 yetenek bulunması. Kitap, hiçbir yere, hiçbir
+NPC'ye ve hiçbir dövüşe mal olmayan tek öğretme yüzeyi; bu da onu, dünyanın başka türlü
+tanıtmaya yeri olmayan yetenekler için doğru araç yapıyor.
+
+**Yenileri nereden gelmeli ve kural.** İcat yerine geri kazanım: her yeni kitap zaten var
+olan bir şeyi öğretir ve zaten var olan bir yerden gelir. Uydurulmak yerine mevcuda karşı
+ölçülmüş adaylar:
+
+- **Lonca**'nın bir kâtibi, bir panosu, bir mühür defteri ve v0.7.2'den beri itibarı var.
+  Orada satın alınan ya da kazanılan bir kitap, Literacy ile Haggling için doğal yer.
+- **Tuz evi** ve **körfez** bir tekneden ineni satıyor ve hiç kitabı yok. Bir kılavuzun
+  ya da saymanın kitabı, Perception, Spatial awareness ve Swimming'in ait olduğu yer.
+- **Dağ**'da oyunun tek 3. kademe istasyonu var ve hiç kitabı yok. Forging ile Smelting'in
+  hiçbir yerde öğretme yüzeyi yok.
+- **Antika koleksiyoncusu** katalog tutuyor; **kenar mahallenin yaşlı kadını** bir liste
+  tutuyor. İkisinin de bütün karakterizasyonu yazılı kayıt.
+
+**Bunun yapmaması gereken.** Bir xp çarpanı dükkânına dönüşmemeli. Yalnızca çarpan veren
+bir kitap, `BookData`'nın yapabileceği en zayıf şey; mevcut en ilginç iki kitap *tarif*
+açıyor ve izlenecek şekil de bu.
+
+**Muhafız.** `check_books_can_be_got`; `check_components_can_be_made`'in bileşenler için
+kapsadığı sınıfın aynısı: her `Book` eşyası ya elde edilebilir olmak zorunda — tüccar,
+düşürme, ödül ya da tarif yoluyla — ya da gerekçesiyle yazılı bir listede durmak. On
+kitap var ve bugün hiçbirinin ulaşılabilir olduğunu hiçbir şey denetlemiyor.
+
+### P-16 — Büyü bir iskele ve hiçbir şeye bağlı değil `blocked`
+
+Sahibinin tespiti; doğru ve kulağa geldiğinden kötü. Ölçüldü:
+
+- `skills["Wands"]` ve `skills["Staffs"]` ikisi de var, ikisi de `Weapon mastery`
+  altında ve ikisinin de tam kademe adları var — *Wand casting*, *Wand mastery*,
+  *Master of wands*.
+- `character.stats`, `max_mana`, `mana_regeneration_flat` ve `mana_regeneration_percent`
+  bildiriyor ve üçü de **`//currently useless`** yorumunu taşıyor.
+- `character.js` bir yorumda üç hasar türü anıyor: `"physical"`, `"elemental"`,
+  `"magic"`.
+- **Oyunda tek bir asa ya da değnek eşyası yok.** `grep -n "wand" src/items.js` hiçbir
+  şey döndürmüyor.
+- `magic` statını hiçbir şey okumuyor. Yaratıklar bildiriyor; hepsinde 0.
+
+Yani büyü, v0.7.5'ten önceki 5. kademenin tam olarak aynı biçiminde: arkasında içerik
+olmayan, bitmiş bir sözcük dağarcığı. Oyunun 64 yeteneğinden ikisi hiçbir yolla
+seviye atlayamıyor, çünkü ölçekledikleri silahlar mevcut değil.
+
+**Koddan karar verilemeyen ve bu yüzden bunu bloklayan şey: bkz. Q-11.** İki cevabın
+maliyeti bir büyüklük mertebesi farklı ve ikisi de savunulabilir; yani bu bir ölçüm
+değil, ürün kararı.
+
+**Karar verilebilen ve iki cevap altında da geçerli olan:**
+
+- Ne yayınlanırsa yayınlansın `Wands` ile `Staffs`'ı seviye atlanabilir kılmalı; çünkü
+  oyuncunun gördüğü ama asla yükseltemediği bir yetenek, hiç olmayan bir yetenekten
+  kötüdür.
+- Mana gerçekten kullanılmadıkça dördüncü bir kaynak çubuğu eklememeli. Üç mana statı,
+  onları okuyan bir şey olana kadar `//currently useless` kalır; hiç okunmayacaksa da
+  bekliyormuş gibi bırakılmak yerine körelmiş oldukları söylenmeli.
+- Yeni bölge yok. Büyü, 5. kademenin düzlükler üzerinden geldiği gibi, var olan yerler ve
+  insanlar üzerinden gelmek zorunda.
+
+##### Q-11 — Büyü üçüncü bir savaş ekseni mi, bir silah ailesi mi? **ÖNERİ: önce bir silah ailesi**
+
+P-16 bu olmadan başlayamaz ve kod bunu belirlemiyor: iki yetenek, üç mana statı ve adı
+konmuş bir `magic` hasar türü var, hiçbirini hiçbir şey kullanmıyor.
+
+**Bir silah ailesi.** Değnekler ve asalar, zaten var olan iki yetenekten ölçeklenen ve
+`magic` hasar türü veren silah eşyalarına dönüşür. Maliyet: eşyalar, tarifler, bir iki
+tüccar satırı ve üçüncü bir hasar türünü okuyan her ne varsa. Ölü iki yeteneği canlandırır,
+hiçbir şeye bağlanmaz ve v0.7.5'in 5. kademe için yaptığı hamlenin aynısıdır — hâlihazırda
+duran iskeleyi bağla ve dur.
+
+**Üçüncü bir savaş ekseni.** Mana çubuğu olan gerçek bir kaynak olur, büyüler maliyeti ve
+bekleme süresi olan seçilebilir bir aksiyona dönüşür ve yaratıklar anlamı olan bir büyü
+direnci kazanır. Maliyet: bütün savaş döngüsünün saygı göstermesi gereken bir kaynak, bir
+büyü kayıt defteri, arayüz ve 64 yetenekle her mevcut yaratık boyunca denge. Bu, bütün
+Marrowmoth arc'ından daha büyük bir değişiklik.
+
+**Öneri: birincisi ve bunu açıkça söylemek.** Üç mana statı `//currently useless` kalır ve
+bekleyen değil körelmiş olduklarını söyleyen bir yorum alır; böylece sonraki okuyucu, bu
+önerinin yazarının yanıldığı gibi yanılmaz. Eksen bir gün istenirse, o kendi arc'ı ve
+kendi sürüm serisidir — başka bir şeyin içindeki bir faz değil.
+
+### P-17 — `docs/TODO.md` izlenen iki dilli bir çifte dönüşür `open`
+
+Sahibinin talimatı ve bu dosyanın da geliştirme döngüsünün de tarif ettiği bir düzeni
+tersine çeviriyor: `docs/TODO.md` bilerek izlem dışıydı, döngünün notları da bunu söylüyor
+ve commit etmemeyi söylüyor. Bu artık geçersiz kılındı — izlenecek; Türkçe özgün metin
+`docs/TODO.TR.md`, yanında da kanonik bir İngilizce `docs/TODO.md` olacak.
+
+**Bunun maliyeti, ölçülmüş hâliyle.** Dosya 975 satır Türkçe metin. D-3 İngilizce yarıyı
+kanonik kıldığı için bu bir başlık değişikliği değil, tam bir çeviri; ve
+`check_docs_are_paired`, ikisinden biri stage'lendiği andan itibaren çifti aynı
+`doc-version`'a bağlayacak — `git ls-files` indeksi okuyor, yani onu bizim yapan şey
+stage'lemek.
+
+**Sonradan keşfedilmek yerine taşınacak sonuçlar:**
+
+- Döngünün talimat dosyası `docs/TODO.md`'nin izlem dışı olduğunu ve commit
+  edilmemesi gerektiğini söylüyor. O dosya, yok sayılan `.claude/` içinde; yani bir
+  commit'le düzeltilemiyor — aynı değişiklikte yerelde düzenlenmesi gerekiyor, yoksa bir
+  sonraki oturum yanlış bir ifadeye göre davranacak.
+- İzlenmeye başladığı anda brief, mekanik anlamda "kuyruk değil bağlam" olmayı bırakıyor:
+  dışarıda tutulmasının sebebi checkbox'ı olmaması ve zaten P-14 içine ölçülmüş olmasıydı.
+  O gerekçe değişmedi ve artık kimsenin göremediği bir teamüle bırakılmak yerine dosyanın
+  kendi içine yazılmalı.
+
 
 ---
 

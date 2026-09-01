@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 79 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 80 -->
 
 # Proposals
 
@@ -495,6 +495,127 @@ wants the same wiring, that is when the abstraction has earned itself.
 Invent a fifth region, a second investigation UI, a scheduler framework, a
 lockpicking skill, or a mystery's answer. Where authored content already covers a
 beat, wire it up instead.
+
+### P-15 — Books, and the skills nothing teaches `open`
+
+The owner's request: new books. Measured before planning, because a book here is cheap
+and that is exactly why it should not be added carelessly.
+
+**What exists.** Ten books, all in `src/items.js` as `Book` items with a matching
+`book_stats` entry. `BookData` already supports everything a new book could want and no
+engine work is needed: `required_time`, `required_skills`, `literacy_xp_rate`,
+`bonuses.xp_multipliers` (per skill or `all`), `bonuses.multipliers` (character stats),
+`rewards` (recipes and the other unlock kinds), and `finish_reward`. The ten are
+*ABC for kids* (all xp ×1.2), *Old combat manual* (Combat), *Twist liek a snek* (Evasion
+plus agility), *Medicine for dummies* (three alchemy recipes), *Butchering and you*,
+*Ode to Whimsy*, *A Glint On The Sand*, *Shellfish desires*, *Wood for Witches* and
+*Counting Mice*.
+
+**What the gap actually is.** Not "there are too few books" — it is that the newest three
+regions have none, and that the game has 64 skills against ten books. A book is the one
+teaching surface that costs no location, no NPC and no combat, which makes it the right
+tool for skills the world has no room to introduce any other way.
+
+**Where new ones should come from, and the rule.** Reclamation over invention: every new
+book teaches something that already exists and comes from a place that already exists.
+Candidates measured against what is there rather than invented:
+
+- The **guild** has a clerk, a board, a seal book and, since v0.7.2, standing. A book
+  bought or earned there is the natural home for Literacy and Haggling.
+- The **salt house** and the **bay** sell what came off a boat and have no book at all.
+  A pilot's or a tallyman's book is where Perception, Spatial awareness and Swimming
+  belong.
+- The **mountain** has the game's only tier-3 station and no book. Forging and Smelting
+  have no teaching surface anywhere.
+- The **antique collector** catalogues; the **old woman of the slums** keeps a roster.
+  Both are people whose whole characterisation is written records.
+
+**What this must not do.** It must not become a shop of xp multipliers. A book that only
+multiplies is the weakest thing `BookData` can do; the two most interesting existing ones
+unlock *recipes*, and that is the shape to follow.
+
+**Guard.** `check_books_can_be_got`, on the class
+`check_components_can_be_made` already covers for components: every `Book` item must be
+obtainable - by trader, drop, reward or recipe - or be on a written list with a reason.
+Ten books and nothing checks that any of them can be reached today.
+
+### P-16 — Magic is scaffolding, and it is not wired to anything `blocked`
+
+The owner's observation, and it is correct and worse than it sounds. Measured:
+
+- `skills["Wands"]` and `skills["Staffs"]` both exist, both under `Weapon mastery`, both
+  with full rank names - *Wand casting*, *Wand mastery*, *Master of wands*.
+- `character.stats` declares `max_mana`, `mana_regeneration_flat` and
+  `mana_regeneration_percent`, and all three carry the comment **`//currently useless`**.
+- `character.js` names three damage types in a comment: `"physical"`, `"elemental"`,
+  `"magic"`.
+- **There is not one wand or staff item in the game.** `grep -n "wand" src/items.js`
+  returns nothing at all.
+- Nothing reads the `magic` stat. Enemies declare it; it is 0 on every one of them.
+
+So magic is exactly the shape tier 5 was before v0.7.5: a finished vocabulary with no
+content behind it. Two of the game's 64 skills can never be levelled by any means,
+because the weapons they scale do not exist.
+
+**What is not decidable from the code, and therefore blocks this: see Q-11.** The cost
+of the two answers differs by an order of magnitude and both are defensible, so it is a
+product decision rather than a measurement.
+
+**What is decidable, and holds under either answer:**
+
+- Whatever ships must make `Wands` and `Staffs` levellable, because a skill the player
+  can see and can never raise is worse than no skill.
+- It must not add a fourth resource bar unless mana is genuinely used. The three mana
+  stats stay `//currently useless` until something reads them, and if nothing will, they
+  should be said to be vestigial rather than left looking pending.
+- No new region. Magic has to arrive through places and people that exist, the way tier 5
+  arrived through the flats.
+
+##### Q-11 — Is magic a third combat axis, or a family of weapons? **PROPOSED: a family of weapons first**
+
+P-16 cannot start without this, and the code does not decide it: two skills, three mana
+stats and a named `magic` damage type all exist, and nothing uses any of them.
+
+**A family of weapons.** Wands and staves become weapon items that scale off the two
+skills that already exist and deal the `magic` damage type. Cost: items, recipes, a
+trader row or two, and whatever reads a third damage type. It makes two dead skills live,
+commits to nothing, and is the same move v0.7.5 made for tier 5 - wire the scaffolding
+that is already there and stop.
+
+**A third combat axis.** Mana becomes a real resource with a bar, spells become a
+selectable action with costs and cooldowns, and enemies get magic resistance that means
+something. Cost: a resource the whole combat loop has to respect, a spell registry, UI,
+and balance across 64 skills and every existing enemy. It is a bigger change than the
+entire Marrowmoth arc was.
+
+**Proposed: the first, and say so out loud.** The three mana stats stay
+`//currently useless` and get a comment that says they are vestigial rather than pending,
+so the next reader is not misled the way this proposal's author was. If the axis is ever
+wanted, it is its own arc and its own version series - not a phase inside something else.
+
+### P-17 — `docs/TODO.md` becomes a tracked bilingual pair `open`
+
+The owner's instruction, and it reverses an arrangement this file and the development
+loop both describe: `docs/TODO.md` has been deliberately untracked, and the loop's own
+notes say so and say not to commit it. That is now overridden - it is to be tracked, with
+the Turkish original as `docs/TODO.TR.md` and a canonical English `docs/TODO.md` beside
+it.
+
+**What that costs, measured.** The file is 975 lines of Turkish prose. D-3 makes the
+English half canonical, so this is a full translation and not a header change, and
+`check_docs_are_paired` will hold the pair to a matching `doc-version` from the moment
+either is staged - `git ls-files` reads the index, so staging is what makes it ours.
+
+**Consequences to carry, not to discover later:**
+
+- The loop's instruction file says `docs/TODO.md` is untracked and must not be committed.
+  It is in `.claude/`, which is ignored, so it cannot be fixed by a commit - it has to be
+  edited locally in the same change or the next session will act on a false statement.
+- Once tracked, the brief stops being "context, not a queue" in the mechanical sense that
+  it was: the reason it was excluded was that it has no checkboxes and was already
+  measured into P-14. That reasoning is unchanged and should be written into the file
+  itself rather than left to a convention nobody can see any more.
+
 
 ---
 
