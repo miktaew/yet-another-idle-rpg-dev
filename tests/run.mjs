@@ -61,6 +61,7 @@ import {
     check_components_can_be_made,
     check_generated_items,
     check_items_can_be_got,
+    check_no_item_shows_its_key,
     check_no_two_items_share_a_name,
     check_recipe_item_names,
 } from "./checks/items.mjs";
@@ -178,6 +179,7 @@ await check_components_can_be_made();
 check_books_can_be_got();
 await check_items_can_be_got();
 await check_no_two_items_share_a_name();
+await check_no_item_shows_its_key();
 check_quality_rolls_take_an_input_quality();
 check_crafting_passes_the_input_quality();
 await check_a_better_input_makes_a_better_result();

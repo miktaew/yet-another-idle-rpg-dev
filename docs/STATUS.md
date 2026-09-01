@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 40 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 41 -->
 
 # Status
 
@@ -201,6 +201,7 @@ but the ones that encode a bug that shipped:
 | `failed attempts` | An action that can fail and eats a required item on failure, so a low skill cannot be raised. 4 actions. |
 | `rolled sets` | A rolled reward set likelier to give nothing than any one of its groups. 1 set. |
 | `reputation gates` | A standing region nothing gates on, so earning it changes nothing. 5 regions. |
+| `item keys` | An item with no name row that assembles none, so the player reads its registry key. 916 lookups. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

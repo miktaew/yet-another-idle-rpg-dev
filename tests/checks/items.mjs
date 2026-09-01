@@ -530,8 +530,79 @@ async function check_no_two_items_share_a_name() {
     }
 }
 
+/**
+ * An item that shows the player its own registry key.
+ *
+ * P-33, from an inventory screenshot: `[ayak] Snakeskin boots` between two properly
+ * translated items. The first diagnosis was wrong and worth recording - it looked like two
+ * missing `component <type>` rows, and measuring showed those rows all exist.
+ *
+ * What actually happens: `Armor.getDisplayName` resolves `name <key>` first, then tries to
+ * assemble from `components.external`, then falls back to the key. Seven clothing templates
+ * have neither - no `name` row, and no external component because they ARE components - so
+ * the key is what the player reads. In English that is invisible, because the key is
+ * English; in every other language it is the only untranslated thing on the screen.
+ *
+ * Which is why nothing caught it. `check_item_display_names` reports every item that HAS a
+ * name row as having one, and `check_no_two_items_share_a_name` compares the rows that
+ * exist. Neither asks whether an item that needs a row has one.
+ *
+ * The rule: in every locale, an item must either resolve a `name <key>` row or assemble a
+ * name that differs from the key. An explicit row whose value happens to equal the key is
+ * fine - `"name Iron ore": "Iron ore"` is a translation, not a fallback.
+ */
+async function check_no_item_shows_its_key() {
+    const before = errors.length;
+
+    const [{ item_templates }, { translationManager }] = await load_browser_free(
+        repo_root, ["src/items.js", "src/translation.js"]);
+
+    const names = fs.readdirSync(locales_dir)
+        .filter((file) => file.endsWith(".js"))
+        .map((file) => file.slice(0, -3));
+
+    let asked = 0;
+    for (const locale_name of names) {
+        if (!await load_locale(locale_name)) continue;
+
+        for (const id of Object.keys(item_templates)) {
+            asked++;
+            //An explicit row is a translation whatever it says.
+            if (translationManager.getOptionalText(locale_name, `name ${id}`) !== undefined) {
+                continue;
+            }
+            //Otherwise the name has to be assembled into something that is not the key.
+            let shown;
+            try {
+                shown = item_templates[id].getDisplayName();
+            } catch (problem) {
+                error(`"${id}" throws while resolving its shown name in `
+                    + `locales/${locale_name}.js: ${problem.message}`);
+                continue;
+            }
+            if (shown === id) {
+                error(`"${id}" has no "name ${id}" row in locales/${locale_name}.js and `
+                    + `assembles no name, so the player reads the registry key. In the `
+                    + `reference language that is invisible - the key is English - and in `
+                    + `every other one it is the only untranslated thing on the screen.`);
+            }
+        }
+    }
+
+    if (asked === 0) {
+        error("no item was asked for its shown name - this check is out of date.");
+        return;
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] item keys: ${asked} name lookups across ${names.length} `
+            + `locales, none falling back to a registry key`);
+    }
+}
+
 export {
     check_books_can_be_got,
+    check_no_item_shows_its_key,
     check_items_can_be_got,
     check_no_two_items_share_a_name,
     check_components_can_be_made,

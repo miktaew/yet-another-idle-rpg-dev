@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 107 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 108 -->
 
 # Proposals
 
@@ -803,42 +803,6 @@ everything picked up in one day would tie, and an idle session is mostly one day
 **Guard.** The class is "a field the display sorts by that the save does not keep", and
 `npm run check:save` already round-trips a real export. A check that every field
 `sort_displayed_inventory` reads is one `save_load.js` writes would hold it.
-
-### P-33 — Two clothing items show their English key `open`
-
-Spotted in the owner's inventory screenshot: `[ayak] Snakeskin boots` sitting between
-`[kol] Yılan derisi eldiven` and `[yüzük] Yılan dişi yüzüğü`.
-
-**Measured, and it is two missing rows, not a translation mistake.** A clothing item's shown
-name is assembled from its material and a piece word - `assembly_parts_for` returns null
-unless BOTH rows exist, and the caller then falls back to the registry key. The piece rows
-are the `component <type>` family, and of the five interior types only three exist:
-
-| item | type | shows |
-| --- | --- | --- |
-| Snakeskin hat | `helmet interior` | Yılan derisi şapka |
-| Snakeskin vest | `chestplate interior` | Yılan derisi yelek |
-| Snakeskin gloves | `glove interior` | Yılan derisi eldiven |
-| **Snakeskin leggings** | `leg armor interior` | **Snakeskin leggings** |
-| **Snakeskin boots** | `shoes interior` | **Snakeskin boots** |
-
-So `component leg armor interior` and `component shoes interior` are missing - and they are
-missing from **`english.js` as well**. That is why nobody noticed: in English the fallback
-to the registry key reads correctly, so the gap is invisible in the reference language and
-glaring in every other one. Four rows fix it, and the same two rows are missing for every
-material with a clothing set, not only snakeskin.
-
-**Why no check caught it.** `LOCALE_STRICT=1` fails on an id that is *requested* and
-missing, and `assembly_parts_for` tests for the row's existence before asking - so it never
-requests one. `check_item_display_names` reports 257 of 257 items having a name row, which
-counts items that have one rather than items that need one, and an assembled name has no
-`name <key>` row by design.
-
-**Guard, and it is the point of the entry.** Every `component_type` any item declares must
-have a `component <type>` row in every locale. That is mechanical, it covers the four rows
-here and every future clothing type, and it is the only thing between the reference language
-and the next silent fallback.
-
 
 ### P-34 — A repeatable action needs a "try again" beside "Finish" `open`
 

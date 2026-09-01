@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 93 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 94 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,54 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.22 - yedi eşya oyuncuya registry anahtarını göstermeyi bırakıyor
+
+P-33, bir envanter ekran görüntüsünden: iki düzgün çevrilmiş eşyanın arasında duran
+`[ayak] Snakeskin boots`. **Teklifin teşhisi yanlıştı ve onu düzelten şey ölçüm oldu.**
+
+**Teklifin söylediği ve neden yanlış olduğu.** İki `component <tip>` satırının eksik
+olduğunu söylüyordu — `leg armor interior` ve `shoes interior` — gerekçesi de şapka, yelek
+ve eldivenin birleşip tayt ile botun birleşmemesiydi. Ölçüldü: **o beş satırın hepsi var,
+iki yerelde de.** Önceki arama onları hiç aramamıştı; başka bir satır ailesini taramış ve
+sonuç okunmak yerine çıkarsanmıştı.
+
+**Gerçekte olan şey.** `Armor.getDisplayName` önce `name <anahtar>` satırını çözüyor, sonra
+`components.external`'dan birleştirmeyi deniyor, sonra anahtara düşüyor. Yedi giysi
+şablonunda ikisi de yok: ne `name` satırı, ne de harici bileşen — **çünkü kendileri
+bileşen**. Dolayısıyla oyuncunun okuduğu şey anahtar oluyor.
+
+İki değil yedi — ve beş farklı bileşen tipinde; tek-sebep teorisini sürdürülemez kılan da
+bu:
+
+| eşya | tip |
+| --- | --- |
+| `Snakeskin boots` | shoes interior |
+| `Snakeskin leggings`, `Linen leggings` | leg armor interior |
+| `Linen bandanna` | helmet interior |
+| `Wool shirt` | chestplate interior |
+| `Iron chainmail vest`, `Steel chainmail vest` | chestplate exterior |
+
+On dört satır bunu düzeltiyor — iki dilde yedi eşya. İngilizce satırlar anahtarların
+kendisi; boşluğun görünmez olmasının sebebi de tam olarak bu: geri düşüş referans dilde
+doğru okunuyor, öteki her dilde ekrandaki tek çevrilmemiş şey oluyor. Türkçesi oyunun kendi
+sözlüğünü izliyor, ki o sözlük zaten oradaydı: `material name snakeskin` "yılan derisi" ve
+`component shoes interior` "ayakkabı", yani bot "Yılan derisi bot".
+
+**Muhafız: `check_no_item_shows_its_key`.** Her yerelde bir eşya, ya bir `name <anahtar>`
+satırı çözmek ya da anahtarından farklı bir ad birleştirmek zorunda. Değeri anahtara eşit
+olan açık bir satır sorun değil — `"name Iron ore": "Iron ore"` bir geri düşüş değil çeviri
+— ve kontrolün tamamı bu ayrımda: adın *çözülüp çözülmediğini* soruyor, doğru görünüp
+görünmediğini değil.
+
+İki yerelde 916 ad araması. Girerken tam on dört bulgu bildirdi; düzeltmeyi yönlendiren de
+o oldu, tersi değil. Bir satırı yeniden kaldırmak onu adıyla düşürüyor.
+
+**Neden daha önce yakalanmadı.** `check_item_display_names`, ad satırı **olan** her eşyayı
+olduğu gibi bildiriyor; `check_no_two_items_share_a_name` ise var olan satırları
+karşılaştırıyor. Hiçbiri, satıra ihtiyacı olan bir eşyanın satırı olup olmadığını sormuyor —
+ve `LOCALE_STRICT=1` yalnızca *istenen* bir kimlikte düşüyor, oysa `getOptionalText` hiç
+istemeyen bir yoklama.
 
 ### v0.7.21 - bataklık kabilesinin itibarı var
 

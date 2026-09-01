@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 93 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 94 -->
 
 # Changelog
 
@@ -20,6 +20,55 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.22 - seven items stop showing the player their registry key
+
+P-33, from an inventory screenshot: `[ayak] Snakeskin boots` sitting between two properly
+translated items. **The proposal's diagnosis was wrong, and measuring is what corrected it.**
+
+**What the proposal said, and why it was wrong.** It said two `component <type>` rows were
+missing - `leg armor interior` and `shoes interior` - reasoning from the fact that the hat,
+the vest and the gloves assemble and the leggings and boots do not. Measured: **all five of
+those rows exist, in both locales.** The earlier grep had never actually looked for them;
+it searched for a different row family and the conclusion was inferred rather than read.
+
+**What is actually happening.** `Armor.getDisplayName` resolves `name <key>` first, then
+tries to assemble from `components.external`, then falls back to the key. Seven clothing
+templates have neither: no `name` row, and no external component **because they are
+components themselves**. So the key is what the player reads.
+
+Seven, not two - and across five component types, which is what made the single-cause
+theory untenable:
+
+| item | type |
+| --- | --- |
+| `Snakeskin boots` | shoes interior |
+| `Snakeskin leggings`, `Linen leggings` | leg armor interior |
+| `Linen bandanna` | helmet interior |
+| `Wool shirt` | chestplate interior |
+| `Iron chainmail vest`, `Steel chainmail vest` | chestplate exterior |
+
+Fourteen rows fix it - seven items in two languages. The English rows are the keys
+themselves, which is exactly why the gap was invisible: the fallback reads correctly in the
+reference language and is the only untranslated thing on the screen in every other one. The
+Turkish follows the game's own vocabulary, which was all already there:
+`material name snakeskin` is "yılan derisi" and `component shoes interior` is "ayakkabı", so
+the boots are "Yılan derisi bot".
+
+**Guard: `check_no_item_shows_its_key`.** In every locale, an item must either resolve a
+`name <key>` row or assemble a name that differs from its key. An explicit row whose value
+equals the key is fine - `"name Iron ore": "Iron ore"` is a translation, not a fallback -
+and that distinction is the whole check: it is asking whether the name was *resolved*, not
+whether it looks right.
+
+916 name lookups across two locales. It reported exactly fourteen findings on the way in,
+which is what drove the fix rather than the other way round, and removing one row again
+fails it by name.
+
+**Why nothing caught it before.** `check_item_display_names` reports every item that HAS a
+name row as having one; `check_no_two_items_share_a_name` compares the rows that exist.
+Neither asks whether an item that needs a row has one - and `LOCALE_STRICT=1` only fails on
+an id that is *requested*, while `getOptionalText` is a probe that never requests one.
 
 ### v0.7.21 - the swampland tribe has standing
 

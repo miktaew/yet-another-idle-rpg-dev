@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 107 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 108 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -828,42 +828,6 @@ her şey eşitlenir ve bekleme oturumu çoğunlukla tek bir gün.
 `npm run check:save` gerçek bir dışa aktarımı zaten round-trip ediyor.
 `sort_displayed_inventory`'nin okuduğu her alanın `save_load.js`'in yazdığı bir alan olduğunu
 doğrulayan bir kontrol bunu tutar.
-
-### P-33 — İki giysi eşyası İngilizce anahtarını gösteriyor `open`
-
-Sahibinin envanter ekran görüntüsünde görüldü: `[kol] Yılan derisi eldiven` ile
-`[yüzük] Yılan dişi yüzüğü` arasında duran `[ayak] Snakeskin boots`.
-
-**Ölçüldü ve bu bir çeviri hatası değil, eksik iki satır.** Bir giysi eşyasının gösterilen
-adı, malzemesi ile bir parça kelimesinden birleştiriliyor — `assembly_parts_for`, İKİ satır
-da yoksa null döndürüyor ve çağıran da registry anahtarına düşüyor. Parça satırları
-`component <tip>` ailesi ve beş iç tipten yalnızca üçü var:
-
-| eşya | tip | gösterdiği |
-| --- | --- | --- |
-| Snakeskin hat | `helmet interior` | Yılan derisi şapka |
-| Snakeskin vest | `chestplate interior` | Yılan derisi yelek |
-| Snakeskin gloves | `glove interior` | Yılan derisi eldiven |
-| **Snakeskin leggings** | `leg armor interior` | **Snakeskin leggings** |
-| **Snakeskin boots** | `shoes interior` | **Snakeskin boots** |
-
-Yani `component leg armor interior` ve `component shoes interior` eksik — ve **`english.js`'te
-de** eksikler. Kimsenin fark etmemesinin sebebi bu: İngilizcede registry anahtarına düşmek
-doğru okunuyor, yani boşluk referans dilde görünmez, öteki her dilde göze batıyor. Dört
-satır bunu düzeltiyor ve aynı iki satır yalnızca yılan derisi için değil, giysi takımı olan
-her malzeme için eksik.
-
-**Neden hiçbir kontrol yakalamadı.** `LOCALE_STRICT=1`, *istenen* ve eksik olan bir kimlikte
-düşüyor; `assembly_parts_for` ise sormadan önce satırın varlığını sınıyor, yani hiç
-istemiyor. `check_item_display_names`, 257 eşyanın 257'sinde ad satırı olduğunu bildiriyor;
-bu, satırı olan eşyaları sayıyor, ihtiyacı olanları değil — ve birleştirilmiş bir adın
-tasarım gereği `name <anahtar>` satırı yok.
-
-**Muhafız ve kaydın asıl noktası bu.** Herhangi bir eşyanın beyan ettiği her
-`component_type`'ın her yerelde bir `component <tip>` satırı olmak zorunda. Bu mekanik,
-buradaki dört satırı ve gelecekteki her giysi tipini kapsıyor ve referans dille bir sonraki
-sessiz geri düşüş arasındaki tek şey o.
-
 
 ### P-34 — Tekrarlanabilir bir aksiyonun "Bitir"in yanında "Tekrar dene"ye ihtiyacı var `open`
 
