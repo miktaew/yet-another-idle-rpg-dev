@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 102 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 105 -->
 
 # Proposals
 
@@ -811,6 +811,162 @@ Whatever is decided here applies to it.
 named `update_displayed_*` that no module calls and no markup handler names is either dead
 or a panel that never refreshes. `check_onclick_names_are_reachable` already walks the other
 direction - markup handlers that name nothing - so the pieces to do it exist.
+
+
+### P-32 — An inventory sort by when you got it `open`
+
+The owner's request: a fourth sort button beside "by name", "by value" and "by type" -
+call it "latest" - putting the most recently obtained items at the top.
+
+**Measured, and the blocker is that nothing records when.** An inventory entry is
+`{item, count}` and that is all of it - `InventoryHaver.add_to_inventory` writes those two
+fields and nothing else. There is no acquisition order to sort by, so this is not a
+comparator, it is a field.
+
+**Which makes it a save question, not a display one.** A counter written only in memory
+resets on every load and the newest item becomes whatever the save happened to serialise
+first - which is exactly the shape of the bug that lost the owner's favourites (constraint 4
+in [STATUS.md](STATUS.md)). So the field has to be written to the save, and an old save
+arrives without it: every existing item has to sort *somewhere*, and "all equally old" is
+the only honest answer.
+
+**Cheapest field that works.** Not a timestamp - a monotonic counter, bumped once per
+addition and stored per entry. It costs one number per inventory key in the save, it is
+stable across loads, and it needs no clock. `current_game_time.day_count` is too coarse:
+everything picked up in one day would tie, and an idle session is mostly one day.
+
+**Three things to decide.**
+
+- **What counts as "getting" it.** Adding to a stack the player already has: does the stack
+  jump to the top, or keep its first-acquired order? The request says "most recently
+  obtained", which argues for the stack moving - but then a stack of arrows the player tops
+  up constantly never leaves the top.
+- **What happens to an old save.** Every entry tying at zero means the first sort by
+  "latest" looks like sort by nothing until new items arrive. That is honest and it is also
+  a bad first impression; the alternative is seeding the counter from the existing display
+  order, which invents a history.
+- **The other two inventories.** `sort_displayed_inventory` serves the character, the trader
+  and storage. A trader's shelf is regenerated on refresh so "latest" means nothing there;
+  storage is the player's and it does. The button should probably not appear for a trader.
+
+**Guard.** The class is "a field the display sorts by that the save does not keep", and
+`npm run check:save` already round-trips a real export. A check that every field
+`sort_displayed_inventory` reads is one `save_load.js` writes would hold it.
+
+### P-33 — Two clothing items show their English key `open`
+
+Spotted in the owner's inventory screenshot: `[ayak] Snakeskin boots` sitting between
+`[kol] Yılan derisi eldiven` and `[yüzük] Yılan dişi yüzüğü`.
+
+**Measured, and it is two missing rows, not a translation mistake.** A clothing item's shown
+name is assembled from its material and a piece word - `assembly_parts_for` returns null
+unless BOTH rows exist, and the caller then falls back to the registry key. The piece rows
+are the `component <type>` family, and of the five interior types only three exist:
+
+| item | type | shows |
+| --- | --- | --- |
+| Snakeskin hat | `helmet interior` | Yılan derisi şapka |
+| Snakeskin vest | `chestplate interior` | Yılan derisi yelek |
+| Snakeskin gloves | `glove interior` | Yılan derisi eldiven |
+| **Snakeskin leggings** | `leg armor interior` | **Snakeskin leggings** |
+| **Snakeskin boots** | `shoes interior` | **Snakeskin boots** |
+
+So `component leg armor interior` and `component shoes interior` are missing - and they are
+missing from **`english.js` as well**. That is why nobody noticed: in English the fallback
+to the registry key reads correctly, so the gap is invisible in the reference language and
+glaring in every other one. Four rows fix it, and the same two rows are missing for every
+material with a clothing set, not only snakeskin.
+
+**Why no check caught it.** `LOCALE_STRICT=1` fails on an id that is *requested* and
+missing, and `assembly_parts_for` tests for the row's existence before asking - so it never
+requests one. `check_item_display_names` reports 257 of 257 items having a name row, which
+counts items that have one rather than items that need one, and an assembled name has no
+`name <key>` row by design.
+
+**Guard, and it is the point of the entry.** Every `component_type` any item declares must
+have a `component <type>` row in every locale. That is mechanical, it covers the four rows
+here and every future clothing type, and it is the only thing between the reference language
+and the next silent fallback.
+
+
+### P-34 — A repeatable action needs a "try again" beside "Finish" `open`
+
+The owner's request, from a failed lock: a **try again** button under the result, so a
+repeatable attempt can be repeated without leaving the screen and coming back.
+
+**Measured, and the cost is small because the pieces exist.** When a `GameAction` finishes,
+`update_game_action_finish_button` writes one button - `action_end_div`, text `ui finish`,
+`onclick="end_activity()"`. There is no second button and no way back into the same action
+except finishing, returning to the location and clicking it again: two clicks and a screen
+change for every failed pick.
+
+Starting an action is already reachable from markup. `start_game_action` is on `window`
+(`main.js`) and the location list uses it directly:
+
+```js
+location_action_div.setAttribute("onclick", "start_game_action(this.getAttribute('data-location_action'));");
+```
+
+So a repeat button is that same call with the action id the box already knows, placed beside
+`action_end_div`.
+
+**When it should appear, and this is the whole of the design.** Only when repeating is
+actually possible, or it is a button that fails: the action must be `repeatable`, and its
+`required` must still be met - `can_be_started(character)` answers exactly that and is
+already on `GameAction`. For the lock both hold right after a failure by design, since
+`remove_on_success` keeps the chest; for a delivery that consumed its materials, neither
+holds and the button should not be there.
+
+**What needs deciding.**
+
+- **Whether it appears after a success too.** After a successful pick the chest is gone, so
+  `can_be_started` is false and the question answers itself - but for an action whose
+  requirement is a skill rather than an item, success leaves it startable, and offering
+  "again" immediately turns a considered action into a click-through.
+- **Whether it should also carry the attempt's cost.** The lock's cost is time, which
+  `keep_progress` preserves; an action that spends something on failure would be charging
+  again from a button that reads like undo.
+
+**Guard.** The class is "a button offered for something that cannot be done", which
+`check_onclick_names_are_reachable` covers for names and not for state. The honest guard
+here is a test that the button is built only when `can_be_started` is true - which means the
+condition has to live in a function that a test can call, not inline in the DOM builder.
+
+
+### P-35 — Every chest gives the same wool scarf `open`
+
+Reported by the owner one version after v0.7.19 shipped the rolled contents: the chest keeps
+producing a wool scarf.
+
+**Measured, and the numbers say it outright.** The four groups roll independently, so per
+open: scarf 35%, dagger 25%, false bottom 15%, and the trap on its derived chance. The scarf
+is the likeliest thing in the box and it is **1.4 scarves for every dagger**; over ten opens
+it is about three and a half of the same amulet. And 41% of opens give coin and nothing
+else, which is the other half of the complaint - the box feels both repetitive and empty.
+
+**The mistake is not the chance, it is the pool.** `chance_of` gives independent rolls,
+which is the right general mechanism, and it was pointed at a pool of two items. Two items
+at 35% and 25% cannot feel varied no matter what the numbers are, and the scarf repeating is
+just the larger of two numbers doing what it says.
+
+**Three fixes, and they are not alternatives - the first is required either way.**
+
+1. **A wider pool.** The measured shortlist is already written down: 22 enemy drops no
+   trader sells (P-24's own measurement), the tier-4 and tier-5 clothing sets, and the
+   generated components. A buried box should hold what somebody buried, which argues for
+   personal things and tools rather than crafting stock.
+2. **One-of semantics.** Independent rolls mean an open can give everything or nothing. A
+   weighted pick - exactly one entry, chosen by weight - is what a loot box usually is, and
+   it removes the 41% empty case at the same time. That is a second mechanism beside
+   `chance_of` rather than a change to it, and adding one needs the same care `chance_of`
+   got: the load path must skip it and its contents must be things a load skips.
+3. **Duplicates of a wearable are dead weight.** The scarf is an Amulet: the second one is
+   worth its sale price and nothing else. Either the pool holds mostly consumables and
+   materials, or repeats have to be worth something - and the first is much cheaper.
+
+**What must not happen.** The chance numbers must not simply be lowered until the box is
+mostly empty. 41% giving nothing but coin is already the largest single outcome; making the
+scarf rarer without widening the pool makes the box worse, not more varied.
 
 
 ---

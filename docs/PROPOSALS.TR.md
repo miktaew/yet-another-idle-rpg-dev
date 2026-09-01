@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 102 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 105 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -837,6 +837,164 @@ edilebilir: hiçbir modülün çağırmadığı ve hiçbir işaretleme işleyici
 `update_displayed_*` fonksiyonu, ya ölüdür ya da hiç yenilenmeyen bir paneldir.
 `check_onclick_names_are_reachable` öteki yönü zaten yürüyor — hiçbir şeyi adlandırmayan
 işaretleme işleyicileri — yani bunu yapacak parçalar mevcut.
+
+
+### P-32 — Envanteri edinme sırasına göre sıralama `open`
+
+Sahibinin isteği: "Ada göre", "Değere göre" ve "Türe göre"nin yanına dördüncü bir düğme —
+adı "Son" olsun — en son elde edilen eşyaları en üstte gösterecek şekilde.
+
+**Ölçüldü ve engel şu: hiçbir şey "ne zaman"ı kaydetmiyor.** Bir envanter girdisi
+`{item, count}` ve hepsi bu — `InventoryHaver.add_to_inventory` bu iki alanı yazıyor,
+başka bir şey yazmıyor. Sıralanacak bir edinme sırası yok; yani bu bir karşılaştırıcı değil,
+bir alan.
+
+**Bu da onu bir gösterim sorusu değil, bir kayıt sorusu yapıyor.** Yalnızca bellekte tutulan
+bir sayaç her yüklemede sıfırlanır ve en yeni eşya, kaydın hangi sırayla serileştirdiğine
+bağlı olur — ki bu, sahibinin favorilerini kaybeden hatanın tam şekli ([STATUS.md](STATUS.md)
+kısıt 4). Yani alan kayda yazılmalı ve eski bir kayıt onsuz geliyor: var olan her eşyanın
+*bir yere* sıralanması gerekiyor ve "hepsi eşit derecede eski" tek dürüst cevap.
+
+**İşe yarayan en ucuz alan.** Zaman damgası değil — ekleme başına bir artan sayaç, girdi
+başına saklanan. Kayıtta envanter anahtarı başına bir sayı tutuyor, yüklemeler arasında
+kararlı ve saate ihtiyacı yok. `current_game_time.day_count` çok kaba: bir günde toplanan
+her şey eşitlenir ve bekleme oturumu çoğunlukla tek bir gün.
+
+**Karar gerektiren üç şey.**
+
+- **"Edinmek" ne sayılıyor.** Oyuncunun zaten sahip olduğu bir yığına ekleme: yığın en üste
+  mi atlıyor, yoksa ilk edinme sırasını mı koruyor? İstek "en son elde edilen" diyor, bu
+  yığının hareket etmesi lehine — ama o zaman sürekli takviye edilen bir ok yığını hiç
+  üstten inmiyor.
+- **Eski bir kayda ne oluyor.** Her girdinin sıfırda eşitlenmesi, "Son"a göre ilk
+  sıralamanın yeni eşyalar gelene kadar hiçbir şeye göre sıralama gibi görünmesi demek. Bu
+  dürüst ve aynı zamanda kötü bir ilk izlenim; alternatifi, sayacı mevcut gösterim
+  sırasından tohumlamak, ki o da bir geçmiş icat etmek olur.
+- **Öteki iki envanter.** `sort_displayed_inventory` karaktere, tüccara ve depoya hizmet
+  ediyor. Bir tüccarın rafı tazelemede yeniden üretiliyor, yani orada "Son" bir şey ifade
+  etmiyor; depo oyuncunun ve ediyor. Düğme büyük olasılıkla tüccarda görünmemeli.
+
+**Muhafız.** Sınıf şu: "gösterimin sıraladığı ama kaydın tutmadığı bir alan" ve
+`npm run check:save` gerçek bir dışa aktarımı zaten round-trip ediyor.
+`sort_displayed_inventory`'nin okuduğu her alanın `save_load.js`'in yazdığı bir alan olduğunu
+doğrulayan bir kontrol bunu tutar.
+
+### P-33 — İki giysi eşyası İngilizce anahtarını gösteriyor `open`
+
+Sahibinin envanter ekran görüntüsünde görüldü: `[kol] Yılan derisi eldiven` ile
+`[yüzük] Yılan dişi yüzüğü` arasında duran `[ayak] Snakeskin boots`.
+
+**Ölçüldü ve bu bir çeviri hatası değil, eksik iki satır.** Bir giysi eşyasının gösterilen
+adı, malzemesi ile bir parça kelimesinden birleştiriliyor — `assembly_parts_for`, İKİ satır
+da yoksa null döndürüyor ve çağıran da registry anahtarına düşüyor. Parça satırları
+`component <tip>` ailesi ve beş iç tipten yalnızca üçü var:
+
+| eşya | tip | gösterdiği |
+| --- | --- | --- |
+| Snakeskin hat | `helmet interior` | Yılan derisi şapka |
+| Snakeskin vest | `chestplate interior` | Yılan derisi yelek |
+| Snakeskin gloves | `glove interior` | Yılan derisi eldiven |
+| **Snakeskin leggings** | `leg armor interior` | **Snakeskin leggings** |
+| **Snakeskin boots** | `shoes interior` | **Snakeskin boots** |
+
+Yani `component leg armor interior` ve `component shoes interior` eksik — ve **`english.js`'te
+de** eksikler. Kimsenin fark etmemesinin sebebi bu: İngilizcede registry anahtarına düşmek
+doğru okunuyor, yani boşluk referans dilde görünmez, öteki her dilde göze batıyor. Dört
+satır bunu düzeltiyor ve aynı iki satır yalnızca yılan derisi için değil, giysi takımı olan
+her malzeme için eksik.
+
+**Neden hiçbir kontrol yakalamadı.** `LOCALE_STRICT=1`, *istenen* ve eksik olan bir kimlikte
+düşüyor; `assembly_parts_for` ise sormadan önce satırın varlığını sınıyor, yani hiç
+istemiyor. `check_item_display_names`, 257 eşyanın 257'sinde ad satırı olduğunu bildiriyor;
+bu, satırı olan eşyaları sayıyor, ihtiyacı olanları değil — ve birleştirilmiş bir adın
+tasarım gereği `name <anahtar>` satırı yok.
+
+**Muhafız ve kaydın asıl noktası bu.** Herhangi bir eşyanın beyan ettiği her
+`component_type`'ın her yerelde bir `component <tip>` satırı olmak zorunda. Bu mekanik,
+buradaki dört satırı ve gelecekteki her giysi tipini kapsıyor ve referans dille bir sonraki
+sessiz geri düşüş arasındaki tek şey o.
+
+
+### P-34 — Tekrarlanabilir bir aksiyonun "Bitir"in yanında "Tekrar dene"ye ihtiyacı var `open`
+
+Sahibinin isteği, başarısız bir kilitten: sonucun altında bir **tekrar dene** düğmesi olsun;
+böylece tekrarlanabilir bir deneme, ekrandan çıkıp geri dönmeden yeniden yapılabilsin.
+
+**Ölçüldü ve maliyet küçük, çünkü parçalar mevcut.** Bir `GameAction` bittiğinde
+`update_game_action_finish_button` tek bir düğme yazıyor — `action_end_div`, metni
+`ui finish`, `onclick="end_activity()"`. İkinci bir düğme yok ve aynı aksiyona geri dönmenin
+yolu yok; bitirmek, lokasyona dönmek ve yeniden tıklamak dışında: her başarısız açış için iki
+tıklama ve bir ekran değişimi.
+
+Bir aksiyonu başlatmak işaretlemeden zaten erişilebilir. `start_game_action`, `window`
+üzerinde (`main.js`) ve lokasyon listesi onu doğrudan kullanıyor:
+
+```js
+location_action_div.setAttribute("onclick", "start_game_action(this.getAttribute('data-location_action'));");
+```
+
+Yani tekrar düğmesi, kutunun zaten bildiği aksiyon kimliğiyle aynı çağrı; `action_end_div`'in
+yanına konmuş hâli.
+
+**Ne zaman görünmesi gerektiği ve tasarımın tamamı bu.** Yalnızca tekrarlamak gerçekten
+mümkün olduğunda; yoksa başarısız olan bir düğme olur: aksiyon `repeatable` olmalı ve
+`required`'ı hâlâ karşılanmalı — `can_be_started(character)` tam olarak bunu cevaplıyor ve
+`GameAction` üzerinde zaten var. Kilit için ikisi de başarısızlığın hemen ardından tasarım
+gereği geçerli, çünkü `remove_on_success` sandığı bırakıyor; malzemesini tüketmiş bir teslimat
+için ikisi de geçerli değil ve düğme orada olmamalı.
+
+**Karar gerektirenler.**
+
+- **Başarıdan sonra da görünüp görünmeyeceği.** Başarılı bir açıştan sonra sandık gitmiş
+  oluyor, yani `can_be_started` false ve soru kendini cevaplıyor — ama şartı eşya değil beceri
+  olan bir aksiyon için başarı onu başlatılabilir bırakıyor ve hemen "yine" sunmak, düşünülmüş
+  bir aksiyonu tıklama geçişine çeviriyor.
+- **Denemenin bedelini de taşıyıp taşımayacağı.** Kilidin bedeli zaman ve `keep_progress` onu
+  koruyor; başarısızlıkta bir şey harcayan bir aksiyon ise geri-al gibi okunan bir düğmeden
+  yeniden ücret keserdi.
+
+**Muhafız.** Sınıf şu: "yapılamayan bir şey için sunulmuş düğme"; bunu
+`check_onclick_names_are_reachable` adlar için kapsıyor, durum için kapsamıyor. Buradaki dürüst
+muhafız, düğmenin yalnızca `can_be_started` true iken kurulduğunu doğrulayan bir test — ki bu
+da koşulun DOM kurucusunun içinde değil, bir testin çağırabileceği bir fonksiyonda yaşaması
+gerektiği anlamına geliyor.
+
+
+### P-35 — Her sandıktan aynı yün atkı çıkıyor `open`
+
+Sahibi, v0.7.19'un atılan içerikleri yayınlamasından bir sürüm sonra bildirdi: sandık sürekli
+yün atkı veriyor.
+
+**Ölçüldü ve sayılar bunu açıkça söylüyor.** Dört grup bağımsız atılıyor, yani açış başına:
+atkı %35, hançer %25, gizli dip %15 ve tuzak türetilmiş şansıyla. Atkı kutudaki en olası şey
+ve **her hançere karşılık 1,4 atkı**; on açışta aynı tılsımdan yaklaşık üç buçuk tane.
+Açışların %41'i ise sikke dışında hiçbir şey vermiyor; şikâyetin öteki yarısı da bu — kutu hem
+tekrarlı hem boş geliyor.
+
+**Hata şansta değil, havuzda.** `chance_of` bağımsız atışlar veriyor, ki doğru genel
+mekanizma; ama iki eşyalık bir havuza yöneltildi. %35 ve %25'te iki eşya, sayılar ne olursa
+olsun çeşitli hissettiremez ve atkının tekrarlaması, iki sayıdan büyük olanının dediğini
+yapmasından ibaret.
+
+**Üç düzeltme ve bunlar alternatif değil — ilki her hâlükârda gerekli.**
+
+1. **Daha geniş bir havuz.** Ölçülmüş kısa liste zaten yazılı: hiçbir tüccarın satmadığı 22
+   düşman ganimeti (P-24'ün kendi ölçümü), 4. ve 5. kademe giysi takımları ve üretilmiş
+   bileşenler. Gömülmüş bir kutu, birinin gömdüğü şeyi tutmalı; bu da üretim stoğu yerine
+   kişisel eşyalar ve aletler lehine bir argüman.
+2. **"Birini seç" anlamı.** Bağımsız atışlar, bir açışın her şeyi ya da hiçbir şeyi
+   verebilmesi demek. Ağırlıklı bir seçim — ağırlığa göre tam olarak bir girdi — bir ganimet
+   kutusunun genellikle olduğu şey ve aynı anda %41'lik boş durumu da ortadan kaldırıyor. Bu,
+   `chance_of`'un değişmesi değil onun yanında ikinci bir mekanizma ve birini eklemek
+   `chance_of`'un gördüğü özeni gerektiriyor: yükleme yolu onu atlamalı ve içeriği yüklemenin
+   atladığı şeyler olmalı.
+3. **Bir giyilebilirin kopyası ölü ağırlık.** Atkı bir Amulet: ikincisi satış fiyatı kadar
+   değerli, o kadar. Ya havuz çoğunlukla tüketilebilir ve malzeme tutmalı, ya da tekrarlar bir
+   şey ifade etmeli — ve birincisi çok daha ucuz.
+
+**Olmaması gereken şey.** Şans sayılarının, kutu çoğunlukla boşalana kadar düşürülmesi. %41
+ile "sikkeden başka hiçbir şey" zaten en büyük tek sonuç; havuzu genişletmeden atkıyı
+seyreltmek kutuyu daha çeşitli değil daha kötü yapar.
 
 
 ---
