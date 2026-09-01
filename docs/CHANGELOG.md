@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 99 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 100 -->
 
 # Changelog
 
@@ -20,6 +20,27 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.28 - an export says which version wrote it
+
+Asked for directly: *"add the version to the exported save filenames too"*.
+
+`yet-another-idle-rpg 2026-09-01 18_06_03 v0.7.28.txt`. **After the date rather than before
+it**, so a folder of exports still sorts chronologically by name - which started mattering
+this version, since v0.7.27 moved them all into `playersaves/` and there are six.
+
+The version is inside the file as well, and that is what the loader and `check:save` read. A
+file listing is not a file, though: six exports named the same but for a timestamp cannot
+answer the first question ever asked of an old save, which is which version wrote it. That
+question opened P-38.
+
+**Guard: `check_an_export_names_its_version`.** One template on one line in `index.html`, with
+nothing else in the build looking at it - exactly the kind of thing a tidy-up drops silently,
+because the export keeps working and only stops being identifiable. It requires both the
+version and the date, and fails when either is taken out.
+
+**Also recorded, with the measurement that confirms it: P-40.** Two quests nothing in the game
+can start.
 
 ### v0.7.27 - standing earned before it counted is paid on loading
 

@@ -1462,7 +1462,13 @@
             function saveToFile() {
                 var a = window.document.createElement('a');
                 a.href = window.URL.createObjectURL(new Blob([save_to_file()], {type: 'text/plain'}));
-                a.download = `yet-another-idle-rpg${isOnDev()?"-dev":""} ${getDate()}.txt`;
+                /*
+                    The version goes after the date, not before it, so a folder of exports
+                    still sorts chronologically by name. Both are in the name because every
+                    question asked of an old save starts with which version wrote it, and
+                    the copy inside the file cannot be read from a file listing.
+                */
+                a.download = `yet-another-idle-rpg${isOnDev()?"-dev":""} ${getDate()} ${get_game_version()}.txt`;
 
                 document.body.appendChild(a);
                 a.click();

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 115 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 116 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -772,6 +772,36 @@ aynı kelimeyi giyen farklı bir özellik.
 kaydediyor ve Keşifler panelinde zaten çiziliyor. En-az-bir-kez-craft-edildi bayrağı yeni bir
 deponun içinde değil onun yanında olabilir — ki bu da belirtecin iki panelde aynı şeyi
 söylemesini sağlar.
+
+### P-40 — Oyundaki hiçbir şeyin başlatamadığı iki görev `open`
+
+Sahibinin talimatı: *"quest ekliyoruz ancak bir yere bağlanmıyorsa, onu uygun bir şekilde
+doğru yerlere bağlamamız gerek."* Oyundaki her göreve karşı ölçüldü ve sezgi ikisi hakkında
+doğruydu.
+
+**Doğrulanmış ölü içerik: `Out on the Ebb` ve `One Unweighed Crate`.** İkisini de hiçbir şey
+vermiyor — ne `rewards.quests`, ne bir `startQuest` çağrısı, ne becerilerde bir şey. Ve
+`questManager.finishQuestTask`, `if(this.isQuestActive(quest_id))` ile açılıyor; yani **onlara
+işaret eden her `quest_progress` ödülü işlevsiz**: oyuncu bütün körfezi çalışabilir ve iki
+görev de günlükte hiç görünmüyor, ilerlemiyor, tamamlanmıyor. Körfezdeki altı aksiyon ve bir
+diyalog repliği, hiç ilerletilemeyecek adımları ilerletiyor.
+
+İkisi de benim, Marrowmoth yayından (Q-7 ile Q-10). İçerik yazılmış ve ulaşılabilir; eksik olan
+yalnızca onu başlatan iplik.
+
+**Kaydedilmeye değer iki yanlış alarm, ki sonraki tarama peşine düşmesin.** `Lost memory`,
+oyun başlarken `main.js:4458`'de açıkça başlatılıyor ve `Swimming/climbing unlock`,
+`src/data/skills.js`'ten veriliyor — yalnızca diyalogları ve konumları okuyan bir tarama ikisini
+de başlatılmamış sayıyor, oysa ikisi de sağlam.
+
+**Nereye bağlanmaları gerektiği.** Körfezin kendi ipliği: liman saymanının konuşması bölgenin
+giriş noktası ve `read the departures`'ı zaten açıyor; suların çekilmesiyle ne gittiğine dair
+bir görevin yeri de orası. `One Unweighed Crate`'in `dialogues.js:3271`'de onu ilerleten bir
+diyalog repliği var, ki bu da onu kimin vermesi gerektiğine işaret ediyor.
+
+**Muhafız sınıfı tutmalı**, bu ikisini değil: hiçbir şeyin başlatamadığı bir görev ve hiçbir
+yolun aktive etmediği bir göreve nişan almış bir `quest_progress` ödülü. İkisi de sessiz —
+özellikle ikincisi, çünkü ödül tam olarak çalışan her ödül gibi görünüyor.
 
 ---
 

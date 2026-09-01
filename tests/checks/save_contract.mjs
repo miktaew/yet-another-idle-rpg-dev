@@ -67,6 +67,42 @@ async function check_save_keys_round_trip() {
     }
 }
 
+/**
+ * An exported save names the version that wrote it, and when.
+ *
+ * The version is inside the file as well, and that is what the loader and check:save read -
+ * but a file listing is not a file. A folder of six exports, all named the same but for the
+ * timestamp, cannot answer the first question ever asked of an old save: which version wrote
+ * this. That question opened P-38 and it opens every compatibility question after it.
+ *
+ * Nothing else in the build looks at the download name, and it is one template on one line
+ * in index.html - exactly the kind of thing a tidy-up drops without anything noticing, since
+ * the export keeps working and only stops being identifiable.
+ */
+function check_an_export_names_its_version() {
+    const html = strip_comments(
+        fs.readFileSync(path.join(repo_root, "index.html"), "utf8"));
+
+    const assignment = /a\s*\.\s*download\s*=\s*`([^`]*)`/.exec(html);
+    if (assignment === null) {
+        error("no `a.download = `...`` in index.html - the export no longer names its file "
+            + "there, and check_an_export_names_its_version is out of date.");
+        return;
+    }
+
+    const template = assignment[1];
+    for (const [what, pattern] of [["version", /get_game_version\s*\(\s*\)|game_version/],
+                                   ["date", /getDate\s*\(\s*\)/]]) {
+        if (!pattern.test(template)) {
+            error(`an exported save is named "${template}", which does not say the ${what} `
+                + `it was written at. A folder of exports cannot then be told apart.`);
+        }
+    }
+
+    console.log(`[check] export name: "${template}"`);
+}
+
 export {
     check_save_keys_round_trip,
+    check_an_export_names_its_version,
 };

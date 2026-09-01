@@ -95,7 +95,7 @@ import {
 } from "./checks/locales.mjs";
 import { check_modules_import_what_they_call } from "./checks/modules.mjs";
 import { check_imports_resolve } from "./checks/imports.mjs";
-import { check_save_keys_round_trip } from "./checks/save_contract.mjs";
+import { check_save_keys_round_trip, check_an_export_names_its_version } from "./checks/save_contract.mjs";
 import { check_docs_are_paired, check_thematic_breaks_are_not_headings } from "./checks/docs.mjs";
 import { check_no_raw_control_bytes } from "./checks/bytes.mjs";
 import { check_effect_tags_match_their_numbers } from "./checks/effects.mjs";
@@ -158,6 +158,7 @@ await check_recipe_item_names();
 await check_modules_import_what_they_call();
 await check_imports_resolve();
 await check_save_keys_round_trip();
+check_an_export_names_its_version();
 await check_docs_are_paired();
 await check_thematic_breaks_are_not_headings();
 await check_no_raw_control_bytes();

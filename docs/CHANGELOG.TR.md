@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 99 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 100 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,27 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.28 - bir dışa aktarma hangi sürümün yazdığını söylüyor
+
+Doğrudan istendi: *"dışarı aktarılan kayıtlara versiyon bilgisi de ekle dosya adlarına"*.
+
+`yet-another-idle-rpg 2026-09-01 18_06_03 v0.7.28.txt`. **Tarihten önce değil sonra**, böylece
+bir kayıt klasörü ada göre hâlâ kronolojik sıralanıyor — ki bu bu sürümde önem kazandı, çünkü
+v0.7.27 hepsini `playersaves/` içine taşıdı ve altı tane var.
+
+Sürüm dosyanın içinde de var ve yükleyicinin ve `check:save`'in okuduğu da o. Ne var ki bir
+dosya listesi bir dosya değil: yalnızca zaman damgasıyla ayrılan altı dışa aktarma, eski bir
+kayda sorulan ilk soruyu cevaplayamıyor — onu hangi sürüm yazdı. P-38'i açan soru da bu.
+
+**Muhafız: `check_an_export_names_its_version`.** `index.html` içinde tek satırda tek bir
+şablon ve derlemede ona bakan başka hiçbir şey yok — bir düzenlemenin sessizce düşüreceği tam
+olarak bu türden bir şey, çünkü dışa aktarma çalışmaya devam ediyor, yalnızca tanınabilir
+olmaktan çıkıyor. Hem sürümü hem tarihi zorunlu kılıyor ve ikisinden biri kaldırıldığında
+düşüyor.
+
+**Ayrıca, onu doğrulayan ölçümle birlikte kaydedildi: P-40.** Oyundaki hiçbir şeyin
+başlatamadığı iki görev.
 
 ### v0.7.27 - bir işe yaramadan önce kazanılan itibar yüklemede ödeniyor
 

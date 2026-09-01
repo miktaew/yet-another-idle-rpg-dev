@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 46 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 47 -->
 
 # Status
 
@@ -209,6 +209,7 @@ but the ones that encode a bug that shipped:
 | `sort buttons` | A sort button no comparator branch understands, or a branch no button offers. 4 orderings. |
 | `standing gates` | A reputation gate asking for more than the game can ever grant, so nobody can open it. 46 grants, 5 gated regions. |
 | `late repairs` | A repair for a reward added late that can no longer find what it replays, so it silently pays nothing. |
+| `export name` | An exported save whose filename does not say the version or the date that wrote it. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

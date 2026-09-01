@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 46 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 47 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -210,6 +210,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `sort buttons` | Hiçbir karşılaştırıcı dalının anlamadığı bir sıralama düğmesi ya da hiçbir düğmenin sunmadığı bir dal. 4 sıralama. |
 | `standing gates` | Oyunun verebileceğinden fazlasını isteyen bir itibar kapısı; kimse açamıyor. 46 bağış, 5 kapatılmış bölge. |
 | `late repairs` | Sonradan eklenmiş bir ödül için yazılmış ama tekrarladığı şeyi artık bulamayan bir onarım; sessizce hiçbir şey ödemiyor. |
+| `export name` | Dosya adı onu yazan sürümü ya da tarihi söylemeyen bir dışa aktarma. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |
