@@ -9,6 +9,7 @@ import {
          update_displayed_xp_bonuses,
          update_displayed_stamina_efficiency,
          update_displayed_item_log,
+         refresh_open_journal_panels,
          update_displayed_location_types,
         } from "./display.js";
 import { active_effects, current_location, current_stance, favourite_consumables, favourite_items, language, remove_consumable_from_favourites, remove_item_from_favourites } from "./main.js";
@@ -818,6 +819,13 @@ function add_to_character_inventory(items, skip_item_log) {
 
     update_displayed_character_inventory({ was_anything_new_added });
     update_displayed_item_log();
+    /*
+        And the journal, if somebody is looking at it. item_log.log_items above has just
+        changed what the Discoveries panel would draw, and nothing told the panel: it is
+        rebuilt when its tab opens and when a filter is touched, and was not while it was
+        open (P-31, reported as "it looks stateless").
+    */
+    refresh_open_journal_panels();
 }
 
 /**

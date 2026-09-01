@@ -54,6 +54,7 @@ import {
     check_no_english_in_dom,
     check_onclick_names_are_reachable,
     check_journal_panels_are_styled,
+    check_every_panel_updater_is_called,
     check_seasons_go_through_the_accessor,
 } from "./checks/dom-text.mjs";
 import {
@@ -129,6 +130,7 @@ check_onclick_names_are_reachable();
 check_journal_panels_are_styled();
 await check_base64_is_utf8_safe();
 await check_seasons_go_through_the_accessor();
+check_every_panel_updater_is_called();
 await check_registry_value_names();
 await check_skill_category_names();
 await check_enumerable_id_families();

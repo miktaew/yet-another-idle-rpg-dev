@@ -30,7 +30,7 @@ import { character,
          get_character_cold_tolerance,
          is_rat} from "./character.js";
 import { activities } from "./activities.js";
-import {
+import { refresh_open_journal_panels,
          end_activity_animation,
          update_displayed_money,
          log_message,
@@ -1495,6 +1495,13 @@ function start_textline(textline_key){
     //read, and this is the only place in the game where that is true.
     textline.is_heard = true;
     game_state.lore_last = {dialogue: current_dialogue, textline: textline_key};
+    /*
+        And the lore panel, if it is open. Same case as a pickup and the Discoveries panel
+        (P-31): the panel is rebuilt when its tab opens and was not while it was already
+        open, so a line heard with the journal on screen did not appear until the player
+        switched tabs.
+    */
+    refresh_open_journal_panels();
 
     process_rewards({rewards: textline.rewards, source_type: "textline", inform_textline: false, source_name: current_dialogue})
 

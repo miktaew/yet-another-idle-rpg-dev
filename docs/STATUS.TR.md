@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 41 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 42 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -203,6 +203,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `rolled sets` | Gruplarından herhangi birinden daha çok "hiçbir şey" vermesi olası, atılan bir ödül kümesi. 1 küme. |
 | `reputation gates` | Hiçbir şeyin kapılamadığı bir itibar bölgesi; kazanmak hiçbir şeyi değiştirmiyor. 5 bölge. |
 | `item keys` | Ad satırı olmayan ve ad birleştirmeyen bir eşya; oyuncu registry anahtarını okuyor. 916 arama. |
+| `panel updaters` | Bir paneli çizen ve hiçbir şeyin çağırmadığı bir fonksiyon; panel hiç görünmüyor. 48 güncelleyici. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

@@ -2319,6 +2319,54 @@ function update_displayed_reputation() {
 }
 
 //TODO: some display polishing + maybe move to a dedicated tab?
+/**
+ * Whether a journal tab is actually on screen.
+ *
+ * changeTab (index.html) writes `display` inline - "none" on every tab it hides, "flex" or
+ * "block" on the one it shows - so this is a string read rather than a layout question.
+ * offsetParent would be stricter and would force layout, which is the wrong trade for
+ * something asked once per item picked up.
+ *
+ * The journal is tested too, because changeTab leaves the last tab's inline display set
+ * when the whole journal is closed. One case still says yes with nothing visible - the
+ * journal open behind another panel - and the cost of being wrong there is one rebuild
+ * nobody sees.
+ */
+function is_journal_tab_open(tab_id) {
+    const journal = document.getElementById("journal_div");
+    if(!journal || journal.style.display === "none") {
+        return false;
+    }
+    const tab = document.getElementById(tab_id);
+    return Boolean(tab) && tab.style.display !== "none" && tab.style.display !== "";
+}
+
+/**
+ * Redraws whichever journal panel is looking at something that just changed.
+ *
+ * Both panels are already rebuilt when their tab is opened - showDiscoveries and showLore
+ * each call their update, which P-31's first reading missed. What neither had was a redraw
+ * while ALREADY open: the player watches the panel, picks something up, and the count does
+ * not move until they switch tabs or touch a filter. That is what was reported as "it
+ * looks stateless".
+ *
+ * Guarded on being open, because the alternative is rebuilding a two-hundred entry list on
+ * every pickup of a long idle session for a panel nobody is looking at.
+ *
+ * It lives here rather than in journal_panels.js because character.js is the caller and
+ * character.js already imports from this file: journal_panels imports items, items imports
+ * character, so a direct import there would close a new cycle. This file was already
+ * importing both updaters and using neither, which was the other half of the finding.
+ */
+function refresh_open_journal_panels() {
+    if(is_journal_tab_open("discoveries_box_div")) {
+        update_displayed_discoveries();
+    }
+    if(is_journal_tab_open("lore_box_div")) {
+        update_displayed_lore();
+    }
+}
+
 function update_displayed_item_log() {
 
     set_HTML(data_entry_divs.item_log,`<div id='item_log_header'>${translationManager.getText(language, "ui item log")}</div>`)
@@ -3833,6 +3881,7 @@ export {
     set_loading_screen_progress, hide_loading_text, show_play_button, set_loading_screen_warnings_warning, set_play_button_text,
     create_floating_effect,
     update_fav_display,
+    refresh_open_journal_panels,
     update_displayed_item_log,
     set_HTML,
     set_light_based_background_color,

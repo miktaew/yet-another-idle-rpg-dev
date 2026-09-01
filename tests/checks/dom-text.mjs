@@ -416,8 +416,66 @@ async function check_base64_is_utf8_safe() {
     console.log(`[check] base64 is utf8-safe: ${checked} call sites`);
 }
 
+/**
+ * A panel updater nothing calls.
+ *
+ * P-31's first reading was that nothing redrew the Discoveries panel, and it was wrong -
+ * `showDiscoveries()` in index.html calls its update, and the grep that "found four
+ * callers" had simply cut the fifth. What was true is narrower: no redraw while the panel
+ * was ALREADY open.
+ *
+ * The class is worth a check anyway, because the wrong reading describes a real failure: a
+ * function that draws a panel and that nothing ever calls is a panel that never appears,
+ * and it looks exactly like working code. `display.js` was importing
+ * update_displayed_discoveries and update_displayed_lore and using neither, which is one
+ * step away from it.
+ *
+ * Callers count from anywhere the game actually runs - any module under src/, and
+ * index.html, whose inline handlers are how three of the journal tabs are wired.
+ * check_onclick_names_are_reachable walks the other direction, from a handler to a name.
+ */
+function check_every_panel_updater_is_called() {
+    const declared = new Map();
+    const called = new Set();
+
+    const sources = source_files(repo_root).map(
+        (relative) => ({ relative, text: strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8")) }));
+    sources.push({ relative: "index.html", text: strip_comments(
+        fs.readFileSync(path.join(repo_root, "index.html"), "utf8")) });
+
+    for (const { relative, text } of sources) {
+        for (const match of text.matchAll(/function\s+(update_displayed_\w+|refresh_\w+)\s*\(/g)) {
+            declared.set(match[1], relative);
+        }
+    }
+    for (const { text } of sources) {
+        for (const match of text.matchAll(/(?<!function\s)(update_displayed_\w+|refresh_\w+)\s*\(/g)) {
+            called.add(match[1]);
+        }
+    }
+
+    if (declared.size === 0) {
+        error("no panel updater is declared anywhere - this check is out of date.");
+        return;
+    }
+
+    for (const [name, relative] of declared) {
+        if (!called.has(name)) {
+            error(`${relative} declares ${name}() and nothing calls it - not another `
+                + `module, and not an inline handler in index.html. A function that draws `
+                + `a panel and is never called is a panel that never appears, and it reads `
+                + `exactly like working code.`);
+        }
+    }
+
+    console.log(`[check] panel updaters: ${declared.size} declared, every one of them `
+        + `called`);
+}
+
 export {
     check_base64_is_utf8_safe,
+    check_every_panel_updater_is_called,
     check_seasons_go_through_the_accessor,
     check_no_english_in_dom,
     check_onclick_names_are_reachable,

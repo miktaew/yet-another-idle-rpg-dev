@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 94 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 95 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,49 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.23 - günlük, siz onu okurken güncelleniyor
+
+P-31; *"burası stateless galiba, ya da hemen yenilenmiyor"* diye bildirildi. **Teklif durumu
+abartmıştı ve onu düzelten şey ikinci ölçüm oldu** — P-33'ten sonra bu, üst üste ikinci.
+
+**Teklifin söylediği.** Keşifler panelini *hiçbir şeyin* yeniden çizmediği: dört çağıran ve
+hepsi `index.html`'deki filtre girdileri. **Beş tane var.** `showDiscoveries()`, sekme
+açılışında güncellemeyi çağırıyor; `showLore()` da aynısını yapıyor — hem de ikisinin de
+yanında, açılışta yeniden kurduklarını ve nedenini söyleyen bir yorum var. "Dört çağıran
+buldu" diyen arama beşinci satırı kırpmış.
+
+**Gerçekte doğru olan şey ve bildirilenin ta kendisi.** İki panel de **zaten açıkken**
+yeniden çizilmiyordu. Oyuncu listeye bakıyor, bir şey topluyor ve sayı, sekme değiştirip
+dönene ya da bir filtreye dokunana kadar kımıldamıyor. `item_log.log_items`,
+`add_to_character_inventory`'den çağrılıyor, `update_displayed_item_log` bir alt satırda
+yenileniyor ve günlük yenilenmiyordu.
+
+**`refresh_open_journal_panels`**, panelin baktığı şeyin değiştiği iki yerden çağrılıyor:
+`character.js`'te `log_items`'ın ardından ve `start_textline` içinde
+`textline.is_heard = true`'nun yanında — günlük ekrandayken duyulan bir lore repliği de aynı
+durumdu.
+
+**Açık olma koşuluna bağlandı**, çünkü alternatifi, kimsenin bakmadığı bir panel için uzun
+bir bekleme oturumunun her toplamasında iki yüz girdilik bir listeyi yeniden kurmak.
+`changeTab`, `display`'i satır içi yazıyor; yani bu bir yerleşim sorusu değil bir dizge
+okuması — `offsetParent` daha katı olurdu ve yerleşimi zorlardı, ki eşya başına bir kez
+sorulan bir şey için yanlış takas. Bir durum hâlâ "evet" diyip hiçbir şey göstermiyor —
+günlüğün başka bir panelin arkasında açık olması — ve orada yanılmanın bedeli, kimsenin
+görmediği bir yeniden kurulum.
+
+**Yardımcı `display.js`'te yaşıyor**, `journal_panels.js`'te değil; ve bu keyfi değil:
+çağıran `character.js` ve o zaten `display.js`'ten import ediyor, oysa
+`journal_panels` → `items` → `character` yeni bir döngü kapatırdı. `display.js` ise iki
+güncelleyiciyi zaten import edip hiçbirini kullanmıyordu; bulgunun öteki yarısı da bu.
+
+**Muhafız: `check_every_panel_updater_is_called`.** Teklifin yanlış okuması gerçek bir
+başarısızlığı tarif ediyor, dolayısıyla bu olmasa da bir kontrole değer: bir paneli çizen ve
+hiç çağrılmayan bir fonksiyon, hiç görünmeyen bir paneldir ve tam olarak çalışan kod gibi
+okunur. Çağıranlar `src/` altındaki her modülden **ve** `index.html`'den sayılıyor, çünkü
+günlük sekmeleri satır içi işleyicilerle bağlı — `check_onclick_names_are_reachable` öteki
+yönü yürüyor. 48 güncelleyici, hepsi çağrılıyor; yeni yardımcıya yapılan iki çağrıyı
+kaldırmak onu adıyla düşürüyor.
 
 ### v0.7.22 - yedi eşya oyuncuya registry anahtarını göstermeyi bırakıyor
 

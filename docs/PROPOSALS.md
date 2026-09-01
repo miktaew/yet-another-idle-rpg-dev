@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 108 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 109 -->
 
 # Proposals
 
@@ -712,56 +712,6 @@ with nothing to tell them so". `check_actions_can_explain_failure` already holds
 `required` to having an `unable_to_begin` line; the missing rule is the other direction - a
 `display_conditions` on something recurring and satisfiable, where a refusal would have
 been the honest choice.
-
-
-### P-31 — The Discoveries panel only redraws when you touch a filter `open`
-
-Reported by the owner: the panel looks stateless, or at least does not refresh at once, and
-the counts should follow a find immediately.
-
-**Measured, and it is worse than stale - nothing redraws it at all.** `grep` for
-`update_displayed_discoveries(` across the whole repository finds four callers, and every
-one of them is an inline handler in `index.html`:
-
-```
-index.html:765  <input type="search"   id="discoveries_search"            oninput="update_displayed_discoveries()">
-index.html:768  <input type="checkbox" id="discoveries_hide_sourceless" onclick="update_displayed_discoveries()">
-index.html:770  <input type="checkbox" id="discoveries_hide_crafted"    onclick="update_displayed_discoveries()">
-index.html:772  <input type="checkbox" id="discoveries_hide_traded"     onclick="update_displayed_discoveries()">
-```
-
-Nothing in `src/` calls it. `display.js` **imports** it on line 59 and never uses the name;
-`main.js` puts it on `window` so those four handlers can reach it. So the panel shows
-whatever was drawn the last time somebody typed in the search box or toggled a checkbox -
-which is why a find does not appear and `bulunan: N` does not move.
-
-**And the gaining path has nothing to say to it.** `item_log.log_items(items)` is called
-from `add_to_character_inventory` in `character.js`, and it updates the log and returns. The
-inventory display is refreshed there; the journal is not.
-
-**Two questions, and only the second is a judgement.**
-
-The first is mechanical: the panel needs redrawing when the log grows and when its tab is
-opened. `update_displayed_item_log` is already called beside `log_items` for the item-log
-strip, so the hook exists and there is a place to add the call. A tab switch has to redraw
-too, or a page load with no filter touched shows nothing at all.
-
-The second: **whether every find should redraw the whole list.** The panel builds one entry
-per known item with its sources, and `item_sources` is a cached index; rebuilding all of it
-on every item picked up during a long idle session is not obviously free. The cheap version
-is to redraw on tab open plus on a **new** item - `log_items` already knows whether anything
-was new, since `add_to_inventory` returns `was_anything_new_added` - and to leave the count
-on an item you already had until the tab is reopened. Whether that is enough is what the
-owner's "increases should be reflected immediately" has to decide.
-
-**Also measured, and worth its own look:** `update_displayed_lore` has exactly the same
-shape - imported in `display.js`, exported to `window`, and called from nothing in `src/`.
-Whatever is decided here applies to it.
-
-**Guard.** The class is "a panel updater nothing calls", and it is checkable: a function
-named `update_displayed_*` that no module calls and no markup handler names is either dead
-or a panel that never refreshes. `check_onclick_names_are_reachable` already walks the other
-direction - markup handlers that name nothing - so the pieces to do it exist.
 
 
 ### P-32 — An inventory sort by when you got it `open`

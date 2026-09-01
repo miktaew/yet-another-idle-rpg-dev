@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 108 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 109 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -734,59 +734,6 @@ ona söyleyen hiçbir şey olmayan bir aksiyon". `check_actions_can_explain_fail
 `required`'ı bir `unable_to_begin` satırına sahip olmaya zorluyor; eksik olan kural öteki
 yön — tekrarlayan ve karşılanabilir bir şey üzerinde, reddetmenin dürüst seçim olacağı bir
 `display_conditions`.
-
-
-### P-31 — Keşifler paneli yalnızca bir filtreye dokununca yeniden çiziliyor `open`
-
-Sahibi bildirdi: panel durumsuz görünüyor, ya da en azından hemen yenilenmiyor; sayılar bir
-bulguyu anında izlemeli.
-
-**Ölçüldü ve durum bayat olmaktan kötü — onu hiçbir şey yeniden çizmiyor.** Bütün depoda
-`update_displayed_discoveries(` araması dört çağıran buluyor ve hepsi `index.html` içindeki
-gövde içi işleyiciler:
-
-```
-index.html:765  <input type="search"   id="discoveries_search"            oninput="update_displayed_discoveries()">
-index.html:768  <input type="checkbox" id="discoveries_hide_sourceless" onclick="update_displayed_discoveries()">
-index.html:770  <input type="checkbox" id="discoveries_hide_crafted"    onclick="update_displayed_discoveries()">
-index.html:772  <input type="checkbox" id="discoveries_hide_traded"     onclick="update_displayed_discoveries()">
-```
-
-`src/` içinden onu hiçbir şey çağırmıyor. `display.js` onu 59. satırda **içe aktarıyor** ve
-adı hiç kullanmıyor; `main.js` ise o dört işleyicinin erişebilmesi için `window`'a koyuyor.
-Yani panel, birinin en son arama kutusuna yazdığı ya da bir kutuyu işaretlediği anda
-çizileni gösteriyor — bir bulgunun görünmemesinin ve `bulunan: N`'in kımıldamamasının sebebi
-de bu.
-
-**Ve kazanma yolunun ona söyleyeceği bir şey yok.** `item_log.log_items(items)`,
-`character.js` içindeki `add_to_character_inventory`'den çağrılıyor; kütüğü güncelliyor ve
-dönüyor. Envanter ekranı orada yenileniyor, günlük yenilenmiyor.
-
-**İki soru var ve yalnızca ikincisi bir yargı.**
-
-Birincisi mekanik: kütük büyüdüğünde ve sekmesi açıldığında panelin yeniden çizilmesi
-gerekiyor. `update_displayed_item_log`, eşya kütüğü şeridi için `log_items`'ın yanında zaten
-çağrılıyor; yani kanca var ve çağrının ekleneceği bir yer var. Sekme geçişi de yeniden
-çizmeli, yoksa hiçbir filtreye dokunulmamış bir sayfa açılışı hiçbir şey göstermiyor.
-
-İkincisi: **her bulgunun bütün listeyi yeniden çizmesi gerekip gerekmediği.** Panel, bilinen
-her eşya için kaynaklarıyla bir girdi kuruyor ve `item_sources` önbelleğe alınmış bir indeks;
-uzun bir bekleme oturumunda toplanan her eşyada bunun tamamını yeniden kurmak bariz biçimde
-bedava değil. Ucuz sürüm, sekme açılışında artı **yeni** bir eşyada yeniden çizmek —
-`log_items` zaten bir şeyin yeni olup olmadığını biliyor, çünkü `add_to_inventory`
-`was_anything_new_added` döndürüyor — ve elinizde zaten olan bir eşyanın sayısını sekme
-yeniden açılana kadar bırakmak. Bunun yeterli olup olmadığına, sahibinin "artışlar hemen
-yansımalı" ifadesi karar verecek.
-
-**Ayrıca ölçüldü ve kendi başına bakılmaya değer:** `update_displayed_lore` tam olarak aynı
-şekle sahip — `display.js`'te içe aktarılmış, `window`'a verilmiş ve `src/` içinden hiçbir
-şey tarafından çağrılmıyor. Burada ne karar verilirse ona da uygulanır.
-
-**Muhafız.** Sınıf şu: "hiçbir şeyin çağırmadığı bir panel güncelleyicisi" ve bu kontrol
-edilebilir: hiçbir modülün çağırmadığı ve hiçbir işaretleme işleyicisinin adlandırmadığı bir
-`update_displayed_*` fonksiyonu, ya ölüdür ya da hiç yenilenmeyen bir paneldir.
-`check_onclick_names_are_reachable` öteki yönü zaten yürüyor — hiçbir şeyi adlandırmayan
-işaretleme işleyicileri — yani bunu yapacak parçalar mevcut.
 
 
 ### P-32 — Envanteri edinme sırasına göre sıralama `open`

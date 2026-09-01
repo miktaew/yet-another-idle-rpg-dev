@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 94 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 95 -->
 
 # Changelog
 
@@ -20,6 +20,47 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.23 - the journal updates while you are reading it
+
+P-31, reported as *"this seems stateless, or it does not refresh immediately"*. **The
+proposal overstated it, and the second measurement is what corrected it** - which makes two
+in a row, after P-33.
+
+**What the proposal said.** That *nothing* redraws the Discoveries panel: four callers, all
+of them filter inputs in `index.html`. **There are five.** `showDiscoveries()` calls the
+update on tab open, and `showLore()` does the same - both with a comment beside them saying
+they rebuild on open and why. The grep that "found four callers" had cut the fifth line.
+
+**What was actually true, and it is exactly what was reported.** Neither panel redrew while
+**already open**. The player watches the list, picks something up, and the count does not
+move until they switch tabs or touch a filter. `item_log.log_items` is called from
+`add_to_character_inventory`, `update_displayed_item_log` is refreshed on the line below it,
+and the journal was not.
+
+**`refresh_open_journal_panels`**, called from the two places where the thing a panel is
+looking at changes: after `log_items` in `character.js`, and beside `textline.is_heard = true`
+in `start_textline` - a lore line heard with the journal on screen was the same case.
+
+**Guarded on being open**, because the alternative is rebuilding a two-hundred entry list on
+every pickup of a long idle session for a panel nobody is looking at. `changeTab` writes
+`display` inline, so that is a string read rather than a layout question - `offsetParent`
+would be stricter and would force layout, which is the wrong trade for something asked once
+per item. One case still says yes with nothing visible, the journal open behind another
+panel, and the cost of being wrong there is one rebuild nobody sees.
+
+**It lives in `display.js`** rather than `journal_panels.js`, and that is not arbitrary:
+`character.js` is the caller and already imports from `display.js`, while
+`journal_panels` → `items` → `character` would have closed a new cycle. `display.js` was
+already importing both updaters and using neither, which was the other half of the finding.
+
+**Guard: `check_every_panel_updater_is_called`.** The proposal's wrong reading describes a
+real failure, so it is worth a check even though it was not this one: a function that draws
+a panel and that nothing ever calls is a panel that never appears, and it reads exactly like
+working code. Callers count from any module under `src/` **and** from `index.html`, since
+inline handlers are how the journal tabs are wired -
+`check_onclick_names_are_reachable` walks the other direction. 48 updaters, all of them
+called; removing both calls to the new helper fails it by name.
 
 ### v0.7.22 - seven items stop showing the player their registry key
 
