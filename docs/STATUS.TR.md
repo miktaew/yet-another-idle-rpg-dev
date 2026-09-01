@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 24 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 25 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -175,7 +175,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `imports resolve` | Dışa aktarmayan bir modülden içe aktarılan ad. 677 ad. |
 | `save keys round-trip` | Adı değişen kayıt anahtarının oyuncu verisini sessizce düşürmesi. |
 | `onclick names reachable` | Hiçbir şeye işaret etmeyen işaretleme işleyicisi. 83 ad. |
-| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.032 kimlik. |
+| `content text ids` | Yerel satırı olmayan oyuncuya görünür metin. 2.039 kimlik. |
 | `action button labels` | Düğmenin içine çizilen paragraf. 45 aksiyon, 80 karakter sınırı. |
 | `effect tags` | Buff diye etiketlenmiş zehir; dev konsolu onu oyuncuya verirdi. |
 | `documentation` | Geride kalmış çeviri ya da hiçbir yeri göstermeyen bağlantı. 18 dosya. |
@@ -185,7 +185,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `visible quest tasks` | Günlükte adı yazan ama bitirilme yolu olmayan adım. 65 adım. |
 | `actions can explain failure` | Sebebini söylemeden başarısız olan aksiyon. 70 aksiyon. |
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
-| `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 44'ü yapılamaz. |
+| `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 8'i yapılamaz. |
 | `quest hints` | Listesini boşaltıp sonra hiçbir şey söylemeyen bir ipucu kurucusu. |
 | `markdown rules` | Paragrafın hemen altına yazılmış `---`; o paragrafı başlığa çeviriyor. 62 çizgi. |
 | `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
@@ -222,11 +222,15 @@ sayılmaz; koruma da hata geri konularak sınanır.
   alt ambar, çamurun üstünde Equilibrium, para ya da `Slums` 250 ile üç yol. Faz 5,
   v0.7.4 olarak yayınlandı: sandık, onu geri koyabilmek üzerine açılıyor; içinde
   koleksiyoncunun bir kez tarif ettiği karelerle oyulmuş, adı olmayan bir metalden tek
-  bir halka var ve bilerek hiçbir eşya ödemiyor. Sıradaki faz, sistem geçişi olan
-  Faz 6.
-- **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
-  külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
-  yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.
+  bir halka var ve bilerek hiçbir eşya ödemiyor. Sistem geçişi olan Faz 6 başladı: dört
+  parçasının ilki v0.7.5 olarak yayınlandı; 5. kademeyi düzlüklere bağladı ve
+  yapılamayan 36 bileşeni sıfıra indirdi. Diğer üçü — `on_hit` üzerinden stance'lar,
+  para kuyusu ve dünya durumu olarak itibar — açık.
+- **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe ikisi de
+  yayında ve 36 beyaz/siyah çelik bileşeni, gelgit düzlüklerinde kazılan bir cevherden
+  üretilebiliyor. Tek bir soru kaldı: `roll_quality`,
+  `station_tier - component_tier` okuyor; yani dağdaki bacada dövülen 5. kademe iki
+  kademelik cezayla atılıyor ve oyunda daha iyi bir ateş yok.
 **İpucu göstermeyen iki görev adımı bu listeden ölçülerek çıktı.** Yeniden
 üretilemiyor. Sahibin iki dışa aktarımında da her aktif görevin güncel adımı tam
 olarak bir adlandırılmış yere çözülüyor; üstelik görünür hiçbir adım, geri dönüşü

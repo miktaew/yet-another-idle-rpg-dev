@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 77 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 78 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -146,17 +146,28 @@ bandında ve on üç dövme bileşen tarifinin her birine iki satır eklendi. İ
 duyduğu her şey zaten mevcuttu — cevherler, külçeler, zincir zırh ve iki dildeki
 adları ile açıklamaları.
 
-**Kalanlar, ve sırası:**
+**5. kademe de v0.7.5 ile yayında.** 36 beyaz çelik ve siyah çelik bileşeninin hepsi
+üretilebiliyor: `Heavy sand` gelgit düzlüklerinde kazılıyor, iki çelik külçesi de
+Atratan cevherinin demirden çelik yaptığı gibi bu kumla ve kendi demir cevheriyle
+eritiliyor; eksik olan dört stok — `White chainmail`, `White plate` ve siyah çiftleri —
+artık var ve külçelerden dövülüyor. `check_components_can_be_made` 203'te 159'dan
+195'e çıktı ve 5. kademe grubu `known_unmade` listesinden tamamen kalktı. Satın alınan
+değil çıkarılan cevher, düzlüklerin kendi damarı; yani 3. madde henüz var olmayan bir
+bölgeden değil, P-14'ün açtığı bölgeden cevaplandı.
 
-2. **5. kademe: beyaz çelik ve siyah çelik.** Külçeler ve zincir zırh eşya olarak
-   mevcut. Olmayan şey bir görünen ad: `material white` ve `material black`'in iki
-   yerelde de satırı yok; özgün çalışma da orada durmuş. 4. kademenin üstündeki bir
-   kademe, 3'ün üstünde bir istasyon da ister ve öyle bir şey yok — dağdaki baca
-   oyunun en iyi ateşi.
-3. **Satın alınan değil, kazılan bir cevher.** Körfezde satın almak, "çok uzaktan"
-   gelen bir metal için doğru; ama oyuncunun yalnızca alışverişle edinebildiği bir
-   kademe zayıf. Nerede kazıldığı bir hikâye sorusu ve bir sonraki açılacak bölgeye
-   ait, bu öneriye değil.
+> **Not.** Bu maddenin İngilizce yarısı bir tur önce yeniden ölçülüp düzeltilmişti,
+> Türkçe yarısı ise düzeltilmemiş "görünen ad eksik" engelini taşımaya devam ediyordu.
+> `doc-version` eşleşiyordu, çünkü o kontrol sürümlerin aynı olmasını denetliyor, aynı
+> şeyi söylediklerini değil (D-3 zaten böyle diyor). Bu tur birlikte düzeltildi.
+
+**Geriye kalan:**
+
+2. **3'ün üstünde bir istasyon.** `roll_quality`, `station_tier - component_tier`
+   okuyor; yani dağdaki bacada — oyunun en iyi ateşi, 3'te — dövülen 5. kademe
+   bileşenleri iki kademelik cezayla atılıyor. Her şey *yapılabilir* durumda; çözülmemiş
+   olan, hak ettiği kalitede çıkıp çıkmayacağı ve daha iyi bir ateşin nerede olacağı.
+   Bu eksik bir tarif değil, bir denge ve bir yer meselesi; ve tek başına iliştirilmiş
+   bir istasyondan çok, P-14 Faz 6'nın ekonomi yarısını yanında istiyor.
 
 **Bunun yapmaması gereken:** beşinci bir kademe uydurmak. Çeliğin ötesinde dört
 malzeme, bataklığın ötesindeki yazılı içerikten çoktan fazla; ve tavan hikâyenin
@@ -391,12 +402,23 @@ Muhafız: 2a'dan gelen `check_lore_threads_resolve` — Q-8 gerçekten iplik se�
 oturdu. İplik artık üç konuşan üzerinde beş beat: bir rıhtım, bir lonca ve meydanın
 karşısındaki bir dükkân; Q-8'in yazıldığı şeklin tam boyu.
 
-**Faz 6 — v0.7.5, sistem geçişi.** Briefin istediği %20 ve arc'ı değerli kılan
-kısım: stance seçimi stat bonusuyla değil `on_hit` / `on_damaged` üzerinden anlam
-kazanır; arc'ın para kuyusu mevcut ekonomiye göre fiyatlanır; tier 4 ve tier 5
-malzemeleri cezirin açtığı şeye bağlanır — P-12'nin "satın alınan değil, çıkarılan
-bir cevher" maddesinin yeri burasıdır; itibar sonuçları cezalandırma gibi değil,
-dünya durumu gibi okunur.
+**Faz 6 — sistem geçişi.** `kısmen tamam`. Birbirinden bağımsız dört parça; biri
+yayınlandı.
+
+- **4. ve 5. kademe malzemelerinin cezirin açtığına bağlanması.** `bitti`, **v0.7.5**
+  olarak. P-12'nin "satın alınan değil, çıkarılan bir cevher" maddesinin yeri burasıydı
+  ve henüz var olmayan bir bölgeden değil, bu arc'ın açtığı bölgeden cevaplandı:
+  `Heavy sand` gelgit düzlüklerinde kazılıyor; o düzlükler de yalnızca Marrowmoth'un iki
+  mevsiminde sunulduğu için, 5. kademe reaktifi kendi koşuluna sahip olmadan arc'ın
+  penceresini miras alıyor. 36 bileşen yapılamazdan yapılabilire geçti ve 5. kademe
+  grubu `known_unmade` listesinden kalktı. P-12'de kalan şey istasyon sorusu, bir tarif
+  değil.
+- **Stance seçiminin stat bonusuyla değil `on_hit` / `on_damaged` üzerinden anlam
+  kazanması.** `open`.
+- **Arc'ın para kuyusunun mevcut ekonomiye göre fiyatlanması.** `open`. Kayıkçının
+  25.000'i bu arc'ın belirlediği tek fiyat ve bütün eğriye göre değil, quest ödüllerine
+  göre belirlendi.
+- **İtibar sonuçlarının ceza değil, dünya durumu gibi okunması.** `open`.
 
 **Faz 7 — v0.8 hazırlığı, *Beyond the Lake*.** Faz 6 yeşile dönmeden başlamaz. Önce
 izler — ayak izleri, tüyler, ses, kırılmış örtü — ve oyuncu yaratıkla karşılaşmadan

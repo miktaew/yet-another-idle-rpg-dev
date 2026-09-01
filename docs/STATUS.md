@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 24 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 25 -->
 
 # Status
 
@@ -174,7 +174,7 @@ but the ones that encode a bug that shipped:
 | `imports resolve` | A name imported from a module that does not export it. 864 names. |
 | `save keys round-trip` | A renamed save key silently dropping player data. |
 | `onclick names reachable` | A markup handler pointing at nothing. 141 names. |
-| `content text ids` | Player-facing text with no locale row. 2,032 ids. |
+| `content text ids` | Player-facing text with no locale row. 2,039 ids. |
 | `action button labels` | A paragraph rendered inside a button. 45 actions, 80-char limit. |
 | `effect tags` | A poison tagged as a buff, which the dev console would then hand out. |
 | `documentation` | A translation left behind, or a link pointing at nothing. 18 files. |
@@ -184,7 +184,7 @@ but the ones that encode a bug that shipped:
 | `visible quest tasks` | A task named in the journal with no way to finish it. 65 tasks. |
 | `actions can explain failure` | An action that fails with no reason shown. 70 actions. |
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
-| `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
+| `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 8 unmade. |
 | `quest hints` | A hint builder that filters itself down to nothing and then says nothing. |
 | `markdown rules` | A `---` written under a paragraph, which renders that paragraph as a heading. 62 breaks. |
 | `seasonal content` | A season named that `getSeason()` never returns, which is content that never happens. 25 names across 54 files. |
@@ -221,10 +221,15 @@ directive is recorded before it is worked on:
   tidal flats and the lower hold, with three ways across the mud on Equilibrium, money
   or `Slums` 250. Phase 5 shipped as v0.7.4: the crate opens on being able to put it
   back, holds one band of an unnameable metal cut with the squares the collector
-  described once, and pays no item on purpose. Phase 6, the systems pass, is next.
-- **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
-  ingots, its chainmail and its names in both languages, and **no recipes at all**:
-  36 of the 44 components nothing can make are white steel and black steel.
+  described once, and pays no item on purpose. Phase 6, the systems pass, is under way:
+  the first of its four pieces shipped as v0.7.5, wiring tier 5 to the flats and taking
+  the 36 unmakeable components to none. Its other three - stances through `on_hit`, the
+  money sink, and standing as world-state - are open.
+- **P-12, the metals above steel** - `partly done`. Tier 4 and tier 5 both ship, and
+  the 36 white-steel and black-steel components are craftable from an ore dug on the
+  tidal flats. One question is left: `roll_quality` reads
+  `station_tier - component_tier`, so tier 5 forged at the mountain flue rolls at a
+  two-tier penalty and there is no better fire in the game.
 **The two quest tasks with no hint came off this list by being measured.** They do not
 reproduce. At both of the owner's exports every active quest's current task resolves
 to exactly one named place, and no visible task can reach the hint path that had no

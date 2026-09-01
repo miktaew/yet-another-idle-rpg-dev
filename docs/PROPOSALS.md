@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 77 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 78 -->
 
 # Proposals
 
@@ -137,20 +137,23 @@ two rows added to each of the thirteen forging component recipes. Everything it
 needed already existed - the ores, the ingots, the chainmail, and their names and
 descriptions in both languages.
 
-**What is left, and in what order:**
+**Tier 5 ships too, in v0.7.5.** The 36 white-steel and black-steel components are
+all craftable: `Heavy sand` is dug on the tidal flats, the two steel ingots smelt from
+it and their own iron ore the way Atratan ore makes steel out of iron, and the four
+missing stocks - `White chainmail`, `White plate` and their black pair - exist and are
+forged from the ingots. `check_components_can_be_made` went from 159 of 203 to 195, and
+the tier-5 group came off `known_unmade` entirely. The ore that is mined rather than
+bought is the flats' own seam, which answers item 3 from the region P-14 opened rather
+than from a region that does not exist yet.
 
-2. **Tier 5: white steel and black steel.** Re-measured, because the blocker recorded
-   here was the wrong one. The display names are **not** missing: the generator asks
-   for `material name white steel` and `material name black steel`, and both rows are
-   in both locales along with the other thirty-six. What is missing is every recipe -
-   36 components are built and not one of them is produced by anything, which
-   `check_components_can_be_made` now says on every push. A tier above tier 4 also
-   wants a station above 3, and there is none - the mountain flue is the game's best
-   fire.
-3. **An ore that is mined rather than bought.** Buying at the bay is correct for a
-   metal that comes "from very far away", but a tier the player can only shop for is
-   thin. Where it is mined is a story question and belongs to whatever region opens
-   next, not to this proposal.
+**What is left:**
+
+2. **A station above tier 3.** `roll_quality` reads `station_tier - component_tier`, so
+   tier-5 components forged at the mountain flue - the best fire in the game, at 3 -
+   roll at a two-tier penalty. Everything is *makeable*; what is not settled is whether
+   it should come out at the quality it is worth, and where a better fire would be.
+   That is a balance and a place, not a missing recipe, and it wants the economy half of
+   P-14 phase 6 beside it rather than a station bolted on alone.
 
 **What this must not do:** invent a fifth tier. Four materials past steel is already
 more than the authored content past the swamp, and the ceiling should move with the
@@ -380,12 +383,22 @@ Guard: `check_lore_threads_resolve` from 2a — Q-8 did land on threads. The thr
 runs to five beats across three speakers, a quay, a guildhall and a shop across the
 square, which is the shape Q-8 was written for at full size.
 
-**Phase 6 — v0.7.5, the systems pass.** The 20% the brief asks for and the part that
-makes the arc worth having: stance choice made to matter through `on_hit` /
-`on_damaged` rather than through stat bonuses; the arc's money sink priced against
-the existing economy; tier-4 and tier-5 materials wired to what the ebb opens, which
-is where P-12's "an ore that is mined rather than bought" belongs; standing
-consequences that read as world-state and not as punishment.
+**Phase 6 — the systems pass.** `partly done`. Four independent pieces; one has
+shipped.
+
+- **Tier-4 and tier-5 materials wired to what the ebb opens.** `done`, as **v0.7.5**.
+  This is where P-12's "an ore that is mined rather than bought" belonged, and it is
+  answered from the region this arc opened rather than from one that does not exist yet:
+  `Heavy sand` is dug on the tidal flats, which are only offered in the Marrowmoth's two
+  seasons, so the tier-5 reagent inherits the arc's own window without a condition of
+  its own. 36 components went from unmakeable to makeable and the tier-5 group came off
+  `known_unmade`. What P-12 still carries is the station question, not a recipe.
+- **Stance choice made to matter through `on_hit` / `on_damaged`** rather than through
+  stat bonuses. `open`.
+- **The arc's money sink priced against the existing economy.** `open`. The boatman's
+  25,000 is the only price this arc set, and it was set against quest rewards rather
+  than against the whole curve.
+- **Standing consequences that read as world-state and not as punishment.** `open`.
 
 **Phase 7 — v0.8 groundwork, *Beyond the Lake*.** Not started before phase 6 is
 green. Traces first — tracks, feathers, noise, broken cover — and the player must be

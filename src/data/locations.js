@@ -2890,6 +2890,30 @@ function get_location_type_penalty(type, stage, stat, category) {
         finishing with more questions than answers.
     */
     /*
+        The ore P-12 has wanted since tier 4 shipped: one that is dug rather than bought.
+
+        It needs no season condition of its own. The flats are only offered while she is
+        on the mud, so an activity on them is already inside that window - which is the
+        whole argument for putting the tier-5 reagent here rather than on any of the
+        thirty-odd places that are open all year.
+    */
+    locations["The tidal flats"].activities = {
+        "digging": new LocationGatheringActivity({
+            activity_name: "digging",
+            starting_text: "activity The tidal flats digging starting",
+            skill_xp_per_tick: 14,
+            is_unlocked: true,
+            gained_resources: {
+                resources: [{name: "Heavy sand", ammount: [[1, 1], [1, 3]], chance: [0.25, 0.9]}],
+                time_period: [150, 50],
+                skill_required: [14, 32]
+            },
+            require_tool: true,
+            unlock_text: "activity The tidal flats digging unlock",
+        }),
+    };
+
+    /*
         P-14 phase 5. The check is not getting the crate open - a crate is not a lock.
         It is being able to leave it the way you found it, which is why it reads
         Perception and Woodworking rather than anything about force: you have to be able

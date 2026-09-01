@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 70 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 71 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,61 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.5 - 5. kademe yapılabiliyor ve cevher satın alınmıyor, kazılıyor
+
+P-14 Faz 6'nın dört parçasından ilki ve P-12'nin büyük kısmını kapatan parça. Otuz altı
+bileşen bu fork'tan da önce, bitmiş hâlde duruyordu — her beyaz çelik ve siyah çelik
+silah başlığı, iki kalkan tabanı, üç sapın tamamı ve beş zırh yuvası için zincir ile
+plaka — ve oyunda hiçbir şey tekini bile üretemiyordu. Otuz altısı da artık üretilebilir.
+`check_components_can_be_made` 203'te 159'dan 195'e çıktı ve 5. kademe grubu, daha iyi
+açıklanmak yerine `known_unmade` listesinden tamamen kalktı.
+
+**Mesele cevherin kendisi.** P-12, 4. kademe yayınlandığından beri "satın alınan değil,
+çıkarılan bir cevher" istiyordu; Faz 6 ise 4. ve 5. kademe malzemelerinin cezirin
+açtığına bağlanmasını söylüyordu. İkisi aynı cümle: `Heavy sand`, yalnızca Marrowmoth'un
+iki mevsiminde sunulan gelgit düzlüklerinde kazılıyor. Yani 5. kademe reaktifi, kendi
+koşulunu taşımadan arc'ın penceresini miras alıyor — aktivitenin mevsim kapısına
+ihtiyacı yok, çünkü üstünde durduğu zemin mevsim dışında var olmuyor. Kimse satmıyor,
+çünkü kimse ona ulaşamıyor; bu da bütün arzın körfezdeki tek bir depo olduğu 4. kademenin
+tam tersi.
+
+Bu bir reaktif, daha zengin bir damar değil. `Heavy sand`, beyaz ve siyah demire,
+Atratan cevherinin demire yaptığını yapıyor; yani 5. kademe, içinde iki cevher olan bir
+eritme tarifi — beyaz ya da siyah demir cevheri beş, artı ağır kum üç, artı iki kömür;
+Smelting 25/35'te ve 4. kademeden daha kötü bir şansla. Bu, bir kademenin var olması için
+ikinci bir yol uydurmak yerine çeliğin zaten sahip olduğu şekli yeniden kullanıyor.
+
+**Dört eşya eksikti ve kimse fark etmemişti.** Üretici, fork'tan da önce "white
+chainmail", "white plate", "black chainmail" ve "black plate" malzemelerinden dış
+parçalar üretiyordu ve bu dördü `items.js` içinde hiç yoktu — bu tek başına, yapılamayan
+36 bileşenin 20'si demek. Artık varlar; 4. kademe çifti gibi iki ve üç külçeden
+dövülüyorlar ve değerleri 4. kademe çiftinin külçe üzerinden ölçeklenmesiyle belirlendi:
+70'lik külçede 105/160 olan, 120'lik külçede 180/275 oluyor.
+
+Ardından on üç bileşen tarifine yayılan 36 satır; bu mekanik bir iş ve öyle de yazıldı —
+elle yazılmak yerine bir tablodan üretildi ve yanında durduğu 4. kademe satırına karşı
+doğrulandı; böylece uyuşmayan bir sayı ya da yanlış yazılmış bir sonuç içeri sızamadı.
+
+**Muhafızın iki yönü de negatif test edildi**, çünkü `check_components_can_be_made` iki
+yönlü işliyor ve yalnızca tek yönden düşen bir liste, bastırma dosyasına dönüşür: yeni
+satırlardan biri çıkarıldı — kontrol bunu, listede olmayan yapılamaz bir bileşen olarak
+adlandırdı; ve artık üretilen bir ad listeye geri kondu — onu da, artık açıklamadığı bir
+girdiyi tutmaya devam eden bir liste olarak adlandırdı.
+
+**P-12'de kalan şey** tek bir soru ve bir tarif değil. `roll_quality`,
+`station_tier - component_tier` okuyor; yani dağdaki bacada — oyunun en iyi ateşi, 3.
+kademede — dövülen 5. kademe bileşenleri iki kademelik cezayla atılıyor. Her şey
+yapılabilir durumda; hak ettiği kalitede çıkıp çıkmayacağı ve daha iyi bir ateşin nerede
+olacağı ise bir denge ve bir yer meselesi. Bu da tek başına iliştirilmiş bir istasyondan
+çok, Faz 6'nın ekonomi geçişinin yanına ait.
+
+**Ve kayda geçmeye değer bir dokümantasyon kayması.** P-12'nin Türkçe yarısı, İngilizce
+yarısının bir tur önce düzeltildiği engeli hâlâ anlatıyordu — var olmadığı ortaya çıkan
+"eksik görünen ad". `doc-version` bu süre boyunca eşleşiyordu, çünkü o kontrol iki yarının
+aynı sürümde olmasını denetliyor, aynı şeyi söylemesini değil; D-3 da bunu kendisi
+söylüyor. İki yarı da artık doğru ve bu, eşli doküman kuralının bir okuyucudan başka
+hiçbir şeyin yakalayamadığı arıza biçimi.
 
 ### v0.7.4 - *One Unweighed Crate*: aynı el ve ona verilecek bir ad yok
 

@@ -160,31 +160,6 @@ async function check_recipe_item_names() {
 */
 const known_unmade = {
     /*
-        P-12's tier 5. The generator builds the whole white-steel and black-steel
-        family - heads, handles, shield bases, and chainmail and plate exteriors for
-        all five armour slots - and not one recipe produces any of them. Their ingots
-        and chainmail exist in items.js and their names exist in both locales, so what
-        is missing is the recipes and an ore, not the naming that P-12 used to claim.
-    */
-    "tier 5, white steel and black steel": [
-        "White short blade", "White long blade", "White axe head", "White hammer head",
-        "White short handle", "White medium handle", "White long handle",
-        "White shield base",
-        "White chainmail helmet armor", "White chainmail chestplate armor",
-        "White chainmail greaves", "White chainmail shoe armor",
-        "White chainmail glove armor",
-        "White plate helmet armor", "White plate chestplate armor",
-        "White plate greaves", "White plate shoe armor", "White plate glove armor",
-        "Black short blade", "Black long blade", "Black axe head", "Black hammer head",
-        "Black short handle", "Black medium handle", "Black long handle",
-        "Black shield base",
-        "Black chainmail helmet armor", "Black chainmail chestplate armor",
-        "Black chainmail greaves", "Black chainmail shoe armor",
-        "Black chainmail glove armor",
-        "Black plate helmet armor", "Black plate chestplate armor",
-        "Black plate greaves", "Black plate shoe armor", "Black plate glove armor",
-    ],
-    /*
         A material listing a component type nobody wrote a recipe for. `turtleshell`
         asks for both shield components and only the base has one; `turtle shellplate`
         is a second turtle material whose five armour pieces duplicate the hand-written
@@ -291,7 +266,7 @@ async function check_components_can_be_made() {
 
     const groups = Object.keys(known_unmade).length;
     console.log(`[check] generated components can be made: ${keys.length - unreachable} of`
-        + ` ${keys.length}, ${unreachable} known unmade in ${groups} groups`);
+        + ` ${keys.length}, ${unreachable} known unmade in ${groups} group${groups === 1 ? "" : "s"}`);
 }
 
 export {

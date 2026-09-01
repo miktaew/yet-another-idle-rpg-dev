@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 70 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 71 -->
 
 # Changelog
 
@@ -20,6 +20,62 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.5 - tier 5 can be made, and the ore is dug rather than bought
+
+P-14 phase 6's first of four pieces, and the one that closes most of P-12. Thirty-six
+components have existed, finished, since before this fork - every white-steel and
+black-steel weapon head, both shield bases, all three handles, and chainmail and plate
+for all five armour slots - and nothing in the game could produce a single one of them.
+All thirty-six are craftable now. `check_components_can_be_made` went from 159 of 203 to
+195, and the tier-5 group came off `known_unmade` entirely rather than being explained
+better.
+
+**The ore is the point.** P-12 has asked since tier 4 shipped for "an ore that is mined
+rather than bought", and phase 6 said tier-4 and tier-5 materials should be wired to what
+the ebb opens. Both are the same sentence: `Heavy sand` is dug on the tidal flats, which
+are only offered in the Marrowmoth's two seasons. So the tier-5 reagent inherits the
+arc's window without carrying a condition of its own - the activity needs no season
+gate, because the ground it is on does not exist out of season. Nobody sells it, because
+nobody can get at it, which is exactly the opposite of tier 4, where the whole supply is
+one shed at the bay.
+
+It is a reagent and not a richer vein. `Heavy sand` does to white and black iron what
+Atratan ore does to iron, so tier 5 is a smelting recipe with two ores in it - white or
+black iron ore, five, plus heavy sand, three, plus two coal, at Smelting 25/35 and a
+worse chance than tier 4. That reuses the shape steel already had rather than inventing
+a second way for a tier to exist.
+
+**Four items were missing and nobody had noticed.** The generator has built exteriors out
+of "white chainmail", "white plate", "black chainmail" and "black plate" since before the
+fork, and none of those four materials existed in `items.js` - which was 20 of the 36
+unmakeable components on its own. They exist now, forged from the steel ingots at two and
+three ingots the way the tier-4 pair is, and valued by scaling the tier-4 pair on the
+ingot: 105/160 at 70 an ingot becomes 180/275 at 120.
+
+Then 36 rows across the thirteen component recipes, which is mechanical work and was
+written as such - generated from a table rather than typed, and asserted against the
+tier-4 row it sits beside so a mismatched count or a misspelt result could not slip in.
+
+**Negative-tested both directions of the guard**, because `check_components_can_be_made`
+is enforced two ways and a list that only fails one way rots into a suppression file: one
+of the new rows taken out, which the check named as an unmade component that is not on
+the list; and a name put back on the list that something now produces, which it named as
+a list keeping an entry it no longer explains.
+
+**What P-12 still carries** is one question, and it is not a recipe. `roll_quality` reads
+`station_tier - component_tier`, so tier-5 components forged at the mountain flue - the
+best fire in the game, at tier 3 - roll at a two-tier penalty. Everything is makeable;
+whether it comes out at the quality it is worth, and where a better fire would be, is a
+balance and a place. That belongs beside phase 6's economy pass rather than as a station
+bolted on alone.
+
+**And a documentation drift worth recording.** P-12's Turkish half still described the
+blocker the English half was corrected about a round ago - the "missing display name" that
+turned out not to exist. `doc-version` matched the whole time, because that check
+enforces that the two halves are at the same version, not that they say the same thing;
+D-3 says as much itself. Both halves are correct now, and this is the failure mode of a
+paired-document rule that nothing but a reader can catch.
 
 ### v0.7.4 - *One Unweighed Crate*: same hand, and no name for it
 

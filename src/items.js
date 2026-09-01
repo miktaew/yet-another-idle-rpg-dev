@@ -4659,6 +4659,27 @@ function add_gear() {
         material_type: "metal",
     });
 
+    /*
+        P-12's "an ore that is mined rather than bought", and P-14 phase 6 wiring tier 5
+        to what the ebb opened.
+
+        White and black IRON come off a boat, which is correct for a metal the cook says
+        comes "from very far away" - but a whole tier the player can only shop for is
+        thin, and that was the half of P-12 that stayed open. This is the other half: the
+        flats scour down to a mineral sand twice a year, and it is only above water while
+        the Marrowmoth is on the mud. Nobody sells it because nobody can get at it except
+        in the two seasons that also happen to be the only two she is here.
+
+        It is a reagent rather than a metal in its own right: heavy sand does to white and
+        black iron what Atratan ore does to iron, which is why tier 5 is a smelting recipe
+        with two ores in it and not a richer vein of the same one.
+    */
+    item_templates["Heavy sand"] = new Material({
+        description: "desc item Heavy sand",
+        value: 45,
+        material_type: "metal",
+    });
+
     item_templates["White steel ingot"] = new Material({
         description: "desc item White steel ingot",
         value: 120,
@@ -4669,6 +4690,37 @@ function add_gear() {
         description: "desc item Black steel ingot",
         value: 120,
         material_type: "metal",
+    });
+
+    /*
+        Tier 5's chainmail and plate. The generator has built exteriors out of "white
+        chainmail", "white plate", "black chainmail" and "black plate" since before this
+        fork, and the four materials they are made of did not exist - which is 20 of the
+        36 components nothing could produce. Values follow the tier-4 pair scaled by the
+        ingot: 105/160 at 70 an ingot becomes 180/275 at 120.
+    */
+    item_templates["White chainmail"] = new Material({
+        description: "desc item White chainmail",
+        value: 180,
+        material_type: "chainmail",
+    });
+
+    item_templates["Black chainmail"] = new Material({
+        description: "desc item Black chainmail",
+        value: 180,
+        material_type: "chainmail",
+    });
+
+    item_templates["White plate"] = new Material({
+        description: "desc item White plate",
+        value: 275,
+        material_type: "plate",
+    });
+
+    item_templates["Black plate"] = new Material({
+        description: "desc item Black plate",
+        value: 275,
+        material_type: "plate",
     });
 
     item_templates["Turtle shellplate"] = new Material({        //treated as a metal material/chainmail instead of leather
