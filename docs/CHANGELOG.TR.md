@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 60 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 61 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -18,6 +18,70 @@ geldiğinde buraya girer.
 > (0.6.1, 0.6.2, …). `npm run check`, iki HTML kopyanın da yayımlanan
 > `game_version` için bir girdi taşıdığını doğruluyor; böylece ikisi fark
 > edilmeden birbirinden uzaklaşamıyor.
+
+---
+
+## 2026-09-01
+
+### Marrowmoth'un dört kararı, onları soran önerinin içine taşındı
+
+P-14'ün Faz 0'ı zemin fazı: hikâye yok, tek işi kendisinden sonraki fazları
+ölçülebilir kılmak. Dört maddesinin üçü koddan çok kaydın kendisiyle ilgili çıktı;
+yalnızca biri işti.
+
+Q-7 ile Q-10 karara bağlanmış ama **Bekleyen kararlar** başlığı altında bırakılmıştı;
+cevaplanmış bir sorunun duracağı yer orası değil. O bölüm projenin tamamını
+ilgilendiriyor — Q-1 ile Q-6 fork'un yaptığı her şeyi kısıtlıyor — oysa bu dördü
+birer fazı kısıtlıyor ve P-14'ü okuyan biri, Faz 3'ün neyi varsayabileceğini öğrenmek
+için öneriden çıkıp geri dönmek zorunda kalıyordu. Artık P-14'ün içinde
+`#### Fazlara taşınan kararlar` başlığı altındalar ve her başlık onu harcayan fazı
+anıyor: Q-10'u Faz 1, Q-8'i Faz 2 (Faz 3 ve 5 de üstüne kuruyor), Q-7'yi Faz 3,
+Q-9'u Faz 4. Numaralar korundu; onları anan commit'ler ve changelog girdileri hâlâ
+çözülüyor. Fazlar da artık dayandıkları cevabı bir çapraz referansla göstermek yerine
+kendi paragraflarında söylüyor.
+
+Kalan üç madde yapılarak değil, ölçülerek kapandı:
+
+- **Yanılan dosya STATUS'tü**, PROPOSALS değil: 48. madde de P-13/35 de kapanmıştı ve
+  hâlâ "devam ediyor" listesindeydi. Bu da okuyanı, iş listesinde bulunmayan
+  önerilerin peşine düşürüyordu. Düzeltme ipucu işiyle birlikte inmişti; Faz 0'a
+  düşen tek şey, düzeltmenin hangi yöne gittiğini kayda geçirmekti.
+- **İpucu göstermeyen iki quest task'ı yeniden üretilemiyor.** Raporun altındaki
+  boşluk gerçekti ve onu `check_hints_say_when_they_cannot_point` tutuyor.
+- **Eksik iki malzeme satırı eksik değil.** Öyle diyen girdiye güvenilmedi, yeniden
+  ölçüldü: `White short blade` gerçek bir registry anahtarı, `name_parts` alanı
+  `material name white steel` ile `component short blade` kimliklerine çözülüyor ve
+  iki satır da hem `locales/english.js` hem `locales/turkish.js` içinde duruyor —
+  siyah çelik çifti de öyle. `white steel` tanımı `name: "white"` taşıdığı için
+  anahtar ile kurulan görünen ad birbirini tutuyor; `check_generated_items` bu yüzden
+  ikisini de itirazsız doğruluyor. 5. kademeyi tıkayan şey tarifler, başka bir şey
+  değil.
+
+P-14 artık `open` değil `active` ve sıradaki faz, *No Word Sent* olan Faz 1. STATUS
+da aynısını söylüyor; okuma sırası bölümü de duran direktiflerin D-8'de bittiğini
+iddia etmeyi bıraktı — dokuz tane var.
+
+### Cümlenin altındaki `---` bir başlıktır, bizde de iki tane vardı
+
+Yukarıdaki kayıt düzeltmesi sırasında bulundu; zaten başka türlü de bulunmazdı:
+**Bekleyen kararlar** başlığından önceki `---`, PROPOSALS'ın iki dilinde de P-14'ün
+son cümlesinin hemen altında duruyordu. Markdown, boş olmayan bir satırın altındaki
+tire dizisini setext altçizgisi olarak okur; yani o cümle yazıldığı günden beri her
+görüntüleyicide `<h2>` olarak çiziliyordu ve kaynakta bakınca kusursuz görünüyordu.
+Diff de göstermiyor: iki durum arasındaki tek fark bir boş satır.
+
+D-8 örneği değil sınıfı istiyor, o yüzden `check_thematic_breaks_are_not_headings`
+izlenen bütün markdown dosyalarını okuyor ve yalnızca `-` ya da yalnızca `=`
+karakterlerinden oluşan her satırın üstünde bir boş satır arıyor. Kod blokları
+atlanıyor, çünkü markdown orayı ayrıştırmıyor; tablo ayraç satırları ise `|` ile
+başladığı için testin önüne hiç gelmiyor. On sekiz dosyada altmış iki çizgi, hepsi
+başlık değil çizgi.
+
+Negatif test bir değil üç yönden yapıldı, çünkü yalnızca kendi yazıldığı örneği
+yakalayan bir muhafız muhafız değildir: boş satır, kusurun hiç bulunmadığı bir dosya
+olan `STATUS.md`'den çıkarıldı ve kontrol onu söyledi; asıl kusur `PROPOSALS.TR.md`
+içine geri kondu, onu da söyledi; ve boş olmayan bir satırın hemen altında, kod bloğu
+içinde bir `---` denendi — onu doğru şekilde görmezden geldi, saymadı da.
 
 ---
 

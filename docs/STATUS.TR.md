@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 14 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 15 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on beş dosya, yardımcılarıyla ~6.400 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 143 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -187,6 +187,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `content object keys` | Verisinin altından çekilip adı değiştirilen kurucu alanı. 345 nesne. |
 | `generated components can be made` | Bir malzemenin genişletilmiş `types` listesinin, hiçbir şeyin üretemediği eşyalar doğurması. 203 üretilmiş, 44'ü yapılamaz. |
 | `quest hints` | Listesini boşaltıp sonra hiçbir şey söylemeyen bir ipucu kurucusu. |
+| `markdown rules` | Paragrafın hemen altına yazılmış `---`; o paragrafı başlığa çeviriyor. 62 çizgi. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -198,9 +199,11 @@ sayılmaz; koruma da hata geri konularak sınanır.
 Çalışma listesi olan ve her direktifin işe girişmeden önce kaydedildiği
 [PROPOSALS.md](PROPOSALS.md) dosyasından:
 
-- **P-14, v0.7 ve Marrowmoth** — `open`. Sıradaki arc; onu isteyen briefe karşı değil
-  koda karşı planlandı, her biri tek başına yayınlanabilir sekiz faz hâlinde. Dört
-  tasarım kararı Q-7 ile Q-10 arasında duruyor.
+- **P-14, v0.7 ve Marrowmoth** — `active`. Sıradaki arc; onu isteyen briefe karşı
+  değil koda karşı planlandı, her biri tek başına yayınlanabilir sekiz faz hâlinde.
+  Zemin fazı olan Faz 0 yeşil: dört tasarım kararı — Q-7 ile Q-10 — cevaplandı ve
+  Bekleyen kararlar'dan çıkıp önerinin kendi içine, her biri onu harcayan fazın
+  karşısına taşındı. Sıradaki faz, *No Word Sent* olan Faz 1.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.
@@ -228,7 +231,7 @@ hiçbir yere değil.
 ## Yeni gelen biri için okuma sırası
 
 1. [AGENTS.md](AGENTS.md) — çalışma anlaşması ve kanonik talimat dosyası.
-2. [PROPOSALS.md](PROPOSALS.md) — önce duran direktifler (D-1 ile D-8), sonra liste.
+2. [PROPOSALS.md](PROPOSALS.md) — önce duran direktifler (D-1 ile D-9), sonra liste.
 3. Bu dosya — ölçülmüş durum.
 4. [I18N.md](I18N.md) — yerelleştirme kuralları ve sözlük.
 5. [STORY.md](STORY.md) — sürdürülen, asla yeniden yazılmayan kanon.

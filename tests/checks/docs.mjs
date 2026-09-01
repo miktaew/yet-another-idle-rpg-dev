@@ -170,6 +170,56 @@ async function check_docs_are_paired() {
     }
 }
 
+/**
+ * A `---` under a paragraph is not a rule, it is a heading.
+ *
+ * Markdown reads a run of `-` (or `=`) directly beneath a non-blank line as a setext
+ * heading over that line, so a section divider written without the blank line above it
+ * silently promotes the sentence before it. It reads correctly in the source and wrong
+ * in every viewer, which is how it survived: P-14's closing sentence had been rendering
+ * as an `<h2>` in both PROPOSALS halves since it was written, and nothing said so.
+ *
+ * The guard is the class rather than that one line. Every tracked markdown file is
+ * read, fenced code is skipped because markdown is not parsing it, and table delimiter
+ * rows never reach here because they start with `|`.
+ */
+async function check_thematic_breaks_are_not_headings() {
+    const files = markdown_files(repo_root);
+    let rules = 0;
+    let flagged = 0;
+
+    for (const file of files) {
+        const lines = fs.readFileSync(path.join(repo_root, file), "utf8").split("\n");
+        let fenced = false;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (/^(```|~~~)/.test(line)) {
+                fenced = !fenced;
+                continue;
+            }
+            //Line 0 cannot underline anything, and is where YAML front matter opens.
+            if (fenced || i === 0) continue;
+            if (!/^(-+|=+)$/.test(line)) continue;
+
+            if (lines[i - 1].trim() === "") {
+                rules++;
+                continue;
+            }
+            flagged++;
+            error(`${file}:${i + 1} has "${line}" directly under "`
+                + `${lines[i - 1].trim().slice(0, 50)}". Markdown reads that as a setext`
+                + " heading over the line above rather than as a rule, so the sentence"
+                + " renders as a heading. Put a blank line between them.");
+        }
+    }
+
+    if (flagged === 0) {
+        console.log(`[check] markdown rules: ${rules} thematic breaks across ${files.length}`
+            + " files, none doubling as a heading");
+    }
+}
+
 export {
     check_docs_are_paired,
+    check_thematic_breaks_are_not_headings,
 };

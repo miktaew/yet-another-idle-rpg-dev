@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 60 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 61 -->
 
 # Changelog
 
@@ -16,6 +16,67 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 > own minor version heading (0.6.1, 0.6.2, …) rather than being folded into an
 > existing one. `npm run check` enforces that both HTML copies hold an entry for
 > the shipped `game_version`, so the two cannot drift apart unnoticed.
+
+---
+
+## 2026-09-01
+
+### The Marrowmoth's four decisions moved into the proposal that asked them
+
+P-14's phase 0 is the ground: no story, and its whole job is to make the phases after
+it measurable. Three of its four items turned out to be about the record rather than
+about the code, and only one was work.
+
+Q-7 to Q-10 were settled and then left sitting under **Open decisions**, which is the
+wrong place for an answered question. That section is project-wide - Q-1 to Q-6
+constrain everything the fork does - while these four constrain one phase each, and a
+reader of P-14 had to leave the proposal and come back to find out what phase 3 was
+allowed to assume. They are now `#### Decisions carried into the phases` inside P-14,
+each heading naming the phase that spends it: Q-10 by phase 1, Q-8 by phase 2 and
+drawn on again by 3 and 5, Q-7 by phase 3, Q-9 by phase 4. The numbers are kept, so
+the commits and changelog entries that name them still resolve, and each phase now
+states the answer it is built on in its own paragraph instead of pointing at one.
+
+The other three items closed by being measured rather than by being done:
+
+- **STATUS was the file that was wrong** about item 48 and P-13/35, not PROPOSALS.
+  Both had closed and were still on the in-flight list, which sent a reader into the
+  backlog after proposals that are not in it. The correction landed with the hint
+  work; phase 0 only had to record which way it went.
+- **The two quest tasks with no hint do not reproduce.** The gap underneath the report
+  did, and `check_hints_say_when_they_cannot_point` holds it.
+- **The two missing material rows are not missing**, re-measured rather than taken on
+  trust from the entry that said so. `White short blade` is a real registry key, its
+  `name_parts` resolve `material name white steel` and `component short blade`, and
+  both rows are in `locales/english.js` and `locales/turkish.js` - as are the black
+  steel pair. `white steel` carries `name: "white"`, so the key and the assembled
+  display name agree, which is why `check_generated_items` verifies them without
+  complaint. Tier 5 is blocked on recipes and on nothing else.
+
+P-14 is `active` rather than `open`, and phase 1, *No Word Sent*, is what comes next.
+STATUS says the same, and its reading order stopped claiming the standing directives
+end at D-8 - there are nine.
+
+### A `---` under a sentence is a heading, and two of ours were
+
+Found while correcting the record above, which is the only reason it was found at all:
+the `---` before **Open decisions** sat directly under P-14's closing sentence in both
+PROPOSALS halves. Markdown reads a run of dashes beneath a non-blank line as a setext
+underline, so that sentence had been rendering as an `<h2>` in every viewer since it
+was written, and it looks perfectly correct in the source. Nothing about a diff shows
+it either: the two states differ by one blank line.
+
+D-8 wants the class rather than the line, so `check_thematic_breaks_are_not_headings`
+reads every tracked markdown file and requires a blank line above any line that is
+only `-` or only `=`. Fenced code is skipped, because markdown is not parsing it, and
+table delimiter rows never reach the test because they start with `|`. Sixty-two
+thematic breaks across the eighteen files, all of them rules rather than headings.
+
+Negative-tested three ways rather than one, because a guard that only catches the
+instance it was written for is not a guard: the blank line taken out of `STATUS.md` -
+a file the defect was never in - and the check named it; the original defect put back
+into `PROPOSALS.TR.md` and it named that; and a `---` inside a fenced block directly
+under a non-blank line, which it correctly ignored and did not count.
 
 ---
 

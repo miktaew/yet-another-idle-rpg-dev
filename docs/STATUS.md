@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 14 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 15 -->
 
 # Status
 
@@ -54,7 +54,7 @@ npm run check:bundle
 ```
 
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
-  ~6,400 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+  ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 143 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -186,6 +186,7 @@ but the ones that encode a bug that shipped:
 | `content object keys` | A constructor field renamed out from under its data. 345 objects. |
 | `generated components can be made` | A material's widened `types` list building items nothing produces. 203 built, 44 unmade. |
 | `quest hints` | A hint builder that filters itself down to nothing and then says nothing. |
+| `markdown rules` | A `---` written under a paragraph, which renders that paragraph as a heading. 62 breaks. |
 
 Directive D-8: a fix is not finished until a check fails without it, and the guard is
 negative-tested by putting the bug back.
@@ -197,9 +198,11 @@ negative-tested by putting the bug back.
 From [PROPOSALS.md](PROPOSALS.md), which is the working backlog and where every
 directive is recorded before it is worked on:
 
-- **P-14, v0.7 and the Marrowmoth** - `open`. The next arc, planned against the code
-  rather than against the brief that asked for it, in eight phases that each ship on
-  their own. Four of its design decisions are Q-7 to Q-10.
+- **P-14, v0.7 and the Marrowmoth** - `active`. The next arc, planned against the
+  code rather than against the brief that asked for it, in eight phases that each ship
+  on their own. Phase 0, the ground, is green: its four design decisions - Q-7 to Q-10
+  - are answered and have moved out of Open decisions into the proposal itself, each
+  against the phase that spends it. Phase 1, *No Word Sent*, is next.
 - **P-12, the metals above steel** - `partly done`. Tier 4 ships. Tier 5 has its
   ingots, its chainmail and its names in both languages, and **no recipes at all**:
   36 of the 44 components nothing can make are white steel and black steel.
@@ -225,7 +228,7 @@ in the backlog for proposals that are not in it. Both are written up in
 ## Reading order for someone new
 
 1. [AGENTS.md](AGENTS.md) - the working agreement, and the canonical instruction file.
-2. [PROPOSALS.md](PROPOSALS.md) - standing directives (D-1 to D-8) then the backlog.
+2. [PROPOSALS.md](PROPOSALS.md) - standing directives (D-1 to D-9) then the backlog.
 3. This file - the measured state.
 4. [I18N.md](I18N.md) - localisation rules and the glossary.
 5. [STORY.md](STORY.md) - the canon, which is continued and never rewritten.

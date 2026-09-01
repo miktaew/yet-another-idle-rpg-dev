@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 67 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 68 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -200,7 +200,7 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     ne de birini asacak bir koşucu.
 
 
-### P-14 — v0.7, Marrowmoth `open`
+### P-14 — v0.7, Marrowmoth `active`
 
 Sıradaki arc ve bu fork'un miras aldığı bir kancaya değil, kendi bıraktığı bir
 kancaya yazdığı ilk arc. Aşağıdaki, proje sahibinin briefinin kod üzerinde
@@ -255,13 +255,30 @@ Her faz kendi başına yayınlanır, `build` + `LOCALE_STRICT=1 check` + `test` 
 `check:bundle` kapılarından geçer ve her iki changelog girdisini alır. Bir önceki
 faz yeşile dönmeden sonraki başlamaz.
 
-**Faz 0 — zemin.** Hikâye yok. Q-7 ile Q-10 karara bağlandı; her cevap onu
-tüketen faza taşınır.
-[STATUS.TR.md](STATUS.TR.md) 48. maddeyi ve P-13/35'i devam ediyor diye sayıyor,
-bu dosyada ikisi de yok; hangisinin yanıldığı ölçülüp düzeltilir. İpucu göstermeyen
-iki quest task'ı kaynaktan değil **çalışan oyunda** ölçülüp düzeltilir. Eksik iki
-malzeme satırı eklenir. Muhafız: yeni yok; bu faz, sonraki fazları ölçülebilir
-kılan fazdır.
+**Faz 0 — zemin.** `bitti`. Hikâye yok; dört maddesinin üçü koddan çok kaydın
+kendisiyle ilgili çıktı — zemin fazı zaten bunun için var.
+
+- **Q-7 ile Q-10 cevaplandı ve taşındı.** Her biri aşağıda
+  [Fazlara taşınan kararlar](#fazlara-taşınan-kararlar) altında, onu harcayan fazın
+  karşısında duruyor. Bu önerinin
+  [Bekleyen kararlar](#bekleyen-kararlar) bölümünde beklediği bir şey kalmadı.
+- **Yanılan dosya STATUS'tü.** 48. madde de P-13/35 de kapanmıştı ama hâlâ "devam
+  ediyor" listesindeydi; bu da okuyanı, iş listesinde bulunmayan önerilerin peşine
+  düşürüyordu.
+- **İpucu göstermeyen iki quest task'ı yeniden üretilemedi.** Kaynaktan değil,
+  sahibin kendi export'larından ölçüldü: açık her questin güncel task'ı adı olan tek
+  bir yere çözülüyor. Raporun altındaki asıl boşluk gerçekti ve onu artık
+  `check_hints_say_when_they_cannot_point` tutuyor.
+- **Eksik iki malzeme satırı eksik değil.** Üretici `material name white steel` ve
+  `material name black steel` istiyor; ikisi de iki dilde de yerinde duruyor. Tier
+  5'i tıkayan şey bir isim değil, hiç var olmayan tariflerin kendisi.
+
+Muhafız: bir tane, planda yoktu ama D-8 gereği borçtu. Kaydı düzeltirken kaydın
+kendisinde bir kusur çıktı — P-14'ün son cümlesinin hemen altına yazılmış bir `---`,
+ki markdown bunu o cümlenin üstüne çekilmiş setext başlığı olarak okuyor — bu yüzden
+`check_thematic_breaks_are_not_headings` o satırı değil sınıfı, izlenen bütün markdown
+dosyalarını okuyarak koruyor. Sonraki fazları ölçülebilir kılan faz buydu; bunu da
+hatırlanan üç bilginin yerine ölçülmüş üçünü koyarak yaptı.
 
 **Faz 1 — v0.7.0, *No Word Sent*.** Oyuncu Marrowmoth'un döndüğünü quest
 bildiriminden değil dünyadan öğrenir: tuz evinin rafı değişir, körfezin fon
@@ -274,11 +291,13 @@ olan hiçbir şey, her yıl gerçekleşmeyen bir pencereye bağlanamaz.
 olarak; manifesto kargo / ağırlık / menşe / varış / mühür / durum olarak okunur.
 Normal satırların hepsi tamdır. Biri değildir ve aynı sandık geçen sefer de
 tartılmamıştır — bu söylenir, açıklanmaz. Yeni arayüz yok: manifesto, aksiyonun
-başarı metni ve bir lore ipliğidir. Muhafız: yeni aksiyonların otomatik olarak
+başarı metni ve Q-8 uyarınca bir lore ipliğidir; `Textline`'ın opsiyonel
+`lore_thread` kimliği ilk kez burada gelir. Muhafız: yeni aksiyonların otomatik olarak
 dâhil olduğu mevcut sınıf düzeyi kontroller.
 
-**Faz 3 — v0.7.2, *A Stroke Through It*.** İtibara bağlı soruşturma; **aynı parçayı
-değil, farklı parçaları** veren üç yol: lonca kayıtları, liman işçisinin tanıklığı,
+**Faz 3 — v0.7.2, *A Stroke Through It*.** İtibara bağlı soruşturma — Q-7 uyarınca
+dördüncü bir reputation bölgesi olan `Guild` üzerinden — ve **aynı parçayı değil,
+farklı parçaları** veren üç yol: lonca kayıtları, liman işçisinin tanıklığı,
 eski manifestolar. Eşikler uydurulmaz; gerçekten kazanılabilen değerlerden (bugün
 610 Village, 350 Slums, 320 Town) ve mevcut yerleşim aksiyonlarının oturduğu
 yerlerden türetilir. Muhafız: `check_reputation_regions_have_names` —
@@ -296,7 +315,8 @@ aksiyon olan bir task'ın ikinci bir ilerleticisi olmak zorundadır. Bu, sahibin
 **Faz 5 — v0.7.4, *One Unweighed Crate*.** Sandığa ulaşılır. Orman yolunda alınan
 objeyle aynı eli taşır — tek bir motif, tek bir metal, tek bir açıklanmamış malzeme
 — ve başka hiçbir şey. Oyuncu bilerek cevaptan çok soruyla çıkmalıdır. Muhafız:
-Q-8 iplik seçeneğine oturursa `check_lore_threads_resolve`.
+`check_lore_threads_resolve`; Q-8 iplik seçeneğine oturdu, yani bu muhafız artık
+borç.
 
 **Faz 6 — v0.7.5, sistem geçişi.** Briefin istediği %20 ve arc'ı değerli kılan
 kısım: stance seçimi stat bonusuyla değil `on_hit` / `on_damaged` üzerinden anlam
@@ -309,16 +329,103 @@ dünya durumu gibi okunur.
 izler — ayak izleri, tüyler, ses, kırılmış örtü — ve oyuncu yaratıkla karşılaşmadan
 önce onun var olup olmadığından emin olmamalıdır.
 
+#### Fazlara taşınan kararlar
+
+Bu önerinin sorduğu dört soru, cevaplarıyla birlikte ve her biri onu harcayan fazın
+karşısında. [Bekleyen kararlar](#bekleyen-kararlar) altında karara bağlanmışlardı;
+faz 0 kapanınca buraya taşındılar: bir karar, biçimlendirdiği işin yanında durur.
+Numaraları korunuyor, böylece onları anan commit'ler ve changelog girdileri hâlâ
+çözülüyor.
+
+##### Q-7 — Lonca itibarı dördüncü bir reputation bölgesi mi olsun? **KARAR: evet** — faz 3 harcar
+
+P-14'ün 3. fazı birbirinden farklı üç bilgi yolu istiyor ve üç eksenin ikisi zaten
+harcanmış durumda: kasaba meydanı Town'u 50 / 150 / 250'de, sıra evleri Slums'ı
+100 / 200 / 300'de okuyor. Bunlardan birinin üzerine kurulacak üçüncü bir yol, aynı
+yolun iki kez yürünmesidir.
+
+Maliyet korkulmadan ölçüldü. `character.reputation` düz bir nesne; `load()`
+**kayıttaki** anahtarları dolaşıyor ve tanımadığı bir bölgeyi uyarıp geçiyor, yani
+eski bir kayıt `Guild` olmadan geliyor ve alan bildirilmiş 0 değerinde kalıyor.
+`update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri gösteriyor, yani
+kimse kazanmadığı bir satırı görmüyor; bölgenin adı da `getDisplayName` üzerinden
+geçiyor, o da dil başına bir locale satırı istiyor. `market_saturation` ayrı bir
+harita ve ellenmiyor: hiçbir şeyi fiyatlamayan bir loncanın market bölgesine
+ihtiyacı yok.
+
+Yani bütün maliyet bir alan, iki locale satırı ve bir kontrol. Alternatif — lonca
+gözdeliğini flag ve quest durumuyla ifade etmek — daha az kod tutar ve hiçbir şey
+kazandırmaz: üçüncü bir yolu üçüncü bir yol gibi hissettiren şey, tam olarak
+oyuncunun yükselişini izleyebildiği bir sayıdır.
+
+##### Q-8 — Soruşturma notları nerede durur? **KARAR: yeni panel değil, bir lore ipliği** — faz 2 harcar, faz 3 ve 5 üstüne kurar
+
+Ölçüldü; çünkü brief Discoveries diyor ve Discoveries kulağa geldiği şey değil.
+`update_displayed_discoveries` **eşyaları** nereden geldiklerine karşı çiziyor;
+kaynağı `world_index`. `update_displayed_lore` ise **oyuncunun duyduğu
+textline'ları** konuşana göre gruplayıp kaldığı yeri gösteren bir satır ekliyor.
+Bir aksiyonun başarı metni ikisi de değil; bugün günlükte bir kez okunup gidiyor.
+
+Üç seçenek var ve doğrusu ortadaki:
+
+- **İpuçlarını `lore: true` işaretli diyalog satırlarından geçirmek.** Hiç kod
+  gerekmez, hâlihazırda çalışır. Ama konuşana göre grupladığı için Marrowmoth'un
+  altı olgusu üç ayrı kişinin altında dağılır ve tek bir iplik değil, üç ayrı sohbet
+  gibi okunur.
+- **`Textline`'a opsiyonel bir `lore_thread` kimliği, lore paneline de konuşan
+  listesinin üstünde bir iplik gruplaması vermek.** Bir opsiyonel alan, bir dal,
+  kayıt üzerinde hiçbir etki — textline'lar zaten açılmış olarak izleniyor. Sürgün
+  kabile ve Rat God için yeniden kullanılabilir; bir soyutlamanın kendini hak edip
+  etmediğinin ölçüsü de budur.
+- **Yeni bir soruşturma paneli.** Hem brief hem de kanıt bunu dışlıyor: oyunun zaten
+  dört günlük yüzeyi var ve beşincisi, buradaki her kalıcı direktifin önlemek için
+  var olduğu paralel sistem olurdu.
+
+##### Q-9 — Cezir zinciri kaç yeni yer ister? **KARAR: dört değil, iki** — faz 4 harcar
+
+Brief şu zinciri çiziyor: Körfez → cezir düzlüğü → demirleme yeri → güverte → alt
+ambar. Körfez oyunun bilerek en ince bölgesi — üç yer, çünkü liman insanın içinden
+geçtiği bir yerdir — ve dört yeni oda onu dağdan sonraki en büyük bölge yapar ki bu
+onun hakkında yanlış bir şey söyler.
+
+Zincirin tamamını iki yer taşır: yaklaşımı ve gelgitin kapattığı şeyi temsil eden
+**düzlük**, ve varış noktası olan **ambar**. Demirleme yeri ile güverte, bu ikisinin
+üzerindeki aksiyonlardır. Burada yer eklemek ucuzdur; tuzak da budur: ölçü bir odayı
+eklemenin maliyeti değil, o odanın içinde bir şey olup olmadığıdır — koridorun
+içinde yoktur.
+
+##### Q-10 — "Yılda iki kez" nasıl çalışır? **KARAR: iki mevsim, zamanlayıcı yok** — faz 1 harcar
+
+`conditions.js` zaten `season: {yes, not}` okuyor; `game_time` mevsimi, haftanın
+gününü, gün sayısını ve ay evresini taşıyor. Yılda iki kez, iki mevsim demektir ve
+briefin saydığı bütün dünya-olayı sözlüğü — tüccar stoğu, fon replikleri,
+aksiyonlar, diyalog — aynı koşulu okuyabilir.
+
+Tek gerçek tehlike zaman modeli değil, durum: `inventory_template` **kayda
+yazılmıyor**. Tekne limandayken bir tüccarın üzerinde çevrilen ne varsa, yazılmak
+yerine yüklemede mevsimden yeniden hesaplanmalı; yoksa bir sonraki oturumda geri
+döner ve hiçbir şey yüksek sesle hata vermez — ki bu, sahibin favori yerlerini
+kaybettiren hatanın tam olarak biçimidir (bkz. [STATUS.TR.md](STATUS.TR.md), 4.
+kısıt). Türet; saklama.
+
+Genel bir dünya-olayı çatısı açıkça kapsam dışıdır. İkinci bir olay aynı tesisatı
+isterse, soyutlama kendini o zaman hak etmiş olur.
+
 #### Bu önerinin yapmayacakları
 
 Beşinci bir bölge, ikinci bir soruşturma arayüzü, bir zamanlayıcı çatısı, bir
 lockpicking skill'i ya da bir gizemin cevabı uydurmak. Yazılmış içerik bir anı
 zaten karşılıyorsa, paralelini yazmak yerine onu bağlayın.
+
 ---
+
 ## Bekleyen kararlar
 
 Bunların her biri neyin inşa edileceğini değiştirir. Tahmin edilmek yerine burada
-kayda geçiriliyorlar.
+kayda geçiriliyorlar. Burada kalanlar projenin tamamını ilgilendiriyor; tek bir
+önerinin sorduğu soru, cevaplandığı anda o önerinin içine geçer. Q-7 ile Q-10 da
+oraya gitti — bkz. P-14 içindeki
+[Fazlara taşınan kararlar](#fazlara-taşınan-kararlar).
 
 ### Q-1 — Bu fork içerik olarak ayrışacak mı? **GÜNCELLENDİ: içerikte ayrış, kodda yakınlaş**
 
@@ -408,80 +515,6 @@ kendiliğinden dönüşüyor. Kalan şey, bir kez emirsel olarak kurulup bir dah
 Her biri `option_language` içinde açık bir yeniden çizim alıyor ve biri eksik
 olursa `npm run check` düşüyor; böylece liste sessizce büyüyemiyor. Yeniden yükleme
 yok ve hiçbir şeyin bölünmesi gerekmedi.
-
-### Q-7 — Lonca itibarı dördüncü bir reputation bölgesi mi olsun? **KARAR: evet**
-
-P-14'ün 3. fazı birbirinden farklı üç bilgi yolu istiyor ve üç eksenin ikisi zaten
-harcanmış durumda: kasaba meydanı Town'u 50 / 150 / 250'de, sıra evleri Slums'ı
-100 / 200 / 300'de okuyor. Bunlardan birinin üzerine kurulacak üçüncü bir yol, aynı
-yolun iki kez yürünmesidir.
-
-Maliyet korkulmadan ölçüldü. `character.reputation` düz bir nesne; `load()`
-**kayıttaki** anahtarları dolaşıyor ve tanımadığı bir bölgeyi uyarıp geçiyor, yani
-eski bir kayıt `Guild` olmadan geliyor ve alan bildirilmiş 0 değerinde kalıyor.
-`update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri gösteriyor, yani
-kimse kazanmadığı bir satırı görmüyor; bölgenin adı da `getDisplayName` üzerinden
-geçiyor, o da dil başına bir locale satırı istiyor. `market_saturation` ayrı bir
-harita ve ellenmiyor: hiçbir şeyi fiyatlamayan bir loncanın market bölgesine
-ihtiyacı yok.
-
-Yani bütün maliyet bir alan, iki locale satırı ve bir kontrol. Alternatif — lonca
-gözdeliğini flag ve quest durumuyla ifade etmek — daha az kod tutar ve hiçbir şey
-kazandırmaz: üçüncü bir yolu üçüncü bir yol gibi hissettiren şey, tam olarak
-oyuncunun yükselişini izleyebildiği bir sayıdır.
-
-### Q-8 — Soruşturma notları nerede durur? **KARAR: yeni panel değil, bir lore ipliği**
-
-Ölçüldü; çünkü brief Discoveries diyor ve Discoveries kulağa geldiği şey değil.
-`update_displayed_discoveries` **eşyaları** nereden geldiklerine karşı çiziyor;
-kaynağı `world_index`. `update_displayed_lore` ise **oyuncunun duyduğu
-textline'ları** konuşana göre gruplayıp kaldığı yeri gösteren bir satır ekliyor.
-Bir aksiyonun başarı metni ikisi de değil; bugün günlükte bir kez okunup gidiyor.
-
-Üç seçenek var ve doğrusu ortadaki:
-
-- **İpuçlarını `lore: true` işaretli diyalog satırlarından geçirmek.** Hiç kod
-  gerekmez, hâlihazırda çalışır. Ama konuşana göre grupladığı için Marrowmoth'un
-  altı olgusu üç ayrı kişinin altında dağılır ve tek bir iplik değil, üç ayrı sohbet
-  gibi okunur.
-- **`Textline`'a opsiyonel bir `lore_thread` kimliği, lore paneline de konuşan
-  listesinin üstünde bir iplik gruplaması vermek.** Bir opsiyonel alan, bir dal,
-  kayıt üzerinde hiçbir etki — textline'lar zaten açılmış olarak izleniyor. Sürgün
-  kabile ve Rat God için yeniden kullanılabilir; bir soyutlamanın kendini hak edip
-  etmediğinin ölçüsü de budur.
-- **Yeni bir soruşturma paneli.** Hem brief hem de kanıt bunu dışlıyor: oyunun zaten
-  dört günlük yüzeyi var ve beşincisi, buradaki her kalıcı direktifin önlemek için
-  var olduğu paralel sistem olurdu.
-
-### Q-9 — Cezir zinciri kaç yeni yer ister? **KARAR: dört değil, iki**
-
-Brief şu zinciri çiziyor: Körfez → cezir düzlüğü → demirleme yeri → güverte → alt
-ambar. Körfez oyunun bilerek en ince bölgesi — üç yer, çünkü liman insanın içinden
-geçtiği bir yerdir — ve dört yeni oda onu dağdan sonraki en büyük bölge yapar ki bu
-onun hakkında yanlış bir şey söyler.
-
-Zincirin tamamını iki yer taşır: yaklaşımı ve gelgitin kapattığı şeyi temsil eden
-**düzlük**, ve varış noktası olan **ambar**. Demirleme yeri ile güverte, bu ikisinin
-üzerindeki aksiyonlardır. Burada yer eklemek ucuzdur; tuzak da budur: ölçü bir odayı
-eklemenin maliyeti değil, o odanın içinde bir şey olup olmadığıdır — koridorun
-içinde yoktur.
-
-### Q-10 — "Yılda iki kez" nasıl çalışır? **KARAR: iki mevsim, zamanlayıcı yok**
-
-`conditions.js` zaten `season: {yes, not}` okuyor; `game_time` mevsimi, haftanın
-gününü, gün sayısını ve ay evresini taşıyor. Yılda iki kez, iki mevsim demektir ve
-briefin saydığı bütün dünya-olayı sözlüğü — tüccar stoğu, fon replikleri,
-aksiyonlar, diyalog — aynı koşulu okuyabilir.
-
-Tek gerçek tehlike zaman modeli değil, durum: `inventory_template` **kayda
-yazılmıyor**. Tekne limandayken bir tüccarın üzerinde çevrilen ne varsa, yazılmak
-yerine yüklemede mevsimden yeniden hesaplanmalı; yoksa bir sonraki oturumda geri
-döner ve hiçbir şey yüksek sesle hata vermez — ki bu, sahibin favori yerlerini
-kaybettiren hatanın tam olarak biçimidir (bkz. [STATUS.TR.md](STATUS.TR.md), 4.
-kısıt). Türet; saklama.
-
-Genel bir dünya-olayı çatısı açıkça kapsam dışıdır. İkinci bir olay aynı tesisatı
-isterse, soyutlama kendini o zaman hak etmiş olur.
 
 ---
 
