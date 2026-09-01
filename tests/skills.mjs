@@ -614,6 +614,60 @@ const registries = {
 }
 
 // ===========================================================================
+// src/reputation.js - standing has a floor
+// ===========================================================================
+/*
+    The floor went in with the first reward in the game that subtracts standing (P-14
+    phase 6). Without it a region goes negative and then disappears:
+    update_displayed_reputation draws only regions above 0, so a player at -20 sees no row
+    and cannot tell they are in a hole or how deep, while every gate still reads shut.
+    Invisible and consequential at once, which is the shape of every bug this project has
+    spent a version chasing.
+*/
+{
+    const [reputation, character_module] = await load_browser_free(repo_root,
+        ["src/reputation.js", "src/character.js"]);
+    const manager = reputation.ReputationManager ?? reputation.default;
+    const hero = character_module.character;
+
+    const set = (value) => { hero.reputation.Slums = value; };
+    const add = (amount) => manager.add_reputation({region: "Slums", reputation: amount});
+
+    set(100);
+    add(50);
+    check("standing goes up", hero.reputation.Slums === 150, String(hero.reputation.Slums));
+
+    add(-40);
+    check("standing comes down", hero.reputation.Slums === 110, String(hero.reputation.Slums));
+
+    //The case the floor is for: more taken than there is.
+    set(20);
+    add(-40);
+    check("standing cannot go below zero", hero.reputation.Slums === 0,
+        String(hero.reputation.Slums));
+
+    //Exactly enough is exactly zero, not -0 or a near miss.
+    set(40);
+    add(-40);
+    check("taking all of it leaves zero", hero.reputation.Slums === 0,
+        String(hero.reputation.Slums));
+
+    //And zero is still a number the display rule can read: it draws regions ABOVE zero,
+    //so zero means "they do not know you", which is where everyone starts.
+    check("zero is not negative", !(hero.reputation.Slums < 0), String(hero.reputation.Slums));
+
+    //A non-integer is refused outright, which was already true and is worth pinning:
+    //the floor must not have turned a rejection into a silent 0.
+    set(75);
+    let threw = false;
+    try { add(1.5); } catch { threw = true; }
+    check("a non-integer is still refused rather than floored",
+        threw && hero.reputation.Slums === 75, `threw=${threw} value=${hero.reputation.Slums}`);
+
+    set(0);
+}
+
+// ===========================================================================
 // src/translation.js — the lookup and the fallback
 // ===========================================================================
 // The Turkish locale is deliberately partial, so the fallback is what keeps the

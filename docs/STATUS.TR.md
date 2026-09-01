@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 32 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 33 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,7 +59,7 @@ npm run check:bundle
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
   (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 201 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 207 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.
@@ -228,11 +228,12 @@ sayılmaz; koruma da hata geri konularak sınanır.
   v0.7.4 olarak yayınlandı: sandık, onu geri koyabilmek üzerine açılıyor; içinde
   koleksiyoncunun bir kez tarif ettiği karelerle oyulmuş, adı olmayan bir metalden tek
   bir halka var ve bilerek hiçbir eşya ödemiyor. Sistem geçişi olan Faz 6 başladı: dört
-  parçasından üçü yayınlandı: v0.7.5, 5. kademeyi düzlüklere bağladı ve yapılamayan
-  36 bileşeni sıfıra indirdi; v0.7.6 dört yaratığı, zaten var olan kancalar üzerinden
-  kahramanın duruşuna tepki verir hâle getirdi; v0.7.10 ise ekonomiyi ölçtükten sonra
-  arc'ın para kuyusunu yeniden fiyatladı. Açık kalan son parça, dünya durumu olarak
-  itibar.
+  parçasının hepsi yayınlandı: v0.7.5, 5. kademeyi düzlüklere bağladı ve yapılamayan 36
+  bileşeni sıfıra indirdi; v0.7.6 dört yaratığı, zaten var olan kancalar üzerinden
+  kahramanın duruşuna tepki verir hâle getirdi; v0.7.10 ekonomiyi ölçtükten sonra arc'ın
+  para kuyusunu yeniden fiyatladı; v0.7.11 ise arc'a, bir yerin fikri olması gibi okunan
+  bir itibar sonucu kazandırdı — artı itibara bir taban, ki ondan bir şey eksiltilene
+  kadar buna kimsenin ihtiyacı olmamıştı. **P-14'ten kalan, v0.8 hazırlığı olan Faz 7.**
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. ve 5. kademe ikisi de
   yayında ve 36 beyaz/siyah çelik bileşeni, gelgit düzlüklerinde kazılan bir cevherden
   üretilebiliyor. Tek bir soru kaldı: `roll_quality`,

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 32 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 33 -->
 
 # Status
 
@@ -56,7 +56,7 @@ npm run check:bundle
 - `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
   ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
-- `test` is the skill and progression suite in `tests/skills.mjs`: 201 checks.
+- `test` is the skill and progression suite in `tests/skills.mjs`: 207 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
   refuses to run against a `dist/bundle.js` older than `src/`, because it once passed
   by testing a stale bundle after a failed build.
@@ -227,10 +227,12 @@ directive is recorded before it is worked on:
   or `Slums` 250. Phase 5 shipped as v0.7.4: the crate opens on being able to put it
   back, holds one band of an unnameable metal cut with the squares the collector
   described once, and pays no item on purpose. Phase 6, the systems pass, is under way:
-  three of its four pieces have shipped - v0.7.5 wired tier 5 to the flats and took the
-  36 unmakeable components to none, v0.7.6 made four enemies react to the hero's stance
-  through the hooks that already existed, and v0.7.10 repriced the arc's money sink after
-  measuring the economy. Standing-as-world-state is the last one open.
+  all four of its pieces have shipped: v0.7.5 wired tier 5 to the flats and took the 36
+  unmakeable components to none, v0.7.6 made four enemies react to the hero's stance
+  through the hooks that already existed, v0.7.10 repriced the arc's money sink after
+  measuring the economy, and v0.7.11 gave the arc a standing consequence that reads as a
+  place having an opinion - plus a floor on standing, which nothing had needed until
+  something subtracted from it. **Phase 7, v0.8 groundwork, is what remains of P-14.**
 - **P-12, the metals above steel** - `partly done`. Tier 4 and tier 5 both ship, and
   the 36 white-steel and black-steel components are craftable from an ore dug on the
   tidal flats. One question is left: `roll_quality` reads

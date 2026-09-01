@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 87 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 88 -->
 
 # Proposals
 
@@ -421,7 +421,27 @@ shipped.
   the real question is a price against *income at that point in the game*, and that is a
   judgement. The numbers above are written into the proposal and beside the price in the
   source instead, so the next price is derived rather than picked.
-- **Standing consequences that read as world-state and not as punishment.** `open`.
+- **Standing consequences that read as world-state and not as punishment.** `done`, as
+  **v0.7.11**, and it completes the phase. The tallyman's own closing line already framed
+  the choice - *"The day I write it down it is a guild matter"* - so the content did not
+  need a decision inventing for it, only the other side of one. The clerk will open the
+  file: Guild +60, Town +20, **Slums -40**, and it will be known that it came from the
+  docks. Nothing forces it; the arc finishes either way and the line simply sits there.
+  The old woman of the slums answers it, gated on a flag, and she is not angry - what she
+  says is that for a while, when somebody down here has something they would rather was
+  not written down, they will think about who they say it in front of. That is the
+  difference the phase was asking for: a place having an opinion, not a score being
+  docked.
+
+  -40 against 350 earnable and the arc's own gates at 200 and 250. It can put the firm
+  line out of reach for a while; wading the flats is free and the boatman is 6,000, so
+  nothing closes.
+
+  **And standing has a floor now**, which had to go in before the first reward in the
+  game that subtracts. `add_reputation` used `+=` with no bound, and
+  `update_displayed_reputation` draws only regions above 0 - so a player at -20 would
+  have seen no row at all, with every gate still shut: invisible and consequential at
+  once. Floored at 0, six tests, negative-tested by taking the floor out again.
 
 **Phase 7 — v0.8 groundwork, *Beyond the Lake*.** Not started before phase 6 is
 green. Traces first — tracks, feathers, noise, broken cover — and the player must be

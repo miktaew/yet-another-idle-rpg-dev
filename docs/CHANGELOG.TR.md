@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 79 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 80 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,54 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.11 - bir yerin fikri olması ve itibarın altına bir taban
+
+P-14 Faz 6'nın son parçası ve fazı tamamlıyor. Brief, ceza değil dünya durumu gibi okunan
+itibar sonuçları istiyordu; bu da koddan önce bir tasarım problemi: bir sayının düşmesi,
+dünyada biri bu konuda bir şey söylemedikçe cezadır.
+
+**İçerik seçimi zaten çerçevelemişti.** Saymanın kapanış repliği şöyle diyor: *"Yazdığım
+gün bu bir lonca meselesi olur, lonca meselesinin bir usulü vardır ve usul de birinin
+hesap sütununa kime fatura keseceğini sormasıdır."* Uzun uzun reddediyor ve reddederken
+oyuncuya, bunu kendisinin yapabileceğini söylüyor. Yani uydurulacak bir şey yoktu —
+yalnızca kanonun çoktan kurduğu bir kararın öteki tarafı.
+
+Lonca kâtibi yapıyor. Bir dosya açıyor, teknenin adını ve iki ilkbaharı yazıyor, dördüncü
+sütunda tam onun gibi duruyor ve kartı dosyalıyor: *"Bunun rıhtımdan geldiği bilinecek.
+Ben aksini varmış gibi yapmayacağım, siz de yapmayın."* Guild +60, Town +20, **Slums −40**
+— oyunun bir şeyi eksilten ilk ödülü.
+
+**Kimse zorlamıyor.** Arc her iki hâlde de bitiyor ve replik kâtibin yanında öylece
+duruyor. Sonuçla ceza arasındaki fark da bu: ceza oynadığınızda olan şeydir, sonuç ise
+seçtiğinizde.
+
+Ve sokak cevap veriyor. Kenar mahallenin yaşlı kadınının, bayrağa bağlı bir repliği var ve
+sinirli değil — düzeltilecek bir şey yok, kimsenin başı dertte değil. Söylediği şu: bir
+süre boyunca, buradan biri yazıya geçmesini istemediği bir şeye sahip olduğunda onu kimin
+yanında söyleyeceğini düşünecek ve oyuncu, düşündüğü insanların listesinde olacak.
+*"Geçer. Burada çoğu şey geçer. Ama daha geçmedi ve siz sordunuz."* Dünya durumu yarısı
+bu; o olmasa −40 bir para cezası olurdu.
+
+350 kazanılabilir değere ve arc'ın Slums 200 ile 250'deki kendi kapılarına karşı −40.
+Sağlam hattı bir süre menzil dışına çıkarabiliyor; düzlükleri yürümek bedava ve kayıkçı
+geçen sürümden beri 6.000, yani hiçbir şey kapanmıyor.
+
+**İtibarın artık bir tabanı var ve bu, herhangi bir şeyin eksiltmesine izin verilmeden
+önce girmek zorundaydı.** `add_reputation` sınırsız bir `+=` kullanıyordu.
+`update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri çiziyor. Yani kenar
+mahallede −20'de olan bir oyuncu **hiçbir satır görmezdi** — ne sayı, ne çukurda olduğuna
+dair bir işaret, ne de ne kadar derinde olduğunu anlamanın bir yolu — bütün kapılar da
+kapalı okunurdu. Aynı anda görünmez ve sonuçlu; bu proje her sürümünü bu biçimdeki
+hataların peşinde geçirdi ve bu, tam da bu özellikle birlikte gelecekti.
+
+0'da tabanlandı; çünkü sıfır "sizi tanımıyorlar" demek ve herkes oradan başlıyor. Altı
+test; aralarında tam olarak hepsini almanın kıl payı değil sıfır bıraktığı ve tam sayı
+olmayan bir değerin hâlâ sessizce tabanlanmak yerine doğrudan reddedildiği de var —
+muhafız bir reddi 0'a çevirmiş olmamalı. Tabanı yeniden kaldırarak negatif test edildi:
+bir kontrol düşüyor ve −20 bildiriyor.
+
+Bu, Faz 6'yı kapatıyor. P-14'ten kalan, v0.8 hazırlığı olan Faz 7.
 
 ### v0.7.10 - kayıkçı bir kilometre taşı gibi fiyatlanmış, bir hizmet gibi satılıyordu
 

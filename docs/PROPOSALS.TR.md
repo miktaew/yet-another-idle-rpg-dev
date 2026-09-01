@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 87 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 88 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -443,7 +443,26 @@ yayınlandı.
   *oyunun o noktasındaki gelire* göre durumu ve bu bir yargı. Bunun yerine yukarıdaki
   sayılar öneriye ve kaynakta fiyatın yanına yazıldı; böylece sonraki fiyat seçilmek
   yerine türetiliyor.
-- **İtibar sonuçlarının ceza değil, dünya durumu gibi okunması.** `open`.
+- **İtibar sonuçlarının ceza değil, dünya durumu gibi okunması.** `bitti`, **v0.7.11**
+  olarak; ve fazı tamamlıyor. Saymanın kapanış repliği seçimi zaten çerçevelemişti —
+  *"Yazdığım gün bu bir lonca meselesi olur"* — yani içeriğe karar uydurmak gerekmedi,
+  yalnızca kararın öteki tarafı gerekti. Kâtip dosyayı açıyor: Guild +60, Town +20,
+  **Slums −40** ve bunun rıhtımdan geldiği bilinecek. Kimse zorlamıyor; arc her iki hâlde
+  de bitiyor ve replik öylece duruyor. Kenar mahallenin yaşlı kadını cevap veriyor, bir
+  bayrağa bağlı, ve sinirli değil — söylediği şu: bir süre boyunca, buradan biri yazıya
+  geçmesini istemediği bir şeye sahip olduğunda, onu kimin yanında söyleyeceğini
+  düşünecek. Fazın istediği fark da bu: bir yerin bir fikri olması, bir puanın kesilmesi
+  değil.
+
+  350 kazanılabilir değere ve arc'ın 200 ile 250'deki kendi kapılarına karşı −40. Sağlam
+  hattı bir süre menzil dışına çıkarabiliyor; düzlükleri yürümek bedava ve kayıkçı 6.000,
+  yani hiçbir şey kapanmıyor.
+
+  **Ve itibarın artık bir tabanı var**; bu, oyunun eksiltme yapan ilk ödülünden önce
+  girmek zorundaydı. `add_reputation` sınırsız bir `+=` kullanıyordu ve
+  `update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri çiziyor — yani −20'deki
+  bir oyuncu hiçbir satır görmezdi, bütün kapılar da kapalı kalırdı: aynı anda görünmez ve
+  sonuçlu. 0'da tabanlandı, altı test, tabanı yeniden kaldırarak negatif test edildi.
 
 **Faz 7 — v0.8 hazırlığı, *Beyond the Lake*.** Faz 6 yeşile dönmeden başlamaz. Önce
 izler — ayak izleri, tüyler, ses, kırılmış örtü — ve oyuncu yaratıkla karşılaşmadan

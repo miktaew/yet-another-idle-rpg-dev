@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 79 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 80 -->
 
 # Changelog
 
@@ -20,6 +20,54 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.11 - a place having an opinion, and a floor under standing
+
+P-14 phase 6's last piece, and it completes the phase. The brief asked for standing
+consequences that read as world-state rather than as punishment, which is a design
+problem before it is a code one: a number going down is a penalty unless somebody in the
+world says something about it.
+
+**The content had already framed the choice.** The tallyman's closing line says *"The day
+I write it down it is a guild matter, and a guild matter is a thing with a procedure, and
+the procedure is that somebody asks the account column who to bill."* He refuses, at
+length, and in refusing he tells the player that they could. So nothing needed inventing -
+only the other side of a decision the canon had already set up.
+
+The guild clerk will do it. She opens a file, writes the hull and the two springs, stops
+at the fourth column exactly as he did, and files the card: *"It will be known that this
+came from the docks. I am not going to pretend otherwise and you should not either."*
+Guild +60, Town +20, **Slums -40** - the game's first reward that subtracts anything.
+
+**Nothing forces it.** The arc finishes either way and the line simply sits at the clerk.
+That is the difference between a consequence and a punishment: a punishment is what
+happens when you play, a consequence is what happens when you choose.
+
+And the row answers. The old woman of the slums has a line gated on the flag, and she is
+not angry - there is nothing to put right and nobody is in trouble. What she says is that
+for a while, when somebody down here has something they would rather was not written down,
+they will think about who they say it in front of, and the player will be on the list of
+people they think about. *"It will pass. Most things do, here. But it has not passed yet,
+and you asked."* That is the world-state half, and without it the -40 would be a fine.
+
+-40 against 350 earnable and the arc's own gates at Slums 200 and 250. It can put the firm
+line out of reach for a while; wading the flats is free and the boatman is 6,000 since
+last version, so nothing closes.
+
+**Standing has a floor now, and it had to before anything was allowed to subtract.**
+`add_reputation` used `+=` with no bound. `update_displayed_reputation` draws only regions
+above 0. So a player at -20 in the slums would have seen **no row at all** - no number, no
+indication they were in a hole, no way to know how deep - while every gate still read
+shut. Invisible and consequential at the same time, which is the shape of every bug this
+project has spent a version chasing, and it would have arrived with this feature.
+
+Floored at 0, because zero is "they do not know you", which is where everyone starts. Six
+tests, including that taking exactly all of it leaves zero rather than a near miss, and
+that a non-integer is still refused outright rather than quietly floored - the guard must
+not have turned a rejection into a 0. Negative-tested by taking the floor out: one check
+fails, reporting -20.
+
+That closes phase 6. What remains of P-14 is phase 7, the v0.8 groundwork.
 
 ### v0.7.10 - the boatman was priced like a milestone and sold like a service
 

@@ -1335,6 +1335,25 @@ class Textline {
                 is where the row's night watch and the gate both sit, so it arrives after
                 the hero has actually done the work rather than after being told about it.
             */
+            /*
+                The other half of the choice, and the reason it is world-state: somebody
+                says something about it. She is not angry and there is nothing to put
+                right - the row simply knows now, and she tells the player what that
+                means here. No reward but the hearing of it.
+            */
+            "the matter": new Textline({
+                lore: true,
+                name: "old the matter",
+                text: "old the matter answ",
+                is_unlocked: true,
+                display_conditions: {
+                    flags: ["is_marrowmoth_a_guild_matter"],
+                },
+                rewards: {
+                    xp: 900,
+                },
+                locks_lines: ["the matter"],
+            }),
             "roster": new Textline({
                 lore: true, //carries the thread; see the lore panel
                 name: "old roster",
@@ -2740,6 +2759,11 @@ class Textline {
                 is_unlocked: false,
                 lore: true,
                 lore_thread: "lore thread the Marrowmoth",
+                //He will not make it a guild matter. He says so, at length, and in saying
+                //so he tells the player that they can.
+                rewards: {
+                    textlines: [{dialogue: "guild clerk", lines: ["make it a matter"]}],
+                },
                 //He counts the ebbs left, and that is what puts the crate itself on the
                 //table: knowing how long you have is what makes going back a decision.
                 rewards: {
@@ -2959,6 +2983,35 @@ class Textline {
                         yes: marrowmoth_seasons,
                     }
                 },
+            }),
+            /*
+                P-14 phase 6's last piece: a standing consequence that reads as world-state
+                rather than as punishment.
+
+                Nothing forces this. The arc finishes without it and the line simply sits
+                here. What it buys is real - the guild starts a file, and files are the only
+                thing that has ever made anyone on this coast ask a question twice - and
+                what it costs is that the row finds out you took a porter's word to the
+                guild. That is not the game docking you for a wrong answer; it is a place
+                having an opinion about a thing you chose to do in front of it.
+
+                -40 against 350 earnable and the arc's own gates at 200 and 250: it can put
+                the firm line out of reach for a while, and wading the flats is free, so
+                nothing closes. Standing is floored at 0 as of this version, so it cannot
+                take anyone into a hole they cannot see.
+            */
+            "make it a matter": new Textline({
+                name: "clerk make it a matter",
+                text: "clerk make it a matter answ",
+                is_unlocked: false,
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
+                rewards: {
+                    reputation: {Guild: 60, Town: 20, Slums: -40},
+                    flags: ["is_marrowmoth_a_guild_matter"],
+                    xp: 4000,
+                },
+                locks_lines: ["make it a matter"],
             }),
             //Unlocked by the robber's confession, which happens long before the
             //town is reachable. The line simply waits here until the player
