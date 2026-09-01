@@ -1016,6 +1016,79 @@ function check_trader_stock_lists() {
         among them, from the only place in the game that sells them - and nothing threw,
         so nothing said so. One resolver, and this keeps it the only one.
     */
+
+    /*
+        And a derived shelf has to say which shelves it can be.
+
+        stock_list_name_of answers "what is this trader selling now", which is the right
+        question for a shop and the wrong one for the Discoveries index: item_sources is
+        built once and cached for the session, so it pins the panel to whichever list was
+        current the first time it was opened. Out-of-season stock would then have no
+        source listed at all, for the rest of the session, with nothing thrown.
+
+        It has been harmless by luck - the bay's two lists hold the same fifteen names -
+        and it stops being luck the moment a derived list carries something another does
+        not. A shelf gated on standing is exactly that, and there the unearned item is the
+        one the panel most needs to name.
+
+        So: a function-valued inventory_template declares its lists, and the declaration
+        is checked against the string literals in the function's own source. Neither half
+        is trusted on its own - a declaration nobody verifies drifts, and a function
+        nobody can enumerate cannot be indexed.
+    */
+    let derived = 0;
+    for (const match of source.matchAll(/traders\s*\["([^"]+)"\s*\]\s*=\s*new Trader\s*\(\s*\{/g)) {
+        const body = braced_body(source, match.index + match[0].length - 1);
+        if (body === null) continue;
+
+        const field = /inventory_template:\s*([^\n]*)/.exec(body);
+        if (!field) continue;
+        const value = field[1].trim();
+        if (!/=>|^function/.test(value)) continue;
+        derived++;
+
+        const literals = new Set(
+            [...value.matchAll(/"([^"]+)"/g)].map((literal) => literal[1]));
+        const declaration = /stock_lists:\s*\[([^\]]*)\]/.exec(body);
+
+        if (!declaration) {
+            error(`the trader "${match[1]}" derives its inventory_template and does not `
+                + `declare stock_lists. The Discoveries index is built once and cached, `
+                + `so without the full list it pins itself to whichever shelf was current `
+                + `when the panel was first opened.`);
+            continue;
+        }
+
+        const declared = new Set(
+            [...declaration[1].matchAll(/"([^"]+)"/g)].map((name) => name[1]));
+
+        for (const name of declared) {
+            if (!lists.has(name)) {
+                error(`the trader "${match[1]}" declares the stock list "${name}", which `
+                    + `no inventory_templates entry defines.`);
+            }
+        }
+        for (const name of literals) {
+            if (!declared.has(name)) {
+                error(`the trader "${match[1]}" can return the stock list "${name}" and `
+                    + `does not declare it, so the Discoveries panel will never name `
+                    + `anything only that shelf holds.`);
+            }
+        }
+        for (const name of declared) {
+            if (!literals.has(name)) {
+                error(`the trader "${match[1]}" declares the stock list "${name}" and its `
+                    + `inventory_template cannot return it. A declaration nobody can `
+                    + `reach indexes items to a shelf that never holds them.`);
+            }
+        }
+    }
+
+    if (derived === 0) {
+        error("no trader derives its inventory_template - this half of "
+            + "check_trader_stock_lists is out of date and guards nothing.");
+    }
+
     for (const relative of source_files(repo_root)) {
         if (relative === "src/traders.js") continue;
         const text = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
@@ -1053,7 +1126,8 @@ function check_trader_stock_lists() {
         return;
     }
 
-    console.log(`[check] trader stock: ${checked} stock names across ${lists.size} lists`);
+    console.log(`[check] trader stock: ${checked} stock names across ${lists.size} `
+        + `lists, ${derived} derived shelf/shelves declaring every list they can be`);
 }
 function check_every_enemy_has_a_home() {
     const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));

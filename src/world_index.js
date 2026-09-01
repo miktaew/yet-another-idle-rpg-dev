@@ -15,7 +15,7 @@
 
 import { locations } from "./data/locations.js";
 import { enemy_templates } from "./enemies.js";
-import { traders, inventory_templates, stock_list_name_of } from "./traders.js";
+import { traders, inventory_templates, stock_lists_of } from "./traders.js";
 import { recipes } from "./crafting_recipes.js";
 import { activities } from "./activities.js";
 import { dialogues } from "./data/dialogues.js";
@@ -82,11 +82,17 @@ function build_item_sources_index() {
                 stopped knowing. Calling forEach on the name is what threw the first time,
                 which is the other half of the same lesson.
             */
-            const stock = inventory_templates[stock_list_name_of(traders[trader_key])];
-            as_list(stock).forEach(stocked => {
-                if(stocked.item_name) {
-                    note(stocked.item_name, {kind: "trade", location_key, via: trader_key});
-                }
+            /*
+                Every list this trader can use, not the one it is using now: this index is
+                built once and cached for the session, so reading the current list would
+                pin the panel to whatever was on the shelf the first time it was opened.
+            */
+            stock_lists_of(traders[trader_key]).forEach(list_name => {
+                as_list(inventory_templates[list_name]).forEach(stocked => {
+                    if(stocked.item_name) {
+                        note(stocked.item_name, {kind: "trade", location_key, via: trader_key});
+                    }
+                });
             });
         });
     });

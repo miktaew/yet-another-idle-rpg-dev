@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 85 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 86 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,46 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Discoveries, bir tüccarın tuttuğu rafı değil tutabileceği her rafı öğreniyor
+
+P-25'in kalan üç parçası için zemin işi ve üstüne inşa etmeden önce zemini ölçerken bulunan
+bir delik.
+
+**Yanlış olan neydi.** `stock_list_name_of`, *bu tüccar şu anda ne satıyor* sorusuna cevap
+veriyor; bu bir dükkân için doğru, Discoveries indeksi için yanlış soru. `item_sources`
+ilk kullanımda bir kez kuruluyor ve **oturum boyunca önbellekte tutuluyor**; yani panel ilk
+açıldığında hangi liste güncelse kendini ona sabitliyordu. Paneli Marrowmoth'un iki mevsimi
+dışında açın, körfezin limandaki stoğunun oturumun geri kalanında hiç kaynağı görünmezdi ve
+hiçbir şey hata atmazdı.
+
+**Bugüne kadar şans eseri zararsızdı.** Ölçüldü: `Bay` ve `Bay in port` listeleri **aynı on
+beş eşya adını** taşıyor, yalnızca sayı ve şanslarda ayrılıyorlar; yani gerçekte hiçbir şey
+kaybolmadı. Bunu sonrasına değil şimdi düzeltmeye değer kılan da tam olarak bu: türetilmiş
+bir liste ötekinde olmayan bir şey taşıdığı an şans bitiyor ve itibara bağlı bir raf
+tastamam odur. Dahası orada, oyuncunun henüz kazanmadığı eşya, panelin en çok adlandırması
+gereken eşyadır — P-25 bunu kendisi söylüyor: *"Oyuncunun göremediği bir raf ödül
+değildir."*
+
+**Düzeltme.** `stock_list_name_of`'un yanına `stock_lists_of`, öteki soruyu cevaplıyor: bir
+tüccarın kullanabileceği her liste. Çıplak bir ad kendine düşüyor, yani sekiz statik tüccar
+için hiçbir şey değişmiyor; türetilmiş bir şablon ise listelerini beyan ediyor. İndeks
+hepsini yürüyor.
+
+**İki yarı birbirine karşı kontrol ediliyor**, çünkü hiçbiri tek başına güvenilir değil:
+kimsenin doğrulamadığı bir beyan fonksiyondan uzaklaşır, kimsenin sayamadığı bir fonksiyon
+da indekslenemez. `check_trader_stock_lists` artık türetilmiş şablonun kendi kaynağındaki
+dizge sabitlerini okuyup beyanın onlarla birebir uyuşmasını şart koşuyor — eksik liste yok,
+fazla liste yok ve beyan edilen her ad gerçek bir `inventory_templates` kaydına dayanıyor.
+Üç yönden negatif test edildi: beyanı kaldırmak, iki listeden birini yazmak ve fonksiyonun
+asla döndüremeyeceği bir rafı yazmak.
+
+**Ayrıca bulundu ama burada düzeltilmedi**, P-27 olarak kaydedildi: oyunda hiçbir şeyin
+üretemediği, satmadığı, düşürmediği ya da vermediği dört elle yazılmış eşya — `White steel
+chainmail`, `Black steel chainmail`, `Scraps of wolf rat meat` ve `Basic spare parts`. İlk
+ikisi 5. kademe zırh örgüsü malzemeleri; 180 değerinde, `material_type: "chainmail"` ile ve
+adlandırma kuralının uyduğu 4. kademe çiftinin bir satır altında duruyorlar — v0.7.5 ise
+onları kullanmak yerine yanlarına `White chainmail` ve `Black chainmail` ekledi.
 
 ### v0.7.15 - itibar bir tavan olabiliyor ve komisyoncu kuralı tekrarlamayı bırakıyor
 

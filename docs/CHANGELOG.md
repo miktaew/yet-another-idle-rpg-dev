@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 85 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 86 -->
 
 # Changelog
 
@@ -20,6 +20,46 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### Discoveries learns every shelf a trader can hold, not the one it is holding
+
+Groundwork for P-25's three remaining parts, and a hole found by measuring the ground
+before building on it.
+
+**What was wrong.** `stock_list_name_of` answers *what is this trader selling now*, which
+is the right question for a shop and the wrong one for the Discoveries index.
+`item_sources` is built once on first use and **cached for the session**, so it pinned
+itself to whichever list happened to be current the first time the panel was opened. Open
+the panel out of the Marrowmoth's two seasons and the bay's in-port stock would have had
+no source listed at all, for the rest of the session, with nothing thrown.
+
+**It has been harmless by luck.** Measured: the `Bay` and `Bay in port` lists hold **the
+same fifteen item names** and differ only in counts and chances, so nothing has ever
+actually gone missing. That is the whole reason it was worth fixing now rather than after:
+it stops being luck the moment a derived list carries something another does not, and a
+shelf gated on standing is exactly that. Worse, there the item the player has not earned
+yet is precisely the one the panel most needs to name - and P-25 says so itself: *"A shelf
+the player cannot see is not a reward."*
+
+**The fix.** `stock_lists_of` beside `stock_list_name_of`, answering the other question:
+every list a trader can ever use. A plain name falls back to itself, so nothing changes
+for the eight static traders; a derived template declares its lists. The index walks all
+of them.
+
+**Both halves are checked against each other**, because neither is trustworthy alone: a
+declaration nobody verifies drifts from the function, and a function nobody can enumerate
+cannot be indexed. `check_trader_stock_lists` now reads the string literals out of the
+derived template's own source and requires the declaration to match them exactly - no
+missing list, no extra one, and every declared name backed by a real
+`inventory_templates` entry. Negative-tested three ways: removing the declaration, naming
+one of the two lists, and naming a shelf the function can never return.
+
+**Also found and not fixed here**, recorded as P-27: four hand-written items that nothing
+in the game can produce, sell, drop or hand over - `White steel chainmail`, `Black steel
+chainmail`, `Scraps of wolf rat meat` and `Basic spare parts`. The first two are the
+tier-5 chainmail materials, at value 180 and `material_type: "chainmail"`, sitting one
+line below the tier-4 pair that the naming convention matches - and v0.7.5 added `White
+chainmail` and `Black chainmail` beside them rather than using them.
 
 ### v0.7.15 - standing can be a ceiling, and the broker stops reciting the rule
 

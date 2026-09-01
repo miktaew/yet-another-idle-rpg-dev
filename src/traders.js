@@ -30,6 +30,34 @@ function stock_list_name_of(trader) {
         : trader?.inventory_template;
 }
 
+/**
+ * EVERY stock list a trader can ever use, not the one it is using now.
+ *
+ * These are two different questions and only one of them had an answer. What a trader
+ * sells today decides what the player can buy today; what it can EVER sell decides what
+ * the Discoveries panel should say about an item, and the panel was asking the first
+ * question. `item_sources` is built once on first use and cached for the session, so it
+ * baked in whichever list happened to be current when the panel was first opened - and
+ * out-of-season items would then have had no source listed for the rest of the session.
+ *
+ * Harmless so far by luck: the bay's two lists hold the same fifteen item names and
+ * differ only in counts and chances. It stops being luck the moment a derived list
+ * carries something the other does not, which is exactly what a shelf gated on standing
+ * is for (P-25) - and there the item the player has not earned yet is precisely the one
+ * the panel most needs to name.
+ *
+ * A function-valued `inventory_template` therefore has to declare its lists, and
+ * check_trader_stock_lists verifies the declaration against the function's own source so
+ * the two cannot drift.
+ */
+function stock_lists_of(trader) {
+    if(trader?.stock_lists) {
+        return trader.stock_lists;
+    }
+    const current = stock_list_name_of(trader);
+    return current ? [current] : [];
+}
+
 
 class Trader extends InventoryHaver {
     constructor({
@@ -40,6 +68,7 @@ class Trader extends InventoryHaver {
                 refresh_time = 4,
                 refresh_shift = 0,
                 inventory_template,
+                stock_lists = null, //required when inventory_template is a function
                 profit_margin = 3,
                 is_unlocked = true,
             }) 
@@ -84,6 +113,11 @@ class Trader extends InventoryHaver {
         //pretty much pointless if refresh time is not N*7
         
         this.inventory_template = inventory_template;
+        /*
+            Every list the template above can return. Only a derived template needs it;
+            for a plain name, stock_lists_of falls back to the name itself.
+        */
+        this.stock_lists = stock_lists;
         //a template for the trader to use, so multiple traders can have same predefined item selection (but still separate and with certain randomness)
         /*
             It may also be a FUNCTION returning a template name, which is how a shelf
@@ -256,6 +290,9 @@ class TradeItem {
         //seasons the Marrowmoth can work the ebb, the shed is holding what she landed;
         //the rest of the year it is down to what is left of it.
         inventory_template: () => is_marrowmoth_in_port(current_game_time.getSeason()) ? "Bay in port" : "Bay",
+        //Both of them, so the Discoveries panel knows what this shed can hold rather
+        //than only what is on the shelf the day it first looked.
+        stock_lists: ["Bay in port", "Bay"],
         is_unlocked: false,
         //Higher than the swamp and the slums both. Everything here has been on a
         //boat, and the price says so.
@@ -682,4 +719,4 @@ class TradeItem {
     ]
 
 })();
-export { traders, inventory_templates, TradeItem, stock_list_name_of };
+export { traders, inventory_templates, TradeItem, stock_list_name_of, stock_lists_of };

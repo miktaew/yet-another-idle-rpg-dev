@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 94 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 95 -->
 
 # Proposals
 
@@ -693,6 +693,45 @@ Up* was written without one on purpose and says so where the field would have go
 it is checkable: every field a data class declares should be named somewhere outside its
 own constructor. That is a broader check than this proposal and would probably find more
 than two.
+
+
+### P-27 — Four items nothing can give you `open`
+
+Found while measuring P-25's groundwork. Four hand-written item templates are named by no
+recipe result, no trader stock list, no enemy loot table and no reward anywhere in `src/`:
+
+| item | what it is |
+| --- | --- |
+| `White steel chainmail` | Material, value 180, `material_type: "chainmail"` |
+| `Black steel chainmail` | Material, value 180, `material_type: "chainmail"` |
+| `Scraps of wolf rat meat` | Material, value 8, `material_type: "meat"` |
+| `Basic spare parts` | OtherItem |
+
+All four have `desc item ...` rows in both locales, so they were written, translated and
+shipped, and no player can ever hold one.
+
+**The first two are the interesting ones.** They sit one line below `Black iron chainmail`,
+the tier-4 pair, and follow its naming exactly - the ingots are white steel and black
+steel, so `White steel chainmail` is what the convention produces. v0.7.5 wired tier 5 and
+added **`White chainmail` and `Black chainmail`** beside them instead of using them. So
+this is very likely a pair the fork's own work walked past rather than an upstream
+leftover.
+
+**What must not happen.** `White chainmail` shipped in v0.7.5 and a save can hold it, so it
+cannot be renamed - registry keys are player data. The choice is between giving the older
+pair a source and deleting it, and deleting is only safe *because* nothing has ever
+produced them: no save can contain what no source ever made.
+
+**Guard, and it is the point of the entry.** `check_components_can_be_made` and
+`check_books_can_be_got` already ask "can this be got at all" of generated components and
+of books, sharing one `reachable_item_names()` helper. Nothing asks it of hand-written
+items, which is why four of them have sat there. The same question over the whole registry
+is a small extension of a helper that exists, and this proposal is not finished until it
+exists - otherwise the fifth one arrives the same way.
+
+**What it will need.** An excuse list, like `known_unmade`: an item may legitimately have
+no source while the content that gives it is still being written. The list is the point -
+written down with a reason beats tolerated in silence.
 
 
 ---
