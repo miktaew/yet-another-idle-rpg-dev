@@ -3574,6 +3574,7 @@ const descriptions = {
     "ui max short": "Azami!",
     "ui bestiary stats": "Statlar:",
     "ui bestiary found in": "Bulunduğu yerler",
+    "ui unlocks repaired": "Zaten hak etmiş olduğunuz {v1} şey açıldı: söz tutulamadan önce tamamladığınız bir şeyin size vaat ettiği konuşmalar ve işler.",
     "ui reputation repaired": "{v1} nezdindeki itibarınız {v2} arttı; bir işe yaramadan önce zaten tamamlamış olduğunuz işler için.",
     "ui region reputation": "{v1} itibarı",
     "name Town": "Kasaba",

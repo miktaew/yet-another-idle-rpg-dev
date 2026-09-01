@@ -24,7 +24,7 @@ import { favourite_locations, locations } from "./data/locations.js";
 import { skills } from "./data/skills.js";
 import { player_storage } from "./data/storage.js";
 import { restore_obtained_order } from "./components/inventory_component.js";
-import { late_reputation_owed } from "./save_repairs.js";
+import { late_reputation_owed, unlocks_missed_by_finished_content } from "./save_repairs.js";
 import {
          change_completed_quest_visibility,
          format_money,
@@ -1530,6 +1530,33 @@ function load(save_data) {
                 v2: repair.missing,
             }), "notification");
         });
+
+        /*
+            And the unlocks a finished line was supposed to grant and never did - the same
+            shape of problem, and the one that sealed the bay: an unlocked tallyman with
+            nothing left to say, because the line that opens the rest of the conversation
+            was corrected after the greeting had already been heard.
+
+            Applied one unlock at a time rather than by replaying whole rewards blocks:
+            only_unlocks skips money and items but not reputation, so a blanket replay would
+            add standing again on every load. See save_repairs.js.
+        */
+        const missed_unlocks = unlocks_missed_by_finished_content({global_flags, stances});
+        missed_unlocks.forEach(missed => {
+            process_rewards({
+                rewards: {[missed.kind]: [missed.target]},
+                only_unlocks: true,
+                is_from_loading: true,
+                inform_overall: false,
+            });
+        });
+        if(missed_unlocks.length > 0) {
+            console.log(`[save repair] re-applied ${missed_unlocks.length} unlock(s) that `
+                + `finished content had granted before the game could hand them over: `
+                + missed_unlocks.map(m => m.from).join(", "));
+            log_message(translationManager.getText(language, "ui unlocks repaired",
+                {v1: missed_unlocks.length}), "notification");
+        }
 
         if(is_a_older_than_b(save_data["game version"], "v0.5")) {
             //unlock status was swapped from local activity to global activity, so a need for this

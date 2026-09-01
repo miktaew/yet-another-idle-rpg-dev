@@ -1,7 +1,7 @@
 /** Standing: what grants it, what it opens, and what repairs it. */
 
 import { repo_root } from "../lib/context.mjs";
-import { error } from "../lib/report.mjs";
+import { error, warn } from "../lib/report.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
 
 /**
@@ -226,4 +226,97 @@ async function check_a_late_repair_still_finds_its_grants() {
     }
 }
 
-export { check_a_standing_gate_can_be_reached, check_a_late_repair_still_finds_its_grants };
+/**
+ * The unlock repair knows every kind of unlock a one-time line can grant.
+ *
+ * A textline locks itself when it is done, so a reward added or corrected after a player has
+ * already heard the line can never fire. `save_repairs.js` re-applies the unlocks missed that
+ * way - which is what unsealed the bay, where the greeting had been heard while the line that
+ * opens the rest of the conversation was still written as `unlocks:`, a parameter Textline
+ * does not have. The tallyman was left unlocked with nothing to say, and a dialogue is only
+ * offered when `is_unlocked && !is_finished` holds for one of its lines, so the whole region
+ * showed nothing but the road out.
+ *
+ * The failure this holds is the repair going quietly out of date. Add a `recipes:` unlock to a
+ * dialogue line and the repair walks past it: nothing throws, the content works for every new
+ * player, and only someone who finished that line at the wrong version is left short - which
+ * is not a state any test can stumble into.
+ *
+ * So every reward kind declared on a one-time entry has to be either repaired or named in
+ * `unlock_kinds_left_alone` with a reason. A kind in neither list is the accident. Both lists
+ * come out of the module - the repaired one derived from the dispatch table itself - so this
+ * cannot come to agree with itself.
+ */
+async function check_the_unlock_repair_knows_every_kind() {
+    const [dialogues_module, locations_module, repairs] = await load_browser_free(repo_root,
+        ["src/data/dialogues.js", "src/data/locations.js", "src/save_repairs.js"]);
+
+    const repaired = new Set(repairs.repairable_unlock_kinds || []);
+    const excused = repairs.unlock_kinds_left_alone || {};
+    if (repaired.size === 0) {
+        error("save_repairs.js exports no repairable_unlock_kinds - this check is out of date.");
+        return;
+    }
+
+    /*
+        A constructor fills every reward field in, so an empty one is a default and not
+        something the content declared. Counting those would have this check demanding a
+        reason for every kind in the game whether or not anything uses it.
+    */
+    const declared = new Map();
+    const note = (entry, where) => {
+        //A repeatable entry can fire its reward again, so a late one is not lost.
+        if (entry.repeatable) return;
+        for (const [kind, value] of Object.entries(entry.rewards || {})) {
+            const has_content = Array.isArray(value)
+                ? value.length > 0
+                : (value && typeof value === "object")
+                    ? Object.keys(value).length > 0
+                    : Boolean(value);
+            if (!has_content) continue;
+            if (!declared.has(kind)) declared.set(kind, where);
+        }
+    };
+    for (const [name, dialogue] of Object.entries(dialogues_module.dialogues)) {
+        for (const bucket of ["textlines", "actions"]) {
+            for (const [key, entry] of Object.entries(dialogue[bucket] || {})) {
+                note(entry, `${name}/${key}`);
+            }
+        }
+    }
+    //Both sources the repair walks, so the two cannot drift apart.
+    for (const [name, location] of Object.entries(locations_module.locations)) {
+        for (const [key, action] of Object.entries(location.actions || {})) {
+            note(action, `${name}/${key}`);
+        }
+    }
+    if (declared.size === 0) {
+        error("no one-time reward declares anything at all - this check is out of date.");
+        return;
+    }
+
+    for (const [kind, where] of declared) {
+        if (repaired.has(kind) || kind in excused) continue;
+        error(`the unlock repair does not handle "${kind}" (declared on ${where}) and `
+            + `unlock_kinds_left_alone does not say why. A player who finished that line `
+            + `before the reward existed can never receive it, and nothing reports it. `
+            + `Handle it in save_repairs.js, or name it there with a reason.`);
+    }
+
+    //And the other direction: an excuse for a kind nothing declares is an excuse to delete.
+    for (const kind of Object.keys(excused)) {
+        if (declared.has(kind) || repaired.has(kind)) continue;
+        warn(`unlock_kinds_left_alone excuses "${kind}", which no one-time reward `
+            + `declares on a one-time entry. The excuse can go.`);
+    }
+
+    const counted = [...declared.keys()].filter(kind => repaired.has(kind)).length;
+    console.log(`[check] unlock repair: ${declared.size} reward kind(s) declared on one-time `
+        + `lines, ${counted} repaired, ${declared.size - counted} excused by name`);
+}
+
+export {
+    check_a_standing_gate_can_be_reached,
+    check_a_late_repair_still_finds_its_grants,
+    check_the_unlock_repair_knows_every_kind,
+};

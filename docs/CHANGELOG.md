@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 100 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 101 -->
 
 # Changelog
 
@@ -20,6 +20,63 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.29 - the bay opens, and so does everything else a finished job had promised
+
+*"There are still no actions in the bay in spring."* The third report of it, and **the first
+two diagnoses were both wrong** - v0.7.25 moved two seasonal actions off
+`display_conditions`, which was a real fault but not this one, and P-30 concluded the region
+was thin by design.
+
+**What it actually was.** `locations["The bay"]` has no actions of its own at all: the region
+is reached through the harbour tallyman, and his greeting is what unlocks the line that opens
+everything else. That reward was once written as `unlocks:` - a parameter `Textline` does not
+have - and a comment in `dialogues.js` records the correction. **The correction came after
+this player had already heard the greeting**, and a textline locks itself when it is done, so
+the reward could never fire again. A dialogue is only offered when `is_unlocked &&
+!is_finished` holds for one of its lines, so an unlocked tallyman with one finished line and
+the rest locked showed **no conversation at all** - which is exactly the screenshot: a bay with
+nothing in it but the road out.
+
+Measured on the owner's save rather than reasoned about: `harbour tallyman` unlocked,
+`tallyman hello` finished, `tallyman what leaves` locked, and `The salt house`, `The tidal
+flats` and `The lower hold` never unlocked - the last two holding four of the region's actions
+between them.
+
+**So it is P-38 again, in a different currency**, and it goes in the same place.
+`save_repairs.js` now also re-applies the unlocks that a finished one-time trigger had granted
+and the player never received. Read from the live registries after everything else has
+loaded, because what matters is the state the game is actually in.
+
+**Applied one unlock at a time, and that is not fussiness.**
+`process_rewards({only_unlocks: true})` skips money, xp, items and effects but explicitly
+does **not** skip reputation - so replaying whole rewards blocks on every load would have been
+a reputation pump. Each missed unlock is handed over as a reward object holding nothing but
+itself.
+
+Safe to run on every load with no record of having run: every availability test in the game is
+`is_unlocked && !is_finished`, so re-opening something already open changes nothing.
+Measured idempotent on the real save - six the first time, none the second.
+
+**What the six were.** The tallyman's line; three lines of the swamp cook's; the antique
+collector's monograph; the nekomimi trader; **a bed at Lake beach**; and the title *the woods
+are quiet*. All six earned, none received. The last two came from location actions rather than
+dialogue - which the repair only started walking because the guard made it.
+
+**Guard: `check_the_unlock_repair_knows_every_kind`.** The failure it holds is the repair going
+quietly out of date: add a new kind of unlock to a one-time line and the repair walks past it,
+nothing throws, the content works for every new player, and only somebody who finished that
+line at the wrong version is left short - which no test can stumble into. So every reward kind
+declared on a one-time entry must be either repaired or named in `unlock_kinds_left_alone`
+**with a reason**. The repaired list is derived from the dispatch table itself, so the check
+cannot come to agree with itself.
+
+**It paid for itself twice while being written.** It found that the repair walked dialogues but
+not location actions - a whole second source of the same dead end - and then, once broadened,
+that `housing` and `titles` were unlocks nobody was repairing. Both are now handled, and both
+turned out to be missing from the owner's save. 22 kinds declared, 10 repaired, 12 excused by
+name. Negative-tested in both directions: a payout kind added to a one-time line, and a
+handler taken out of the repair.
 
 ### v0.7.28 - an export says which version wrote it
 

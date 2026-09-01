@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 100 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 101 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,61 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.29 - körfez açılıyor, tamamlanmış bir işin vaat ettiği her şeyle birlikte
+
+*"Körfez bölgesinde ilkbaharda hâlâ aksiyon yok."* Bunun üçüncü bildirimi ve **ilk iki
+teşhisim de yanlıştı** — v0.7.25 iki mevsimlik aksiyonu `display_conditions`'tan çıkardı, ki bu
+gerçek bir hataydı ama bu değildi; P-30 ise bölgenin bilerek ince olduğu sonucuna varmıştı.
+
+**Gerçekte ne olduğu.** `locations["The bay"]`'in kendine ait hiç aksiyonu yok: bölgeye liman
+saymanı üzerinden giriliyor ve onun selamı, geri kalan her şeyi açan repliği açan şey. O ödül
+bir zamanlar `unlocks:` olarak yazılmıştı — `Textline`'ın sahip olmadığı bir parametre — ve
+`dialogues.js`'teki bir yorum düzeltmeyi kaydediyor. **Düzeltme, bu oyuncu selamı çoktan
+duyduktan sonra geldi** ve bir replik bitince kendini kilitliyor, yani ödül bir daha
+ateşlenemedi. Bir diyalog yalnızca repliklerinden biri için `is_unlocked && !is_finished`
+tuttuğunda sunuluyor; dolayısıyla tek repliği bitmiş, gerisi kilitli olan açık bir sayman
+**hiç konuşma göstermiyordu** — ekran görüntüsünün tam kendisi: içinde çıkış yolundan başka
+hiçbir şey olmayan bir körfez.
+
+Akıl yürütülmek yerine sahibinin kaydında ölçüldü: `harbour tallyman` açık, `tallyman hello`
+bitmiş, `tallyman what leaves` kilitli ve `The salt house`, `The tidal flats`, `The lower hold`
+hiç açılmamış — son ikisi bölgenin dört aksiyonunu aralarında tutuyor.
+
+**Yani bu yine P-38, farklı bir para biriminde** ve aynı yere gidiyor. `save_repairs.js` artık
+tamamlanmış tek seferlik bir tetikleyicinin verdiği ama oyuncunun hiç almadığı kilit açmalarını
+da yeniden uyguluyor. Her şey yüklendikten sonra canlı kayıt defterlerinden okunuyor, çünkü
+önemli olan oyunun gerçekten içinde bulunduğu durum.
+
+**Kilit açmalar tek tek uygulanıyor ve bu titizlik değil.**
+`process_rewards({only_unlocks: true})` parayı, tecrübeyi, eşyayı ve etkileri atlıyor ama
+itibarı **atlamıyor** — yani her yüklemede bütün ödül bloklarını tekrar oynatmak bir itibar
+pompası olurdu. Kaçırılmış her kilit açma, yalnızca kendisini taşıyan bir ödül nesnesi olarak
+veriliyor.
+
+Çalıştığına dair kayıt tutmadan her yüklemede çalışması güvenli: oyundaki her uygunluk testi
+`is_unlocked && !is_finished`, yani zaten açık olanı yeniden açmak hiçbir şeyi değiştirmiyor.
+Gerçek kayıtta idempotent olarak ölçüldü — ilk seferde altı, ikinci seferde sıfır.
+
+**O altısının ne olduğu.** Saymanın repliği; bataklık aşçısının üç repliği; antikacının
+monografı; nekomimi tüccarı; **Lake beach'te bir yatak**; ve *the woods are quiet* unvanı.
+Altısı da kazanılmış, hiçbiri alınmamış. Son ikisi diyalogdan değil konum aksiyonlarından
+geliyordu — ki onarım oraları yürümeye ancak muhafız zorladığı için başladı.
+
+**Muhafız: `check_the_unlock_repair_knows_every_kind`.** Tuttuğu başarısızlık, onarımın sessizce
+güncelliğini yitirmesi: tek seferlik bir repliğe yeni tür bir kilit açma ekleyin, onarım
+yanından geçer, hiçbir şey fırlatmaz, içerik her yeni oyuncu için çalışır ve yalnızca o
+repliği yanlış sürümde bitirmiş biri eksik kalır — ki hiçbir test bu duruma denk gelemez.
+Dolayısıyla tek seferlik bir girdide bildirilen her ödül türü ya onarılmış olmalı ya da
+`unlock_kinds_left_alone` içinde **gerekçesiyle** adlandırılmalı. Onarılanlar listesi dağıtım
+tablosunun kendisinden türetiliyor, yani kontrol kendi kendiyle hemfikir olamıyor.
+
+**Yazılırken masrafını iki kez çıkardı.** Onarımın diyalogları yürüdüğünü ama konum
+aksiyonlarını yürümediğini buldu — aynı çıkmazın koca bir ikinci kaynağı — ve genişletildikten
+sonra da `housing` ile `titles`'ın kimsenin onarmadığı kilit açmalar olduğunu. İkisi de artık
+kapsanıyor ve ikisi de sahibinin kaydında eksik çıktı. 22 tür bildirilmiş, 10'u onarılıyor,
+12'si adıyla gerekçeli. İki yönde negatif test edildi: tek seferlik bir repliğe eklenen bir
+ödeme türü ve onarımdan çıkarılan bir işleyici.
 
 ### v0.7.28 - bir dışa aktarma hangi sürümün yazdığını söylüyor
 

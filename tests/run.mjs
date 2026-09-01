@@ -83,6 +83,7 @@ import {
 import {
     check_a_standing_gate_can_be_reached,
     check_a_late_repair_still_finds_its_grants,
+    check_the_unlock_repair_knows_every_kind,
 } from "./checks/reputation.mjs";
 import {
     check_duration_units_have_rows,
@@ -206,6 +207,7 @@ check_a_sorted_field_is_saved();
 check_every_sort_button_is_understood();
 await check_a_standing_gate_can_be_reached();
 await check_a_late_repair_still_finds_its_grants();
+await check_the_unlock_repair_knows_every_kind();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

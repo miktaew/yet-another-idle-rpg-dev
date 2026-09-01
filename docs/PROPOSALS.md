@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 116 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 117 -->
 
 # Proposals
 
@@ -783,6 +783,45 @@ at `dialogues.js:3271`, which points at who should hand it out.
 especially, since the reward looks exactly like every reward that works.
 
 ---
+
+### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
+
+The owner's request: *"let us add random quests from the guild, A through S. We should be able
+to take different ones, and they should sit somewhere separate called guild quests. Different
+types - hunt x monsters, gather y of something - and they should raise guild reputation. With
+guild reputation we should get different rewards from the guild shop, different rewards at
+certain milestones. Maybe we can add guild-only items."*
+
+**What already exists, measured.** `Guild` is a real reputation region and it is at 0 in the
+owner's save; the guild factor's dialogue grants it in three places; a `Guild` gate already
+exists. The quest machinery handles tasks, hidden tasks, ordered completion and task rewards.
+So the region, the currency and the task engine are all in place.
+
+**What does not exist, and it is the whole of the work.** Every quest in the game is written
+by hand, named, and reached from a specific line of dialogue. Nothing generates one, nothing
+holds a pool of them, and nothing offers a choice of several. A board of randomised jobs is a
+new mechanism: it needs a generator, a place to keep the ones currently on offer, a rule for
+how they refresh, and a save shape - because a job the player accepted has to survive a
+reload.
+
+**Four decisions before any of it is written.**
+
+- **What "A through S" means.** Nineteen tiers of difficulty, or nineteen distinct jobs? The
+  first is a ladder and needs a scaling rule; the second is a pool and needs nineteen written
+  briefs.
+- **Where they refresh.** Per in-game day, per visit, or on completion. This is the difference
+  between a board the player checks and a board the player farms.
+- **How they pay standing.** A fixed amount per tier is simple and predictable; scaling with
+  the job makes the ladder matter. Either way the total has to be bounded, because
+  `check_a_standing_gate_can_be_reached` compares grants against gates and a repeatable source
+  makes a region unbounded - which would silence that check for the guild.
+- **What guild-only items are for.** Items nobody else sells is a good reason for a shop to
+  exist (the two cafés were added in v0.7.9 for exactly that). Items nobody else sells *and*
+  that are better than what the player has is a power curve, and the game's is already set by
+  tier.
+
+**Where it should live.** A separate panel, as asked. `Guild` standing already has a row in the
+Data panel once it is above nought, so the milestones have somewhere to be read off.
 
 ## Open decisions
 

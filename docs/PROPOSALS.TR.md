@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 116 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 117 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -804,6 +804,44 @@ yolun aktive etmediği bir göreve nişan almış bir `quest_progress` ödülü.
 özellikle ikincisi, çünkü ödül tam olarak çalışan her ödül gibi görünüyor.
 
 ---
+
+### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
+
+Sahibinin isteği: *"loncadan random A'dan S'ye kadar görevler ekleyelim. farklı görevleri
+alabilelim ve bunlar lonca görevleri adıyla farklı bir yerde dursun. x kadar canavar avla, y
+şundan topla gibi farklı tip görevler, ve lonca rep'i arttırsın. lonca rep'i ile de lonca
+mağazasından farklı ödüller, belli milestonelerde farklı ödüller alabilelim. belki loncaya özel
+eşyalar ekleyebiliriz."*
+
+**Zaten var olanlar, ölçüldü.** `Guild` gerçek bir itibar bölgesi ve sahibinin kaydında 0;
+lonca faktörünün diyalogu üç yerde onu veriyor; bir `Guild` kapısı da zaten var. Görev
+makinesi adımları, gizli adımları, sıralı tamamlamayı ve adım ödüllerini kaldırıyor. Yani
+bölge, para birimi ve adım motoru yerinde.
+
+**Var olmayan şey ve işin tamamı da bu.** Oyundaki her görev elle yazılmış, adlandırılmış ve
+belirli bir diyalog repliğinden ulaşılıyor. Hiçbir şey görev üretmiyor, hiçbir şey bir havuz
+tutmuyor ve hiçbir şey birkaçı arasından seçim sunmuyor. Rastgele işlerden oluşan bir pano yeni
+bir mekanizma: bir üretici, o an sunulanları tutacak bir yer, nasıl yenilendiklerine dair bir
+kural ve bir kayıt biçimi gerekiyor — çünkü oyuncunun kabul ettiği bir iş yeniden yüklemeyi
+atlatmalı.
+
+**Herhangi biri yazılmadan önce dört karar.**
+
+- **"A'dan S'ye" ne demek.** On dokuz zorluk kademesi mi, on dokuz ayrı iş mi? Birincisi bir
+  merdiven ve bir ölçekleme kuralı gerektiriyor; ikincisi bir havuz ve on dokuz yazılmış brief.
+- **Nerede yenilendikleri.** Oyun günü başına, ziyaret başına ya da tamamlamada. Bu, oyuncunun
+  kontrol ettiği bir pano ile oyuncunun çiftlik yaptığı bir pano arasındaki fark.
+- **İtibarı nasıl ödedikleri.** Kademe başına sabit bir miktar basit ve öngörülebilir;
+  işle ölçeklenmesi merdiveni anlamlı kılıyor. Her hâlükârda toplam sınırlı olmalı, çünkü
+  `check_a_standing_gate_can_be_reached` bağışları kapılarla karşılaştırıyor ve tekrarlanabilir
+  bir kaynak bölgeyi sınırsız yapıyor — ki bu o kontrolü lonca için susturur.
+- **Loncaya özel eşyaların ne işe yaradığı.** Başka kimsenin satmadığı eşyalar bir dükkânın var
+  olması için iyi bir sebep (iki kafe v0.7.9'da tam olarak bunun için eklendi). Başka kimsenin
+  satmadığı **ve** oyuncunun elindekinden iyi olan eşyalar ise bir güç eğrisi ve oyunun eğrisi
+  zaten kademeyle belirlenmiş.
+
+**Nerede yaşamalı.** İstendiği gibi ayrı bir panel. `Guild` itibarının sıfırın üzerine çıktığı
+anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı bir yer var.
 
 ## Bekleyen kararlar
 

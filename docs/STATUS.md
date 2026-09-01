@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 47 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 48 -->
 
 # Status
 
@@ -210,6 +210,7 @@ but the ones that encode a bug that shipped:
 | `standing gates` | A reputation gate asking for more than the game can ever grant, so nobody can open it. 46 grants, 5 gated regions. |
 | `late repairs` | A repair for a reward added late that can no longer find what it replays, so it silently pays nothing. |
 | `export name` | An exported save whose filename does not say the version or the date that wrote it. |
+| `unlock repair` | An unlock a one-time line can grant that the save repair does not know about, so a player who finished it too early never gets it. 22 kinds. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |
