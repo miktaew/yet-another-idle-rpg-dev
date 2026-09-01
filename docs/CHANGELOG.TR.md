@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 80 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 81 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,119 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.12 - balık, pişirdiğinizde kalitesini koruyor
+
+Oyun içinde bildirildi: balığın kalitesi pişirdikten sonra kayboluyor.
+
+**Bunun teklifinin, tek satır kod değişmeden önce iki kez yanlış bildiği şey.** Eşya
+yolunun
+`roll_quality(station_tier - result_tier)` çağırdığını, bileşenlerle ekipmanın ise
+ikisinin de ağırlıklı bir girdi kalitesi geçirdiğini yazıyordu. İkisi de doğru değil.
+Ölçüldüğünde dört yol şöyleydi:
+
+| yol | kalite atıyor mu | girdisine bakıyor mu |
+| --- | --- | --- |
+| eşyalar — yemek, eritme, simya, kasaplık, cam, kömür | **hayır** | atış diye bir şey yoktu: sonuç `item_templates[result_id].getInventoryKey()` ile ekleniyordu, yani kalitesi `null` çıkıyordu |
+| bileşenler — külçeden namluya, kumaştan giysiye | evet | **hayır** — `roll_quality(tier)`'ın bunun için parametresi yoktu |
+| pelerinler | evet | **hayır** — aynısı |
+| ekipman montajı | evet | evet — `roll_quality(component_stats.weighted_quality, tier)` |
+
+Yani mesele, eşya atışının malzemeleri görmezden gelmesi değildi. Eşya atışı diye bir şey
+yoktu ve kaliteyi çöpe atan satır kusursuz masum görünüyordu. Dört yoldan yalnızca biri
+girdisine bakmıştı.
+
+**Ayrışma neden mümkün oldu ve düzeltme ne.** Dört sınıftan üçü kendi `roll_quality`
+kopyasını taşıyordu; her biri yalnızca bir kademe alıyordu. Daha iyisini yapacak
+mekanizma — `get_quality_range`'in iki dalı — ise bunca zaman temel sınıfta kullanılmadan
+duruyordu. Artık `ItemRecipe` üzerinde tek bir gövde var, `(input_quality, tier)`, ve
+kaliteli bir şey üreten her alt sınıf onu miras alıyor; `EquipmentRecipe` bu şekli zaten
+taşıyordu. İki mükerrer gövde silindi.
+
+`use_recipe`'in eşya dalı, gerçekten tükettiği şeyin kalitesini, ne kadarını tükettiğine
+göre ağırlıklandırarak topluyor; hem de tam o yığınları zaten yürüyen döngünün içinde.
+Parti başına tek atış, çünkü o dal bir parti: tek bir çağrıda tek bir şeyin `final_count`
+tanesini üretiyor ve hiç eşya başına dönmüyor — yani karışık bir balık kovası, yığını on
+parçaya bölmek yerine tek bir kaliteye pişiyor.
+
+**Bunun neden sınırlı kaldığı.** Kalitesi olmayan bir malzeme toplamı sıfırda bırakıyor ve
+sonuç eskisi gibi şablondan üretiliyor; çünkü `get_quality_range`, yanlış-değerli bir
+girdi kalitesine kendi girdisiz dalıyla cevap veriyor. Üretim dışında kalite yaratan tek
+şey balıkçılık — oyundaki üç `roll_quality: true` etkinliğinin üçü de balık tutma — yani
+bugün mesele balıklar ve başka hiçbir şey. Kural balıklarla değil malzemelerle ilgili
+olduğu için, sonradan kalite verilen her şey kendiliğinden devreye giriyor.
+
+**Bunu baştan güvenli kılan sayı.** `get_quality_range`'in iki dalı, 80 girdi
+kalitesinde buluşuyor: 50 + 80, girdisiz dalın eklediği 130 ediyor. Dolayısıyla eşya
+tariflerinin hiç kullanmadığı dal, harfiyen *malzemeleri 80 varsay* demek; bu da gerçek
+kaliteyi geçirmeyi bir güçlendirme değil, simetrik bir şey yapıyor. Balığı, balıkçılığın
+kendi formülüyle atarak beceri seviyeleri boyunca ölçüldü:
+
+| Balıkçılık / Yemek | balık atışı | yemek, eskiden fiyatlandığı sabit %100'ün oranı olarak |
+| --- | --- | --- |
+| 0 | 55-80 | %58 |
+| 10 | 85-110 | %112 |
+| 20 | 115-140 | %140 |
+| 30 | 145-160 | %160 |
+| 50+ | 200 | %200 |
+
+Eğim, nerf değil: acemi biri kötü bir balıktan kötü bir yemek yapıyor ve bir süre balık
+tutmuş biri için yaklaşık iki katına çıkıyor. Oyunun başındaki kayıp, 40 değerli bir
+eşyada birkaç sikke.
+
+**Ölçümün bulup planın bulamadığı iki şey.** İkisi de oyuncunun birinde göremeyeceği,
+diğerinde atlatamayacağı bir kaliteyi yayınlayacaktı:
+
+- **`use_quality`.** Kaliteyi çizen iki yer de — tooltip ve envanter satırı — önce eşyaya
+  `use_quality` diye soruyor ve 39 tüketilebilirin hepsi "hayır" diyordu; çünkü bugüne
+  kadar pişmiş hiçbir şeyin kalitesi yoktu. Bunu ayarlamasak yemek, üstünde hiçbir yerde
+  görünmeyen bir sayıyla kaydedilecek, fiyatlanacak ve alınıp satılacaktı: aynı anda
+  görünmez ve sonuçlu, yani bu projenin sürekli peşine düştüğü tam o eşleşme. Tarif
+  yürüyüşünün adlandırdığı, kalitenin ulaşabildiği dört yemekte ayarlandı: şiş, kızarmış
+  balık, fileto ve biftek — biftek geçişli olarak, fileto üzerinden.
+- **`getRarity`.** Çizen iki yer de sayıyı `item.getRarity()` ile renklendiriyor ve bu,
+  `Item` üzerinde değil üç alt sınıfta üç birebir kopya hâlinde yaşıyordu. `UsableItem` ve
+  `OtherItem` — yemeklerin ait olduğu iki sınıf — bundan yoksundu, yani kaliteli ilk yemek
+  bir TypeError atıp envanter ekranını da beraberinde götürecekti. `Item`'a taşındı, üç
+  kopya silindi.
+
+**Dört muhafız; her biri hatayı geri koyarak negatif test edildi.**
+
+- Her `roll_quality` bildirimi ilk sırada bir kademe değil bir girdi kalitesi alıyor.
+  `ItemRecipe`'in imzasını geri almak hem bunu hem davranış kontrolünü düşürüyor.
+- Her çağrı yeri iki argüman geçiyor ve ilkinde bir kaliteyi adlandırıyor; ayrıca üretilen
+  hiçbir eşya kendi şablonunun envanter anahtarıyla eklenemiyor — bu ikinci kural,
+  balığın kalitesinin öldüğü satırın tam şekli; çünkü çağrı yerlerini saymak, atış
+  korunurken sonucun şablona dönmesini yakalamazdı.
+- Arkasındaki aralık değil, yayınlanan `roll_quality` üzerinden: %130 girdiden alınan 40
+  örneğin hepsi %40 girdiden alınan 40 örneği geçiyor, yanlış-değerli bir girdi girdisiz
+  aralığın içinde kalıyor ve iki dal hâlâ 80'de buluşuyor. Aralığı okumak yerine atışı
+  örneklemek bilinçli — bu kontrolün ilk hâli doğrudan `get_quality_range`'i soruyordu ve
+  parametre bağlanmamışken **geçiyordu**.
+- Tarif yürüyüşü: bugün kalite gösteren her şeyden başlayarak, kalitenin ulaşabildiği her
+  sonuç da bir kalite göstermek zorunda ve her eşya şablonu `getRarity`'ye cevap vermek
+  zorunda. Listelenmek yerine türetildi, böylece başka bir malzemeye kalite vermek, onu
+  yutacak olanı adlandırıyor.
+
+**Bilerek bırakılanlar ve nedenleri.**
+
+- **Bileşen yarısı bağlı ama erişilemez.** Bir bileşen tarifinin aldığı hiçbir malzemenin
+  henüz kalitesi yok ve `update_displayed_material_choice` satırlarını yığınlardan değil
+  şablondan anahtarlıyor — üstünde duran upstream notu tam bunu söylüyor:
+  `//TODO currently doesn't support items with quality`. Yani oyuncu kaliteli bir külçeyi
+  baştan seçemiyor. Yine de bağlamak esas nokta: parametreyi dışarıda bırakmak, yolların
+  ayrışma biçiminin kendisiydi; seçici de ona sunacak kaliteli bir külçe olduğunda gelir.
+- **Yemek etkileri ölçeklenmiyor.** Bir yemeğin etkisi, sabit süreli adlandırılmış bir
+  öğün; yani %140 kızarmış balık daha değerli ama daha iyi doyurmuyor. Süre bariz eksen ve
+  bu bir tasarım kararı, düzeltme değil.
+- **Hiçbir kütük satırı kaliteyi söylemiyor.** Eşya dalı "N tanesinden M yaptı" diye
+  yazıyor, bileşen dalının ise içinde kalite olan kendi ifadesi var. Onu yeniden kullanmak
+  iki dilde dört yeni yerel satır gerektirirdi; sayı her hâlükârda eşyanın üstünde.
+- **`item_mapping` kaliteli bir eşyaya ulaşmıyor.** Kayıt yükleyici, yeniden adlandırma
+  haritasını kalitesi olmayan eşyaların dalında uyguluyor; pişmiş balığın geldiği dalda
+  değil. Haritadaki üç kayıt, asla kalite taşıyamayacak odun malzemeleri; bu yüzden bugüne
+  kadar önemi olmadı — o haritaya bir şey ekleyecek sonraki kişinin görmesi için dalın
+  yanına not düşüldü.
 
 ### v0.7.11 - bir yerin fikri olması ve itibarın altına bir taban
 

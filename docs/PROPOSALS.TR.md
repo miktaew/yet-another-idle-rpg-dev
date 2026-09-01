@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 90 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 91 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -644,43 +644,6 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
   insanlar üzerinden gelmek zorunda.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
-
-### P-22 — Bir eşya tarifi, içine gireni çöpe atıyor `open`
-
-Oyun içinde bildirildi: balığın kalitesi pişirdikten sonra kayboluyor. Ölçüldü ve mesele
-balık değil.
-
-`src/crafting.js` içinde iki üretim yolu var ve kaliteyi farklı ele alıyorlar:
-
-- **Bileşenler ve ekipman**, `roll_quality(comp_quality_weighted, station_tier -
-  comp_tier_max)` çağırıyor. Bileşenlerin ağırlıklı kalitesi içeri giriyor, yani iyi bir
-  namludan iyi bir kılıç çıkıyor. Oyuncunun her yerde beklediği davranış da bu.
-- **Eşyalar**, `roll_quality(station_tier - result_tier)` çağırıyor. **Malzemelerle ilgili
-  hiçbir şey aktarılmıyor.** %90 bir alabalık ile %10 bir alabalık aynı dağılıma pişiyor
-  ve sonucu oynatan tek şey istasyon ile yetenek atışı.
-
-Yani bu, oyundaki her eşya tarifini kapsıyor — yemek, simya, eritme, cam ve kömür — tek
-bir yemeği değil. Balıkçılığın toplanan kaynaktaki `roll_quality: true` ayarının, balık
-tavaya girdiği an anlamsız gelmesinin sebebi de bu.
-
-**Varsayılmak yerine karar verilmesi gerekenler:**
-
-- Girdinin kalitesinin, bileşenin yaptığı gibi atışı ağırlıklandırması mı, onu
-  sınırlaması mı, yoksa tabanını mı kaydırması gerektiği. Bileşenin ağırlıklandırması
-  bariz emsal ve `roll_quality`'nin mevcut ilk parametresini yeniden kullanmak kodun
-  tamamı demek.
-- Farklı kalitelerde birkaç malzemesi olan bir tarifin ne yapacağı. Bileşenler bunu
-  ağırlıklı ortalamayla zaten cevaplıyor; eşyalar ikinci bir cevap uydurmamalı.
-- Tarifin bir kimlik değil bir eşya sınıfı adlandırdığı ve oyuncunun onun beş kalitesini
-  elinde tutabildiği `material_type` şartına ne olacağı. Hangisinin tüketileceği,
-  matematik olduğu kadar arayüz sorusu ve bugün hiçbir şey seçmiyor.
-- Mevcut dengenin bu davranışa bağlı olup olmadığı. %100 bir alabalığın %100 kızarmış
-  balığa dönüşmesi, bütün yemek tariflerine birden gelen düpedüz bir güçlendirme.
-
-**Muhafız.** İki yol bir daha ayrışamamalı: yayınlanan `roll_quality` üzerinden, yüksek
-kaliteli bir girdinin düşük kaliteliden daha iyi bir sonuç ürettiğini doğrulayan bir test;
-bir eşya tarifi ve bir bileşen tarifi için. Bugün o testin eşya yarısı düşüyor, ki mesele
-de bu.
 
 ### P-23 — Koleksiyoncu bir kitap satıyor ve o bir yemek kitabı değil `open`
 

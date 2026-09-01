@@ -232,6 +232,28 @@ class Item {
         return JSON.stringify(key);
     }
 
+    /*
+        Lives here rather than on the three subclasses that used to carry a copy of it
+        each. Rarity is a function of quality and nothing else, and Item is where
+        quality lives - so a class that could hold a quality but not answer for its
+        rarity was a crash waiting for the first item to hold one.
+
+        Which arrived with P-22: cooked fish carry their inputs' quality now, and both
+        the tooltip and the inventory row call getRarity() to colour the number.
+        UsableItem and OtherItem had neither, so the first fried fish with a quality
+        would have thrown a TypeError and taken the inventory display with it.
+    */
+    getRarity(quality){
+        if(!quality) {
+            if(!this.rarity) {
+                this.rarity = getItemRarity(this.quality);
+            }
+            return this.rarity;
+        } else {
+            return getItemRarity(quality);
+        }
+    }
+
     getBaseValue({quality, multiplier = 1}={}) {
         quality = quality || this.quality || 100;
         if(this.components) {
@@ -342,17 +364,6 @@ class Material extends OtherItem {
         }
     }
 
-    getRarity(quality){
-        if(!quality) {
-            if(!this.rarity) {
-                this.rarity = getItemRarity(this.quality);
-            }
-            return this.rarity;
-        } else {
-            return getItemRarity(quality);
-        }
-    }
-
     getSize(quality) {
         if(!quality) {
             if(!this.size_value) {
@@ -389,17 +400,6 @@ class ItemComponent extends Item {
             output with the classes stubbed, not the instances these constructors make.
         */
         this.material_id = item_data.material_id;
-    }
-
-    getRarity(quality){
-        if(!quality) {
-            if(!this.rarity) {
-                this.rarity = getItemRarity(this.quality);
-            }
-            return this.rarity;
-        } else {
-            return getItemRarity(quality);
-        }
     }
 
     getStats() {
@@ -596,18 +596,6 @@ class Equippable extends Item {
         } else { 
             return 1;
         }
-    }
-
-    getRarity(quality){
-        if(!quality) {
-            if(!this.rarity) {
-                this.rarity = getItemRarity(this.quality);
-            }
-            return this.rarity;
-        } else {
-            return getItemRarity(quality);
-        }
-
     }
 
     getStats(quality){
@@ -1666,6 +1654,15 @@ book_stats["Counting Mice"] = new BookData({
         name: "Fish fillet", 
         description: "desc item Fish fillet",
         value: 30,
+        /*
+            The fish it is made of show a quality, so this has to as well. Item recipes
+            carry their inputs' quality through as of P-22, and both the tooltip and the
+            inventory row draw a quality only when the item says use_quality - so
+            without this the dish would be saved, priced and traded on a quality the
+            player could not see anywhere. Invisible and consequential is the exact
+            pairing this project keeps having to hunt down.
+        */
+        use_quality: true,
     });
 
     item_templates["Glass phial"] = new OtherItem({
@@ -5281,6 +5278,15 @@ function add_gear() {
         value: 20,
         effects: [{effect: "Cheap meat meal", duration: 45}],
         tags: {"food": true},
+        /*
+            The fish it is made of show a quality, so this has to as well. Item recipes
+            carry their inputs' quality through as of P-22, and both the tooltip and the
+            inventory row draw a quality only when the item says use_quality - so
+            without this the dish would be saved, priced and traded on a quality the
+            player could not see anywhere. Invisible and consequential is the exact
+            pairing this project keeps having to hunt down.
+        */
+        use_quality: true,
     });
 
     item_templates["Fried fish"] = new UsableItem({
@@ -5289,6 +5295,15 @@ function add_gear() {
         value: 40,
         effects: [{effect: "Simple meat meal", duration: 60}],
         tags: {"food": true},
+        /*
+            The fish it is made of show a quality, so this has to as well. Item recipes
+            carry their inputs' quality through as of P-22, and both the tooltip and the
+            inventory row draw a quality only when the item says use_quality - so
+            without this the dish would be saved, priced and traded on a quality the
+            player could not see anywhere. Invisible and consequential is the exact
+            pairing this project keeps having to hunt down.
+        */
+        use_quality: true,
     });
 
     item_templates["Fish steak"] = new UsableItem({
@@ -5297,6 +5312,15 @@ function add_gear() {
         value: 60,
         effects: [{effect: "Decent meat meal", duration: 60}],
         tags: {"food": true},
+        /*
+            The fish it is made of show a quality, so this has to as well. Item recipes
+            carry their inputs' quality through as of P-22, and both the tooltip and the
+            inventory row draw a quality only when the item says use_quality - so
+            without this the dish would be saved, priced and traded on a quality the
+            player could not see anywhere. Invisible and consequential is the exact
+            pairing this project keeps having to hunt down.
+        */
+        use_quality: true,
     });
 
     item_templates["Apple pie"] = new UsableItem({

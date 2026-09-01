@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 80 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 81 -->
 
 # Changelog
 
@@ -20,6 +20,118 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.12 - a fish keeps its quality when you cook it
+
+Reported in play: a fish's quality is gone after cooking it.
+
+**What the proposal for this got wrong, twice, before a line of code changed.** It said
+the items path calls
+`roll_quality(station_tier - result_tier)`, and that components and equipment both pass a
+weighted input quality. Neither is true. Measured, the four paths were:
+
+| path | rolls a quality | consults its input |
+| --- | --- | --- |
+| items - cooking, smelting, alchemy, butchering, glass, charcoal | **no** | there was no roll: the result was added at `item_templates[result_id].getInventoryKey()`, so it came out with quality `null` |
+| components - ingot to blade, cloth to clothing | yes | **no** - `roll_quality(tier)` had no parameter for one |
+| capes | yes | **no** - same |
+| equipment assembly | yes | yes - `roll_quality(component_stats.weighted_quality, tier)` |
+
+So it was not that the item roll ignored the materials. There was no item roll at all, and
+the line that threw the quality away read perfectly innocently. Only one of four paths
+had ever consulted its input.
+
+**Why the drift was possible, and the fix.** Three of the four classes carried their own
+copy of `roll_quality`, each taking a tier and nothing else, while the machinery to do
+better - `get_quality_range`'s two branches - had been sitting unused on the base class
+the whole time. One body on `ItemRecipe` now, `(input_quality, tier)`, inherited by every
+subclass that makes something with a quality; `EquipmentRecipe` already had that shape.
+Two duplicate bodies deleted.
+
+`use_recipe`'s item branch tallies the quality of what it actually consumed, weighted by
+how much of it it consumed, in the loop that was already walking exactly those stacks. One
+roll for the batch, because that branch is a batch - it makes `final_count` of one thing in
+one call and never loops per item, so a mixed bucket of fish cooks into one quality rather
+than splitting the stack a dozen ways.
+
+**Why this is contained.** A material with no quality leaves the tally at zero and the
+result is created from the template exactly as before, because `get_quality_range` answers
+a falsy input quality with its no-input branch. Fishing is the only thing outside crafting
+that makes a quality - all three `roll_quality: true` activities in the game are fishing -
+so today this is the fish and nothing else. The rule is about materials rather than about
+fish, so anything given a quality later starts mattering on its own.
+
+**The number that made this safe to do at all.** The two branches of `get_quality_range`
+meet at an input quality of 80: 50 + 80 is the 130 the no-input branch adds. The branch
+item recipes had never used is therefore literally *assume the materials were 80*, which
+makes passing the real quality symmetric rather than a buff. Measured across skill levels,
+with the fish rolled by fishing's own formula:
+
+| Fishing / Cooking | fish rolls | dish, as a share of the flat 100% it used to be priced at |
+| --- | --- | --- |
+| 0 | 55-80 | 58% |
+| 10 | 85-110 | 112% |
+| 20 | 115-140 | 140% |
+| 30 | 145-160 | 160% |
+| 50+ | 200 | 200% |
+
+A gradient, not a nerf: a novice cooking a poor fish makes a poor meal, and by the time
+anyone has fished for a while it pays about double. The early-game loss is a few coins on
+a 40-value item.
+
+**Two things the measurement found that the plan had not.** Both would have shipped a
+quality the player could not have, in one case, seen and in the other, survived:
+
+- **`use_quality`.** Both places that draw a quality - the tooltip and the inventory row -
+  ask the item for `use_quality` first, and all 39 usable items said false, because until
+  now no cooked thing had one. Without setting it the dish would have been saved, priced
+  and traded on a number shown nowhere on it: invisible and consequential at once, the
+  exact pairing this project keeps having to hunt down. Set on the four dishes a quality
+  can reach, which the recipe walk names: the skewer, the fried fish, the fillet, and the
+  steak - the steak transitively, through the fillet.
+- **`getRarity`.** Both drawing sites colour the number by `item.getRarity()`, which lived
+  on three subclasses in three identical copies and not on `Item`. `UsableItem` and
+  `OtherItem` - the two classes the dishes are - had none, so the first qualitied meal
+  would have thrown a TypeError and taken the inventory display with it. Moved to `Item`,
+  three copies deleted.
+
+**Guards, four of them, each negative-tested by putting the fault back.**
+
+- Every `roll_quality` declaration takes an input quality first, not a tier. Reverting
+  `ItemRecipe`'s signature fails this and the behaviour check both.
+- Every call site passes two arguments and names a quality in the first, and no crafted
+  item may be added at its template's own inventory key - that second rule is the shape of
+  the exact line the fish's quality used to die on, because a count of call sites would
+  not have caught the roll being kept while the result went back to the template.
+- Through the shipped `roll_quality` rather than the range behind it: 40 samples from a
+  130% input all beat 40 samples from a 40% one, a falsy input stays inside the no-input
+  range, and the two branches still meet at 80. Sampling the roll rather than reading the
+  range is deliberate - the first version of this check asked `get_quality_range` directly
+  and **passed** with the parameter unthreaded.
+- The recipe walk: from everything that shows a quality today, every result a quality can
+  reach must show one too, and every item template must be able to answer `getRarity`.
+  Derived rather than listed, so giving another material a quality names what would
+  swallow it.
+
+**What is deliberately left, and why.**
+
+- **The component half is wired and unreachable.** No material a component recipe takes
+  has a quality yet, and `update_displayed_material_choice` keys its rows from the
+  template rather than from the stacks - the upstream `//TODO currently doesn't support
+  items with quality` sitting right on it. So the player cannot pick a qualitied ingot to
+  begin with. Wiring it anyway is the point: leaving the parameter out is how the paths
+  drifted apart, and the chooser follows when there is a qualitied ingot for it to offer.
+- **Food effects do not scale.** A dish's effect is a named meal for a fixed duration, so
+  a 140% fried fish is worth more and does not feed better. Duration is the obvious axis
+  and it is a design decision, not a fix.
+- **No log line says the quality.** The item branch logs "made N out of M" and the
+  component branch has its own phrasing with a quality in it. Reusing that would need four
+  new locale rows in two languages; the number is on the item either way.
+- **`item_mapping` does not reach a qualitied item.** The save loader applies the rename
+  map in the branch for items without a quality, not in the branch cooked fish come
+  through. Its three entries are wood materials that can never carry one, which is why
+  this has never mattered - noted at the branch so the next person to add to that map
+  sees it.
 
 ### v0.7.11 - a place having an opinion, and a floor under standing
 

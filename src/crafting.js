@@ -106,6 +106,22 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 run_stats.total_crafting_attempts += attempted_crafting_ammount;
                 run_stats.total_crafting_successes += successful_crafting_ammount;
 
+                /*
+                    P-22. What actually went in, weighted by how much of it went in.
+
+                    This loop is the only place that knows: get_availability hands back the
+                    real inventory entries rather than the recipe's material list, so the
+                    stacks being consumed - and the quality each of them carries - are
+                    right here, and were being walked past.
+
+                    Only materials that carry a quality are counted, so a recipe whose
+                    inputs have none leaves this at 0 and the result is created from the
+                    template exactly as it was before. Fishing is the only thing outside
+                    crafting that makes a quality today, so today this is the fish.
+                */
+                let consumed_quality_total = 0;
+                let consumed_quality_count = 0;
+
                 //remove used materials
                 for (let i = 0; i < selected_recipe.materials.length; i++) {
                     let to_remove = selected_recipe.materials[i].count * attempted_crafting_ammount;
@@ -113,12 +129,22 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     for (let j = 0; j < materials[i].items.length && to_remove > 0; j++) {
                         const removed = Math.min(materials[i].items[j].count, to_remove);
                         const key = materials[i].items[j].item.inventory_key;
+                        const consumed_quality = materials[i].items[j].item.quality;
+
+                        if(consumed_quality) {
+                            consumed_quality_total += consumed_quality * removed;
+                            consumed_quality_count += removed;
+                        }
 
                         remove_from_character_inventory([{ item_key: key, item_count: removed }]);
 
                         to_remove -= removed;
                     }
                 }
+
+                const input_quality = consumed_quality_count
+                    ? consumed_quality_total/consumed_quality_count
+                    : undefined;
 
                 const final_result_count =  count * successful_crafting_ammount; 
                 //recipe is either full success or full fail
@@ -130,7 +156,26 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 const final_count = scale_results ? fuzzy_final_result_count : final_result_count;
 
                 if(final_count) {
-                    add_to_character_inventory([{item_key: item_templates[result_id].getInventoryKey(), count: final_count}]);
+                    /*
+                        One roll for the batch, because this branch is a batch: it makes
+                        final_count of one thing in one call and never loops per item, so
+                        a mixed bucket of fish cooks into a batch of one quality rather
+                        than splitting the stack a dozen ways.
+
+                        No result of an item recipe declares a tier today, so the station's
+                        tier contributes nothing; if one ever does, it contributes exactly
+                        what it does for a component.
+                    */
+                    const result_tier = item_templates[result_id].item_tier;
+                    const result_key = input_quality
+                        ? JSON.stringify({
+                            ...JSON.parse(item_templates[result_id].getInventoryKey()),
+                            quality: selected_recipe.roll_quality(input_quality,
+                                result_tier ? station_tier - result_tier : 0),
+                        })
+                        : item_templates[result_id].getInventoryKey();
+
+                    add_to_character_inventory([{item_key: result_key, count: final_count}]);
                     const made = item_templates[result_id].getDisplayName();
                     const tried = count * attempted_crafting_ammount;
                     log_message((attempted_crafting_ammount > 1 || scale_results)
@@ -208,7 +253,23 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     for(let i = 0; i < ammount_that_can_be_crafted; i++) {
                         //loop for every item to be crafted, as they differ in quality and resultingly in xp too
                         const result_tier = result.component_tier ?? result.item_tier;
-                        quality = selected_recipe.roll_quality(station_tier - result_tier);
+                        /*
+                            The selected stack's own quality, which this roll used to
+                            ignore - the player picks a specific stack and the pick meant
+                            nothing (P-22).
+
+                            It is unreachable as of this version and deliberately wired
+                            anyway: no material a component recipe takes has a quality yet
+                            (only fishing makes one), and update_displayed_material_choice
+                            still keys its rows from the template rather than from the
+                            stacks, which is the TODO sitting on it. Leaving the parameter
+                            out here is how the item and equipment paths drifted apart to
+                            begin with; the mechanism goes in first and the chooser follows
+                            when there is a qualitied ingot for it to offer.
+                        */
+                        quality = selected_recipe.roll_quality(
+                            character.inventory[material_1_key].item.quality,
+                            station_tier - result_tier);
 
                         crafted_items[quality] = (crafted_items[quality]+1 || 1);
                         all_crafted[quality] = (all_crafted[quality]+1 || 1);

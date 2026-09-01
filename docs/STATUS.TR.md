@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 33 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 34 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -57,7 +57,7 @@ npm run check:bundle
 ```
 
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
-  (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
+  (on altı dosya, yardımcılarıyla ~6.100 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
 - `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 207 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
@@ -166,7 +166,7 @@ gibi okunmalıdır — kurallar [I18N.md](I18N.md) içinde, direktif numarası D
 
 ## Kontroller neyi kapsıyor
 
-`tests/checks/` altında on beş dosya. Değerli olanlar genel biçim kuralları değil,
+`tests/checks/` altında on altı dosya. Değerli olanlar genel biçim kuralları değil,
 yayımlanmış bir hatayı kodlayanlar:
 
 | Kontrol | Neyi engelliyor |
@@ -195,6 +195,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |
+| `crafting quality` | İçine ne girdiğinin söylenmesine imkân tanımayan bir kalite atışı ve kendi şablonunun anahtarıyla eklenen üretilmiş bir eşya. 2 bildirim, 6 çağrı yeri. |
+| `inherited quality is shown` | Bir tarifin devrettiği ama hiçbir tooltip'in çizmediği bir kalite ve nadirliğine cevap veremeyen bir eşya sınıfı. 4 tarif. |
 | `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 58 kullanım. |
 | `dead ends` | Questi kilitleyen başarısızlık: kazanma dalının dışındaki kilit ya da kaybedilen denemede yenen eşya. 18 aksiyon. |
 | `stance reactions` | Stance olmayan bir stance kimliğine tepki veren yaratık; hiç tetiklenmez. 10 kimlik, 7 stance. |

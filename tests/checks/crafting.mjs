@@ -1,0 +1,399 @@
+/**
+ * The crafting quality model: who rolls a quality, and whether the roll knows what
+ * went into it.
+ *
+ * These exist because the four crafting paths drifted apart without anyone noticing.
+ * Only equipment assembly ever consulted its inputs; component crafting rolled from
+ * the station tier alone and ignored which stack the player had picked, and item
+ * recipes did not roll at all - the result was added at the template's own inventory
+ * key, so a dish cooked from a good fish came out with quality null. Fishing is the
+ * only thing outside crafting that makes a quality, which is why the symptom that
+ * surfaced was "fish quality disappears after cooking" (P-22).
+ *
+ * The drift was possible because each class carried its own roll_quality body. They
+ * share one now, and these checks are about keeping the shape they share.
+ */
+
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { repo_root } from "../lib/context.mjs";
+import { error } from "../lib/report.mjs";
+import { load_browser_free } from "../lib/browser-free-src.mjs";
+import { strip_comments } from "../lib/source.mjs";
+
+/**
+ * The arguments of the call whose opening parenthesis is at `open`, split on
+ * top-level commas only.
+ *
+ * A regex cannot do this: two of the six call sites pass an argument containing its
+ * own parentheses or brackets, and one spans three lines. Returns null if the
+ * parentheses do not close, so a malformed match is reported rather than guessed at.
+ */
+function call_arguments(source, open) {
+    let depth = 0;
+    let start = open + 1;
+    const args = [];
+
+    for (let i = open; i < source.length; i++) {
+        const character = source[i];
+        if ("([{".includes(character)) {
+            depth++;
+        } else if (")]}".includes(character)) {
+            depth--;
+            if (depth === 0) {
+                args.push(source.slice(start, i));
+                return args;
+            }
+        } else if (character === "," && depth === 1) {
+            args.push(source.slice(start, i));
+            start = i + 1;
+        }
+    }
+    return null;
+}
+
+/** Every `roll_quality` declaration in the source, as {parameters, line}. */
+function quality_roll_declarations(source) {
+    const found = [];
+    for (const match of source.matchAll(/(?<![.\w])roll_quality\s*\(/g)) {
+        const open = match.index + match[0].length - 1;
+        const parameters = call_arguments(source, open);
+        if (parameters === null) continue;
+
+        //A declaration is followed by its body; a call is not.
+        const closing = open + 1 + parameters.join(",").length;
+        if (!/^\)\s*\{/.test(source.slice(closing))) continue;
+
+        found.push({
+            parameters,
+            line: source.slice(0, match.index).split("\n").length,
+        });
+    }
+    return found;
+}
+
+/**
+ * Every roll of a crafting quality has to be able to take the quality of what went
+ * in - which means its FIRST parameter, because that is the one the shipped callers
+ * fill.
+ *
+ * The old signature was roll_quality(tier = 0): the tier in first position, no way to
+ * say anything about the materials. Three of the four recipe classes had it, so
+ * passing an input quality was not something a caller could do wrong - it was
+ * something a caller could not do at all. That is the shape this refuses.
+ */
+function check_quality_rolls_take_an_input_quality() {
+    const declarations = [];
+
+    for (const relative of ["src/crafting_recipes.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const found of quality_roll_declarations(source)) {
+            declarations.push({ ...found, file: relative });
+        }
+    }
+
+    if (declarations.length === 0) {
+        error("crafting quality: found no roll_quality declaration at all - "
+            + "this check is out of date and has stopped guarding anything.");
+        return;
+    }
+
+    console.log(`[check] crafting quality: ${declarations.length} quality roll`
+        + ` declaration(s), each taking what went in`);
+
+    for (const { parameters, line, file } of declarations) {
+        const first = (parameters[0] ?? "").trim();
+
+        if (!/quality/.test(first)) {
+            error(`crafting quality: roll_quality at ${file}:${line} takes `
+                + `"${first || "nothing"}" first, so a caller has no way to say what `
+                + `went into the craft. The input quality goes first and the tier `
+                + `second - see ItemRecipe.roll_quality.`);
+        }
+    }
+}
+
+/**
+ * And every caller has to actually say it.
+ *
+ * A signature that accepts an input quality buys nothing if the call sites keep
+ * passing only a tier, and that is exactly how the item path stayed broken while the
+ * machinery to fix it - get_quality_range's two branches - had been sitting in the
+ * base class the whole time. So: two arguments, and the first one is about quality.
+ *
+ * Passing a falsy quality is fine and is the point: get_quality_range answers a falsy
+ * one with its no-input branch, so a recipe whose materials carry no quality rolls
+ * what it always rolled.
+ */
+function check_crafting_passes_the_input_quality() {
+    const sites = [];
+
+    for (const relative of ["src/crafting.js", "src/crafting_recipes.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const match of source.matchAll(/\.roll_quality\s*\(/g)) {
+            const open = match.index + match[0].length - 1;
+            sites.push({
+                args: call_arguments(source, open),
+                line: source.slice(0, match.index).split("\n").length,
+                file: relative,
+            });
+        }
+    }
+
+    /*
+        And the item branch's result has to be able to carry one.
+
+        The count below would catch its roll being deleted outright, but not its roll
+        being kept while the result went back to the template's own key - which is the
+        exact line the fish's quality used to die on, and it read innocently:
+        add_to_character_inventory([{item_key: item_templates[result_id].getInventoryKey()}]).
+        A key built from the template can never carry a quality, so that call is
+        refused by shape. Building the key from the template and then adding a quality
+        to it, as use_recipe does now, is not this pattern.
+    */
+    const crafting_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/crafting.js"), "utf8"));
+
+    for (const match of crafting_source.matchAll(
+        /add_to_character_inventory\(\[\{\s*item_key:\s*item_templates\[[^\]]+\]\.getInventoryKey\(\)/g)) {
+        const line = crafting_source.slice(0, match.index).split("\n").length;
+        error(`crafting quality: src/crafting.js:${line} adds a crafted item at its `
+            + `template's own inventory key, which cannot carry a quality. Roll one `
+            + `from what went in and put it on the key - that line is where a good `
+            + `fish became an ordinary meal (P-22).`);
+    }
+
+    //Six as of P-22: three in use_recipe's branches, three in the getResult bodies.
+    if (sites.length < 6) {
+        error(`crafting quality: found ${sites.length} roll_quality call site(s), `
+            + `expected at least 6 - this check is out of date.`);
+        return;
+    }
+
+    console.log(`[check] crafting quality: ${sites.length} roll_quality call site(s)`
+        + ` passing an input quality`);
+
+    for (const { args, line, file } of sites) {
+        if (args === null) {
+            error(`crafting quality: could not read the arguments of the `
+                + `roll_quality call at ${file}:${line}.`);
+            continue;
+        }
+        if (args.length < 2) {
+            error(`crafting quality: roll_quality at ${file}:${line} is called with `
+                + `${args.length} argument(s). It takes the input quality first and `
+                + `the tier second; a one-argument call passes the tier as the `
+                + `quality, which is how the fish path lost its quality.`);
+            continue;
+        }
+        const first = args[0].trim();
+        if (!/quality/.test(first)) {
+            error(`crafting quality: roll_quality at ${file}:${line} passes `
+                + `"${first}" as the input quality, which does not look like one. If `
+                + `the craft genuinely has no input quality, pass undefined and say `
+                + `so - do not pass the tier.`);
+        }
+    }
+}
+
+/**
+ * What the parameter is for, measured through the shipped roll rather than restated:
+ * a better input has to give a better result, and no input has to change nothing.
+ *
+ * The middle assertion is the one that keeps this honest. get_quality_range's two
+ * branches meet at an input quality of 80 - 50 + 80 is the 130 the no-input branch
+ * adds - so the branch that item recipes have always used is literally "assume the
+ * materials were 80". That is why passing the real quality is not a blanket buff: it
+ * is symmetric around the number the game was already assuming. If someone retunes
+ * one branch and not the other, the two stop meeting and a poor fish silently becomes
+ * free money, or a good one a penalty.
+ */
+async function check_a_better_input_makes_a_better_result() {
+    const [{ recipes }] = await load_browser_free(
+        repo_root, ["src/crafting_recipes.js", "src/items.js"]);
+
+    //One of each kind that rolls: an item recipe, a component recipe, an assembly.
+    const under_test = [
+        ["cooking item recipe", recipes.cooking?.items?.["Fried fish"]],
+        ["forging component recipe", Object.values(recipes.forging?.components ?? {})[0]],
+        ["equipment assembly", Object.values(recipes.crafting?.equipment ?? {})[0]],
+    ];
+
+    console.log(`[check] crafting quality: ${under_test.length} recipe kinds measured`
+        + ` through the shipped roll`);
+
+    for (const [label, recipe] of under_test) {
+        if (!recipe) {
+            error(`crafting quality: no ${label} to test - this check is out of date.`);
+            continue;
+        }
+
+        /*
+            Sampled through roll_quality rather than read off get_quality_range,
+            because the parameter being threaded from the signature to the range is
+            half of what broke: a roll_quality that takes only a tier still answers
+            get_quality_range correctly, and a check that asked the range directly
+            passed while the shipped roll was reading 130 as a station tier.
+        */
+        const sample = (input) => {
+            const rolled = [];
+            for (let i = 0; i < 40; i++) { rolled.push(recipe.roll_quality(input, 0)); }
+            return rolled;
+        };
+
+        const poor = sample(40);
+        const good = sample(130);
+        const unqualitied = recipe.get_quality_range(0);
+        const assumed = recipe.get_quality_range(0, 80);
+
+        if (Math.min(...good) <= Math.max(...poor)) {
+            error(`crafting quality: the ${label} rolled `
+                + `${Math.min(...good)}-${Math.max(...good)} from a 130% input and `
+                + `${Math.min(...poor)}-${Math.max(...poor)} from a 40% one, so what `
+                + `went in does not decide what comes out.`);
+        }
+
+        if (unqualitied[0] !== assumed[0]) {
+            error(`crafting quality: the ${label}'s no-input range starts at `
+                + `${unqualitied[0]} but an input of 80 starts at ${assumed[0]}. The `
+                + `two branches of get_quality_range are meant to meet at 80, so that `
+                + `passing a real quality is symmetric around what the game already `
+                + `assumed rather than a buff or a nerf.`);
+        }
+
+        //And the fallback has to be the no-input branch, not a roll from nothing.
+        for (const nothing of [undefined, null, 0]) {
+            const rolled = sample(nothing);
+            const outside = rolled.filter(
+                (quality) => quality < unqualitied[0] || quality > unqualitied[1]);
+
+            if (outside.length > 0) {
+                error(`crafting quality: the ${label} rolled ${outside[0]} for an input `
+                    + `quality of ${String(nothing)}, outside the `
+                    + `${JSON.stringify(unqualitied)} it rolls for none. A material `
+                    + `with no quality has to leave the roll as it was.`);
+            }
+        }
+    }
+}
+
+/**
+ * A quality the player cannot see is worse than no quality at all.
+ *
+ * Both places that draw one - the tooltip and the inventory row - ask the item for
+ * use_quality first, and all 39 usable items said false because until P-22 no cooked
+ * thing had a quality to draw. Wiring the quality through without this would have left
+ * a dish saved, priced and traded on a number shown nowhere on it: the exact pairing -
+ * invisible and consequential at once - that this project has spent versions hunting.
+ *
+ * So the rule is derived rather than listed: walk the item recipes from everything that
+ * shows a quality today, and every result a quality can reach has to show one too. Give
+ * another material a quality, or add a recipe that consumes one, and this names what
+ * would swallow it.
+ */
+async function check_inherited_quality_is_shown() {
+    const [{ item_templates }, { recipes }] = await load_browser_free(
+        repo_root, ["src/items.js", "src/crafting_recipes.js"]);
+
+    const by_material_type = {};
+    for (const id of Object.keys(item_templates)) {
+        const type = item_templates[id].material_type;
+        if (type) { (by_material_type[type] ??= []).push(id); }
+    }
+
+    /*
+        Every item recipe as {result, inputs}. A recipe that names a material_type
+        rather than an id stands for every item of that type, which is how the six fish
+        reach three different cooking recipes.
+    */
+    const item_recipes = [];
+    for (const category of Object.keys(recipes)) {
+        for (const key of Object.keys(recipes[category].items ?? {})) {
+            const recipe = recipes[category].items[key];
+            const inputs = [];
+            for (const material of recipe.materials ?? []) {
+                if (material.material_id) {
+                    inputs.push(material.material_id);
+                } else if (material.material_type) {
+                    inputs.push(...(by_material_type[material.material_type] ?? []));
+                }
+            }
+            inputs.forEach((id) => {
+                if (!item_templates[id]) {
+                    error(`crafting quality: ${category}/${key} names a material `
+                        + `"${id}" that is not an item - this check is out of date.`);
+                }
+            });
+            item_recipes.push({
+                where: `${category}/${key}`,
+                result: recipe.result?.result_id,
+                inputs,
+            });
+        }
+    }
+
+    if (item_recipes.length === 0) {
+        error("crafting quality: found no item recipes to walk - "
+            + "this check is out of date and has stopped guarding anything.");
+        return;
+    }
+
+    //Everything that shows a quality today, then everything a recipe can pass one to.
+    const carriers = new Set(
+        Object.keys(item_templates).filter((id) => item_templates[id].use_quality));
+
+    for (let growing = true; growing; ) {
+        growing = false;
+        for (const { result, inputs } of item_recipes) {
+            if (result && !carriers.has(result) && inputs.some((id) => carriers.has(id))) {
+                carriers.add(result);
+                growing = true;
+            }
+        }
+    }
+
+    /*
+        And showing one means being able to answer for it. Both drawing sites colour the
+        number by item.getRarity(), which lived on three subclasses and not on Item - so
+        UsableItem and OtherItem, the two classes the fish dishes are, had no getRarity
+        at all and the first qualitied meal would have thrown a TypeError and taken the
+        inventory display down with it. Asked of every template, not only the carriers,
+        because the next thing given a quality should not have to rediscover this.
+    */
+    for (const id of Object.keys(item_templates)) {
+        if (typeof item_templates[id].getRarity !== "function") {
+            error(`crafting quality: "${id}" is a `
+                + `${item_templates[id].constructor.name} and cannot answer getRarity, `
+                + `so it would crash the inventory display the moment it carried a `
+                + `quality. getRarity belongs on Item.`);
+        }
+    }
+
+    let reached = 0;
+    for (const { where, result, inputs } of item_recipes) {
+        const from = inputs.filter((id) => carriers.has(id));
+        if (from.length === 0 || !result) continue;
+        reached++;
+
+        if (!item_templates[result]?.use_quality) {
+            error(`crafting quality: ${where} makes "${result}" out of ${from.join(", ")}, `
+                + `which carry a quality, but "${result}" does not set use_quality - so `
+                + `the quality it inherits would be saved and priced without ever being `
+                + `shown. Set use_quality on it, or take the quality off the input.`);
+        }
+    }
+
+    console.log(`[check] crafting quality: ${reached} recipe(s) can inherit a quality, `
+        + `every result showing one`);
+}
+
+export {
+    check_a_better_input_makes_a_better_result,
+    check_inherited_quality_is_shown,
+    check_crafting_passes_the_input_quality,
+    check_quality_rolls_take_an_input_quality,
+};

@@ -132,6 +132,44 @@ class ItemRecipe extends Recipe {
         
         return {available_ammount: amount, materials};
     }
+
+    /*
+        Item recipes had no cap of their own because they had no roll at all: use_recipe's
+        item branch added the result at the template's own inventory key, so a dish cooked
+        from a 130% trout came out with quality null and the fish's quality simply
+        vanished (P-22). Nothing an item recipe makes is equipment, so the components cap
+        is the right ceiling; ComponentRecipe and ComponentlessEquipRecipe override this
+        with their own because what they make can be.
+    */
+    get_quality_cap() {
+        return get_crafting_quality_caps(this.recipe_skill).components;
+    }
+
+    /*
+        input_quality is the quality of what actually went in - for an item recipe the
+        weighted quality of everything consumed, for a component recipe the quality of the
+        one selected material.
+
+        It is falsy whenever nothing that went in carried a quality, and get_quality_range
+        answers a falsy quality with its no-input branch, so a recipe fed unqualitied
+        materials rolls exactly the range it rolled before this parameter existed. That is
+        what keeps the change to the recipes it is about: fishing is the only thing outside
+        crafting that makes a quality, so today this is the fish and nothing else - but the
+        rule is about materials rather than about fish, and anything given a quality later
+        starts mattering here on its own.
+
+        The two branches meet at 80 (50 + 80 = 130), so a real input quality is not a
+        blanket buff: it is symmetric around the 80 the no-input branch has always
+        silently assumed. A poor fish makes a poor meal.
+
+        Every subclass that makes something with a quality shares this body now. Two of
+        them used to carry their own copy that took a tier and nothing else, which is how
+        the item and equipment paths were able to drift apart in the first place.
+    */
+    roll_quality(input_quality, tier = 0) {
+        const quality_range = this.get_quality_range(tier, input_quality);
+        return round_quality(random_range(quality_range[0], quality_range[1]), this.quality_precision);
+    }
 }
 
 class ComponentRecipe extends ItemRecipe{
@@ -151,7 +189,7 @@ class ComponentRecipe extends ItemRecipe{
         this.getResult = function(material, station_tier = 1){
             const result = item_templates[this.materials.filter(x => x.material_id===material.id)[0].result_id];
             //return based on material used
-            let quality = this.roll_quality((station_tier-result.component_tier) || 0);
+            let quality = this.roll_quality(material.quality, (station_tier-result.component_tier) || 0);
             if(result.tags["clothing"]) {
                 //means its a clothing (wearable internal part of armor)
                 return new Armor({...item_templates[result.id], quality: quality});
@@ -180,11 +218,7 @@ class ComponentRecipe extends ItemRecipe{
             return get_crafting_quality_caps(this.recipe_skill).components;
         }
     }
-
-    roll_quality(tier = 0) {
-        const quality_range = this.get_quality_range(tier);
-        return round_quality(random_range(quality_range[0], quality_range[1]),this.quality_precision);
-    }
+    //roll_quality is ItemRecipe's; this class only differs in what it may cap at.
 }
 
 class ComponentlessEquipRecipe extends ItemRecipe{
@@ -202,7 +236,7 @@ class ComponentlessEquipRecipe extends ItemRecipe{
         this.getResult = function(material, station_tier = 1){
             const result = item_templates[this.materials.filter(x => x.material_id===material.id)[0].result_id];
             //return based on material used
-            let quality = this.roll_quality((station_tier-result.item_tier) || 0);
+            let quality = this.roll_quality(material.quality, (station_tier-result.item_tier) || 0);
             return new Cape({...item_templates[result.id], quality: quality});
         }
     }
@@ -210,11 +244,7 @@ class ComponentlessEquipRecipe extends ItemRecipe{
     get_quality_cap() {
         return get_crafting_quality_caps(this.recipe_skill).equipment;
     }
-
-    roll_quality(tier = 0) {
-        const quality_range = this.get_quality_range(tier);
-        return round_quality(random_range(quality_range[0], quality_range[1]),this.quality_precision);
-    }
+    //roll_quality is ItemRecipe's; this class only differs in what it may cap at.
 }
 
 class EquipmentRecipe extends Recipe {

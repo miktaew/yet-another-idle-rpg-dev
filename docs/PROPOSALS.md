@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 90 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 91 -->
 
 # Proposals
 
@@ -617,42 +617,6 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
 - The existing combat formulas are not to be broken to fit it. `intuition` and the
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
-
-### P-22 — An item recipe throws away what went into it `open`
-
-Reported in play: a fish's quality is gone after cooking it. Measured, and it is not
-about fish.
-
-`src/crafting.js` has two crafting paths and they treat quality differently:
-
-- **Components and equipment** call `roll_quality(comp_quality_weighted, station_tier -
-  comp_tier_max)`. The components' weighted quality goes in, so a good blade makes a good
-  sword. That is the behaviour a player expects everywhere.
-- **Items** call `roll_quality(station_tier - result_tier)`. **Nothing about the materials
-  is passed at all.** A 90% trout and a 10% trout cook into the same distribution, and the
-  only thing that moves the result is the station and the skill roll.
-
-So this covers every item recipe in the game - cooking, alchemy, smelting, the glass and
-the charcoal - not one dish. It is why fishing's `roll_quality: true` on the gathered
-resource feels pointless the moment the fish reaches a pan.
-
-**What this must decide rather than assume:**
-
-- Whether the input's quality should weight the roll the way a component's does, or cap
-  it, or shift its floor. A component's weighting is the obvious precedent, and reusing
-  `roll_quality`'s existing first parameter is the whole of the code.
-- What a recipe with several materials of different qualities does. Components already
-  answer this with a weighted average; items should not invent a second answer.
-- What happens to a `material_type` requirement, where the recipe names a class of item
-  rather than an id and the player may hold five qualities of it. Which one gets consumed
-  is a UI question as much as a maths one, and today nothing chooses.
-- Whether any existing balance depends on the current behaviour. A 100% trout becoming a
-  100% fried fish is a straightforward buff to every cooking recipe at once.
-
-**Guard.** The two paths should not be able to drift again: a test that a high-quality
-input produces a better result than a low-quality one, through the shipped
-`roll_quality`, for one item recipe and one component recipe. Today the item half of that
-test fails, which is the point.
 
 ### P-23 — The collector sells one book, and it is not a cookbook `open`
 

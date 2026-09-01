@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 33 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 34 -->
 
 # Status
 
@@ -53,8 +53,8 @@ npm test
 npm run check:bundle
 ```
 
-- `check` runs the content and consistency checks in `tests/checks/` (fifteen files,
-  ~4,900 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
+- `check` runs the content and consistency checks in `tests/checks/` (sixteen files,
+  ~6,100 lines with their helpers). `LOCALE_STRICT=1` additionally fails on a missing
   translation rather than warning.
 - `test` is the skill and progression suite in `tests/skills.mjs`: 207 checks.
 - `check:bundle` evaluates the built bundle in Node with the browser stubbed. It
@@ -165,7 +165,7 @@ Turkish - the rules are in [I18N.md](I18N.md), and it is directive D-7.
 
 ## What the checks actually cover
 
-Fifteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
+Sixteen files in `tests/checks/`. The valuable ones are not the generic lint-style rules
 but the ones that encode a bug that shipped:
 
 | Check | What it prevents |
@@ -194,6 +194,8 @@ but the ones that encode a bug that shipped:
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |
+| `crafting quality` | A quality roll with no way to be told what went into it, and a crafted item added at its template's own key. 2 declarations, 6 call sites. |
+| `inherited quality is shown` | A quality a recipe passes on that no tooltip draws, and an item class that cannot answer for its rarity. 4 recipes. |
 | `reputation regions` | A region with no name, or a region key that is not one. 4 regions, 58 uses. |
 | `dead ends` | A failure that locks a quest - a lock outside the win branch, or an item eaten on a lost attempt. 18 actions. |
 | `stance reactions` | An enemy reacting to a stance id that is not a stance, which never fires. 10 ids, 7 stances. |

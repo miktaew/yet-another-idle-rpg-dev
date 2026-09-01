@@ -853,6 +853,18 @@ function load(save_data) {
                         console.error(`Intentory key "${key}" from save on version "${save_data["game version"]} seems to refer to non-existing item type!`);
                     }
                 } else if(quality) { //no comps but quality (clothing / artifact /)
+                    /*
+                        Cooked fish come through here as of P-22 - they have an id and a
+                        quality and no components - and add_to_inventory rebuilds them
+                        from item_id + quality correctly, so nothing needed changing.
+
+                        One thing to know before adding to item_mapping: the rename map
+                        is applied in the branch above, not here, so a qualitied item is
+                        NOT renamed on load. Its three entries are wood materials that
+                        cannot carry a quality, which is why this has never mattered. If
+                        an item that can ever carry one goes in that map, this branch has
+                        to consult it too.
+                    */
                     const item_id = get_component_name(id);
                     //const new_item_key = item_templates[item_id].getInventoryKey();
                     item_list.push({item_id: item_id, count: save_data.character.inventory[key].count, quality: quality});
