@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 85 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 86 -->
 
 # Proposals
 
@@ -584,28 +584,6 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
 - The existing combat formulas are not to be broken to fit it. `intuition` and the
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
-### P-19 — A trader in the town square, or somewhere off it `open`
-
-The owner's request: a trader who sells in the town square or one of the places connected
-to it.
-
-**Measured first, because the town may already have one.** Eight traders exist across
-seven stock lists, and the square itself has none - it has three standing actions, a
-fountain, pigeons, a crier and two bakers, and nothing to buy. The square is the town's
-centre of life and the only settlement centre with no shop.
-
-What that means for the design:
-
-- The stock list is the decision, not the trader. Seven exist; a square trader should
-  read one that already exists or a new list assembled from items that do, the way the
-  bay's was. The anti-goal is a new tier of goods.
-- The square has a `market_region`; check it before adding, because `market_saturation`
-  is what stops a shop being a money printer and a new shop in an existing region
-  inherits that.
-- "Or somewhere off it" is the interesting half. The square connects to the guild and the
-  slums, and the slums have the shed with the scales and a standing ladder already. A
-  trader whose stock or prices read `Town` or `Slums` standing would spend a number the
-  game already has.
 
 ---
 

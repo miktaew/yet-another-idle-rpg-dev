@@ -1552,7 +1552,10 @@ class Textline {
                 text: "proprietress offer answ",
                 rewards: {
                     textlines: [{dialogue: "nekomimi proprietress", lines: ["special", "puns"]}],
-                    //todo: unlock trade
+                    //Was `//todo: unlock trade`, and the trader it meant has existed with a
+                    //stock list the whole time (P-19). She is the one offering, so she is
+                    //the one who opens it.
+                    traders: [{trader: "nekomimi trader"}],
                 },
                 locks_lines: ["offer"],
             }),

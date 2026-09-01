@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 85 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 86 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -611,28 +611,6 @@ hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
   insanlar üzerinden gelmek zorunda.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
-### P-19 — Kasaba meydanında ya da ona bağlı bir yerde bir tüccar `open`
-
-Sahibinin isteği: kasaba meydanında ya da ona bağlı yerlerden birinde satış yapabilen bir
-tüccar.
-
-**Önce ölçüldü, çünkü kasabanın zaten bir tüccarı olabilirdi.** Yedi stok listesine
-yayılmış sekiz tüccar var ve meydanın hiç tüccarı yok — üç itibar aksiyonu, bir çeşme,
-güvercinler, bir tellal ve iki fırıncı var; satın alınacak hiçbir şey yok. Meydan
-kasabanın yaşam merkezi ve dükkânı olmayan tek yerleşim merkezi.
-
-Bunun tasarıma etkisi:
-
-- Karar tüccar değil, stok listesi. Yedi liste var; meydan tüccarı ya var olan bir
-  listeyi okumalı ya da körfezinki gibi, var olan eşyalardan kurulmuş yeni bir listeyi.
-  Karşı-hedef yeni bir mal kademesi.
-- Meydanın bir `market_region`'ı var; eklemeden önce kontrol edilmeli, çünkü bir dükkânın
-  para basma makinesine dönüşmesini engelleyen şey `market_saturation` ve var olan bir
-  bölgedeki yeni dükkân onu miras alıyor.
-- "Ya da ona bağlı bir yer" ilginç olan yarısı. Meydan loncaya ve kenar mahalleye
-  bağlanıyor; kenar mahallede terazili baraka ve hazır bir itibar merdiveni zaten var.
-  Stoğu ya da fiyatları `Town` veya `Slums` itibarını okuyan bir tüccar, oyunun elinde
-  zaten bulunan bir sayıyı harcar.
 
 ---
 

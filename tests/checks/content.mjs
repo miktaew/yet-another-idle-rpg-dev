@@ -1179,7 +1179,47 @@ async function check_trader_market_regions() {
                 + " market_region_mapping.");
         }
     }
-    console.log(`[check] trader market regions: ${with_traders} shops across ${regions.size} regions`);
+    /*
+        And every trader stands somewhere.
+
+        This is the fault P-19 turned out to be: `cat cafe trader` and `nekomimi trader`
+        have existed with a full stock list since before this fork, and no location listed
+        either of them - so neither could ever be met, both cafes had nothing to buy, and
+        nothing failed. `check_trader_stock_lists` was happy because their lists were real.
+        A trader nobody can reach is the same shape of dead content as a component nothing
+        can make, and it went unnoticed for far longer.
+
+        Read off the same location blocks above rather than from the runtime registry,
+        because a trader can be unlocked by a reward and still be listed by the room it
+        stands in - listing is the placement, unlocking is only the permission.
+    */
+    const declared_traders = new Set(
+        [...strip_comments(fs.readFileSync(path.join(repo_root, "src/traders.js"), "utf8"))
+            .matchAll(/traders\["([^"]+)\"\]\s*=\s*new Trader\(/g)].map(m => m[1]));
+    const placed = new Set();
+    for (const [, , body] of blocks) {
+        const traders = own_field(body, "traders");
+        if (!traders) continue;
+        for (const name of traders[1].matchAll(/"([^"]+)"/g)) {
+            placed.add(name[1]);
+        }
+    }
+    for (const name of declared_traders) {
+        if (!placed.has(name)) {
+            error(`trader "${name}" is declared with a stock list and no location lists it,`
+                + " so the player can never reach it and whatever room was meant to hold it"
+                + " has nothing to buy. Add it to that room's `traders`, or delete it.");
+        }
+    }
+    for (const name of placed) {
+        if (!declared_traders.has(name)) {
+            error(`a location lists trader "${name}", which is not declared in traders.js.`
+                + " Opening that shop would throw.");
+        }
+    }
+
+    console.log(`[check] trader market regions: ${with_traders} shops across ${regions.size}`
+        + ` regions, ${declared_traders.size} traders all placed`);
 }
 
 /**

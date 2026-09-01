@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 30 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 31 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -194,6 +194,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `books` | Hiçbir şeyin satmadığı/düşürmediği/vermediği bir kitap ya da okuma verisi olmayan bir kitap eşyası. 11 kitap. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
+| `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |
 | `reputation regions` | Adı olmayan bir bölge ya da bölge olmayan bir bölge anahtarı. 4 bölge, 58 kullanım. |
 | `dead ends` | Questi kilitleyen başarısızlık: kazanma dalının dışındaki kilit ya da kaybedilen denemede yenen eşya. 18 aksiyon. |
 | `stance reactions` | Stance olmayan bir stance kimliğine tepki veren yaratık; hiç tetiklenmez. 10 kimlik, 7 stance. |

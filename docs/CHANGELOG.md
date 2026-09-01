@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 77 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 78 -->
 
 # Changelog
 
@@ -20,6 +20,50 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.9 - the two cafés that had nothing to sell
+
+P-19 asked for a trader in the town square or one of the places off it. Measured before
+building one, and the answer was that two already existed.
+
+`cat cafe trader` and `nekomimi trader` have been declared in `traders.js` since before
+this fork, with a real ten-row stock list between them - fresh bread, bread kwas, cooked
+clam, crab bisque, kingsized frog legs, fish steak. **No location listed either of them.**
+So neither could ever be met, both cafés had nothing to buy, and nothing failed:
+`check_trader_stock_lists` was perfectly happy, because their lists were real. The Cat café
+was a room with nine background noises and nothing in it at all - no NPC either.
+
+And the nekomimi proprietress's `offer` line carried, in the source, the comment
+**`//todo: unlock trade`**. The wiring was described and never done, which is the most
+useful kind of thing to find: it says exactly where the trader belongs and who opens it.
+
+So this is reclamation and not invention, which is what P-19 recorded as the rule. The
+proprietress opens hers, because she is the one offering. The Cat café's opens on walking
+in, because there is nobody in there to ask.
+
+**The town has a market region now**, and it had to. `src/verifier.js` refuses a trader in
+a location with no `market_region`, and the whole town had none - the square, both cafés
+and the antique store were all `market_region: null`, which is consistent with none of them
+having anything to buy. `Town` bleeds into `Slums` and into nothing else, because they are
+the same city: what you dump in a café off the square moves a price in the row, and neither
+moves one in a village a day's walk away.
+
+**`check_trader_market_regions` grew the guard that would have caught this.** Every trader
+declared in `traders.js` must be listed by some location, and every trader a location lists
+must be declared - the same both-directions shape as the components and books checks. A
+trader nobody can reach is the same kind of dead content as a component nothing can make,
+and this one sat there far longer.
+
+It reads the location blocks rather than the runtime registry on purpose: a trader can be
+unlocked by a reward and still be listed by the room it stands in. Listing is the
+placement; unlocking is only the permission. Negative-tested both ways - the cat café's
+listing removed, and a room listing a trader that does not exist. 6 shops across 5 regions,
+8 traders all placed.
+
+One thing left where it was: the proprietress's `special` line still carries
+`//todo: unlock paid action`. That is an action rather than a trader, so it is not this
+proposal's, and inventing one to tidy a comment away is how content gets added for the
+wrong reason.
 
 ### The dev console survives a reload and not a restart
 

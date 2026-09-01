@@ -9,6 +9,17 @@ const group_key_prefix = "type_";
 const market_regions = {};
 const market_region_mapping = {
     "Village": ["Slums", "Swamp"],
+    /*
+        The town proper, added for P-19. It bleeds into the Slums and into nothing else,
+        because they are the same city: what you dump in a cafe off the square moves a
+        price in the row, and neither of them moves one in the village a day's walk away.
+
+        It exists because a shop needs a counter. src/verifier.js refuses a trader in a
+        location with no market_region, and until now the whole town had no region - which
+        is why the square, the cafes and the antique store all had `market_region: null`
+        and not one of them had anything to buy.
+    */
+    "Town": ["Slums"],
     //The bay bleeds into nothing. It is a month up the coast from everything else
     //here, so what the player sells there does not move a price in the village -
     //and a market that does not remember the village is the point of the region.

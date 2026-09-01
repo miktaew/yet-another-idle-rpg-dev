@@ -1763,11 +1763,27 @@ function get_location_type_penalty(type, stage, stat, category) {
                                                         {location: locations["Town square"], travel_time: 40}
                                                     );
 
+    /*
+        P-19, and it is reclamation rather than invention: `cat cafe trader` and
+        `nekomimi trader` have existed with a ten-row stock list since before this fork and
+        neither was listed by any location, so neither could ever be met and both cafes had
+        nothing to buy. The Cat café had no NPC either - it was a room with nine background
+        noises and nothing in it.
+
+        The trade opens on walking in, because there is nobody here to ask. The nekomimi
+        café has a proprietress and hers opens through her instead, which is where the
+        source has carried `//todo: unlock trade` all along.
+    */
     locations["Cat cafe"] = new Location({ 
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: "desc location Cat cafe",
         name: "Cat café",
         is_unlocked: true,
+        traders: ["cat cafe trader"],
+        market_region: "Town",
+        entrance_rewards: {
+            traders: [{trader: "cat cafe trader"}],
+        },
         getBackgroundNoises: function() {
             let noises = [
                 translationManager.getText(language, "noise Cat cafe 1"), translationManager.getText(language, "noise Cat cafe 2"), translationManager.getText(language, "noise Cat cafe 3"), translationManager.getText(language, "noise Cat cafe 4"), translationManager.getText(language, "noise Cat cafe 5"),
@@ -1785,6 +1801,8 @@ function get_location_type_penalty(type, stage, stat, category) {
         description: "desc location Nekomimi cafe",
         name: "Nekomimi café",
         is_unlocked: true,
+        traders: ["nekomimi trader"],
+        market_region: "Town",
         getBackgroundNoises: function() {
             let noises = [
                 translationManager.getText(language, "noise Nekomimi cafe 1"), translationManager.getText(language, "noise Nekomimi cafe 2"), translationManager.getText(language, "noise Nekomimi cafe 3"), translationManager.getText(language, "noise Nekomimi cafe 4"), translationManager.getText(language, "noise Nekomimi cafe 5"),

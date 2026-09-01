@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 77 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 78 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,52 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.9 - satacak hiçbir şeyi olmayan iki kafe
+
+P-19, kasaba meydanında ya da ona bağlı yerlerden birinde bir tüccar istiyordu. Bir tane
+yapmadan önce ölçüldü ve cevap şu çıktı: iki tanesi zaten vardı.
+
+`cat cafe trader` ile `nekomimi trader`, bu fork'tan da önce `traders.js` içinde
+bildirilmiş ve ikisinin arasında gerçek, on satırlık bir stok listesi var — taze ekmek,
+ekmek kvası, pişmiş istiridye, yengeç çorbası, kral boy kurbağa bacağı, balık bifteği.
+**Hiçbir yer ikisini de listelemiyordu.** Yani hiçbiriyle karşılaşılamıyordu, iki kafenin
+de satın alınacak bir şeyi yoktu ve hiçbir şey düşmüyordu: `check_trader_stock_lists`
+gayet memnundu, çünkü listeleri gerçekti. Kedi kafesi, dokuz fon sesi olan ve içinde
+hiçbir şey bulunmayan bir odaydı — NPC'si de yoktu.
+
+Ve nekomimi işletmecisinin `offer` repliği, kaynağın içinde **`//todo: unlock trade`**
+yorumunu taşıyordu. Bağlantı tarif edilmiş ve hiç yapılmamış; bulunabilecek en işe yarar
+şey de bu: tüccarın nereye ait olduğunu ve onu kimin açtığını tam olarak söylüyor.
+
+Yani bu icat değil geri kazanım; P-19'un kural olarak kaydettiği de bu. İşletmeci
+kendisininkini açıyor, çünkü öneren o. Kedi kafesinin tezgâhı içeri girildiğinde açılıyor,
+çünkü orada soracak kimse yok.
+
+**Kasabanın artık bir market bölgesi var** ve olması zorunluydu. `src/verifier.js`,
+`market_region`'ı olmayan bir yerdeki tüccarı reddediyor ve bütün kasabanın hiç bölgesi
+yoktu — meydan, iki kafe ve antika dükkânı hepsi `market_region: null`'dı; ki hiçbirinin
+satın alınacak bir şeyi olmamasıyla da tutarlı. `Town` yalnızca `Slums`'a sızıyor, başka
+hiçbir yere değil; çünkü ikisi aynı şehir: meydanın yanındaki bir kafeye boşalttığınız şey
+sokakta bir fiyatı oynatıyor, ikisi de bir günlük yürüyüş uzaktaki bir köyde hiçbir şeyi
+oynatmıyor.
+
+**`check_trader_market_regions`, bunu yakalayacak muhafızı kazandı.** `traders.js` içinde
+bildirilen her tüccarın bir yer tarafından listelenmesi ve bir yerin listelediği her
+tüccarın bildirilmiş olması şart — bileşen ve kitap kontrollerindeki aynı iki yönlü şekil.
+Kimsenin ulaşamadığı bir tüccar, hiçbir şeyin yapamadığı bir bileşenle aynı türden ölü
+içerik; bu ise orada çok daha uzun süre durmuş.
+
+Çalışma anındaki registry yerine yer bloklarını okuyor, bilerek: bir tüccar bir ödülle
+açılabilir ve yine de içinde durduğu oda tarafından listelenmiş olabilir. Listelenmek
+yerleştirmedir; açılmak yalnızca izindir. İki yönden de negatif test edildi — kedi
+kafesinin listesi kaldırıldı ve bir odaya var olmayan bir tüccar yazıldı. 5 bölgede 6
+dükkân, 8 tüccarın hepsi yerleştirilmiş.
+
+Olduğu yerde bırakılan bir şey var: işletmecinin `special` repliği hâlâ
+`//todo: unlock paid action` taşıyor. O bir tüccar değil bir aksiyon, yani bu önerinin işi
+değil; ve bir yorumu ortadan kaldırmak için aksiyon uydurmak, içeriğin yanlış sebeple
+eklenme biçimidir.
 
 ### Dev konsolu yenilemeden sağ çıkıyor, yeniden açılıştan çıkmıyor
 
