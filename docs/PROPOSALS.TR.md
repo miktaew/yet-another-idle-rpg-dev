@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 76 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 77 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -361,11 +361,35 @@ Sonraki fazlar için not: 4a'nın muhafızı `main.js` içindeki deneme çözüm
 çağrı yerinin sırasına bakarak okuyor. O çözümleyicide yapılacak her düzenleme, kilidi
 kazanan tarafta tutmak ya da niçin tutmadığını söylemek zorunda.
 
-**Faz 5 — v0.7.4, *One Unweighed Crate*.** Sandığa ulaşılır. Orman yolunda alınan
-objeyle aynı eli taşır — tek bir motif, tek bir metal, tek bir açıklanmamış malzeme
-— ve başka hiçbir şey. Oyuncu bilerek cevaptan çok soruyla çıkmalıdır. Muhafız:
-`check_lore_threads_resolve`; Q-8 iplik seçeneğine oturdu, yani bu muhafız artık
-borç.
+**Faz 5 — v0.7.4, *One Unweighed Crate*.** `bitti`. Sandığa ulaşılıyor ve kontrol onu
+açmak değil — sandık bir kilit değil. Perception ve Woodworking okunuyor, çünkü zorluk
+bu rıhtımda kimsenin atmayacağı bir bağı okumak ve onu, bağlayan adamın iki kez
+bakmayacağı kadar iyi yeniden yapmak. Başarısızlık, bunu hiçbir şeyi *kesmeden önce*
+anlamak; yani hiçbir şey kesilmiyor ve hiçbir şey kaybedilmiyor: oyuncu, su gitmesini
+söyleyene kadar sırtını ona yaslayıp oturuyor.
+
+İçinde: saman; keçe olmayan, mantar olmayan ve sıkışmayan gri bir malzemeden kesilmiş bir
+yatak; ve demir, çelik ya da tunç olmayan, tırnaktan iz almayan bir metalden, bir bilek
+genişliğinde kapalı bir halka — çepeçevre, kendi başlangıcına dönen karelerle oyulmuş.
+Tek motif, tek metal, tek açıklanmamış malzeme; tam olarak bu önerinin istediği gibi ve
+sandıkta başka hiçbir şey yok.
+
+**Hiçbir eşya ödemiyor**, bilerek. Envanterdeki bir nesnenin bir şey yapması gerekirdi ve
+yaptığı her şey, bu arc'ın cevaplamasına izin verilmeyen bir soruyu cevaplardı. Oyuncunun
+elinde kalan şey bir tarif ve daha önce bir kez anlatılmış bir desen.
+
+Arc, sayman değil **antika koleksiyoncusu** üzerinde kapanıyor; çünkü oyunda *"aynı el"*
+diyip inandırabilecek tek kişi o — kasabanın en eski şeylerini kırk yıl kataloglamış ve
+öteki parçayı suyun kaynama süresi kadar elinde tutmuş biri. Üç şey söylüyor ve
+dördüncüsünü reddediyor: en az iki tane var, onları isteyen biri var, o biri onları
+yapanla aynı değil ve *"dikkatli olmak istiyorum, çünkü söylediğimi hatırlayacaksınız."*
+Kimin eli olduğunu söylemiyor. "Tek katman" kuralı burada tutuyor ve
+[STORY.TR.md](STORY.TR.md) bölüm 3 artık bu üç olguyu ve hâlâ açık olanların listesini
+kayda geçiriyor; böylece sonraki arc onları sessizce genişletemiyor.
+
+Muhafız: 2a'dan gelen `check_lore_threads_resolve` — Q-8 gerçekten iplik seçeneğine
+oturdu. İplik artık üç konuşan üzerinde beş beat: bir rıhtım, bir lonca ve meydanın
+karşısındaki bir dükkân; Q-8'in yazıldığı şeklin tam boyu.
 
 **Faz 6 — v0.7.5, sistem geçişi.** Briefin istediği %20 ve arc'ı değerli kılan
 kısım: stance seçimi stat bonusuyla değil `on_hit` / `on_damaged` üzerinden anlam

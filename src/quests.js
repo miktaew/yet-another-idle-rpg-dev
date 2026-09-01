@@ -861,6 +861,39 @@ const questManager = {
             },
         }
     });
+    /*
+        P-14 quest 4, and the end of the arc. Two tasks: get it open without leaving a
+        sign, and take the description to the one man who can tell you it is the same
+        hand.
+
+        It pays no item. That is deliberate and it is the point of the phase: the player
+        finishes with a description, a motif they have seen once before, and no way at
+        all to act on either. An object in the inventory would have to do something, and
+        anything it did would answer a question this arc is not allowed to answer.
+    */
+    quests["One Unweighed Crate"] = new Quest({
+        quest_name: "quest One Unweighed Crate",
+        display_priority: 20,
+        getQuestDescription: ()=>{
+            if(quests["One Unweighed Crate"].quest_tasks[0].is_finished) {
+                return "quest One Unweighed Crate desc 2";
+            } else {
+                return "quest One Unweighed Crate desc 1";
+            }
+        },
+        questline: "No Word Sent",
+        quest_tasks: [
+            new QuestTask({task_description: "quest One Unweighed Crate task 1"}),
+            new QuestTask({task_description: "quest One Unweighed Crate task 2"}),
+        ],
+        quest_rewards: {
+            xp: 120000,
+            reputation: {
+                Guild: 50,
+                Town: 30,
+            },
+        }
+    });
     quests["A Fire in a Hollow"] = new Quest({
         quest_name: "quest A Fire in a Hollow",
         display_priority: 16,

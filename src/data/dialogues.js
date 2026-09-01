@@ -2737,6 +2737,11 @@ class Textline {
                 is_unlocked: false,
                 lore: true,
                 lore_thread: "lore thread the Marrowmoth",
+                //He counts the ebbs left, and that is what puts the crate itself on the
+                //table: knowing how long you have is what makes going back a decision.
+                rewards: {
+                    actions: [{location: "The lower hold", action: "open the crate"}],
+                },
                 locks_lines: ["tallyman the hold"],
             }),
         }
@@ -3084,6 +3089,29 @@ class Textline {
                 is_unlocked: false,
                 text: "collector price answ",
                 locks_lines: ["price"],
+            }),
+            /*
+                The arc's last beat, and it is his rather than the tallyman's on purpose.
+                The tallyman keeps a page; this man has catalogued the town's oldest
+                things for forty years and held the other piece for about the time it
+                takes to boil water. He is the only person in the game who can say "the
+                same hand" and be believed.
+
+                He does not say whose hand. That is the arc's one-layer rule, and it is
+                the reason this line exists at all: one layer, once - the crate and the
+                thing taken on the forest road were made by the same people, and nothing
+                here says who they were, where either came from, or why the hero had one.
+            */
+            "the band": new Textline({
+                name: "collector the band",
+                is_unlocked: false,
+                text: "collector the band answ",
+                lore: true,
+                lore_thread: "lore thread the Marrowmoth",
+                rewards: {
+                    quest_progress: [{quest_id: "One Unweighed Crate", task_index: 1}],
+                },
+                locks_lines: ["the band"],
             }),
             "other": new Textline({
                 name: "collector other",

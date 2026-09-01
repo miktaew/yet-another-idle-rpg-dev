@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 13 -->
+<!-- doc-source: docs/STORY.md  doc-version: 14 -->
 
 > **Kanonik dosya: [STORY.md](STORY.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -147,6 +147,27 @@ bir kapı; onu *"don't live in the walls, they ARE the walls… An abomination t
 cannot exist, and yet it does"* diye tanımlanan şeyler koruyor.
 
 Bu iki gizem omurgadır. İkisini de gelişigüzel çözmeyin.
+
+**v0.7.4'ün birincisine eklediği şey ve bunun tam sınırı.** Koleksiyoncunun ikinci
+parçası — *"düz, avuç içi büyüklüğünde, kendi başlangıcına dönen karelerle oyulmuş"*,
+*"suyun kaynama süresi kadar"* elinde tuttuğu parça — artık bir kardeşine sahip.
+Marrowmoth'un tartılmamış sandığı, bir bilek genişliğinde kapalı bir halka taşıyordu:
+demir, çelik ya da tunç olmayan ve tırnaktan iz almayan bir metalden; bu ülkede hiç
+kimsenin ad veremediği gri bir malzemeye yataklanmış ve çepeçevre aynı karelerle
+oyulmuş. Kasabanın en eski şeylerini kırk yıldır kataloglayan koleksiyoncu şunu
+söylüyor: *"Aynı el. Aynı nesne değil. Kopyası da değil… bir evdeki iki kapının aynı el
+olduğu gibi."*
+
+O repliğin kanona kattığı üç şey var ve **başka hiçbir şey yok**:
+
+1. Bu nesnelerden **en az iki tane** var.
+2. Onları **isteyen** biri var ve ilkini almaya pazarlık etmeden geldi.
+3. O biri, onları **yapan** kişiyle aynı değil.
+
+Hâlâ açık ve hâlâ gelişigüzel cevaplanmayacak olanlar: soygunun parasını kimin verdiği,
+neden o yolcunun, iki nesnenin nereden geldiği, kahramanın neden birine sahip olduğu ve
+o karelerin ne olduğu. Arc tek bir katmanı bir kez gösterdi. Sonrakinin oyuncuya borcu
+henüz yok.
 
 ## 4. Ton
 

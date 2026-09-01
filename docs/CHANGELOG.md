@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 69 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 70 -->
 
 # Changelog
 
@@ -20,6 +20,63 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.4 - *One Unweighed Crate*: same hand, and no name for it
+
+P-14 phase 5, and the end of the arc's story. The crate is reached, and the whole design
+problem of the scene is that a crate is not a lock.
+
+**The check is putting it back.** Perception and Woodworking, because what is difficult
+is reading a lashing nobody at this quay would tie - it goes over itself in a sequence
+you have to work out twice - and remaking it well enough that the man who tied it would
+not look twice. So failure is not "it would not open". It is working that out *before*
+cutting anything: there is no version where you cut it and tie it back convincingly, so
+you do not cut it, and you sit with your back against it until the water tells you to go.
+Nothing is lost, nothing is consumed, and the guard from 4a says so.
+
+**What is in it.** Straw, then a bed cut to fit out of a grey material that is not felt
+and is not cork and does not compress under a thumb, and is warmer than the hold. In the
+bed, one thing: a closed band the size of a wrist, in a metal that is not iron and not
+steel and not bronze and takes no mark from a nail, cut through all the way round with
+squares that turn and come back to their own beginning.
+
+One motif, one metal, one unexplained material, which is exactly what the proposal asked
+for, and nothing else in the crate at all. Then the bed goes back, and the straw, and the
+lashing is tied the way it was tied in the order it was tied, and checked twice.
+
+**It pays no item.** That is the phase, not an omission. An object in the inventory has
+to do something - be equipped, be crafted with, be sold - and anything it did would
+answer a question this arc is explicitly not allowed to answer. What the player carries
+out is a description and a pattern they have been told about exactly once before.
+
+**The arc closes on the antique collector**, not the tallyman, and that was the one real
+authoring decision here. The tallyman keeps a page; this man has catalogued the town's
+oldest things for forty years and held the other piece *"for about the time it takes to
+boil water"*. He is the only person in the game who can say "same hand" and be believed.
+He asks for the rest of the description before he answers - the metal, what it did under
+a nail, whether the case was warm - and then he puts the magnifying glass in the drawer,
+which is the first thing he has ever been seen to do that was not about work.
+
+*"Same hand. Not the same object. Not a copy of it, either, and not somebody imitating
+one. The same hand, the way two doors in one house are the same hand."*
+
+Three facts are canon out of that, and **nothing else is**: there are at least two;
+somebody wants them and came for the first without haggling; and that somebody is not
+whoever makes them. He does not say whose hand, and he says explicitly that he is being
+careful because the player will remember it. `STORY.md` section 3 now records those three
+and the list of what is still open - who paid for the robbery, why that traveller, where
+either object came from, why the hero had one, and what the squares are - so the next arc
+cannot widen them by accident. Reclamation over invention: the payoff is an NPC the story
+notes had already marked as exhausted, extended rather than replaced.
+
+Guard: `check_lore_threads_resolve` from phase 2a, and Q-8 did land on threads. The
+Marrowmoth thread is five beats across three speakers now - a quay, a guildhall, and a
+shop across the square - which is the shape Q-8 was written for, at full size. Under the
+by-speaker list alone those five would read as three unrelated conversations.
+
+Measured: the action sits on the hold at Perception 30/60 and Woodworking 15/40, the
+quest carries two tasks under the id the save will hold, and the thread resolves to five
+beats over `harbour tallyman`, `guild clerk` and `antique collector`.
 
 ### v0.7.3 - *Out on the Ebb*: three ways across the same mud
 

@@ -2889,7 +2889,42 @@ function get_location_type_penalty(type, stage, stat, category) {
         seen and not opened: reaching it is phase 5's, and the whole arc is built on
         finishing with more questions than answers.
     */
+    /*
+        P-14 phase 5. The check is not getting the crate open - a crate is not a lock.
+        It is being able to leave it the way you found it, which is why it reads
+        Perception and Woodworking rather than anything about force: you have to be able
+        to read a lashing you have never seen before and remake it well enough that the
+        man who tied it would not look twice.
+
+        Failure is therefore not "it would not open". It is working out, before you cut
+        anything, that you could not put it back - so you do not. Retryable, costs
+        nothing, and the reason is the whole of the tension in the scene.
+    */
     locations["The lower hold"].actions = {
+        "open the crate": new GameAction({
+            action_id: "open the crate",
+            action_name: "action open the crate name",
+            starting_text: "action open the crate starting",
+            description: "action open the crate desc",
+            action_text: "action open the crate during",
+            success_text: "action open the crate success",
+            is_unlocked: false,
+            conditions: [
+                {skills: {Perception: 30, Woodworking: 15}},
+                {skills: {Perception: 60, Woodworking: 40}},
+            ],
+            failure_texts: {
+                conditional_loss: ["action open the crate fail conditional_loss 1"],
+                random_loss: ["action open the crate fail random_loss 1"],
+            },
+            attempt_duration: 700,
+            success_chances: [0.3, 1],
+            rewards: {
+                skill_xp: {Perception: 1500, Woodworking: 900},
+                quest_progress: [{quest_id: "One Unweighed Crate", task_index: 0}],
+                textlines: [{dialogue: "antique collector", lines: ["the band"]}],
+            },
+        }),
         "go along the cargo deck": new GameAction({
             action_id: "go along the cargo deck",
             action_name: "action go along the cargo deck name",

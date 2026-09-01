@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 76 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 77 -->
 
 # Proposals
 
@@ -350,11 +350,35 @@ Note for the phases after this: 4a's guard reads `main.js`'s attempt resolver by
 order of three call sites. Any rework of that resolver has to keep the lock on the
 winning side or say why.
 
-**Phase 5 — v0.7.4, *One Unweighed Crate*.** The crate is reached. It carries the
-same hand as the object taken on the forest road — one motif, one metal, one
-unexplained material — and nothing else. The player should finish with more questions
-than answers, deliberately. Guard: `check_lore_threads_resolve`; Q-8 landed on
-threads, so the guard is owed.
+**Phase 5 — v0.7.4, *One Unweighed Crate*.** `done`. The crate is reached, and the check
+is not opening it — a crate is not a lock. It is Perception and Woodworking, because the
+difficulty is reading a lashing nobody at this quay would tie and remaking it well enough
+that the man who tied it would not look twice. Failure is working that out *before*
+cutting anything, so nothing is cut and nothing is lost; the player sits with their back
+against it until the water tells them to go.
+
+Inside: straw, a bed cut out of a grey material that is not felt and is not cork and does
+not compress, and one closed band the size of a wrist in a metal that is not iron, steel
+or bronze and takes no mark from a nail — cut through all the way round with squares that
+turn and come back to their own beginning. One motif, one metal, one unexplained
+material, exactly as this proposal asked, and nothing else in the crate at all.
+
+**It pays no item**, deliberately. An object in the inventory would have to do something,
+and anything it did would answer a question this arc is not allowed to answer. What the
+player leaves with is a description and a pattern they have been told about once before.
+
+The arc closes on the **antique collector** rather than the tallyman, because he is the
+only person in the game who can say *"same hand"* and be believed — forty years of
+cataloguing the town's oldest things, and the other piece in his hand for about the time
+it takes to boil water. He says three things and refuses the fourth: there are at least
+two, somebody wants them, that somebody is not whoever makes them, and *"I want to be
+careful, because you will remember what I say."* He does not say whose hand. That is the
+one-layer rule holding, and [STORY.md](STORY.md) section 3 now records the three facts
+and the list of what is still open, so the next arc cannot quietly widen them.
+
+Guard: `check_lore_threads_resolve` from 2a — Q-8 did land on threads. The thread now
+runs to five beats across three speakers, a quay, a guildhall and a shop across the
+square, which is the shape Q-8 was written for at full size.
 
 **Phase 6 — v0.7.5, the systems pass.** The 20% the brief asks for and the part that
 makes the arc worth having: stance choice made to matter through `on_hit` /

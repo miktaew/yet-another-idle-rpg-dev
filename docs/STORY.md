@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STORY.md  doc-version: 13 -->
+<!-- doc-source: docs/STORY.md  doc-version: 14 -->
 
 # Story canon
 
@@ -147,6 +147,26 @@ strength"*, guarded by things that *"don't live in the walls, they ARE the walls
 An abomination that cannot exist, and yet it does."*
 
 These two mysteries are the spine. Do not resolve either one casually.
+
+**What v0.7.4 added to the first one, and the exact limit of it.** The collector's
+second piece — *"flat, palm-sized, cut through with squares that turn and come back to
+their own beginning"*, held *"for about the time it takes to boil water"* — now has a
+sibling. The unweighed crate on the Marrowmoth held a closed band the size of a wrist,
+in a metal that is not iron, steel or bronze and takes no mark from a nail, bedded in a
+grey material nobody in this country can name, and cut through all the way round with
+the same squares. The collector, who has catalogued the town's oldest things for forty
+years, says: *"Same hand. Not the same object. Not a copy of it, either… the way two
+doors in one house are the same hand."*
+
+Three things are canon from that line and **nothing else is**:
+
+1. There are **at least two** such objects.
+2. Somebody **wants** them, and came for the first one without haggling.
+3. That somebody is **not** whoever makes them.
+
+Still open, and still not to be answered casually: who paid for the robbery, why that
+traveller, where either object came from, why the hero had one, and what the squares
+are. The arc showed one layer once. The next one is not owed to the player yet.
 
 ## 4. Tone
 

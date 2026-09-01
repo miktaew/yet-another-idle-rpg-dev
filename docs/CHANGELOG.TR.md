@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 69 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 70 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,65 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.4 - *One Unweighed Crate*: aynı el ve ona verilecek bir ad yok
+
+P-14 Faz 5 ve arc'ın hikâyesinin sonu. Sandığa ulaşılıyor ve sahnenin tasarım probleminin
+tamamı şu: sandık bir kilit değil.
+
+**Kontrol, onu geri koymak.** Perception ve Woodworking; çünkü zor olan şey, bu rıhtımda
+kimsenin atmayacağı bir bağı okumak — kendi üstünden, iki kez çözmeniz gereken bir
+sırayla geçiyor — ve onu, bağlayan adamın iki kez bakmayacağı kadar iyi yeniden yapmak.
+Yani başarısızlık "açılmadı" değil. Bunu hiçbir şeyi *kesmeden önce* anlamak: onu kesip
+inandırıcı biçimde geri bağlayacağınız hiçbir senaryo yok, o yüzden kesmiyorsunuz ve su
+gitmenizi söyleyene kadar sırtınızı ona yaslayıp oturuyorsunuz. Hiçbir şey
+kaybedilmiyor, hiçbir şey tüketilmiyor ve 4a'nın muhafızı bunu söylüyor.
+
+**İçinde ne var.** Saman; sonra keçe olmayan, mantar olmayan, başparmak altında
+sıkışmayan ve ambardan sıcak olan gri bir malzemeden ölçüsüne göre kesilmiş bir yatak.
+Yatağın içinde tek bir şey: bir bilek genişliğinde kapalı bir halka; demir olmayan, çelik
+olmayan, tunç olmayan ve tırnaktan iz almayan bir metalden, çepeçevre kendi başlangıcına
+dönen karelerle oyulmuş.
+
+Tek motif, tek metal, tek açıklanmamış malzeme; tam olarak önerinin istediği şey ve
+sandıkta başka hiçbir şey yok. Sonra yatak yerine, saman yerine gidiyor; bağ bağlandığı
+gibi, bağlandığı sırayla bağlanıyor ve iki kez kontrol ediliyor.
+
+**Hiçbir eşya ödemiyor.** Bu bir eksiklik değil, fazın kendisi. Envanterdeki bir nesnenin
+bir şey yapması gerekir — kuşanılması, bir şeyin yapımında kullanılması, satılması — ve
+yaptığı her şey, bu arc'ın açıkça cevaplamasına izin verilmeyen bir soruyu cevaplardı.
+Oyuncunun dışarı taşıdığı şey bir tarif ve daha önce tam olarak bir kez anlatılmış bir
+desen.
+
+**Arc, sayman değil antika koleksiyoncusu üzerinde kapanıyor** ve buradaki tek gerçek
+yazarlık kararı da bu oldu. Sayman bir sayfa tutuyor; bu adam ise kasabanın en eski
+şeylerini kırk yıldır kataloglamış ve öteki parçayı *"suyun kaynama süresi kadar"* elinde
+tutmuş. Oyunda "aynı el" deyip inandırabilecek tek kişi o. Cevap vermeden önce tarifin
+gerisini istiyor — metali, tırnağın altında ne yaptığını, yatağın sıcak olup olmadığını —
+sonra büyütecini çekmeceye koyuyor; onun işle ilgisi olmayan bir şey yaptığı ilk kez
+görülüyor.
+
+*"Aynı el. Aynı nesne değil. Kopyası da değil ve birinin ona öykünmesi de değil. Aynı el;
+bir evdeki iki kapının aynı el olduğu gibi."*
+
+Bundan kanona geçen üç olgu var ve **başka hiçbir şey yok**: en az iki tane var; onları
+isteyen biri var ve ilkini almaya pazarlık etmeden geldi; ve o biri, onları yapanla aynı
+değil. Kimin eli olduğunu söylemiyor ve oyuncunun bunu hatırlayacağı için dikkatli
+olduğunu açıkça belirtiyor. `STORY.md` bölüm 3 artık bu üçünü ve hâlâ açık olanların
+listesini kayda geçiriyor — soygunun parasını kimin verdiği, neden o yolcunun, iki
+nesnenin nereden geldiği, kahramanın neden birine sahip olduğu ve o karelerin ne olduğu —
+böylece sonraki arc onları kazara genişletemiyor. İcat yerine geri kazanım: ödül,
+hikâye notlarının çoktan "tükenmiş" diye işaretlediği bir NPC; değiştirilmedi,
+genişletildi.
+
+Muhafız: Faz 2a'dan gelen `check_lore_threads_resolve` ve Q-8 gerçekten iplik seçeneğine
+oturdu. Marrowmoth ipliği artık üç konuşan üzerinde beş beat — bir rıhtım, bir lonca ve
+meydanın karşısındaki bir dükkân — Q-8'in yazıldığı şeklin tam boyu. Yalnızca konuşan
+bazlı listede bakıldığında bu beşi, birbiriyle alakasız üç konuşma gibi okunurdu.
+
+Ölçüldü: aksiyon ambarda, Perception 30/60 ve Woodworking 15/40 ile duruyor; quest,
+kaydın tutacağı kimlik altında iki görev taşıyor; ve iplik `harbour tallyman`,
+`guild clerk` ile `antique collector` üzerinde beş beat'e çözülüyor.
 
 ### v0.7.3 - *Out on the Ebb*: aynı çamurun üstünde üç yol
 
