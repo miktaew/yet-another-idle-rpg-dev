@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 95 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 96 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,52 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.24 - bir süre, birimlerini oyuncunun dilinde söylüyor
+
+P-29, bir ekran görüntüsünden: Türkçe bir panelde *"Sonraki seviyeye kalan 3801 saat
+(**2 days 15 hours 22 minutes** gerçek zamanda)"*.
+
+**Sorun `locales/turkish.js` değildi** — sahibi oraya işaret etti ve
+`check_translations_have_no_english` o dosyanın her satırını tarayıp geçiyor. İngilizce,
+`src/game_time.js` içindeki `format_time`'daydı: on düz kelime — `year/years`,
+`month/months`, `day/days`, `hour/hours`, `minute/minutes` — bir `long_names` bayrağının
+arkasında, hiçbir yerel satırdan geçmeden dizgeye kurulmuş. **Projenin bütün kontrollerine
+görünmez**, çünkü İngilizce sızıntı kontrolü çevirileri okuyor ve hiç çevrilmemiş bir metnin
+okunacak satırı yok.
+
+**Düzeltmenin nereye gitmesi gerektiği ve bunun hatanın olduğu yer olmadığı.**
+`game_time.js`'in **hiç import'u yok** — `src/` içindeki tek yaprak modül — ve kelimelerin
+yerelden gelmesi gerekiyor; yerel ise `translation.js`'in arkasında, o `main.js`'i,
+o da `game_time.js`'i import ediyor. Çeviri katmanına orada uzanmak, hiç döngüsü olmayan tek
+modülün üzerinden bir döngü kapatırdı.
+
+Yani aritmetik kalıyor, sözcükler taşınıyor. `split_duration` dakikaları saate, saatleri güne
+taşıyor ve dışa aktarılıyor; `format_time` kısa biçimi koruyor — `2D15h22m` kelime değil harf
+olduğu için yerelsiz bir dosyada güvenli — ve `display.js` içindeki
+`format_duration_in_words` söyleme işini yapıyor; yerelin zaten bulunduğu yerde.
+
+**Taşımadan önce ölçüldü: `long_names: true`'nun tam olarak bir çağıranı vardı** —
+`display.js`'teki "sonraki seviyeye kalan" satırı, ki ekran görüntüsündeki dize de o.
+Dolayısıyla bayrak ve on kelimesi yerinde çevrilmek yerine tamamen kaldırıldı.
+
+**On satırın dördü zaten vardı.** `display.js`, başka bir panel için `ui time hour`,
+`ui time hours`, `ui time minute` ve `ui time minutes`'ı çözüyordu; `format_time` ise kendi
+kelimelerini kuruyordu. Altı satır aileyi tamamlıyor. Türkçe bir sayıdan sonra ismi çoğul
+yapmıyor — "2 gün", "2 günler" değil — yani iki biçimi de aynı şeyi söylüyor; bu bir kopya
+değil doğru cevap.
+
+**Artık iki kontrol kapsıyor ve biri bedava.** Kimlikler kurulmak yerine çözüldüğü için
+`LOCALE_STRICT=1`, eksik olan biri istendiği anda düşüyor — düzeltmenin yapısal yarısı. Ve
+`check_duration_units_have_rows`, katılığın kapsayamadığını kapsıyor: listeye eklenen ama
+satırlarını kimsenin yazmadığı bir birim. Birim listesini yeniden ifade etmek yerine
+`display.js`'ten okuyor, yani "week" eklemek kontrolün kendi kendiyle hemfikir kalmasına yol
+açmıyor — iki yönden negatif test edildi: bir Türkçe satır silinerek ve altıncı bir birim
+eklenerek.
+
+`check_no_unused_locale_rows`'a da `ui time <birim>`'in artık kurulmuş bir aile olduğunun
+söylenmesi gerekti. Bunu kendi mesajı söylüyordu; kendi masrafını çıkaran kontrol tam olarak
+bu türden.
 
 ### v0.7.23 - günlük, siz onu okurken güncelleniyor
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 109 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 110 -->
 
 # Proposals
 
@@ -623,38 +623,6 @@ own constructor. That is a broader check than this proposal and would probably f
 than two.
 
 
-
-### P-29 — A duration says "2 days 15 hours" in Turkish `open`
-
-Reported by the owner with a screenshot: a Turkish panel reading *"Sonraki seviyeye kalan
-3801 saat (**2 days 15 hours 22 minutes** gerçek zamanda)"*.
-
-**Measured, and `locales/turkish.js` is not where the problem is.** The file is clean -
-`check_translations_have_no_english` scans every row of it for English marker words and
-passes. The English is in `src/game_time.js`, in `format_time`:
-
-```js
-const used_term = time.days == 1?"day":"days";
-formatted_time += long_names? `${time.days} ${used_term} ` : `${time.days}D`;
-```
-
-Ten literal English words - `year/years`, `month/months`, `day/days`, `hour/hours`,
-`minute/minutes` - built into the string without ever passing through a locale row. That is
-a D-5 violation, and it is invisible to every check the project has: the English-leak check
-reads translations, and text that was never translated has no row to read. The short form
-(`3h18m`) is fine, because a letter is not a word.
-
-**Two of the ten already have rows.** `display.js` resolves `ui time hour`, `ui time hours`,
-`ui time minute` and `ui time minutes`, so half the vocabulary exists and `format_time`
-does not use it. The fix is those rows plus six more, and `game_time.js` importing the
-translation layer the way `display.js` does.
-
-**Guard, and it is the valuable half.** The class is "player-facing English built in `src/`
-rather than resolved from a row", and nothing checks for it - `check_no_english_in_dom`
-reads `index.html`'s static markup, not a string a function assembles at runtime. A check
-that refuses an English word inside a template literal in `src/` would have caught this and
-would catch the next one. It needs an allow-list for the short forms and for log ids, so it
-is not free - but it is the only thing standing between D-5 and the next hardcoded word.
 
 ### P-30 — The bay hides what it cannot offer instead of refusing it `open`
 

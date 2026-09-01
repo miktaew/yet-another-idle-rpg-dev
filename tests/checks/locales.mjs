@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { base_key, load_locale } from "../lib/locale-files.mjs";
 import { default_language, locales_dir, repo_root, strict_locales, variant_prefix } from "../lib/context.mjs";
-import { error, warn } from "../lib/report.mjs";
+import { errors, error, warn } from "../lib/report.mjs";
 import { source_files, strip_comments } from "../lib/source.mjs";
 
 /**
@@ -337,6 +337,13 @@ async function check_no_unused_locale_rows() {
         "age ", "height ", "race ", "ui rarity ", "ui enemy tag ", "loctype ",
         //`title ${title_id} name` and `... desc`, built off the registry key.
         "title ",
+        /*
+            `ui time ${unit}` and `ui time ${unit}s`, the five units of a spoken duration.
+            They were literals in display.js until P-29 moved the wording out of
+            game_time.js - where the unit words were English strings built into the string -
+            and an assembled id is invisible to the scan above.
+        */
+        "ui time ",
     ];
 
     /*
@@ -456,7 +463,68 @@ async function check_ui_ids_exist() {
     }
 }
 
+/**
+ * A duration unit with no words to say it in.
+ *
+ * P-29: `format_time` built "day"/"days", "hour"/"hours" and six more into the string as
+ * English literals, and no check could see it - the English-leak check reads translations,
+ * and text that was never translated has no row to read. The wording is
+ * format_duration_in_words in display.js now, resolving `ui time <unit>` and
+ * `ui time <unit>s`, so LOCALE_STRICT covers a missing row the moment one is asked for.
+ *
+ * This is the half strictness cannot cover: a unit added to the list whose rows nobody
+ * wrote. It would say nothing for that unit - the loop skips a row it cannot resolve or
+ * renders a marker - in whichever language was forgotten, which is exactly the shape the
+ * original bug had.
+ *
+ * The unit list is read out of display.js rather than written here, so adding "week" cannot
+ * leave this check agreeing with itself.
+ */
+async function check_duration_units_have_rows() {
+    const before = errors.length;
+
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/display.js"), "utf8"));
+    const declaration = /const duration_units\s*=\s*\[([^\]]*)\]/.exec(source);
+    if (!declaration) {
+        error("src/display.js no longer declares `const duration_units = [...]` - "
+            + "check_duration_units_have_rows cannot tell a unit from a typo.");
+        return;
+    }
+    const units = [...declaration[1].matchAll(/"([^"]+)"/g)].map((match) => match[1]);
+    if (units.length === 0) {
+        error("duration_units is empty - this check is out of date.");
+        return;
+    }
+
+    const names = fs.readdirSync(locales_dir)
+        .filter((file) => file.endsWith(".js"))
+        .map((file) => file.slice(0, -3));
+
+    for (const locale_name of names) {
+        const rows = await load_locale(locale_name);
+        if (!rows) continue;
+
+        for (const unit of units) {
+            for (const id of [`ui time ${unit}`, `ui time ${unit}s`]) {
+                if (rows[id] === undefined) {
+                    error(`locales/${locale_name}.js has no "${id}" row, so a duration `
+                        + `containing ${unit}s says nothing about them in that language. `
+                        + `format_duration_in_words asks for both the singular and the `
+                        + `plural of every unit in duration_units.`);
+                }
+            }
+        }
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] duration units: ${units.length} units across `
+            + `${names.length} locales, singular and plural for each`);
+    }
+}
+
 export {
+    check_duration_units_have_rows,
     check_duplicate_keys,
     check_ui_ids_exist,
     check_interpolated_pairs,

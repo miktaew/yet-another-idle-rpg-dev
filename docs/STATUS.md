@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 42 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 43 -->
 
 # Status
 
@@ -203,6 +203,7 @@ but the ones that encode a bug that shipped:
 | `reputation gates` | A standing region nothing gates on, so earning it changes nothing. 5 regions. |
 | `item keys` | An item with no name row that assembles none, so the player reads its registry key. 916 lookups. |
 | `panel updaters` | A function that draws a panel and that nothing calls, so the panel never appears. 48 updaters. |
+| `duration units` | A duration unit with no words to say it in, in some language. 5 units. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

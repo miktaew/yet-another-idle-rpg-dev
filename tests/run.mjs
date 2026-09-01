@@ -76,6 +76,7 @@ import {
     check_the_prediction_and_the_roll_share_one_source,
 } from "./checks/crafting.mjs";
 import {
+    check_duration_units_have_rows,
     check_interpolated_pairs,
     check_locales,
     check_no_placeholder_text,
@@ -109,6 +110,7 @@ import {
 
 check_site();
 check_interpolated_pairs();
+await check_duration_units_have_rows();
 check_reward_keys();
 check_a_rolled_set_is_not_mostly_nothing();
 check_location_types();

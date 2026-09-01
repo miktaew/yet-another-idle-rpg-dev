@@ -20,7 +20,7 @@ import { current_enemies, game_options,
     get_effective_skill_xp_gain} from "./main.js";
 import { dialogues } from "./data/dialogues.js";
 import { activities } from "./activities.js";
-import { format_time, current_game_time, seasons } from "./game_time.js";
+import { format_time, split_duration, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, get_location_type_penalty, location_types, locations } from "./data/locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
@@ -2367,6 +2367,45 @@ function refresh_open_journal_panels() {
     }
 }
 
+/*
+    The units of a spoken duration, in the order they are said. The row ids are the
+    existing `ui time hour` / `ui time hours` family, which display.js already resolved for
+    the two smallest units and which now covers all five.
+*/
+const duration_units = ["year", "month", "day", "hour", "minute"];
+
+/**
+ * A duration in words: "2 days 15 hours 22 minutes", in whatever language is loaded.
+ *
+ * This used to be format_time's `long_names` flag, which built the unit words into the
+ * string as English literals - the only untranslated thing on a Turkish panel (P-29). The
+ * arithmetic stays in game_time.js as split_duration; the wording is here because this is
+ * where the locale is, and game_time.js is a leaf that cannot reach it without closing a
+ * cycle through main.js.
+ *
+ * Singular and plural are separate rows because English needs them. Turkish does not
+ * pluralise after a number - "2 gün", not "2 günler" - so both of its rows say the same
+ * thing, which is the right answer rather than a duplicate.
+ *
+ * @param {Object} time {minutes, hours, days, months, years}
+ * @returns {String}
+ */
+function format_duration_in_words(time) {
+    const carried = split_duration({time});
+    const said = [];
+
+    for(const unit of duration_units) {
+        const amount = carried[`${unit}s`];
+        if(!(amount > 0)) {
+            continue;
+        }
+        said.push(translationManager.getText(language,
+            amount === 1 ? `ui time ${unit}` : `ui time ${unit}s`, {v1: amount}));
+    }
+
+    return said.join(" ");
+}
+
 function update_displayed_item_log() {
 
     set_HTML(data_entry_divs.item_log,`<div id='item_log_header'>${translationManager.getText(language, "ui item log")}</div>`)
@@ -2703,7 +2742,7 @@ function update_displayed_ongoing_activity(current_activity) {
                 : NaN;
 
             if(Number.isFinite(time_needed)) {
-                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_time({ time: { minutes: time_needed / 60 }, long_names: true })}${translationManager.getText(language, "ui realtime")})`);
+                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_duration_in_words({ minutes: time_needed / 60 })}${translationManager.getText(language, "ui realtime")})`);
             } else {
                 insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level unknown")}`);
             }

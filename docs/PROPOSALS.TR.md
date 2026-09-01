@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 109 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 110 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -644,39 +644,6 @@ kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından
 ve muhtemelen ikiden fazlasını bulur.
 
 
-
-### P-29 — Bir süre Türkçede "2 days 15 hours" diyor `open`
-
-Sahibi ekran görüntüsüyle bildirdi: Türkçe bir panelde *"Sonraki seviyeye kalan 3801 saat
-(**2 days 15 hours 22 minutes** gerçek zamanda)"*.
-
-**Ölçüldü ve sorun `locales/turkish.js`'te değil.** Dosya temiz —
-`check_translations_have_no_english` onun her satırını İngilizce işaret kelimeleri için
-tarıyor ve geçiyor. İngilizce, `src/game_time.js` içindeki `format_time`'da:
-
-```js
-const used_term = time.days == 1?"day":"days";
-formatted_time += long_names? `${time.days} ${used_term} ` : `${time.days}D`;
-```
-
-On adet düz İngilizce kelime — `year/years`, `month/months`, `day/days`, `hour/hours`,
-`minute/minutes` — hiçbir yerel satırdan geçmeden dizgenin içine kuruluyor. Bu bir D-5
-ihlali ve projenin bütün kontrollerine görünmez: İngilizce sızıntı kontrolü çevirileri
-okuyor, hiç çevrilmemiş bir metnin ise okunacak satırı yok. Kısa biçim (`3h18m`) sorun
-değil, çünkü bir harf kelime değil.
-
-**Onun ikisinin satırı zaten var.** `display.js`, `ui time hour`, `ui time hours`,
-`ui time minute` ve `ui time minutes`'ı çözüyor; yani söz dağarcığının yarısı var ve
-`format_time` onu kullanmıyor. Düzeltme, o satırlar artı altı tane daha ve `game_time.js`'in
-çeviri katmanını `display.js` gibi içe aktarması.
-
-**Muhafız ve değerli olan yarı bu.** Sınıf şu: "bir satırdan çözülmek yerine `src/` içinde
-kurulmuş, oyuncunun gördüğü İngilizce" — ve bunu hiçbir şey kontrol etmiyor;
-`check_no_english_in_dom`, `index.html`'in statik işaretlemesini okuyor, bir fonksiyonun
-çalışma anında kurduğu dizgeyi değil. `src/` içindeki bir şablon dizgesinde İngilizce
-kelimeyi reddeden bir kontrol bunu yakalardı ve bir sonrakini de yakalar. Kısa biçimler ve
-kütük kimlikleri için bir izin listesi gerektiriyor, yani bedava değil — ama D-5 ile bir
-sonraki gömülü kelime arasında duran tek şey o.
 
 ### P-30 — Körfez, sunamadığı şeyi reddetmek yerine saklıyor `open`
 

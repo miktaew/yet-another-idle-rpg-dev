@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 95 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 96 -->
 
 # Changelog
 
@@ -20,6 +20,50 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.24 - a duration says its units in the player's language
+
+P-29, from a screenshot: a Turkish panel reading *"Sonraki seviyeye kalan 3801 saat
+(**2 days 15 hours 22 minutes** gerçek zamanda)"*.
+
+**`locales/turkish.js` was not the problem** - the owner pointed at it, and
+`check_translations_have_no_english` scans every row of that file and passes. The English was
+in `src/game_time.js`, in `format_time`: ten literal words - `year/years`, `month/months`,
+`day/days`, `hour/hours`, `minute/minutes` - built into the string behind a `long_names`
+flag, without ever passing through a locale row. **Invisible to every check the project
+has**, because the English-leak check reads translations and text that was never translated
+has no row to read.
+
+**Where the fix had to go, and it is not where the bug was.** `game_time.js` has **no
+imports at all** - it is the one leaf module in `src/` - and the words have to come from the
+locale, which lives behind `translation.js`, which imports `main.js`, which imports
+`game_time.js`. Reaching for the translation layer there would close a cycle through the
+only module that has none.
+
+So the arithmetic stays and the wording moves. `split_duration` carries minutes into hours
+into days and is exported; `format_time` keeps the short form, which is safe in a
+locale-less file because `2D15h22m` is letters rather than words; and
+`format_duration_in_words` in `display.js` does the saying, where the locale already is.
+
+**Measured before moving it: `long_names: true` had exactly one caller** - the "next level
+in" line in `display.js`, which is the string in the screenshot. So the flag and its ten
+words are gone rather than translated in place.
+
+**Four of the ten rows already existed.** `display.js` was resolving `ui time hour`,
+`ui time hours`, `ui time minute` and `ui time minutes` for a different panel while
+`format_time` built its own. Six more complete the family. Turkish does not pluralise a noun
+after a number - "2 gün", not "2 günler" - so both of its forms say the same thing, which is
+the right answer rather than a duplicate.
+
+**Two checks now cover it, and one of them for free.** Because the ids are resolved rather
+than built, `LOCALE_STRICT=1` fails on a missing one the moment it is asked for - the
+structural half of the fix. And `check_duration_units_have_rows` covers what strictness
+cannot: a unit added to the list whose rows nobody wrote. It reads the unit list out of
+`display.js` rather than restating it, so adding "week" cannot leave the check agreeing with
+itself - negative-tested both ways, by deleting a Turkish row and by adding a sixth unit.
+
+`check_no_unused_locale_rows` also had to be told that `ui time <unit>` is now an assembled
+family. Its own message said so, which is the sort of check that pays for itself.
 
 ### v0.7.23 - the journal updates while you are reading it
 

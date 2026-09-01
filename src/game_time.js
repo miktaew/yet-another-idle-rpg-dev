@@ -147,13 +147,20 @@ Game_Time.prototype.toString = function() {
 }
 
 /**
- * 
- * @param {Object} data 
+ * A duration carried up into whole units: minutes into hours, hours into days, and so on.
+ *
+ * Split out of format_time so that the arithmetic has one home and the WORDING has
+ * another. This file has no imports at all - it is a leaf - and the words have to come
+ * from the locale, which lives behind translation.js, which imports main.js, which imports
+ * this file. Reaching for the translation layer here would close a cycle through the one
+ * module that has none, so the caller does the wording instead.
+ *
+ * @param {Object} data
  * @param {Object} data.time {minutes, hours, days, months, years}
- * @param {Boolean} [data.long_names] if it should use "minutes", "hours", etc instead of "m","h"
- * @returns 
+ * @param {Boolean} [data.round] carry into larger units; false leaves the minutes as given
+ * @returns {Object} the same shape, carried
  */
-function format_time({time, long_names, round=true}) { //{time, long_names?}
+function split_duration({time, round = true}) {
     if(!time) {
         throw "No time passed in arguments!";
     }
@@ -179,26 +186,40 @@ function format_time({time, long_names, round=true}) { //{time, long_names?}
         }
     }
 
+    return time;
+}
+
+/**
+ * The short form: 2D15h22m.
+ *
+ * A letter per unit and no words, which is why this one can stay in a file with no access
+ * to the locale. The long form used to live here too, behind a `long_names` flag, and it
+ * built "day"/"days", "hour"/"hours" and six more into the string - ten English words in
+ * `src/`, reaching a Turkish player as the only untranslated thing on the screen (P-29).
+ * It is format_duration_in_words in display.js now, where the locale is.
+ *
+ * @param {Object} data
+ * @param {Object} data.time {minutes, hours, days, months, years}
+ * @returns {String}
+ */
+function format_time({time, round=true}) {
+    const carried = split_duration({time, round});
+
     let formatted_time = '';
-    if(time.years > 0) {
-        const used_term = time.years == 1?"year":"years";
-        formatted_time += long_names? `${time.years} ${used_term} ` : `${time.years}Y`;
+    if(carried.years > 0) {
+        formatted_time += `${carried.years}Y`;
     }
-    if(time.months > 0) {
-        const used_term = time.months == 1?"month":"months";
-        formatted_time += long_names? `${time.months} ${used_term} ` : `${time.months}M`;
+    if(carried.months > 0) {
+        formatted_time += `${carried.months}M`;
     }
-    if(time.days > 0) {
-        const used_term = time.days == 1?"day":"days";
-        formatted_time += long_names? `${time.days} ${used_term} ` : `${time.days}D`;
+    if(carried.days > 0) {
+        formatted_time += `${carried.days}D`;
     }
-    if(time.hours > 0) {
-        const used_term = time.hours == 1?"hour":"hours";
-        formatted_time += long_names? `${time.hours} ${used_term} ` : `${time.hours}h`;
+    if(carried.hours > 0) {
+        formatted_time += `${carried.hours}h`;
     }
-    if(time.minutes > 0) {
-        const used_term = time.minutes == 1?"minute":"minutes";
-        formatted_time += long_names? `${time.minutes} ${used_term} ` : `${time.minutes}m`;
+    if(carried.minutes > 0) {
+        formatted_time += `${carried.minutes}m`;
     }
 
     return formatted_time;
@@ -213,4 +234,4 @@ const seasons = ["Spring","Summer","Autumn","Winter"];
 
 const current_game_time = new Game_Time({year: 999, month: 4, day: 1, hour: 8, minute: 0, day_count: 1});
 
-export {current_game_time, format_time, is_night, seasons, Game_Time, night_time};
+export {current_game_time, format_time, split_duration, is_night, seasons, Game_Time, night_time};
