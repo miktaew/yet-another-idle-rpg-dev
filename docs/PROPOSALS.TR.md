@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 100 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 102 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -706,6 +706,137 @@ geçerli kalıyor.
 lehine argümanı, oyuncunun yükselişini izleyebildiği bir sayının bir yolu yol gibi
 hissettirdiğiydi — sonucu da şu: arkasında yol olmayan bir sayı, hiç sayı olmamasından
 kötüdür.
+
+
+### P-29 — Bir süre Türkçede "2 days 15 hours" diyor `open`
+
+Sahibi ekran görüntüsüyle bildirdi: Türkçe bir panelde *"Sonraki seviyeye kalan 3801 saat
+(**2 days 15 hours 22 minutes** gerçek zamanda)"*.
+
+**Ölçüldü ve sorun `locales/turkish.js`'te değil.** Dosya temiz —
+`check_translations_have_no_english` onun her satırını İngilizce işaret kelimeleri için
+tarıyor ve geçiyor. İngilizce, `src/game_time.js` içindeki `format_time`'da:
+
+```js
+const used_term = time.days == 1?"day":"days";
+formatted_time += long_names? `${time.days} ${used_term} ` : `${time.days}D`;
+```
+
+On adet düz İngilizce kelime — `year/years`, `month/months`, `day/days`, `hour/hours`,
+`minute/minutes` — hiçbir yerel satırdan geçmeden dizgenin içine kuruluyor. Bu bir D-5
+ihlali ve projenin bütün kontrollerine görünmez: İngilizce sızıntı kontrolü çevirileri
+okuyor, hiç çevrilmemiş bir metnin ise okunacak satırı yok. Kısa biçim (`3h18m`) sorun
+değil, çünkü bir harf kelime değil.
+
+**Onun ikisinin satırı zaten var.** `display.js`, `ui time hour`, `ui time hours`,
+`ui time minute` ve `ui time minutes`'ı çözüyor; yani söz dağarcığının yarısı var ve
+`format_time` onu kullanmıyor. Düzeltme, o satırlar artı altı tane daha ve `game_time.js`'in
+çeviri katmanını `display.js` gibi içe aktarması.
+
+**Muhafız ve değerli olan yarı bu.** Sınıf şu: "bir satırdan çözülmek yerine `src/` içinde
+kurulmuş, oyuncunun gördüğü İngilizce" — ve bunu hiçbir şey kontrol etmiyor;
+`check_no_english_in_dom`, `index.html`'in statik işaretlemesini okuyor, bir fonksiyonun
+çalışma anında kurduğu dizgeyi değil. `src/` içindeki bir şablon dizgesinde İngilizce
+kelimeyi reddeden bir kontrol bunu yakalardı ve bir sonrakini de yakalar. Kısa biçimler ve
+kütük kimlikleri için bir izin listesi gerektiriyor, yani bedava değil — ama D-5 ile bir
+sonraki gömülü kelime arasında duran tek şey o.
+
+### P-30 — Körfez, sunamadığı şeyi reddetmek yerine saklıyor `open`
+
+Sahibi ekran görüntüsüyle bildirdi: **Kış**'ta körfezde durunca bölge hiç aksiyon
+göstermiyor — yalnızca yolculuk.
+
+**Ölçüldü ve her parça yazıldığı gibi davranıyor.** Körfezde dört aksiyon ve bir etkinlik
+var:
+
+| ne | durum |
+| --- | --- |
+| `read the departures` | `is_unlocked: false` — hikâye ilerlemesi |
+| `ask who carried it` | `is_unlocked: false` — hikâye ilerlemesi |
+| `lend a hand on the quay` | `display_conditions: {season: {yes: ["Spring","Autumn"]}}` |
+| `see the manifest` | aynı mevsim koşulu |
+| `fishing` | `is_unlocked: false` — *Nothing Bites Here* kitabı açıyor |
+
+Yani kışta iki mevsimlik aksiyon saklanıyor, öteki üçü de oyuncunun yapmadığı şeyleri
+bekliyor. Kırık bir şey yok. **Deneyim yine de yanlış** ve projenin bunun nedenini yazdığı
+yer zaten var.
+
+**`display_conditions` saklıyor; `required` sebebiyle reddediyor.** Faz 4'ün kuralı, P-25'te
+yeniden ifade edildiği hâliyle: *"Yerleşim aksiyonları kazanılmadan önce görünüyor ve
+sebebiyle reddediliyor; bilerek, çünkü kimsenin göremediği kilitli bir kapı hedef
+değildir."* Mevsimlik körfez aksiyonları `display_conditions` kullanıyor, dolayısıyla kışın
+gelen biri onların var olduğunu öğrenmiyor — ve körfez bilerek oyunun en ince bölgesi, yani
+dört aksiyonundan ikisini saklamak onu boşaltıyor.
+
+**Düzeltme bir taşıma, yeni makine değil.** `required` de her koşul kümesi gibi bir küme ve
+`conditions.js` onun içinde `season` okuyor; yani mevsim `display_conditions`'tan
+`required`'a taşınabilir ve Marrowmoth'un hangi mevsimlerde çalıştığını söyleyen bir
+`unable_to_begin` satırı eklenebilir. Aksiyon o zaman yıl boyu görünür ve neden
+alınamadığını söyler — gelgit düzlüklerinin zaten davrandığı gibi, çünkü onların aksiyonları
+`is_unlocked: true` ve gelgit metnin içinde.
+
+**Karar gerektiren şey.** Bir mevsimin **genel olarak** `required`'a mı ait olduğu, yoksa
+yalnızca bölgenin saklamanın onu boşaltacağı kadar ince olduğu yerlerde mi. Körfez, bunu
+apaçık kılan vaka; yirmi aksiyonu olan bir bölgedeki mevsimlik bir aksiyon aynı sorun değil.
+
+**Muhafız.** Sınıf şu: "oyuncunun sonradan karşılayabileceği bir koşulla saklanmış ve bunu
+ona söyleyen hiçbir şey olmayan bir aksiyon". `check_actions_can_explain_failure` her
+`required`'ı bir `unable_to_begin` satırına sahip olmaya zorluyor; eksik olan kural öteki
+yön — tekrarlayan ve karşılanabilir bir şey üzerinde, reddetmenin dürüst seçim olacağı bir
+`display_conditions`.
+
+
+### P-31 — Keşifler paneli yalnızca bir filtreye dokununca yeniden çiziliyor `open`
+
+Sahibi bildirdi: panel durumsuz görünüyor, ya da en azından hemen yenilenmiyor; sayılar bir
+bulguyu anında izlemeli.
+
+**Ölçüldü ve durum bayat olmaktan kötü — onu hiçbir şey yeniden çizmiyor.** Bütün depoda
+`update_displayed_discoveries(` araması dört çağıran buluyor ve hepsi `index.html` içindeki
+gövde içi işleyiciler:
+
+```
+index.html:765  <input type="search"   id="discoveries_search"            oninput="update_displayed_discoveries()">
+index.html:768  <input type="checkbox" id="discoveries_hide_sourceless" onclick="update_displayed_discoveries()">
+index.html:770  <input type="checkbox" id="discoveries_hide_crafted"    onclick="update_displayed_discoveries()">
+index.html:772  <input type="checkbox" id="discoveries_hide_traded"     onclick="update_displayed_discoveries()">
+```
+
+`src/` içinden onu hiçbir şey çağırmıyor. `display.js` onu 59. satırda **içe aktarıyor** ve
+adı hiç kullanmıyor; `main.js` ise o dört işleyicinin erişebilmesi için `window`'a koyuyor.
+Yani panel, birinin en son arama kutusuna yazdığı ya da bir kutuyu işaretlediği anda
+çizileni gösteriyor — bir bulgunun görünmemesinin ve `bulunan: N`'in kımıldamamasının sebebi
+de bu.
+
+**Ve kazanma yolunun ona söyleyeceği bir şey yok.** `item_log.log_items(items)`,
+`character.js` içindeki `add_to_character_inventory`'den çağrılıyor; kütüğü güncelliyor ve
+dönüyor. Envanter ekranı orada yenileniyor, günlük yenilenmiyor.
+
+**İki soru var ve yalnızca ikincisi bir yargı.**
+
+Birincisi mekanik: kütük büyüdüğünde ve sekmesi açıldığında panelin yeniden çizilmesi
+gerekiyor. `update_displayed_item_log`, eşya kütüğü şeridi için `log_items`'ın yanında zaten
+çağrılıyor; yani kanca var ve çağrının ekleneceği bir yer var. Sekme geçişi de yeniden
+çizmeli, yoksa hiçbir filtreye dokunulmamış bir sayfa açılışı hiçbir şey göstermiyor.
+
+İkincisi: **her bulgunun bütün listeyi yeniden çizmesi gerekip gerekmediği.** Panel, bilinen
+her eşya için kaynaklarıyla bir girdi kuruyor ve `item_sources` önbelleğe alınmış bir indeks;
+uzun bir bekleme oturumunda toplanan her eşyada bunun tamamını yeniden kurmak bariz biçimde
+bedava değil. Ucuz sürüm, sekme açılışında artı **yeni** bir eşyada yeniden çizmek —
+`log_items` zaten bir şeyin yeni olup olmadığını biliyor, çünkü `add_to_inventory`
+`was_anything_new_added` döndürüyor — ve elinizde zaten olan bir eşyanın sayısını sekme
+yeniden açılana kadar bırakmak. Bunun yeterli olup olmadığına, sahibinin "artışlar hemen
+yansımalı" ifadesi karar verecek.
+
+**Ayrıca ölçüldü ve kendi başına bakılmaya değer:** `update_displayed_lore` tam olarak aynı
+şekle sahip — `display.js`'te içe aktarılmış, `window`'a verilmiş ve `src/` içinden hiçbir
+şey tarafından çağrılmıyor. Burada ne karar verilirse ona da uygulanır.
+
+**Muhafız.** Sınıf şu: "hiçbir şeyin çağırmadığı bir panel güncelleyicisi" ve bu kontrol
+edilebilir: hiçbir modülün çağırmadığı ve hiçbir işaretleme işleyicisinin adlandırmadığı bir
+`update_displayed_*` fonksiyonu, ya ölüdür ya da hiç yenilenmeyen bir paneldir.
+`check_onclick_names_are_reachable` öteki yönü zaten yürüyor — hiçbir şeyi adlandırmayan
+işaretleme işleyicileri — yani bunu yapacak parçalar mevcut.
 
 
 ---

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 100 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 102 -->
 
 # Proposals
 
@@ -684,6 +684,133 @@ declared 0 stands.
 **What this must not do.** It must not become a fifth region for symmetry. Q-7's argument
 for the Guild was that a number the player can watch rise is what makes a path feel like a
 path - and the corollary is that a number with no path behind it is worse than no number.
+
+
+### P-29 — A duration says "2 days 15 hours" in Turkish `open`
+
+Reported by the owner with a screenshot: a Turkish panel reading *"Sonraki seviyeye kalan
+3801 saat (**2 days 15 hours 22 minutes** gerçek zamanda)"*.
+
+**Measured, and `locales/turkish.js` is not where the problem is.** The file is clean -
+`check_translations_have_no_english` scans every row of it for English marker words and
+passes. The English is in `src/game_time.js`, in `format_time`:
+
+```js
+const used_term = time.days == 1?"day":"days";
+formatted_time += long_names? `${time.days} ${used_term} ` : `${time.days}D`;
+```
+
+Ten literal English words - `year/years`, `month/months`, `day/days`, `hour/hours`,
+`minute/minutes` - built into the string without ever passing through a locale row. That is
+a D-5 violation, and it is invisible to every check the project has: the English-leak check
+reads translations, and text that was never translated has no row to read. The short form
+(`3h18m`) is fine, because a letter is not a word.
+
+**Two of the ten already have rows.** `display.js` resolves `ui time hour`, `ui time hours`,
+`ui time minute` and `ui time minutes`, so half the vocabulary exists and `format_time`
+does not use it. The fix is those rows plus six more, and `game_time.js` importing the
+translation layer the way `display.js` does.
+
+**Guard, and it is the valuable half.** The class is "player-facing English built in `src/`
+rather than resolved from a row", and nothing checks for it - `check_no_english_in_dom`
+reads `index.html`'s static markup, not a string a function assembles at runtime. A check
+that refuses an English word inside a template literal in `src/` would have caught this and
+would catch the next one. It needs an allow-list for the short forms and for log ids, so it
+is not free - but it is the only thing standing between D-5 and the next hardcoded word.
+
+### P-30 — The bay hides what it cannot offer instead of refusing it `open`
+
+Reported by the owner with a screenshot: standing in the bay in **Winter**, the region shows
+no actions at all - only travel.
+
+**Measured, and every piece is behaving as written.** The bay has four actions and one
+activity:
+
+| what | state |
+| --- | --- |
+| `read the departures` | `is_unlocked: false` - story progress |
+| `ask who carried it` | `is_unlocked: false` - story progress |
+| `lend a hand on the quay` | `display_conditions: {season: {yes: ["Spring","Autumn"]}}` |
+| `see the manifest` | same seasonal condition |
+| `fishing` | `is_unlocked: false` - the book *Nothing Bites Here* unlocks it |
+
+So in Winter the two seasonal actions are hidden, and the other three are waiting on things
+the player has not done. Nothing is broken. **The experience is still wrong**, and the
+project has already written down why.
+
+**`display_conditions` hides; `required` refuses with a reason.** Phase 4's rule, restated
+in P-25: *"the settlement actions are visible before they are earned and refused with a
+reason, deliberately, because a locked door nobody can see is not a goal."* The seasonal
+bay actions use `display_conditions`, so a winter visitor does not learn they exist - and
+the bay is the thinnest region in the game on purpose, so hiding two of its four actions
+empties it.
+
+**The fix is a move, not new machinery.** `required` is a condition set like any other and
+`conditions.js` reads `season` in it, so the season can move from `display_conditions` to
+`required` with an `unable_to_begin` line saying which seasons the Marrowmoth works the
+ebb. The action then shows all year and says why it cannot be taken - which is also how the
+tidal flats already behave, since their actions are `is_unlocked: true` and the tide is in
+the text.
+
+**What needs deciding.** Whether a season belongs in `required` **generally**, or only
+where the region is thin enough that hiding empties it. The bay is the case that makes it
+obvious; a seasonal action in a region with twenty others is not the same problem.
+
+**Guard.** The class is "an action hidden by a condition the player could satisfy later,
+with nothing to tell them so". `check_actions_can_explain_failure` already holds every
+`required` to having an `unable_to_begin` line; the missing rule is the other direction - a
+`display_conditions` on something recurring and satisfiable, where a refusal would have
+been the honest choice.
+
+
+### P-31 — The Discoveries panel only redraws when you touch a filter `open`
+
+Reported by the owner: the panel looks stateless, or at least does not refresh at once, and
+the counts should follow a find immediately.
+
+**Measured, and it is worse than stale - nothing redraws it at all.** `grep` for
+`update_displayed_discoveries(` across the whole repository finds four callers, and every
+one of them is an inline handler in `index.html`:
+
+```
+index.html:765  <input type="search"   id="discoveries_search"            oninput="update_displayed_discoveries()">
+index.html:768  <input type="checkbox" id="discoveries_hide_sourceless" onclick="update_displayed_discoveries()">
+index.html:770  <input type="checkbox" id="discoveries_hide_crafted"    onclick="update_displayed_discoveries()">
+index.html:772  <input type="checkbox" id="discoveries_hide_traded"     onclick="update_displayed_discoveries()">
+```
+
+Nothing in `src/` calls it. `display.js` **imports** it on line 59 and never uses the name;
+`main.js` puts it on `window` so those four handlers can reach it. So the panel shows
+whatever was drawn the last time somebody typed in the search box or toggled a checkbox -
+which is why a find does not appear and `bulunan: N` does not move.
+
+**And the gaining path has nothing to say to it.** `item_log.log_items(items)` is called
+from `add_to_character_inventory` in `character.js`, and it updates the log and returns. The
+inventory display is refreshed there; the journal is not.
+
+**Two questions, and only the second is a judgement.**
+
+The first is mechanical: the panel needs redrawing when the log grows and when its tab is
+opened. `update_displayed_item_log` is already called beside `log_items` for the item-log
+strip, so the hook exists and there is a place to add the call. A tab switch has to redraw
+too, or a page load with no filter touched shows nothing at all.
+
+The second: **whether every find should redraw the whole list.** The panel builds one entry
+per known item with its sources, and `item_sources` is a cached index; rebuilding all of it
+on every item picked up during a long idle session is not obviously free. The cheap version
+is to redraw on tab open plus on a **new** item - `log_items` already knows whether anything
+was new, since `add_to_inventory` returns `was_anything_new_added` - and to leave the count
+on an item you already had until the tab is reopened. Whether that is enough is what the
+owner's "increases should be reflected immediately" has to decide.
+
+**Also measured, and worth its own look:** `update_displayed_lore` has exactly the same
+shape - imported in `display.js`, exported to `window`, and called from nothing in `src/`.
+Whatever is decided here applies to it.
+
+**Guard.** The class is "a panel updater nothing calls", and it is checkable: a function
+named `update_displayed_*` that no module calls and no markup handler names is either dead
+or a panel that never refreshes. `check_onclick_names_are_reachable` already walks the other
+direction - markup handlers that name nothing - so the pieces to do it exist.
 
 
 ---
