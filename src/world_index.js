@@ -596,6 +596,44 @@ function is_lore_worth_keeping(unit) {
 }
 
 /**
+ * The thread a unit belongs to, or null.
+ *
+ * A unit can fold several lines into one beat, so the first line that names a thread
+ * decides for the whole unit. Two lines of one beat naming different threads would be
+ * an authoring mistake rather than a case to support, and check_lore_threads_resolve
+ * says so.
+ */
+function lore_thread_of(unit) {
+    const lines = unit.keys.map(key => dialogues[unit.dialogue].textlines[key]).filter(Boolean);
+    return lines.find(line => line.lore_thread)?.lore_thread ?? null;
+}
+
+/**
+ * The threads, and the units in each, in the order the threads first appear.
+ *
+ * Declaration order rather than alphabetical: dialogues are declared in roughly the
+ * order the player meets them, so a thread's place in the list is where the player
+ * first ran into it. Within a thread the units keep index order for the same reason.
+ *
+ * @param {Boolean} everything whether to keep what the lore rule would drop
+ * @returns {{thread: String, units: Object[]}[]}
+ */
+function lore_threads(everything) {
+    const grouped = new Map();
+    lore_units(everything).forEach(unit => {
+        const thread = lore_thread_of(unit);
+        if(!thread) {
+            return;
+        }
+        if(!grouped.has(thread)) {
+            grouped.set(thread, []);
+        }
+        grouped.get(thread).push(unit);
+    });
+    return [...grouped].map(([thread, units]) => ({thread, units}));
+}
+
+/**
  * The units to show, and every unit heard - the second for the "everything" view.
  *
  * @param {Boolean} everything whether to keep what the thread rule would drop
@@ -623,6 +661,6 @@ function unlock_sources_for(key) {
 }
 
 export { enemy_zones, zones_for_enemy_tag, item_sources, training_places, unlock_sources_for,
-    lore_units, lore_unit_of, lore_all_units,
+    lore_units, lore_unit_of, lore_all_units, lore_threads, lore_thread_of,
     first_available_opener, is_step_available,
     quest_task_advancers };

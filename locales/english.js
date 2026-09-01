@@ -3075,6 +3075,7 @@ const descriptions = {
     "ui tab discoveries": "Discoveries",
     "ui tab lore": "Lore",
     "ui lore resume header": "= Where you left off =",
+    "ui lore threads header": "= What you are piecing together =",
     "ui lore heard header": "= Who told you what =",
     "ui lore none": "Nothing has been said to you yet that is worth keeping.",
     "ui lore everything": "Show everything heard",

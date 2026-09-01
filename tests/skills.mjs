@@ -983,6 +983,79 @@ const translationManager = globalThis.__real_tm;
         rendered >= 90 && printed >= 550, `${rendered} blocks, ${printed} milestones`);
 }
 // ===========================================================================
+// src/world_index.js - lore threads
+// ===========================================================================
+/*
+    Q-8's answer to "where do investigation notes live": not a fifth journal panel, but
+    an optional `lore_thread` id on a Textline and a grouping above the by-speaker list.
+
+    The threading is injected here rather than asserted against content, because no
+    content is threaded yet - the first real thread is the Marrowmoth's manifest. Both
+    modules are loaded into ONE graph so the mutation is visible to the index; two
+    separate calls are two unrelated copies of src/ and would prove nothing.
+
+    The case being tested is the exact one Q-8 describes: two beats, two speakers, one
+    subject. Under the by-speaker list alone they read as two conversations.
+*/
+{
+    const [world, dialogue_data] = await load_browser_free(repo_root,
+        ["src/world_index.js", "src/data/dialogues.js"]);
+
+    //The baseline, and the reason it comes first: while nothing is threaded, the panel
+    //has to show exactly what it showed before this field existed.
+    check("nothing in the game is threaded yet", world.lore_threads(true).length === 0);
+    check("and no unit claims a thread",
+        world.lore_all_units().every(unit => world.lore_thread_of(unit) === null));
+
+    const heard = (dialogue, line, thread) => {
+        const textline = dialogue_data.dialogues[dialogue].textlines[line];
+        textline.is_heard = true;
+        textline.lore = true;
+        textline.lore_thread = thread;
+    };
+
+    //Declared earlier in the file than the clerk, so its thread is the earlier of the two.
+    heard("guild factor", "hello", "ui lore heard header");
+    heard("square broker", "hello", "ui lore threads header");
+
+    /*
+        The clerk's beat is a fold: "hello" unlocks "board" and nothing else does, so the
+        index absorbs the second into the first. The thread is put on the SECOND line on
+        purpose - a beat is one thing, so naming the thread anywhere in it has to thread
+        the whole beat. Reading only the head line passes every other check here.
+    */
+    heard("guild clerk", "hello", undefined);
+    heard("guild clerk", "board", "ui lore threads header");
+
+    const groups = world.lore_threads(false);
+    check("two threads come back", groups.length === 2, `got ${groups.length}`);
+
+    const marrow = groups.find(group => group.thread === "ui lore threads header");
+    check("a thread gathers beats from different speakers",
+        marrow?.units.length === 2, `got ${marrow?.units.length}`);
+    check("and they are the two that were threaded",
+        marrow?.units.map(unit => unit.dialogue).join() === "guild clerk,square broker",
+        marrow?.units.map(unit => unit.dialogue).join());
+
+    //A unit folds several lines into one beat; the thread belongs to the beat, not to
+    //whichever half of it happened to name the thread.
+    check("a folded beat joins the thread whole",
+        marrow?.units[0].keys.length === 2, marrow?.units[0].keys.join());
+
+    check("threads keep the order they first appear in",
+        groups[0].thread === "ui lore heard header", groups[0].thread);
+
+    //The half that keeps the panel honest: a threaded beat is in its thread and nowhere
+    //else, or the same six facts are on the page twice.
+    const unthreaded = world.lore_units(false).filter(unit => !world.lore_thread_of(unit));
+    check("a threaded beat is not left in the by-speaker list", unthreaded.length === 0,
+        `${unthreaded.length} of ${world.lore_units(false).length} still unthreaded`);
+
+    check("an unheard beat is in no thread",
+        world.lore_thread_of({dialogue: "guild clerk", head: "asking", keys: ["asking"]}) === null);
+}
+
+// ===========================================================================
 // src/world_index.js — the reverse indexes, against the real registries
 // ===========================================================================
 /*

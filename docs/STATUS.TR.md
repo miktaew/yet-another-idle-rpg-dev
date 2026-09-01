@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 17 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 18 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -59,7 +59,7 @@ npm run check:bundle
 - `check`, `tests/checks/` altındaki içerik ve tutarlılık kontrollerini çalıştırır
   (on beş dosya, yardımcılarıyla ~4.900 satır). `LOCALE_STRICT=1`, eksik çeviride
   uyarmak yerine hata verir.
-- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 164 kontrol.
+- `test`, `tests/skills.mjs` içindeki yetenek ve ilerleyiş takımıdır: 173 kontrol.
 - `check:bundle`, derlenmiş paketi tarayıcı taklit edilerek Node içinde çalıştırır.
   `dist/bundle.js`, `src/`'den eskiyse çalışmayı reddeder — çünkü bir keresinde
   başarısız bir derlemeden kalan bayat paketi sınayıp geçmişti.
@@ -190,6 +190,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `markdown rules` | Paragrafın hemen altına yazılmış `---`; o paragrafı başlığa çeviriyor. 62 çizgi. |
 | `seasonal content` | `getSeason()`'ın hiç döndürmediği bir mevsim adı; yani hiç gerçekleşmeyen içerik. 54 dosyada 25 ad. |
 | `trader stock` | Var olmayan bir stok listesi ya da türetilmek yerine tüccara saklanmış bir raf. 9 ad, 8 liste. |
+| `lore threads` | Altında hiçbir şey olmayan bir başlık olarak çizilen iplik. |
 
 D-8 direktifi: bir düzeltme, o olmadan bir kontrol başarısız olana kadar bitmiş
 sayılmaz; koruma da hata geri konularak sınanır.
@@ -207,8 +208,10 @@ sayılmaz; koruma da hata geri konularak sınanır.
   Bekleyen kararlar'dan çıkıp önerinin kendi içine, her biri onu harcayan fazın
   karşısına taşındı. *No Word Sent* olan Faz 1, v0.7.0 olarak yayınlandı: Marrowmoth
   İlkbahar ve Sonbaharda limanda ve tuz evinin rafı, rıhtımın fon replikleri ile lonca
-  kâtibinin söylentisi hep o tek pencereyi okuyor. Sıradaki faz, *Forty Tons* olan
-  Faz 2.
+  kâtibinin söylentisi hep o tek pencereyi okuyor. *Forty Tons* olan Faz 2 de aynı
+  şekilde ikiye bölündü: `Textline`'ın opsiyonel `lore_thread` alanı ve lore panelinin
+  iplik gruplaması olan 2a girdi; manifesto ile arc'ın ilk gerçek ipliği olan 2b,
+  v0.7.1 olarak yayınlanacak.
 - **P-12, çelikten üstteki madenler** — `kısmen bitti`. 4. kademe yayında. 5. kademenin
   külçesi, zinciri ve iki dildeki adları var; **hiç tarifi yok**: hiçbir şeyin
   yapamadığı 44 bileşenin 36'sı beyaz çelik ve siyah çelik.

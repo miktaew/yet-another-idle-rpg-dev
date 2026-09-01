@@ -12,7 +12,7 @@ import { skills } from "./data/skills.js";
 import { titles } from "./data/titles.js";
 import { traders } from "./traders.js";
 import { game_state } from "./game_state.js";
-import { enemy_zones, item_sources, lore_unit_of, lore_units,
+import { enemy_zones, item_sources, lore_unit_of, lore_units, lore_threads, lore_thread_of,
          training_places } from "./world_index.js";
 import { create_item_tooltip, create_item_tooltip_content, obscure_name } from "./item_tooltips.js";
 import {
@@ -398,17 +398,59 @@ function update_displayed_lore() {
         list.appendChild(resume);
     }
 
-    const heading = document.createElement("div");
-    heading.classList.add("discovery_heading");
-    heading.innerText = translationManager.getText(language, "ui lore heard header");
-    list.appendChild(heading);
+    /*
+        Threads first, then everybody else.
+
+        A threaded unit appears here and NOT under its speaker below. Splitting it
+        across both would put the same beat on the page twice, and the whole point of a
+        thread is that six facts learned from three people are one thing rather than
+        three conversations (Q-8). Who said it is still on the entry itself.
+    */
+    const threads = lore_threads(everything)
+        .map(group => ({thread: group.thread, units: group.units.filter(matches)}))
+        .filter(group => group.units.length > 0);
+
+    if(threads.length > 0) {
+        const threads_heading = document.createElement("div");
+        threads_heading.classList.add("discovery_heading");
+        threads_heading.innerText = translationManager.getText(language, "ui lore threads header");
+        list.appendChild(threads_heading);
+
+        threads.forEach(group => {
+            const block = document.createElement("details");
+            block.classList.add("lore_speaker_block");
+            //Open the one the player was last reading, same rule as the speaker blocks.
+            block.open = !!last && group.units.some(unit => unit.dialogue === last.dialogue
+                && unit.head === last.head);
+
+            const summary = document.createElement("summary");
+            summary.classList.add("lore_speaker");
+            summary.innerText = `${translationManager.getText(language, group.thread)}`
+                + ` · ${group.units.length}`;
+            block.appendChild(summary);
+
+            group.units.forEach(unit => block.appendChild(create_lore_entry(unit)));
+            list.appendChild(block);
+        });
+    }
 
     //Grouped by who said it, in the order the dialogues are declared, which is the order
     //the player meets them.
     const by_speaker = {};
-    units.forEach(unit => {
+    units.filter(unit => !lore_thread_of(unit)).forEach(unit => {
         (by_speaker[unit.dialogue] ??= []).push(unit);
     });
+
+    //Only when there is something under it: a heading over an empty list reads as a
+    //bug, and everything heard being threaded is a perfectly ordinary state.
+    if(Object.keys(by_speaker).length === 0) {
+        return;
+    }
+
+    const heading = document.createElement("div");
+    heading.classList.add("discovery_heading");
+    heading.innerText = translationManager.getText(language, "ui lore heard header");
+    list.appendChild(heading);
 
     Object.keys(dialogues).filter(key => by_speaker[key]).forEach(dialogue_key => {
         //<details> rather than a class toggle: no click handler, no window assignment,

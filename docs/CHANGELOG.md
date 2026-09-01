@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 63 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 64 -->
 
 # Changelog
 
@@ -20,6 +20,66 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### An investigation is one thread, not three conversations
+
+P-14 phase 2a, and Q-8's answer put into code. The brief wanted investigation notes to
+live somewhere, and named Discoveries; Discoveries is not what it sounds like. It
+renders *items* against where each one comes from. Lore renders *textlines the player
+has heard*, grouped by speaker. Six facts about one hull learned from three different
+people therefore sit under three different names and read as three conversations rather
+than as one thing being worked out - which is the failure, and it is a grouping problem
+rather than a missing panel.
+
+So `Textline` takes an optional `lore_thread`: a text id naming the thread. One field,
+one branch, nothing added to the save - textlines are already tracked as unlocked. The
+excluded alternative was a fifth journal surface, which the brief ruled out and which
+every standing directive here exists to prevent; the game has four already.
+
+`world_index.js` does the grouping, not the panel, which is what makes it testable at
+all - the panel needs a browser and the index does not. `lore_thread_of(unit)` reads
+the beat rather than the line: a unit can fold several textlines into one beat, so the
+first line that names a thread decides for the whole beat. `lore_threads(everything)`
+returns the groups in the order they first appear, which is roughly the order the
+player met them, since dialogues are declared that way.
+
+A threaded beat is drawn in its thread and **not** under its speaker below. Showing it
+in both would put the same six facts on the page twice, and one thing rather than three
+conversations was the whole request. Who said it is still on the entry itself. The
+by-speaker heading is now only drawn when something is left under it, because a heading
+over an empty list reads as a bug and everything-heard-being-threaded is an ordinary
+state.
+
+**`check_lore_threads_resolve`** is phase 5's guard, brought forward for the same
+reason phase 1's was: it is what makes the content that follows measurable. Threading
+and lore-keeping are two independent decisions, which is where the failure hides - a
+line put in a thread and marked `lore: false` is dropped before the grouping ever sees
+it, so the thread quietly holds one fewer beat, or none, and the heading vanishes with
+no error anywhere. Three rules: no line in a thread may be `lore: false`; a thread needs
+at least two beats, since one beat under a heading of its own is a line with furniture
+and the by-speaker list already had it; and a thread's id is a text id like any other,
+so `check_content_text_ids` now scans `lore_thread` and a thread whose name has no
+locale row fails rather than rendering its own id as a heading.
+
+Negative-tested four ways at once, with a valid two-line thread alongside them so the
+parser was proved to find threads rather than to find nothing: a `lore: false` line in
+a thread, two separate one-line threads, and an id with no locale row. All four were
+named.
+
+Nine tests cover the grouping, and they load `world_index.js` and `data/dialogues.js`
+into **one** graph so a textline can be threaded at runtime and the index sees it - two
+separate loads are two unrelated copies of `src/` and would prove nothing, which is how
+an earlier gate test first failed against working code. The case tested is Q-8's own:
+two beats, two speakers, one subject.
+
+The first version of the fold test passed against a deliberately wrong implementation
+that read only the head line, because the thread had been put on the head line. It is
+on the *second* line of the fold now, and the wrong implementation fails four checks.
+A test that agrees with the bug is worth less than no test, since it certifies it.
+
+No version bump: nothing in the game is threaded yet, so the panel draws exactly what
+it drew before - which is the first thing the tests assert. Phase 2 is split in the
+backlog to say so. 2b is the manifest, the arc's first real thread, and v0.7.1.
 
 ### v0.7.0 - *No Word Sent*: three surfaces and no notification
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 70 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 71 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -301,9 +301,24 @@ tersi değil, keşiften açılıyor.
 olarak; manifesto kargo / ağırlık / menşe / varış / mühür / durum olarak okunur.
 Normal satırların hepsi tamdır. Biri değildir ve aynı sandık geçen sefer de
 tartılmamıştır — bu söylenir, açıklanmaz. Yeni arayüz yok: manifesto, aksiyonun
-başarı metni ve Q-8 uyarınca bir lore ipliğidir; `Textline`'ın opsiyonel
-`lore_thread` kimliği ilk kez burada gelir. Muhafız: yeni aksiyonların otomatik olarak
-dâhil olduğu mevcut sınıf düzeyi kontroller.
+başarı metni ve Q-8 uyarınca bir lore ipliğidir. Faz 1 gibi ikiye bölündü ve aynı
+sebeple: Q-8'in istediği yüzey kendi başına test edilebiliyor, oyuncu ise iplikli bir
+içerik olana dek onu göremiyor.
+
+- **2a — iplik.** `bitti`. `Textline` artık opsiyonel bir `lore_thread` alıyor —
+  ipliği adlandıran bir metin kimliği; `world_index.js` birimleri buna göre
+  gruplandırıyor; lore paneli iplikleri konuşan bazlı listenin üstünde çiziyor ve
+  iplikli bir beat yalnızca kendi ipliğinde görünüyor, çünkü aynı altı olguyu sayfada
+  iki kez göstermek Q-8'in istediği şey değildi. Tek bir opsiyonel alan, tek bir dal,
+  kayda hiç dokunmuyor ve sürgün kabile ile Sıçan Tanrı için yeniden kullanılabilir —
+  ki soyutlamanın kendini hak edip etmediğinin ölçüsü olarak Q-8 tam bunu koymuştu.
+  Muhafız: Faz 5'ten öne alınan `check_lore_threads_resolve`; bir ipliğin boş başlık
+  olarak çizilmesine yol açan üç yol üzerinde duruyor. Henüz iplikli içerik yok, yani
+  panel değişmedi ve sürüm de yok.
+- **2b — manifesto.** `open`. Boşaltma aksiyonları, altı alanlı manifesto, tam
+  olmayan tek satır ve arc'ın ilk gerçek ipliği. 1. quest keşiften burada açılıyor.
+  v0.7.1 olarak yayınlanacak olan bu. Muhafız: yeni aksiyonların otomatik olarak dâhil
+  olduğu mevcut sınıf düzeyi kontroller.
 
 **Faz 3 — v0.7.2, *A Stroke Through It*.** İtibara bağlı soruşturma — Q-7 uyarınca
 dördüncü bir reputation bölgesi olan `Guild` üzerinden — ve **aynı parçayı değil,

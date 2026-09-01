@@ -3116,6 +3116,7 @@ const descriptions = {
     "ui tab discoveries": "Keşifler",
     "ui tab lore": "Anlatılanlar",
     "ui lore resume header": "= Nerede kalmıştınız =",
+    "ui lore threads header": "= Parçalarını birleştirdikleriniz =",
     "ui lore heard header": "= Size kim ne anlattı =",
     "ui lore none": "Size henüz saklamaya değer bir şey söylenmedi.",
     "ui lore everything": "Duyulan her şeyi göster",

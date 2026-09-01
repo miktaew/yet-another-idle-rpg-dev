@@ -51,6 +51,9 @@ async function check_content_text_ids() {
             //a whole commented-out dialogue ("cute little rat") still holds raw
             //English, and it is unreachable content rather than a translation gap.
             /^ {16}(?:name|text):\s*"([^"]+)"/gm,
+            //A thread's id names it in the lore panel, so it is a text id like any
+            //other. Unscanned, a thread would render its own id as its heading.
+            /(?<![A-Za-z0-9_])lore_thread:\s*"([^"]+)"/g,
             /(?<![A-Za-z0-9_])(?:description|starting_text):\s*"((?:desc|ui|sup|g |sus|elder|craftsman|guard|nekomimi|swamp|slum) [^"]*)"/g,
         ]},
         { file: "src/races.js", patterns: [
@@ -532,6 +535,82 @@ function value_expression(source, from) {
         } else if (c === "," && depth === 0) return source.slice(from, i);
     }
     return source.slice(from);
+}
+
+/**
+ * A thread that renders as a heading with nothing under it.
+ *
+ * `lore_thread` groups units in the lore panel, and the panel only ever shows units the
+ * lore rule kept (P-14, Q-8). Those are two independent decisions, which is where the
+ * failure is: a line put in a thread and marked `lore: false` is dropped before the
+ * grouping ever sees it, so the thread quietly holds one fewer beat than it was written
+ * to hold - or none, and the heading disappears with no error anywhere.
+ *
+ * Three rules, all of them about the thread still being there when it is drawn:
+ *
+ *  - No line in a thread may be `lore: false`. That flag drops the unit outright.
+ *  - A thread needs at least two units. One beat under a heading of its own is not a
+ *    thread, it is a line with extra furniture, and the by-speaker list already had it.
+ *  - The two halves of one beat may not name different threads. A unit belongs to the
+ *    first thread it names, so the second name would silently do nothing.
+ *
+ * It reads the source rather than the built index because the index needs a browser.
+ * That is enough here: every rule above is about what is written, not about what the
+ * player has heard.
+ */
+function check_lore_threads_resolve() {
+    const before = errors.length;
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/data/dialogues.js"), "utf8"));
+
+    /*
+        Each Textline literal, so a thread can be tied to the line's own flags. The
+        opening brace of `new Textline({` is where braced_body starts, and the fields sit
+        at a known indent - the same thing check_content_text_ids relies on to tell a
+        Textline's `name` from a Dialogue's.
+    */
+    const lines = [];
+    for(const opening of source.matchAll(/"([^"]+)":\s*new Textline\(\{/g)) {
+        const body = braced_body(source, opening.index + opening[0].length - 1);
+        if(body === null) continue;
+        const thread = /(?<![A-Za-z0-9_])lore_thread:\s*"([^"]+)"/.exec(body);
+        lines.push({
+            key: opening[1],
+            thread: thread ? thread[1] : null,
+            drops_lore: /(?<![A-Za-z0-9_])lore:\s*false/.test(body),
+        });
+    }
+
+    if(lines.length === 0) {
+        error("no Textline literals found in src/data/dialogues.js - check_lore_threads_resolve"
+            + " is out of date.");
+        return;
+    }
+
+    const threaded = lines.filter(line => line.thread);
+    const by_thread = {};
+    for(const line of threaded) {
+        (by_thread[line.thread] ??= []).push(line);
+        if(line.drops_lore) {
+            error(`textline "${line.key}" is in thread "${line.thread}" and also`
+                + " `lore: false`, which drops it before the panel groups anything. A line"
+                + " cannot both carry a thread and be kept out of the lore panel.");
+        }
+    }
+
+    for(const [thread, members] of Object.entries(by_thread)) {
+        if(members.length < 2) {
+            error(`thread "${thread}" has one line in it ("${members[0].key}"). A thread is`
+                + " what makes several beats read as one investigation; a single beat"
+                + " already reads correctly under its speaker, so this is a heading with"
+                + " nothing to group.");
+        }
+    }
+
+    if (errors.length === before) {
+        console.log(`[check] lore threads: ${Object.keys(by_thread).length} threads over`
+            + ` ${threaded.length} lines, none of them empty when drawn`);
+    }
 }
 
 function check_trader_stock_lists() {
@@ -1111,4 +1190,5 @@ export {
     check_location_types,
     check_trader_market_regions,
     check_seasonal_content_is_reachable,
+    check_lore_threads_resolve,
 };

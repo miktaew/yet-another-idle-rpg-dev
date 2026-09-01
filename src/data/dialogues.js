@@ -79,6 +79,23 @@ class Textline {
                 //gets it wrong. true keeps it, false drops it, undefined leaves the
                 //decision to what the line changes in the world.
                 lore,
+                /*
+                    The thread this line belongs to: a text id naming the thread, or
+                    undefined for a line that belongs to nobody but its speaker.
+
+                    The lore panel groups by who said it, which is right for a
+                    conversation and wrong for an investigation: six facts about one
+                    hull, learned from three different people, read as three
+                    conversations rather than as one thing being worked out (P-14, Q-8).
+                    A thread is the fix, and it is one optional field rather than a
+                    fifth journal surface - the game has four already and a parallel
+                    one is what every standing directive here exists to prevent.
+
+                    It is reusable on purpose. The banished tribe and the Rat God want
+                    exactly this shape, and an abstraction that only ever serves the
+                    thing it was written for has not earned itself.
+                */
+                lore_thread,
             }) 
     {
         this.name = name; // displayed option to click, don't make it too long
@@ -88,6 +105,7 @@ class Textline {
         this.is_unlocked = is_unlocked;
         this.is_finished = is_finished;
         this.lore = lore;
+        this.lore_thread = lore_thread;
         /*
             Whether the player has actually read this, which is not the same as
             is_finished. That one is written from a designer lock list, so across the

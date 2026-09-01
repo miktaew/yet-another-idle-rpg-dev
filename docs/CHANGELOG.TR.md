@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 63 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 64 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,69 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### Bir soruşturma tek bir ipliktir, üç ayrı konuşma değil
+
+P-14 Faz 2a; Q-8'in cevabının koda dökülmüş hâli. Brief, soruşturma notlarının bir
+yerde durmasını istiyor ve Keşifler'i adlandırıyordu; oysa Keşifler, adının çağrıştırdığı
+şey değil. O panel *eşyaları*, her birinin nereden geldiğine göre çiziyor. Lore ise
+*oyuncunun duyduğu replikleri*, konuşana göre gruplayarak çiziyor. Yani tek bir tekne
+hakkında üç ayrı kişiden öğrenilen altı olgu, üç ayrı adın altına dağılıyor ve tek bir
+şeyin çözülmesi gibi değil, üç ayrı konuşma gibi okunuyor. Arıza bu ve eksik bir panel
+değil, bir gruplama sorunu.
+
+Bu yüzden `Textline` artık opsiyonel bir `lore_thread` alıyor: ipliği adlandıran bir
+metin kimliği. Tek alan, tek dal, kayda hiç dokunmuyor — replikler zaten açılmış olarak
+izleniyor. Dışarıda bırakılan seçenek beşinci bir günlük yüzeyiydi; brief onu zaten
+eliyordu ve buradaki her kalıcı direktif de onu önlemek için var. Oyunda dört tane
+zaten mevcut.
+
+Gruplamayı panel değil `world_index.js` yapıyor; test edilebilir olmasının tek sebebi
+de bu — panel bir tarayıcı istiyor, indeks istemiyor. `lore_thread_of(unit)` satırı
+değil beat'i okuyor: bir birim birkaç repliği tek bir beat'e katlayabiliyor, dolayısıyla
+ipliği adlandıran ilk satır beat'in tamamı adına karar veriyor. `lore_threads(everything)`
+grupları ilk göründükleri sırayla döndürüyor; diyaloglar aşağı yukarı oyuncunun onlarla
+karşılaştığı sırayla tanımlandığı için bu, oyuncunun onlara rastladığı sıra demek.
+
+İplikli bir beat kendi ipliğinde çiziliyor ve aşağıda konuşanının altında **çizilmiyor**.
+İkisinde birden göstermek aynı altı olguyu sayfaya iki kez koymak olurdu; oysa istenen
+şey tam olarak "üç konuşma değil, tek bir şey"di. Kimin söylediği zaten girdinin
+üzerinde duruyor. Konuşan bazlı başlık da artık yalnızca altında bir şey kaldığında
+çiziliyor: boş listenin üstündeki başlık hata gibi okunuyor ve duyulan her şeyin iplikli
+olması gayet olağan bir durum.
+
+**`check_lore_threads_resolve`**, Faz 5'in muhafızı; Faz 1'inki gibi öne alındı, aynı
+sebeple: ardından gelen içeriği ölçülebilir kılan şey o. İplik olmak ile lore'da
+tutulmak birbirinden bağımsız iki karar ve arıza tam burada saklanıyor — bir ipliğe
+konup `lore: false` işaretlenen bir satır, gruplama onu görmeden eleniyor; iplik
+sessizce bir beat eksik kalıyor, ya da hiç kalmıyor ve başlık hiçbir yerde hata
+vermeden yok oluyor. Üç kural: bir iplikteki hiçbir satır `lore: false` olamaz; bir
+iplik en az iki beat ister, çünkü kendi başlığının altındaki tek beat, üstüne mobilya
+konmuş bir satırdır ve konuşan bazlı liste onu zaten gösteriyordu; ve bir ipliğin
+kimliği de diğerleri gibi bir metin kimliğidir, bu yüzden `check_content_text_ids`
+artık `lore_thread` alanını da tarıyor ve yerel satırı olmayan bir iplik adı, başlık
+olarak kendi kimliğini çizmek yerine hata veriyor.
+
+Negatif test tek seferde dört yönden yapıldı ve yanlarında geçerli iki satırlık bir
+iplik de vardı; böylece ayrıştırıcının iplik bulduğu kanıtlandı, hiçbir şey bulmadığı
+değil: bir iplikteki `lore: false` satırı, iki ayrı tek satırlık iplik ve yerel satırı
+olmayan bir kimlik. Dördü de adlandırıldı.
+
+Gruplamayı dokuz test kapsıyor ve bu testler `world_index.js` ile `data/dialogues.js`
+dosyalarını **tek** bir grafiğe yüklüyor; böylece bir replik çalışma anında ipliğe
+bağlanabiliyor ve indeks bunu görüyor. İki ayrı yükleme, `src/` dizininin birbiriyle
+ilgisiz iki kopyası demek ve hiçbir şey kanıtlamaz — daha önce bir kapı testi çalışan
+koda karşı tam bu yüzden düşmüştü. Test edilen durum Q-8'in kendi örneği: iki beat, iki
+konuşan, tek konu.
+
+Katlama testinin ilk hâli, yalnızca baş satırı okuyan kasıtlı olarak yanlış bir
+uygulamayı da geçiyordu; çünkü iplik baş satıra konmuştu. Artık katlamanın *ikinci*
+satırında ve yanlış uygulama dört kontrolü birden düşürüyor. Hatayla hemfikir olan bir
+test, hiç test olmamasından daha kötüdür: hatayı onaylar.
+
+Sürüm artmadı: oyunda henüz iplikli hiçbir şey yok, yani panel eskiden ne çiziyorsa onu
+çiziyor — testlerin ilk doğruladığı şey de bu. İş listesinde Faz 2 bunu söylemek için
+ikiye bölündü. 2b, manifesto ile arc'ın ilk gerçek ipliği ve v0.7.1.
 
 ### v0.7.0 - *No Word Sent*: üç yüzey ve hiç bildirim yok
 
