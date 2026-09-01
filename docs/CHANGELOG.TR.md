@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 81 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 82 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,71 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.13 - v0.7.12'nin ihtiyacı olan düzeltme ve sözünü tutan bir ipucu
+
+Bu döngünün bir iterasyon önce yayınladığı bir regresyon; bildirimle değil ölçümle
+bulundu — hem de bu işin değil, sıradaki işin ölçümüyle.
+
+**Ne kırıldı.** v0.7.12, `Fish fillet`'e bir kalite verdi; çünkü iyi bir yayından kesilmiş
+fileto iyi bir fileto olmalı. `find_recipe_material`'ın iki dalı vardı ve **id** ile
+adlandırılmış bir malzeme için olanı tek bir aramaydı:
+
+```js
+const key = item_templates[material_id].getInventoryKey();
+if (character.inventory[key]) { ... }
+```
+
+Bu, **şablonun** anahtarı ve kalite taşımıyor. Bir tarifin id ile istediği hiçbir şeyin
+kalitesi olamadığı sürece doğruydu; `Fish fillet`'in olabildiği an yanlış oldu. %68 bir
+fileto `{"id":"Fish fillet","quality":68}` altında saklanıyor, `Fish steak` tarifi filetoyu
+id ile istiyor ve arama onu hiç görmüyordu. Ölçüldü: çantada on fileto,
+`get_availability()` 0 döndürüyor. Malzeme elde dururken tarif "yapılamaz" diyordu.
+
+Öteki dal — **tür** ile adlandırılmış malzeme, ki balığın tavaya ulaşma yolu o —
+`Object.values(character.inventory)` üzerinde yürüyüp filtreliyor, yani bu sorunu hiç
+yaşamamıştı. Balığı pişirmek çalışıyordu; balıktan kestiğiniz şeyi pişirmek çalışmıyordu.
+
+**Düzeltme, artık tek dal olması.** İkisi arasındaki tek gerçek fark yüklemdi, dolayısıyla
+kalan tek fark da o: `entry.item.id === material_id` ya da
+`entry.item.material_type === material_type`; sonra tek yürüyüş, tek sıralama, tek durma
+kuralı. En ucuz önce; ki kalite taşıyan bir şey için bu, en kötüsünün ilk harcanıp
+iyilerin elde kalması demek — tür yürüyüşünün zaten sahip olduğu kural, artık ikisinde de.
+
+**Ve tahmin hâlâ gizliydi.** Tarif ipucu sonucunu `{skip_quality: true}` ile kuruyordu;
+eşya tarifleri kaliteli hiçbir şey üretmezken bu doğruydu. Yani kızarmış balık tarifine
+bakan bir oyuncu, iyi balığın iyi yemek yapacağını anlayamıyordu — özellik oyunda vardı ve
+okunacağı tek yerde görünmezdi.
+
+Önünde iki şey duruyordu, ikisi de kalktı:
+
+- **Ağırlıklandırmanın tek sahibi vardı, iki tanesi gerekiyordu.** `use_recipe` onu
+  gövdesinin içinde hesaplıyordu. `get_consumed_quality` olarak ayrıldı; hem atış hem ipucu
+  ona soruyor, çünkü sonuçla çelişebilen bir tahmin, hiç tahmin olmamasından kötüdür. Bu
+  dosyanın bütün tarihi tek cümlede bu.
+- **`show_quality`, eşyanın kalitesinin zaten olmasını istiyordu.** Tarif ipucuna paylaşılan
+  *şablon* veriliyor ve bir şablonun kalitesi, teçhizat olmayan her şey için `null` —
+  kuşanılabilirlerin 100 varsayması ise parça tarifi ipucunun bugüne kadar bir aralık
+  çizebilmesinin tek sebebi. Artık `options.quality` geçen bir çağıranın söylemesi yeterli;
+  `use_quality` de onaylamak zorunda, yani kimsenin istemediği yerde bir sayı açamıyor. Dört
+  durumda da ölçüldü: tahmin edilen aralık çiziliyor, `skip_quality` hâlâ gizliyor, seçenek
+  yokken hâlâ gizliyor ve `use_quality: false` olan bir eşya tahmini yok sayıyor.
+
+**Muhafızlar, ikisi de negatif test edildi.**
+
+- Bir eşya tarifinin id ile adlandırdığı her malzeme envantere iki kez konuyor — düz ve %68
+  — ve iki seferinde de bulunmak zorunda. 82 adlandırılmış malzeme üzerinde 164 arama.
+  Şablon-anahtarı karşılaştırmasını geri koymak, Silver ingot, Wool, Flax ve diğerlerinde
+  düşüyor; ki mesele bu: sınıf "bir tarif istediğini bulabilir", "fileto artık çalışıyor"
+  değil.
+- `get_consumed_quality`'nin tam olarak tek bir tanımı var ve hem `crafting.js` hem
+  `item_tooltips.js` onu çağırmak zorunda. Kopyalardan birini geri gövdeye almak düşüyor.
+
+**Akılda tutulacak ders.** `check_inherited_quality_is_shown`, tarif çizgesini yürüyüp
+kalitenin ulaşabildiği her sonucun onu *gösterip* göstermediğini soruyordu. Kalitenin
+ulaşabildiği her malzemenin hâlâ *bulunabildiğini* sormuyordu. Bir şeye kalite vermek onun
+envanter anahtarını değiştiriyor ve envanter anahtarı bir aramadır — yani her yeni kaliteye
+sorulacak soru, yalnızca onu kimin gösterdiği değil, kimin aradığıdır.
 
 ### v0.7.12 - balık, pişirdiğinizde kalitesini koruyor
 

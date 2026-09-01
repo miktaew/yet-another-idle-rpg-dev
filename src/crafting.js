@@ -13,7 +13,7 @@
 
 import { character, add_to_character_inventory, remove_from_character_inventory,
     update_character_stats, get_skill_xp_gain } from "./character.js";
-import { recipes, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
+import { recipes, get_consumed_quality, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
 import { skills, crafting_skill_xp_gains_cap } from "./data/skills.js";
 import {
          log_message,
@@ -107,20 +107,21 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 run_stats.total_crafting_successes += successful_crafting_ammount;
 
                 /*
-                    P-22. What actually went in, weighted by how much of it went in.
+                    P-22. What actually goes in, weighted by how much of it goes in, read
+                    before the removal loop spends it. get_availability hands back the real
+                    inventory entries rather than the recipe's material list, so the stacks
+                    about to be consumed - and the quality each carries - are known here.
 
-                    This loop is the only place that knows: get_availability hands back the
-                    real inventory entries rather than the recipe's material list, so the
-                    stacks being consumed - and the quality each of them carries - are
-                    right here, and were being walked past.
-
-                    Only materials that carry a quality are counted, so a recipe whose
-                    inputs have none leaves this at 0 and the result is created from the
-                    template exactly as it was before. Fishing is the only thing outside
-                    crafting that makes a quality today, so today this is the fish.
+                    The tooltip that told the player what this craft would produce asks the
+                    same function with craft_count 1, which is the point of it being a
+                    function: a prediction that can disagree with the roll is worse than no
+                    prediction.
                 */
-                let consumed_quality_total = 0;
-                let consumed_quality_count = 0;
+                const input_quality = get_consumed_quality({
+                    recipe_materials: selected_recipe.materials,
+                    materials,
+                    craft_count: attempted_crafting_ammount,
+                });
 
                 //remove used materials
                 for (let i = 0; i < selected_recipe.materials.length; i++) {
@@ -129,22 +130,12 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     for (let j = 0; j < materials[i].items.length && to_remove > 0; j++) {
                         const removed = Math.min(materials[i].items[j].count, to_remove);
                         const key = materials[i].items[j].item.inventory_key;
-                        const consumed_quality = materials[i].items[j].item.quality;
-
-                        if(consumed_quality) {
-                            consumed_quality_total += consumed_quality * removed;
-                            consumed_quality_count += removed;
-                        }
 
                         remove_from_character_inventory([{ item_key: key, item_count: removed }]);
 
                         to_remove -= removed;
                     }
                 }
-
-                const input_quality = consumed_quality_count
-                    ? consumed_quality_total/consumed_quality_count
-                    : undefined;
 
                 const final_result_count =  count * successful_crafting_ammount; 
                 //recipe is either full success or full fail

@@ -13,7 +13,7 @@ import { current_trader } from "./trade.js";
 import { format_time } from "./game_time.js";
 import { Armor, Shield, Weapon, book_stats, getItemRarity, item_log, item_templates,
          rarity_multipliers } from "./items.js";
-import { find_recipe_material, get_component_stats, get_recipe_xp_value,
+import { find_recipe_material, get_consumed_quality, get_component_stats, get_recipe_xp_value,
          recipes } from "./crafting_recipes.js";
 
 /*
@@ -209,7 +209,19 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         item_tooltip += `<br>${item.getDescription()}`;
     }
 
-    let show_quality = item.quality && !options.skip_quality && item.use_quality;
+    /*
+        `item.quality &&` was the whole condition, which is right for an item out of the
+        inventory and wrong for a recipe's PREDICTION of one: a recipe tooltip is handed
+        the shared template, and a template's quality is null for everything that is not
+        equipment - equippables happen to default to 100, which is the only reason the
+        component recipe tooltip has ever drawn a range at all.
+
+        A caller that passes options.quality is stating that this item will have one, so
+        that is now enough on its own. It cannot turn a quality on where nobody asked:
+        options.quality is opt-in and item.use_quality still has to agree.
+    */
+    let show_quality = (item.quality || options?.quality?.[0])
+        && !options.skip_quality && item.use_quality;
     let quality = item.quality;
     if (show_quality && options?.quality && options.quality[0]) {
         quality = options.quality[0];
@@ -590,8 +602,10 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
     if(subcategory === "items") {   //TODO base on result present? class?
         const success_chance = Math.round(100*recipe.get_success_chance(station_tier));
         tooltip += `${translationManager.getText(language, "ui success rate")}: <b><span style="color:${success_chance > 74?"lime":success_chance>49?"yellow":success_chance>24?"orange":"red"}">${success_chance}%</span></b><br><br>${translationManager.getText(language, "ui materials required")}<br>`;
+        const found_materials = [];
         for (let i = 0; i < recipe.materials.length; i++) {
             const material = find_recipe_material({material: recipe.materials[i], ignore_stop: true});
+            found_materials.push(material);
 
             //base type
             let main_name = recipe.materials[i].material_type
@@ -615,7 +629,32 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         }
         const xp_val_1 = get_recipe_xp_value({category, subcategory, recipe_id});
         tooltip += `<br>${translationManager.getText(language, "ui xp value")}: ${xp_val_1}`;
-        tooltip += `<br>${translationManager.getText(language, "ui recipe result")} <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
+
+        /*
+            What this craft will actually come out at, asked of the same function
+            use_recipe rolls from, so the prediction cannot disagree with the result. It
+            is undefined for every recipe whose materials carry no quality - nearly all
+            of them - and those keep hiding the number the way they always have, because
+            for them there is no number.
+
+            Read for one craft: crafting more spends further down the same cheapest-first
+            list and can only land between what is shown and what the next stack holds.
+        */
+        const result_id = recipe.getResult().result_id;
+        const input_quality = get_consumed_quality({
+            recipe_materials: recipe.materials,
+            materials: found_materials,
+        });
+        const item_result_tier = item_templates[result_id].item_tier;
+        const result_options = input_quality
+            ? {
+                quality: recipe.get_quality_range(
+                    item_result_tier ? station_tier - item_result_tier : 0, input_quality),
+                anchor_tooltip: true,
+            }
+            : {skip_quality: true, anchor_tooltip: true};
+
+        tooltip += `<br>${translationManager.getText(language, "ui recipe result")} <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[result_id], options: result_options})}</div>`;
     } else if(!components) {
         //some component
         let name = obscure_name(material.material_id);

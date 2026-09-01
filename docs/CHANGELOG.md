@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 81 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 82 -->
 
 # Changelog
 
@@ -20,6 +20,73 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.13 - the fix v0.7.12 needed, and a tooltip that means it
+
+A regression this loop shipped one iteration earlier, found by measuring rather than by
+a report - and the measurement was of the next job, not this one.
+
+**What broke.** v0.7.12 gave `Fish fillet` a quality, because a fillet cut from a good
+catfish should be a good fillet. `find_recipe_material` had two branches, and the one for
+a material named by **id** was a single lookup:
+
+```js
+const key = item_templates[material_id].getInventoryKey();
+if (character.inventory[key]) { ... }
+```
+
+That is the **template's** key, which carries no quality. Correct for as long as nothing a
+recipe names by id could have one; wrong the moment `Fish fillet` could. A fillet at 68% is
+stored under `{"id":"Fish fillet","quality":68}`, the `Fish steak` recipe asks for a fillet
+by id, and the lookup missed it entirely. Measured: ten fillets in the inventory,
+`get_availability()` returns 0. The recipe simply read as unavailable, with the materials
+in hand.
+
+The other branch - a material named by **type**, which is how the fish reach the pan -
+walks `Object.values(character.inventory)` and filters, so it had never had the problem.
+Cooking a fish worked; cooking the thing you cut off a fish did not.
+
+**The fix is that there is one branch now.** The predicate was the only real difference
+between the two, so it is the only difference left: `entry.item.id === material_id` or
+`entry.item.material_type === material_type`, then one walk, one sort, one stop rule.
+Cheapest first, which for something carrying a quality means the poorest is spent first
+and the good ones keep - the rule the type walk already had, now applying to both.
+
+**And the prediction was still hiding.** The recipe tooltip built its result with
+`{skip_quality: true}`, which was right while item recipes made nothing with a quality.
+So a player looking at the fried fish recipe could not tell that a good fish makes a good
+meal - the feature was in the game and invisible in the one place it would be read.
+
+Two things stood in the way, and both are now gone:
+
+- **The weighting had one owner and needed two.** `use_recipe` computed it inline.
+  Extracted as `get_consumed_quality`, asked by the roll and by the tooltip, because a
+  prediction that can disagree with the result is worse than no prediction. That is the
+  whole history of this file in one sentence.
+- **`show_quality` required the item to already have a quality.** A recipe tooltip is
+  handed the shared *template*, and a template's quality is `null` for everything that is
+  not equipment - equippables happen to default to 100, which is the only reason the
+  component recipe tooltip has ever drawn a range at all. A caller passing
+  `options.quality` is now enough on its own; `use_quality` still has to agree, so it
+  cannot turn a number on where nobody asked. Measured in all four cases: a predicted
+  range draws, `skip_quality` still hides, no options still hides, and an item with
+  `use_quality: false` ignores the prediction.
+
+**Guards, both negative-tested.**
+
+- Every material an item recipe names by id is put in an inventory twice - plain, and at
+  68% - and has to be found both times. 164 lookups across 82 named materials. Putting
+  the template-key comparison back fails it on Silver ingot, Wool, Flax and the rest,
+  which is the point: the class is "a recipe can find what it asks for", not "the fillet
+  works now".
+- `get_consumed_quality` has exactly one definition, and both `crafting.js` and
+  `item_tooltips.js` have to call it. Re-inlining either copy fails.
+
+**The lesson worth keeping.** `check_inherited_quality_is_shown` walked the recipe graph
+and asked whether every result a quality can reach *shows* one. It did not ask whether
+every material a quality can reach can still be *found*. Giving something a quality
+changes its inventory key, and an inventory key is a lookup - so the question to ask of
+any new quality is not only who displays it but who looks it up.
 
 ### v0.7.12 - a fish keeps its quality when you cook it
 

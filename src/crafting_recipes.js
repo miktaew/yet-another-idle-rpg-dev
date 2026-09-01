@@ -322,64 +322,100 @@ class EquipmentRecipe extends Recipe {
  * @returns { count, items[] } - items: [{item_key, count, item_id (if no key), quality (optional if no key)},...] - same as inventory
  */
 function find_recipe_material({material, ignore_stop, needed_count}) {
+    /*
+        One walk for both ways a recipe can name what it wants.
+
+        The two used to be separate, and the id one was a single lookup of
+        item_templates[material_id].getInventoryKey() - the TEMPLATE's key, which carries
+        no quality. That was correct for as long as nothing a recipe names by id could
+        have one, and it stopped being correct the moment something could: a Fish fillet
+        butchered from a good catfish is stored under {"id":"Fish fillet","quality":68},
+        and the Fish steak recipe that asks for it by id then found nothing at all. Ten
+        fillets in the bag and the recipe reads unavailable.
+
+        The predicate was the only real difference between the two branches, so it is the
+        only difference now. Cheapest first, which for something that carries a quality
+        means the poorest is spent first and the good ones are kept - the same rule the
+        material_type walk has always used.
+    */
+    const matches = material.material_id
+        ? (entry) => entry.item.id === material.material_id
+        : (entry) => Boolean(material.material_type)
+            && entry.item.material_type === material.material_type;
+
+    const available = Object.values(character.inventory)
+        .filter(matches)
+        .sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue());
+
     let count = 0;
-    let items = [];
+    const items = [];
 
-    if (material.material_id) {
-        //grab count of material with provided id
-        const material_id = material.material_id;
-        const key = item_templates[material_id].getInventoryKey();
-        if (character.inventory[key]) {
-            //material without quality exists, no need to search further
-            count = character.inventory[key].count;
-            items = [character.inventory[key]];
-        }
-        
-    } else if(material.material_type) {
+    if(game_options.stop_crafting_on_material_change && !ignore_stop) {
+        //crafting stops when material changes
+        if(available[0]) {
+            count = available[0].count;
+            items.push(available[0]);
+            //add it to list either way, no matter if it's enough
 
-        if(game_options.stop_crafting_on_material_change && !ignore_stop) {
-            //crafting stops when material changes
-
-            //grab material of provided type, sorted by price 
-            const materials = Object.values(character.inventory)
-                .filter(item => (material.material_type && item.item.material_type === material.material_type))
-                .sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue());
-                
-            if(materials[0]) {
-                let current_mat = materials[0];
-
-                count = current_mat.count;
-                items.push(current_mat);
-                //add it to list either way, no matter if it's enough
-            
-                let i = 1;
-                while(count < needed_count && materials[i]) {
-                    /*
-                    there is not enough, check next cheapest, add it, and so on
-                    this way:
-                        if there's enough of first mat, on click it will only use first mat
-                        if there's not enough of first mat, on click it will use first mat and next mat, and so on, until it has enough
-                    */
-                    current_mat = materials[i];
-                    count += current_mat.count;
-                    items.push(current_mat);
-                    i++;
-                }
+            let i = 1;
+            while(count < needed_count && available[i]) {
+                /*
+                there is not enough, check next cheapest, add it, and so on
+                this way:
+                    if there's enough of first mat, on click it will only use first mat
+                    if there's not enough of first mat, on click it will use first mat and next mat, and so on, until it has enough
+                */
+                count += available[i].count;
+                items.push(available[i]);
+                i++;
             }
-        
-        } else {
-            //grab total count of all materials of desired type
-            Object.values(character.inventory)
-                .filter(item => (material.material_type && item.item.material_type === material.material_type))
-                .sort((a,b) => a.item.getBaseValue()-b.item.getBaseValue())
-                .forEach(item => {
-                    count += item.count;
-                    items.push(item);
-            });
         }
+    } else {
+        //grab total count of everything that matches
+        available.forEach(entry => {
+            count += entry.count;
+            items.push(entry);
+        });
     }
 
     return { count, items };
+}
+
+/**
+ * @description The quality of what a recipe would consume, weighted by how much of it it
+ * would consume - or undefined when nothing it consumes carries one.
+ *
+ * Defined once because it has two callers that must agree: use_recipe, which rolls the
+ * result's quality from it, and the recipe tooltip, which tells the player what that roll
+ * is going to produce. A second copy of this is how the crafting paths drifted apart the
+ * first time.
+ *
+ * @param {Object} data
+ * @param {Array} data.recipe_materials the recipe's own material list
+ * @param {Array} data.materials what find_recipe_material found for each of them, in order
+ * @param {Number} data.craft_count how many crafts to account for
+ * @returns {Number|undefined}
+ */
+function get_consumed_quality({recipe_materials, materials, craft_count = 1}) {
+    let total = 0;
+    let counted = 0;
+
+    for (let i = 0; i < recipe_materials.length; i++) {
+        let to_take = recipe_materials[i].count * craft_count;
+
+        for (let j = 0; j < (materials[i]?.items.length ?? 0) && to_take > 0; j++) {
+            const taken = Math.min(materials[i].items[j].count, to_take);
+            const quality = materials[i].items[j].item.quality;
+
+            if(quality) {
+                total += quality * taken;
+                counted += taken;
+            }
+            to_take -= taken;
+        }
+    }
+
+    return counted ? total/counted : undefined;
 }
 
 function get_component_stats(components) {
@@ -2163,4 +2199,4 @@ Object.keys(recipes).forEach(recipe_category => {
     });
 });
 
-export { recipes, find_recipe_material, get_recipe_xp_value, get_crafting_quality_caps, get_component_stats, ItemRecipe }
+export { recipes, find_recipe_material, get_consumed_quality, get_recipe_xp_value, get_crafting_quality_caps, get_component_stats, ItemRecipe }

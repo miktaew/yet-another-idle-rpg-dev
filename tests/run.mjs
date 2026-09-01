@@ -55,7 +55,9 @@ import {
     check_a_better_input_makes_a_better_result,
     check_crafting_passes_the_input_quality,
     check_inherited_quality_is_shown,
+    check_qualitied_materials_can_still_be_found,
     check_quality_rolls_take_an_input_quality,
+    check_the_prediction_and_the_roll_share_one_source,
 } from "./checks/crafting.mjs";
 import {
     check_interpolated_pairs,
@@ -156,6 +158,8 @@ check_quality_rolls_take_an_input_quality();
 check_crafting_passes_the_input_quality();
 await check_a_better_input_makes_a_better_result();
 await check_inherited_quality_is_shown();
+await check_qualitied_materials_can_still_be_found();
+check_the_prediction_and_the_roll_share_one_source();
 
 for (const message of warnings) {
     console.warn(`[check] WARN  ${message}`);

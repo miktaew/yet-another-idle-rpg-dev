@@ -257,6 +257,13 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.7.13</button>
+    <div class="content">
+        <ul class="entries">
+            <li>Fixes a recipe that the previous version broke. Giving fish dishes a quality also gave the fish fillet one, and the fish steak recipe asks for a fillet by name &mdash; and asking for something by name only ever looked for the plain, quality-less version of it. So a fillet cut from a good catfish was invisible to the recipe that wants it: ten in the bag and the steak read as unavailable. Anything a recipe names is now found whatever quality it carries, and the poorest of a stack is spent first so the good ones keep.</li>
+            <li>A recipe tooltip now tells you the quality it is going to make, when the materials you have carry one. It reads the same numbers the craft itself will, so what it promises is what you get.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.7.12</button>
     <div class="content">
         <ul class="entries">

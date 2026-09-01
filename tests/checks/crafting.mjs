@@ -391,8 +391,137 @@ async function check_inherited_quality_is_shown() {
         + `every result showing one`);
 }
 
+/**
+ * A material a recipe names by id has to stay findable once it carries a quality.
+ *
+ * This is the regression v0.7.12 shipped and this check reproduces. find_recipe_material
+ * had two branches, and the id one was a single lookup of
+ * item_templates[material_id].getInventoryKey() - the TEMPLATE's key, which carries no
+ * quality. Correct for as long as nothing named by id could have one; wrong the moment
+ * Fish fillet could. A fillet butchered from a good catfish is stored under
+ * {"id":"Fish fillet","quality":68}, the Fish steak recipe asked for it by id, and found
+ * nothing: ten fillets in the bag and the recipe read unavailable.
+ *
+ * Asked of every id an item recipe names, with and without a quality, because the class is
+ * "a recipe can find what it asks for" and not "the fillet works now".
+ */
+async function check_qualitied_materials_can_still_be_found() {
+    const [{ recipes, find_recipe_material }, { item_templates, getItem }, { character }] =
+        await load_browser_free(repo_root,
+            ["src/crafting_recipes.js", "src/items.js", "src/character.js"]);
+
+    const named = new Set();
+    for (const category of Object.keys(recipes)) {
+        for (const key of Object.keys(recipes[category].items ?? {})) {
+            for (const material of recipes[category].items[key].materials ?? []) {
+                if (material.material_id) { named.add(material.material_id); }
+            }
+        }
+    }
+
+    if (named.size === 0) {
+        error("crafting quality: no item recipe names a material by id - "
+            + "this check is out of date and has stopped guarding anything.");
+        return;
+    }
+
+    let checked = 0;
+    for (const id of named) {
+        if (!item_templates[id]) {
+            error(`crafting quality: a recipe names the material "${id}", which is not `
+                + `an item - this check is out of date.`);
+            continue;
+        }
+
+        //Once as it sits on the shelf, once as it comes out of a good catfish.
+        for (const quality of [undefined, 68]) {
+            let stored;
+            try {
+                stored = quality
+                    ? getItem({...item_templates[id], quality})
+                    : item_templates[id];
+                character.inventory = {};
+                character.inventory[stored.getInventoryKey()] = {item: stored, count: 7};
+            } catch (problem) {
+                error(`crafting quality: could not put "${id}" in an inventory to test `
+                    + `with (${problem.message}) - this check is out of date.`);
+                continue;
+            }
+
+            const found = find_recipe_material({
+                material: {material_id: id, count: 1},
+                ignore_stop: true,
+                needed_count: 1,
+            });
+
+            if (found.count !== 7) {
+                error(`crafting quality: 7 of "${id}"`
+                    + `${quality ? ` at ${quality}% quality` : ""} in the inventory and a `
+                    + `recipe that names it by id finds ${found.count}. A stack whose key `
+                    + `carries a quality is not the template's key, so a recipe cannot be `
+                    + `looked up by the template - that is how the Fish steak recipe went `
+                    + `uncraftable the moment the fillet got a quality.`);
+            }
+            checked++;
+        }
+    }
+    character.inventory = {};
+
+    console.log(`[check] crafting quality: ${checked} material lookup(s) across `
+        + `${named.size} id-named material(s), each found with and without a quality`);
+}
+
+/**
+ * And the prediction has to be read from the same place the roll is.
+ *
+ * The recipe tooltip tells the player what a craft will come out at; use_recipe decides
+ * what it actually comes out at. Those were separate arithmetic once - which is the whole
+ * history of this file - so the weighting lives in get_consumed_quality and both ask it.
+ * A prediction that can disagree with the result is worse than no prediction, so
+ * re-inlining either copy has to fail here.
+ */
+function check_the_prediction_and_the_roll_share_one_source() {
+    const definitions = [];
+    const callers = [];
+
+    for (const relative of ["src/crafting_recipes.js", "src/crafting.js",
+                            "src/item_tooltips.js"]) {
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        if (/function\s+get_consumed_quality\s*\(/.test(source)) {
+            definitions.push(relative);
+        }
+        //Not preceded by `function`, so the definition does not count as a caller.
+        if (/(?<!function\s)get_consumed_quality\s*\(\s*\{/.test(source)) {
+            callers.push(relative);
+        }
+    }
+
+    if (definitions.length !== 1) {
+        error(`crafting quality: get_consumed_quality is defined in `
+            + `${definitions.length} place(s) (${definitions.join(", ") || "none"}). One `
+            + `definition is the point - two copies of the weighting is how the roll and `
+            + `the prediction drifted apart before.`);
+    }
+
+    for (const needed of ["src/crafting.js", "src/item_tooltips.js"]) {
+        if (!callers.includes(needed)) {
+            error(`crafting quality: ${needed} does not call get_consumed_quality. The `
+                + `roll and the tooltip's prediction of it both have to come from that `
+                + `one function, or the tooltip can promise a quality the craft will not `
+                + `produce.`);
+        }
+    }
+
+    console.log(`[check] crafting quality: 1 weighting, `
+        + `${callers.length} caller(s) sharing it`);
+}
+
 export {
     check_a_better_input_makes_a_better_result,
+    check_qualitied_materials_can_still_be_found,
+    check_the_prediction_and_the_roll_share_one_source,
     check_inherited_quality_is_shown,
     check_crafting_passes_the_input_quality,
     check_quality_rolls_take_an_input_quality,
