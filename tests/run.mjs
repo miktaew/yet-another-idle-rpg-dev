@@ -33,6 +33,7 @@ import {
     check_droprate_tags_are_worth_scaling,
     check_locked_skills_can_be_unlocked,
     check_display_conditions_are_not_wrapped_twice,
+    check_moon_phases_are_real,
 } from "./checks/content.mjs";
 import {
     check_creation_panel_values,
@@ -153,6 +154,7 @@ check_stance_reactions_name_real_stances();
 await check_droprate_tags_are_worth_scaling();
 check_locked_skills_can_be_unlocked();
 check_display_conditions_are_not_wrapped_twice();
+check_moon_phases_are_real();
 check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();

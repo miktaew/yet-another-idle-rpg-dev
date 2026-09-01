@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 36 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 37 -->
 
 # Status
 
@@ -194,6 +194,8 @@ but the ones that encode a bug that shipped:
 | `droprate tags` | A droprate skill pointed at a tag no enemy carries, or at one whose enemies drop nothing. 2 pairs. |
 | `locked skills` | A skill that starts locked and that no reward ever unlocks. 3 locked. |
 | `tier ladder` | A component tier the station penalty has made not worth reaching. 30 tier/skill points. |
+| `display conditions` | A display_conditions written as an array, which every constructor wraps into a condition that is always met. 21 written. |
+| `moon phases` | A moon phase name getMoonPhaseName never returns, gating a window that then never opens. 4 phases. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

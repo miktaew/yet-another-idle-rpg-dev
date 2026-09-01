@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 96 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 97 -->
 
 # Proposals
 
@@ -610,70 +610,6 @@ in scope, so this is the first request that is allowed to add one.
 the clothes must be existing items unless there is a reason for new ones - reclamation
 over invention, and there are 44 generated components and eight unmade ones already in the
 file to draw on.
-
-
-### P-25 — Standing changes what a place is like, not only what it costs `partly done`
-
-The owner's request, in four parts: NPCs speak differently at high and at low standing;
-some items only sell at high standing; a back room; and a black market that turns up on
-the slums side.
-
-**Two of the four have shipped.** v0.7.15 - the broker in the town square answers a
-stranger and a regular differently - and v0.7.16, the man in the slums with a second box
-that opens at Slums 300. Both corrected this entry on the way.
-
-**And the suggestion below about what to stock did not survive measurement.** The eight
-unmade generated components are duplicates - five are `Turtle shellplate` armour pieces
-that duplicate the hand-written `Turtleshell *` ones the recipes name - and the tier-5
-family became craftable in v0.7.5, so selling it would undercut the chain the arc built.
-What the shelf holds instead came from the bay trader's own note: the five dearest of the
-22 enemy drops no trader sells, four of which are 50-to-1 butchering upgrades.
-
-**What is left is the black market**, which is this shelf plus a time condition - both
-halves now exist.
-
-**Measured, and the finding is that all four are the two mechanisms this game already
-has.** The line below saying neither needs engine work was **wrong about the first one**:
-`display_conditions` could only ever express a FLOOR. All six standing gates in the game
-are floors, `conditions[1]` is a success-chance ramp rather than a cap, and so a place
-could get warmer and never be cold. v0.7.15 gave the condition the `{at_least, at_most}`
-shape `location_clears` already had, and the second half of the vocabulary exists now. The
-three parts that remain need no engine work, which is the half of the claim that held:
-
-- **`display_conditions: {reputation: {...}}` on a Textline.** Six lines already use it -
-  the supplier's, the broker's, the old woman's roster at Slums 300. A different greeting
-  at high and at low standing is two textlines with opposite conditions, which is exactly
-  the shape the supplier's `troubled` / `troubled unavailable` pair already has for winter.
-- **A derived `inventory_template` on a Trader.** Since v0.7.5 the field takes a function,
-  because the bay's shelf changes with the season. A shelf that changes with *standing* is
-  the same call with `character.reputation` in it instead of the season, and
-  `stock_list_name_of` already funnels every reader through one place.
-
-So the back room is not a room and the black market is not a system. Both are a second
-stock list and a condition, which is what the fourth item makes obvious: "the black market
-that turns up occasionally" is a stock list gated on standing **and** on time, and the arc
-has already shipped both halves of that.
-
-**What actually needs deciding, and is not mechanical:**
-
-- **Low standing has no vocabulary yet.** Everything so far reads standing as a threshold
-  to pass; nobody has written what a place sounds like when it thinks little of you. Q-4
-  settled the address register per NPC, and that is the axis this would move along -
-  formality is already the game's way of saying distance.
-- **Standing can only go up, almost.** v0.7.11 added the first reward that subtracts, and
-  standing is floored at 0. "Low standing" therefore means *new*, not *disliked*, for
-  every player who has not made the arc's one choice. Whether the game wants a way to be
-  actively disliked is a design question and a large one - it changes what the number
-  means.
-- **A shelf the player cannot see is not a reward.** The settlement actions are visible
-  before they are earned and refused with a reason, deliberately, because a locked door
-  nobody can see is not a goal. A back room the player never learns exists breaks that
-  rule; one they are told about and cannot enter yet keeps it.
-
-**What this must not do.** It must not add a trader per tier of standing. One trader whose
-list is derived is the mechanism; three traders in one room is the parallel system D-*
-exists to prevent. And the goods must be existing items unless there is a reason - the
-eight unmade generated components and the tier-5 family are already there to draw on.
 
 
 ### P-26 — Two BookData fields that are read by nothing `open`

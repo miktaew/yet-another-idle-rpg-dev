@@ -120,6 +120,20 @@ function Game_Time(new_time) {
         const phases = ["Full", "Waning", "New", "Waxing"];
         return phases[Math.floor(phase * phases.length)];
     }
+
+    /*
+        The dark quarter, named here rather than at the call site.
+
+        A caller that wants "is it a new moon" would otherwise hold the string "New"
+        itself, and the four names live in this file - a fifth copy of one of them
+        somewhere else is a copy that can be misspelt without anything noticing, since a
+        wrong phase name compares false against every phase there is and reads exactly
+        like a window that never opens. It also keeps a trader's derived stock list free
+        of literals that are not stock list names, which is what its own check reads.
+    */
+    this.isNewMoon = function () {
+        return this.getMoonPhaseName(this.getMoonPhase()) === "New";
+    }
 }
 
 Game_Time.prototype.toString = function() {

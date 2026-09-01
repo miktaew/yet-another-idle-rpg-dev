@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 87 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 88 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,76 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.17 - kutunun altındaki kutu ve takvime bir ay eklendi
+
+P-25'in son parçası ve teklifi kapatıyor: arada çıkan karaborsa. Teklif bunun *"itibara
+**ve** zamana bağlı bir stok listesi olduğunu ve arc'ın bu ikisinin de yarısını çoktan
+yayınladığını"* söylüyordu. İtibar yarısı doğruydu. Zaman yarısı değil.
+
+**Yayınlanmış zaman koşulunun neden yanlış olanı olduğu.** `season`, *yılın* çeyreği. Bu,
+yılda iki kez gelen bir tekne için doğru ritim — Q-10 onu bunun için karara bağladı — ve
+arada bir çıkması gereken bir şey için çok yavaş. Bu yüzden koşullar bir `moon` kazandı;
+`season` ile aynı `{yes, not}` şeklinde ve aynı sebeple: arkasında hiçbir zamanlayıcı
+olmadan kendiliğinden açılan tekrarlı bir pencere. Bir evre 29,5 günün çeyreği, yaklaşık
+7,4 gün; yani her ay geliyor ve dört günde bir tazelenen bir tüccar genellikle içine bir
+kez düşüyor.
+
+**Haftanın günü ise ölçüldü ve elendi.** Bariz kol gibi görünüyor ve bir artefakt:
+`Trader.can_refresh`, `last_refresh`'i `refresh_time`'ın katına oturtuyor; yani dört günlük
+tazelemeyle bir gün koşulu ve tazeleme ızgarası ancak 28 günde bir buluşuyor. Bu, iki
+ızgaranın etkileşimi; kimsenin tasarladığı bir ritim değil.
+
+**Kutuda ne var — iki tasarım ölçümden geçmedikten sonra.**
+
+*Bitmiş nişaneler* bariz ve en gösterişli cevaptı. Kimsenin satmadığı beş artefakt ve her
+biri arka odanın 50-e-1 kasaplık yükseltmelerinden **dört** tane istiyor — bir dağ keçisi
+nişanesi 200 kusursuz boynuz, boynuz da %2 düşen 50 keçi boynuzu: on bin öldürme mertebesi.
+Fiyat sistemi bunu söyleyemiyor. Fiyat `değer` çarpı marj, nişanenin değeri 650 ve hiçbir
+marj on bin öldürmeyi bir sayıya çevirmiyor: birini birkaç bine satmak, oyundaki en derin
+öğütmeyi anlamsız kılardı. v0.7.10'un kayıkçısı ve P-23'ün kitabıyla aynı bulgu şekli —
+ekonominin kolu değer çarpı marj ve nadirliği ifade edemiyor.
+
+*Kalite* edebiliyor. Ölçüldü: **oyundaki her listede kalite adlandıran 183 stok girdisi var
+ve hiçbiri 120'yi geçmiyor**; yardım sayfası bunu bir kural olarak yazıyor. Yani
+karaborsanın ayırt edici yanı farklı mallar değil, aynı malların kimsenin satmasına izin
+verilmediği kadar iyisi — Intermediate listesinin zaten 70-120'de sunduğu dört deri
+pelerin, burada 130-160'ta. Ve ekonomi bunu kendiliğinden doğru fiyatlıyor, çünkü kalite
+değeri çarpıyor ve yolda bir nadirlik bandı geçiyor: 150'deki bir pelerin değer x1,5 x1,3
+iken aynı pelerin 120'de değer x1,2 x1,1.
+
+Yardım artık bunu söylüyor, çünkü yazdığı kuralın bir istisnası var: *"herhangi bir dükkânın
+sunduğu en yüksek eşya kalitesi %120 — bir istisnası var ve o, dükkân saatlerine uymuyor."*
+
+**Ve kadın gecenin hangi tür gece olduğunu söylüyor.** Slums 300 **ve** yeni aya bağlı bir
+replik; arka oda repliğinin aksine duyulduktan sonra kilitlenmiyor — tekrarlı bir şey ve
+kadın onu yine söylerdi. O kadar iyi bir pelerinin nereden geldiğine ve sormaya dair bir
+görüşü var.
+
+**İki muhafız, üç negatif test ve kendi kontrolümün yakaladığı bir şey.**
+
+- `check_moon_phases_are_real`, dört adı `game_time.js`'ten okuyor — burada yazılı bir
+  listeden değil — ve her `moon:` koşulunu onlara bağlıyor. Yanlış yazılmış bir evre, var
+  olan her evreye karşı yanlış döner; yani pencere hiç açılmaz ve dükkân öylece kalır.
+  `"Dark"` ile negatif test edildi.
+- İki tur önceki türetilmiş raf kuralı **kendi sınırında düştü**, ki işe yarayan kısım bu:
+  üçlü şablon birkaç satıra yayılan bir blok gövde ve kontrol yalnızca ilk satırı okuyup
+  hiç sabit bulamadı, üç beyan edilmiş listeyi de erişilemez bildirdi. Bu, yanlış şeye
+  nişan alan doğru bir hata. Artık değerin tamamını `value_expression` üzerinden okuyor —
+  yanındaki kardeş kuralın baştan beri kullandığı şey.
+- Ayrıca `"New"`'i stok listesi adı sanıp bildirdi, çünkü evre dizgesi tüccarın kendi
+  fonksiyonunun içinde duruyordu. Bu, kontrol hatası değil gerçek bir tasarım kokusuydu:
+  `getMoonPhaseName`'in dört adı `game_time.js`'te yaşıyor ve birinin başka bir dosyadaki
+  beşinci kopyası hiçbir şey fark etmeden yanlış yazılabilir. Artık
+  `current_game_time.isNewMoon()`; ikisini de çözüyor.
+- Karaborsayı beyandan çıkararak ve fonksiyonu onu döndüremez hâle getirerek negatif test
+  edildi.
+
+**P-25 backlog'dan çıkıyor.** Dört parça: yüksek ve düşük itibarda farklı konuşan NPC'ler
+(v0.7.15 ve bunu mümkün kılan itibar tavanı), yalnızca yüksek itibarda satılan eşyalar
+(v0.7.16 ve ondan önceki Keşifler zemin işi), bir arka oda (aynı v0.7.16 — aynı şey olduğu
+ortaya çıktı) ve arada çıkan karaborsa. Teklifin "hiçbiri motor işi gerektirmiyor" iddiası
+iki kez yanlıştı: itibarın tavanı, zamanın da evresi yoktu.
 
 ### v0.7.16 - ikinci kutu ve içindekiler ölçüldü
 

@@ -1041,9 +1041,15 @@ function check_trader_stock_lists() {
         const body = braced_body(source, match.index + match[0].length - 1);
         if (body === null) continue;
 
-        const field = /inventory_template:\s*([^\n]*)/.exec(body);
-        if (!field) continue;
-        const value = field[1].trim();
+        /*
+            value_expression rather than the rest of the line: a derived template may be
+            a block body spanning several lines, and reading one line of it found no
+            literals at all. It reported that as a mismatch rather than passing in
+            silence, which is the right failure - against the wrong thing.
+        */
+        const opener = /inventory_template:\s*/.exec(body);
+        if (!opener) continue;
+        const value = value_expression(body, opener.index + opener[0].length).trim();
         if (!/=>|^function/.test(value)) continue;
         derived++;
 
@@ -1850,6 +1856,68 @@ function check_display_conditions_are_not_wrapped_twice() {
     console.log(`[check] display conditions: ${checked} written, none double-wrapped`);
 }
 
+/**
+ * A moon phase name that no moon phase has.
+ *
+ * `getMoonPhaseName` returns one of four names and a condition compares against them by
+ * string. A misspelt one compares false against every phase there is, so the window it
+ * gates never opens: the line is written, translated, shipped and never once seen, and the
+ * shop it would have changed simply stays as it was. Exactly the shape
+ * check_stance_reactions_name_real_stances exists for, in the other half of the calendar.
+ *
+ * The four names are read out of game_time.js rather than listed here, so renaming a phase
+ * cannot leave this check agreeing with itself.
+ */
+function check_moon_phases_are_real() {
+    const time_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/game_time.js"), "utf8"));
+
+    const declaration = /const phases\s*=\s*\[([^\]]*)\]/.exec(time_source);
+    if (!declaration) {
+        error("src/game_time.js no longer declares the moon phase list - "
+            + "check_moon_phases_are_real cannot tell a phase from a typo.");
+        return;
+    }
+    const phases = new Set(
+        [...declaration[1].matchAll(/"([^"]+)"/g)].map((match) => match[1]));
+
+    if (phases.size === 0) {
+        error("the moon phase list is empty - this check is out of date.");
+        return;
+    }
+
+    let named = 0;
+    for (const relative of source_files(repo_root)) {
+        if (relative === "src/game_time.js") continue;
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const match of source.matchAll(/moon:\s*\{/g)) {
+            const body = braced_body(source, match.index + match[0].length - 1);
+            if (body === null) continue;
+            for (const name of body.matchAll(/"([^"]+)"/g)) {
+                named++;
+                if (!phases.has(name[1])) {
+                    const line = source.slice(0, match.index).split("\n").length;
+                    error(`${relative}:${line} gates on the moon phase "${name[1]}", which `
+                        + `getMoonPhaseName never returns. It compares false against every `
+                        + `phase there is, so the window never opens and nothing says so. `
+                        + `The phases are ${[...phases].join(", ")}.`);
+                }
+            }
+        }
+    }
+
+    if (named === 0) {
+        error("nothing gates on a moon phase - check_moon_phases_are_real is out of date "
+            + "and guards nothing.");
+        return;
+    }
+
+    console.log(`[check] moon phases: ${named} named against ${phases.size} phases, all `
+        + `of them real`);
+}
+
 export {
     check_action_branches,
     check_every_enemy_has_a_home,
@@ -1873,4 +1941,5 @@ export {
     check_droprate_tags_are_worth_scaling,
     check_locked_skills_can_be_unlocked,
     check_display_conditions_are_not_wrapped_twice,
+    check_moon_phases_are_real,
 };

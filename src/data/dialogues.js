@@ -1362,6 +1362,21 @@ class Textline {
                 would mention it - it opens on the same 300 that puts you on her roster,
                 which is the same fact from the other side of the street.
             */
+            /*
+                Only on the nights it is there, which is the whole of what makes it a
+                black market rather than a second shelf. Not locked after hearing - it is
+                a recurring thing and she would say it again.
+            */
+            "dark night": new Textline({
+                lore: true,
+                name: "old dark night",
+                text: "old dark night answ",
+                is_unlocked: true,
+                display_conditions: {
+                    reputation: {Slums: {at_least: 300}},
+                    moon: {yes: "New"},
+                },
+            }),
             "back room": new Textline({
                 lore: true,
                 name: "old back room",

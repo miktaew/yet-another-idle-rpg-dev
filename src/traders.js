@@ -266,8 +266,14 @@ class TradeItem {
             people we would get out of bed for". The back room opening at the same point
             is that same fact from the other side of the street.
         */
-        inventory_template: () => character.reputation.Slums >= 300 ? "Slums back room" : "Intermediate",
-        stock_lists: ["Slums back room", "Intermediate"],
+        inventory_template: () => {
+            if(character.reputation.Slums < 300) {
+                return "Intermediate";
+            }
+            //And on a dark night, the box under the box.
+            return current_game_time.isNewMoon() ? "Slums black market" : "Slums back room";
+        },
+        stock_lists: ["Intermediate", "Slums back room", "Slums black market"],
         is_unlocked: false,
         profit_margin: 6,
     });
@@ -760,6 +766,38 @@ class TradeItem {
         new TradeItem({item_name: "High quality wolf fang", count: [1,2], chance: 0.2}),
         new TradeItem({item_name: "High quality boar tusk", count: [1,2], chance: 0.2}),
         new TradeItem({item_name: "Turtle shell", count: [1], chance: 0.25}),
+    ];
+
+    /*
+        P-25's last part: the black market that turns up occasionally. The back room plus
+        one thing no shop in the game offers - quality above 120.
+
+        That ceiling is real and it is documented: 183 stock entries across every list
+        name a quality and **not one of them goes past 120**, which the help page states
+        as a rule. So the fence's distinction is not different goods, it is the same goods
+        better than anybody is supposed to sell them, and the economy expresses that on
+        its own - a cape at 150 is worth its value times 1.5 times the rare multiplier,
+        where the same cape at 120 gets 1.2 times uncommon.
+
+        Two designs were measured and dropped before this one. Finished trophies were the
+        obvious answer - five artifacts nobody sells, each wanting FOUR of the back room's
+        50-to-1 upgrades, so a mountain goat trophy is on the order of ten thousand kills.
+        The price system cannot say that: a price is value times margin, the trophy's
+        value is 650, and no margin turns ten thousand kills into a number. Selling one
+        for a few thousand would have made the deepest grind in the game pointless. And
+        the day of the week was dropped for the reason written beside the moon condition.
+
+        The capes are the four the Intermediate list already sells at 70-120. Same items,
+        same man, a quality he should not have.
+    */
+    inventory_templates["Slums black market"] =
+    [
+        ...inventory_templates["Slums back room"],
+
+        new TradeItem({item_name: "Bear hide cape", count: [1], quality: [130, 160], chance: 0.1}),
+        new TradeItem({item_name: "Goat hide cape", count: [1], quality: [130, 160], chance: 0.12}),
+        new TradeItem({item_name: "Boar hide cape", count: [1], quality: [130, 160], chance: 0.12}),
+        new TradeItem({item_name: "Wolf pelt cape", count: [1], quality: [130, 160], chance: 0.15}),
     ];
 
 })();

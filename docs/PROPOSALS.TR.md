@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 96 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 97 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -632,70 +632,6 @@ bu, bir yetenek eklemesine izin verilen ilk istek.
 **Ne yapmaması gerektiği.** `loot_list`'in yanına ikinci bir ganimet sistemi olmamalı. Ve
 kıyafetler, yenilerine sebep olmadıkça var olan eşyalar olmalı — icat yerine geri kazanım;
 dosyada zaten 44 üretilmiş bileşen ve yapılamayan sekiz tanesi duruyor.
-
-
-### P-25 — İtibar, bir yerin ne kadara sattığını değil nasıl bir yer olduğunu değiştirir `kısmen tamam`
-
-Sahibinin isteği, dört parça hâlinde: NPC'ler yüksek ve düşük itibarda farklı konuşsun;
-bazı eşyalar yalnızca yüksek itibarda satılsın; bir arka oda olsun; ve kenar mahalle
-tarafında arada bir çıkan bir karaborsa olsun.
-
-**Dördün ikisi yayınlandı.** v0.7.15 — kasaba meydanındaki komisyoncu bir yabancıyla bir
-müdavime aynı cevabı vermiyor — ve v0.7.16, kenar mahallede Slums 300'de açılan ikinci
-kutulu adam. İkisi de yol boyunca bu kaydı düzeltti.
-
-**Ve aşağıdaki, rafta ne olacağına dair öneri ölçümden geçmedi.** Yapılamayan sekiz
-üretilmiş bileşen mükerrer — beşi, tariflerin adlandırdığı elle yazılmış `Turtleshell *`
-parçalarını tekrarlayan `Turtle shellplate` zırh parçaları — ve 5. kademe ailesi v0.7.5'te
-üretilebilir oldu, yani onu satmak arc'ın kurduğu zinciri baltalardı. Rafın onun yerine
-tuttuğu şey körfez tüccarının kendi notundan geldi: hiçbir tüccarın satmadığı 22 ganimetin
-en pahalı beşi; dördü 50-e-1 kasaplık yükseltmesi.
-
-**Kalan, karaborsa**; o da bu raf artı bir zaman koşulu — iki yarı da artık var.
-
-**Ölçüldü ve bulgu şu: dördü de bu oyunun zaten sahip olduğu iki mekanizma.** Aşağıdaki
-"hiçbiri motor işi gerektirmiyor" ifadesi **ilki için yanlıştı**: `display_conditions`
-yalnızca bir TABAN ifade edebiliyordu. Oyundaki altı itibar kapısının hepsi taban,
-`conditions[1]` bir tavan değil başarı şansı rampası; yani bir yer ısınabiliyor ama asla
-soğuk olamıyordu. v0.7.15, koşula `location_clears`'ın zaten sahip olduğu
-`{at_least, at_most}` şeklini kazandırdı ve söz dağarcığının ikinci yarısı artık var. Geriye
-kalan üç parça motor işi gerektirmiyor; iddianın tutan yarısı da bu:
-
-- **Bir Textline üzerinde `display_conditions: {reputation: {...}}`.** Altı replik bunu
-  zaten kullanıyor — tedarikçinin, komisyoncunun, yaşlı kadının Slums 300'deki listesi.
-  Yüksek ve düşük itibarda farklı bir selamlama, zıt koşullu iki replik demek; ki
-  tedarikçinin `troubled` / `troubled unavailable` çiftinin kış için sahip olduğu şekil de
-  tam olarak bu.
-- **Bir Trader üzerinde türetilmiş `inventory_template`.** v0.7.5'ten beri alan bir
-  fonksiyon kabul ediyor, çünkü körfezin rafı mevsime göre değişiyor. *İtibara* göre
-  değişen bir raf, aynı çağrının içinde mevsim yerine `character.reputation` olması demek
-  ve `stock_list_name_of` her okuyucuyu zaten tek bir yerden geçiriyor.
-
-Yani arka oda bir oda değil, karaborsa da bir sistem değil. İkisi de ikinci bir stok
-listesi ve bir koşul; dördüncü madde de bunu açıkça gösteriyor: "arada bir çıkan
-karaborsa", itibara **ve** zamana bağlı bir stok listesi ve arc bu ikisinin de yarısını
-çoktan yayınladı.
-
-**Gerçekten karar gerektiren ve mekanik olmayan şeyler:**
-
-- **Düşük itibarın henüz bir dili yok.** Şimdiye kadar her şey itibarı geçilecek bir eşik
-  olarak okuyor; bir yerin sizi az beğendiğinde nasıl konuştuğunu kimse yazmadı. Q-4 hitap
-  kipini NPC bazında karara bağladı ve bunun hareket edeceği eksen de o — resmiyet, bu
-  oyunun mesafeyi söyleme biçimi.
-- **İtibar neredeyse yalnızca yükseliyor.** v0.7.11 eksilten ilk ödülü ekledi ve itibar
-  0'da tabanlandı. Dolayısıyla arc'ın o tek seçimini yapmamış her oyuncu için "düşük
-  itibar", *sevilmeyen* değil *yeni* demek. Oyunun etkin biçimde sevilmeme yolu isteyip
-  istemediği bir tasarım sorusu ve büyük bir soru — sayının ne anlama geldiğini
-  değiştiriyor.
-- **Oyuncunun göremediği bir raf ödül değildir.** Yerleşim aksiyonları kazanılmadan önce
-  görünüyor ve sebebiyle reddediliyor; bilerek, çünkü kimsenin göremediği kilitli bir kapı
-  hedef değildir. Oyuncunun var olduğunu hiç öğrenmediği bir arka oda bu kuralı bozar;
-  söylenip de henüz girilemeyen bir arka oda onu korur.
-
-**Ne yapmaması gerektiği.** İtibar kademesi başına bir tüccar eklememeli. Listesi
-türetilen tek bir tüccar mekanizmadır; bir odada üç tüccar, D-* direktiflerinin önlemek
-için var olduğu paralel sistemdir. Ve mallar, sebep olmadıkça var olan eşyalar olmalı —
-yapılamayan sekiz üretilmiş bileşen ile 5. kademe ailesi zaten elde duruyor.
 
 
 ### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `open`

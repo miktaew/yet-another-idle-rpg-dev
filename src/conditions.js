@@ -69,6 +69,11 @@ import { registries } from "./registries.js";
             }
         }
 
+        moon: { //lunar phase(s) that must, or must not, be current
+            not: String | [String],
+            yes: String | [String],
+        }
+
         flags: [String] //global flags required
 
         relative_height: { //short / average / tall, relative to race
@@ -314,6 +319,37 @@ const process_conditions = (conditions, character) => {
             }
         } else if(conditions[0].season.not) {
             if(listed(conditions[0].season.not).includes(season)) {
+                met = 0;
+            }
+        }
+    }
+
+    /*
+        The moon, in the same shape as the season above and for the same reason: a
+        recurring window that opens on its own with no scheduler behind it.
+
+        Where it differs is the period. A season is a quarter of the year, which is the
+        right rhythm for a boat that comes twice a year and much too slow for anything
+        that is meant to feel occasional. A phase is a quarter of 29.5 days - about 7.4 -
+        so it comes round every month and a trader refreshing every four days will
+        usually land inside it once. That is what P-25's "turns up occasionally" needs,
+        and the day of the week could not do it: refreshes snap to a multiple of
+        refresh_time, so a weekday condition and a four-day grid only meet every 28 days,
+        which is an artifact of two grids rather than a rhythm anybody designed.
+
+        Names are the four getMoonPhaseName returns; check_moon_phases_are_real holds
+        content to them, because a misspelt phase compares false against every phase
+        there is and behaves exactly like a window that never opens.
+    */
+    if(conditions[0].moon) {
+        const phase = current_game_time.getMoonPhaseName(current_game_time.getMoonPhase());
+        const listed = (declared) => Array.isArray(declared) ? declared : [declared];
+        if(conditions[0].moon.yes) {
+            if(!listed(conditions[0].moon.yes).includes(phase)) {
+                met = 0;
+            }
+        } else if(conditions[0].moon.not) {
+            if(listed(conditions[0].moon.not).includes(phase)) {
                 met = 0;
             }
         }

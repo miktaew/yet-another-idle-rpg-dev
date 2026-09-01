@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 36 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 37 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -195,6 +195,8 @@ yayımlanmış bir hatayı kodlayanlar:
 | `droprate tags` | Hiçbir düşmanın taşımadığı ya da düşmanları hiçbir şey düşürmeyen bir etikete yöneltilmiş düşme oranı yeteneği. 2 çift. |
 | `locked skills` | Kilitli başlayan ve hiçbir ödülün açmadığı bir yetenek. 3 kilitli. |
 | `tier ladder` | İstasyon cezasının ulaşmaya değmez hâle getirdiği bir bileşen kademesi. 30 kademe/beceri noktası. |
+| `display conditions` | Dizi olarak yazılmış bir display_conditions; her yapıcı onu sarmalayıp hep karşılanan bir koşula çeviriyor. 21 yazım. |
+| `moon phases` | getMoonPhaseName'in hiç döndürmediği bir ay evresi adı; kapıladığı pencere hiç açılmıyor. 4 evre. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

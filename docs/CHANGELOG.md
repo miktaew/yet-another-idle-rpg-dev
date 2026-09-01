@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 87 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 88 -->
 
 # Changelog
 
@@ -20,6 +20,78 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.17 - the box under the box, and the calendar gains a moon
+
+P-25's last part, and it closes the proposal: the black market that turns up occasionally.
+The proposal said it was *"a stock list gated on standing **and** on time, and the arc has
+already shipped both halves of that"*. The standing half was true. The time half was not.
+
+**Why the shipped time condition was the wrong one.** `season` is a quarter of the *year*.
+That is the right rhythm for a boat that comes twice a year - it is what Q-10 settled it
+for - and far too slow for something meant to feel occasional. So conditions gained a
+`moon`, in the same `{yes, not}` shape as `season` and for the same reason: a recurring
+window that opens on its own with no scheduler behind it. A phase is a quarter of 29.5
+days, about 7.4, so it comes round monthly and a trader refreshing every four days will
+usually land inside it once.
+
+**And the day of the week was measured and dropped.** It looks like the obvious lever and
+it is an artifact: `Trader.can_refresh` snaps `last_refresh` to a multiple of
+`refresh_time`, so with a four-day refresh a weekday condition and the refresh grid only
+meet every 28 days. That is two grids interacting, not a rhythm anybody designed.
+
+**What is in the box, after two designs failed measurement.**
+
+*Finished trophies* were the obvious answer and the best-looking one. Five artifacts nobody
+sells, each wanting **four** of the back room's 50-to-1 butchering upgrades - a mountain
+goat trophy is 200 pristine horns, and a horn is 50 goat horns at a 2% drop, so on the
+order of ten thousand kills. The price system cannot say that. A price is `value` times
+margin, the trophy's value is 650, and no margin turns ten thousand kills into a number:
+selling one for a few thousand would have made the deepest grind in the game pointless.
+Same finding shape as v0.7.10's boatman and P-23's book - the economy's lever is value
+times margin, and it cannot express rarity.
+
+*Quality* can. Measured: **183 stock entries across every list in the game name a quality
+and not one of them passes 120**, which the help page states as a rule. So the fence's
+distinction is not different goods, it is the same goods better than anybody is supposed to
+sell them - the four hide capes the Intermediate list already offers at 70-120, offered
+here at 130-160. And the economy prices that correctly on its own, because quality
+multiplies value and crosses a rarity band on the way: a cape at 150 is value x1.5 x1.3
+where the same cape at 120 is value x1.2 x1.1.
+
+Help says so now, since the rule it stated has an exception: *"the highest item quality any
+shop offers is 120% - with one exception, and it does not keep shop hours."*
+
+**And she says which kind of night it is.** A line gated on Slums 300 **and** the new moon,
+and unlike her back-room line it does not lock after hearing - it is a recurring thing and
+she would mention it again. She has a view on where a cloak that good comes from, and on
+asking.
+
+**Two guards, three negative tests, and one caught by my own check.**
+
+- `check_moon_phases_are_real` reads the four names out of `game_time.js` - not a list
+  written down here - and holds every `moon:` condition to them. A misspelt phase compares
+  false against every phase there is, so the window never opens and the shop simply stays
+  as it was. Negative-tested with `"Dark"`.
+- The derived-shelf rule from two rounds ago **failed on its own limitation**, which is the
+  useful part: the three-way template is a block body across several lines and the check
+  read only the first line, found no literals, and reported all three declared lists as
+  unreachable. That is the right failure aimed at the wrong thing. It reads the whole value
+  through `value_expression` now, which the sibling rule beside it had been using all along.
+- It also flagged `"New"` as a stock list name, because the phase string was sitting inside
+  the trader's own function. That one was a real design smell rather than a check bug:
+  `getMoonPhaseName`'s four names live in `game_time.js`, and a fifth copy of one of them
+  in another file can be misspelt without anything noticing. It is `current_game_time.isNewMoon()`
+  now, which fixes both.
+- Negative-tested by leaving the black market out of the declaration and by making the
+  function unable to return it.
+
+**P-25 leaves the backlog.** Four parts: NPCs who speak differently at high and low
+standing (v0.7.15, and the reputation ceiling that made it possible), items sold only at
+high standing (v0.7.16, and the Discoveries groundwork before it), a back room (the same
+v0.7.16 - it turned out to be the same thing), and the occasional black market. The
+proposal's claim that none of it needed engine work was wrong twice: standing had no
+ceiling and time had no phase.
 
 ### v0.7.16 - the second box, and what is in it was measured
 
