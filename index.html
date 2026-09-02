@@ -693,6 +693,10 @@
                             <div class="crafting_subpage_button" data-crafting_subcategory="components" onclick="switchCraftingRecipesSubpage('components')" data-translation="ui craft components"></div>
                             <div class="crafting_subpage_button" data-crafting_subcategory="equipment" onclick="switchCraftingRecipesSubpage('equipment')" data-translation="ui show equipment"></div>
                         </div>
+                        <div id="crafting_filter_div">
+                            <input type="checkbox" id="crafting_only_makeable" onclick="update_displayed_crafting_recipes()">
+                            <label for="crafting_only_makeable" data-translation="ui craft only makeable"></label>
+                        </div>
                         <div id="recipe_categories" class="crafting_category"></div>
                         <div id="exit_crafting_button" onclick="closeCraftingWindow()" data-translation="ui btn exit">
                         </div>

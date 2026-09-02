@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 107 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 108 -->
 
 # Changelog
 
@@ -20,6 +20,44 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.36 - only what I can make, and P-39 closes
+
+The other half of P-39: *"add a checkbox on the crafting pages to filter to only the ones that
+can be made."*
+
+**The proposal called this the cheap half - "a predicate that exists and a checkbox that reads
+it" - and two thirds of it existed.** `get_availability` is on `ItemRecipe` and inherited by
+component recipes; `EquipmentRecipe extends Recipe` and had none. That is also why the
+greying-out of unmakeable recipes sits commented out on the component and equipment pages to
+this day: there was nothing there to ask.
+
+**So equipment learned to answer.** An equipment recipe names a pair of component types - an
+axe is an "axe head" and a "medium handle" - and the question is whether the player is holding
+one of each. The number returned is the smallest number of complete sets the bag could supply,
+which is what the item recipes' number already means, because one caller reads both.
+
+Quality and tier are deliberately not consulted. Any blade will make some axe, and which blade
+is the player's choice to make, not the filter's to pre-empt.
+
+**One place asks now.** The component-choice list was filtering the inventory by
+`component_type` inline, so "which components could go here" was about to be written twice;
+`count_components_of_type` is that question, once.
+
+`.recipe_hidden { display: none }` was already in the stylesheet, so the hiding half cost
+nothing once something could answer. The box is applied both when a row is built and when it
+is refreshed, so a page opened with it already ticked is right the first time.
+
+**Guard: `check_every_recipe_can_say_if_it_is_makeable`.** A recipe kind that cannot answer
+does not fail loudly - the optional call returns undefined and a whole page filters wrongly
+while the box looks like it is working. 148 recipes, each able to answer; taking the predicate
+back off `EquipmentRecipe` fails it by name and by page. Six behaviour tests cover the answer
+itself: an empty bag, half the pair, both halves, and the shape matching what an item recipe
+returns.
+
+**And an existing check earned its keep again.** `check_onclick_names_are_reachable` caught the
+new checkbox calling `update_displayed_crafting_recipes` before anything had put it on
+`window` - a button that would have done nothing, and only a click would have said so.
 
 ### v0.7.35 - a recipe you have never made says so
 

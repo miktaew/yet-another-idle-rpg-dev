@@ -1558,6 +1558,53 @@ const translationManager = globalThis.__real_tm;
     }
 }
 
+// --- P-39: can this equipment be made right now ---------------------------
+{
+    /*
+        The filter is only as good as the answer, and equipment is the kind that had no
+        answer at all until this. Both halves of the pair have to be in the bag, and the
+        number has to mean what the item recipes' number means: how many complete sets.
+    */
+    const [recipes_module, character_module, items_module] = await load_browser_free(repo_root,
+        ["src/crafting_recipes.js", "src/character.js", "src/items.js"]);
+
+    const equipment = recipes_module.recipes.crafting?.equipment ?? {};
+    const recipe = Object.values(equipment)[0];
+    check("there is an equipment recipe to ask", recipe !== undefined);
+
+    if (recipe) {
+        const of_type = (type) => Object.values(items_module.item_templates)
+            .find(item => item.component_type === type);
+        const first = of_type(recipe.components[0]);
+        const second = of_type(recipe.components[1]);
+        check("both of its component types exist as items",
+            Boolean(first) && Boolean(second));
+
+        const held = (entries) => { character_module.character.inventory = entries; };
+
+        held({});
+        check("an empty bag makes nothing", recipe.get_availability().available_ammount === 0);
+
+        held({a: {item: first, count: 3}});
+        check("half the pair still makes nothing",
+            recipe.get_availability().available_ammount === 0);
+
+        held({a: {item: first, count: 3}, b: {item: second, count: 2}});
+        check("both halves make the smaller number of sets",
+            recipe.get_availability().available_ammount === 2);
+
+        //And the field is named the way the item recipes name it, since one caller reads both.
+        const item_recipe = Object.values(recipes_module.recipes.cooking?.items ?? {})[0];
+        held({});
+        check("it answers in the same shape an item recipe does",
+            item_recipe !== undefined
+            && "available_ammount" in item_recipe.get_availability()
+            && "available_ammount" in recipe.get_availability());
+
+        held({});
+    }
+}
+
 console.log("");
 if (failures.length > 0) {
     console.error(`${failures.length} check(s) failed:`);

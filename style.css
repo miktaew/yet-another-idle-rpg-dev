@@ -1464,6 +1464,17 @@ input[type=checkbox], input[type=radio] {
 		font-size: 18px;
 		outline: 2px dashed silver;
 	}
+	/* The "only what I can make" box, under the page's own buttons (P-39). */
+	#crafting_filter_div {
+		font-size: 15px;
+		padding: 3px 2px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+	#crafting_filter_div label {
+		cursor: pointer;
+	}
 		.crafting_subpage_button {
 			padding: 3px 0px 3px 0px;
 			float:left;

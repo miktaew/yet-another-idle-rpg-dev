@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 124 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 125 -->
 
 # Proposals
 
@@ -623,31 +623,6 @@ own constructor. That is a broader check than this proposal and would probably f
 than two.
 
 
-
-### P-39 — Mark what has never been crafted, and filter to what can be `partly done`
-
-The owner's request, in two parts: *"let us mark craftable but never-crafted items with an
-indicator, as discovered / not discovered. And add a checkbox on the crafting pages to filter
-to only the ones that can be made."*
-
-**The marker is done (v0.7.35).** "Never crafted" was the reading the request itself settled -
-*hiç craft edilmemiş* - so it records what the player has done. Keyed by recipe id rather than
-by category/subcategory/id, because nine of the 136 ids appear in two or three categories and
-the question is "have I ever made one of these". Not in `item_log`, which this proposal
-suggested: that is keyed by item, and a component recipe's item depends on its material.
-
-**Still open: the filter, and the proposal was wrong about it being cheap.** "Can be made right
-now" is NOT already computed everywhere. `get_availability` lives on `ItemRecipe` and is
-inherited by component recipes; `EquipmentRecipe extends Recipe` and has none, which is
-exactly why the greying-out is commented out on the component and equipment pages.
-
-So the checkbox needs that predicate written for equipment first, and there the question is
-harder than for an item: an equipment recipe needs a material AND a set of components chosen
-before "can this be made" means anything at all. The honest options are to write it properly,
-or to offer the filter only on the items page and say so.
-
-`.recipe_hidden { display: none }` already exists in the stylesheet, so the hiding half costs
-nothing once the predicate does.
 
 ### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
 

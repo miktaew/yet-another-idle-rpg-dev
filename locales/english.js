@@ -3148,6 +3148,7 @@ const descriptions = {
     "ui tab data": "Data",
     "ui label prices": "Prices:",
     "ui label total price": "Total price:",
+    "ui craft only makeable": "Only what I can make",
     "ui craft items": "Items/trinkets",
     "ui craft components": "Components",
     "ui label strength": "Strength:",

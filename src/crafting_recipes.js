@@ -277,6 +277,23 @@ class ComponentlessEquipRecipe extends ItemRecipe{
     //roll_quality is ItemRecipe's; this class only differs in what it may cap at.
 }
 
+/**
+ * How many of a component type the player is holding.
+ *
+ * The one place that asks. The component-choice list in crafting_display.js filtered the
+ * inventory by `component_type` inline, so "which components could go here" would have been
+ * written twice the moment anything else needed to know (P-39).
+ */
+function count_components_of_type(component_type) {
+    let count = 0;
+    for(const entry of Object.values(character.inventory)) {
+        if(entry.item.component_type === component_type) {
+            count += entry.count;
+        }
+    }
+    return count;
+}
+
 class EquipmentRecipe extends Recipe {
     constructor({
         name,
@@ -292,6 +309,33 @@ class EquipmentRecipe extends Recipe {
         this.components = components;
         this.item_type = item_type;
         this.quality_precision = config.equipment_crafting_quality_precision;
+
+        /**
+         * Whether the player is holding a component for every slot this needs.
+         *
+         * ItemRecipe has had one of these all along and EquipmentRecipe never did, which is
+         * why the greying-out on the equipment page is commented out and why a "only what I
+         * can make" filter had nothing to read there (P-39).
+         *
+         * The number is the smallest set of complete sets the inventory could supply, so it
+         * means what the item recipes' number means. Quality and tier are not consulted: any
+         * blade will make some axe, and which blade is the player's choice to make.
+         *
+         * @returns {Object} {available_ammount, components}
+         */
+        this.get_availability = function() {
+            let amount = Infinity;
+            const components = [];
+            for(const component_type of this.components) {
+                const count = count_components_of_type(component_type);
+                components.push({component_type, count});
+                amount = Math.min(amount, count);
+                if(amount === 0) {
+                    break;
+                }
+            }
+            return {available_ammount: amount === Infinity ? 0 : amount, components};
+        };
         this.getResult = function (components, station_tier = 1) {
             const component_stats = get_component_stats(components);
             let quality = this.roll_quality(component_stats.weighted_quality, station_tier - component_stats.max_tier);

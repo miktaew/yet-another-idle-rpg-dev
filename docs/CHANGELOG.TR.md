@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 107 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 108 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,45 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.36 - sadece yapabildiklerim ve P-39 kapanıyor
+
+P-39'un öteki yarısı: *"craft sayfalarında sadece yapılabilirleri filtrelemek için bir
+checkbox ekleyelim."*
+
+**Teklif bunu ucuz yarı diye anmıştı — "var olan bir yüklem ve onu okuyan bir onay kutusu" —
+ve üçte ikisi vardı.** `get_availability` `ItemRecipe` üzerinde ve component tarifleri onu
+miras alıyor; `EquipmentRecipe extends Recipe` ise hiç taşımıyordu. Yapılamayan tariflerin
+soluklaştırılmasının component ve ekipman sayfalarında bugüne dek yorumda durmasının sebebi
+de bu: soracak bir şey yoktu.
+
+**Böylece ekipman cevap vermeyi öğrendi.** Bir ekipman tarifi bir bileşen türü çifti
+adlandırıyor — bir balta, bir "axe head" ve bir "medium handle" — ve soru, oyuncunun her
+birinden birini taşıyıp taşımadığı. Dönen sayı, çantanın sağlayabileceği en küçük tam takım
+sayısı; ki eşya tariflerinin sayısının zaten anlamı bu, çünkü ikisini de tek bir çağıran
+okuyor.
+
+Kalite ve kademe bilerek sorulmuyor. Herhangi bir ağız bir balta yapar ve hangi ağız olacağı
+oyuncunun vereceği karar, filtrenin peşinen alacağı değil.
+
+**Artık tek bir yer soruyor.** Bileşen seçim listesi envanteri `component_type`'a göre satır
+içinde süzüyordu; yani "buraya hangi bileşenler girebilir" iki kez yazılmak üzereydi.
+`count_components_of_type` o soru, bir kez.
+
+`.recipe_hidden { display: none }` stil dosyasında zaten vardı, yani cevap verecek bir şey
+olunca saklama yarısı bedava geldi. Kutu hem satır kurulurken hem yenilenirken uygulanıyor,
+böylece zaten işaretliyken açılan bir sayfa ilk seferde doğru.
+
+**Muhafız: `check_every_recipe_can_say_if_it_is_makeable`.** Cevap veremeyen bir tarif türü
+gürültüyle düşmüyor — isteğe bağlı çağrı undefined dönüyor ve kutu çalışıyor gibi görünürken
+koca bir sayfa yanlış filtreleniyor. 148 tarif, hepsi cevap verebiliyor; yüklemi
+`EquipmentRecipe`'ten geri almak onu adıyla ve sayfasıyla düşürüyor. Altı davranış testi
+cevabın kendisini kapsıyor: boş çanta, çiftin yarısı, iki yarı ve bir eşya tarifinin
+döndürdüğü biçimle eşleşme.
+
+**Ve mevcut bir kontrol yine hakkını verdi.** `check_onclick_names_are_reachable`, yeni onay
+kutusunun `update_displayed_crafting_recipes`'i, onu `window`'a koyan bir şey olmadan
+çağırdığını yakaladı — hiçbir şey yapmayacak bir düğme ve bunu ancak bir tıklama söylerdi.
 
 ### v0.7.35 - hiç yapmadığınız bir tarif bunu söylüyor
 

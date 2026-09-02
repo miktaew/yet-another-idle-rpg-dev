@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 124 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 125 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -644,31 +644,6 @@ kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından
 ve muhtemelen ikiden fazlasını bulur.
 
 
-
-### P-39 — Hiç craft edilmemişi işaretle, yapılabilire göre filtrele `partly done`
-
-Sahibinin isteği, iki parça: *"craft edilebilir ama hiç craft edilmemiş eşyaları bir belirteçle
-keşfedildi/keşfedilmedi şeklinde işaretleyelim. craft sayfalarında sadece yapılabilirleri
-filtrelemek için bir checkbox ekleyelim."*
-
-**Belirteç yapıldı (v0.7.35).** "Hiç craft edilmemiş" okumasını isteğin kendisi çözdü, yani
-oyuncunun ne yaptığını kaydediyor. Kategori/altkategori/kimliğe göre değil tarif kimliğine
-göre anahtarlı; çünkü 136 kimliğin dokuzu iki ya da üç kategoride birden görünüyor ve soru
-"bunlardan hiç yaptım mı". Bu teklifin önerdiği `item_log`'a konmadı: o eşyaya göre anahtarlı
-ve bir component tarifinin eşyası malzemesine bağlı.
-
-**Hâlâ açık: filtre ve teklifin ucuz olduğu iddiası yanlıştı.** "Şu anda yapılabilir" her yerde
-hesaplanmıyor. `get_availability` `ItemRecipe` üzerinde ve component tarifleri onu miras
-alıyor; `EquipmentRecipe extends Recipe` ve hiç taşımıyor — component ve ekipman sayfalarında
-soluklaştırmanın yorumda olmasının sebebi tam olarak bu.
-
-Yani onay kutusu önce o yüklemin ekipman için yazılmasını gerektiriyor ve orada soru bir
-eşyadakinden zor: bir ekipman tarifinin "bu yapılabilir mi" sorusunun anlam kazanması için
-önce bir malzeme VE bir bileşen kümesi seçilmiş olmalı. Dürüst seçenekler, onu düzgün yazmak
-ya da filtreyi yalnızca eşya sayfasında sunup bunu söylemek.
-
-`.recipe_hidden { display: none }` stil dosyasında zaten var, yani yüklem hazır olduğunda
-saklama yarısı bedava.
 
 ### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
 

@@ -710,6 +710,53 @@ function check_every_craft_records_that_it_happened() {
         + `result, ${hands_over.length - unrecorded} recording it`);
 }
 
+/**
+ * Every recipe can say whether it can be made right now.
+ *
+ * The crafting pages carry a "only what I can make" box (P-39), and it works by asking each
+ * recipe `get_availability`. A kind of recipe that cannot answer does not fail loudly - the
+ * optional call returns undefined, the row is treated as unmakeable or as makeable depending
+ * on how the caller reads it, and a whole page quietly filters wrongly.
+ *
+ * That was the state this found: `get_availability` was on `ItemRecipe` and inherited by
+ * component recipes, and `EquipmentRecipe extends Recipe` had none - which is also why the
+ * greying-out on two of the three pages sits commented out to this day. The proposal had
+ * called the filter "a predicate that exists and a checkbox that reads it"; two thirds of it
+ * existed.
+ */
+async function check_every_recipe_can_say_if_it_is_makeable() {
+    const [recipes_module] = await load_browser_free(repo_root, ["src/crafting_recipes.js"]);
+
+    let counted = 0;
+    const mute = new Set();
+    for (const [category, subs] of Object.entries(recipes_module.recipes)) {
+        for (const [subcategory, list] of Object.entries(subs)) {
+            for (const [id, recipe] of Object.entries(list)) {
+                counted++;
+                if (typeof recipe.get_availability !== "function") {
+                    mute.add(`${category}/${subcategory} (${recipe.constructor?.name ?? "?"}), `
+                        + `e.g. "${id}"`);
+                }
+            }
+        }
+    }
+
+    if (counted === 0) {
+        error("there are no recipes at all - check_every_recipe_can_say_if_it_is_makeable is "
+            + "out of date.");
+        return;
+    }
+
+    for (const where of mute) {
+        error(`recipes in ${where} have no get_availability, so nothing can tell whether the `
+            + `player can make one. The "only what I can make" filter shows that whole page `
+            + `unfiltered and says nothing about it.`);
+    }
+
+    console.log(`[check] recipe availability: ${counted} recipe(s), `
+        + `${mute.size === 0 ? "each able to say whether it can be made" : `${mute.size} kind(s) mute`}`);
+}
+
 export {
     check_a_better_input_makes_a_better_result,
     check_higher_tiers_are_still_worth_reaching,
@@ -718,5 +765,6 @@ export {
     check_inherited_quality_is_shown,
     check_crafting_passes_the_input_quality,
     check_every_craft_records_that_it_happened,
+    check_every_recipe_can_say_if_it_is_makeable,
     check_quality_rolls_take_an_input_quality,
 };

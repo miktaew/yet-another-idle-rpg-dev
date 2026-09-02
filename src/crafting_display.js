@@ -168,6 +168,7 @@ function add_crafting_recipe_to_display({ category, subcategory, recipe_id }) {
     recipe_div.classList.add("recipe_div");
     recipe_div.dataset.recipe_id = recipe_id;
     mark_if_never_crafted(recipe_div, recipe_id);
+    hide_if_not_makeable(recipe_div, recipe);
 
     if(subcategory === "items") {
         recipe_name_span.classList.add("recipe_item_name");
@@ -339,6 +340,29 @@ function mark_if_never_crafted(recipe_div, recipe_id) {
     recipe_div.classList.toggle("recipe_never_crafted", !was_ever_crafted(recipe_id));
 }
 
+/**
+ * Hides a recipe the player cannot make right now, when they have asked for that.
+ *
+ * Every recipe can answer it as of P-39's second half: ItemRecipe has always had
+ * `get_availability`, component recipes inherit it, and EquipmentRecipe was given one -
+ * which was the real reason the filter was not "a predicate that exists and a checkbox that
+ * reads it", and the reason the greying-out is commented out on two of the three pages.
+ *
+ * `.recipe_hidden` was already in the stylesheet, so the hiding half cost nothing; what it
+ * needed was something to ask.
+ */
+function hide_if_not_makeable(recipe_div, recipe) {
+    if(!recipe_div) {
+        return;
+    }
+    if(!document.getElementById("crafting_only_makeable")?.checked) {
+        recipe_div.classList.remove("recipe_hidden");
+        return;
+    }
+    recipe_div.classList.toggle("recipe_hidden",
+        !recipe.get_availability?.().available_ammount);
+}
+
 function update_displayed_crafting_recipes() {
     Object.keys(recipes).forEach(recipe_category => {
         Object.keys(recipes[recipe_category]).forEach(recipe_subcategory => {
@@ -373,6 +397,7 @@ function update_displayed_crafting_recipe({category, subcategory, recipe_id}) {
         appeared on one page in three would be worse than none.
     */
     mark_if_never_crafted(recipe_div, recipe_id);
+    hide_if_not_makeable(recipe_div, recipe);
 
     if(subcategory === "items") {
         if(recipe.get_availability().available_ammount) {

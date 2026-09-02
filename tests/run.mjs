@@ -76,6 +76,7 @@ import {
     check_quality_rolls_take_an_input_quality,
     check_the_prediction_and_the_roll_share_one_source,
     check_every_craft_records_that_it_happened,
+    check_every_recipe_can_say_if_it_is_makeable,
 } from "./checks/crafting.mjs";
 import {
     check_a_sorted_field_is_saved,
@@ -213,6 +214,7 @@ await check_higher_tiers_are_still_worth_reaching();
 await check_qualitied_materials_can_still_be_found();
 check_the_prediction_and_the_roll_share_one_source();
 check_every_craft_records_that_it_happened();
+await check_every_recipe_can_say_if_it_is_makeable();
 check_a_sorted_field_is_saved();
 check_every_sort_button_is_understood();
 await check_a_standing_gate_can_be_reached();

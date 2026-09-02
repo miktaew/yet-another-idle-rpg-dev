@@ -4109,6 +4109,8 @@ window.do_enemy_combat_action = do_enemy_combat_action;
 
 window.sort_displayed_inventory = sort_displayed_inventory;
 window.update_displayed_discoveries = update_displayed_discoveries;
+//The crafting page's "only what I can make" box calls it (P-39).
+window.update_displayed_crafting_recipes = update_displayed_crafting_recipes;
 window.update_displayed_lore = update_displayed_lore;
 window.update_displayed_titles = update_displayed_titles;
 window.update_displayed_character_inventory = update_displayed_character_inventory;

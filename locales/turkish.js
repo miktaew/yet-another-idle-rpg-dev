@@ -3189,6 +3189,7 @@ const descriptions = {
     "ui tab data": "Veri",
     "ui label prices": "Fiyatlar:",
     "ui label total price": "Toplam fiyat:",
+    "ui craft only makeable": "Sadece yapabildiklerim",
     "ui craft items": "Eşyalar/süsler",
     "ui craft components": "Parçalar",
     "ui label strength": "Kuvvet:",
