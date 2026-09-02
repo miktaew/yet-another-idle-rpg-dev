@@ -151,7 +151,8 @@ import { is_title_earned, titles } from "./data/titles.js";
 //new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
 import { place_tooltip_vertically } from "./ui_helpers.js";
 import { rolls_a_sighting } from "./data/marrowmoth.js";
-import { accept_from_board, refreshed_board } from "./guild_jobs.js";
+import { accept_from_board, job_after_kill, job_is_done, refreshed_board,
+         standing_paid_for } from "./guild_jobs.js";
 import { update_displayed_guild_board } from "./guild_display.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -2222,6 +2223,23 @@ function kill_enemy(target, do_quest_events = true) {
                 quest_event_count: 1,
             });
         })
+
+        /*
+            And the guild's job, if it is a hunt for something this was (P-41). Here rather
+            than in a loop of its own because the tags are already in hand, and inside the
+            same `do_quest_events` guard as the events above for the same reason those are:
+            a replay must not count a kill twice.
+
+            job_after_kill returns the same object when the kill was nothing to do with the
+            job, so the comparison is what decides whether anything is redrawn.
+        */
+        if(game_state.guild_board?.accepted) {
+            const advanced = job_after_kill(game_state.guild_board.accepted, target.tags);
+            if(advanced !== game_state.guild_board.accepted) {
+                game_state.guild_board = {...game_state.guild_board, accepted: advanced};
+                update_displayed_guild_board();
+            }
+        }
     }
 }
 
@@ -4164,6 +4182,87 @@ function accept_guild_job(index) {
     update_displayed_guild_board();
 }
 
+/**
+ * Handing the taken job back to the clerk.
+ *
+ * Everything is re-checked here rather than trusted from the panel. The button is only
+ * drawn when the job is done, but the panel is redrawn on a tick and a click is not - and
+ * a gather job can stop being done between the two, because selling the goods is a thing
+ * a player does while the journal is open.
+ */
+function hand_in_guild_job() {
+    const board = game_state.guild_board;
+    const job = board?.accepted;
+    if(!job || !job_is_done(job, character.inventory)) {
+        return;
+    }
+
+    if(job.type === "gather") {
+        /*
+            Removed by inventory key, and the count can span several stacks - a
+            quality-rolled material is held in one stack per quality. Taken cheapest first
+            so a player who has kept a good one keeps it: the guild asked for a count, not
+            for the best of what you have.
+        */
+        let owed = job.count;
+        const stacks = Object.keys(character.inventory)
+            .filter(key => {
+                try {
+                    return JSON.parse(key)?.id === job.target;
+                } catch (malformed) {
+                    return false;
+                }
+            })
+            .sort((first, second) => {
+                const quality = (key) => {
+                    try {
+                        return JSON.parse(key)?.quality ?? 0;
+                    } catch (malformed) {
+                        return 0;
+                    }
+                };
+                return quality(first) - quality(second);
+            });
+
+        for(const key of stacks) {
+            if(owed <= 0) {
+                break;
+            }
+            const taking = Math.min(owed, character.inventory[key].count);
+            remove_from_character_inventory([{item_key: key, item_count: taking}]);
+            owed -= taking;
+        }
+        update_displayed_character_inventory();
+    }
+
+    const standing = standing_paid_for(job, character.reputation["Guild"] ?? 0);
+    game_state.guild_board = {...board, accepted: null};
+
+    /*
+        Through process_rewards, so the standing is granted and displayed the way every
+        other grant in the game is rather than written straight onto the character - and
+        skipped entirely when there is nothing to grant.
+
+        Nothing to grant means the top of the ladder, which is the ceiling Q-14 asked for.
+        The work is still taken in; it is the book that has no further up to go, and the
+        line says which of the two happened rather than claiming a promotion it did not
+        give.
+    */
+    if(standing > 0) {
+        process_rewards({
+            rewards: {reputation: {Guild: standing}},
+            source_type: "action",
+            source_name: "guild clerk",
+        });
+    }
+
+    log_message(translationManager.getText(language, standing > 0
+        ? "log guild job handed in"
+        : "log guild job handed in at the top"), "notification");
+    update_displayed_guild_board();
+}
+
+window.hand_in_guild_job = hand_in_guild_job;
 window.accept_guild_job = accept_guild_job;
 window.reload_normal_location = reload_normal_location;
 window.handleLocationIconClick = handle_location_icon_click;

@@ -286,6 +286,177 @@ async function check_a_restored_board_drops_jobs_that_name_nothing() {
         + "recovers to an empty board");
 }
 
+/**
+ * A gather job counts what the player holds across every stack of it.
+ *
+ * **The finding this exists for was a measurement, not a guess.** An inventory key is JSON
+ * and carries the quality when an item has one, so a material out of a quality-rolling
+ * activity is held in one stack per quality. The owner's save holds Ratfish in **seven**
+ * stacks, Carp in six, Mackerel shark in six - and seven of the thirty gatherable materials
+ * are quality-rolled, so roughly a quarter of gather jobs name one.
+ *
+ * The engine's own `items_by_id` condition asks whether ONE stack holds enough. That is
+ * right for the sixteen declared places that use it, none of which names a quality-rolled
+ * material, and it would have been wrong here in the least diagnosable way possible: an
+ * inventory with forty fish in it and a hand-in that refuses, with nothing logged and
+ * nothing failing.
+ *
+ * So this drives `held_of` and `job_is_done` against a split inventory, and it fails if
+ * either goes back to reading one stack.
+ */
+async function check_a_gather_job_counts_every_stack() {
+    const [jobs_module] = await load_browser_free(repo_root, ["src/guild_jobs.js"]);
+    const {held_of, job_progress, job_is_done, gatherable_materials} = jobs_module;
+
+    if (typeof held_of !== "function" || typeof job_is_done !== "function") {
+        error("hand-in's rules are not where this expects them - "
+            + "check_a_gather_job_counts_every_stack is out of date.");
+        return;
+    }
+
+    const material = [...gatherable_materials()][0];
+    if (material === undefined) {
+        error("nothing is gatherable, so a gather job cannot be tested.");
+        return;
+    }
+
+    //Three stacks of the same id, the way a quality-rolled material is really held.
+    const split = {
+        [JSON.stringify({id: material})]: {count: 4},
+        [JSON.stringify({id: material, quality: 41})]: {count: 5},
+        [JSON.stringify({id: material, quality: 96})]: {count: 6},
+        [JSON.stringify({id: "something else entirely"})]: {count: 99},
+        //A malformed key is not impossible in a hand-edited save, and must not throw.
+        "not json at all": {count: 3},
+    };
+
+    if (held_of(material, split) !== 15) {
+        error(`held_of counted ${held_of(material, split)} of ${material} across three `
+            + `stacks holding 4, 5 and 6. A gather job would refuse a hand-in from an `
+            + `inventory that has the goods in it, which is the failure with no symptom.`);
+    }
+    if (held_of(material, {}) !== 0 || held_of(material, undefined) !== 0) {
+        error("held_of does not answer 0 for an empty or missing inventory.");
+    }
+
+    const job = {type: "gather", target: material, count: 15};
+    if (job_progress(job, split) !== 15) {
+        error("job_progress does not read a gather job's progress off the inventory.");
+    }
+    if (!job_is_done(job, split)) {
+        error(`a gather job for 15 ${material} is not done with 15 held across stacks.`);
+    }
+    if (job_is_done({...job, count: 16}, split)) {
+        error("a gather job is done one short of its count.");
+    }
+
+    console.log(`[check] gather hand-in: ${material} counted across 3 stacks`);
+}
+
+/**
+ * A hunt job advances on the kills it asked for, stops at its count, and ignores the rest.
+ *
+ * Progress accumulates because a kill cannot un-happen, which means it is the one number
+ * here that a bug can quietly inflate or strand. Four ways that goes wrong and all four are
+ * silent: it counts a kill it did not ask for (the job finishes on the wrong work), it
+ * counts nothing (the job can never finish), it runs past the brief (the panel shows 30 of
+ * 8), and it advances a gather job (whose progress must come from the inventory, so a stored
+ * count would contradict what the player is holding).
+ */
+async function check_a_hunt_job_counts_only_its_own_kills() {
+    const [jobs_module] = await load_browser_free(repo_root, ["src/guild_jobs.js"]);
+    const {job_after_kill, counts_towards_job} = jobs_module;
+
+    if (typeof job_after_kill !== "function") {
+        error("job_after_kill is not where this expects it - "
+            + "check_a_hunt_job_counts_only_its_own_kills is out of date.");
+        return;
+    }
+
+    const job = {type: "hunt", target: "wolf rat", count: 2, progress: 0};
+
+    const wrong = job_after_kill(job, {"stone crab": true});
+    if (wrong !== job) {
+        error("a hunt job advances on a kill that does not carry its target tag.");
+    }
+
+    const once = job_after_kill(job, {"wolf rat": true, living: true});
+    if (once === job || once.progress !== 1) {
+        error("a hunt job does not advance on a kill carrying its target tag.");
+    }
+
+    const twice = job_after_kill(once, {"wolf rat": true});
+    if (twice.progress !== 2) {
+        error("a hunt job stops advancing before it reaches its count.");
+    }
+
+    const past = job_after_kill(twice, {"wolf rat": true});
+    if (past !== twice) {
+        error(`a finished hunt job kept counting, to ${past.progress} of ${job.count}. The `
+            + `panel would show more work done than was asked for.`);
+    }
+
+    const gather = {type: "gather", target: "anything", count: 2, progress: 0};
+    if (job_after_kill(gather, {anything: true}) !== gather) {
+        error("a gather job accumulates kills. Its progress has to come from the inventory, "
+            + "so a stored count would disagree with what the player is holding.");
+    }
+
+    if (counts_towards_job(null, {a: true}) || counts_towards_job(job, undefined)) {
+        error("counts_towards_job does not answer false for a missing job or missing tags.");
+    }
+
+    console.log("[check] hunt hand-in: counts its own kills, stops at the brief");
+}
+
+/**
+ * Every hunt the board can offer names a tag some COUNTABLE enemy carries.
+ *
+ * Progress comes from the kill hook in `kill_enemy`, and that hook sits inside
+ * `if(target.add_to_bestiary)`. Seven of the game's enemies have that false - the two
+ * village-guard variants, the suspicious wall and man, the mountain goat, and both giant
+ * crabs - so a kill of one of those advances nothing.
+ *
+ * Which is fine while every offered tag has at least one countable carrier, and is measured
+ * rather than assumed: today none of them is entirely uncountable. It stops being fine the
+ * moment content moves, and the symptom would be a job that simply never progresses no
+ * matter how much of the right thing the player kills.
+ */
+async function check_every_hunt_target_can_be_counted() {
+    const [jobs_module, enemies_module, reputation_module] = await load_browser_free(
+        repo_root, ["src/guild_jobs.js", "src/enemies.js", "src/reputation.js"]);
+    const {hunt_targets_for} = jobs_module;
+    const {enemy_templates} = enemies_module;
+    const {guild_ranks} = reputation_module;
+
+    let checked = 0;
+    const seen = new Set();
+    for (let index = 0; index < guild_ranks.length; index++) {
+        for (const tag of hunt_targets_for(index)) {
+            if (seen.has(tag)) continue;
+            seen.add(tag);
+            checked++;
+
+            const carriers = Object.entries(enemy_templates)
+                .filter(([, enemy]) => Boolean(enemy.tags?.[tag]));
+            const countable = carriers.filter(([, enemy]) => enemy.add_to_bestiary);
+
+            if (countable.length === 0) {
+                error(`the board can offer a hunt for "${tag}", and every enemy carrying it `
+                    + `(${carriers.map(([name]) => name).join(", ")}) has `
+                    + `add_to_bestiary false. The kill hook is inside that guard, so the job `
+                    + `would never advance however many the player killed.`);
+            }
+        }
+    }
+
+    console.log(`[check] hunt targets: ${checked} tag(s) offered, each carried by something `
+        + `the kill hook counts`);
+}
+
 export { check_every_guild_rank_can_be_given_work,
     check_the_board_keeps_what_was_taken_off_it,
-    check_a_restored_board_drops_jobs_that_name_nothing };
+    check_a_restored_board_drops_jobs_that_name_nothing,
+    check_a_gather_job_counts_every_stack,
+    check_a_hunt_job_counts_only_its_own_kills,
+    check_every_hunt_target_can_be_counted };

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 121 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 122 -->
 
 # Changelog
 
@@ -20,6 +20,68 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.44 - handing the job in, and the stack count that decided how
+
+P-41's fourth piece. The board could be read and taken from at v0.7.43 and the clerk could
+not take anything back; she can now, and the interesting half of it is a measurement.
+
+**A fetch counts across stacks, and that was measured rather than assumed.** An inventory
+key is JSON and carries the quality when an item has one, so a material out of a
+quality-rolling activity is held in one stack per quality. **The owner's save holds Ratfish
+in seven stacks, Carp in six, Mackerel shark in six** - and seven of the thirty gatherable
+materials are quality-rolled, so roughly a quarter of gather jobs name one.
+
+The engine's own `items_by_id` condition asks whether ONE stack holds enough. Measured
+against the sixteen places that use it: not one names a quality-rolled material, so it has
+never been wrong - and reusing it here would have been wrong in the least diagnosable way
+available. An inventory with forty fish in it and a hand-in that refuses, nothing logged,
+nothing failing. So `held_of` sums by id across every stack, and the goods are taken
+**cheapest first**: the guild asked for a count, not for the best of what you have.
+
+**A hunt counts from the moment the job was taken**, which needed no new counter and no
+snapshot either. `kill_enemy` already walks the dead enemy's tags to fire the quest engine's
+`kill_any` events, so the job is advanced in that loop, inside the same `do_quest_events`
+guard - a replay must not count a kill twice. Progress stops at the brief: a count that runs
+on would show 30 of 8.
+
+**Why the two are counted differently, since it looks like an inconsistency.** A kill has
+happened and cannot un-happen, so it accumulates. Goods can be sold, spent or eaten between
+taking the job and finishing it, so they are counted at the moment they are asked for. A
+stored count for a fetch would keep saying the player had something they no longer have.
+
+**Hand-in re-checks everything the button already implied.** The button is only drawn when
+the job is done, but the panel is drawn on a tick and a click is not - and selling the goods
+is a thing a player does with the journal open.
+
+**Past the top of the ladder it pays nothing, and now says so.** `standing_paid_for` has
+returned 0 there since v0.7.41, which is the ceiling Q-14 asked for; the first version of
+this hand-in still logged *"your name is a little further up her book"*, which would have
+been a lie. There are two lines now and the reward call is skipped entirely.
+
+**Three checks, and the first one is the one the measurement earned.**
+`check_a_gather_job_counts_every_stack` drives `held_of` against an inventory holding the
+same id in three stacks plus a malformed key; `check_a_hunt_job_counts_only_its_own_kills`
+covers the four silent ways progress goes wrong; and
+`check_every_hunt_target_can_be_counted` guards a hazard the kill hook creates -
+`kill_enemy` counts inside `if(target.add_to_bestiary)`, and **seven enemies have that
+false** (both village-guard variants, the suspicious wall and man, the mountain goat, both
+giant crabs). None of the six offered tags is entirely uncountable today. The moment one is,
+the symptom is a job that never progresses however much of the right thing is killed.
+
+**Negative-tested with six reintroduced bugs**, each caught by its own message, including
+`add_to_bestiary` defaulted to false - which made all six tags uncountable and the guard say
+so for each.
+
+**And the help, which is the part that had been getting skipped.** The owner's instruction:
+new features and new regions must be reflected in `help.html` and `help.tr.html`. Measured,
+and it was worse than the guild: **of the eight journal tabs, help named only Data.** Quests,
+Bestiary, Anthology, Discoveries, Lore and Titles were not named at all. A Guild work section
+covers this feature end to end - the F-to-SSS ladder, the board's rank window, the per-day
+refresh, one job at a time, and how each of the two job types is counted - and the standing
+list stops calling the Guild "the merchant Guild", because the clerk at the Adventurer's
+guild has paid into that same region since before P-41 and the board pays into it too. One
+region, two houses. The other six tabs are P-44.
 
 ### v0.7.43 - the guild's board, and the save shape under it
 

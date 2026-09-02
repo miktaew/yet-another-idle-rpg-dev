@@ -343,7 +343,11 @@ function accept_from_board({board, index}) {
     }
     return {
         ...board,
-        accepted: job,
+        //`progress` only ever means kills. A gather job's progress is how much the player
+        //is holding right now, which is read at hand-in rather than accumulated - goods can
+        //be spent, sold or eaten between taking the job and finishing it, and a stored
+        //count would keep saying otherwise.
+        accepted: {...job, progress: 0},
         //Taken off the board, because it has been taken off the board.
         offered: board.offered.filter((_, at) => at !== index),
     };
@@ -364,13 +368,122 @@ function restored_board(saved) {
     const offered = Array.isArray(saved?.offered)
         ? saved.offered.filter(job_target_resolves)
         : [];
-    const accepted = job_target_resolves(saved?.accepted) ? saved.accepted : null;
+    const accepted = job_target_resolves(saved?.accepted)
+        ? {...saved.accepted,
+            //A v0.7.43 save has an accepted job and no progress on it, because nothing
+            //counted yet. Nought is the true answer for those, not a guess.
+            progress: typeof saved.accepted.progress === "number"
+                ? Math.max(0, saved.accepted.progress) : 0}
+        : null;
     return {
         //A day that is not a number rolls a new offer on the next tick.
         day: typeof saved?.day === "number" ? saved.day : null,
         offered,
         accepted,
     };
+}
+
+/**
+ * Whether a kill counts towards a job.
+ *
+ * The tags come from the enemy that died. `kill_enemy` already walks them to fire the
+ * quest engine's `kill_any` events, so this is asked in the loop that exists rather than
+ * from a second pass over the same object.
+ *
+ * @param {Object} job the accepted job, or nothing
+ * @param {Object} tags the dead enemy's `tags`
+ * @returns {Boolean}
+ */
+function counts_towards_job(job, tags) {
+    return Boolean(job && job.type === "hunt" && tags && tags[job.target]);
+}
+
+/**
+ * How many of an item the player holds, across every stack of it.
+ *
+ * **Across stacks is the whole point, and it was measured rather than assumed.** An
+ * inventory key is JSON and carries the quality when an item has one, so a material that
+ * comes out of a quality-rolling activity is held in as many stacks as it has qualities.
+ * The owner's save holds Ratfish in **seven** of them, Carp in six, Mackerel shark in six.
+ * Seven of the thirty gatherable materials are quality-rolled, so about a quarter of gather
+ * jobs name one.
+ *
+ * The engine's existing `items_by_id` condition asks whether ONE stack holds enough, which
+ * is right for the sixteen places that use it - none of them names a quality-rolled
+ * material - and would have been wrong here in a way nobody could have diagnosed from the
+ * screen: an inventory with forty fish in it, and a hand-in that refuses.
+ *
+ * @param {String} item_id
+ * @param {Object} inventory character.inventory, keyed by the JSON inventory key
+ * @returns {Number}
+ */
+function held_of(item_id, inventory) {
+    let held = 0;
+    for(const [key, stack] of Object.entries(inventory || {})) {
+        let parsed;
+        try {
+            parsed = JSON.parse(key);
+        } catch (malformed) {
+            continue;
+        }
+        if(parsed?.id === item_id) {
+            held += stack?.count ?? 0;
+        }
+    }
+    return held;
+}
+
+/**
+ * How far along a job is.
+ *
+ * Two different questions behind one number, which is why this takes the inventory rather
+ * than reading a stored count for both: a hunt has happened and cannot un-happen, so it
+ * accumulates; goods can be spent, so they are counted at the moment they are asked for.
+ *
+ * @param {Object} job
+ * @param {Object} [inventory] character.inventory, needed only for a gather job
+ * @returns {Number}
+ */
+function job_progress(job, inventory) {
+    if(!job) {
+        return 0;
+    }
+    if(job.type === "gather") {
+        return held_of(job.target, inventory);
+    }
+    return job.progress ?? 0;
+}
+
+/**
+ * Whether a job can be handed in.
+ *
+ * @param {Object} job
+ * @param {Object} [inventory]
+ * @returns {Boolean}
+ */
+function job_is_done(job, inventory) {
+    return Boolean(job) && job_progress(job, inventory) >= job.count;
+}
+
+/**
+ * The job advanced by one kill, or the same job when that kill was nothing to do with it.
+ *
+ * Returns a new object rather than mutating, so the caller's `!==` tells it whether to
+ * redraw - the same shape `refreshed_board` uses and for the same reason.
+ *
+ * @param {Object} job
+ * @param {Object} tags the dead enemy's `tags`
+ * @returns {Object} the job
+ */
+function job_after_kill(job, tags) {
+    if(!counts_towards_job(job, tags)) {
+        return job;
+    }
+    //Never past the brief. A count that runs on reads as work that was not asked for.
+    if((job.progress ?? 0) >= job.count) {
+        return job;
+    }
+    return {...job, progress: (job.progress ?? 0) + 1};
 }
 
 export {
@@ -388,4 +501,9 @@ export {
     refreshed_board,
     accept_from_board,
     restored_board,
+    counts_towards_job,
+    held_of,
+    job_progress,
+    job_is_done,
+    job_after_kill,
 };

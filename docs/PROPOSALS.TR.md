@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 142 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 145 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -129,6 +129,27 @@ Pages deploy'u yalnızca varsayılan branch'te tetiklendiği için yan bir branc
 deploy'u sessizce atlar.
 
 ---
+
+### D-10 — Oyuncunun gördüğü bir değişiklik, yardım girdisiyle birlikte yayınlanır `standing`
+
+**2026-09-02, sahibi.** *"Eklenen maddelerle help'i de güncellemeyi atlama. Örneğin şu an
+loncalara ekleme yapıldı ama help'te bir karşılığı var mı?"* Ve: *"Yeni bölgeler, yeni
+özellikler gibi şeylerde help'lerde düzenlenmeli."*
+
+Yoktu; ölçüm de sorunun ima ettiğinden kötüydü: **sekiz günlük sekmesinden `help.html`
+yalnızca Data'yı adlandırıyordu.** Quests, Bestiary, Anthology, Discoveries, Lore ve Titles
+hiç anılmıyordu; envanterin dördüncü sıralaması, tekrar dene düğmesi, craft filtresi ve
+yetenek isteyen kitaplar da öyle.
+
+Kural, D-9'un sürüm kuralının yanında ve aynı anda istendi: **değişiklik bir sürümü hak
+ediyorsa, bir yardım girdisini de hak eder.** İki sayfa birlikte, `help.html` ve
+`help.tr.html`, aynı commit'te — Türkçesi sonradan çevrilmiş değil, Türkçe yazılmış (D-7).
+Yeni bölge dünya haritası bölümüne girer; yeni bir panel ya da sistem, oyuncunun arayacağı
+yerde adlandırılır.
+
+`npm run check` sayfanın iki parçasını bu kurala çoktan bağlıyor — harita 71 mekânın hepsini
+kapsıyor, itibar bloğu her itibar bölgesini adlandırıyor — yani üçüncüsünü korumanın deseni
+hazır. P-44, bu direktifin bulduğu iş listesi.
 
 ## Öneriler
 
@@ -368,7 +389,38 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
   kendine ait bir bayrak, hâlihazırda var olan ve hâlihazırda kaydedilen bir duruma katılan
   ikinci bir durum olurdu.
 
-**Sırada, bu sırayla:** bitmiş bir işin teslim edilmesi, sonra dükkân.
+- **Teslim.** `done`, **v0.7.44** olarak. Av işi, işin alındığı andan itibaren sayıyor;
+  `kill_enemy`in motorun `kill_any` olayları için çoktan yürüttüğü etiket döngüsünün içinde
+  ve aynı `do_quest_events` muhafızının altında ilerletiliyor, yani bir tekrar oynatma bir
+  öldürmeyi iki kez sayamıyor. Getirme işi ise oyuncunun elinde tuttuğunu sayıyor ve en
+  ucuzdan alıyor.
+
+  **Getirmeye karar veren ölçüm.** Envanter anahtarı JSON ve kaliteyi taşıyor; yani kalite
+  yuvarlanan bir malzeme her kalite için bir yığında duruyor — sahibinin kaydı Ratfish'i
+  **yedi**, Carp'ı altı, Mackerel shark'ı altı yığında tutuyor ve 30 toplanabilir malzemenin
+  7'si kalite yuvarlıyor. Motorun kendi `items_by_id`si **tek** bir yığının yeterli olup
+  olmadığını soruyor; onu kullanan on altı bildirilmiş yer için doğru (hiçbiri kalite
+  yuvarlanan malzeme adlandırmıyor) ve burada belirtisiz biçimde yanlış olurdu: çantada kırk
+  balık ve reddeden bir teslim. `held_of` yığınlar boyunca topluyor.
+
+  İkisi bilerek farklı sayılıyor: öldürme olmamış hâle gelemez, o yüzden birikir; mal ise iş
+  alınıp bitirilene kadar satılabilir, o yüzden istendiğinde sayılır. Merdivenin tepesinden
+  sonra ödeme 0, ödül çağrısı atlanıyor ve ikinci bir log satırı, bir rütbe artışı iddia
+  etmek yerine bunu söylüyor.
+
+  Üç kontrolle korunuyor ve altı hata geri konularak negatif test edildi. Üçüncü muhafız
+  anılmaya değer: `kill_enemy`, `if(target.add_to_bestiary)` içinde sayıyor ve **yedi
+  düşmanda bu false**; bu yüzden `check_every_hunt_target_can_be_counted`, panonun
+  sunabildiği bir etiket tamamen sayılamaz hâle gelirse düşüyor — belirti, doğru şeyin ne
+  kadarı öldürülürse öldürülsün hiç ilerlemeyen bir iş olurdu.
+
+  **Ve yardımı**, D-10 gereği: iki sayfada da bir Lonca işleri bölümü ve itibar listesi artık
+  Lonca'ya "tüccar Loncası" demiyor — kâtip o bölgeye P-41'den önce de ödeme yapıyordu. Tek
+  bölge, iki ev.
+
+**Sırada:** dükkân, son parça. Loncaya özel eşyalar itibar fiyatıyla, milestone ödülleriyle —
+ve Q-14'ün dördüncü cevabı onu çoktan sınırlıyor, çünkü panonun ödemesi merdivenin tepesinde
+duruyor.
 
 **Teslim, bir işi bitirmenin neye mal olduğunu belirleyen parça** ve yazılmadan önce ölçülecek
 bir şeyi var: bir av işi, iş alındığından beri bir *etiketin* öldürülme sayısını saymak
@@ -426,6 +478,71 @@ hataların neredeyse hiçbiri biçim hatası değildi. Ulaşılabilirlik ve sır
 yakalıyor ve zaten yakalamadığı için yazıldılar. Tipleme, iyi olduğu şey için değerli — yanlış
 yazılmış bir özellik, hatalı argüman sayısı — ve bu dosyaların boyutunun yarattığı problemin
 cevabı değil.
+
+#### Sahibinin dört sorusu, 2026-09-02
+
+*"src altında hepsini listelemek yerine klasörleyerek tipine konusuna göre kullanmak daha
+doğru olmaz mı? models kullanımını daha da arttırmak tip güvenliği için daha iyi olmaz mı,
+any any yerine? Ayrıca main.js sadece orchestrator olarak davransa fark yaratır mı?"* Ve
+ayrıca: *"Bir de eşyalar, görevler gibi şeylerde json olarak verileri ayırsak ve jsondan
+beslesek rahatlatır mı?"*
+
+Ölçüldü ve dördünden üçünün net bir cevabı var.
+
+**JSON: eşyalar ve tarifler için evet, görevler için hayır — ve sayı belirleyici.** Soru
+aslında tek: "bu bildirim bir fonksiyon içeriyor mu?" Çünkü JSON fonksiyon tutamaz:
+
+| dosya | bildirim | fonksiyon içeren |
+|---|---|---|
+| `items.js` | 256 | **1** (%0) |
+| `crafting_recipes.js` | 148 | **0** (%0) |
+| `quests.js` | 23 | **20** (%87) |
+
+Yani `items.js` ve `crafting_recipes.js`, kod gibi davranan veri — ikisinde 404 bildirim ve
+bir fonksiyon — ve JSON'a taşımak tek bir davranışı değiştirmeden 7.700 satır kaynağı
+kaldırıyor. `quests.js` ise tam tersi: 23 görevinin %87'si fonksiyon, çünkü bir görevin
+koşulu ve ipucu hesaplanıyor. Görevleri JSON'dan beslemek, o fonksiyonlar için JSON'un içinde
+bir dil uydurmak olurdu; veri biçimleri de kötü programlama dillerine böyle dönüşür.
+
+**Bu, P-42'nin 2. adımıyla yarışmıyor, onun yerine geçiyor.** 2. adım "items.js'i yorumlarda
+kendini çoktan grupladığı ailelere böl" idi. JSON taşıması aynı iş ama sonu daha iyi: bölme
+zaten bedavaya geliyor (aile başına bir dosya ya da tek bir dizi) ve tek yeni kod yükleyici.
+Muhafız da 2. adımın zaten sahip olduğu muhafız: `npm run check:bundle`,
+`Verify_Game_Objects()` ve gerçek bir export'a karşı `npm run check:save` — artı JSON'daki her
+id'nin çözüldüğünü kontrol eden bir kontrol, ki `check_save_keys_round_trip` ve kayıt defteri
+kontrolleri bunu öbür yönden çoktan yapıyor.
+
+**`src/`yi konuya göre klasörlemek: evet ve neredeyse bedava.** Üst seviyede 45 dosyaya karşı
+hâlihazırda var olan ve hâlihazırda bir şey ifade eden dört klasör — `data/`, `models/`,
+`components/`, `mods/`. Kural orada; yalnızca uygulanmaz olmuş. Yeniden adlandırmalar burada
+ucuz, çünkü `src/` dışından hiçbir şey yola göre import etmiyor ve paket tek bir giriş
+noktasından derleniyor. **Ama bunu JSON taşımasından ve dosya bölmelerinden sonra yapmak
+gerekiyor**, öncesinde değil: bir dosyayı iki kez taşımak iki kat pahalı ve ikisi de dosyanın
+hangi klasöre ait olduğuna karar veriyor.
+
+**models/ ve `any`: evet ve P-42'nin 1. adımı bedelini çoktan ölçtü.** `models/` iki dosya
+tutuyor. Tür denetimi 56 dosyanın 26'sında açık ve proje çapındaki sonda hâlâ 30 dosyada 1672
+hata bildiriyor — ve **bunların üçte ikisi iki kod**: TS2353 ile TS2740, ki ikisi tek bir
+bulgu: *veri dosyaları, hiçbir kurucunun adını anmadığı fazladan alanlar taşıyan içerik
+nesneleri bildiriyor.* Bir model tam olarak bunun içindir. Yani sıra "modelleri yaz, sonra
+türleri" değil: bildirimleri JSON'a taşınan her dosya, doğrulanacağı bir şekle ihtiyaç duyuyor
+ve o şekil modelin kendisi. JSON taşıması ile modeller tek bir iş; ayrı yapmak aynı okumayı
+iki kez yapmak olur.
+
+**main.js'in yalnızca orchestrator olması: dördün en belirsizi ve dürüst cevap "henüz
+değil".** 4.930 satır, 121 üst seviye fonksiyon, 96'sı `window`a asılı, 41 import. Asıl şekli
+o 96 window bağı gösteriyor: `main.js` bir tanrı-nesne olmaktan çok *HTML'in
+ulaşabildiği dosya*, çünkü `index.html`teki her `onclick` bir global istiyor. Yani "yalnızca
+orchestrator", `main.js`in refactor'u değil — DOM'un oyuna nasıl seslendiğine dair bir karar
+ve bu, yukarıdaki üçünden daha büyük ve daha riskli. `display.js` bunun ucuz sürümünün
+işlediğini kanıtladı (beş panel çıktı, tek yönlü import, döngü yok) ve v0.7.43'teki
+`guild_display.js` aynı desenin tekrarı. **Öneri: panelleri çıkarmaya devam et; `main.js`te
+kalan şey döngü, içerik yığını ve window bağları olduğunda karar ver.** İzlenecek sayı o 96
+bağ; dosya yarıya inerken onlar 96 kalıyorsa cevap evetti.
+
+**Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü
+arkasında ölçülmüş 404'e 1 gibi bir argüman olan tek iş bu. Sonra klasör düzeni, dosyalar
+hareket etmeyi bıraktıktan sonra. `main.js` en son ve yalnızca panellerin götürdüğü kadar.
 
 **Gitmesi gereken sıra, küçükten büyüğe.**
 
@@ -570,6 +687,37 @@ gösteriyor; iki yerden varılan bir bölge, izleri süs hâline getirir. Ve in�
 parça, P-14'ünkiler gibi ölçülmek zorunda; çünkü brief'in altı odağı altı iş parçası değil —
 ikisi (navigasyon, duruş dövüşü) bir bölgenin içerdiği özellikler değil, sahip olduğu
 niteliklerdir.
+
+### P-44 — Yardımın söylemedikleri `open`
+
+D-10'un iş listesi; tahmin değil, ölçüm. `help.html` ve `help.tr.html`, oyuncunun gördüğü
+tek dokümantasyon ve v0.7 civarında bir yerde geride kalmışlar.
+
+**Sekiz günlük sekmesinden yardım ikisini adlandırıyor.** Data zaten vardı; Guild work
+v0.7.44 ile eklendi. Tamamen eksik olanlar: **Quests, Bestiary, Anthology, Discoveries,
+Lore, Titles.** Bunlardan ikisi, oyuncuya gösterilerek değil anlatılarak öğretilmesi gereken
+sistemler — Discoveries "bu nereden geliyor" sorusunu cevaplıyor, Lore ise başka türlü
+yalnızca bir kez okunabilen iplikleri topluyor.
+
+**Ve son yirmi sürümün özellikleri.** Şunların hiçbiri iki sayfanın hiçbir yerinde
+adlandırılmıyor: envanterin dördüncü sıralaması ve kısa etiketleri, başarısız kilidin
+altındaki tekrar dene düğmesi, craft sayfalarındaki keşfedildi/keşfedilmedi işaretleri ve
+yalnızca yapılabilirler filtresi, okunabilmesi için yetenek isteyen kitaplar, kasaba
+meydanının idman ve nöbet işleri, ve dosya adına giren sürüm bilgisi.
+
+**İzler hariç, karşılaşma hariç.** P-14 faz 7'nin bütün tasarımı, oyuncunun o şeyin var
+olduğundan emin olamaması. Yardım ise oyuncunun emin olmaya gittiği yer; bu yüzden izler ve
+on binde bir görme onun dışında kalıyor. D-10'un geçerli olmadığı tek yer bu ve biri
+yardımcı olmak isteyip onu belgelemeden önce yazılmaya değer.
+
+**Sonra muhafız, ama ancak o zaman.** Her günlük sekmesinin iki sayfada da adlandırıldığını
+kontrol etmek türetilebilir ve sınıfı yakalar — `check_help_explains_standing` ile aynı
+şekil, ki o da bir bloğu okuyup `character.reputation`ın bildirdiğine bağlıyor. Önce
+eklenemez: yazıldığı gün altı sekmede düşerdi ve sözleşme kırmızı kapıyla commit'e izin
+vermiyor.
+
+**Sıra:** altı sekme, sonra özellik listesi, sonra kontrol. Sekmeler, oyuncunun yardımı en
+çok *onlar için* açacağı yarı.
 
 ## Bekleyen kararlar
 

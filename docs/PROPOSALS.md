@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 142 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 145 -->
 
 # Proposals
 
@@ -120,6 +120,27 @@ deploy only triggers on the default branch, so a side branch would silently skip
 deployment.
 
 ---
+
+### D-10 — A player-visible change ships with its help entry `standing`
+
+**2026-09-02, owner.** *"Do not skip updating help along with the items you add. The guild
+has just been added to, for instance - is there anything answering to it in help?"* And:
+*"new regions, new features and the like have to be edited into the helps."*
+
+There was not, and the measurement was worse than the question implied: **of the eight
+journal tabs, `help.html` named only Data.** Quests, Bestiary, Anthology, Discoveries, Lore
+and Titles were not named at all, and neither were the inventory's fourth sort, the retry
+button, the crafting filter or books that require a skill.
+
+So the rule, alongside D-9's version rule and asked at the same moment: **if the change
+earns a version, it earns a help entry.** Both pages, `help.html` and `help.tr.html`, at the
+same time and in the same commit - the Turkish one written as Turkish (D-7), not translated
+after the fact. A new region goes in the world map section; a new panel or system gets named
+where the player would look for it.
+
+`npm run check` already holds two pieces of the page to this - the map covers all 71
+locations, and the standing block names every reputation region - so the pattern for
+guarding a third is there. P-44 is the backlog this directive found.
 
 ## Proposals
 
@@ -362,7 +383,37 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
   board - a flag of its own would have been a second piece of state agreeing with one that
   already exists and is already saved.
 
-**Next, in order:** handing a finished job in, then the shop.
+- **Handing it in.** `done`, as **v0.7.44**. A hunt counts from the moment the job was
+  taken, advanced inside the tag loop `kill_enemy` already runs for the quest engine's
+  `kill_any` events and under the same `do_quest_events` guard, so a replay cannot count a
+  kill twice. A fetch counts what the player holds and takes it cheapest first.
+
+  **The measurement that decided the fetch.** An inventory key is JSON and carries the
+  quality, so a quality-rolled material is held in one stack per quality - the owner's save
+  holds Ratfish in **seven**, Carp in six, Mackerel shark in six, and 7 of the 30 gatherable
+  materials are quality-rolled. The engine's own `items_by_id` asks whether ONE stack holds
+  enough, which is right for the sixteen declared places that use it (none names a
+  quality-rolled material) and would have been wrong here with no symptom: forty fish in the
+  bag and a hand-in that refuses. `held_of` sums across stacks.
+
+  The two are counted differently on purpose: a kill cannot un-happen, so it accumulates;
+  goods can be sold between taking a job and finishing it, so they are counted when asked
+  for. Past the top of the ladder the pay is 0, the reward call is skipped and a second log
+  line says so rather than claiming a promotion.
+
+  Guarded by three checks and negative-tested with six reintroduced bugs. The third guard is
+  the one worth naming: `kill_enemy` counts inside `if(target.add_to_bestiary)` and **seven
+  enemies have that false**, so `check_every_hunt_target_can_be_counted` fails if a tag the
+  board can offer ever becomes entirely uncountable - the symptom would be a job that never
+  advances however much of the right thing is killed.
+
+  **And its help**, per D-10: a Guild work section on both pages, and the standing list no
+  longer calls the Guild "the merchant Guild" - the clerk has paid into that region since
+  before P-41. One region, two houses.
+
+**Next:** the shop, which is the last piece. Guild-only items at a standing price, with
+milestone rewards - and Q-14's fourth answer already bounds it, since the board's pay stops
+at the top of the ladder.
 
 **Handing in is the piece that decides what a job costs to finish**, and it has one thing to
 measure before it is written: a hunt has to count kills of a *tag* since the job was accepted,
@@ -419,6 +470,73 @@ recipe that cannot say whether it can be made, an unlock whose trigger was alrea
 **TypeScript catches none of those.** The 232 checks do, and they were written because it does
 not. Typing is worth having for what it is good at - a misspelt property, a wrong argument
 count - and it is not the answer to the problem the size of these files is causing.
+
+#### The owner's four questions, 2026-09-02
+
+*"Instead of listing everything under src, would it not be more correct to fold it into
+folders by type and subject? Would using models more not be better for type safety, instead
+of any-any? And would it make a difference if main.js behaved only as an orchestrator?"* And
+separately: *"if we split data like items and quests out as JSON and fed from that, would it
+make things easier?"*
+
+Measured, and three of the four have a clear answer.
+
+**JSON: yes for items and recipes, no for quests, and the number is decisive.** The question
+is only ever "does this declaration contain a function", because JSON cannot hold one:
+
+| file | declarations | containing a function |
+|---|---|---|
+| `items.js` | 256 | **1** (0%) |
+| `crafting_recipes.js` | 148 | **0** (0%) |
+| `quests.js` | 23 | **20** (87%) |
+
+So `items.js` and `crafting_recipes.js` are data pretending to be code - 404 declarations
+between them and one function - and moving them to JSON removes 7,700 lines of source
+without changing a single behaviour. `quests.js` is the opposite: its 23 quests are 87%
+functions, because a task's condition and its hint are computed. Feeding quests from JSON
+would mean inventing a language for those functions inside the JSON, which is how data
+formats become bad programming languages.
+
+**This replaces P-42's step 2 rather than competing with it.** Step 2 was "split `items.js`
+by the families it already groups itself into in comments". A JSON move is the same work with
+a better ending: the split falls out of it for free (one file per family, or one array), and
+the loader is the only new code. The guard is the one step 2 already had -
+`npm run check:bundle`, `Verify_Game_Objects()` and `npm run check:save` against a real
+export - plus a check that every id in the JSON resolves, which `check_save_keys_round_trip`
+and the registry checks already do from the other direction.
+
+**Folding `src/` by subject: yes, and it is nearly free.** 45 files at the top level against
+four folders that already exist and already mean something - `data/`, `models/`,
+`components/`, `mods/`. The convention is there; it just stopped being followed. Renames are
+cheap here because nothing outside `src/` imports by path and the bundle is built from one
+entry point. **But it is worth doing after the JSON move and after any file splits**, not
+before: moving a file twice costs twice, and both of those decide which folder a file
+belongs in.
+
+**models/ and `any`: yes, and P-42's step 1 already measured the cost.** `models/` holds two
+files. The type check is on for 26 of 56 files and the project-wide probe still reports 1672
+errors across 30 - and **two thirds of them are two codes**, TS2353 and TS2740, which are the
+same finding: *the data files declare content objects carrying more fields than any
+constructor names.* That is exactly what a model is for. So the order is not "write models,
+then types" - it is: every file whose declarations move into JSON needs a shape to validate
+against, and that shape IS the model. The JSON move and the models are one job, and doing
+them apart would be doing the same reading twice.
+
+**main.js as an orchestrator: the least clear of the four, and the honest answer is "not
+yet".** 4,930 lines, 121 top-level functions, 96 of them hung on `window`, 41 imports. The 96
+window bindings are the real shape: `main.js` is not a god object so much as *the file the
+HTML can reach*, because every `onclick` in `index.html` needs a global. So "orchestrator
+only" is not a refactor of `main.js` - it is a decision about how the DOM calls into the
+game, and that is a bigger and riskier change than any of the three above. `display.js`
+proved the cheap version of it works (five panels moved out, one-way imports, no cycle), and
+`guild_display.js` at v0.7.43 is the same pattern again. **Proposal: keep moving panels out
+until what is left in `main.js` is the loop, the content stack and the window bindings, and
+judge it then.** The 96 bindings are the number to watch; if they stay 96 while the file
+halves, the answer was yes.
+
+**Sequenced:** JSON + models for `items.js` and `crafting_recipes.js` first, because it is
+the one with a measured 404-to-1 argument behind it. Then the folder layout, once the files
+have stopped moving. `main.js` last, and only as far as the panels take it.
 
 **The order this should go in, smallest first.**
 
@@ -563,6 +681,37 @@ pointing at it, so a region reached from two places would make the traces decora
 first piece to be built must be measured the way P-14's were, because the brief's six focuses
 are not six pieces of work - two of them (navigation, stance combat) are properties a region
 has rather than features it contains.
+
+### P-44 — What help does not say `open`
+
+D-10's backlog, measured rather than guessed. `help.html` and `help.tr.html` are the only
+documentation a player ever sees, and they stopped keeping up somewhere around v0.7.
+
+**Of the eight journal tabs, help names two.** Data was already there; Guild work was added
+with v0.7.44. Missing entirely: **Quests, Bestiary, Anthology, Discoveries, Lore, Titles.**
+Two of those are systems the player has to be told about rather than shown - Discoveries
+answers "where does this come from", and Lore collects threads that are otherwise only
+readable once.
+
+**And the features from the last twenty versions.** None of these is named anywhere on
+either page: the inventory's fourth sort and its short labels, the retry button under a
+failed lock, the crafting pages' discovered/undiscovered marks and the makeable-only filter,
+books that require a skill before they can be read, the town square's practice and watch
+work, and the export filename carrying its version.
+
+**Not the traces, and not the meeting.** P-14 phase 7's whole design is that the player
+cannot be sure the thing exists. Help is where a player goes to stop being unsure, so the
+traces and the one-in-ten-thousand sighting stay out of it. This is the one place D-10 does
+not apply, and it is worth writing down before somebody helpfully documents it.
+
+**Then the guard, and only then.** A check that every journal tab is named on both pages is
+derivable and catches the class - it is the same shape as
+`check_help_explains_standing`, which reads one block and holds it to what
+`character.reputation` declares. It cannot be added first: it would fail on six tabs on the
+day it was written, and the contract does not allow committing a red gate.
+
+**Order:** the six tabs, then the feature list, then the check. The tabs are the half a
+player is most likely to open help *for*.
 
 ## Open decisions
 

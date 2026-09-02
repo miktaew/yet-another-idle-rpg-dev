@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 121 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 122 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,67 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.44 - işin teslimi ve nasıl olacağına karar veren yığın sayımı
+
+P-41'in dördüncü parçası. v0.7.43'te pano okunabiliyor ve ondan iş alınabiliyordu, kâtip ise
+hiçbir şeyi geri alamıyordu; artık alıyor ve işin ilginç yarısı bir ölçüm.
+
+**Getirme işi yığınlar boyunca sayıyor ve bu varsayılmadı, ölçüldü.** Envanter anahtarı JSON
+ve eşyanın kalitesi varsa onu da taşıyor; yani kalite yuvarlayan bir aktiviteden çıkan
+malzeme, her kalite için bir yığında tutuluyor. **Sahibinin kaydı Ratfish'i yedi yığında,
+Carp'ı altı, Mackerel shark'ı altı yığında tutuyor** — ve otuz toplanabilir malzemenin
+yedisi kalite yuvarlıyor, yani toplama işlerinin kabaca dörtte biri bunlardan birini
+adlandırıyor.
+
+Motorun kendi `items_by_id` koşulu, **tek** bir yığının yeterli olup olmadığını soruyor. Onu
+kullanan on altı yere karşı ölçüldü: hiçbiri kalite yuvarlanan bir malzeme adlandırmıyor,
+yani hiç yanlış olmamış — ve burada kullanılması, mevcut en teşhis edilemez biçimde yanlış
+olurdu. İçinde kırk balık olan bir envanter ve reddeden bir teslim; loglanan bir şey yok,
+düşen bir şey yok. Bu yüzden `held_of` her yığını id'ye göre topluyor ve mal **en ucuzdan
+başlanarak** alınıyor: lonca bir sayı istedi, elindekinin en iyisini değil.
+
+**Av işi, işin alındığı andan itibaren sayıyor** ve bu ne yeni bir sayaç ne de bir anlık
+görüntü gerektirdi. `kill_enemy`, ölen düşmanın etiketlerini motorun `kill_any` olaylarını
+tetiklemek için çoktan yürüyor; iş de o döngü içinde, aynı `do_quest_events` muhafızının
+altında ilerletiliyor — bir tekrar oynatma bir öldürmeyi iki kez saymamalı. İlerleme brief'te
+duruyor: koşmaya devam eden bir sayaç 8'in 30'unu gösterirdi.
+
+**İkisinin neden farklı sayıldığı, tutarsızlık gibi göründüğü için.** Öldürme olmuştur ve
+olmamış hâle gelemez, o yüzden birikir. Mal ise iş alınıp bitirilene kadar satılabilir,
+harcanabilir, yenebilir; o yüzden istendiği anda sayılır. Getirme işi için saklanan bir sayı,
+oyuncunun artık elinde olmayan bir şeyi hâlâ varmış gibi söylerdi.
+
+**Teslim, düğmenin ima ettiği her şeyi yeniden kontrol ediyor.** Düğme yalnızca iş bittiğinde
+çiziliyor, ama panel bir tick'te çiziliyor, tıklama ise değil — ve malı satmak, oyuncunun
+günlük açıkken yaptığı bir şey.
+
+**Merdivenin tepesinden sonra hiçbir şey ödemiyor ve artık bunu söylüyor.**
+`standing_paid_for` orada v0.7.41'den beri 0 döndürüyor, ki bu Q-14'ün istediği tavan; bu
+teslimin ilk hâli ise yine *"adınız defterinde biraz daha yukarıda"* diye logluyordu, ki bu
+yalan olurdu. Artık iki satır var ve ödül çağrısı tamamen atlanıyor.
+
+**Üç kontrol ve ilki ölçümün hak ettiği kontrol.** `check_a_gather_job_counts_every_stack`,
+`held_of`ü aynı id'yi üç yığında tutan artı bir bozuk anahtar taşıyan bir envantere karşı
+sürüyor; `check_a_hunt_job_counts_only_its_own_kills`, ilerlemenin sessizce bozulduğu dört
+yolu kapsıyor; `check_every_hunt_target_can_be_counted` ise öldürme kancasının yarattığı bir
+tehlikeyi koruyor: `kill_enemy`, `if(target.add_to_bestiary)` içinde sayıyor ve **yedi
+düşmanda bu false** (iki köy muhafızı varyantı, kuşkulu duvar ve adam, dağ keçisi, iki dev
+yengeç). Bugün sunulan altı etiketin hiçbiri tamamen sayılamaz değil. Biri öyle olduğu anda
+belirti, doğru şeyin ne kadarı öldürülürse öldürülsün hiç ilerlemeyen bir iş olur.
+
+**Altı hata geri konularak negatif test edildi**, her biri kendi mesajıyla yakalandı;
+`add_to_bestiary`nin false varsayılması da dâhil — bu altı etiketin tümünü sayılamaz yaptı ve
+muhafız her biri için bunu söyledi.
+
+**Ve atlanıp duran kısım: yardım.** Sahibinin talimatı: yeni özellikler ve yeni bölgeler
+`help.html` ile `help.tr.html`e yansımalı. Ölçüldü ve durum loncadan da kötüydü: **sekiz
+günlük sekmesinden yardım yalnızca Data'yı adlandırıyordu.** Quests, Bestiary, Anthology,
+Discoveries, Lore ve Titles hiç anılmıyordu. Bir Lonca işleri bölümü bu özelliği uçtan uca
+anlatıyor — F'den SSS'e merdiven, panonun kademe penceresi, gün başına yenilenme, aynı anda
+tek iş ve iki iş tipinin her birinin nasıl sayıldığı — ve itibar listesi artık Lonca'ya
+"tüccar Loncası" demiyor, çünkü Maceracılar loncasındaki kâtip aynı bölgeye P-41'den önce de
+ödeme yapıyordu ve pano da ona ödüyor. Tek bölge, iki ev. Diğer altı sekme P-44.
 
 ### v0.7.43 - loncanın iş panosu ve altındaki kayıt şekli
 

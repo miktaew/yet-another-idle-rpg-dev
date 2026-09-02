@@ -21,7 +21,7 @@ import { translationManager } from "./translation.js";
 import { clear_HTML_content, insert_HTML } from "./ui_helpers.js";
 import { get_guild_rank } from "./reputation.js";
 import { enemy_tag_label } from "./journal_panels.js";
-import { standing_paid_for } from "./guild_jobs.js";
+import { job_is_done, job_progress, standing_paid_for } from "./guild_jobs.js";
 
 /**
  * Whether the player knows there is a board.
@@ -77,6 +77,16 @@ function create_guild_job_row(job, index, {standing, can_take}) {
     insert_HTML(terms, `${difficulty} &middot; ${pays}`);
     body.appendChild(terms);
 
+    //Progress belongs to the taken job only. On the board it would be nought every time.
+    if(!can_take && index === -1) {
+        const progress = document.createElement("div");
+        progress.classList.add("guild_job_terms");
+        insert_HTML(progress, translationManager.getText(language, "ui guild job progress",
+            {v1: String(Math.min(job_progress(job, character.inventory), job.count)),
+                v2: String(job.count)}));
+        body.appendChild(progress);
+    }
+
     row.appendChild(body);
 
     /*
@@ -90,6 +100,15 @@ function create_guild_job_row(job, index, {standing, can_take}) {
         take.setAttribute("onclick", `accept_guild_job(${index})`);
         insert_HTML(take, translationManager.getText(language, "ui guild board take"));
         row.appendChild(take);
+    }
+
+    //And the other end of it, on the taken job, once it is actually finished.
+    if(index === -1 && job_is_done(job, character.inventory)) {
+        const hand_in = document.createElement("div");
+        hand_in.classList.add("guild_job_take");
+        hand_in.setAttribute("onclick", "hand_in_guild_job()");
+        insert_HTML(hand_in, translationManager.getText(language, "ui guild board hand in"));
+        row.appendChild(hand_in);
     }
 
     return row;
@@ -142,16 +161,15 @@ function update_displayed_guild_board() {
         list.appendChild(only_one);
 
         /*
-            And where the feature stops, said in the panel rather than left in a changelog.
-            The job is taken, it is saved, and it survives the day - but the clerk cannot
-            take finished work in yet, so a player who does the work and finds nowhere to
-            put it would be right to think it was broken.
+            v0.7.43 said here that the clerk was not taking work in yet. She is, as of
+            v0.7.44, so what the note says now is where to take it - which is the thing a
+            player who has finished a job actually needs to know.
         */
-        const not_yet = document.createElement("div");
-        not_yet.classList.add("guild_board_note");
-        insert_HTML(not_yet,
-            translationManager.getText(language, "ui guild board no hand in yet"));
-        list.appendChild(not_yet);
+        const where = document.createElement("div");
+        where.classList.add("guild_board_note");
+        insert_HTML(where,
+            translationManager.getText(language, "ui guild board hand in where"));
+        list.appendChild(where);
     }
 
     const heading = document.createElement("div");

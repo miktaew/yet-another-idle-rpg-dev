@@ -99,7 +99,10 @@ import {
 import { check_no_content_object_repeats_a_key } from "./checks/literals.mjs";
 import { check_every_guild_rank_can_be_given_work,
     check_the_board_keeps_what_was_taken_off_it,
-    check_a_restored_board_drops_jobs_that_name_nothing } from "./checks/guild.mjs";
+    check_a_restored_board_drops_jobs_that_name_nothing,
+    check_a_gather_job_counts_every_stack,
+    check_a_hunt_job_counts_only_its_own_kills,
+    check_every_hunt_target_can_be_counted } from "./checks/guild.mjs";
 import { check_constructors_do_not_test_fields_before_setting_them }
     from "./checks/constructors.mjs";
 import { check_the_sighting_can_land_and_then_stops,
@@ -236,6 +239,9 @@ await check_every_guild_rank_can_be_reached();
 await check_every_guild_rank_can_be_given_work();
 await check_the_board_keeps_what_was_taken_off_it();
 await check_a_restored_board_drops_jobs_that_name_nothing();
+await check_a_gather_job_counts_every_stack();
+await check_a_hunt_job_counts_only_its_own_kills();
+await check_every_hunt_target_can_be_counted();
 await check_constructors_do_not_test_fields_before_setting_them();
 await check_the_sighting_can_land_and_then_stops();
 await check_the_sighting_places_are_the_traced_places();
