@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 117 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 118 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,69 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.42 - karşılaşma, on binde bir
+
+P-14 faz 7 ve Q-13'ün cevabı — tartışılarak değil, inşa edilerek: üç izin sahibi olan şeyle
+**karşılaşılabiliyor**. Programlanmış değil, içine yürünen bir sahne de değil: iz taşıyan iki
+yerde, oyuncu o izleri okuduktan sonra atılan bir zar.
+
+**Ölçülmesi gereken kısım birimdi.** "On binde bir" sahibinin verdiği sayı; neyin on binde
+biri olduğu ise olayın var olup olmadığına karar veriyor. Üç kadans vardı ve ikisi yanlış: bir
+aksiyon tick'i, aksiyon-saniyesinin onda biri — bu, olayı birkaç dakikada bir düşürürdü; bir
+mekâna varmak ise uzun bir kayıtta birkaç yüz kez olur, yani hiç düşürmezdi. `update()` oyun
+içi dakikada bir tikliyor ve bu, karşılaşmayı suyun kenarında yaklaşık yedi oyun günü durmaya
+karşılık getiriyor: neredeyse hiç kimse, ama gerçekten orada. Q-13'ün çizdiği ayrım tam olarak
+buydu ve üç hızdan yalnızca birinde tutuyor.
+
+**`data/marrowmoth.js` içine yazıldı; o dosya zaten bunun için vardı.** Modül tek bir teknenin
+takvimiydi; artık arkın sabitleri ve yüklemleri, hâlâ hiçbir şey import etmiyor. Yerler,
+oranlar, iz kapısı ve "yalnızca bir kez" kuralı `rolls_a_sighting` içinde; rastgelelik ise
+**dışarıdan veriliyor** — on binde bir olan bir olayı test edilebilir kılan şey bu ve aşağıdaki
+kontrollerin iki ucu birden yedi oyun gününde değil bir milisaniyede sürebilmesinin sebebi de
+bu.
+
+**Barınakları okumuş olmaya bağlı, o da sığlıkları gerektiriyor**: iki iz için tek test, gölün
+kendi açıklamasının çoktan kullandığı kestirme. Bu kapı kolaylık değil, arkın kuralı: oyuncunun
+o şeyin var olduğundan emin olamaz hâle getirilmiş olması gerekiyor ki öğrenmesine izin
+verilsin — ve bir iz görmeden hiçbir şeye bakmak için sebebi yok.
+
+**Dövüş yok ve olay hiçbir şeyi kesmiyor.** Ark faz 4'ten beri dövüşsüz ve izler hiçbir şeyi
+adlandırmıyor; dolayısıyla karşılaşma da adlandırmıyor: dört bacak, tüyler ve o boyda bir
+gövdede hiç işi olmayan bir kuş kafası. Oyuncuya sığırların baktığı gibi bakıp gidiyor. Bu aynı
+zamanda fazın artık kalan **tüyler** izini de harcıyor — o iz tam olarak şu yüzden zordu:
+envanterdeki bir eşyanın bir şey yapması gerekirdi ve yapacağı her şey bu arkın cevaplamadığı
+bir soruyu cevaplardı. Burada tüyler taşınan değil, bakılan bir şey.
+
+Geride kalan tek iz Forest lake'in açıklaması: ikinci bir dal değil, üçüncü bir kapanış
+kazanıyor. Sazlar aynı sazlar; değişen şey, okuyanın artık onlara bir ağırlık ve bir yürüyüş
+koyabilmesi. Yerinde yeniden çizim yalnızca ekranda düz mekân varken yapılıyor — yani içerik
+yığını boşken — çünkü koşan bir aktivitenin üstüne çizmek oyuncunun kullandığı paneli çöpe
+atar.
+
+**İki kontrol ve birincisi fonksiyonun o şekilde olmasının bütün sebebi.** Asla
+ateşlenemeyecek şekilde bağlanmış, on binde bir olan bir olay, tam olarak kimsenin görecek
+kadar şanslı olmadığı bir olaya benziyor ve bunun için hiçbir zaman hata bildirimi gelmez.
+`check_the_sighting_can_land_and_then_stops` beş durumu sürüyor: kazanan zarda düşüyor, izsiz
+yerlerden uzak duruyor, izleri bekliyor, bir kez oluyor ve kaybeden zarı kaybediyor — artı
+oranlar için mümkün olan en gevşek sınır: 0 ya da 1 değil, bir olasılık olduğu.
+`check_the_sighting_places_are_the_traced_places` kuralı listeyi import etmek yerine
+`locations.js`'ten türetiyor ve sessiz kalacak arızayı yakalıyor: zar `current_location.name`
+ile karşılaştırıyor ve bu ad **kayıt anahtarından farklı olabiliyor** — `locations["Frogs"]`in
+adı "Water's edge" — yani anahtarıyla eklenen bir yer bir kez bile ateşlenmezdi.
+
+**Beş hata geri konularak negatif test edildi**, beşi de adıyla yakalandı: "yalnızca bir kez"
+muhafızının kaldırılması, oranın 0 yapılması, hiçbir şeyin cevap vermediği bir yer, adı yerine
+anahtarıyla yazılmış bir yer ve listeden düşürülmüş, iz taşıyan bir yer. İkinci kontrol ilk
+koşusunda yanlıştı ve bunu kendisi söyledi: `locations.js`'i yalnızca bildirimlerden bölüyordu,
+bu yüzden kendi mekânının iki bin satır altında bildirilen bir aksiyon bloğu en son bildirilen
+mekânın içine düşüyordu ve hayvanın Forest den traversal'da bulunabilir olması gerektiğini
+bildirdi.
+
+**Kayıtla uyumlu ve onarılacak bir şey yok.** Bayrak varsayılan olarak false ve yükleme
+yalnızca kaydın gerçekten taşıdığı bayrakları kopyalıyor, dolayısıyla eski bir kayıt doğru
+geliyor. `save_repairs.js` içinde olmaması bilerek: bunun ödülü olduğu bitmiş bir içerik yok.
+Bu ya sana oldu ya olmadı.
 
 ### hâlihazırda yazılmış JSDoc üzerinden tür denetimi: dâhil olmalı ve geri dönüşsüz
 

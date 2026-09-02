@@ -2035,6 +2035,7 @@ const descriptions = {
     "desc location Forest den": "A relatively large cave in the depths of the forest, filled with hordes of direwolves",
     "desc location Bears' den": "A dark, smelly cave in the heart of the forest, with massive bones spread around the entrance",
     "desc location Forest lake seen": "*[On the far side, where the canopy comes down to the water, a run of reeds lies pushed flat in a line about the width of a cart. It is not new. They have gone brown where they lie and stayed green where they stand, and they have been like that since before the first time you came here.]*",
+    "desc location Forest lake met": "*[On the far side the reeds still lie flat in their line the width of a cart, and you know now what lies down in them. Nothing about the run has changed. What has changed is that you can put a weight to it, and a way of walking, and a colour &mdash; and you have told nobody.]*",
     "desc location Forest lake": "Far away from civilization, the forest opens up to an unspoiled lake. Nestled between a small cliff where it receives water from a rocky waterfall, and a dense canopy leading to what must be the forest's heart, it serves as a respite for the local animals - and now, yourself",
     "desc location Frogs": "Battling at the lake's edge",
     "desc location Forest ant nest": "A labyrinthine nest of red ants",
@@ -2900,6 +2901,7 @@ const descriptions = {
 
     //LOG MESSAGES. %HeroName% is substituted by the log itself and must survive
     //untouched; {v1}, {v2} are names and numbers filled in at the call site.
+    "log the animal seen": "It is there before you understand that it is. Out at the edge of the water, in to the knee, head down &mdash; and then not down, because it has heard you stop. Four legs. Feathers, wet to black along the flank and dried to something paler over the back, and the head of a bird that has no business on a body that size. It looks at you the way cattle do, which is to say it decided some time ago that you are nothing. Then it goes back out of the water, unhurried, and the cover closes over the place it went in. You stand there a long while. Nobody is going to believe this, and you find you do not much want to tell them.",
     "log entering v1": "[ Entering {v1} ]",
     "log you need to equip a": "You need to equip a proper tool to do that!",
     "log heroname finished v1": "%HeroName% finished {v1}",

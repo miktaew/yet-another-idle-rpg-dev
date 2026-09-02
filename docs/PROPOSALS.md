@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 138 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 139 -->
 
 # Proposals
 
@@ -436,19 +436,37 @@ at all before they meet it.
 
   Added to the description rather than replacing it, so the two states cannot drift.
 
-- **Still to come.** Three of the brief's four kinds are used: tracks, a lying-up place, and
-  broken cover. **Feathers is the one left and the awkward one** - an item in the inventory
-  would have to do something, and anything it did would answer a question this arc may not
-  answer. The honest options are to leave it out, or to make it something that is looked at
-  and not carried.
+- **The meeting.** `done`, as **v0.7.42**, and it is Q-13's answer built: one roll per in-game
+  minute, in the two places that carry a trace, once the shelters have been read. About seven
+  in-game days of standing at the water.
 
-  And the decision this phase exists to reach: whether v0.8 meets the thing or keeps refusing
-  to. Three traces is enough that the next piece has to be an answer to that rather than a
-  fourth trace.
+  **The odds were the owner's; the unit was measured.** "One in ten thousand" only means
+  something once you know what it is one in ten thousand *of*, and two of the three available
+  cadences make the event a different event. An action tick is a tenth of an action-second and
+  would land this every few minutes; arriving in a location happens a few hundred times in a
+  long save and would land it never. Only the minute tick gives "almost nobody, but genuinely
+  out there", which is the distinction Q-13 drew.
+
+  **It also spends the feathers trace**, which was the awkward one for a good reason: an item
+  in the inventory would have had to do something. Here the feathers are in the meeting -
+  looked at and not carried, which was one of the two honest options this phase had named.
+  Nothing is named, there is no combat, and nothing interrupts: the arc has had no combat since
+  phase 4 and the player is in the middle of something else when it happens.
+
+  The Forest lake's description gains a third **ending** rather than a second branch, so the
+  first paragraph stays in one place. The check that matters is the one that can fail silently:
+  a one-in-ten-thousand event wired so it can never fire is indistinguishable from one nobody
+  has been lucky enough to see, so `rolls_a_sighting` takes its randomness as an argument and
+  `check_the_sighting_can_land_and_then_stops` drives both ends of it.
+
+- **Still to come.** Nothing of the brief's four kinds is left. What phase 7 has not done is
+  anything with **v0.8 itself**: the meeting is groundwork's last piece, not the arc's next
+  one, and what happens after somebody has seen the thing is a story decision this proposal
+  has not been given.
 
 #### Decisions carried into the phases
 
-The four questions this proposal asked, with their answers, each against the phase
+The five questions this proposal asked, with their answers, each against the phase
 that spends it. They were settled under [Open decisions](#open-decisions) and moved
 here when phase 0 closed: a decision belongs beside the work it shapes, and the
 numbers are kept so the commits and changelog entries that name them still resolve.
@@ -521,6 +539,24 @@ favourites (see constraint 4 in [STATUS.md](STATUS.md)). Derive it; do not store
 
 A general world-event framework is explicitly out of scope. If a second event ever
 wants the same wiring, that is when the abstraction has earned itself.
+
+##### Q-13 — Does v0.8 meet the four-legged bird, or keep refusing to? **DECIDED: it can be met, at about one in ten thousand** — spent by phase 7
+
+Not the proposal's answer either, and better than it. The meeting is **possible** rather than
+scheduled: a very low chance - on the order of **1 in 10,000** - in certain places only.
+
+That keeps what the phase was protecting. The player still cannot be sure it exists, because
+almost nobody will see it; the traces stay the way the arc is normally experienced; and
+nothing has to be spent to make the meeting happen. It is the difference between a scene the
+story walks you into and a thing that is genuinely out there.
+
+**The three things it left to be decided at build time, and what they came out as.** *Which
+places*: the two that carry a trace, read out of the location data rather than chosen - the
+animal has no reason to be anywhere nothing has pointed at. *On entering, on an action, or
+per tick*: per tick, because that tick is one in-game minute and it is the only one of the
+three cadences at which "one in ten thousand" means what this decision meant by it. *What the
+encounter is*: a sighting and not a fight, which the arc had already decided by having no
+combat since phase 4 and by naming nothing in any of the three traces.
 
 #### What this proposal must not do
 
@@ -794,7 +830,7 @@ measurement, and this file has enough of those already.
 
 Each of these changes what gets built. They are recorded here rather than guessed
 at. What is left here is project-wide; a question asked by one proposal moves into
-that proposal once it is answered, which is where Q-7 to Q-10 went — see
+that proposal once it is answered, which is where Q-7 to Q-10 and Q-13 went — see
 [Decisions carried into the phases](#decisions-carried-into-the-phases) inside P-14.
 
 ### Q-1 — Does this fork diverge in content? **REVISED AGAIN: diverge completely**
@@ -924,21 +960,6 @@ yet has to say so and say what it wants, or it is a locked door nobody can see.
 
 `finish_reward` is untouched by this answer. No book sets it and nothing reads it, so it is
 still a trap - deleting it loses nothing and is not the same question.
-
-
-### Q-13 — Does v0.8 meet the four-legged bird, or keep refusing to? **DECIDED: it can be met, at about one in ten thousand**
-
-Not the proposal's answer either, and better than it. The meeting is **possible** rather than
-scheduled: a very low chance - on the order of **1 in 10,000** - in certain places only.
-
-That keeps what the phase was protecting. The player still cannot be sure it exists, because
-almost nobody will see it; the traces stay the way the arc is normally experienced; and
-nothing has to be spent to make the meeting happen. It is the difference between a scene the
-story walks you into and a thing that is genuinely out there.
-
-**What this needs deciding when it is built:** which places, and whether the chance is rolled
-on entering, on an action, or per tick - and what the encounter *is*, given the arc has had no
-combat since phase 4.
 
 
 ### Q-14 — Guild work: the four decisions **DECIDED, all four**

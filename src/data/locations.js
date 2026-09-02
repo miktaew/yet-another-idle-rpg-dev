@@ -1515,7 +1515,17 @@ function get_location_type_penalty(type, stage, stat, category) {
             if(!global_flags.has_read_the_shelters) {
                 return lake;
             }
-            return `${lake}\n\n${translationManager.getText(language, "desc location Forest lake seen")}`;
+            /*
+                Three states now, and still only the ending changes (P-14 phase 7, Q-13).
+                Once the player has actually seen the thing, the reeds stop being a
+                question: the same paragraph of lake, a different last thing said about it.
+                Swapping the id rather than adding a branch is what keeps that first
+                paragraph in one place, which is what the comment above is already about.
+            */
+            const ending = global_flags.has_seen_the_animal
+                ? "desc location Forest lake met"
+                : "desc location Forest lake seen";
+            return `${lake}\n\n${translationManager.getText(language, ending)}`;
         },
         name: "Forest lake",
         /*

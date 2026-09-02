@@ -2140,6 +2140,7 @@ const descriptions = {
     "desc location Forest den": "Ormanın derinliklerinde, ulukurt sürüleriyle dolu, oldukça büyük bir mağara",
     "desc location Bears' den": "Ormanın kalbinde, girişine kocaman kemikler saçılmış, karanlık ve kokuşmuş bir mağara",
     "desc location Forest lake seen": "*[Karşı kıyıda, örtünün suya indiği yerde, bir sazlık şeridi bir araba genişliğinde bir hat boyunca yatırılmış duruyor. Yeni değil. Yattıkları yerde kahverengileşmiş, dik durdukları yerde yeşil kalmışlar; buraya ilk geldiğinden beri böyleler.]*",
+    "desc location Forest lake met": "*[Karşı kıyıda sazlar hâlâ o bir araba genişliğindeki hattında yatıyor ve içlerinde neyin yattığını artık biliyorsun. Şeritte değişen bir şey yok. Değişen şu: ona bir ağırlık, bir yürüyüş, bir renk koyabiliyorsun &mdash; ve kimseye anlatmadın.]*",
     "desc location Forest lake": "Uygarlıktan uzakta, orman açılıp el değmemiş bir göle dönüşüyor. Suyunu kayalık bir şelaleden aldığı küçük bir yarla ormanın kalbine götüren yoğun bir örtü arasına kurulmuş; buranın hayvanlarına -- ve artık sana da -- bir soluklanma yeri",
     "desc location Frogs": "Gölün kıyısında dövüş",
     "desc location Forest ant nest": "Kırmızı karıncaların labirent gibi yuvası",
@@ -2946,6 +2947,7 @@ const descriptions = {
     "skill effect Haggling": "Tüccar fiyat çarpanını asıl değerin %{v1} kadarına düşürür",
 
     //LOG MESSAGES. %HeroName% is substituted by the log itself and must survive untouched.
+    "log the animal seen": "Orada olduğunu anlamadan önce orada. Suyun kıyısında, dizine kadar içinde, başı önde &mdash; sonra önde değil, çünkü durduğunu duydu. Dört bacak. Tüyler, yanı boyunca ıslaklıktan siyaha, sırtında kuruyup daha açık bir şeye çalıyor; ve o boyda bir gövdede hiç işi olmayan bir kuş kafası. Sana sığırların baktığı gibi bakıyor: yani senin bir hiç olduğuna çoktan karar vermiş. Sonra acele etmeden sudan çıkıyor ve girdiği yerin örtüsü arkasından kapanıyor. Uzun bir süre öyle kalıyorsun. Buna kimse inanmayacak; anlatmayı da pek istemediğini fark ediyorsun.",
     "log entering v1": "[ {v1} bölgesine giriliyor ]",
     "log you need to equip a": "Bunu yapmak için uygun bir alet kuşanmalısın!",
     "log heroname finished v1": "%HeroName% {v1} işini bitirdi",

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 138 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 139 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -454,19 +454,35 @@ olmadığından emin olmamalıdır.
 
   Açıklamanın yerine geçmek yerine ona ekleniyor, böylece iki durum ayrışamıyor.
 
-- **Sırada olanlar.** Brief'in dört türünün üçü kullanıldı: izler, yatıp kalkılan bir yer ve
-  kırılmış örtü. **Kalan tek tür tüy ve zor olanı da o** — envanterdeki bir eşyanın bir şey
-  yapması gerekir ve yapacağı her şey bu yayın cevaplamaya hakkı olmayan bir soruyu
-  cevaplardı. Dürüst seçenekler: ya dışarıda bırakmak ya da taşınan değil bakılan bir şey
-  yapmak.
+- **Karşılaşma.** `done`, **v0.7.42** olarak, ve bu Q-13'ün cevabının inşası: oyun içi dakikada
+  bir zar, iz taşıyan iki yerde, barınaklar okunduktan sonra. Suyun kenarında yaklaşık yedi
+  oyun günü durmaya karşılık geliyor.
 
-  Ve bu fazın var olma sebebi olan karar: v0.8 o şeyle karşılaşacak mı, yoksa karşılaşmamayı
-  sürdürecek mi. Üç iz, sonraki parçanın dördüncü bir iz değil buna bir cevap olması gerektiği
-  kadar yeterli.
+  **Oran sahibinin; birim ölçüldü.** "On binde bir", neyin on binde biri olduğu bilinmeden bir
+  şey söylemiyor ve mevcut üç kadanstan ikisi olayı bambaşka bir olay yapıyor. Bir aksiyon
+  tick'i, aksiyon-saniyesinin onda biri: olayı birkaç dakikada bir düşürürdü. Bir mekâna varmak
+  uzun bir kayıtta birkaç yüz kez olur: hiç düşürmezdi. "Neredeyse hiç kimse, ama gerçekten
+  orada" ifadesini yalnızca dakika tick'i veriyor ve Q-13'ün çizdiği ayrım da buydu.
+
+  **Tüy izini de harcıyor.** O iz iyi bir sebeple zordu: envanterdeki bir eşyanın bir şey
+  yapması gerekirdi. Burada tüyler karşılaşmanın içinde — taşınan değil, bakılan; ki bu, fazın
+  kendi saydığı iki dürüst seçenekten biriydi. Hiçbir şey adlandırılmıyor, dövüş yok ve hiçbir
+  şey kesilmiyor: ark faz 4'ten beri dövüşsüz ve olay olurken oyuncu başka bir işin ortasında.
+
+  Orman gölünün açıklaması ikinci bir dal değil üçüncü bir **kapanış** kazanıyor; böylece ilk
+  paragraf tek yerde kalıyor. Önemli olan kontrol, sessizce düşebilecek olan: asla
+  ateşlenemeyecek şekilde bağlanmış, on binde bir olan bir olay, kimsenin görecek kadar şanslı
+  olmadığı bir olaydan ayırt edilemez. Bu yüzden `rolls_a_sighting` rastgeleliği argüman olarak
+  alıyor ve `check_the_sighting_can_land_and_then_stops` iki ucu birden sürüyor.
+
+- **Sırada olanlar.** Brief'in dört türünden geriye kalan yok. Faz 7'nin yapmadığı şey
+  **v0.8'in kendisiyle** ilgili olan: karşılaşma zemin işinin son parçası, arkın sonraki
+  parçası değil — ve birisi o şeyi gördükten sonra ne olacağı, bu önerinin verilmemiş bir
+  hikâye kararı.
 
 #### Fazlara taşınan kararlar
 
-Bu önerinin sorduğu dört soru, cevaplarıyla birlikte ve her biri onu harcayan fazın
+Bu önerinin sorduğu beş soru, cevaplarıyla birlikte ve her biri onu harcayan fazın
 karşısında. [Bekleyen kararlar](#bekleyen-kararlar) altında karara bağlanmışlardı;
 faz 0 kapanınca buraya taşındılar: bir karar, biçimlendirdiği işin yanında durur.
 Numaraları korunuyor, böylece onları anan commit'ler ve changelog girdileri hâlâ
@@ -545,6 +561,23 @@ kısıt). Türet; saklama.
 
 Genel bir dünya-olayı çatısı açıkça kapsam dışıdır. İkinci bir olay aynı tesisatı
 isterse, soyutlama kendini o zaman hak etmiş olur.
+
+##### Q-13 — v0.8 dört bacaklı kuşla karşılaşacak mı? **KARAR: karşılaşılabilir, on binde bir civarında** — faz 7 harcadı
+
+Bu da önerinin cevabı değil ve ondan iyi. Karşılaşma programlanmış değil **mümkün**: yalnızca
+belli yerlerde, **10.000'de 1** mertebesinde çok düşük bir şans.
+
+Bu, fazın korumaya çalıştığı şeyi koruyor. Oyuncu onun var olduğundan hâlâ emin olamıyor,
+çünkü neredeyse hiç kimse görmeyecek; izler arkın normalde yaşandığı biçim olarak kalıyor; ve
+karşılaşmanın olması için hiçbir şeyin harcanması gerekmiyor. Bu, hikâyenin içine yürüttüğü bir
+sahne ile gerçekten dışarıda olan bir şey arasındaki fark.
+
+**İnşa anına bıraktığı üç şey ve nasıl sonuçlandıkları.** *Hangi yerler*: iz taşıyan ikisi;
+seçilerek değil, mekân verisinden okunarak — hayvanın, hiçbir şeyin işaret etmediği bir yerde
+olmak için sebebi yok. *Girişte mi, aksiyonda mı, tick başına mı*: tick başına, çünkü o tick
+oyun içi bir dakika ve üç kadanstan yalnızca onda "on binde bir" bu kararın kastettiği şeyi
+söylüyor. *Karşılaşma nedir*: dövüş değil, bir görme — ki arkın kendisi buna faz 4'ten beri
+dövüşsüz kalarak ve üç izin hiçbirinde hiçbir şeyi adlandırmayarak çoktan karar vermişti.
 
 #### Bu önerinin yapmayacakları
 
@@ -822,7 +855,7 @@ bir kural olurdu ve bu dosyada onlardan yeterince var.
 
 Bunların her biri neyin inşa edileceğini değiştirir. Tahmin edilmek yerine burada
 kayda geçiriliyorlar. Burada kalanlar projenin tamamını ilgilendiriyor; tek bir
-önerinin sorduğu soru, cevaplandığı anda o önerinin içine geçer. Q-7 ile Q-10 da
+önerinin sorduğu soru, cevaplandığı anda o önerinin içine geçer. Q-7 ile Q-10 ve Q-13 de
 oraya gitti — bkz. P-14 içindeki
 [Fazlara taşınan kararlar](#fazlara-taşınan-kararlar).
 
@@ -954,21 +987,6 @@ ne istediğini söylemesi gerekir, yoksa kimsenin göremediği kilitli bir kapı
 
 `finish_reward` bu cevabın dışında. Hiçbir kitap onu ayarlamıyor ve hiçbir şey okumuyor; yani
 hâlâ bir tuzak — silmek hiçbir şey kaybettirmiyor ve aynı soru değil.
-
-
-### Q-13 — v0.8 dört bacaklı kuşla karşılaşacak mı? **KARAR: karşılaşılabilir, on binde bir civarında**
-
-Bu da teklifin cevabı değil ve ondan iyi. Karşılaşma planlanmış değil **mümkün**: yalnızca
-belirli yerlerde, **10.000'de 1** mertebesinde çok düşük bir şansla.
-
-Bu, fazın koruduğu şeyi koruyor. Oyuncu hâlâ onun var olduğundan emin olamıyor, çünkü neredeyse
-kimse görmeyecek; izler yayın normalde yaşandığı biçim olarak kalıyor; ve karşılaşmanın olması
-için hiçbir şey harcanmıyor. Hikâyenin sizi içine soktuğu bir sahne ile gerçekten orada olan
-bir şey arasındaki fark bu.
-
-**Yapılırken karar gerektirecek olan:** hangi yerler ve şansın girişte mi, bir aksiyonda mı,
-yoksa tik başına mı atılacağı — ve karşılaşmanın *ne olduğu*, çünkü yayın 4. fazdan beri hiç
-savaşı olmadı.
 
 
 ### Q-14 — Lonca işleri: dört karar **KARAR VERİLDİ, dördü de**

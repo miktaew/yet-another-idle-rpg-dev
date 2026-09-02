@@ -150,6 +150,7 @@ import { is_title_earned, titles } from "./data/titles.js";
 //At the end of the list on purpose: main.js's import order is load-bearing and a
 //new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
 import { place_tooltip_vertically } from "./ui_helpers.js";
+import { rolls_a_sighting } from "./data/marrowmoth.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
 const backup_key = "backup save";
@@ -171,6 +172,16 @@ const global_flags = {
     //The second trace, in the basin's rock shelters. Set by reading them, and read by the
     //basin's own noise - which it badly needed, having exactly one.
     has_read_the_shelters: false,
+    /*
+        P-14 phase 7, and the answer to Q-13: the thing the traces belong to can be met,
+        at about one in ten thousand, in the two places that carry a trace. Set by that
+        roll in update() and read by the Forest lake's description, which stops being
+        about reeds once the reader knows what flattened them.
+
+        Not earnable retroactively and so not in save_repairs.js: there is no finished
+        content whose reward this is. It is a thing that either happened to you or did not.
+    */
+    has_seen_the_animal: false,
     is_hero_created: false, //changed after going through hero creation panel
     //P-10 region 4. Read live by the Mountain camp's crafting tiers, so the flue is
     //a flag rather than a saved tier - global_flags are already saved and loaded.
@@ -3650,6 +3661,37 @@ function update() {
                 //update displayed prices due to recovery
                 update_displayed_character_inventory({is_trade: true});
                 update_displayed_trader_inventory();
+            }
+        }
+
+        /*
+            P-14 phase 7, Q-13. One roll per in-game minute, only in the two places that
+            carry a trace and only once the player has read them - the module holds all
+            three of those conditions and the odds.
+
+            Here rather than anywhere else because this tick IS the in-game minute, which
+            is the only cadence in the game that makes one in ten thousand mean what the
+            owner meant by it. The rain counter two blocks down is the same shape already:
+            a per-tick thing that only happens in some places.
+
+            No interruption, no dialogue, nothing to click. The player is in the middle of
+            whatever they were doing and this happens next to them, which is the entire
+            point of it not being a scene the story walks you into.
+        */
+        if(rolls_a_sighting({location_name: current_location.name,
+                has_read_the_shelters: global_flags.has_read_the_shelters,
+                has_seen_the_animal: global_flags.has_seen_the_animal})) {
+            global_flags.has_seen_the_animal = true;
+            log_message(translationManager.getText(language, "log the animal seen"),
+                "notification");
+            /*
+                The lake's description gains its last paragraph, so redraw - but only when
+                the plain location is what is on screen. An empty content stack is what
+                that means here, and redrawing over a running activity or an open dialogue
+                would throw away the panel the player is actually using.
+            */
+            if(!content_stack.length) {
+                reload_normal_location();
             }
         }
 

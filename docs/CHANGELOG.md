@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 117 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 118 -->
 
 # Changelog
 
@@ -20,6 +20,70 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.42 - the meeting, at one in ten thousand
+
+P-14 phase 7, and the answer to Q-13 built rather than argued: the thing the three traces
+belong to **can** be met. Not scheduled and not walked into - a roll, in the two places that
+carry a trace, once the player has read them.
+
+**The unit was the part that had to be measured.** "One in ten thousand" is the owner's
+figure; what it is one in ten thousand *of* decides whether the event exists at all. Three
+cadences were available and two of them are wrong: an action tick is a tenth of an
+action-second, which would land this every few minutes, and arriving in a location happens a
+few hundred times in a long save, which would land it never. `update()` ticks once per in-game
+minute, which puts the meeting at about seven in-game days of standing at the water - almost
+nobody, but genuinely out there. That is exactly the distinction Q-13 drew, and it holds at
+only one of the three rates.
+
+**Written into `data/marrowmoth.js`, which already existed for this.** The module was the
+hull's timetable and nothing else; it is now the arc's constants and its predicates, still
+importing nothing. The places, the odds, the trace gate and the once-only rule are all in
+`rolls_a_sighting`, with the randomness **passed in** - which is what makes a
+one-in-ten-thousand event testable at all, and the reason the checks below can drive both ends
+of it in a millisecond rather than in seven in-game days.
+
+**Gated on having read the shelters, which requires the shallows** - one test for both traces,
+the same shortcut the lake's own description already takes. That gate is the arc's rule and not
+a convenience: the player has to have been made unsure the thing exists before they are allowed
+to find out, and before a trace they have no reason to be looking at anything.
+
+**No combat, and it does not interrupt.** The arc has had none since phase 4 and the traces
+name nothing, so the meeting names nothing either: four legs, feathers, and the head of a bird
+that has no business on a body that size. It looks at the player the way cattle do, and walks
+off. This also spends the phase's leftover **feathers** trace, which was awkward precisely
+because an item in the inventory would have had to answer a question this arc does not answer -
+here they are something looked at and not carried.
+
+The one lasting mark is the Forest lake's description, which gains a third ending rather than a
+second branch: the reeds are the same run of reeds, and what changed is that the reader can now
+put a weight and a way of walking to them. Redrawn on the spot only when the plain location is
+what is on screen - an empty content stack - because redrawing over a running activity throws
+away the panel the player is using.
+
+**Two checks, and the first one is the whole reason the function has that shape.** A
+one-in-ten-thousand event wired so it can *never* fire looks exactly like an event nobody has
+been lucky enough to see, and no bug report ever arrives for that.
+`check_the_sighting_can_land_and_then_stops` drives five cases: it lands on a winning roll, it
+stays out of untraced places, it waits for the traces, it happens once, and it loses a losing
+roll - plus the loosest possible bound on the odds, that they are a probability rather than 0
+or 1. `check_the_sighting_places_are_the_traced_places` derives the rule from `locations.js`
+instead of importing the list, and catches the failure that would otherwise be silent: the roll
+compares against `current_location.name`, which is **allowed to differ from the registry key** -
+`locations["Frogs"]` is called "Water's edge" - so a place added by its key would never once
+fire.
+
+**Negative-tested with five reintroduced bugs**, all five caught by name: the once-only guard
+removed, the chance set to 0, a place nothing answers to, a place named by its key instead of
+its name, and a traced place dropped from the list. And the second check was wrong on its own
+first run and said so - it split `locations.js` on declarations alone, so an actions block
+declared two thousand lines below its own location landed inside whichever location came last,
+and it reported that the animal ought to be findable in the Forest den traversal.
+
+**Save-compatible with nothing to repair.** The flag defaults to false and loading copies only
+the flags a save actually holds, so an old save arrives correct. It is deliberately *not* in
+`save_repairs.js`: there is no finished content whose reward this is. It either happened to you
+or it did not.
 
 ### type checking from the JSDoc that is already written, opt-in and ratcheted
 
