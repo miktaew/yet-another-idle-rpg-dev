@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 131 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 132 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -696,7 +696,7 @@ ve muhtemelen ikiden fazlasını bulur.
 
 
 
-### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
+### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `blocked`
 
 Sahibinin isteği: *"loncadan random A'dan S'ye kadar görevler ekleyelim. farklı görevleri
 alabilelim ve bunlar lonca görevleri adıyla farklı bir yerde dursun. x kadar canavar avla, y
@@ -902,6 +902,47 @@ harcamıyor.
 **Öteki cevabın maliyeti, seçim adil olsun diye.** Karşılaşmak bir düşman ya da bir karşılaşma
 gerektiriyor; bu da yayın 4. fazdan beri bilerek hiç kullanmadığı savaş içeriğini gerektirir ve
 oyunun en eski açık ipliğini tek bir sahneye harcar.
+
+### Q-14 — Lonca işleri: ölçümün veremeyeceği dört karar **HER BİRİ İÇİN AYRI ÖNERİ AŞAĞIDA**
+
+P-41, bu dosyada başka hiçbir şeyin bloke etmediği son madde ve bunlar olmadan başlayamaz.
+Önce ölçüldü, böylece her soru bir görüş değil bir sayı taşıyor.
+
+**Loncanın bugünkü hâli.** Altı kaynaktan 255 Lonca itibarı kazanılabiliyor — kâtibin
+repliği, mühür kitabı ve dört Marrowmoth görevi — ve **onu okuyan tam olarak bir kapı var**:
+50'deki mühür kitabı. Yani para birimi zaten var ve neredeyse hiçbir şey satın almıyor; panonun
+yeni işler kadar yeni kapılara da ihtiyacı var. Adventurer's guild, tek aksiyonu olan ve **hiç
+tüccarı olmayan** açık bir konum; yani lonca dükkânı yeni bir stok listesi değil yeni bir
+tüccar demek.
+
+**Ve pano gerçekten yeni makine.** Oyundaki 23 görevin hepsi `quests.js` içinde düz yazılmış;
+hiçbir yer çalışma anında `Quest` kurmuyor. Rastgele işlerden bir havuz; bir üretici, o an
+sunulanları tutacak bir yer, bir yenilenme kuralı ve bir kayıt biçimi gerektiriyor — çünkü
+oyuncunun kabul ettiği bir iş yeniden yüklemeyi atlatmalı.
+
+**1. "A'dan S'ye" ne demek.** On dokuz zorluk kademesi mi, on dokuz ayrı yazılmış iş mi? İstek
+*türleri* ayrıca adlandırıyor — şu kadar canavar avla, şundan şu kadar topla — ki bu, harflerin
+brief değil kademe olduğunu düşündürüyor. Ama bir kademe merdiveni olarak A'dan S'ye yalnızca
+iki basamak; merdiven E-D-C-B-A-S diye işlemedikçe, ve o gelenek bu oyunun hiçbir yerinde yok.
+**Öneri yok: bu, geri kalan her şeyin şeklini değiştiriyor ve tahmin edilebilir değil.**
+
+**2. Pano ne zaman yenilensin.** Oyun günü başına, ziyaret başına ya da tamamlamada.
+**ÖNERİ: oyun günü başına.** Ziyarete bağlı yenilenme, oyuncunun dışarı çıkıp girerek yeniden
+attığı bir pano demek; bu da özelliği bir kumar makinesine çevirir. Tamamlamaya bağlı olan ise
+seçim sunamaz, oysa istek bunu açıkça istiyor.
+
+**3. İşler itibarı nasıl ödesin.** **ÖNERİ: kademe başına sabit bir miktar ve panonun toplamda
+ödeyebileceğine bir tavan.** Teknik kısıt gerçek ve ölçülmüş:
+`check_a_standing_gate_can_be_reached` tekrarlanabilir bir kaynağı sınırsız sayıyor; yani
+tavansız bir pano o kontrolü Lonca için tamamen kapatır — hem de itibarın en çok önem
+kazanmak üzere olduğu bölgede.
+
+**4. Loncaya özel eşyalar ne işe yarasın.** **ÖNERİ: component'ler.** Argüman v0.7.33'ün
+ölçümü: 175 component ve 94 hammadde hiç kimse tarafından satılmıyor ve component satmak o
+zaman, oyuncunun zanaat merdivenini atlamasına izin verdiği için reddedilmişti. Onları *itibar
+fiyatına* satan bir lonca, o atlamayı satın alınan değil hak edilen bir şey yapar — ki bir
+loncanın var olma sebebi de budur. Olmaması gereken şey daha iyi ekipman: oyunun güç eğrisi
+kademeyle belirleniyor ve onu geçen bir dükkân, zanaat sistemini yerinden eden bir dükkândır.
 
 ---
 

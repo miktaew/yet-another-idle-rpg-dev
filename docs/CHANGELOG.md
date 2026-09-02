@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 112 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 113 -->
 
 # Changelog
 
@@ -20,6 +20,33 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### guild work measured and blocked, and the backlog is fully triaged
+
+No version. P-41 was the last item nothing else blocked, and it turns out it cannot start
+without four decisions - so it is `blocked` on **Q-14**, with the measurements written down so
+the next attempt does not derive them again.
+
+**The guild already has a currency and almost nothing to spend it on.** 255 Guild standing is
+grantable across six sources, and **exactly one gate reads it** - the seal book at 50. So a
+board of jobs needs new doors as much as new work. The Adventurer's guild is an unlocked
+location with one action and **no trader at all**, so a guild shop is a new trader, not a new
+stock list.
+
+**The board is genuinely new machinery, and that is measured rather than assumed.** All 23
+quests in the game are literals in `quests.js`; nothing anywhere constructs a `Quest` at
+runtime. A pool of randomised jobs needs a generator, a place to keep what is on offer, a
+refresh rule and a save shape.
+
+Three of the four decisions carry a proposal. The fourth - what "A through S" means - does
+not, because it changes the shape of everything else: the request names the job *types*
+separately, which suggests the letters are ranks, but A-to-S as a ladder is two rungs unless
+it runs E-D-C-B-A-S, and that convention appears nowhere in this game.
+
+**Where the backlog stands.** P-26 and P-41 are blocked on Q-12 and Q-14; P-14's phase 7 waits
+on Q-13; P-16 is deliberately sequenced after the current story; and P-15 has nothing left to
+reclaim under its own rule, measured last iteration. P-13 is standing directives, which are
+never work to be finished.
 
 ### the backlog corrected against what the code says
 

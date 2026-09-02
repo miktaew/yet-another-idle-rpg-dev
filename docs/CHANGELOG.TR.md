@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 112 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 113 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,33 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### lonca işleri ölçüldü ve bloke edildi, kuyruk tamamen triyaj edildi
+
+Sürüm yok. P-41, başka hiçbir şeyin bloke etmediği son maddeydi ve dört karar olmadan
+başlayamayacağı ortaya çıktı — bu yüzden **Q-14** üzerinde `blocked`, ve ölçümler yazıldı ki
+sonraki deneme onları yeniden türetmesin.
+
+**Loncanın zaten bir para birimi var ve harcayacak neredeyse hiçbir şeyi yok.** Altı kaynaktan
+255 Lonca itibarı kazanılabiliyor ve **onu okuyan tam olarak bir kapı var** — 50'deki mühür
+kitabı. Yani bir iş panosunun yeni işler kadar yeni kapılara da ihtiyacı var. Adventurer's
+guild, tek aksiyonu olan ve **hiç tüccarı olmayan** açık bir konum; yani lonca dükkânı yeni bir
+stok listesi değil yeni bir tüccar.
+
+**Pano gerçekten yeni makine ve bu varsayım değil ölçüm.** Oyundaki 23 görevin hepsi
+`quests.js` içinde düz yazılmış; hiçbir yer çalışma anında `Quest` kurmuyor. Rastgele işlerden
+bir havuz; bir üretici, sunulanları tutacak bir yer, bir yenilenme kuralı ve bir kayıt biçimi
+gerektiriyor.
+
+Dört kararın üçü bir öneri taşıyor. Dördüncüsü — "A'dan S'ye"nin ne demek olduğu — taşımıyor,
+çünkü geri kalan her şeyin şeklini değiştiriyor: istek iş *türlerini* ayrıca adlandırıyor, ki
+bu harflerin kademe olduğunu düşündürüyor; ama bir merdiven olarak A'dan S'ye, E-D-C-B-A-S diye
+işlemedikçe iki basamak ve o gelenek bu oyunun hiçbir yerinde yok.
+
+**Kuyruğun durumu.** P-26 ve P-41, Q-12 ile Q-14 üzerinde bloke; P-14'ün 7. fazı Q-13'ü
+bekliyor; P-16 bilerek mevcut hikâyeden sonraya sıralanmış; P-15'in ise kendi kuralı gereği
+geri kazanacak bir şeyi kalmadı, geçen iterasyonda ölçüldü. P-13 duran direktifler, ki onlar
+hiçbir zaman bitecek iş değil.
 
 ### kuyruk, kodun söylediğine göre düzeltildi
 

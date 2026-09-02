@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 131 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 132 -->
 
 # Proposals
 
@@ -671,7 +671,7 @@ than two.
 
 
 
-### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
+### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `blocked`
 
 The owner's request: *"let us add random quests from the guild, A through S. We should be able
 to take different ones, and they should sit somewhere separate called guild quests. Different
@@ -876,6 +876,46 @@ to be built around rather than spent on.
 **What the other answer costs, so it is a fair choice.** Meeting it needs an enemy or an
 encounter, which needs combat content the arc has deliberately had none of since phase 4, and
 it spends the game's oldest open thread on a single scene.
+
+### Q-14 — Guild work: four decisions the measurement cannot make **PROPOSED below, each separately**
+
+P-41 is the last item in this file that nothing else blocks, and it cannot start without
+these. Measured first, so each question carries a number rather than an opinion.
+
+**What the guild is today.** 255 Guild standing is grantable across six sources - the clerk's
+line, the seal book, and the four Marrowmoth quests - and **exactly one gate reads it**, the
+seal book at 50. So the currency already exists and buys almost nothing; the board needs new
+doors as much as it needs new jobs. The Adventurer's guild is an unlocked location with one
+action and **no trader at all**, so a guild shop is a new trader rather than a new stock list.
+
+**And the board is genuinely new machinery.** All 23 quests in the game are literals in
+`quests.js`; nothing anywhere constructs a `Quest` at runtime. A pool of randomised jobs needs
+a generator, somewhere to keep what is currently on offer, a refresh rule, and a save shape,
+because a job the player has accepted has to survive a reload.
+
+**1. What "A through S" means.** Nineteen difficulty ranks, or nineteen distinct written jobs?
+The request names the *types* separately - hunt so many monsters, gather so much of something
+- which suggests the letters are ranks rather than briefs. But A-to-S as a rank ladder is only
+two rungs unless the ladder runs E-D-C-B-A-S, and that convention is not in this game
+anywhere. **No proposal: this one changes the shape of everything else and is not guessable.**
+
+**2. When the board refreshes.** Per in-game day, per visit, or on completion.
+**PROPOSED: per in-game day.** A visit-based refresh is a board the player rerolls by walking
+out and back in, which turns the feature into a slot machine; a completion-based one cannot
+offer a choice, which the request explicitly asks for.
+
+**3. How the jobs pay standing.** **PROPOSED: a fixed amount per rank, and a cap on what the
+board can pay in total.** The technical constraint is real and measured:
+`check_a_standing_gate_can_be_reached` treats a repeatable source as unbounded, so an
+uncapped board would switch that check off for the Guild entirely - the one region where
+standing is about to matter most.
+
+**4. What guild-only items are for.** **PROPOSED: components.** The measurement from v0.7.33
+is the argument: 175 components and 94 materials are sold by nobody, and selling components
+was declined then because it lets a player skip the crafting ladder. A guild that sells them
+*at a standing price* makes that skip something earned rather than bought, which is what a
+guild is for. What it must not be is better equipment, because the game's power curve is set
+by tier and a shop that outruns it is a shop that replaces the crafting system.
 
 ---
 
