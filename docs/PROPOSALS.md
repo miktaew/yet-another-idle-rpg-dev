@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 153 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 154 -->
 
 # Proposals
 
@@ -647,6 +647,49 @@ TS2353 and TS2740 (two thirds of the type errors) actually live.
 **Sequenced:** JSON + models for `items.js` and `crafting_recipes.js` first, because it is
 the one with a measured 404-to-1 argument behind it. Then the folder layout, once the files
 have stopped moving. `main.js` last, and only as far as the panels take it.
+
+#### Why these questions keep coming, and what the measurements say back
+
+**2026-09-02, owner:** *"I am obsessed with SOLID principles. That is why I ask whether
+separating makes sense. But if there is no way around it, we accept it."*
+
+Worth recording, because it is the frame for every answer above and it changes how they
+should be written: a "no" here has to be a measurement rather than a preference, and it is
+allowed to be a no.
+
+**Three of the four answers agree with SOLID rather than arguing with it**, which is the
+part worth saying first.
+
+- **The JSON move is SRP, done.** `items.js` held 256 declarations and one function;
+  `crafting_recipes.js` held 148 and none. That is data and behaviour in one file, and
+  separating them took 5,464 lines to 4,901 and 2,277 to 761 with **112 of 112 and 148 of
+  148 constructed objects identical**. The responsibility split was real and it was
+  measurable.
+- **It bought OCP as a side effect.** The quartermaster's shelves, the board's job pools and
+  the hunt targets are all *derived* from the registries: adding a component grows the shelf
+  and adding an enemy grows the pool, with nothing edited. That is open for extension without
+  modification, and it is why a hand-written list of 197 component names was refused.
+- **DIP is what made the rare things testable.** `rolls_a_sighting` and `generate_guild_job`
+  take `random` as a parameter instead of reaching for `Math.random`, which is the only
+  reason a one-in-ten-thousand event has a check at all - both ends of it are driven in a
+  millisecond rather than in seven in-game days.
+
+**And the one no, restated as a SOLID argument rather than a refusal.** `main.js` is 4,930
+lines with **96 `window.*` bindings**, and those bindings are not a responsibility it chose:
+every `onclick` in `index.html` needs a global, so `main.js` is *the file the DOM can reach*.
+Splitting it without changing how the markup calls into the game moves the 96 bindings
+somewhere else and separates nothing - the coupling is in `index.html`, not in `main.js`.
+
+Which reframes the work rather than declining it: **the thing to separate is the DOM's entry
+point**, and the measurable target is that number. `display.js` proved the cheap half works
+- five panels out, one-way imports, no cycle - and `guild_display.js` is the same pattern
+again. So the plan stays "keep moving panels out", and the test is whether the 96 falls as
+`main.js` shrinks. If it does not, the split was cosmetic.
+
+**The other no is smaller and sharper.** Moving `quests.js` to JSON fails on its own numbers:
+20 of its 23 quests carry functions, because a task's condition and its hint are computed. A
+data format that has to express those becomes a language, so "separate data from behaviour"
+there would be SRP in name and a new interpreter in fact.
 
 **The order this should go in, smallest first.**
 

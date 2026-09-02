@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 153 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 154 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -654,6 +654,49 @@ hatalarının üçte ikisi) gerçekten yaşadığı yer de burası.
 **Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü
 arkasında ölçülmüş 404'e 1 gibi bir argüman olan tek iş bu. Sonra klasör düzeni, dosyalar
 hareket etmeyi bıraktıktan sonra. `main.js` en son ve yalnızca panellerin götürdüğü kadar.
+
+#### Bu soruların neden gelip durduğu ve ölçümlerin ne cevap verdiği
+
+**2026-09-02, sahibi:** *"SOLID prensiplerine takıntılıyım. o yüzden ayrıştırmak mantıklı mı
+diye soruyorum. ama kaçarı yoksa kabul ediyoruz."*
+
+Kayda değer, çünkü yukarıdaki her cevabın çerçevesi bu ve nasıl yazılmaları gerektiğini
+değiştiriyor: burada bir "hayır", tercih değil ölçüm olmak zorunda — ve hayır olmasına da
+izin var.
+
+**Dört cevaptan üçü SOLID'le tartışmıyor, onunla aynı şeyi söylüyor**; önce bunu belirtmeye
+değer.
+
+- **JSON taşıması, yapılmış hâliyle SRP.** `items.js` 256 bildirim ve bir fonksiyon
+  tutuyordu; `crafting_recipes.js` 148 bildirim ve hiç fonksiyon. Bu, tek dosyada veri ve
+  davranış demek; ayırmak birini 5.464 satırdan 4.901'e, diğerini 2.277'den 761'e indirdi ve
+  **kurulan nesnelerin 112'de 112'si ile 148'de 148'i birebir aynı** kaldı. Sorumluluk
+  ayrımı gerçekti ve ölçülebilirdi.
+- **Yanında OCP'yi de getirdi.** Levazımcının rafları, panonun iş havuzları ve av hedefleri
+  kayıt defterlerinden *türetiliyor*: bir parça eklemek rafı, bir düşman eklemek havuzu
+  büyütüyor ve hiçbir şey elle düzenlenmiyor. Bu, değiştirmeye kapalı genişletmeye açık
+  olmanın kendisi — ve 197 parça adının elle yazılmış listesinin reddedilme sebebi de bu.
+- **Nadir şeyleri test edilebilir kılan şey DIP'ti.** `rolls_a_sighting` ve
+  `generate_guild_job`, `Math.random`a uzanmak yerine `random`ı parametre olarak alıyor; on
+  binde bir olan bir olayın hiç kontrolü olmasının tek sebebi bu — iki ucu birden yedi oyun
+  gününde değil bir milisaniyede sürülüyor.
+
+**Ve tek "hayır", ret değil bir SOLID argümanı olarak yeniden.** `main.js` 4.930 satır ve
+**96 `window.*` bağı** taşıyor; o bağlar onun seçtiği bir sorumluluk değil: `index.html`teki
+her `onclick` bir global istiyor, yani `main.js` *DOM'un ulaşabildiği dosya*. Markup'ın oyuna
+nasıl seslendiğini değiştirmeden onu bölmek, 96 bağı başka bir yere taşır ve hiçbir şeyi
+ayırmaz — bağlantı `main.js`te değil, `index.html`te.
+
+Bu da işi reddetmek yerine yeniden çerçeveliyor: **ayrılacak şey DOM'un giriş noktası** ve
+ölçülebilir hedef o sayı. `display.js` ucuz yarısının işlediğini kanıtladı — beş panel çıktı,
+tek yönlü import, döngü yok — ve `guild_display.js` aynı desenin tekrarı. Yani plan "panelleri
+çıkarmaya devam" olarak kalıyor ve testi şu: `main.js` küçülürken 96 düşüyor mu? Düşmüyorsa
+bölme kozmetikti.
+
+**Öteki hayır daha küçük ve daha keskin.** `quests.js`i JSON'a taşımak kendi sayılarında
+düşüyor: 23 görevinin 20'si fonksiyon taşıyor, çünkü bir görevin koşulu ve ipucu hesaplanıyor.
+Onları ifade etmek zorunda kalan bir veri biçimi dile dönüşür; yani orada "veriyi davranıştan
+ayır", adı SRP olan ve gerçekte yeni bir yorumlayıcı olan bir şey olurdu.
 
 **Gitmesi gereken sıra, küçükten büyüğe.**
 
