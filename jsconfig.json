@@ -1,0 +1,26 @@
+{
+  "//": [
+    "Type checking for JavaScript, from the JSDoc that is already written (P-42).",
+    "",
+    "`checkJs` is FALSE on purpose. Turning it on for the whole project reports 1667 errors",
+    "across 38 of the 56 files, which is a number nobody reads and a gate nobody can go",
+    "green on. So a file opts in by carrying `// @ts-check` at the top, and the set only",
+    "ever grows - `check_checked_files_stay_checked` fails if a file that would pass is",
+    "not opted in.",
+    "",
+    "Nothing about the build changes: esbuild does not read this file, the source stays the",
+    "JavaScript the browser runs, and deleting this file removes the checking and nothing",
+    "else."
+  ],
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "strict": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.js"]
+}

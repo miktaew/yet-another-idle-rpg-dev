@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 const game_version = "v0.7.41";
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 137 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 138 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -725,7 +725,7 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
 **Sırada, bu sırayla:** panonun kendisi — gün başına yenilenme ve alınmış işin kalıcılığıyla
 (kayıt biçimi isteğe bağlı olmayan kısım) — sonra biten işin teslimi, sonra dükkân.
 
-### P-42 — Büyük dosyalar ve TypeScript yerine ne kullanılacağı `open`
+### P-42 — Büyük dosyalar ve TypeScript yerine ne kullanılacağı `active`
 
 Sahibinin isteği: *"display.js gibi dosyalar çok büyüdü, uygulamaya genel bir component haline
 getirme uygulamak gerek. TS kullanmak mantıksız demiştin, yerine alternatif ne var?"*
@@ -779,6 +779,38 @@ cevabı değil.
 2. Hisle değil ölçümle seçilmiş tek bir bölme: `items.js`, yorumlarında kendini zaten
    grupladığı eşya ailelerine.
 3. `display.js` ancak ondan sonra ve mevcut beş bölmenin gittiği gibi panel panel.
+
+**1. adım tamam ve ölçüm saklanmaya değer.** `checkJs` her şey için açıkken TypeScript, iki
+saniye kadar bir sürede **56 dosyanın 37'sinde 1690 hata** bildiriyor. Bu yüzden
+`jsconfig.json` içinde `checkJs` `false` ve dosyalar `// @ts-check` taşıyarak dâhil oluyor:
+**19 dosya hâlihazırda temiz** ve artık pragmayı taşıyor, `npm run check:types` de geçiyor.
+Dâhil olma yönteminin tehlikesi, geçmeye devam etmek için yalnızca *geriye* gitmesinin yetmesi
+— pragmayı sil, hatalar yok olur — bu yüzden `check_checked_files_stay_checked` hangi
+dosyaların geçeceğini TypeScript'e soruyor ve bunlardan biri dâhil edilmemişse başarısız
+oluyor. Bakımı gereken bir liste yok, eşlenmesi gereken bir sayı da yok. Temiz olduğu hâlde
+dâhil etmediğim `weather.js`'i bu şekilde yakaladı.
+
+Pist, 1b adımı tahmin değil ölçüm olsun diye. Altı dosya temizliğe bir ya da iki hata uzakta —
+`world_index.js`, `ui_helpers.js`, `person.js`, `pathfinding.js`, `activities.js` (birer),
+`conditions.js` ve `combat_stances.js` (ikişer) — diğer uçta ise `main.js` (294),
+`data/dialogues.js` (289), `crafting_recipes.js` (160) ve `data/locations.js` (157) var. Dört
+kod toplamın üçte ikisi: TS2345 yanlış argüman türü (679), TS2339 çıkarsanan şekilde olmayan
+özellik (448), TS2353 şeklin bildirmediği bir özelliği taşıyan nesne sabiti (267), TS2740
+şeklin gerektirdiği özellikleri eksik bırakan sabit (99). Son ikisi tek bir şey: **veri
+dosyaları, hiçbir kurucunun adını anmadığı fazladan alanlar taşıyan içerik nesneleri
+bildiriyor** — kayıt defteri kontrollerinin öbür yönden söyleyip durduğu bulgunun aynısı.
+
+**Ve iki sessiz arıza, çünkü bu kontrol tek bir soruyu cevaplamak için var ve onu iki kez
+yanlış cevapladı.** İlk seferde kontrol edilmeyen 38 dosyanın tamamının pragmaya ihtiyaç
+duyduğunu bildirdi: sonda yapılandırması geçici dizine yazılmıştı, `include` ise yapılandırma
+dosyasının kendi dizinine göre çözülür, dolayısıyla hiçbir şeyle eşleşmedi ve tsc *hiçbir şeyi*
+kontrol etmemiş olarak temiz çıktı. Düzeltildikten sonra aynısını yine yaptı: `execFileSync`
+varsayılan olarak bir megabaytlık `maxBuffer` kullanıyor ve bir buçuk megabaytlık hata metni
+ona **hata fırlatmak yerine süreci öldürüp boş çıktı döndürtüyor**. Her iki seferde de "çıktı
+yok", "her şey geçiyor" diye okundu. Kontrol artık tsc kendi başına çıkmadığında hiç cevap
+vermeyi reddediyor ve üçüncü arızayı yüzeye çıkaran da bu muhafız oldu: Node bir `.cmd`
+sarmalayıcısını kabuk olmadan başlatmıyor, bu yüzden tsc TypeScript'in kendi giriş betiği
+üzerinden `process.execPath` ile koşuyor.
 
 **Muhafız.** Bir bölme ne yaparsa yapsın davranışı değiştirmemeli ve bu projenin bunu söyleyecek
 aracı var: `npm run check:bundle` paketin hâlâ değerlendiğini, `Verify_Game_Objects()` kayıt

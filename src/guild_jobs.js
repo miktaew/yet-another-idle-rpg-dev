@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * The guild's job generator (P-41, decided in Q-14).

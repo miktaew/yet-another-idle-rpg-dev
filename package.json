@@ -15,9 +15,11 @@
     "check:save": "node tests/save.mjs",
     "test": "node tests/skills.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8080",
-    "serve:site": "esbuild --servedir=_site --serve=127.0.0.1:8081"
+    "serve:site": "esbuild --servedir=_site --serve=127.0.0.1:8081",
+    "check:types": "tsc -p jsconfig.json"
   },
   "devDependencies": {
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
   }
 }

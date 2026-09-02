@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 116 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 117 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -20,6 +20,55 @@ geldiğinde buraya girer.
 > edilmeden birbirinden uzaklaşamıyor.
 
 ---
+
+## 2026-09-02
+
+### hâlihazırda yazılmış JSDoc üzerinden tür denetimi: dâhil olmalı ve geri dönüşsüz
+
+Sürüm yok: buradaki hiçbir şey oyuncuya görünmüyor. P-42'nin ilk adımı ve sahibinin *"ts
+kullanmak mantıksız demiştin, yerine alternatif ne var?"* sorusunun cevabı — `allowJs`,
+`noEmit` ve dosya başına dâhil olma ile bir `jsconfig.json`; böylece tarayıcının koşturduğu
+JavaScript, repodaki JavaScript olarak kalıyor ve esbuild bu dosyanın varlığını hiç öğrenmiyor.
+Dosyayı silmek denetimi kaldırır, başka hiçbir şeyi değiştirmez.
+
+**`checkJs` kapalı ve bu bir taviz değil, tasarımın kendisi.** Her şey için açıldığında
+TypeScript, iki saniye kadar bir sürede **56 kaynak dosyanın 37'sinde 1690 hata** bildiriyor.
+Kimsenin yeşile çeviremeyeceği bir kapı, silinen bir kapıdır; bu yüzden dosyalar
+`// @ts-check` taşıyarak dâhil oluyor. **On dokuz dosya hâlihazırda temizdi** ve artık
+pragmayı taşıyor; `npm run check:types`, `tsc -p jsconfig.json` koşturuyor ve geçiyor.
+
+**Dâhil olma yönteminin kendi arıza biçimi, yalnızca geriye gitmesinin yetmesi.** Bir pragmayı
+sil, hatalar sessizce yok olur: denetlenen küme küçülür, her şey yeşil kalır. Bu yüzden
+`check_checked_files_stay_checked` liste tutmuyor; her şey için denetim açıkken hangi
+dosyaların geçeceğini TypeScript'e soruyor ve bunlardan dâhil edilmemiş olana hata veriyor. Bir
+dosyayı düzelt, kontrol onu dâhil etmeni söylüyor; birini sustur, kontrol onu geri koyuyor.
+Bakılacak bir şey, eşlenecek bir sayı yok — ve bunu ilk dürüst koşusunda, temiz olduğu hâlde
+bu girdinin dayandığı ölçümün atladığı `weather.js`'i adıyla söyleyerek hak etti.
+
+**Yol boyunca üç arıza, hepsi aynı biçimde: kontrolün hiçbir şeyle kendinden emin cevap
+vermesi.** İlk seferde denetlenmeyen 38 dosyanın tamamı için pragma istedi. Sonda
+yapılandırması geçici dizine yazılmıştı ve bir `include` deseni yapılandırma dosyasının *kendi*
+dizinine göre çözülür — dolayısıyla hiçbir şeyle eşleşmedi, tsc de sıfır dosya kontrol etmiş
+olarak temiz çıktı. Kaynağın yanına taşınınca aynısını yine yaptı: `execFileSync` varsayılan
+olarak bir megabaytlık `maxBuffer` kullanıyor ve bir buçuk megabaytlık hata metni ona **hata
+fırlatmak yerine süreci öldürüp boş çıktı döndürtüyor**. İki kez "çıktı yok", "her dosya
+geçiyor" diye okundu. Kontrol artık tsc kendi başına çıkmadığında cevap vermeyi reddediyor — ve
+önceki ikisinin sakladığı üçüncü arızayı yüzeye çıkaran da bu ret oldu: Node bir `.cmd`
+sarmalayıcısını kabuk olmadan başlatmıyor (EINVAL), bu yüzden tsc artık TypeScript'in kendi
+giriş betiği üzerinde `process.execPath` olarak koşuyor; o betik her platformda düz
+JavaScript.
+
+**Temiz bir dosyadan pragma silinerek negatif test edildi**: `src/reputation.js` adıyla
+başarısız oldu, geri konulduğunda yine geçti.
+
+**Hata kodlarının kod tabanı hakkında söylediği şey, sayının kendisinden daha değerli.** Dört
+kod toplamın üçte ikisi: TS2345 yanlış argüman türü (679), TS2339 çıkarsanan şekilde bulunmayan
+özellik (448), TS2353 şeklinin bildirmediği bir özelliği taşıyan nesne sabiti (267) ve TS2740
+şeklinin gerektirdiği özellikleri eksik bırakan sabit (99). Son ikisi tek bir bulgu — **veri
+dosyaları, hiçbir kurucunun adını anmadığı fazladan alanlarla içerik nesneleri bildiriyor** —
+ki kayıt defteri kontrolleri de öbür yandan bunu söyleyip duruyor. Dördünün hiçbiri de bu
+projenin gerçekten yayına verdiği arıza sınıfı değil: onlar erişilebilirlik ve sıralama
+arızalarıydı ve 232 kontrol, tür denetiminin onları yakalamaması yüzünden var.
 
 ## 2026-09-01
 

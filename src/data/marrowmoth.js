@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * When the Marrowmoth is in port, and nothing else.

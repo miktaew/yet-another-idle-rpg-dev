@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 137 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 138 -->
 
 # Proposals
 
@@ -702,7 +702,7 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
 (the save shape is the part that is not optional), then handing a finished job in, then the
 shop.
 
-### P-42 — The big files, and what to use instead of TypeScript `open`
+### P-42 — The big files, and what to use instead of TypeScript `active`
 
 The owner's request: *"files like display.js have got very big, we need to apply a general
 component approach. You said TypeScript is illogical - what is the alternative?"*
@@ -754,6 +754,35 @@ count - and it is not the answer to the problem the size of these files is causi
 2. One split, chosen by measurement rather than by feel: `items.js` into the item families it
    already groups itself into in comments.
 3. `display.js` only after that, and by panel, the way the five existing splits went.
+
+**Step 1 is done, and the measurement is worth keeping.** With `checkJs` on for everything
+TypeScript reports **1690 errors across 37 of the 56 files** in about two seconds. So `checkJs`
+is `false` in `jsconfig.json` and a file opts in by carrying `// @ts-check`: **19 files are
+already clean** and now hold the pragma, and `npm run check:types` passes. The danger of an
+opt-in is that it only ever has to go *backwards* to keep passing - delete the pragma and the
+errors go away - so `check_checked_files_stay_checked` asks TypeScript which files *would* pass
+and fails if any of them is not opted in. There is no list to maintain and no number to keep in
+step. It caught `weather.js`, which was clean and which I had not opted in.
+
+The runway, so step 1b is a measurement rather than a guess. Six files are one or two errors
+from clean - `world_index.js`, `ui_helpers.js`, `person.js`, `pathfinding.js`, `activities.js`
+(1 each), `conditions.js` and `combat_stances.js` (2 each) - and the far end is `main.js` (294),
+`data/dialogues.js` (289), `crafting_recipes.js` (160) and `data/locations.js` (157). Four codes
+are two thirds of the total: TS2345 wrong argument type (679), TS2339 property not on the
+inferred shape (448), TS2353 object literal with a property the shape does not declare (267),
+TS2740 a literal missing properties the shape requires (99). Those last two are one thing -
+**the data files declare content objects that carry more fields than any constructor names**,
+which is the same finding the registry checks keep making from the other direction.
+
+**And two silent failures, because this check exists to answer one question and got it wrong
+twice.** It first reported all 38 unchecked files as needing a pragma: the probe config was
+written to the temp directory, an `include` resolves against the config file's own directory,
+so it matched nothing and tsc exited clean having checked *nothing*. Fixed, it did it again -
+`execFileSync` defaults to a one-megabyte `maxBuffer`, and a megabyte and a half of errors makes
+it **kill the process and hand back empty output rather than raise**. Both times "no output"
+read as "everything passes". The check now refuses to answer at all when tsc did not exit on
+its own, and that guard is what surfaced the third fault: Node will not spawn a `.cmd` shim
+without a shell, so tsc runs through `process.execPath` on TypeScript's own entry script.
 
 **Guard.** Whatever a split does, it must not change behaviour, and this project has the tool
 for saying so: `npm run check:bundle` proves the bundle still evaluates, `Verify_Game_Objects()`

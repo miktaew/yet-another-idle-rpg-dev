@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * Repairs for rewards added to content a player may already have finished.

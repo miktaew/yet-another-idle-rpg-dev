@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 import { process_conditions } from "../conditions.js";
 

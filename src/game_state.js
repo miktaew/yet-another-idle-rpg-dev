@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * The state a save writes back into, held in an object rather than as loose bindings.

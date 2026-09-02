@@ -1,3 +1,4 @@
+// @ts-check
 /*
     Not in use yet, currently just references for rewards objects; will be reworked into class later on (probably)
 */

@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * Registries the component system writes into and reads back.

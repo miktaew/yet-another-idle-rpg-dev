@@ -1,3 +1,4 @@
+// @ts-check
 /** Titles: a record of what the player has done. */
 
 import { character } from "../character.js";

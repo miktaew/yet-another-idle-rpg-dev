@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 116 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 117 -->
 
 # Changelog
 
@@ -18,6 +18,54 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 > the shipped `game_version`, so the two cannot drift apart unnoticed.
 
 ---
+
+## 2026-09-02
+
+### type checking from the JSDoc that is already written, opt-in and ratcheted
+
+No version: nothing here is player-visible. P-42's first step, and the answer to the owner's
+*"TypeScript is illogical - what is the alternative?"* - `jsconfig.json` with `allowJs`,
+`noEmit` and a per-file opt-in, so the JavaScript the browser runs stays the JavaScript in the
+repository and esbuild never learns this file exists. Deleting it removes the checking and
+nothing else.
+
+**`checkJs` is off, and that is the design rather than a compromise.** Turned on for everything
+TypeScript reports **1690 errors across 37 of the 56 source files**, in about two seconds. A
+gate nobody can go green on is a gate that gets deleted, so a file opts in by carrying
+`// @ts-check`. **Nineteen files were already clean** and now hold the pragma;
+`npm run check:types` runs `tsc -p jsconfig.json` and passes.
+
+**The opt-in's own failure mode is that it only has to go backwards.** Delete a pragma and the
+errors go away, silently, and the checked set shrinks while everything stays green. So
+`check_checked_files_stay_checked` does not keep a list: it asks TypeScript which files *would*
+pass with checking on for everything, and errors on any of those that is not opted in. Fix a
+file and the check tells you to opt it in; silence one and it puts it straight back. Nothing to
+maintain, no number to keep in step - and it earned that on the first honest run by naming
+`weather.js`, which was clean and which the measurement behind this entry had missed.
+
+**Three faults on the way, all the same shape: the check answering confidently with nothing.**
+It first demanded a pragma on all 38 unchecked files. The probe config was written to the temp
+directory, and an `include` pattern resolves against the config file's *own* directory - so it
+matched nothing, and tsc exited clean having checked zero files. Moved beside the source, it did
+it again: `execFileSync` defaults to a one-megabyte `maxBuffer`, and a megabyte and a half of
+errors makes it **kill the process and return empty output rather than raise**. Twice, "no
+output" read as "every file passes". The check now refuses to answer when tsc did not exit on
+its own - and that refusal is what surfaced the third fault, which the previous two had been
+hiding: Node will not spawn a `.cmd` shim without a shell (EINVAL), so tsc now runs as
+`process.execPath` on TypeScript's own entry script, which is plain JavaScript on every
+platform.
+
+**Negative-tested by removing the pragma from a clean file**, which failed naming
+`src/reputation.js`, and passing again once restored.
+
+**What the error codes say about the codebase, which is worth more than the count.** Four codes
+are two thirds of the total: TS2345 wrong argument type (679), TS2339 property absent from the
+inferred shape (448), TS2353 an object literal carrying a property its shape does not declare
+(267) and TS2740 a literal missing properties its shape requires (99). The last two are one
+finding - **the data files declare content objects with more fields than any constructor
+names** - which is what the registry checks keep saying from the other side. And none of the
+four is the class of fault this project has actually shipped: those were reachability and
+ordering, and the 232 checks exist because typing does not catch them.
 
 ## 2026-09-01
 
