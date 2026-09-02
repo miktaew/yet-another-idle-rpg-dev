@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 150 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 151 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -590,8 +590,22 @@ türetiyordu**; o yüzden taşıma, sorunsuz çalışan malzemeleri adlandıran 
 üretti. `tests/lib/item-keys.mjs` artık bunu iki yerden birlikte cevaplıyor ve
 `check_item_data_files_are_all_read`, yeni bir veri dosyası oraya eklenmezse düşüyor.
 
-**Sırada: `crafting_recipes.js`,** 148 bildirim ve hiçbirinde fonksiyon yok. Sonra modeller;
-ki o da aynı okumayı iki kez değil bir kez yapmak.
+**İkinci aile de tamam.** 148 tarifin hepsi `src/data/recipes.json` içinde;
+`crafting_recipes.js` 2.277 yerine 761 satır. Kurulan 148 tarifin 148'i öncesi ve sonrasında
+birebir aynı. `tests/lib/recipe-rows.mjs` eş yardımcı ve altı türetme metin yerine satırlardan
+alan okuyor.
+
+**Tariflerin, malzemelerin öğrettiğinin ötesinde öğrettiği.** Onları taşımak, hepsi "bu bozuk"
+değil *"oyuncuya bunu hiçbir şey veremez"* diyen 255 hata üretti — yanlış yere bakan bir
+türetme düşmüyor, yalan söylüyor. Ve iki kapsam kaybı sayılana kadar sessizdi:
+`interpolated pairs` 229'dan 125'e düştü (104 tarifin success_chance aralığı sınırsız, kontrol
+hâlâ yeşil) ve `material_type` toplam kıpırdamadan 9 değerden 3'e daraldı. **Yani kalan
+aileler için yöntem şu: önce kapsam sayılarını yakala, sonra karşılaştır.**
+
+**Sırada: modeller.** İki veri dosyasının da artık aynı anda üç yerde iddia edilen bir şekli
+var — yükleyici, yardımcı ve muhafız — ki bu, üçü yerine aile başına tek bir modelin
+gerekçesi. Aynı okumayı üç kez değil bir kez yapmak demek ve TS2353 ile TS2740'ın (tür
+hatalarının üçte ikisi) gerçekten yaşadığı yer de burası.
 
 **Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü
 arkasında ölçülmüş 404'e 1 gibi bir argüman olan tek iş bu. Sonra klasör düzeni, dosyalar

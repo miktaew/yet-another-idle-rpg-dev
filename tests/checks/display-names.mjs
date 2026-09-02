@@ -15,6 +15,7 @@ import { load_locale } from "../lib/locale-files.mjs";
 import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
 import { declared_item_keys } from "../lib/item-keys.mjs";
+import { recipe_field_values } from "../lib/recipe-rows.mjs";
 
 /**
  * Every dialogue needs a "name <key>" row for its display name.
@@ -613,7 +614,15 @@ async function check_registry_value_names() {
     //field -> {files, prefix}. Add a row here when a new registry field starts
     //being shown to the player.
     const shown_values = [
-        { field: "material_type", files: ["src/items.js", "src/crafting_recipes.js"], prefix: "material type" },
+        /*
+            items.js is the only FILE left that declares one - the recipes moved into JSON -
+            so `rows` names the helper that reads the rest. Measured when the recipes moved:
+            items.js declares 3 material types and the recipes carry 9, six of them
+            (metal, coal, raw meat and the three fish sizes) declared nowhere else. Dropping
+            crafting_recipes.js from this list without replacing it lost those six silently.
+        */
+        { field: "material_type", files: ["src/items.js"], prefix: "material type",
+          rows: "material_type" },
         { field: "weapon_type", files: ["src/items.js"], prefix: "weapon type" },
         //getItemRarity assigns these rather than declaring them as a field, and the
         //quality line of every item tooltip prints one.
@@ -621,8 +630,8 @@ async function check_registry_value_names() {
     ];
 
     let total = 0;
-    for (const { field, files, prefix } of shown_values) {
-        const values = new Set();
+    for (const { field, files, prefix, rows } of shown_values) {
+        const values = new Set(rows ? recipe_field_values(repo_root, rows) : []);
         for (const relative of files) {
             const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
             const pattern = new RegExp(`${field}\\s*[:=]\\s*"([^"]+)"`, "g");

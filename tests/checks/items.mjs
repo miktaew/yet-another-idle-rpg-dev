@@ -10,6 +10,7 @@ import { load_locale } from "../lib/locale-files.mjs";
 import { strip_comments } from "../lib/source.mjs";
 import { declared_item_keys, item_data_files,
     rows_declared_in_data } from "../lib/item-keys.mjs";
+import { recipe_data_files, recipe_field_values } from "../lib/recipe-rows.mjs";
 
 /**
  * The generated items: 203 components built at runtime from a material and a
@@ -135,18 +136,26 @@ async function check_recipe_item_names() {
         ...declared_item_keys(repo_root),
     ]);
 
-    const recipes = strip_comments(fs.readFileSync(path.join(repo_root, "src/crafting_recipes.js"), "utf8"));
 
     let checked = 0;
     const reported = new Set();
-    for (const match of recipes.matchAll(/\b(material_id|result_id):\s*"([^"]+)"/g)) {
-        const [, field, name] = match;
+    /*
+        From the rows rather than from the file. Both fields sit nested inside
+        `materials: [...]` and `result: {...}`, so recipe_field_values walks the row instead
+        of matching text - which is also what lets it see the recipes that moved into JSON.
+    */
+    const named = [
+        ...[...recipe_field_values(repo_root, "material_id")]
+            .map(name => ["material_id", name]),
+        ...[...recipe_field_values(repo_root, "result_id")].map(name => ["result_id", name]),
+    ];
+    for (const [field, name] of named) {
         checked++;
         if (known.has(name) || reported.has(`${field}:${name}`)) continue;
         reported.add(`${field}:${name}`);
-        error(`src/crafting_recipes.js names ${field} "${name}", which is neither declared in`
-            + " items.js nor built by crafting_component_filling.js. The recipe would list and"
-            + " produce nothing.");
+        error(`a recipe names ${field} "${name}", which is neither declared in items.js or`
+            + " its data files nor built by crafting_component_filling.js. The recipe would"
+            + " list and produce nothing.");
     }
     console.log(`[check] recipe item names: ${checked} resolved against ${known.size} templates`);
 }
@@ -231,7 +240,9 @@ function reachable_item_names() {
     const names_in = (source, pattern) => [...source.matchAll(pattern)].map(match => match[1]);
 
     const reachable = new Set([
-        ...names_in(read("src/crafting_recipes.js"), /result_id:\s*"([^"]+)"/g),
+        //From the rows rather than the file: the recipes live in JSON now, and reading
+        //crafting_recipes.js for them reported every craftable trophy as unreachable.
+        ...recipe_field_values(repo_root, "result_id"),
         ...names_in(read("src/traders.js"), /item_name:\s*"([^"]+)"/g),
         ...names_in(read("src/enemies.js"), /item_name:\s*"([^"]+)"/g),
     ]);
@@ -737,32 +748,48 @@ async function check_trader_stock_names_resolve() {
  * cannot drift: a JSON import in items.js IS the declaration that a data file exists.
  */
 function check_item_data_files_are_all_read() {
-    const source = fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8");
+    /*
+        One rule, both families. Each pair is a source file that imports JSON and the helper
+        that has to read the same JSON back: items to item-keys.mjs, recipes to
+        recipe-rows.mjs. Moving the recipes cost 255 check errors for exactly the missing
+        half of this, so the rule is worth stating for every family rather than one.
+    */
+    const pairs = [
+        {source: "src/items.js", listed: item_data_files, helper: "tests/lib/item-keys.mjs"},
+        {source: "src/crafting_recipes.js", listed: recipe_data_files,
+            helper: "tests/lib/recipe-rows.mjs"},
+    ];
 
-    const imported = [...source.matchAll(/from\s+"\.\/(data\/[\w.-]+\.json)"/g)]
-        .map(found => `src/${found[1]}`);
-    if (imported.length === 0) {
-        error("src/items.js imports no JSON data file. If the item families moved back into "
-            + "source, check_item_data_files_are_all_read and tests/lib/item-keys.mjs are "
-            + "both out of date.");
-        return;
-    }
+    const imported = [];
+    for (const pair of pairs) {
+        const source = fs.readFileSync(path.join(repo_root, pair.source), "utf8");
+        const reads = [...source.matchAll(/from\s+"\.\/(data\/[\w.-]+\.json)"/g)]
+            .map(found => `src/${found[1]}`);
+        if (reads.length === 0) {
+            error(`${pair.source} imports no JSON data file. If that family moved back into `
+                + `source, this check and ${pair.helper} are both out of date.`);
+            continue;
+        }
+        imported.push(...reads);
 
-    for (const file of imported) {
-        if (item_data_files.includes(file)) continue;
-        error(`src/items.js reads "${file}" and tests/lib/item-keys.mjs does not list it, so `
-            + `every item in it is invisible to the five checks that ask which item keys `
-            + `exist. Nothing would fail: the items work and the checks stop covering them.`);
-    }
-    for (const file of item_data_files) {
-        if (imported.includes(file)) continue;
-        error(`tests/lib/item-keys.mjs lists "${file}" and src/items.js does not read it, so `
-            + `the checks believe in items the game never builds.`);
+        for (const file of reads) {
+            if (pair.listed.includes(file)) continue;
+            error(`${pair.source} reads "${file}" and ${pair.helper} does not list it, so `
+                + `everything in it is invisible to the checks that ask what exists. `
+                + `Nothing would fail: the content works and the checks stop covering it.`);
+        }
+        for (const file of pair.listed) {
+            if (reads.includes(file)) continue;
+            error(`${pair.helper} lists "${file}" and ${pair.source} does not read it, so `
+                + `the checks believe in content the game never builds.`);
+        }
     }
 
     //And the rows themselves, since nothing else parses them.
     let rows = 0;
-    const source_keys = new Set([...strip_comments(source)
+    const items_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
+    const source_keys = new Set([...items_source
         .matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(found => found[1]));
 
     for (const [key, row] of rows_declared_in_data(repo_root)) {

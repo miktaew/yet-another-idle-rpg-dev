@@ -6,6 +6,7 @@ import { base_key, load_locale } from "../lib/locale-files.mjs";
 import { default_language, locales_dir, repo_root, strict_locales, variant_prefix } from "../lib/context.mjs";
 import { errors, error, warn } from "../lib/report.mjs";
 import { source_files, strip_comments } from "../lib/source.mjs";
+import { recipe_ranges } from "../lib/recipe-rows.mjs";
 
 /**
  * Reports ids declared more than once in a locale FILE.
@@ -198,10 +199,8 @@ function check_interpolated_pairs() {
              match => [["minimum ammount", match[1], match[3]],
                        ["maximum ammount", match[2], match[4]]]],
         ]},
-        { file: "src/crafting_recipes.js", patterns: [
-            [/(?<![A-Za-z0-9_])(success_chance):\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g,
-             match => [[match[1], match[2], match[3]]]],
-        ]},
+        //The recipes' success_chance pairs are read from the rows below rather than
+        //from this file, since they moved into JSON.
     ];
 
     let checked = 0;
@@ -226,6 +225,21 @@ function check_interpolated_pairs() {
             }
         }
     }
+    /*
+        And the recipes' success_chance pairs, which used to be matched out of
+        crafting_recipes.js and now live in JSON. Losing them was silent: the count fell from
+        229 to 125 and nothing failed, which is exactly 104 recipes' worth of unchecked
+        ranges.
+    */
+    for (const range of recipe_ranges(repo_root, "success_chance")) {
+        checked++;
+        if (!(range.low > 0) || !(range.high > 0)) {
+            error(`${range.from} declares a success_chance of [${range.low}, ${range.high}]`
+                + ` for "${range.key}"; both ends of an interpolated pair must be positive,`
+                + " or slerp falls back to a linear curve instead of the geometric one.");
+        }
+    }
+
     if (checked === 0) {
         error("found no interpolated pairs to check - this check is out of date.");
     }

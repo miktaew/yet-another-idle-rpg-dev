@@ -1,0 +1,1789 @@
+{
+    "forging": {
+        "components": {
+            "Short blade": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 2, "result_id": "Cheap iron short blade"},
+                    {"material_id": "Iron ingot", "count": 2, "result_id": "Iron short blade"},
+                    {"material_id": "Steel ingot", "count": 2, "result_id": "Steel short blade"},
+                    {"material_id": "White iron ingot", "count": 2, "result_id": "White iron short blade"},
+                    {"material_id": "White steel ingot", "count": 2, "result_id": "White short blade"},
+                    {"material_id": "Black iron ingot", "count": 2, "result_id": "Black iron short blade"},
+                    {"material_id": "Black steel ingot", "count": 2, "result_id": "Black short blade"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Long blade": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 3, "result_id": "Cheap iron long blade"},
+                    {"material_id": "Iron ingot", "count": 3, "result_id": "Iron long blade"},
+                    {"material_id": "Steel ingot", "count": 3, "result_id": "Steel long blade"},
+                    {"material_id": "White iron ingot", "count": 3, "result_id": "White iron long blade"},
+                    {"material_id": "White steel ingot", "count": 3, "result_id": "White long blade"},
+                    {"material_id": "Black iron ingot", "count": 3, "result_id": "Black iron long blade"},
+                    {"material_id": "Black steel ingot", "count": 3, "result_id": "Black long blade"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Axe head": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 4, "result_id": "Cheap iron axe head"},
+                    {"material_id": "Iron ingot", "count": 4, "result_id": "Iron axe head"},
+                    {"material_id": "Steel ingot", "count": 4, "result_id": "Steel axe head"},
+                    {"material_id": "White iron ingot", "count": 4, "result_id": "White iron axe head"},
+                    {"material_id": "White steel ingot", "count": 4, "result_id": "White axe head"},
+                    {"material_id": "Black iron ingot", "count": 4, "result_id": "Black iron axe head"},
+                    {"material_id": "Black steel ingot", "count": 4, "result_id": "Black axe head"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Hammer head": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 4, "result_id": "Cheap iron hammer head"},
+                    {"material_id": "Iron ingot", "count": 4, "result_id": "Iron hammer head"},
+                    {"material_id": "Steel ingot", "count": 4, "result_id": "Steel hammer head"},
+                    {"material_id": "White iron ingot", "count": 4, "result_id": "White iron hammer head"},
+                    {"material_id": "White steel ingot", "count": 4, "result_id": "White hammer head"},
+                    {"material_id": "Black iron ingot", "count": 4, "result_id": "Black iron hammer head"},
+                    {"material_id": "Black steel ingot", "count": 4, "result_id": "Black hammer head"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Short hilt": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 1, "result_id": "Cheap iron short handle"},
+                    {"material_id": "Iron ingot", "count": 1, "result_id": "Iron short handle"},
+                    {"material_id": "Steel ingot", "count": 1, "result_id": "Steel short handle"},
+                    {"material_id": "White iron ingot", "count": 1, "result_id": "White iron short handle"},
+                    {"material_id": "White steel ingot", "count": 1, "result_id": "White short handle"},
+                    {"material_id": "Black iron ingot", "count": 1, "result_id": "Black iron short handle"},
+                    {"material_id": "Black steel ingot", "count": 1, "result_id": "Black short handle"},
+                    {"material_id": "Turtle shellplate", "count": 2, "result_id": "Turtleshell short handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Medium handle": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 2, "result_id": "Cheap iron medium handle"},
+                    {"material_id": "Iron ingot", "count": 2, "result_id": "Iron medium handle"},
+                    {"material_id": "Steel ingot", "count": 2, "result_id": "Steel medium handle"},
+                    {"material_id": "White iron ingot", "count": 2, "result_id": "White iron medium handle"},
+                    {"material_id": "White steel ingot", "count": 2, "result_id": "White medium handle"},
+                    {"material_id": "Black iron ingot", "count": 2, "result_id": "Black iron medium handle"},
+                    {"material_id": "Black steel ingot", "count": 2, "result_id": "Black medium handle"},
+                    {"material_id": "Turtle shellplate", "count": 4, "result_id": "Turtleshell medium handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Long shaft": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 4, "result_id": "Cheap iron long handle"},
+                    {"material_id": "Iron ingot", "count": 4, "result_id": "Iron long handle"},
+                    {"material_id": "Steel ingot", "count": 4, "result_id": "Steel long handle"},
+                    {"material_id": "White iron ingot", "count": 4, "result_id": "White iron long handle"},
+                    {"material_id": "White steel ingot", "count": 4, "result_id": "White long handle"},
+                    {"material_id": "Black iron ingot", "count": 4, "result_id": "Black iron long handle"},
+                    {"material_id": "Black steel ingot", "count": 4, "result_id": "Black long handle"},
+                    {"material_id": "Turtle shellplate", "count": 8, "result_id": "Turtleshell long handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging"
+            },
+            "Shield base": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Low quality iron ingot", "count": 5, "result_id": "Cheap iron shield base"},
+                    {"material_id": "Iron ingot", "count": 5, "result_id": "Iron shield base"},
+                    {"material_id": "Steel ingot", "count": 5, "result_id": "Steel shield base"},
+                    {"material_id": "White iron ingot", "count": 5, "result_id": "White iron shield base"},
+                    {"material_id": "White steel ingot", "count": 5, "result_id": "White shield base"},
+                    {"material_id": "Black iron ingot", "count": 5, "result_id": "Black iron shield base"},
+                    {"material_id": "Black steel ingot", "count": 5, "result_id": "Black shield base"},
+                    {"material_id": "Turtle shellplate", "count": 10, "result_id": "Turtleshell shield base"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging",
+                "component_type": "shield base"
+            },
+            "Helmet exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Iron chainmail", "count": 3, "result_id": "Iron chainmail helmet armor"},
+                    {"material_id": "Steel plate", "count": 3, "result_id": "Steel plate helmet armor"},
+                    {"material_id": "White iron plate", "count": 3, "result_id": "White iron plate helmet armor"},
+                    {"material_id": "White plate", "count": 3, "result_id": "White plate helmet armor"},
+                    {"material_id": "Black iron plate", "count": 3, "result_id": "Black iron plate helmet armor"},
+                    {"material_id": "Black plate", "count": 3, "result_id": "Black plate helmet armor"},
+                    {"material_id": "Steel chainmail", "count": 3, "result_id": "Steel chainmail helmet armor"},
+                    {"material_id": "White iron chainmail", "count": 3, "result_id": "White iron chainmail helmet armor"},
+                    {"material_id": "White chainmail", "count": 3, "result_id": "White chainmail helmet armor"},
+                    {"material_id": "Black iron chainmail", "count": 3, "result_id": "Black iron chainmail helmet armor"},
+                    {"material_id": "Black chainmail", "count": 3, "result_id": "Black chainmail helmet armor"},
+                    {"material_id": "Turtle shellplate", "count": 6, "result_id": "Turtleshell helmet armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging",
+                "component_type": "helmet exterior"
+            },
+            "Chestplate exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Iron chainmail", "count": 5, "result_id": "Iron chainmail vest"},
+                    {"material_id": "Steel plate", "count": 5, "result_id": "Steel plate chestplate armor"},
+                    {"material_id": "White iron plate", "count": 5, "result_id": "White iron plate chestplate armor"},
+                    {"material_id": "White plate", "count": 5, "result_id": "White plate chestplate armor"},
+                    {"material_id": "Black iron plate", "count": 5, "result_id": "Black iron plate chestplate armor"},
+                    {"material_id": "Black plate", "count": 5, "result_id": "Black plate chestplate armor"},
+                    {"material_id": "Steel chainmail", "count": 5, "result_id": "Steel chainmail vest"},
+                    {"material_id": "White iron chainmail", "count": 5, "result_id": "White iron chainmail chestplate armor"},
+                    {"material_id": "White chainmail", "count": 5, "result_id": "White chainmail chestplate armor"},
+                    {"material_id": "Black iron chainmail", "count": 5, "result_id": "Black iron chainmail chestplate armor"},
+                    {"material_id": "Black chainmail", "count": 5, "result_id": "Black chainmail chestplate armor"},
+                    {"material_id": "Turtle shellplate", "count": 10, "result_id": "Turtleshell chestplate armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging",
+                "component_type": "chestplate exterior"
+            },
+            "Leg armor exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Iron chainmail", "count": 4, "result_id": "Iron chainmail greaves"},
+                    {"material_id": "Steel plate", "count": 4, "result_id": "Steel plate greaves"},
+                    {"material_id": "White iron plate", "count": 4, "result_id": "White iron plate greaves"},
+                    {"material_id": "White plate", "count": 4, "result_id": "White plate greaves"},
+                    {"material_id": "Black iron plate", "count": 4, "result_id": "Black iron plate greaves"},
+                    {"material_id": "Black plate", "count": 4, "result_id": "Black plate greaves"},
+                    {"material_id": "Steel chainmail", "count": 4, "result_id": "Steel chainmail greaves"},
+                    {"material_id": "White iron chainmail", "count": 4, "result_id": "White iron chainmail greaves"},
+                    {"material_id": "White chainmail", "count": 4, "result_id": "White chainmail greaves"},
+                    {"material_id": "Black iron chainmail", "count": 4, "result_id": "Black iron chainmail greaves"},
+                    {"material_id": "Black chainmail", "count": 4, "result_id": "Black chainmail greaves"},
+                    {"material_id": "Turtle shellplate", "count": 8, "result_id": "Turtleshell greaves"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging",
+                "component_type": "leg armor exterior"
+            },
+            "Glove exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Iron chainmail", "count": 3, "result_id": "Iron chainmail glove armor"},
+                    {"material_id": "Steel plate", "count": 3, "result_id": "Steel plate glove armor"},
+                    {"material_id": "White iron plate", "count": 3, "result_id": "White iron plate glove armor"},
+                    {"material_id": "White plate", "count": 3, "result_id": "White plate glove armor"},
+                    {"material_id": "Black iron plate", "count": 3, "result_id": "Black iron plate glove armor"},
+                    {"material_id": "Black plate", "count": 3, "result_id": "Black plate glove armor"},
+                    {"material_id": "Steel chainmail", "count": 3, "result_id": "Steel chainmail glove armor"},
+                    {"material_id": "White iron chainmail", "count": 3, "result_id": "White iron chainmail glove armor"},
+                    {"material_id": "White chainmail", "count": 3, "result_id": "White chainmail glove armor"},
+                    {"material_id": "Black iron chainmail", "count": 3, "result_id": "Black iron chainmail glove armor"},
+                    {"material_id": "Black chainmail", "count": 3, "result_id": "Black chainmail glove armor"},
+                    {"material_id": "Turtle shellplate", "count": 6, "result_id": "Turtleshell glove armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging",
+                "component_type": "Glove exterior"
+            },
+            "Shoes exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Iron chainmail", "count": 3, "result_id": "Iron chainmail shoe armor"},
+                    {"material_id": "Steel plate", "count": 3, "result_id": "Steel plate shoe armor"},
+                    {"material_id": "White iron plate", "count": 3, "result_id": "White iron plate shoe armor"},
+                    {"material_id": "White plate", "count": 3, "result_id": "White plate shoe armor"},
+                    {"material_id": "Black iron plate", "count": 3, "result_id": "Black iron plate shoe armor"},
+                    {"material_id": "Black plate", "count": 3, "result_id": "Black plate shoe armor"},
+                    {"material_id": "Steel chainmail", "count": 3, "result_id": "Steel chainmail shoe armor"},
+                    {"material_id": "White iron chainmail", "count": 3, "result_id": "White iron chainmail shoe armor"},
+                    {"material_id": "White chainmail", "count": 3, "result_id": "White chainmail shoe armor"},
+                    {"material_id": "Black iron chainmail", "count": 3, "result_id": "Black iron chainmail shoe armor"},
+                    {"material_id": "Black chainmail", "count": 3, "result_id": "Black chainmail shoe armor"},
+                    {"material_id": "Turtle shellplate", "count": 6, "result_id": "Turtleshell shoe armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Forging",
+                "component_type": "shoes exterior"
+            }
+        },
+        "items": {
+            "White iron chainmail": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "White iron ingot", "count": 2}
+                ],
+                "result": {"result_id": "White iron chainmail", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [15, 25]
+            },
+            "Black iron chainmail": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Black iron ingot", "count": 2}
+                ],
+                "result": {"result_id": "Black iron chainmail", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [15, 25]
+            },
+            "Steel plate": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Steel ingot", "count": 3}
+                ],
+                "result": {"result_id": "Steel plate", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [12, 22]
+            },
+            "White iron plate": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "White iron ingot", "count": 3}
+                ],
+                "result": {"result_id": "White iron plate", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [17, 27]
+            },
+            "Black iron plate": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Black iron ingot", "count": 3}
+                ],
+                "result": {"result_id": "Black iron plate", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [17, 27]
+            },
+            "White chainmail": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "White steel ingot", "count": 2}
+                ],
+                "result": {"result_id": "White chainmail", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [22, 32]
+            },
+            "Black chainmail": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Black steel ingot", "count": 2}
+                ],
+                "result": {"result_id": "Black chainmail", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [22, 32]
+            },
+            "White plate": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "White steel ingot", "count": 3}
+                ],
+                "result": {"result_id": "White plate", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [24, 34]
+            },
+            "Black plate": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Black steel ingot", "count": 3}
+                ],
+                "result": {"result_id": "Black plate", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [24, 34]
+            },
+            "Iron chainmail": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Iron ingot", "count": 2}
+                ],
+                "result": {"result_id": "Iron chainmail", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [5, 15]
+            },
+            "Steel chainmail": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Steel ingot", "count": 2}
+                ],
+                "result": {"result_id": "Steel chainmail", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [10, 20]
+            },
+            "Metal fishing hook": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_type": "metal", "count": 1}
+                ],
+                "result": {"result_id": "Metal fishing hook", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Forging",
+                "recipe_level": [5, 15]
+            }
+        }
+    },
+    "crafting": {
+        "components": {
+            "Short hilt": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed weak monster bone", "count": 1, "result_id": "Weak bone short handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting"
+            },
+            "Medium handle": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed weak monster bone", "count": 2, "result_id": "Weak bone medium handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting"
+            },
+            "Long shaft": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed weak monster bone", "count": 4, "result_id": "Weak bone long handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting"
+            },
+            "Helmet exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 3, "result_id": "Wolf leather helmet armor"},
+                    {"material_id": "Piece of boar leather", "count": 3, "result_id": "Boar leather helmet armor"},
+                    {"material_id": "Piece of bear leather", "count": 3, "result_id": "Bear leather helmet armor"},
+                    {"material_id": "Piece of alligator leather", "count": 3, "result_id": "Alligator helmet armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting",
+                "component_type": "helmet exterior"
+            },
+            "Chestplate exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 5, "result_id": "Wolf leather chestplate armor"},
+                    {"material_id": "Piece of boar leather", "count": 5, "result_id": "Boar leather chestplate armor"},
+                    {"material_id": "Piece of bear leather", "count": 5, "result_id": "Bear leather chestplate armor"},
+                    {"material_id": "Piece of alligator leather", "count": 5, "result_id": "Alligator chestplate armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting",
+                "component_type": "chestplate exterior"
+            },
+            "Leg armor exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 4, "result_id": "Wolf leather greaves"},
+                    {"material_id": "Piece of boar leather", "count": 4, "result_id": "Boar leather greaves"},
+                    {"material_id": "Piece of bear leather", "count": 4, "result_id": "Bear leather greaves"},
+                    {"material_id": "Piece of alligator leather", "count": 4, "result_id": "Alligator greaves"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting",
+                "component_type": "leg armor exterior"
+            },
+            "Glove exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 3, "result_id": "Wolf leather glove armor"},
+                    {"material_id": "Piece of boar leather", "count": 3, "result_id": "Boar leather glove armor"},
+                    {"material_id": "Piece of bear leather", "count": 3, "result_id": "Bear leather glove armor"},
+                    {"material_id": "Piece of alligator leather", "count": 3, "result_id": "Alligator glove armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting",
+                "component_type": "glove exterior"
+            },
+            "Shoes exterior": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 3, "result_id": "Wolf leather shoe armor"},
+                    {"material_id": "Piece of boar leather", "count": 3, "result_id": "Boar leather shoe armor"},
+                    {"material_id": "Piece of bear leather", "count": 3, "result_id": "Bear leather shoe armor"},
+                    {"material_id": "Piece of alligator leather", "count": 3, "result_id": "Alligator shoe armor"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Crafting",
+                "component_type": "shoes exterior"
+            }
+        },
+        "equipment": {
+            "Axe": {
+                "type": "EquipmentRecipe",
+                "components": ["axe head", "medium handle"],
+                "item_type": "Weapon"
+            },
+            "Dagger": {
+                "type": "EquipmentRecipe",
+                "components": ["short blade", "short handle"],
+                "item_type": "Weapon"
+            },
+            "Hammer": {
+                "type": "EquipmentRecipe",
+                "components": ["hammer head", "medium handle"],
+                "item_type": "Weapon"
+            },
+            "Spear": {
+                "type": "EquipmentRecipe",
+                "components": ["short blade", "long handle"],
+                "item_type": "Weapon"
+            },
+            "Sword": {
+                "type": "EquipmentRecipe",
+                "components": ["long blade", "short handle"],
+                "item_type": "Weapon"
+            },
+            "Shield": {
+                "type": "EquipmentRecipe",
+                "components": ["shield base", "shield handle"],
+                "item_type": "Shield"
+            },
+            "Helmet": {
+                "type": "EquipmentRecipe",
+                "components": ["helmet interior", "helmet exterior"],
+                "item_type": "Armor"
+            },
+            "Chestplate": {
+                "type": "EquipmentRecipe",
+                "components": ["chestplate interior", "chestplate exterior"],
+                "item_type": "Armor"
+            },
+            "Leg armor": {
+                "type": "EquipmentRecipe",
+                "components": ["leg armor interior", "leg armor exterior"],
+                "item_type": "Armor"
+            },
+            "Gauntlets": {
+                "type": "EquipmentRecipe",
+                "components": ["glove interior", "glove exterior"],
+                "item_type": "Armor"
+            },
+            "Armored shoes": {
+                "type": "EquipmentRecipe",
+                "components": ["shoes interior", "shoes exterior"],
+                "item_type": "Armor"
+            },
+            "Hat": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 3, "result_id": "Leather hat"},
+                    {"material_id": "Wool cloth", "count": 3, "result_id": "Wool hat"},
+                    {"material_id": "Wicker", "count": 3, "result_id": "Sun hat"},
+                    {"material_id": "Piece of goat leather", "count": 3, "result_id": "Goat leather hat"},
+                    {"material_id": "Linen cloth", "count": 3, "result_id": "Linen bandanna"},
+                    {"material_id": "Piece of frog leather", "count": 3, "result_id": "Batrachian hat"},
+                    {"material_id": "Piece of snakeskin leather", "count": 3, "result_id": "Snakeskin hat"}
+                ],
+                "item_type": "Armor",
+                "component_type": "helmet interior",
+                "recipe_skill": "Crafting"
+            },
+            "Shirt": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf rat leather", "count": 5, "result_id": "Cheap leather vest"},
+                    {"material_id": "Piece of wolf leather", "count": 5, "result_id": "Leather vest"},
+                    {"material_id": "Wool cloth", "count": 5, "result_id": "Wool shirt"},
+                    {"material_id": "Piece of goat leather", "count": 5, "result_id": "Goat leather vest"},
+                    {"material_id": "Linen cloth", "count": 5, "result_id": "Linen vest"},
+                    {"material_id": "Piece of frog leather", "count": 5, "result_id": "Batrachian vest"},
+                    {"material_id": "Piece of snakeskin leather", "count": 5, "result_id": "Snakeskin vest"}
+                ],
+                "item_type": "Armor",
+                "component_type": "chestplate interior",
+                "recipe_skill": "Crafting"
+            },
+            "Pants": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf rat leather", "count": 3, "result_id": "Cheap leather pants"},
+                    {"material_id": "Piece of wolf leather", "count": 3, "result_id": "Leather pants"},
+                    {"material_id": "Wool cloth", "count": 3, "result_id": "Wool pants"},
+                    {"material_id": "Piece of goat leather", "count": 3, "result_id": "Goat leather pants"},
+                    {"material_id": "Linen cloth", "count": 3, "result_id": "Linen leggings"},
+                    {"material_id": "Piece of frog leather", "count": 3, "result_id": "Batrachian pants"},
+                    {"material_id": "Piece of snakeskin leather", "count": 3, "result_id": "Snakeskin leggings"}
+                ],
+                "item_type": "Armor",
+                "component_type": "leg armor interior",
+                "recipe_skill": "Crafting"
+            },
+            "Gloves": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf leather", "count": 2, "result_id": "Leather gloves"},
+                    {"material_id": "Wool cloth", "count": 2, "result_id": "Wool gloves"},
+                    {"material_id": "Piece of goat leather", "count": 2, "result_id": "Goat leather gloves"},
+                    {"material_id": "Linen cloth", "count": 2, "result_id": "Linen gloves"},
+                    {"material_id": "Piece of frog leather", "count": 2, "result_id": "Batrachian gloves"},
+                    {"material_id": "Piece of snakeskin leather", "count": 2, "result_id": "Snakeskin gloves"}
+                ],
+                "item_type": "Armor",
+                "component_type": "glove interior",
+                "recipe_skill": "Crafting"
+            },
+            "Shoes": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Piece of wolf rat leather", "count": 2, "result_id": "Cheap leather shoes"},
+                    {"material_id": "Piece of wolf leather", "count": 2, "result_id": "Leather shoes"},
+                    {"material_id": "Piece of goat leather", "count": 2, "result_id": "Goat leather shoes"},
+                    {"material_id": "Piece of frog leather", "count": 2, "result_id": "Batrachian shoes"},
+                    {"material_id": "Piece of snakeskin leather", "count": 2, "result_id": "Snakeskin boots"}
+                ],
+                "item_type": "Armor",
+                "component_type": "shoes interior",
+                "recipe_skill": "Crafting"
+            },
+            "Amulet": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Wool cloth", "count": 5, "result_id": "Wool scarf"}
+                ],
+                "item_type": "Amulet",
+                "recipe_skill": "Crafting"
+            },
+            "Cape": {
+                "type": "ComponentlessEquipRecipe",
+                "materials": [
+                    {"material_id": "Processed rat pelt", "count": 12, "result_id": "Rat pelt cape"},
+                    {"material_id": "Processed wolf pelt", "count": 8, "result_id": "Wolf pelt cape"},
+                    {"material_id": "Processed boar hide", "count": 8, "result_id": "Boar hide cape"},
+                    {"material_id": "Processed goat hide", "count": 8, "result_id": "Goat hide cape"},
+                    {"material_id": "Processed bear hide", "count": 8, "result_id": "Bear hide cape"},
+                    {"material_id": "Piece of frog leather", "count": 8, "result_id": "Batrachian cape"}
+                ],
+                "item_type": "Cape",
+                "recipe_skill": "Crafting"
+            }
+        },
+        "items": {
+            "Silver divining rod": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Silver ingot", "count": 3}
+                ],
+                "result": {"result_id": "Silver divining rod", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_skill": "Crafting",
+                "recipe_level": [15, 25]
+            },
+            "Wool cloth": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Wool", "count": 5}
+                ],
+                "result": {"result_id": "Wool cloth", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Crafting",
+                "recipe_level": [5, 15]
+            },
+            "Linen cloth": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Flax", "count": 10}
+                ],
+                "result": {"result_id": "Linen cloth", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Crafting",
+                "recipe_level": [22, 30]
+            },
+            "Glass phial": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Raw Glass", "count": 1}
+                ],
+                "result": {"result_id": "Glass phial", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Crafting"
+            },
+            "Glass bottle": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Raw Glass", "count": 3}
+                ],
+                "result": {"result_id": "Glass bottle", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Crafting"
+            },
+            "Sinew string": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Sinew", "count": 5}
+                ],
+                "result": {"result_id": "Sinew string", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [5, 15],
+                "recipe_skill": "Crafting"
+            },
+            "Flax string": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Flax", "count": 5}
+                ],
+                "result": {"result_id": "Flax string", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [20, 30],
+                "recipe_skill": "Crafting"
+            },
+            "Bonemeal": {
+                "type": "ItemRecipe",
+                "is_unlocked": true,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_type": "animal tooth", "count": 20}
+                ],
+                "result": {"result_id": "Bonemeal", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [1, 12],
+                "recipe_skill": "Crafting"
+            },
+            "Wolf trophy": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "High quality wolf fang", "count": 4}
+                ],
+                "result": {"result_id": "Wolf trophy", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [1, 10],
+                "recipe_skill": "Crafting"
+            },
+            "Boar trophy": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "High quality boar tusk", "count": 4}
+                ],
+                "result": {"result_id": "Boar trophy", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [5, 15],
+                "recipe_skill": "Crafting"
+            },
+            "Mountain goat trophy": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Pristine mountain goat horn", "count": 4}
+                ],
+                "result": {"result_id": "Mountain goat trophy", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Crafting"
+            },
+            "Bear trophy": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Sharp bear claw", "count": 4}
+                ],
+                "result": {"result_id": "Bear trophy", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Crafting"
+            },
+            "Crab trophy": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Giant crab claw", "count": 4}
+                ],
+                "result": {"result_id": "Crab trophy", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Crafting"
+            },
+            "Simple dream catcher": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Piece of willow wood", "count": 1},
+                    {"material_id": "Sinew string", "count": 1}
+                ],
+                "result": {"result_id": "Simple dream catcher", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Crafting",
+                "recipe_level": [10, 20]
+            }
+        }
+    },
+    "woodworking": {
+        "components": {
+            "Short hilt": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed rough wood", "count": 1, "result_id": "Simple wooden short handle"},
+                    {"material_id": "Processed wood", "count": 1, "result_id": "Wooden short handle"},
+                    {"material_id": "Processed ash wood", "count": 1, "result_id": "Ash wood short handle"},
+                    {"material_id": "Processed hickory wood", "count": 1, "result_id": "Hickory short handle"},
+                    {"material_id": "Alchemical Wood", "count": 1, "result_id": "Alchemical wood short handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Woodworking"
+            },
+            "Medium handle": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed rough wood", "count": 2, "result_id": "Simple wooden medium handle"},
+                    {"material_id": "Processed wood", "count": 2, "result_id": "Wooden medium handle"},
+                    {"material_id": "Processed ash wood", "count": 2, "result_id": "Ash wood medium handle"},
+                    {"material_id": "Processed hickory wood", "count": 2, "result_id": "Hickory medium handle"},
+                    {"material_id": "Alchemical Wood", "count": 2, "result_id": "Alchemical wood medium handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Woodworking"
+            },
+            "Long shaft": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed rough wood", "count": 4, "result_id": "Simple wooden long handle"},
+                    {"material_id": "Processed wood", "count": 4, "result_id": "Wooden long handle"},
+                    {"material_id": "Processed ash wood", "count": 4, "result_id": "Ash wood long handle"},
+                    {"material_id": "Processed hickory wood", "count": 4, "result_id": "Hickory long handle"},
+                    {"material_id": "Alchemical Wood", "count": 4, "result_id": "Alchemical wood long handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Woodworking"
+            },
+            "Shield base": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed rough wood", "count": 6, "result_id": "Simple wooden shield base"},
+                    {"material_id": "Processed wood", "count": 6, "result_id": "Wooden shield base"},
+                    {"material_id": "Processed ash wood", "count": 6, "result_id": "Ash wood shield base"},
+                    {"material_id": "Processed hickory wood", "count": 6, "result_id": "Hickory shield base"},
+                    {"material_id": "Alchemical Wood", "count": 6, "result_id": "Alchemical wood shield base"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Woodworking",
+                "component_type": "shield base"
+            },
+            "Shield handle": {
+                "type": "ComponentRecipe",
+                "materials": [
+                    {"material_id": "Processed rough wood", "count": 4, "result_id": "Simple wooden shield handle"},
+                    {"material_id": "Processed wood", "count": 4, "result_id": "Wooden shield handle"},
+                    {"material_id": "Processed ash wood", "count": 4, "result_id": "Ash wood shield handle"},
+                    {"material_id": "Processed hickory wood", "count": 4, "result_id": "Hickory shield handle"},
+                    {"material_id": "Alchemical Wood", "count": 4, "result_id": "Alchemical wood shield handle"}
+                ],
+                "item_type": "Component",
+                "recipe_skill": "Woodworking",
+                "component_type": "shield handle"
+            }
+        },
+        "items": {
+            "Processed rough wood": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Rough wood log", "count": 1}
+                ],
+                "result": {"result_id": "Processed rough wood", "count": 3},
+                "success_chance": [0.3, 1],
+                "recipe_level": [1, 8],
+                "recipe_skill": "Woodworking"
+            },
+            "Processed wood": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Wood log", "count": 1}
+                ],
+                "result": {"result_id": "Processed wood", "count": 3},
+                "success_chance": [0.3, 1],
+                "recipe_level": [6, 16],
+                "recipe_skill": "Woodworking"
+            },
+            "Processed ash wood": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Ash wood log", "count": 1}
+                ],
+                "result": {"result_id": "Processed ash wood", "count": 3},
+                "success_chance": [0.3, 1],
+                "recipe_level": [11, 22],
+                "recipe_skill": "Woodworking"
+            },
+            "Processed hickory wood": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Hickory wood log", "count": 1}
+                ],
+                "result": {"result_id": "Processed hickory wood", "count": 3},
+                "success_chance": [0.3, 1],
+                "recipe_level": [17, 28],
+                "recipe_skill": "Woodworking"
+            },
+            "Wicker": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Piece of willow wood", "count": 6}
+                ],
+                "result": {"result_id": "Wicker", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [7, 17],
+                "recipe_skill": "Woodworking"
+            },
+            "Willow bark": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Piece of willow wood", "count": 2}
+                ],
+                "result": {"result_id": "Willow bark", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [10, 25],
+                "recipe_skill": "Woodworking"
+            },
+            "Makeshift fishing pole": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Processed rough wood", "count": 4},
+                    {"material_id": "Wool", "count": 1}
+                ],
+                "result": {"result_id": "Makeshift fishing pole", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [1, 12],
+                "recipe_skill": "Woodworking"
+            },
+            "Wooden fishing pole": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Processed wood", "count": 4},
+                    {"material_id": "Sinew string", "count": 1},
+                    {"material_id": "Metal fishing hook", "count": 1}
+                ],
+                "result": {"result_id": "Wooden fishing pole", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [7, 17],
+                "recipe_skill": "Woodworking"
+            },
+            "Ash wood fishing pole": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Processed ash wood", "count": 4},
+                    {"material_id": "Sinew string", "count": 1},
+                    {"material_id": "Metal fishing hook", "count": 1}
+                ],
+                "result": {"result_id": "Ash wood fishing pole", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [12, 22],
+                "recipe_skill": "Woodworking"
+            },
+            "Hickory wood fishing pole": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Processed hickory wood", "count": 4},
+                    {"material_id": "Flax string", "count": 1},
+                    {"material_id": "Metal fishing hook", "count": 1}
+                ],
+                "result": {"result_id": "Hickory wood fishing pole", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [17, 27],
+                "recipe_skill": "Woodworking"
+            },
+            "Alchemical wood fishing pole": {
+                "type": "ItemRecipe",
+                "recipe_type": "equipment",
+                "materials": [
+                    {"material_id": "Alchemical Wood", "count": 4},
+                    {"material_id": "Flax string", "count": 1},
+                    {"material_id": "Metal fishing hook", "count": 1}
+                ],
+                "result": {"result_id": "Alchemical wood fishing pole", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [22, 32],
+                "recipe_skill": "Woodworking"
+            }
+        }
+    },
+    "butchering": {
+        "items": {
+            "Piece of wolf rat leather": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Rat pelt", "count": 6}
+                ],
+                "result": {"result_id": "Piece of wolf rat leather", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [1, 5],
+                "recipe_skill": "Butchering"
+            },
+            "Piece of wolf leather": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Wolf pelt", "count": 6}
+                ],
+                "result": {"result_id": "Piece of wolf leather", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [1, 10]
+            },
+            "Piece of boar leather": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Boar hide", "count": 6}
+                ],
+                "result": {"result_id": "Piece of boar leather", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [5, 15]
+            },
+            "Piece of goat leather": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Mountain goat hide", "count": 6}
+                ],
+                "result": {"result_id": "Piece of goat leather", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [5, 15]
+            },
+            "Piece of bear leather": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Bear hide", "count": 6}
+                ],
+                "result": {"result_id": "Piece of bear leather", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [12, 25]
+            },
+            "Piece of frog leather": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Frog hide", "count": 4},
+                    {"material_id": "Belmart leaf", "count": 2}
+                ],
+                "result": {"result_id": "Piece of frog leather", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [12, 25],
+                "recipe_skill": "Butchering"
+            },
+            "Piece of alligator leather": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Alligator skin", "count": 6}
+                ],
+                "result": {"result_id": "Piece of alligator leather", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [22, 30]
+            },
+            "Piece of snakeskin leather": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Giant snake skin", "count": 6}
+                ],
+                "result": {"result_id": "Piece of snakeskin leather", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [22, 30]
+            },
+            "Turtle shellplate": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Turtle shell", "count": 10}
+                ],
+                "result": {"result_id": "Turtle shellplate", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_skill": "Butchering",
+                "recipe_level": [27, 37]
+            },
+            "Processed rat pelt": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Rat pelt", "count": 6}
+                ],
+                "result": {"result_id": "Processed rat pelt", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [1, 5],
+                "recipe_skill": "Butchering"
+            },
+            "Processed wolf pelt": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Wolf pelt", "count": 6}
+                ],
+                "result": {"result_id": "Processed wolf pelt", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [1, 10],
+                "recipe_skill": "Butchering"
+            },
+            "Processed boar hide": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Boar hide", "count": 6}
+                ],
+                "result": {"result_id": "Processed boar hide", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [5, 15],
+                "recipe_skill": "Butchering"
+            },
+            "Processed goat hide": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Mountain goat hide", "count": 6}
+                ],
+                "result": {"result_id": "Processed goat hide", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [5, 15],
+                "recipe_skill": "Butchering"
+            },
+            "Processed bear hide": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Bear hide", "count": 6}
+                ],
+                "result": {"result_id": "Processed bear hide", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [12, 25],
+                "recipe_skill": "Butchering"
+            },
+            "Rat meat chunks": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Rat tail", "count": 3}
+                ],
+                "result": {"result_id": "Rat meat chunks", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [1, 5],
+                "recipe_skill": "Butchering"
+            },
+            "Fish fillet": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_type": "large fish", "count": 1}
+                ],
+                "result": {"result_id": "Fish fillet", "count": 3},
+                "success_chance": [0.4, 1],
+                "recipe_level": [10, 15],
+                "recipe_skill": "Butchering"
+            },
+            "Processed weak monster bone": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Weak monster bone", "count": 5}
+                ],
+                "result": {"result_id": "Processed weak monster bone", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Butchering"
+            },
+            "High quality wolf fang": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Wolf fang", "count": 50}
+                ],
+                "result": {"result_id": "High quality wolf fang", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [1, 7],
+                "recipe_skill": "Butchering"
+            },
+            "High quality boar tusk": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Boar tusk", "count": 50}
+                ],
+                "result": {"result_id": "High quality boar tusk", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [5, 12],
+                "recipe_skill": "Butchering"
+            },
+            "Pristine mountain goat horn": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Mountain goat horn", "count": 50}
+                ],
+                "result": {"result_id": "Pristine mountain goat horn", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [10, 17],
+                "recipe_skill": "Butchering"
+            },
+            "Sharp bear claw": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Bear claw", "count": 50}
+                ],
+                "result": {"result_id": "Sharp bear claw", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [13, 20],
+                "recipe_skill": "Butchering"
+            },
+            "Giant crab claw": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Crab claw", "count": 50}
+                ],
+                "result": {"result_id": "Giant crab claw", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [18, 25],
+                "recipe_skill": "Butchering"
+            },
+            "Sinew": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_type": "raw meat", "count": 2}
+                ],
+                "result": {"result_id": "Sinew", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Butchering"
+            }
+        }
+    },
+    "smelting": {
+        "items": {
+            "Low quality iron ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Low quality iron ore", "count": 5},
+                    {"material_type": "coal", "count": 1}
+                ],
+                "result": {"result_id": "Low quality iron ingot", "count": 1},
+                "success_chance": [0.6, 1],
+                "recipe_level": [1, 5],
+                "recipe_skill": "Smelting"
+            },
+            "White iron ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "White iron ore", "count": 5},
+                    {"material_type": "coal", "count": 1}
+                ],
+                "result": {"result_id": "White iron ingot", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Smelting"
+            },
+            "Black iron ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Black iron ore", "count": 5},
+                    {"material_type": "coal", "count": 1}
+                ],
+                "result": {"result_id": "Black iron ingot", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Smelting"
+            },
+            "White steel ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "White iron ore", "count": 5},
+                    {"material_id": "Heavy sand", "count": 3},
+                    {"material_type": "coal", "count": 2}
+                ],
+                "result": {"result_id": "White steel ingot", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [25, 35],
+                "recipe_skill": "Smelting"
+            },
+            "Black steel ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Black iron ore", "count": 5},
+                    {"material_id": "Heavy sand", "count": 3},
+                    {"material_type": "coal", "count": 2}
+                ],
+                "result": {"result_id": "Black steel ingot", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [25, 35],
+                "recipe_skill": "Smelting"
+            },
+            "Iron ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Iron ore", "count": 5},
+                    {"material_type": "coal", "count": 1}
+                ],
+                "result": {"result_id": "Iron ingot", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [5, 15],
+                "recipe_skill": "Smelting"
+            },
+            "Silver ingot": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Silver ore", "count": 5},
+                    {"material_type": "coal", "count": 1}
+                ],
+                "result": {"result_id": "Silver ingot", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [7, 17],
+                "recipe_skill": "Smelting"
+            },
+            "Steel ingot (inefficient)": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Iron ore", "count": 5},
+                    {"material_id": "Atratan ore", "count": 4},
+                    {"material_type": "coal", "count": 2}
+                ],
+                "result": {"result_id": "Steel ingot", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Smelting",
+                "is_unlocked": false
+            },
+            "Raw Glass": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Silica Sand", "count": 2},
+                    {"material_id": "Potash", "count": 1}
+                ],
+                "result": {"result_id": "Raw Glass", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Smelting"
+            },
+            "Alchemical Wood": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Sulfur", "count": 5},
+                    {"material_id": "Potash", "count": 5},
+                    {"material_id": "Processed hickory wood", "count": 2}
+                ],
+                "result": {"result_id": "Alchemical Wood", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Smelting"
+            },
+            "Charcoal": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "materials": [
+                    {"material_type": "raw wood", "count": 1}
+                ],
+                "result": {"result_id": "Charcoal", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [1, 10],
+                "recipe_skill": "Smelting"
+            }
+        }
+    },
+    "cooking": {
+        "items": {
+            "Animal fat": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Boar meat", "count": 3}
+                ],
+                "result": {"result_id": "Animal fat", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [7, 20],
+                "recipe_skill": "Cooking"
+            },
+            "Cooked carrot": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Carrot", "count": 2}
+                ],
+                "result": {"result_id": "Cooked carrot", "count": 1},
+                "success_chance": [0.8, 1],
+                "recipe_level": [1, 4],
+                "recipe_skill": "Cooking"
+            },
+            "Cooked potato": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Potato", "count": 2}
+                ],
+                "result": {"result_id": "Cooked potato", "count": 1},
+                "success_chance": [0.8, 1],
+                "recipe_level": [1, 4],
+                "recipe_skill": "Cooking"
+            },
+            "Roasted rat meat": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Rat meat chunks", "count": 2}
+                ],
+                "result": {"result_id": "Roasted rat meat", "count": 1},
+                "success_chance": [0.7, 1],
+                "recipe_level": [1, 5],
+                "recipe_skill": "Cooking"
+            },
+            "Roasted purified rat meat": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Rat meat chunks", "count": 2},
+                    {"material_id": "Belmart leaf", "count": 1}
+                ],
+                "result": {"result_id": "Roasted purified rat meat", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [1, 10],
+                "recipe_skill": "Cooking"
+            },
+            "Fried pork": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Boar meat", "count": 2}
+                ],
+                "result": {"result_id": "Fried pork", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [7, 15],
+                "recipe_skill": "Cooking"
+            },
+            "Fried goat meat": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Goat meat", "count": 2}
+                ],
+                "result": {"result_id": "Fried goat meat", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [10, 15],
+                "recipe_skill": "Cooking"
+            },
+            "Pork roast": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Boar meat", "count": 2},
+                    {"material_id": "Cooking herbs", "count": 3}
+                ],
+                "result": {"result_id": "Pork roast", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Cooking"
+            },
+            "Goat stew": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Goat meat", "count": 2},
+                    {"material_id": "Cooking herbs", "count": 2}
+                ],
+                "result": {"result_id": "Goat stew", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [12, 22],
+                "recipe_skill": "Cooking"
+            },
+            "Bread kwas": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_type": "bread", "count": 2},
+                    {"material_id": "Glass bottle", "count": 1}
+                ],
+                "result": {"result_id": "Bread kwas", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [10, 15],
+                "recipe_skill": "Cooking"
+            },
+            "Fish skewer": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_type": "small fish", "count": 5}
+                ],
+                "result": {"result_id": "Fish skewer", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [1, 10],
+                "recipe_skill": "Cooking"
+            },
+            "Fried fish": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_type": "medium fish", "count": 1}
+                ],
+                "result": {"result_id": "Fried fish", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [7, 15],
+                "recipe_skill": "Cooking"
+            },
+            "Fish steak": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Fish fillet", "count": 1},
+                    {"material_id": "Cooking herbs", "count": 1}
+                ],
+                "result": {"result_id": "Fish steak", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [7, 15],
+                "recipe_skill": "Cooking"
+            },
+            "Fried frog meat": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Frog meat", "count": 2}
+                ],
+                "result": {"result_id": "Fried frog meat", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [12, 20],
+                "recipe_skill": "Cooking"
+            },
+            "Kingsized frog legs": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Frog meat", "count": 2},
+                    {"material_id": "Cooking herbs", "count": 2}
+                ],
+                "result": {"result_id": "Kingsized frog legs", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [15, 25],
+                "recipe_skill": "Cooking"
+            },
+            "Alligator jerky": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Alligator meat", "count": 2}
+                ],
+                "result": {"result_id": "Alligator jerky", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Cooking"
+            },
+            "Snake jerky": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Giant snake meat", "count": 2}
+                ],
+                "result": {"result_id": "Snake jerky", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Cooking"
+            },
+            "Turtle jerky": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Turtle meat", "count": 2}
+                ],
+                "result": {"result_id": "Turtle jerky", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Cooking"
+            },
+            "Swampland skewer": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Alligator meat", "count": 1},
+                    {"material_id": "Giant snake meat", "count": 1},
+                    {"material_id": "Turtle meat", "count": 1},
+                    {"material_id": "Wild garlic", "count": 1},
+                    {"material_id": "Wild onion", "count": 1},
+                    {"material_id": "Cooking herbs", "count": 1}
+                ],
+                "result": {"result_id": "Swampland skewer", "count": 1},
+                "success_chance": [0.3, 1],
+                "recipe_level": [27, 37],
+                "recipe_skill": "Cooking"
+            },
+            "Crab bisque": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Crab meat", "count": 3},
+                    {"material_id": "Cooking herbs", "count": 1},
+                    {"material_id": "Wild potato", "count": 2},
+                    {"material_id": "Wild onion", "count": 1},
+                    {"material_id": "Glass bottle", "count": 1}
+                ],
+                "result": {"result_id": "Crab bisque", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Cooking"
+            },
+            "Clam broth": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Clam", "count": 3},
+                    {"material_id": "Cooking herbs", "count": 1},
+                    {"material_id": "Wild garlic", "count": 1},
+                    {"material_id": "Glass bottle", "count": 1}
+                ],
+                "result": {"result_id": "Clam broth", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Cooking"
+            },
+            "Turtle soup": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Turtle meat", "count": 1},
+                    {"material_id": "Cooking herbs", "count": 1},
+                    {"material_id": "Wild potato", "count": 1},
+                    {"material_id": "Glass bottle", "count": 1}
+                ],
+                "result": {"result_id": "Turtle soup", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [22, 30],
+                "recipe_skill": "Cooking"
+            },
+            "Basin gumbo": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "usable",
+                "materials": [
+                    {"material_id": "Alligator meat", "count": 3},
+                    {"material_id": "Turtle meat", "count": 3},
+                    {"material_id": "Crab meat", "count": 6},
+                    {"material_id": "Clam", "count": 6},
+                    {"material_id": "Wild potato", "count": 6},
+                    {"material_id": "Wild garlic", "count": 4},
+                    {"material_id": "Wild onion", "count": 4},
+                    {"material_id": "Animal fat", "count": 3},
+                    {"material_id": "Cooking herbs", "count": 3},
+                    {"material_id": "Belmart leaf", "count": 2},
+                    {"material_id": "Glass bottle", "count": 1}
+                ],
+                "result": {"result_id": "Basin gumbo", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [35, 60],
+                "recipe_skill": "Cooking"
+            }
+        }
+    },
+    "alchemy": {
+        "items": {
+            "Potash": {
+                "type": "ItemRecipe",
+                "is_unlocked": false,
+                "recipe_type": "material",
+                "materials": [
+                    {"material_id": "Charcoal", "count": 8}
+                ],
+                "result": {"result_id": "Potash", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Alchemy"
+            },
+            "Weak healing powder": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Golmoon leaf", "count": 5}
+                ],
+                "result": {"result_id": "Weak healing powder", "count": 1},
+                "success_chance": [0.4, 1],
+                "recipe_level": [1, 10],
+                "recipe_skill": "Alchemy"
+            },
+            "Healing powder": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Golmoon leaf", "count": 3},
+                    {"material_id": "Silver thistle", "count": 3}
+                ],
+                "result": {"result_id": "Healing powder", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [5, 15],
+                "recipe_skill": "Alchemy"
+            },
+            "Potent healing powder": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Willow bark", "count": 3},
+                    {"material_id": "Silver thistle", "count": 3}
+                ],
+                "result": {"result_id": "Potent healing powder", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Alchemy"
+            },
+            "Oneberry juice": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Oneberry", "count": 10},
+                    {"material_id": "Glass phial", "count": 1}
+                ],
+                "result": {"result_id": "Oneberry juice", "count": 1},
+                "success_chance": [0.5, 1],
+                "recipe_level": [2, 12],
+                "recipe_skill": "Alchemy"
+            },
+            "Healing potion": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Oneberry", "count": 8},
+                    {"material_id": "Silver thistle", "count": 4},
+                    {"material_id": "Glass phial", "count": 1}
+                ],
+                "result": {"result_id": "Healing potion", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [7, 17],
+                "recipe_skill": "Alchemy"
+            },
+            "Healing balm": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Oneberry", "count": 10},
+                    {"material_id": "Golmoon leaf", "count": 5},
+                    {"material_id": "Animal fat", "count": 1}
+                ],
+                "result": {"result_id": "Healing balm", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [7, 15],
+                "recipe_skill": "Alchemy"
+            },
+            "Thick healing balm": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Healing balm", "count": 1},
+                    {"material_id": "Willow bark", "count": 2}
+                ],
+                "result": {"result_id": "Thick healing balm", "count": 2},
+                "success_chance": [0.1, 1],
+                "recipe_level": [12, 20],
+                "recipe_skill": "Alchemy"
+            },
+            "Potion of sapping": {
+                "type": "ItemRecipe",
+                "recipe_type": "usable",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Tree sap", "count": 2},
+                    {"material_id": "Glass phial", "count": 1}
+                ],
+                "result": {"result_id": "Potion of sapping", "count": 1},
+                "success_chance": [0.2, 1],
+                "recipe_level": [3, 15],
+                "recipe_skill": "Alchemy"
+            },
+            "Sulfur": {
+                "type": "ItemRecipe",
+                "recipe_type": "material",
+                "is_unlocked": false,
+                "materials": [
+                    {"material_id": "Low quality iron ore", "count": 10}
+                ],
+                "result": {"result_id": "Sulfur", "count": 1},
+                "success_chance": [0.1, 1],
+                "recipe_level": [10, 20],
+                "recipe_skill": "Alchemy"
+            }
+        }
+    }
+}

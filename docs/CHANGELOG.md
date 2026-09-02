@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 126 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 127 -->
 
 # Changelog
 
@@ -20,6 +20,66 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### the recipes into JSON, and the coverage that had to be counted back
+
+No version. P-42 step 2, second family: `crafting_recipes.js` goes from **2,277 lines to
+761**, and `src/data/recipes.json` holds all 148 recipes.
+
+**Cleaner than the materials were.** 148 declarations, **none** carrying a function - so
+unlike items.js there is no exception left behind - and all 148 names equal to their key, so
+`name` is derived and 148 redundant strings are gone with the chance of one drifting.
+
+The type is carried per row rather than inferred from the subcategory, because the
+subcategory does not determine it: `equipment` holds EquipmentRecipe (11), ComponentRecipe
+(6) and ComponentlessEquipRecipe (1).
+
+**Proved the same way: 148 of 148 constructed recipes identical**, comparing every non-method
+field plus the constructor's own name, before against after.
+
+**And the interesting half, which is why this entry is long.** The materials taught that
+moving a family breaks the checks that read the file as text. The recipes taught what that
+failure actually looks like: **255 errors**, and not one of them said "this is broken". They
+said *"nothing can give the player Mountain goat trophy"*, *"nothing can give the player Bear
+trophy"* - the reachability check had lost sight of every recipe at once and was reporting
+perfectly craftable items as unreachable. **A derivation that reads the wrong place does not
+fail, it lies.**
+
+So `tests/lib/recipe-rows.mjs` is the companion to `item-keys.mjs`, and six derivations now
+ask it for fields instead of reading text: recipe keys in `save.mjs`, `result_id` and
+`material_id` in `items.mjs`, `success_chance` ranges in `locales.mjs`, `material_type` in
+`display-names.mjs`. It walks nested rows, which is what lets one call see `material_id`
+inside `materials: [...]` and `result_id` inside `result: {...}`.
+
+**Two silent coverage losses caught by counting, not by failing.** This is the part worth
+keeping.
+
+- `interpolated pairs` fell from **229 to 125** and nothing failed. That is exactly 104
+  recipes' worth of `success_chance` ranges no longer bounded - the check was still green
+  while checking 45% less. Restored through `recipe_ranges`, back to 229.
+- `registry value names` still said 21, but `material_type` had quietly narrowed: items.js
+  declares **3** and the recipes carry **9**, six of them - metal, coal, raw meat and the
+  three fish sizes - declared nowhere else. Dropping `crafting_recipes.js` from that check's
+  file list lost all six without moving the total, because the total counts fields rather
+  than values.
+
+**And one apparent loss that was not one.** `recipe item names` fell from 671 to 423, which
+looks like the same failure and is not: the old count counted every textual occurrence and
+the new one counts distinct names. Verified rather than assumed - the distinct sets are
+**361 before and 361 after, none missed.** The first attempt at that verification reported
+one missing name, `Simple long wooden shaft`, and the probe was wrong rather than the code:
+it appears only inside `//` comments, and the old check stripped comments while my probe did
+not.
+
+**The data-file guard now covers both families**, as one rule applied to two pairs: a source
+file that imports JSON, and the helper that has to read the same JSON back. Negative-tested
+by dropping each file from its list, which reports the cause alongside the symptoms.
+
+**Both files reformatted to read like tables.** `json.dumps` at indent 4 spent 27 lines per
+recipe, most of it breaking `{material_id, count}` across four lines each: 4,093 lines for
+148 recipes. One material per line brings it to 1,789, and materials.json to 113 lines for
+111 rows. The reformat asserts the parsed content is identical, so it is a layout change and
+nothing else.
 
 ### the materials out of items.js and into JSON, proved rather than believed
 

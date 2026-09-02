@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 150 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 151 -->
 
 # Proposals
 
@@ -584,8 +584,23 @@ items.js**, so the move produced 171 check errors naming materials that worked p
 `tests/lib/item-keys.mjs` answers that from both places now, and
 `check_item_data_files_are_all_read` fails if a new data file is not listed there.
 
-**Next: `crafting_recipes.js`,** 148 declarations and none with a function. Then the models,
-which is the same reading done once rather than twice.
+**The second family is done too.** All 148 recipes are in `src/data/recipes.json`;
+`crafting_recipes.js` is 761 lines rather than 2,277. 148 of 148 constructed recipes
+identical before and after. `tests/lib/recipe-rows.mjs` is the companion helper, and six
+derivations read fields off rows instead of text.
+
+**What the recipes taught, beyond what the materials did.** Moving them produced 255 errors
+that all said *"nothing can give the player this"* rather than "this is broken" - a
+derivation reading the wrong place does not fail, it lies. And two coverage losses were
+silent until counted: `interpolated pairs` fell 229 to 125 (104 recipes' success_chance
+ranges unbounded, check still green) and `material_type` narrowed from 9 values to 3 without
+the total moving. **So the method for the remaining families is: capture the coverage counts
+first, and compare them after.**
+
+**Next: the models.** Both data files now have a shape that is asserted in three places at
+once - the loader, the helper and the guard - which is the argument for one model per family
+rather than the three. That is the same reading done once instead of thrice, and it is where
+TS2353 and TS2740 (two thirds of the type errors) actually live.
 
 **Sequenced:** JSON + models for `items.js` and `crafting_recipes.js` first, because it is
 the one with a measured 404-to-1 argument behind it. Then the folder layout, once the files

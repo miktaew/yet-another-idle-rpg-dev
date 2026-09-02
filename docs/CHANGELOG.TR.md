@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 126 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 127 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,65 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### tarifler JSON'a, ve geri sayılması gereken kapsam
+
+Sürüm yok. P-42 2. adım, ikinci aile: `crafting_recipes.js` **2.277 satırdan 761'e** iniyor
+ve `src/data/recipes.json` 148 tarifin tamamını tutuyor.
+
+**Malzemelerden temizdi.** 148 bildirim, **hiçbiri** fonksiyon taşımıyor — yani items.js'in
+aksine geride bırakılan bir istisna yok — ve 148 adın hepsi anahtarına eşit; dolayısıyla
+`name` türetiliyor ve 148 gereksiz dizge, birinin kaymaya başlama olasılığıyla birlikte
+gidiyor.
+
+Tip, alt kategoriden çıkarsanmak yerine satır başına taşınıyor; çünkü alt kategori onu
+belirlemiyor: `equipment` içinde EquipmentRecipe (11), ComponentRecipe (6) ve
+ComponentlessEquipRecipe (1) var.
+
+**Aynı yöntemle kanıtlandı: kurulan 148 tarifin 148'i birebir aynı** — metot olmayan her alan
+artı kurucunun kendi adı, öncesi ile sonrası karşılaştırılarak.
+
+**Ve bu girdinin uzun olma sebebi olan ilginç yarısı.** Malzemeler, bir aileyi taşımanın
+dosyayı metin olarak okuyan kontrolleri kırdığını öğretti. Tarifler ise o arızanın gerçekte
+neye benzediğini öğretti: **255 hata** ve hiçbiri "bu bozuk" demiyordu. Şunu diyorlardı:
+*"oyuncuya Mountain goat trophy'yi hiçbir şey veremez"*, *"oyuncuya Bear trophy'yi hiçbir şey
+veremez"* — erişilebilirlik kontrolü bütün tarifleri bir anda gözden kaybetmiş ve pekâlâ
+yapılabilir eşyaları erişilemez diye bildiriyordu. **Yanlış yere bakan bir türetme düşmüyor,
+yalan söylüyor.**
+
+Bu yüzden `tests/lib/recipe-rows.mjs`, `item-keys.mjs`in eşi ve altı türetme artık metin
+okumak yerine ondan alan istiyor: `save.mjs`te tarif anahtarları, `items.mjs`te `result_id`
+ve `material_id`, `locales.mjs`te `success_chance` aralıkları, `display-names.mjs`te
+`material_type`. İç içe satırları yürüyor; tek bir çağrının `materials: [...]` içindeki
+`material_id`yi ve `result: {...}` içindeki `result_id`yi görmesini sağlayan da bu.
+
+**Düşerek değil sayılarak yakalanan iki sessiz kapsam kaybı.** Saklanmaya değer kısım bu.
+
+- `interpolated pairs` **229'dan 125'e** düştü ve hiçbir şey düşmedi. Bu tam olarak 104
+  tarifin `success_chance` aralığının artık sınırlanmadığı anlamına geliyor — kontrol %45
+  daha az şey kontrol ederken yeşil kalıyordu. `recipe_ranges` ile geri getirildi, yine 229.
+- `registry value names` hâlâ 21 diyordu ama `material_type` sessizce daralmıştı: items.js
+  **3** tane bildiriyor, tarifler **9** taşıyor ve altısı — metal, coal, raw meat ve üç balık
+  boyu — başka hiçbir yerde bildirilmiyor. O kontrolün dosya listesinden
+  `crafting_recipes.js`i düşürmek altısını da kaybetti ve toplam kıpırdamadı, çünkü toplam
+  değerleri değil alanları sayıyor.
+
+**Ve kayıp gibi görünüp kayıp olmayan bir şey.** `recipe item names` 671'den 423'e düştü; aynı
+arıza gibi görünüyor ama değil: eski sayı her metinsel geçişi sayıyordu, yenisi ayrık adları
+sayıyor. Varsayılmadı, doğrulandı — ayrık kümeler **öncesinde 361, sonrasında 361, hiçbiri
+eksik değil.** O doğrulamanın ilk denemesi eksik bir ad bildirdi, `Simple long wooden shaft`;
+yanlış olan kod değil sondaydı: o ad yalnızca `//` yorumlarının içinde geçiyor ve eski kontrol
+yorumları soyuyordu, benim sondam soymuyordu.
+
+**Veri dosyası muhafızı artık iki aileyi de kapsıyor**: JSON import eden bir kaynak dosya ve
+aynı JSON'u geri okumak zorunda olan yardımcı — tek kural, iki çifte uygulanmış. Her dosyayı
+kendi listesinden düşürerek negatif test edildi; sebebi semptomlarla birlikte bildiriyor.
+
+**İki dosya da tablo gibi okunacak biçimde yeniden düzenlendi.** `json.dumps` indent 4'te
+tarif başına 27 satır harcıyordu, çoğu `{material_id, count}`u dörde bölmekle: 148 tarif için
+4.093 satır. Satır başına bir malzeme bunu 1.789'a, materials.json'ı da 111 satır için 113'e
+indiriyor. Yeniden düzenleme, ayrıştırılmış içeriğin birebir aynı olduğunu doğruluyor; yani
+yalnızca bir yerleşim değişikliği.
 
 ### malzemeler items.js'ten çıkıp JSON'a girdi; inanılarak değil kanıtlanarak
 

@@ -28,6 +28,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { load_generated_item_templates } from "./lib/generated-items.mjs";
 import { declared_item_keys } from "./lib/item-keys.mjs";
+import { recipe_rows } from "./lib/recipe-rows.mjs";
 
 const repo_root = path.resolve(import.meta.dirname, "..");
 const errors = [];
@@ -95,7 +96,8 @@ const registries = {
     books: declared("src/items.js", /book_stats\["([^"]+)"\]\s*=\s*new /g),
     // Recipes are grouped per skill and then per kind, and the same recipe name
     // legitimately appears under several skills, so this is a set of NAMES.
-    recipes: declared("src/crafting_recipes.js", /\.(?:items|components|equipment)\["([^"]+)"\]\s*=\s*new /g),
+    //Both places, since the recipes moved into JSON (P-42 step 2).
+    recipes: new Set(recipe_rows(repo_root).map(row => row.key)),
 };
 
 /** Recipe names in the save, which are nested skill -> kind -> name. */
