@@ -105,7 +105,8 @@ import { check_every_guild_rank_can_be_given_work,
     check_a_restored_board_drops_jobs_that_name_nothing,
     check_a_gather_job_counts_every_stack,
     check_a_hunt_job_counts_only_its_own_kills,
-    check_every_hunt_target_can_be_counted } from "./checks/guild.mjs";
+    check_every_hunt_target_can_be_counted,
+    check_every_guild_rank_can_shop } from "./checks/guild.mjs";
 import { check_constructors_do_not_test_fields_before_setting_them }
     from "./checks/constructors.mjs";
 import { check_the_sighting_can_land_and_then_stops,
@@ -255,6 +256,7 @@ await check_a_restored_board_drops_jobs_that_name_nothing();
 await check_a_gather_job_counts_every_stack();
 await check_a_hunt_job_counts_only_its_own_kills();
 await check_every_hunt_target_can_be_counted();
+await check_every_guild_rank_can_shop();
 await check_constructors_do_not_test_fields_before_setting_them();
 await check_the_sighting_can_land_and_then_stops();
 await check_the_sighting_places_are_the_traced_places();

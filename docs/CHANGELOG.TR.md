@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 128 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 129 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,70 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.48 - loncanın levazımcısı ve P-41'in bitişi
+
+Loncanın son parçası ve tasarımı Q-14'ün kalanında karara bağlanmıştı: parçalar, itibar
+fiyatıyla — çünkü kimsenin satmadığı parçalar, bir dükkânın sunabileceği ne kopya ne de güç
+eğrisi olan tek şey.
+
+**İnanılmadı, ölçüldü: oyundaki 212 parçanın 197'sini hiçbir tüccar satmıyor** — tier 1'de 15,
+tier 2'de 29, tier 3'te 31, tier 4'te 71, tier 5'te 51. Öneri 175 diyordu; o yazıldığından
+beri içerik büyümüş.
+
+**"İtibar fiyatıyla" ifadesinin bir yerinin karara bağlanması gerekiyordu, çünkü apaçık okuma
+merdiveni bozuyor.** İtibar harcamak alıcıyı rütbe düşürürdü: kademe *itibarın kendisi* (Q-7),
+yani bir parça almak, onu almayı sağlayan kademeye mal olurdu. Bu yüzden itibar **kapı**, para
+ise fiyat — ve fiyat zaten itibara cevap veriyor, çünkü `getProfitMargin` bir tüccarın marjını
+pazar bölgesinin itibarına göre düşürüyor. Loncanın **hiç pazar bölgesi yoktu**, yani kendi
+itibarı kendi tezgâhında hiçbir şey ifade etmiyordu; `market_region: "Guild"` vermek o satırın
+Lonca itibarını okumasını sağlıyor. Yeni bir şey yok, harcanan bir şey yok ve kademe
+tırmandıkça tezgâh ucuzluyor.
+
+Bu aynı zamanda loncaya kendi doygunluk kovasını veriyor, ki bu tesadüf değil doğru: bir
+kalkan gövdesi selinin meydanın sattığı hiçbir şeyle ilgisi yok. Kasabaya sızıyor ve daha
+ileri gitmiyor; Kasaba da Slums'a sızdığı için sıra evler bunu ikinci elden duyuyor.
+
+**Mekanizma sıra evlerin mekanizması, yeniden kullanılmış.** Slums tüccarının
+`inventory_template`i çoktan `character.reputation.Slums`u okuyup üç listeden birini döndüren
+bir fonksiyon ve `stock_lists` hepsini bildiriyor; böylece Keşifler paneli dükkânın neyi
+tutabileceğini biliyor. Levazımcı, Lonca kademesine karşı aynı şekil.
+
+**Raflar türetilmiş, kademe bantları da türetilmiş.** Her raf, başka hiçbir stok listesinin
+taşımadığı bir kademenin bütün parçaları — 197 adın elle yazılmış listesi bir sürüm içinde
+yanlış olurdu. Bantlar beş kademeyi dokuz basamağa oransal olarak eşliyor; bu da onları F, D,
+B, S ve SSS'e koyuyor: tepede bilerek dik, çünkü Q-14'ün tavanı panonun ödemesini tam olarak o
+en üst basamakta durduruyor, yani son raf bir satın alma değil bütün tırmanış.
+
+**Kontrollerin reddettiği üç şey, her biri gerçek bir boşluk.** İlkini ve en kötüsünü
+`check:bundle` yakaladı: traders.js hâlâ değerlendirilirken çağrılan
+`Object.entries(item_templates)`, *"Cannot convert undefined or null to object"* fırlatıyordu
+— kötü bir raf değil, **boş bir sayfa**. traders.js ile items.js bilerek bir döngüde ve o
+dosyadaki `item_templates`in diğer her kullanımı sonradan koşan bir fonksiyonun içinde;
+benimki değildi. Raflar artık ilk kullanımda doluyor.
+
+Sonra ikisi, ki bunlar kontrollerin varsayımlarının benim kod şeklimle karşılaşmasıydı,
+ikisinden birinin arızası değil. Bir dükkânın listelerini doğrulayan kontrol, çift tırnaklı
+her dizgeyi `inventory_template` ifadesinden çekiyor — yani bir şablon dizgesi hiç raf adı
+göstermiyordu ve aynı ifadedeki `character.reputation["Guild"]` ona "Guild" adlı bir raf
+bildirtti. Bildirilen bir listenin var olduğunu doğrulayan kontrol ise
+`inventory_templates[...]` atamalarını kaynaktan okuyor; yani değişkenle atanan raflar
+görünmezdi. İki varsayım da doğru olan varsayım: **bir kontrolün bulamadığı raf, bir insanın
+da grepleyemediği raftır.** Adlar yazıldı ve itibar kendi fonksiyonunun içinde okunuyor.
+
+Kontrollerin istediği son ikisi düpedüz eksikti: `name guild quartermaster` satırı yoktu ve
+dükkânı açan bir şey yoktu. Kâtibin pano satırı onu açıyor; böylece pano ve tezgâh birlikte
+geliyor, biri oyuncunun göremediği bir kapının arkasında oturmuyor.
+
+**`check_every_guild_rank_can_shop` ile korunuyor**; karakterin üstünde gerçek bir itibarla
+merdiveni yürüyüp dükkâna ne göstereceğini soruyor. Eşlemenin iki ucunu da kontrol ediyor, ki
+bir değişikliğin sessizce bozduğu yerler onlar: en alt kademe bir şey görmek zorunda ve en üst
+kademe son rafa ulaşmak zorunda, yoksa o kademe her şey yolundaymış gibi görünürken
+erişilemez. Bir rafı boşaltan bir filtre ve tepeye hiç ulaşmayan bir bant ile negatif test
+edildi.
+
+**Ve D-10 gereği yardımı**, iki sayfada da: dükkânın ne sattığı, kademenin rafa nasıl karar
+verdiği ve fiyatın neden parayla olup itibarın onu nasıl belirlediği.
 
 ### modeller ve bir düzeltme: tür kapısı hiçbir şeyi denetlemiyormuş
 

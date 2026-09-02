@@ -20,6 +20,17 @@ const market_region_mapping = {
         and not one of them had anything to buy.
     */
     "Town": ["Slums"],
+    /*
+        The guild's counter (P-41). It bleeds into the Town and nothing else: it is a
+        building in that town, so what you dump on the quartermaster moves a price on the
+        square - and Town already bleeds into the Slums, so the row hears about it second
+        hand, which is the right distance.
+
+        It has a region of its own rather than sharing the Town's because what this counter
+        trades is components no stall carries. A flood of shield bases is not a flood of
+        anything the square sells.
+    */
+    "Guild": ["Town"],
     //The bay bleeds into nothing. It is a month up the coast from everything else
     //here, so what the player sells there does not move a price in the village -
     //and a market that does not remember the village is the point of the region.

@@ -3746,6 +3746,7 @@ const descriptions = {
     //collector's last line is the reason to go. Everything here is a ledger.
     "name harbour tallyman": "liman sayman",
     "name bay trader": "tuz evi bekçisi",
+    "name guild quartermaster": "lonca levazımcısı",
     "name Coast road": "Sahil yolu",
     "name The bay": "Körfez",
     "name The tidal flats": "Gelgit düzlükleri",

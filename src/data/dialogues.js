@@ -3048,6 +3048,15 @@ class Textline {
                 name: "clerk board",
                 is_unlocked: false,
                 text: "clerk board answ",
+                /*
+                    And the quartermaster (P-41). Being told about the work is being told
+                    where the guild keeps what the work needs - the same line opens the
+                    board panel, so the two arrive together rather than one of them sitting
+                    behind a door the player cannot see.
+                */
+                rewards: {
+                    traders: ["guild quartermaster"],
+                },
                 locks_lines: ["board"],
             }),
             /*

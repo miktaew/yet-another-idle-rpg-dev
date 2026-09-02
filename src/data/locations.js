@@ -1907,6 +1907,20 @@ function get_location_type_penalty(type, stage, stat, category) {
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: "desc location Adventurer's guild",
         dialogues: ["guild clerk"],
+        traders: ["guild quartermaster"],
+        /*
+            A market region of its own (P-41), which is what makes the shop's price answer to
+            Guild standing: getProfitMargin reduces a trader's margin by the region's
+            reputation, and this location had no region at all - so the guild's own standing
+            counted for nothing at the guild's own counter.
+
+            It also gives the guild its own market saturation bucket, which is correct rather
+            than incidental: what the quartermaster buys off you has nothing to do with what
+            the town's stalls are flooded with. An old save simply arrives with the bucket
+            empty, because fill_market_regions creates it and set_loot_sold_count only fills
+            what the save holds.
+        */
+        market_region: "Guild",
         name: "Adventurer's guild",
         is_unlocked: true,
         getBackgroundNoises: function() {

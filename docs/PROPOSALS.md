@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 152 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 153 -->
 
 # Proposals
 
@@ -449,20 +449,45 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
   **Not to be built before the shop**, because the shop is what standing is *for* and a
   penalty that costs standing means more once there is something to spend it on.
 
-**Next:** the shop, which is the last piece. Guild-only items at a standing price, with
-milestone rewards - and Q-14's fourth answer already bounds it, since the board's pay stops
-at the top of the ladder.
+- **The shop.** `done`, as **v0.7.48**. A quartermaster at the guild selling components -
+  measured at **197 of 212 stocked by no trader at all**, across five tiers (15/29/31/71/51);
+  the proposal's 175 was written before the content grew.
 
-**Handing in is the piece that decides what a job costs to finish**, and it has one thing to
-measure before it is written: a hunt has to count kills of a *tag* since the job was accepted,
-and there is no per-tag kill counter - only per-enemy counts, which the bestiary already
-shows. Summing those over the enemies carrying the tag and snapshotting at acceptance would
-reuse state that exists; anything else is a new counter. A gather job hands goods over, which
-the swamp deliveries already do.
+  **"At a standing price" had to be settled, because the obvious reading breaks the ladder.**
+  Spending standing demotes the buyer, since the rank IS the standing (Q-7). So standing is
+  the gate and money is the price - and the price answers to standing anyway, because
+  `getProfitMargin` reduces a margin by the market region's reputation. The guild had **no
+  market region**, so its own standing counted for nothing at its own counter;
+  `market_region: "Guild"` is what makes that line read it. The counter also gets its own
+  saturation bucket, bleeding into Town and no further.
 
-Until then the panel says so where the player takes a job: taking works and persists, and the
-clerk cannot take finished work in yet. A player who did the work and found nowhere to put it
-would be right to think it was broken.
+  The mechanism is the row's, reused: an `inventory_template` function returning one of five
+  declared `stock_lists`. Shelves derived (every component of a tier no other list carries)
+  and bands derived (five tiers over nine rungs, so F/D/B/S/SSS - steep at the top because
+  Q-14's ceiling stops the board paying at exactly that rung).
+
+  `check:bundle` caught the one real fault: reading `item_templates` while traders.js was
+  still evaluating threw, which is a blank page rather than a bad shelf. The shelves fill on
+  first use. Two more were the checks' assumptions meeting my code shape - a template literal
+  and a computed key are both invisible to a source scan - and the assumptions are right: a
+  shelf a check cannot find is one a person cannot grep for.
+
+  Guarded by `check_every_guild_rank_can_shop`, both ends of the mapping, negative-tested.
+
+**What is left of P-41** is the three-at-once and deadline item above, and nothing else. It
+was deliberately sequenced after the shop: the shop is what standing is *for*, and a penalty
+that costs standing means more once there is something to spend it on.
+
+**The milestone rewards the owner asked for are the rank bands**, which is worth saying
+because it was a separate bullet in the original request. Each rung of the ladder opens a
+tier of components rather than handing over a prize, so the milestone and the reward are the
+same fact - no second mechanism, and nothing to keep in step with the ranks.
+
+**One prediction in this proposal turned out wrong and the correction is worth keeping.** The
+plan for handing in was to snapshot per-enemy kill counts at acceptance and sum them over the
+tag, because there is no per-tag counter. What shipped needed no snapshot at all: `kill_enemy`
+already walks the dead enemy's tags to fire the quest engine's `kill_any` events, so the job
+advances inside a loop that exists. Reading the code beat reasoning about it, again.
 
 ### P-42 — The big files, and what to use instead of TypeScript `active`
 

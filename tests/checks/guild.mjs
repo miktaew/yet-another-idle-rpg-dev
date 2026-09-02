@@ -454,7 +454,93 @@ async function check_every_hunt_target_can_be_counted() {
         + `the kill hook counts`);
 }
 
-export { check_every_guild_rank_can_be_given_work,
+
+/**
+ * Every guild rank opens a shelf, and every shelf has something on it.
+ *
+ * The quartermaster's stock is **derived**: each shelf is every component of one tier that no
+ * other shop in the game stocks. That is the right way round - 197 of 212 components are
+ * sold by nobody, and a hand-written list of them would be wrong within a version - but it
+ * means the shelves move when the content moves. A shelf that empties offers nothing, and a
+ * shop that offers nothing reads exactly like a shop the player has not unlocked.
+ *
+ * So this walks the ladder with a real standing on the character and asks the shop what it
+ * would show, through the same `stock_list_name_of` the game calls. Measured today: tiers
+ * open at F, D, B, S and SSS with 15, 29, 31, 71 and 51 components on them.
+ *
+ * It also checks the two ends of the mapping, which are the parts a change would break
+ * quietly: the bottom rank must see something (F is standing 0, so there is no band below
+ * it) and the top rank must see the last shelf, or the steepest tier is unreachable while
+ * everything still looks fine.
+ */
+async function check_every_guild_rank_can_shop() {
+    const [traders_module, items_module, reputation_module, character_module] =
+        await load_browser_free(repo_root, ["src/traders.js", "src/items.js",
+            "src/reputation.js", "src/character.js"]);
+    const {traders, inventory_templates, stock_list_name_of} = traders_module;
+    const {guild_ranks} = reputation_module;
+    const {character} = character_module;
+
+    const shop = traders["guild quartermaster"];
+    if (!shop || typeof stock_list_name_of !== "function") {
+        error("the guild quartermaster is not where this expects it - "
+            + "check_every_guild_rank_can_shop is out of date.");
+        return;
+    }
+
+    const was = character.reputation["Guild"];
+    const seen = new Set();
+    let smallest = Infinity;
+
+    for (const entry of guild_ranks) {
+        character.reputation["Guild"] = entry.at_least;
+        const name = stock_list_name_of(shop);
+        const list = inventory_templates[name];
+
+        if (!Array.isArray(list)) {
+            error(`at rank ${entry.rank} the quartermaster asks for the shelf "${name}", `
+                + `which no inventory template defines. Opening the shop throws.`);
+            continue;
+        }
+        if (list.length === 0) {
+            error(`at rank ${entry.rank} the quartermaster's shelf "${name}" is empty. `
+                + `A shop with nothing on it reads like a shop the player has not earned, `
+                + `and the shelves are derived from the components no other shop stocks - `
+                + `so one can empty when content moves.`);
+        }
+        seen.add(name);
+        smallest = Math.min(smallest, list.length);
+    }
+
+    //The bottom rung must be able to shop: F is standing 0, so nothing sits below it.
+    character.reputation["Guild"] = 0;
+    const bottom = inventory_templates[stock_list_name_of(shop)];
+    if (!bottom || bottom.length === 0) {
+        error("a player with no Guild standing at all sees an empty quartermaster. F is "
+            + "standing 0, so there is no band below the bottom one and this is every "
+            + "player's first sight of the shop.");
+    }
+
+    //And the top rung must reach the last shelf, or its tier is unreachable in silence.
+    const top = guild_ranks[guild_ranks.length - 1];
+    character.reputation["Guild"] = top.at_least;
+    const at_top = stock_list_name_of(shop);
+    const declared = shop.stock_lists ?? [];
+    if (declared.length && at_top !== declared[declared.length - 1]) {
+        error(`at the top of the ladder (${top.rank}) the quartermaster shows `
+            + `"${at_top}" rather than the last shelf it declares `
+            + `("${declared[declared.length - 1]}"), so that tier can never be bought and `
+            + `nothing says so.`);
+    }
+
+    character.reputation["Guild"] = was;
+
+    console.log(`[check] guild shop: ${guild_ranks.length} rank(s) across ${seen.size} `
+        + `shelf/shelves, smallest holding ${smallest} component(s)`);
+}
+
+export {
+    check_every_guild_rank_can_shop, check_every_guild_rank_can_be_given_work,
     check_the_board_keeps_what_was_taken_off_it,
     check_a_restored_board_drops_jobs_that_name_nothing,
     check_a_gather_job_counts_every_stack,

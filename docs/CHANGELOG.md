@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 128 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 129 -->
 
 # Changelog
 
@@ -20,6 +20,69 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.48 - the guild's quartermaster, and P-41 finishes
+
+The last piece of the guild, and the design was settled in Q-14's remainder: components at a
+standing price, because components nobody sells are the one thing a shop can offer that is
+neither a duplicate nor a power curve.
+
+**Measured rather than trusted: 197 of the game's 212 components are stocked by no trader at
+all** - 15 at tier 1, 29 at tier 2, 31 at tier 3, 71 at tier 4, 51 at tier 5. The proposal
+said 175; the content has grown since it was written.
+
+**"At a standing price" needed one thing settled, because the obvious reading breaks the
+ladder.** Spending standing would demote the buyer: the rank *is* the standing (Q-7), so
+buying a component would cost the rank that allowed it. So standing is the **gate** and money
+is the price - and the price answers to standing anyway, because `getProfitMargin` reduces a
+trader's margin by the market region's reputation. The guild had **no market region at all**,
+so its own standing counted for nothing at its own counter; giving it `market_region: "Guild"`
+is what makes that line read Guild standing. Nothing new, nothing spent, and the counter gets
+cheaper as the rank climbs.
+
+It also gives the guild its own saturation bucket, which is correct rather than incidental: a
+flood of shield bases is not a flood of anything the square carries. It bleeds into the Town
+and no further, and Town already bleeds into the Slums, so the row hears about it second hand.
+
+**The mechanism is the row's, reused.** The Slums trader's `inventory_template` is already a
+function reading `character.reputation.Slums` and returning one of three lists, with
+`stock_lists` declaring all of them so the Discoveries panel knows what the shop can hold.
+The quartermaster is the same shape against Guild rank.
+
+**The shelves are derived and the rank bands are derived.** Each shelf is every component of
+one tier that no other stock list carries - a hand-written list of 197 names would be wrong
+within a version. The bands map five tiers onto nine rungs proportionally, which puts them at
+F, D, B, S and SSS: steep at the top by design, since Q-14's ceiling stops the board paying
+at exactly that top rung, so the last shelf is the whole climb rather than a purchase.
+
+**Three things the checks refused, each a real gap.** `check:bundle` caught the first and
+it was the worst: `Object.entries(item_templates)` while traders.js was still evaluating
+threw *"Cannot convert undefined or null to object"* - a **blank page**, not a bad shelf.
+traders.js and items.js are in a cycle by design, and every other use of `item_templates` in
+that file is inside a function that runs later; mine was not. The shelves fill on first use
+now.
+
+Then two that were the checks' assumptions meeting my code shape rather than faults in
+either. The check that verifies a shop's lists pulls every double-quoted string out of the
+`inventory_template` expression - so a template literal exposed no shelf name at all, and
+`character.reputation["Guild"]` sitting in the same expression made it report a shelf called
+"Guild". And the check that verifies a declared list exists reads the `inventory_templates[...]`
+assignments out of the source, so shelves assigned through a variable were invisible. Both
+assumptions are the right ones: **a shelf a check cannot find is a shelf a person cannot grep
+for.** The names are written out and the standing is read inside a function of its own.
+
+The last two the checks asked for were plain omissions: no `name guild quartermaster` row,
+and nothing unlocking the shop. The clerk's board line opens it, so the board and the
+counter arrive together rather than one of them sitting behind a door the player cannot see.
+
+**Guarded by `check_every_guild_rank_can_shop`**, which walks the ladder with a real standing
+on the character and asks the shop what it would show. It checks both ends of the mapping,
+which are the parts a change breaks quietly: the bottom rank must see something, and the top
+rank must reach the last shelf or its tier is unreachable while everything still looks fine.
+Negative-tested with a filter that empties a shelf and a band that never reaches the top.
+
+**And its help, per D-10**, on both pages: what the shop sells, how the rank decides the
+shelf, and why the price is in money while the standing sets it.
 
 ### the models, and a correction: the type gate had been checking nothing
 

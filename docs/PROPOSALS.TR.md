@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 152 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 153 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -456,20 +456,48 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
   **Dükkândan önce yapılmamalı**, çünkü itibarın ne *için* olduğunu dükkân belirliyor ve
   itibara mal olan bir ceza, harcanacak bir şey olduğunda daha fazla şey ifade ediyor.
 
-**Sırada:** dükkân, son parça. Loncaya özel eşyalar itibar fiyatıyla, milestone ödülleriyle —
-ve Q-14'ün dördüncü cevabı onu çoktan sınırlıyor, çünkü panonun ödemesi merdivenin tepesinde
-duruyor.
+- **Dükkân.** `done`, **v0.7.48** olarak. Loncada parça satan bir levazımcı — ölçüldü:
+  **212 parçanın 197'sini hiçbir tüccar satmıyor**, beş kademeye yayılmış (15/29/31/71/51);
+  önerinin 175'i içerik büyümeden önce yazılmıştı.
 
-**Teslim, bir işi bitirmenin neye mal olduğunu belirleyen parça** ve yazılmadan önce ölçülecek
-bir şeyi var: bir av işi, iş alındığından beri bir *etiketin* öldürülme sayısını saymak
-zorunda ve etiket başına öldürme sayacı yok — yalnızca bestiary'nin çoktan gösterdiği düşman
-başına sayılar var. O sayıları etiketi taşıyan düşmanlar üzerinden toplamak ve iş alınırken
-anlık görüntü almak, var olan durumu kullanmak olur; başka her şey yeni bir sayaç. Toplama işi
-ise mal teslim ediyor, ki bataklık teslimatları bunu çoktan yapıyor.
+  **"İtibar fiyatıyla" karara bağlanmak zorundaydı, çünkü apaçık okuma merdiveni bozuyor.**
+  İtibar harcamak alıcıyı rütbe düşürür, çünkü kademe itibarın kendisi (Q-7). Yani itibar
+  kapı, para fiyat — ve fiyat zaten itibara cevap veriyor, çünkü `getProfitMargin` marjı
+  pazar bölgesinin itibarına göre düşürüyor. Loncanın **pazar bölgesi yoktu**, yani kendi
+  itibarı kendi tezgâhında hiçbir şey ifade etmiyordu; `market_region: "Guild"` o satırın onu
+  okumasını sağlıyor. Tezgâh ayrıca kendi doygunluk kovasını alıyor; Kasabaya sızıyor ve daha
+  ileri gitmiyor.
 
-O zamana kadar panel bunu, oyuncunun iş aldığı yerde söylüyor: almak çalışıyor ve kalıcı,
-kâtip bitmiş işi henüz teslim alamıyor. İşi yapıp koyacak yer bulamayan bir oyuncunun bunu
-bozuk sanmakta hakkı olurdu.
+  Mekanizma sıra evlerin mekanizması: bildirilmiş beş `stock_lists`ten birini döndüren bir
+  `inventory_template` fonksiyonu. Raflar türetilmiş (başka hiçbir listenin taşımadığı bir
+  kademenin bütün parçaları), bantlar türetilmiş (dokuz basamağa beş kademe, yani F/D/B/S/SSS
+  — tepede dik, çünkü Q-14'ün tavanı panonun ödemesini tam o basamakta durduruyor).
+
+  Tek gerçek arızayı `check:bundle` yakaladı: traders.js hâlâ değerlendirilirken
+  `item_templates`i okumak fırlatıyordu, ki bu kötü bir raf değil boş bir sayfa. Raflar ilk
+  kullanımda doluyor. İki tanesi daha kontrollerin varsayımlarının kod şeklimle
+  karşılaşmasıydı — bir şablon dizgesi ve hesaplanmış bir anahtar, ikisi de kaynak taramasına
+  görünmez — ve varsayımlar doğru: bir kontrolün bulamadığı raf, bir insanın da
+  grepleyemediği raftır.
+
+  `check_every_guild_rank_can_shop` ile korunuyor, eşlemenin iki ucu birlikte, negatif test
+  edildi.
+
+**P-41'den kalan**, yukarıdaki üç-iş ve süre maddesi; başka bir şey yok. Bilerek dükkândan
+sonraya dizilmişti: itibarın ne *için* olduğunu dükkân belirliyor ve itibara mal olan bir
+ceza, harcanacak bir şey olduğunda daha fazlasını ifade ediyor.
+
+**Sahibinin istediği milestone ödülleri, kademe bantlarının kendisi** — bunu söylemeye değer,
+çünkü özgün talepte ayrı bir madde olarak duruyordu. Merdivenin her basamağı bir ödül
+uzatmak yerine bir parça kademesi açıyor; yani milestone ile ödül aynı olgu — ikinci bir
+mekanizma yok ve kademelerle eşlenmesi gereken bir şey de yok.
+
+**Bu önerideki bir öngörü yanlış çıktı ve düzeltmesi saklanmaya değer.** Teslim için plan,
+iş alınırken düşman başına öldürme sayılarının anlık görüntüsünü alıp etiket üzerinden
+toplamaktı, çünkü etiket başına sayaç yok. Yayına giren şeyin hiç anlık görüntüye ihtiyacı
+olmadı: `kill_enemy`, ölen düşmanın etiketlerini motorun `kill_any` olaylarını tetiklemek için
+çoktan yürüyor; yani iş, var olan bir döngünün içinde ilerliyor. Kodu okumak, onun hakkında
+akıl yürütmeyi yine yendi.
 
 ### P-42 — Büyük dosyalar ve TypeScript yerine ne kullanılacağı `active`
 

@@ -6,6 +6,7 @@ import { character, get_total_level_bonus } from "./character.js";
 import { current_game_time } from "./game_time.js";
 import { InventoryHaver } from "./components/inventory_component.js";
 import { item_templates, getItem} from "./items.js";
+import { get_guild_rank, guild_ranks } from "./reputation.js";
 import { is_marrowmoth_in_port } from "./data/marrowmoth.js";
 
 const traders = {};
@@ -872,6 +873,161 @@ class TradeItem {
         new TradeItem({item_name: "Boar hide cape", count: [1], quality: [130, 160], chance: 0.12}),
         new TradeItem({item_name: "Wolf pelt cape", count: [1], quality: [130, 160], chance: 0.15}),
     ];
+
+
+    /*
+        THE GUILD'S QUARTERMASTER (P-41, the last piece).
+
+        Five lists, one per component tier, each holding every component of that tier that no
+        other shop in the game stocks. Derived from the registry rather than written out:
+        measured at 197 of 212 components sold by nobody - 15 at tier 1, 29 at tier 2, 31 at
+        tier 3, 71 at tier 4, 51 at tier 5 - and a hand-written list of 197 names would be
+        wrong within a version.
+
+        Built after every other list on purpose: "nobody else stocks it" is answered by
+        reading the lists above, so this has to come last.
+    */
+    /*
+        Written out rather than built, because two checks read these names out of the
+        `inventory_template` expression below and a template literal exposes none of them.
+        A shelf a check cannot find is also a shelf a person cannot grep for.
+    */
+    const guild_shelves = [
+        "Guild quartermaster 1",
+        "Guild quartermaster 2",
+        "Guild quartermaster 3",
+        "Guild quartermaster 4",
+        "Guild quartermaster 5",
+    ];
+
+    /**
+     * Which shelf a standing opens, as an index into guild_shelves.
+     *
+     * Derived rather than tabled: five component tiers mapped onto the nine rungs of the
+     * ladder proportionally, which puts tier 1 at F, tier 2 at D, tier 3 at B, tier 4 at S
+     * and tier 5 at SSS. Steep at the top by design - a tier-5 component skips a long
+     * stretch of the crafting ladder, and Q-14's ceiling stops the board paying at exactly
+     * that top rung, so the last shelf is the whole climb rather than a purchase.
+     *
+     * F is standing 0, so there is no band below the bottom one and every player sees at
+     * least the first shelf.
+     *
+     * Reads the standing itself rather than taking it, so the name of the region does not
+     * appear inside the `inventory_template` expression: the check that verifies a shop's
+     * lists pulls every quoted string out of that expression, and `reputation["Guild"]`
+     * there made it report a shelf called "Guild".
+     *
+     * @returns {Number} 0 to 4
+     */
+    function guild_shelf_for() {
+        const {index} = get_guild_rank(character.reputation["Guild"] ?? 0);
+        let shelf = 0;
+        for(let at = 0; at < guild_shelves.length; at++) {
+            const rung = Math.round((at / (guild_shelves.length - 1))
+                * (guild_ranks.length - 1));
+            if(index >= rung) {
+                shelf = at;
+            }
+        }
+        return shelf;
+    }
+
+    /*
+        Filled on first use rather than at module load, and check:bundle is what insisted:
+        `Object.entries(item_templates)` while this module was still evaluating threw
+        "Cannot convert undefined or null to object", which is a blank page rather than a
+        bad shelf. traders.js and items.js are in a cycle by design - every other use of
+        item_templates in this file is inside a function that runs later, and this one has
+        to be too.
+
+        Idempotent, so the first shopper pays for it and nobody else does.
+    */
+    let guild_stock_filled = false;
+    function fill_guild_stock() {
+        if(guild_stock_filled) {
+            return;
+        }
+        const stocked_elsewhere = new Set();
+        Object.values(inventory_templates).forEach(list => {
+            list.forEach(row => stocked_elsewhere.add(row.item_name));
+        });
+
+        /**
+         * Every component of a tier that no other shop in the game stocks.
+         *
+         * A chance rather than a certainty, and a low one for the higher tiers: a shelf
+         * that holds seventy-one things every time it refreshes is a list, not a shop. The
+         * count is one because a component is one component.
+         *
+         * @param {Number} tier 1 to 5
+         * @returns {Array} TradeItems
+         */
+        const shelf_of = (tier) => Object.entries(item_templates)
+            .filter(([key, item]) => item.component_type
+                && (item.component_tier || 1) === tier
+                && !stocked_elsewhere.has(key))
+            .map(([key]) => new TradeItem({item_name: key, count: [1],
+                chance: tier >= 4 ? 0.2 : 0.35}));
+
+        /*
+            Assigned under literal keys, not through the loop that would be shorter. The
+            check that verifies a declared stock list exists reads these names out of the
+            source, so a name written as a variable is a name it cannot find - and so is a
+            name a person cannot grep for. The CONTENTS stay derived; only the keys are
+            spelt out.
+        */
+        inventory_templates["Guild quartermaster 1"] = shelf_of(1);
+        inventory_templates["Guild quartermaster 2"] = shelf_of(2);
+        inventory_templates["Guild quartermaster 3"] = shelf_of(3);
+        inventory_templates["Guild quartermaster 4"] = shelf_of(4);
+        inventory_templates["Guild quartermaster 5"] = shelf_of(5);
+        guild_stock_filled = true;
+    }
+
+
+    /*
+        The quartermaster. Behind the clerk, and only interested in you once the guild is.
+
+        The rank bands are derived rather than chosen: five component tiers mapped onto the
+        nine rungs of the ladder proportionally, which puts tier 1 at F, tier 2 at D, tier 3
+        at B, tier 4 at S and tier 5 at SSS. Steep at the top by design - a tier-5 component
+        skips a long stretch of the crafting ladder, and Q-14's ceiling means the board's pay
+        stops at exactly that top rung, so the last tier is the whole climb rather than a
+        purchase.
+
+        A player below F's threshold sees the tier-1 shelf, because F is standing 0: there is
+        no band below the bottom one.
+    */
+    traders["guild quartermaster"] = new Trader({
+        name: "guild quartermaster",
+        //Derived at every refresh and never stored, like the bay's and the row's.
+        inventory_template: () => {
+            fill_guild_stock();
+            return [
+                "Guild quartermaster 1",
+                "Guild quartermaster 2",
+                "Guild quartermaster 3",
+                "Guild quartermaster 4",
+                "Guild quartermaster 5",
+            ][guild_shelf_for()];
+        },
+        //All five, so the Discoveries panel knows what this shop can ever hold.
+        stock_lists: [
+            "Guild quartermaster 1",
+            "Guild quartermaster 2",
+            "Guild quartermaster 3",
+            "Guild quartermaster 4",
+            "Guild quartermaster 5",
+        ],
+        is_unlocked: false,
+        /*
+            The highest margin in the game, and the reason is the same as the bay's: this is
+            not a market, it is a store cupboard being opened for somebody the guild owes. The
+            price falls as Guild standing rises, because getProfitMargin reads the location's
+            market_region and the guild's is "Guild".
+        */
+        profit_margin: 9,
+    });
 
 })();
 export { traders, inventory_templates, TradeItem, stock_list_name_of, stock_lists_of };
