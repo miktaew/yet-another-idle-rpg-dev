@@ -2031,6 +2031,7 @@ const descriptions = {
     "desc location Precarious tree bridge": "A warthog heard the commotion and is guarding the way across.",
     "desc location Forest den": "A relatively large cave in the depths of the forest, filled with hordes of direwolves",
     "desc location Bears' den": "A dark, smelly cave in the heart of the forest, with massive bones spread around the entrance",
+    "desc location Forest lake seen": "*[On the far side, where the canopy comes down to the water, a run of reeds lies pushed flat in a line about the width of a cart. It is not new. They have gone brown where they lie and stayed green where they stand, and they have been like that since before the first time you came here.]*",
     "desc location Forest lake": "Far away from civilization, the forest opens up to an unspoiled lake. Nestled between a small cliff where it receives water from a rocky waterfall, and a dense canopy leading to what must be the forest's heart, it serves as a respite for the local animals - and now, yourself",
     "desc location Frogs": "Battling at the lake's edge",
     "desc location Forest ant nest": "A labyrinthine nest of red ants",

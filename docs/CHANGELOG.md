@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 110 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 111 -->
 
 # Changelog
 
@@ -20,6 +20,42 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.39 - the reeds were always down
+
+P-14 phase 7's third trace, and **a different kind on purpose**. The first two are errands:
+go to a place, read a thing. This one is the place the arc started at, read again by somebody
+who now knows what to look at - and what they see was always there.
+
+Broken cover is one of the four kinds the phase asks for, and the only one of the remaining
+three that works as a place rather than as another errand. A feather would be an item, and an
+item in the inventory would have to do something; noise is already the channel each trace uses
+for its afterwards.
+
+Nothing new has happened at the lake. The reeds are brown where they lie and green where they
+stand, and they have been down since before the player first came. What changed is the reader.
+
+**Added to the description rather than replacing it.** A whole alternative text is what the
+basin does, and is right there, because all three of its states differ throughout; here only
+the ending changes, and two copies of one paragraph drift the first time somebody edits the
+lake. Keyed on having read the shelters, which implies having read the shallows - the shelters
+require that flag, so one test covers the pair.
+
+Measured through all three states: six sounds at the lake and one at the basin to begin with,
+nine and one after the print, nine and two after the shelters, and the reeds appearing only at
+the end.
+
+**No new guard, and that is the second time this phase.** A description keyed on a flag is
+held by `check_global_flags` for the name and by `LOCALE_STRICT` for the text; composing the
+paragraph rather than copying the description is what removes the drift a check would
+otherwise have had to watch for. A rule invented to cover it would have had to allow the
+basin's three states, which differ on purpose.
+
+**A tooling note worth keeping.** `src/data/locations.js` was truncated to zero during this
+iteration by a patch script whose `io.open(path, "w", newline=...)` raised on a bad argument -
+after the "w" had already emptied the file. It was restored from HEAD and the one uncommitted
+block re-applied knowingly. Every write since goes to a temporary file and is moved into
+place, so a script that fails cannot leave a source file empty.
 
 ### v0.7.38 - the second trace, and something has been lying up
 

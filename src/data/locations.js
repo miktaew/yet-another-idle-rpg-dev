@@ -1491,6 +1491,32 @@ function get_location_type_penalty(type, stage, stat, category) {
     locations["Forest lake"] = new Location({
         connected_locations: [{location: locations["Forest road"], travel_time: 120}],
         description: "desc location Forest lake",
+        /*
+            P-14 phase 7, the third trace, and a different kind on purpose. The first two are
+            things the player goes and reads. This is the place they started at, read again by
+            somebody who now knows what to look at - and what they see was always there.
+
+            Broken cover, which is one of the four kinds the phase asks for and the only one
+            that works as a place rather than as an errand. Nothing new has happened at the
+            lake: the reeds have been down since before the player first came, brown where
+            they lie and green where they stand.
+
+            Added to the description rather than replacing it with a second copy of the same
+            paragraph plus one. A whole alternative text is what the basin does and is right
+            there, because all three of its states differ throughout; here only the ending
+            changes, and two copies of one paragraph drift the first time somebody edits the
+            lake.
+
+            Keyed on having read the shelters, which implies having read the shallows: the
+            shelters require that flag, so one test covers the pair.
+        */
+        getDescription: function() {
+            const lake = translationManager.getText(language, "desc location Forest lake");
+            if(!global_flags.has_read_the_shelters) {
+                return lake;
+            }
+            return `${lake}\n\n${translationManager.getText(language, "desc location Forest lake seen")}`;
+        },
         name: "Forest lake",
         /*
             The lake says it before anyone does, the way the quay does.

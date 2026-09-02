@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 127 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 128 -->
 
 # Proposals
 
@@ -429,11 +429,22 @@ at all before they meet it.
   noises are already in this register and `cut the standing flax` closes the thread outright.
   A trace there would reopen what the game has finished saying.
 
-- **Still to come.** The traces so far are both "read the ground" in a new place. The
-  remaining kinds in the brief are feathers, noise and broken cover, and a feather is the
-  awkward one - an item in the inventory would have to do something, and anything it did would
-  answer a question this arc may not answer. And a decision, when the traces are enough:
-  whether v0.8 meets the thing or keeps refusing to.
+- **The third trace.** `done`, as **v0.7.39**, and a different kind: not an errand but a
+  place. Once the shelters have been looked into, the Forest lake's description gains a
+  paragraph - a run of reeds pushed flat, brown where they lie and green where they stand,
+  down since before the player first came. Broken cover, and the reader is what changed.
+
+  Added to the description rather than replacing it, so the two states cannot drift.
+
+- **Still to come.** Three of the brief's four kinds are used: tracks, a lying-up place, and
+  broken cover. **Feathers is the one left and the awkward one** - an item in the inventory
+  would have to do something, and anything it did would answer a question this arc may not
+  answer. The honest options are to leave it out, or to make it something that is looked at
+  and not carried.
+
+  And the decision this phase exists to reach: whether v0.8 meets the thing or keeps refusing
+  to. Three traces is enough that the next piece has to be an answer to that rather than a
+  fourth trace.
 
 #### Decisions carried into the phases
 

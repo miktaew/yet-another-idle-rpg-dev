@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 127 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 128 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -447,11 +447,22 @@ olmadığından emin olmamalıdır.
   kayıtta ve `cut the standing flax` ipliği açıkça kapatıyor. Oraya bir iz koymak, oyunun
   söylemeyi bitirdiğini yeniden açardı.
 
-- **Sırada olanlar.** Şimdiye kadarki iki iz de "yeni bir yerde yeri okumak". Brief'te kalan
-  türler tüyler, ses ve kırılmış örtü; tüy olan zor olanı — envanterdeki bir eşyanın bir şey
-  yapması gerekir ve yapacağı her şey, bu yayın cevaplamaya hakkı olmayan bir soruyu
-  cevaplardı. Ve izler yeterli olduğunda bir karar: v0.8 o şeyle karşılaşacak mı, yoksa
-  karşılaşmamayı sürdürecek mi.
+- **Üçüncü iz.** `done`, **v0.7.39** olarak ve farklı bir tür: bir angarya değil bir yer.
+  Barınaklara bakıldıktan sonra Orman gölünün açıklaması bir paragraf kazanıyor — yatırılmış
+  bir sazlık şeridi, yattıkları yerde kahverengi dik durdukları yerde yeşil, oyuncu ilk
+  geldiğinden beri yatık. Kırılmış örtü ve değişen şey okuyan.
+
+  Açıklamanın yerine geçmek yerine ona ekleniyor, böylece iki durum ayrışamıyor.
+
+- **Sırada olanlar.** Brief'in dört türünün üçü kullanıldı: izler, yatıp kalkılan bir yer ve
+  kırılmış örtü. **Kalan tek tür tüy ve zor olanı da o** — envanterdeki bir eşyanın bir şey
+  yapması gerekir ve yapacağı her şey bu yayın cevaplamaya hakkı olmayan bir soruyu
+  cevaplardı. Dürüst seçenekler: ya dışarıda bırakmak ya da taşınan değil bakılan bir şey
+  yapmak.
+
+  Ve bu fazın var olma sebebi olan karar: v0.8 o şeyle karşılaşacak mı, yoksa karşılaşmamayı
+  sürdürecek mi. Üç iz, sonraki parçanın dördüncü bir iz değil buna bir cevap olması gerektiği
+  kadar yeterli.
 
 #### Fazlara taşınan kararlar
 

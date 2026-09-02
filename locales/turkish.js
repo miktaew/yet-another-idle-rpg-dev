@@ -2136,6 +2136,7 @@ const descriptions = {
     "desc location Precarious tree bridge": "Bir bakla domuzu gürültüyü duymuş, karşıya geçişi tutuyor.",
     "desc location Forest den": "Ormanın derinliklerinde, ulukurt sürüleriyle dolu, oldukça büyük bir mağara",
     "desc location Bears' den": "Ormanın kalbinde, girişine kocaman kemikler saçılmış, karanlık ve kokuşmuş bir mağara",
+    "desc location Forest lake seen": "*[Karşı kıyıda, örtünün suya indiği yerde, bir sazlık şeridi bir araba genişliğinde bir hat boyunca yatırılmış duruyor. Yeni değil. Yattıkları yerde kahverengileşmiş, dik durdukları yerde yeşil kalmışlar; buraya ilk geldiğinden beri böyleler.]*",
     "desc location Forest lake": "Uygarlıktan uzakta, orman açılıp el değmemiş bir göle dönüşüyor. Suyunu kayalık bir şelaleden aldığı küçük bir yarla ormanın kalbine götüren yoğun bir örtü arasına kurulmuş; buranın hayvanlarına -- ve artık sana da -- bir soluklanma yeri",
     "desc location Frogs": "Gölün kıyısında dövüş",
     "desc location Forest ant nest": "Kırmızı karıncaların labirent gibi yuvası",

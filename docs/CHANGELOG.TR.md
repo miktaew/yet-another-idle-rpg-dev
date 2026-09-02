@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 110 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 111 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,40 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.39 - sazlar zaten yatıktı
+
+P-14'ün 7. fazının üçüncü izi ve **bilerek farklı bir tür**. İlk ikisi birer angarya: bir yere
+git, bir şey oku. Bu ise yayın başladığı yerin, artık neye bakacağını bilen biri tarafından
+yeniden okunması — ve gördükleri şey hep oradaydı.
+
+Kırılmış örtü, fazın istediği dört türden biri ve kalan üçü içinde bir angarya değil bir yer
+olarak işleyen tek tür. Tüy bir eşya olurdu ve envanterdeki bir eşyanın bir şey yapması
+gerekir; ses ise her izin "sonrası" için zaten kullanılan kanal.
+
+Gölde yeni bir şey olmadı. Sazlar yattıkları yerde kahverengi, dik durdukları yerde yeşil ve
+oyuncu buraya ilk geldiğinden beri yatıklar. Değişen şey okuyan.
+
+**Açıklamanın yerine geçmek yerine ona ekleniyor.** Bütün bir alternatif metin havzanın
+yaptığı şey ve orada doğru, çünkü onun üç durumu baştan sona farklı; burada yalnızca son
+değişiyor ve tek bir paragrafın iki kopyası, biri gölü ilk düzenlediğinde ayrışır. Barınakları
+okumuş olmaya bağlı, ki o da sığlığı okumuş olmayı gerektiriyor — barınaklar o bayrağı şart
+koştuğu için tek bir test ikisini birden kapsıyor.
+
+Üç durumda da ölçüldü: başlangıçta gölde altı ses ve havzada bir, izden sonra dokuz ve bir,
+barınaklardan sonra dokuz ve iki; sazlar ise yalnızca sonda beliriyor.
+
+**Yeni muhafız yok ve bu fazda ikinci kez böyle.** Bayrağa bağlı bir açıklamayı adı için
+`check_global_flags`, metni için `LOCALE_STRICT` tutuyor; paragrafı kopyalamak yerine
+birleştirmek de bir kontrolün gözlemek zorunda kalacağı ayrışmayı ortadan kaldırıyor. Onu
+kapsamak için uydurulacak bir kural, havzanın bilerek farklı olan üç durumuna izin vermek
+zorunda kalırdı.
+
+**Saklanmaya değer bir araç notu.** Bu iterasyon sırasında `src/data/locations.js` sıfıra
+kesildi: bir yama betiğinin `io.open(path, "w", newline=...)` çağrısı kötü bir argümanla hata
+verdi — ama "w" dosyayı çoktan boşaltmıştı. HEAD'den geri alındı ve commit edilmemiş tek blok
+bilerek yeniden uygulandı. O andan itibaren her yazma geçici bir dosyaya gidip yerine
+taşınıyor; yani hata veren bir betik bir kaynak dosyayı boş bırakamıyor.
 
 ### v0.7.38 - ikinci iz ve yatıp kalkan bir şey
 
