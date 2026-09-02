@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 132 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 133 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -665,7 +665,7 @@ geliyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
-### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `blocked`
+### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `open`
 
 P-23 ölçülürken bulundu. `BookData`, bir kitabın taşıyabileceği altı şey tanımlıyor ve
 **ikisi `src/` içinde hiçbir yerde okunmuyor**:
@@ -696,7 +696,7 @@ ve muhtemelen ikiden fazlasını bulur.
 
 
 
-### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `blocked`
+### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
 
 Sahibinin isteği: *"loncadan random A'dan S'ye kadar görevler ekleyelim. farklı görevleri
 alabilelim ve bunlar lonca görevleri adıyla farklı bir yerde dursun. x kadar canavar avla, y
@@ -856,93 +856,68 @@ Her biri `option_language` içinde açık bir yeniden çizim alıyor ve biri eks
 olursa `npm run check` düşüyor; böylece liste sessizce büyüyemiyor. Yeniden yükleme
 yok ve hiçbir şeyin bölünmesi gerekmedi.
 
-### Q-12 — Bir kitap, okunmak için beceri isteyebilmeli mi? **ÖNERİ: hayır, iki alan da silinsin**
+### Q-12 — Bir kitap, okunmak için beceri isteyebilmeli mi? **KARAR: evet, ve bu bir seri**
 
-P-26, `src/` içinde hiçbir şeyin okumadığı iki `BookData` alanı buldu: bir kitabın
-okunabilmesine kapı gibi görünen `required_skills` ve bitirmeye ödül gibi görünen
-`finish_reward`. Ölçüm ne yapılacağını çözmüyor; bu madde de çözmüyor, zaten burada olmasının
-sebebi bu.
+Teklifin cevabı değil. Kitap okumak genel olarak hiçbir şey istemiyor ve **Okuma becerisini
+artırıyor** — bir kitabın var olma sebebi de bu. Ama bir kitap, o becerinin *hakkında* ve
+okuyanın ulaşmış olması gereken bir seviyedeyse beceri isteyebilir: kılıç becerisi veren bir
+kitabın hiçbir şeye ihtiyacı yokken, bir **ustalık serisi** — "Kılıç ustalığı" ve benzerleri —
+derinleştirdiği beceride 20. seviyeyi isteyebilir.
 
-**`finish_reward` aslında bir soru değil.** Hiçbir kitap onu ayarlamıyor ve hiçbir şey
-okumuyor; silmek bir tuzağı kaldırıyor ve hiçbir şey kaybettirmiyor.
+Yani `required_skills` **kalıyor ve bağlanıyor**; P-26'nın silinecek bir alan değil gerçek bir
+özellik dediği yarı bu. Yanında gereken şey reddetme: henüz okuyamadığınız bir kitabın bunu ve
+ne istediğini söylemesi gerekir, yoksa kimsenin göremediği kilitli bir kapıdır.
 
-**Asıl soru `required_skills`,** çünkü *Nothing Bites Here* `{literacy: 6}` bildiriyor ve oyun
-bunu hep yok saydı. Şimdi uygulamak, **oyuncuların bugün okuyabildiği bir kitabı geriye dönük
-kilitlemek** olur — mevcut içerikte bir davranış değişikliği, bir düzeltme değil.
+`finish_reward` bu cevabın dışında. Hiçbir kitap onu ayarlamıyor ve hiçbir şey okumuyor; yani
+hâlâ bir tuzak — silmek hiçbir şey kaybettirmiyor ve aynı soru değil.
 
-**ÖNERİ: ikisi de silinsin.** Hiç çalışmamış bir kapı, elden alınan bir özellik değildir; ve
-onun dürüst hâli bir alandan fazlası: bu projenin kendi kuralı, kimsenin göremediği kilitli bir
-kapının hedef olmadığını söylüyor. Yani henüz okuyamadığınız bir kitabın bunu ve nedenini
-söylemesi gerekir — bir reddetme metni, ne istediğini öğrenmenin bir yolu ve geri gelmeye
-değmesinin bir sebebi. Bu, açılacak bir alan değil tasarlanacak bir özellik.
 
-Kapılı kitaplar isteniyorsa alan, yanında o reddetme metniyle geri gelir ve *Nothing Bites
-Here* başlangıç noktasıdır.
+### Q-13 — v0.8 dört bacaklı kuşla karşılaşacak mı? **KARAR: karşılaşılabilir, on binde bir civarında**
 
-### Q-13 — v0.8 dört bacaklı kuşla karşılaşacak mı, yoksa karşılaşmamayı sürdürecek mi? **ÖNERİ: bir kez daha sürdürsün**
+Bu da teklifin cevabı değil ve ondan iyi. Karşılaşma planlanmış değil **mümkün**: yalnızca
+belirli yerlerde, **10.000'de 1** mertebesinde çok düşük bir şansla.
 
-P-14'ün 7. fazı buraya varmak için var. Üç iz gönderildi — Orman gölünün kumundaki bir iz
-(v0.7.37), havzanın kaya barınaklarında yatıp kalkılan bir yer (v0.7.38) ve hep yatık olan bir
-sazlık şeridi (v0.7.39) — ve fazın kendi brief'i, oyuncunun onunla karşılaşmadan önce var olup
-olmadığından emin olmaması gerektiğini söylüyor. Üç iz, sonraki parçanın dördüncü bir iz değil
-buna bir cevap olması gerektiği kadar yeterli.
+Bu, fazın koruduğu şeyi koruyor. Oyuncu hâlâ onun var olduğundan emin olamıyor, çünkü neredeyse
+kimse görmeyecek; izler yayın normalde yaşandığı biçim olarak kalıyor; ve karşılaşmanın olması
+için hiçbir şey harcanmıyor. Hikâyenin sizi içine soktuğu bir sahne ile gerçekten orada olan
+bir şey arasındaki fark bu.
 
-**Neden türetilemez.** İki cevap da kanonla tutarlı. STORY.md, Orman gölünün ötesindeki dört
-bacaklı kuşu, mevcut yayın *açıp kapatmadığı* şeylerden biri olarak listeliyor; yani onunla
-karşılaşmak, bilerek açık bırakılmış bir ucu kapatma kararı. Bu bir ölçüm değil, v0.8'in ne
-olduğuna dair sahibinin kararı.
+**Yapılırken karar gerektirecek olan:** hangi yerler ve şansın girişte mi, bir aksiyonda mı,
+yoksa tik başına mı atılacağı — ve karşılaşmanın *ne olduğu*, çünkü yayın 4. fazdan beri hiç
+savaşı olmadı.
 
-**ÖNERİ: karşılaşmamayı sürdürsün ve reddedişin kendisi içerik olsun.** Şimdiye kadarki izlerin
-hepsi oyuncunun kanıt bulması. Karşılaşma olmayan en güçlü sonraki vuruş, dünyanın bir görüşü
-olması: orada yaşayan biri — bataklık izcisi, sayman, liman — oyuncunun tarif ettiği şeyin ne
-olduğunu tam olarak bilip adını koymayı reddetmesi. Bu, yaya hiçbir şeyi cevaplamadan ikinci
-bir ses kazandırıyor ve karşılaşmayı, üzerine kurulacak asıl v0.8'e bırakıyor; tek bir sahnede
-harcamıyor.
 
-**Öteki cevabın maliyeti, seçim adil olsun diye.** Karşılaşmak bir düşman ya da bir karşılaşma
-gerektiriyor; bu da yayın 4. fazdan beri bilerek hiç kullanmadığı savaş içeriğini gerektirir ve
-oyunun en eski açık ipliğini tek bir sahneye harcar.
+### Q-14 — Lonca işleri: dört karar **KARAR VERİLDİ, dördü de**
 
-### Q-14 — Lonca işleri: ölçümün veremeyeceği dört karar **HER BİRİ İÇİN AYRI ÖNERİ AŞAĞIDA**
+**1. Kademeler.** Dokuz basamaklı bir merdiven: **F, E, D, C, B, A, S, SS, SSS**. Bir oyuncu
+panoda **kendi kademesinin, bir altının ve bir üstünün** işlerini görüyor — D'deyken E, D ve C.
+Kendi kademenizin üstünden iş almak sizi daha hızlı yükseltiyor ve bunu yapmak için daha zor iş
+veriyor; panonun sunduğu seçimin tamamı bu. **SS ve SSS nadir ve zorlaması amaçlanan
+kademeler.**
 
-P-41, bu dosyada başka hiçbir şeyin bloke etmediği son madde ve bunlar olmadan başlayamaz.
-Önce ölçüldü, böylece her soru bir görüş değil bir sayı taşıyor.
+*Listeden değil örnekten okundu: liste "F, D, E, C, A, S, SS, SSS" diyor, örnek ise — "D'deyken
+E, D ve C alabilir" — E'yi D'nin altına, C'yi üstüne koyuyor; bu da azalan harf merdiveni. B de
+aynı okumayla yazıldı. İkisinden biri yanlışsa düzeltilecek satır bu, çünkü kademe kaydedilen
+bir değer ve sonradan yeniden adlandırmak bu projenin yapmadığı şey.*
 
-**Loncanın bugünkü hâli.** Altı kaynaktan 255 Lonca itibarı kazanılabiliyor — kâtibin
-repliği, mühür kitabı ve dört Marrowmoth görevi — ve **onu okuyan tam olarak bir kapı var**:
-50'deki mühür kitabı. Yani para birimi zaten var ve neredeyse hiçbir şey satın almıyor; panonun
-yeni işler kadar yeni kapılara da ihtiyacı var. Adventurer's guild, tek aksiyonu olan ve **hiç
-tüccarı olmayan** açık bir konum; yani lonca dükkânı yeni bir stok listesi değil yeni bir
-tüccar demek.
+**2. Yenilenme: oyun günü başına, ve alınmış bir iş asla kaybolmuyor.** Pano yeniden atıyor;
+oyuncunun kabul ettiği iş atmıyor. Yenilenmeyi yavaş olanın cezası olmaktan çıkaran şey bu; ve
+kayıt biçimini zorunlu kılan da bu — kabul edilmiş bir iş yeniden yüklemeyi atlatmalı.
 
-**Ve pano gerçekten yeni makine.** Oyundaki 23 görevin hepsi `quests.js` içinde düz yazılmış;
-hiçbir yer çalışma anında `Quest` kurmuyor. Rastgele işlerden bir havuz; bir üretici, o an
-sunulanları tutacak bir yer, bir yenilenme kuralı ve bir kayıt biçimi gerektiriyor — çünkü
-oyuncunun kabul ettiği bir iş yeniden yüklemeyi atlatmalı.
+**3. İtibar: kademe için sabit bir miktar, artı işin zorluğu için bir miktar.** Yani aynı
+kademedeki iki iş aynı ödemiyor; zor olan brief daha çok ödüyor. Ölçülmüş kısıt yerinde:
+`check_a_standing_gate_can_be_reached` tekrarlanabilir bir kaynağı sınırsız sayıyor, yani
+panonun toplamda ödeyebileceğine hâlâ bir tavan gerekiyor; yoksa o kontrol Lonca için susuyor.
 
-**1. "A'dan S'ye" ne demek.** On dokuz zorluk kademesi mi, on dokuz ayrı yazılmış iş mi? İstek
-*türleri* ayrıca adlandırıyor — şu kadar canavar avla, şundan şu kadar topla — ki bu, harflerin
-brief değil kademe olduğunu düşündürüyor. Ama bir kademe merdiveni olarak A'dan S'ye yalnızca
-iki basamak; merdiven E-D-C-B-A-S diye işlemedikçe, ve o gelenek bu oyunun hiçbir yerinde yok.
-**Öneri yok: bu, geri kalan her şeyin şeklini değiştiriyor ve tahmin edilebilir değil.**
+**4. Zorluk brief'i ölçekliyor, kurguyu değil.** "Şundan 10 getir", "30 getir" oluyor; "100
+öldür", "300 öldür" oluyor. Her kademede aynı iş türleri ve işi sayılar yapıyor — isteğin
+adlandırdığı iki tür (şu kadar avla, şu kadar topla) da bu yüzden başlanacak doğru ikisi.
 
-**2. Pano ne zaman yenilensin.** Oyun günü başına, ziyaret başına ya da tamamlamada.
-**ÖNERİ: oyun günü başına.** Ziyarete bağlı yenilenme, oyuncunun dışarı çıkıp girerek yeniden
-attığı bir pano demek; bu da özelliği bir kumar makinesine çevirir. Tamamlamaya bağlı olan ise
-seçim sunamaz, oysa istek bunu açıkça istiyor.
+**Hâlâ açık ve küçük:** loncaya özel eşyaların ne işe yaradığı. Teklifin cevabı — component'ler,
+itibar fiyatına; çünkü 175'ini kimse satmıyor ve onları itibarla almak, zanaat merdivenini
+atlamayı satın alınan değil hak edilen bir şey yapıyor — çürütülmedi ve sahibi aksini söyleyene
+kadar geçerli.
 
-**3. İşler itibarı nasıl ödesin.** **ÖNERİ: kademe başına sabit bir miktar ve panonun toplamda
-ödeyebileceğine bir tavan.** Teknik kısıt gerçek ve ölçülmüş:
-`check_a_standing_gate_can_be_reached` tekrarlanabilir bir kaynağı sınırsız sayıyor; yani
-tavansız bir pano o kontrolü Lonca için tamamen kapatır — hem de itibarın en çok önem
-kazanmak üzere olduğu bölgede.
-
-**4. Loncaya özel eşyalar ne işe yarasın.** **ÖNERİ: component'ler.** Argüman v0.7.33'ün
-ölçümü: 175 component ve 94 hammadde hiç kimse tarafından satılmıyor ve component satmak o
-zaman, oyuncunun zanaat merdivenini atlamasına izin verdiği için reddedilmişti. Onları *itibar
-fiyatına* satan bir lonca, o atlamayı satın alınan değil hak edilen bir şey yapar — ki bir
-loncanın var olma sebebi de budur. Olmaması gereken şey daha iyi ekipman: oyunun güç eğrisi
-kademeyle belirleniyor ve onu geçen bir dükkân, zanaat sistemini yerinden eden bir dükkândır.
 
 ---
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 132 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 133 -->
 
 # Proposals
 
@@ -640,7 +640,7 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
 
-### P-26 — Two BookData fields that are read by nothing `blocked`
+### P-26 — Two BookData fields that are read by nothing `open`
 
 Found while measuring P-23. `BookData` declares six things a book can carry, and **two of
 them are never read anywhere in `src/`**:
@@ -671,7 +671,7 @@ than two.
 
 
 
-### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `blocked`
+### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
 
 The owner's request: *"let us add random quests from the guild, A through S. We should be able
 to take different ones, and they should sit somewhere separate called guild quests. Different
@@ -830,92 +830,71 @@ panel. Each gets an explicit repaint in `option_language`, and `npm run check`
 fails if one of them is missing, so the list cannot silently grow. No reload, and
 nothing had to be split.
 
-### Q-12 — Should a book be able to require a skill to read it? **PROPOSED: no, delete both fields**
+### Q-12 — Should a book be able to require a skill to read it? **DECIDED: yes, and it is a series**
 
-P-26 found two `BookData` fields that nothing in `src/` reads: `required_skills`, which looks
-like a gate on being able to read a book, and `finish_reward`, which looks like a reward on
-finishing one. The measurement does not settle what to do; this does not either, which is why
-it is here.
+Not the proposal's answer. Reading a book requires nothing in general and **raises Literacy**,
+which is what a book is for. But a book may require a skill when the book is *about* that
+skill at a level the reader has to have reached: a book that grants a sword skill needs
+nothing, while a **mastery series** - "Sword mastery" and its kin - can ask for level 20 in the
+skill it deepens.
 
-**`finish_reward` is not really a question.** No book sets it and nothing reads it, so
-deleting it removes a trap and loses nothing.
+So `required_skills` **stays and gets wired up**, which is the half P-26 called a real feature
+rather than a field to delete. What it needs beside it is the refusal: a book you cannot read
+yet has to say so and say what it wants, or it is a locked door nobody can see.
 
-**`required_skills` is the question,** because *Nothing Bites Here* declares
-`{literacy: 6}` and the game has always ignored it. Enforcing it now would **retroactively
-lock a book players can read today** - a behaviour change to existing content, not a fix.
+`finish_reward` is untouched by this answer. No book sets it and nothing reads it, so it is
+still a trap - deleting it loses nothing and is not the same question.
 
-**PROPOSED: delete both.** A gate that has never worked is not a feature being taken away, and
-the honest version of it is more than a field: this project's own rule says a locked door
-nobody can see is not a goal, so a book you cannot read yet has to say so and say why - a
-refusal text, a way to find out what it wants, and a reason it is worth coming back for. That
-is a feature to design, not a field to switch on.
 
-If gated books are wanted, the field comes back with that refusal text beside it, and *Nothing
-Bites Here* is where it starts.
+### Q-13 — Does v0.8 meet the four-legged bird, or keep refusing to? **DECIDED: it can be met, at about one in ten thousand**
 
-### Q-13 — Does v0.8 meet the four-legged bird, or keep refusing to? **PROPOSED: keep refusing, once more**
+Not the proposal's answer either, and better than it. The meeting is **possible** rather than
+scheduled: a very low chance - on the order of **1 in 10,000** - in certain places only.
 
-P-14 phase 7 exists to reach this. Three traces have shipped - a print in the sand at the
-Forest lake (v0.7.37), a lying-up place in the basin's rock shelters (v0.7.38), and a run of
-reeds that was always down (v0.7.39) - and the phase's own brief says the player must be
-unsure the thing exists at all before they meet it. Three is enough that the next piece has to
-answer this rather than be a fourth trace.
+That keeps what the phase was protecting. The player still cannot be sure it exists, because
+almost nobody will see it; the traces stay the way the arc is normally experienced; and
+nothing has to be spent to make the meeting happen. It is the difference between a scene the
+story walks you into and a thing that is genuinely out there.
 
-**Why it is not derivable.** Both answers are consistent with the canon. STORY.md lists the
-four-legged bird past the Forest lake as one of the things the current arc *opens and does not
-close*, so meeting it is a decision to close a dead end that was left open on purpose. That is
-the owner's call about what v0.8 is, not a measurement.
+**What this needs deciding when it is built:** which places, and whether the chance is rolled
+on entering, on an action, or per tick - and what the encounter *is*, given the arc has had no
+combat since phase 4.
 
-**PROPOSED: keep refusing, and make the refusal itself the content.** The traces so far are
-all the player finding evidence. The strongest next beat that is not a meeting is the world
-having an opinion: somebody who lives out there - the swampland scout, the tallyman, the
-harbour - knowing exactly what the player is describing and declining to name it. That gives
-the arc a second voice without answering anything, and it leaves the meeting for v0.8 proper
-to be built around rather than spent on.
 
-**What the other answer costs, so it is a fair choice.** Meeting it needs an enemy or an
-encounter, which needs combat content the arc has deliberately had none of since phase 4, and
-it spends the game's oldest open thread on a single scene.
+### Q-14 — Guild work: the four decisions **DECIDED, all four**
 
-### Q-14 — Guild work: four decisions the measurement cannot make **PROPOSED below, each separately**
+**1. Ranks.** A ladder of nine: **F, E, D, C, B, A, S, SS, SSS**. A player at a given rank sees
+the board's jobs for **their own rank, one below and one above** - at D, that is E, D and C.
+Taking work above your rank raises you faster and gives you harder work to do it with, which is
+the whole of the choice the board offers. **SS and SSS are rare and meant to be punishing.**
 
-P-41 is the last item in this file that nothing else blocks, and it cannot start without
-these. Measured first, so each question carries a number rather than an opinion.
+*Read from the owner's example rather than their list: the list reads "F, D, E, C, A, S, SS,
+SSS", and the example - "at D you can take E, D and C" - puts E below D and C above it, which
+is the descending-letter ladder. B is written in on the same reading. If either is wrong, this
+is the line to correct, because a rank is a saved value and renaming one later is the thing
+this project does not do.*
 
-**What the guild is today.** 255 Guild standing is grantable across six sources - the clerk's
-line, the seal book, and the four Marrowmoth quests - and **exactly one gate reads it**, the
-seal book at 50. So the currency already exists and buys almost nothing; the board needs new
-doors as much as it needs new jobs. The Adventurer's guild is an unlocked location with one
-action and **no trader at all**, so a guild shop is a new trader rather than a new stock list.
+**2. Refresh: per in-game day, and a job already taken is never lost.** The board rerolls; what
+the player has accepted does not. That is what stops the refresh from being a punishment for
+being slow, and it is what makes the save shape non-optional - an accepted job has to survive
+a reload.
 
-**And the board is genuinely new machinery.** All 23 quests in the game are literals in
-`quests.js`; nothing anywhere constructs a `Quest` at runtime. A pool of randomised jobs needs
-a generator, somewhere to keep what is currently on offer, a refresh rule, and a save shape,
-because a job the player has accepted has to survive a reload.
+**3. Standing: a fixed amount for the rank, plus an amount for the difficulty of the work.**
+So two jobs of the same rank do not pay identically; the harder brief pays more. The measured
+constraint stands: `check_a_standing_gate_can_be_reached` treats a repeatable source as
+unbounded, so the board still needs a ceiling on what it can pay in total, or that check goes
+silent for the Guild.
 
-**1. What "A through S" means.** Nineteen difficulty ranks, or nineteen distinct written jobs?
-The request names the *types* separately - hunt so many monsters, gather so much of something
-- which suggests the letters are ranks rather than briefs. But A-to-S as a rank ladder is only
-two rungs unless the ladder runs E-D-C-B-A-S, and that convention is not in this game
-anywhere. **No proposal: this one changes the shape of everything else and is not guessable.**
+**4. Difficulty scales the brief, not the fiction.** "Bring 10 of these" becomes "bring 30";
+"kill 100" becomes "kill 300". The same job types at every rank, with the numbers doing the
+work - which is why the types the request names (hunt so many, gather so much) are the right
+two to start from.
 
-**2. When the board refreshes.** Per in-game day, per visit, or on completion.
-**PROPOSED: per in-game day.** A visit-based refresh is a board the player rerolls by walking
-out and back in, which turns the feature into a slot machine; a completion-based one cannot
-offer a choice, which the request explicitly asks for.
+**Still open, and small:** what guild-only items are for. The proposal's answer - components,
+sold at a standing price, because 175 of them are sold by nobody and buying them at a price
+in standing makes skipping the crafting ladder something earned rather than bought - was not
+contradicted, and stands unless the owner says otherwise.
 
-**3. How the jobs pay standing.** **PROPOSED: a fixed amount per rank, and a cap on what the
-board can pay in total.** The technical constraint is real and measured:
-`check_a_standing_gate_can_be_reached` treats a repeatable source as unbounded, so an
-uncapped board would switch that check off for the Guild entirely - the one region where
-standing is about to matter most.
-
-**4. What guild-only items are for.** **PROPOSED: components.** The measurement from v0.7.33
-is the argument: 175 components and 94 materials are sold by nobody, and selling components
-was declined then because it lets a player skip the crafting ladder. A guild that sells them
-*at a standing price* makes that skip something earned rather than bought, which is what a
-guild is for. What it must not be is better equipment, because the game's power curve is set
-by tier and a shop that outruns it is a shop that replaces the crafting system.
 
 ---
 
