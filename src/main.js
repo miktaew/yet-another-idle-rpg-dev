@@ -702,11 +702,11 @@ function start_activity(selected_activity) {
             current_activity = null;
             return;
         }
-        current_activity.gathered_materials = {};
     } else throw `"${activities[current_activity.activity_name].type}" is not a valid activity type!`;
 
     current_activity.earnings = 0;
     current_activity.gathering_time = 0;
+    current_activity.gathered_materials = {};
     current_activity.gathering_time_needed = current_activity.getActivityEfficiency().gathering_time_needed;
 
     add_to_content_stack({content_type: "activity", data: {activity: current_activity}});
@@ -2967,7 +2967,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     }
                     
                     update_displayed_material_choice({category, subcategory, recipe_id, refreshing: true});
-                    //update_displayed_crafting_recipes();
+                    update_displayed_crafting_recipes();
                 } else {
                     console.log("Tried to create an item without having necessary materials");
                 }

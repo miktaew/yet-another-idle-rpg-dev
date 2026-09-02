@@ -2046,6 +2046,11 @@ function update_displayed_book(book_id) {
 
     item_divs[book_key].getElementsByClassName("item_tooltip")[0].remove();
     item_divs[book_key].getElementsByClassName("item_book")[0].appendChild(create_item_tooltip(book));
+
+
+
+    let percent = Math.min(book_stats[book_key].accumulated_time / book_stats[book_key].required_time, 1);
+    document.getElementById("action_progress_bar").style.width = 385*percent+"px";
 }
 
 /**
@@ -4521,6 +4526,16 @@ function start_reading_display(title) {
     const action_status_div = document.createElement("div");
     action_status_div.innerText = `Reading the book, ${format_reading_time(item_templates[title].getRemainingTime())} left`;
     action_status_div.id = "action_status_div";
+
+
+    const action_progress_bar_max = document.createElement("div");
+    const action_progress_bar = document.createElement("div");
+    action_progress_bar_max.appendChild(action_progress_bar);
+    action_progress_bar.id = "action_progress_bar";
+    action_progress_bar.style.width = "0px";
+    action_progress_bar_max.id = "action_progress_bar_max";
+    action_div.appendChild(action_progress_bar_max);
+
 
     const action_end_div = document.createElement("div");
     action_end_div.setAttribute("onclick", "end_reading()");

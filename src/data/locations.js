@@ -1935,6 +1935,28 @@ There's another gate on the wall in front of you, but you have a strange feeling
             require_tool: true,
         })
     };
+
+    locations["Eastern mill"].activities = {
+        "balancing": new LocationActivity({
+            activity_name: "climbing",
+            starting_text: "Stay on top of the windmill sails",
+            skill_xp_per_tick: 15,
+            is_unlocked: false,
+        }),
+        "weightlifting": new LocationActivity({
+            activity_name: "weightlifting",
+            starting_text: "Manually grind flour",
+            skill_xp_per_tick: 15,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [{name: "Flour", ammount: [[1,1], [1,3]], chance: [0.2, 1]}],
+                time_period: [40, 10],
+                skill_required: [20, 40],
+            },
+        }),
+    };
+
+
     locations["Nearby cave"].activities = {
         "weightlifting": new LocationActivity({
             activity_name: "weightlifting",
@@ -2554,6 +2576,98 @@ There's another gate on the wall in front of you, but you have a strange feeling
             keep_progress: true,
         }),
     };
+
+    locations["Eastern mill"].actions = {
+        "unlock balancing": new GameAction({
+            action_id: "unlock balancing",
+            starting_text: "Climb atop the sails",
+            description: "See what the view from up there is like.",
+            action_text: "Navigating the moving spars",
+            success_text: "You finally reach the top. Now, staying there is a whole different thing...",
+            failure_texts: {
+                conditional_loss: [
+                    "You can already tell this is a bad idea. Maybe if you were better at climbing and balancing..."
+                ],
+                random_loss: [
+                    "The sails take you back to the bottom",
+                    "You lose your way and end up going down",
+                    "The wind is too strong, you can only cling for your dear life until the sails take you back down",
+                    "You end as you began",
+                    "*Hey, get down from there! This ain't no ride!*"
+                ],
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Climbing": 20,
+                        "Equilibrium": 15,
+                    },
+                    stats: {
+                        strength: 300,
+                        agility: 400,
+                        max_stamina: 500,
+                    }
+                },
+                {
+                    skills: {
+                        "Climbing": 40,
+                        "Equilibrium": 30,
+                    },
+                    stats: {
+                        strength: 600,
+                        agility: 1000,
+                        max_stamina: 1000,
+                    },
+                },
+            ],
+            attempt_duration: 20,
+            success_chances: [0.2, 1],
+            rewards: {
+                skill_xp: {"Climbing": 30000},
+                activities: [{location:"Eastern mill", activity:"balancing"}],
+            },
+        }),
+        "unlock weightlifting": new GameAction({
+            action_id: "unlock weightlifting",
+            starting_text: "Try to lift the massive millstone",
+            description: "See how stong you are compared to the wind itself.",
+            action_text: "Huffing and puffing",
+            success_text: "'Oh wow! That's Impressive! Are you sure you're not secretly a bear?' One of the millers winks at you. 'I know! If you can make the milling go faster, we'll let you keep some of the extra flour! Deal?'",
+            failure_texts: {
+                conditional_loss: [
+                    "Despite trying your best, you can feel that you are just too weak for it. You should get stronger first."
+                ],
+                random_loss: [
+                    "You have confirmed that it is indeed heavy."
+                ],
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Weightlifting": 20,
+                    },
+                    stats: {
+                        strength: 500,
+                    }
+                },
+                {
+                    skills: {
+                        "Weightlifting": 40,
+                    },
+                    stats: {
+                        strength: 1000,
+                    }
+                }
+            ],
+            attempt_duration: 10,
+            success_chances: [0.2, 1],
+            rewards: {
+                skill_xp: {"Weightlifting": 10000},
+                activities: [{location:"Eastern mill", activity:"weightlifting"}],
+            },
+        }),
+    };
+
     locations["Nearby cave"].actions = {
         "open the gate": new GameAction({
             action_id: "open the gate",

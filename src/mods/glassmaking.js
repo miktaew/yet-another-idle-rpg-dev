@@ -1,6 +1,6 @@
 "use strict";
 
-import { locations, LocationActivity } from "../locations.js"
+import { locations, LocationActivity } from "../data/locations.js"
 import { Material, Book, BookData, item_templates, book_stats } from "../items.js"
 import { inventory_templates, TradeItem } from "../traders.js"
 import { recipes, ItemRecipe } from "../crafting_recipes.js"
