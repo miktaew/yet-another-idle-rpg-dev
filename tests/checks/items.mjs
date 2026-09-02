@@ -8,6 +8,8 @@ import { load_generated_item_templates } from "../lib/generated-items.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 import { strip_comments } from "../lib/source.mjs";
+import { declared_item_keys, item_data_files,
+    rows_declared_in_data } from "../lib/item-keys.mjs";
 
 /**
  * The generated items: 203 components built at runtime from a material and a
@@ -128,10 +130,9 @@ async function check_recipe_item_names() {
         return;
     }
 
-    const items = strip_comments(fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
     const known = new Set([
         ...Object.keys(generated),
-        ...[...items.matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(match => match[1]),
+        ...declared_item_keys(repo_root),
     ]);
 
     const recipes = strip_comments(fs.readFileSync(path.join(repo_root, "src/crafting_recipes.js"), "utf8"));
@@ -715,7 +716,79 @@ async function check_trader_stock_names_resolve() {
         + `${rows} row(s), each naming a real item`);
 }
 
+
+/**
+ * Every item data file items.js reads is one the checks read too.
+ *
+ * This is the guard for the failure the move itself demonstrated, and it is worth stating
+ * plainly because it is invisible from the game's side. Five separate places derived "what
+ * is an item template" by grepping `src/items.js`. Moving 111 materials into JSON broke all
+ * five at once - **171 check errors and 76 from check:save**, every one of them naming a
+ * material that was working perfectly in the browser. The code was right and the checks were
+ * reading the wrong place.
+ *
+ * `tests/lib/item-keys.mjs` now answers that question from both places, and keeps its own
+ * list of the data files. So the next family to move needs one filename added there - and
+ * this is what fails if it is not. Without it, forgetting the filename does not break
+ * anything loudly: the items work, the checks simply stop seeing them, and a whole family
+ * quietly leaves the coverage of five checks at once.
+ *
+ * Derived from what items.js actually imports rather than from a second list, so the two
+ * cannot drift: a JSON import in items.js IS the declaration that a data file exists.
+ */
+function check_item_data_files_are_all_read() {
+    const source = fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8");
+
+    const imported = [...source.matchAll(/from\s+"\.\/(data\/[\w.-]+\.json)"/g)]
+        .map(found => `src/${found[1]}`);
+    if (imported.length === 0) {
+        error("src/items.js imports no JSON data file. If the item families moved back into "
+            + "source, check_item_data_files_are_all_read and tests/lib/item-keys.mjs are "
+            + "both out of date.");
+        return;
+    }
+
+    for (const file of imported) {
+        if (item_data_files.includes(file)) continue;
+        error(`src/items.js reads "${file}" and tests/lib/item-keys.mjs does not list it, so `
+            + `every item in it is invisible to the five checks that ask which item keys `
+            + `exist. Nothing would fail: the items work and the checks stop covering them.`);
+    }
+    for (const file of item_data_files) {
+        if (imported.includes(file)) continue;
+        error(`tests/lib/item-keys.mjs lists "${file}" and src/items.js does not read it, so `
+            + `the checks believe in items the game never builds.`);
+    }
+
+    //And the rows themselves, since nothing else parses them.
+    let rows = 0;
+    const source_keys = new Set([...strip_comments(source)
+        .matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(found => found[1]));
+
+    for (const [key, row] of rows_declared_in_data(repo_root)) {
+        rows++;
+        if (typeof row.value !== "number" || !Number.isFinite(row.value)) {
+            error(`${row.from} gives "${key}" a value of ${JSON.stringify(row.value)}, `
+                + `which is not a number. Every item needs one.`);
+        }
+        if (row.name === key) {
+            error(`${row.from} states name "${key}" for the key "${key}". The name is only `
+                + `carried when it DIFFERS from the key - setup_ids() fills it from the key `
+                + `otherwise - so a row repeating it is a row that will drift.`);
+        }
+        if (source_keys.has(key)) {
+            error(`"${key}" is declared both in ${row.from} and in src/items.js. Whichever `
+                + `runs second silently replaces the other, and which that is depends on `
+                + `where in the file the loader sits.`);
+        }
+    }
+
+    console.log(`[check] item data: ${imported.length} file(s) read and listed, ${rows} `
+        + `row(s), none clashing with a declaration in source`);
+}
+
 export {
+    check_item_data_files_are_all_read,
     check_trader_stock_names_resolve,
     check_books_can_be_got,
     check_books_ask_for_real_skills,

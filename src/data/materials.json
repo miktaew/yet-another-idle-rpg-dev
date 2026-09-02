@@ -1,0 +1,441 @@
+{
+    "Boar tusk": {
+        "value": 20
+    },
+    "Rat tail": {
+        "value": 4
+    },
+    "Rat pelt": {
+        "value": 10,
+        "material_type": "pelt"
+    },
+    "High quality wolf fang": {
+        "value": 15,
+        "material_type": "miscellaneous"
+    },
+    "Wolf pelt": {
+        "value": 20,
+        "material_type": "pelt"
+    },
+    "Boar hide": {
+        "value": 30,
+        "material_type": "pelt"
+    },
+    "Boar meat": {
+        "value": 20,
+        "material_type": "raw meat"
+    },
+    "High quality boar tusk": {
+        "value": 25,
+        "material_type": "miscellaneous"
+    },
+    "Bear hide": {
+        "value": 50,
+        "material_type": "pelt"
+    },
+    "Bear claw": {
+        "value": 50
+    },
+    "Sharp bear claw": {
+        "value": 80,
+        "material_type": "miscellaneous"
+    },
+    "Weak monster bone": {
+        "value": 30,
+        "material_type": "bone"
+    },
+    "Goat meat": {
+        "value": 25,
+        "name": "Mountain goat meat",
+        "material_type": "raw meat"
+    },
+    "Mountain goat hide": {
+        "value": 30,
+        "material_type": "pelt"
+    },
+    "Pristine mountain goat horn": {
+        "value": 70,
+        "material_type": "miscellaneous"
+    },
+    "Crab meat": {
+        "value": 20
+    },
+    "Crab claw": {
+        "value": 40
+    },
+    "Giant crab claw": {
+        "value": 100,
+        "material_type": "miscellaneous"
+    },
+    "Alligator meat": {
+        "value": 40,
+        "material_type": "raw meat"
+    },
+    "Alligator skin": {
+        "value": 50,
+        "material_type": "pelt"
+    },
+    "Turtle meat": {
+        "value": 40,
+        "material_type": "raw meat"
+    },
+    "Turtle shell": {
+        "value": 30,
+        "material_type": "pelt"
+    },
+    "Giant snake meat": {
+        "value": 40,
+        "material_type": "raw meat"
+    },
+    "Giant snake skin": {
+        "value": 50,
+        "material_type": "pelt"
+    },
+    "Frog meat": {
+        "value": 50,
+        "material_type": "raw meat"
+    },
+    "Frog hide": {
+        "value": 50,
+        "material_type": "pelt"
+    },
+    "Low quality iron ore": {
+        "value": 3,
+        "material_type": "raw metal"
+    },
+    "Iron ore": {
+        "value": 5,
+        "material_type": "raw metal"
+    },
+    "Atratan ore": {
+        "value": 6,
+        "material_type": "raw metal"
+    },
+    "White iron ore": {
+        "value": 10,
+        "material_type": "raw metal"
+    },
+    "Black iron ore": {
+        "value": 10,
+        "material_type": "raw metal"
+    },
+    "Silver ore": {
+        "value": 10,
+        "material_type": "raw metal"
+    },
+    "Coal": {
+        "value": 7,
+        "material_type": "coal"
+    },
+    "Charcoal": {
+        "value": 5,
+        "material_type": "coal"
+    },
+    "Wood log": {
+        "value": 20,
+        "material_type": "raw wood"
+    },
+    "Ash wood log": {
+        "value": 35,
+        "material_type": "raw wood"
+    },
+    "Hickory wood log": {
+        "value": 50,
+        "material_type": "raw wood"
+    },
+    "Piece of willow wood": {
+        "value": 5
+    },
+    "Stone brick": {
+        "value": 8,
+        "material_type": "stone brick"
+    },
+    "Belmart leaf": {
+        "value": 8,
+        "material_type": "disinfectant herb"
+    },
+    "Golmoon leaf": {
+        "value": 8,
+        "material_type": "healing herb"
+    },
+    "Oneberry": {
+        "value": 8,
+        "material_type": "healing herb"
+    },
+    "Silver thistle": {
+        "value": 20,
+        "material_type": "healing herb"
+    },
+    "Tree sap": {
+        "value": 5
+    },
+    "Cooking herbs": {
+        "value": 10,
+        "name": "Parsley, sage, rosemary and thyme",
+        "material_type": "culinary herb"
+    },
+    "Wool": {
+        "value": 8,
+        "material_type": "raw fabric"
+    },
+    "Silica Sand": {
+        "value": 1,
+        "name": "Silica sand"
+    },
+    "Flax": {
+        "value": 14,
+        "material_type": "raw fabric"
+    },
+    "Clam": {
+        "value": 6
+    },
+    "Wild onion": {
+        "value": 20
+    },
+    "Wild garlic": {
+        "value": 20,
+        "material_type": "culinary herb"
+    },
+    "Wild potato": {
+        "value": 20
+    },
+    "Ratfish": {
+        "value": 5,
+        "material_type": "small fish",
+        "base_size": 5,
+        "use_quality": true
+    },
+    "Minnow": {
+        "value": 10,
+        "material_type": "small fish",
+        "base_size": 10,
+        "use_quality": true
+    },
+    "Mackerel shark": {
+        "value": 85,
+        "material_type": "medium fish",
+        "base_size": 35,
+        "use_quality": true
+    },
+    "Trout": {
+        "value": 110,
+        "material_type": "medium fish",
+        "base_size": 60,
+        "use_quality": true
+    },
+    "Carp": {
+        "value": 150,
+        "material_type": "medium fish",
+        "base_size": 50,
+        "use_quality": true
+    },
+    "Catfish": {
+        "value": 200,
+        "material_type": "large fish",
+        "base_size": 100,
+        "use_quality": true
+    },
+    "Bonemeal": {
+        "value": 100
+    },
+    "Low quality iron ingot": {
+        "value": 10,
+        "material_type": "metal"
+    },
+    "Iron ingot": {
+        "value": 20,
+        "material_type": "metal"
+    },
+    "Steel ingot": {
+        "value": 40,
+        "material_type": "metal"
+    },
+    "White iron ingot": {
+        "value": 70,
+        "material_type": "metal"
+    },
+    "Black iron ingot": {
+        "value": 70,
+        "material_type": "metal"
+    },
+    "Heavy sand": {
+        "value": 45,
+        "material_type": "metal"
+    },
+    "White steel ingot": {
+        "value": 120,
+        "material_type": "metal"
+    },
+    "Black steel ingot": {
+        "value": 120,
+        "material_type": "metal"
+    },
+    "White chainmail": {
+        "value": 180,
+        "material_type": "chainmail"
+    },
+    "Black chainmail": {
+        "value": 180,
+        "material_type": "chainmail"
+    },
+    "White plate": {
+        "value": 275,
+        "material_type": "plate"
+    },
+    "Black plate": {
+        "value": 275,
+        "material_type": "plate"
+    },
+    "Turtle shellplate": {
+        "value": 60,
+        "material_type": "metal"
+    },
+    "Silver ingot": {
+        "value": 30,
+        "material_type": "metal"
+    },
+    "Piece of wolf rat leather": {
+        "value": 20,
+        "material_type": "piece of leather"
+    },
+    "Processed rat pelt": {
+        "value": 20,
+        "material_type": "processed pelt"
+    },
+    "Piece of wolf leather": {
+        "value": 30,
+        "material_type": "piece of leather"
+    },
+    "Processed wolf pelt": {
+        "value": 30,
+        "material_type": "processed pelt"
+    },
+    "Piece of boar leather": {
+        "value": 45,
+        "material_type": "piece of leather"
+    },
+    "Processed boar hide": {
+        "value": 45,
+        "material_type": "processed pelt"
+    },
+    "Piece of goat leather": {
+        "value": 60,
+        "material_type": "piece of leather"
+    },
+    "Processed goat hide": {
+        "value": 60,
+        "material_type": "processed pelt"
+    },
+    "Piece of bear leather": {
+        "value": 90,
+        "material_type": "piece of leather"
+    },
+    "Processed bear hide": {
+        "value": 90,
+        "material_type": "piece of leather"
+    },
+    "Piece of frog leather": {
+        "value": 60,
+        "material_type": "piece of leather"
+    },
+    "Piece of alligator leather": {
+        "value": 150,
+        "material_type": "piece of leather"
+    },
+    "Piece of snakeskin leather": {
+        "value": 150,
+        "material_type": "piece of leather"
+    },
+    "Animal fat": {
+        "value": 40,
+        "material_type": "fat"
+    },
+    "Sinew": {
+        "value": 5
+    },
+    "Sinew string": {
+        "value": 20
+    },
+    "Flax string": {
+        "value": 35
+    },
+    "Wool cloth": {
+        "value": 8,
+        "material_type": "fabric"
+    },
+    "Linen cloth": {
+        "value": 14,
+        "material_type": "fabric"
+    },
+    "Iron chainmail": {
+        "value": 30,
+        "material_type": "chainmail"
+    },
+    "Steel chainmail": {
+        "value": 60,
+        "material_type": "chainmail"
+    },
+    "Steel plate": {
+        "value": 90,
+        "material_type": "plate"
+    },
+    "White iron plate": {
+        "value": 160,
+        "material_type": "plate"
+    },
+    "Black iron plate": {
+        "value": 160,
+        "material_type": "plate"
+    },
+    "White iron chainmail": {
+        "value": 105,
+        "material_type": "chainmail"
+    },
+    "Black iron chainmail": {
+        "value": 105,
+        "material_type": "chainmail"
+    },
+    "Processed rough wood": {
+        "value": 6,
+        "material_type": "wood"
+    },
+    "Processed wood": {
+        "value": 11,
+        "material_type": "wood"
+    },
+    "Processed ash wood": {
+        "value": 20,
+        "material_type": "wood"
+    },
+    "Processed hickory wood": {
+        "value": 35,
+        "material_type": "wood"
+    },
+    "Alchemical Wood": {
+        "value": 50,
+        "material_type": "wood"
+    },
+    "Processed weak monster bone": {
+        "value": 40,
+        "material_type": "bone"
+    },
+    "Wicker": {
+        "value": 10
+    },
+    "Willow bark": {
+        "value": 25
+    },
+    "Potash": {
+        "value": 25
+    },
+    "Sulfur": {
+        "value": 30
+    },
+    "Raw Glass": {
+        "value": 100,
+        "name": "Raw glass"
+    },
+    "Metal fishing hook": {
+        "value": 10
+    }
+}

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 125 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 126 -->
 
 # Changelog
 
@@ -20,6 +20,59 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### the materials out of items.js and into JSON, proved rather than believed
+
+No version: nothing player-visible changed, and the point is that **nothing changed at all**.
+P-42 step 2, first family. `items.js` goes from 5,464 lines to 4,901; `src/data/materials.json`
+holds 111 rows.
+
+**The measurement that chose materials first, and chose JSON at all.** Of 256 item
+declarations in that file, exactly **one** carries a function - and of the 112 materials it is
+`Rough wood log`, whose `getName` calls `is_rat()`. So it stays in source, with a comment
+saying why, and the other 111 are data that had been pretending to be code.
+
+**Two fields are not in the JSON, and both removals are load-bearing.** Every one of the 112
+descriptions was exactly `desc item <key>`, so the loader derives it and a description that
+does not match its key is no longer expressible. And `name` is carried only by the **four**
+whose name differs from their key - Goat meat, Cooking herbs, Silica Sand, Raw Glass -
+because `setup_ids()` already fills the name from the key for the 67 that never stated one,
+so the 45 that stated it redundantly now take that same path.
+
+**`with { type: "json" }` is required rather than decorative.** Measured both ways: esbuild
+accepts a bare JSON import and Node refuses it outright, and the checks load this file
+through Node. A bare import would have built, bundled and shipped while breaking every check
+that touches items.
+
+**Proved, not believed.** The registry was snapshotted before the move - name, description,
+value, material type, item type, quality, base size, use_quality, id and tags for every
+material - and compared after: **112 of 112 identical, 0 different.**
+
+**The move broke five checks at once, and that is the finding worth keeping.** Five separate
+places derived "what is an item template" by grepping `src/items.js` for
+`item_templates["X"] = new `: `tests/save.mjs`, two in `display-names.mjs`, one in
+`items.mjs`, one in `rewards.mjs`. Moving the materials produced **171 check errors and 76
+from check:save**, every one naming a material that was working perfectly in the browser.
+The code was right; five checks were reading the wrong place.
+
+So `tests/lib/item-keys.mjs` answers that question once, from both places. Which means the
+next family costs one filename there rather than five greps updated in step - and
+`check_item_data_files_are_all_read` is what fails if that filename is forgotten, derived
+from what `items.js` actually imports so the two lists cannot drift. Without it, forgetting
+is silent in the worst way: the items work and a whole family simply leaves the coverage of
+five checks.
+
+**And one thing the helper got wrong on its first run, which the old check had already
+written down.** It read items.js without stripping comments - and **118 declarations in that
+file sit inside block comments**, superseded by the components
+`crafting_component_filling.js` generates. That cost 111 errors demanding display-name rows
+for clothing that no longer exists. The comment at `display-names.mjs:155` had explained
+exactly this; I had not read it before writing the replacement.
+
+**Five stray commas fixed on the way.** `Bonemeal`, `Piece of goat leather`, `Processed bear
+hide`, `Piece of alligator leather` and `Piece of snakeskin leather` ended `}),` rather than
+`});`, chaining each into the following statement. Legal, harmless, and it broke the first
+attempt at reading the file a declaration at a time.
 
 ### v0.7.47 - a quest that could stall for good, and the save that already had
 

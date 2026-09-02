@@ -69,6 +69,7 @@ import {
     check_no_two_items_share_a_name,
     check_recipe_item_names,
     check_trader_stock_names_resolve,
+    check_item_data_files_are_all_read,
 } from "./checks/items.mjs";
 import {
     check_a_better_input_makes_a_better_result,
@@ -169,6 +170,7 @@ await check_trader_display_names();
 await check_item_display_names();
 check_no_item_canonical_names_outside_items();
 await check_trader_stock_names_resolve();
+check_item_data_files_are_all_read();
 await check_equipment_slot_names();
 await check_no_english_in_dom();
 check_onclick_names_are_reachable();

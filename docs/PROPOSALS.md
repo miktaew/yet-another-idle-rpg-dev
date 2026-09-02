@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 149 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 150 -->
 
 # Proposals
 
@@ -571,6 +571,21 @@ proved the cheap version of it works (five panels moved out, one-way imports, no
 until what is left in `main.js` is the loop, the content stack and the window bindings, and
 judge it then.** The 96 bindings are the number to watch; if they stay 96 while the file
 halves, the answer was yes.
+
+**The first family is done.** 111 of the 112 materials are in `src/data/materials.json`;
+`items.js` is 4,901 lines rather than 5,464. `Rough wood log` stayed in source because its
+`getName` calls `is_rat()`. Proved by snapshotting the constructed registry before and after:
+112 of 112 identical.
+
+Two things it taught, both of which make the next family cheaper. `with { type: "json" }` is
+required, not optional - esbuild accepts a bare JSON import and Node refuses it, and the
+checks run on Node. And **five checks derived "what is an item template" by grepping
+items.js**, so the move produced 171 check errors naming materials that worked perfectly;
+`tests/lib/item-keys.mjs` answers that from both places now, and
+`check_item_data_files_are_all_read` fails if a new data file is not listed there.
+
+**Next: `crafting_recipes.js`,** 148 declarations and none with a function. Then the models,
+which is the same reading done once rather than twice.
 
 **Sequenced:** JSON + models for `items.js` and `crafting_recipes.js` first, because it is
 the one with a measured 404-to-1 argument behind it. Then the folder layout, once the files

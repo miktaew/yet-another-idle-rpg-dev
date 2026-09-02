@@ -37,6 +37,7 @@
 //as a note, try to not give dexterity/agility from weapons and instead use attack_points/evasion_points, this is in regards of possible skill checks;
 //leaving it on armor seems fine on the other hand, as it makes much more sense for worn clothing to impact such a situation
 
+import materials from "./data/materials.json" with { type: "json" };
 import { round_item_price } from "./misc.js";
 import { group_key_prefix, get_item_value_with_market_saturation, get_total_tier_saturation, get_loot_price_multiple} from "./market_saturation.js";
 import { is_rat } from "./character.js";
@@ -1705,11 +1706,34 @@ book_stats["Counting Mice"] = new BookData({
         value: 12,
         material_type: "animal tooth",
     });
-    item_templates["Boar tusk"] = new Material({
-        name: "Boar tusk",
-        description: "desc item Boar tusk",
-        value: 20,
-    });
+    /*
+        The materials, read from data rather than declared (P-42 step 2).
+
+        Measured before it was moved: of 256 item declarations in this file exactly one
+        carries a function, and of the 112 materials it is `Rough wood log` - which stays
+        below, because its `getName` calls `is_rat()` and JSON holds no functions. The other
+        111 were pure literals.
+
+        Two fields are NOT in the JSON, on purpose:
+
+          - `description`. All 112 were exactly `desc item <key>`, so it is derived here and
+            a description that does not match its key stops being expressible.
+          - `name`, except for the four whose name differs from their key - Goat meat,
+            Cooking herbs, Silica Sand, Raw Glass. `setup_ids()` already fills the name from
+            the key for the 67 that never stated one, so the 45 that stated it redundantly
+            now take that same path.
+
+        The import attribute is required rather than decorative: esbuild accepts a bare JSON
+        import and Node does not, and the checks load this file through Node.
+    */
+    for(const [key, row] of Object.entries(materials)) {
+        item_templates[key] = new Material({
+            ...row,
+            name: row.name ?? key,
+            description: `desc item ${key}`,
+        });
+    }
+
     item_templates["Rat meat chunks"] = new OtherItem({
         name: "Rat meat chunks",
         description: "desc item Rat meat chunks",
@@ -1773,211 +1797,21 @@ book_stats["Counting Mice"] = new BookData({
 
 //lootable materials
 (function(){
-    item_templates["Rat tail"] = new Material({
-        name: "Rat tail",
-        description: "desc item Rat tail",
-        value: 4,
-    });
-    item_templates["Rat pelt"] = new Material({
-        name: "Rat pelt",
-        description: "desc item Rat pelt",
-        value: 10,
-        material_type: "pelt",
-    });
 	
-    item_templates["High quality wolf fang"] = new Material({
-        name: "High quality wolf fang",
-        description: "desc item High quality wolf fang",
-        value: 15,
-        material_type: "miscellaneous",
-    });
-    item_templates["Wolf pelt"] = new Material({
-        name: "Wolf pelt",
-        description: "desc item Wolf pelt",
-        value: 20,
-        material_type: "pelt",
-    });
 	
-    item_templates["Boar hide"] = new Material({
-        name: "Boar hide",
-        description: "desc item Boar hide",
-        value: 30,
-        material_type: "pelt",
-    });
-    item_templates["Boar meat"] = new Material({
-        name: "Boar meat",
-        description: "desc item Boar meat",
-        value: 20,
-        material_type: "raw meat",
-    });
-    item_templates["High quality boar tusk"] = new Material({
-        name: "High quality boar tusk",
-        description: "desc item High quality boar tusk",
-        value: 25,
-        material_type: "miscellaneous",
-    });
 	
-    item_templates["Bear hide"] = new Material({
-        description: "desc item Bear hide",
-        value: 50,
-        material_type: "pelt",
-    });
-    item_templates["Bear claw"] = new Material({
-        description: "desc item Bear claw",
-        value: 50,
-    });
-    item_templates["Sharp bear claw"] = new Material({
-        description: "desc item Sharp bear claw",
-        value: 80,
-        material_type: "miscellaneous",
-    });
-    item_templates["Weak monster bone"] = new Material({
-        name: "Weak monster bone",
-        description: "desc item Weak monster bone",
-        value: 30,
-        material_type: "bone",
-    });
 	
-    item_templates["Goat meat"] = new Material({
-        name: "Mountain goat meat",
-        description: "desc item Goat meat",
-        value: 25,
-        material_type: "raw meat",
-    });
-    item_templates["Mountain goat hide"] = new Material({
-        name: "Mountain goat hide",
-        description: "desc item Mountain goat hide",
-        value: 30,
-        material_type: "pelt",
-    });
-    item_templates["Pristine mountain goat horn"] = new Material({
-        name: "Pristine mountain goat horn",
-        description: "desc item Pristine mountain goat horn",
-        value: 70,
-        material_type: "miscellaneous",
-    });
 	
-    item_templates["Crab meat"] = new Material({
-        name: "Crab meat",
-        description: "desc item Crab meat",
-        value: 20,
-    });
-    item_templates["Crab claw"] = new Material({
-        name: "Crab claw",
-        description: "desc item Crab claw",
-        value: 40,
-    });
-    item_templates["Giant crab claw"] = new Material({
-        description: "desc item Giant crab claw",
-        value: 100,
-        material_type: "miscellaneous",
-    });
 	
-    item_templates["Alligator meat"] = new Material({
-        name: "Alligator meat",
-        description: "desc item Alligator meat",
-        value: 40,
-        material_type: "raw meat",
-    });
-    item_templates["Alligator skin"] = new Material({
-        name: "Alligator skin",
-        description: "desc item Alligator skin",
-        value: 50,
-        material_type: "pelt",
-    });
 	
-    item_templates["Turtle meat"] = new Material({
-        name: "Turtle meat",
-        description: "desc item Turtle meat",
-        value: 40,
-        material_type: "raw meat",
-    });
-    item_templates["Turtle shell"] = new Material({
-        name: "Turtle shell",
-        description: "desc item Turtle shell",
-        value: 30,
-        material_type: "pelt",
-    });
 	
-    item_templates["Giant snake meat"] = new Material({
-        name: "Giant snake meat",
-        description: "desc item Giant snake meat",
-        value: 40,
-        material_type: "raw meat",
-    });
-    item_templates["Giant snake skin"] = new Material({
-        name: "Giant snake skin",
-        description: "desc item Giant snake skin",
-        value: 50,
-        material_type: "pelt",
-    });
 	
 
-    item_templates["Frog meat"] = new Material({
-        name: "Frog meat",
-        description: "desc item Frog meat",
-        value: 50,
-        material_type: "raw meat",
-    });
-    item_templates["Frog hide"] = new Material({
-        name: "Frog hide", 
-        description: "desc item Frog hide",
-        value: 50,
-        material_type: "pelt",
-    });
 
 })();
 
 //gatherable materials
 (function(){
-    item_templates["Low quality iron ore"] = new Material({
-        name: "Low quality iron ore",
-        description: "desc item Low quality iron ore",
-        value: 3,
-        material_type: "raw metal",
-    });
-    item_templates["Iron ore"] = new Material({
-        name: "Iron ore",
-        description: "desc item Iron ore",
-        value: 5,
-        material_type: "raw metal",
-    });
-    item_templates["Atratan ore"] = new Material({
-        name: "Atratan ore",
-        description: "desc item Atratan ore",
-        value: 6,
-        material_type: "raw metal",
-    });
-    item_templates["White iron ore"] = new Material({
-        name: "White iron ore",
-        description: "desc item White iron ore",
-        value: 10,
-        material_type: "raw metal",
-    });
-    item_templates["Black iron ore"] = new Material({
-        name: "Black iron ore",
-        description: "desc item Black iron ore",
-        value: 10,
-        material_type: "raw metal",
-    });
-    item_templates["Silver ore"] = new Material({
-        name: "Silver ore", 
-        description: "desc item Silver ore",
-        value: 10,
-        material_type: "raw metal",
-    });
-    item_templates["Coal"] = new Material({
-        name: "Coal",
-        description: "desc item Coal",
-        value: 7,
-        material_type: "coal",
-    });
-    item_templates["Charcoal"] = new Material({
-        name: "Charcoal",
-        description: "desc item Charcoal",
-        value: 5,
-        material_type: "coal",
-    });
 	
     item_templates["Rough wood log"] = new Material({
         description: "desc item Rough wood log",
@@ -1988,154 +1822,14 @@ book_stats["Counting Mice"] = new BookData({
             else return "Rough wood log";
         }
     });
-    item_templates["Wood log"] = new Material({
-        description: "desc item Wood log",
-        value: 20,
-        material_type: "raw wood",
-    });
-    item_templates["Ash wood log"] = new Material({
-        description: "desc item Ash wood log",
-        value: 35,
-        material_type: "raw wood",
-    });
-    item_templates["Hickory wood log"] = new Material({
-        description: "desc item Hickory wood log",
-        value: 50,
-        material_type: "raw wood",
-    });
-    item_templates["Piece of willow wood"] = new Material({
-        description: "desc item Piece of willow wood",
-        value: 5,
-        //material_type: "raw wood", //too easy to obtain compared to wood logs
-    });
 
-    item_templates["Stone brick"] = new Material({
-        description: "desc item Stone brick",
-        value: 8,
-        material_type: "stone brick",
-    });
 	
-    item_templates["Belmart leaf"] = new Material({
-        description: "desc item Belmart leaf",
-        value: 8,
-        material_type: "disinfectant herb",
-    });
-    item_templates["Golmoon leaf"] = new Material({
-        description: "desc item Golmoon leaf",
-        value: 8,
-        material_type: "healing herb",
-    });
-    item_templates["Oneberry"] = new Material({
-        description: "desc item Oneberry",
-        value: 8,
-        material_type: "healing herb",
-    });
-    item_templates["Silver thistle"] = new Material({
-        description: "desc item Silver thistle",
-        value: 20,
-        material_type: "healing herb",
-    });
 
-    item_templates["Tree sap"] = new Material({
-        description: "desc item Tree sap",
-        value: 5,
-    });
 	
-    item_templates["Cooking herbs"] = new Material({
-        name: "Parsley, sage, rosemary and thyme",
-        description: "desc item Cooking herbs",
-        value: 10,
-        material_type: "culinary herb",
-    });
-    item_templates["Wool"] = new Material({
-        description: "desc item Wool",
-        value: 8,
-        material_type: "raw fabric",
-    });
-    item_templates["Silica Sand"] = new Material({
-        name: "Silica sand",
-        description: "desc item Silica Sand",
-        value: 1
-    });
 
-    item_templates["Flax"] = new Material({
-        name: "Flax",
-        description: "desc item Flax",
-        value: 14,
-        material_type: "raw fabric",
-    });
-    item_templates["Clam"] = new Material({
-        name: "Clam",
-        description: "desc item Clam",
-        value: 6,
-    });
-    item_templates["Wild onion"] = new Material({
-        name: "Wild onion",
-        description: "desc item Wild onion",
-        value: 20,
-    });
-    item_templates["Wild garlic"] = new Material({
-        name: "Wild garlic",
-        description: "desc item Wild garlic",
-        value: 20,
-        material_type: "culinary herb",
-    });
-    item_templates["Wild potato"] = new Material({
-        name: "Wild potato",
-        description: "desc item Wild potato",
-        value: 20,
-    });
 	
-    item_templates["Ratfish"] = new Material({
-        name: "Ratfish",
-        description: "desc item Ratfish",
-        use_quality: true,
-        base_size: 5,
-        value: 5,
-        material_type: "small fish",
-    });
-    item_templates["Minnow"] = new Material({
-        name: "Minnow",
-        description: "desc item Minnow",
-        use_quality: true,
-        base_size: 10,
-        value: 10,
-        material_type: "small fish",
-    });
 
-    item_templates["Mackerel shark"] = new Material({
-        name: "Mackerel shark",
-        description: "desc item Mackerel shark",
-        use_quality: true,
-        base_size: 35,
-        value: 85,
-        material_type: "medium fish",
-    });
-    item_templates["Trout"] = new Material({
-        name: "Trout",
-        description: "desc item Trout",
-        use_quality: true,
-        base_size: 60,
-        value: 110,
-        material_type: "medium fish",
-    });
 
-    item_templates["Carp"] = new Material({
-        name: "Carp",
-        description: "desc item Carp",
-        use_quality: true,
-        base_size: 50,
-        value: 150,
-        material_type: "medium fish",
-    });
-    item_templates["Catfish"] = new Material({
-        name: "Catfish",
-        description: "desc item Catfish",
-        use_quality: true,
-        base_size: 100,
-        value: 200,
-        material_type: "large fish",
-    });
 })();
 
 
@@ -4733,39 +4427,10 @@ function add_gear() {
 
 //processed materials
 (function(){
-    item_templates["Bonemeal"] = new Material({
-        description: "desc item Bonemeal",
-        value: 100,
-    }),
 	
-    item_templates["Low quality iron ingot"] = new Material({
-        description: "desc item Low quality iron ingot",
-        value: 10,
-        material_type: "metal",
-    });
-    item_templates["Iron ingot"] = new Material({
-        description: "desc item Iron ingot",
-        value: 20,
-        material_type: "metal",
-    });
 
-    item_templates["Steel ingot"] = new Material({
-        description: "desc item Steel ingot",
-        value: 40,
-        material_type: "metal",
-    });
 
-    item_templates["White iron ingot"] = new Material({
-        description: "desc item White iron ingot",
-        value: 70,
-        material_type: "metal",
-    });
 
-    item_templates["Black iron ingot"] = new Material({
-        description: "desc item Black iron ingot",
-        value: 70,
-        material_type: "metal",
-    });
 
     /*
         P-12's "an ore that is mined rather than bought", and P-14 phase 6 wiring tier 5
@@ -4782,23 +4447,8 @@ function add_gear() {
         black iron what Atratan ore does to iron, which is why tier 5 is a smelting recipe
         with two ores in it and not a richer vein of the same one.
     */
-    item_templates["Heavy sand"] = new Material({
-        description: "desc item Heavy sand",
-        value: 45,
-        material_type: "metal",
-    });
 
-    item_templates["White steel ingot"] = new Material({
-        description: "desc item White steel ingot",
-        value: 120,
-        material_type: "metal",
-    });
 
-    item_templates["Black steel ingot"] = new Material({
-        description: "desc item Black steel ingot",
-        value: 120,
-        material_type: "metal",
-    });
 
     /*
         Tier 5's chainmail and plate. The generator has built exteriors out of "white
@@ -4807,150 +4457,18 @@ function add_gear() {
         36 components nothing could produce. Values follow the tier-4 pair scaled by the
         ingot: 105/160 at 70 an ingot becomes 180/275 at 120.
     */
-    item_templates["White chainmail"] = new Material({
-        description: "desc item White chainmail",
-        value: 180,
-        material_type: "chainmail",
-    });
 
-    item_templates["Black chainmail"] = new Material({
-        description: "desc item Black chainmail",
-        value: 180,
-        material_type: "chainmail",
-    });
 
-    item_templates["White plate"] = new Material({
-        description: "desc item White plate",
-        value: 275,
-        material_type: "plate",
-    });
 
-    item_templates["Black plate"] = new Material({
-        description: "desc item Black plate",
-        value: 275,
-        material_type: "plate",
-    });
 
-    item_templates["Turtle shellplate"] = new Material({        //treated as a metal material/chainmail instead of leather
-        description: "desc item Turtle shellplate",
-        value: 60,
-        material_type: "metal",
-    });
 	
-    item_templates["Silver ingot"] = new Material({
-        description: "desc item Silver ingot",
-        value: 30,
-        material_type: "metal",
-    });
-    item_templates["Piece of wolf rat leather"] = new Material({
-        description: "desc item Piece of wolf rat leather",
-        value: 20,
-        material_type: "piece of leather",
-    });
-    item_templates["Processed rat pelt"] = new Material({
-        description: "desc item Processed rat pelt",
-        value: 20,
-        material_type: "processed pelt",
-    });
 	
-    item_templates["Piece of wolf leather"] = new Material({
-        description: "desc item Piece of wolf leather",
-        value: 30,
-        material_type: "piece of leather",
-    });
-    item_templates["Processed wolf pelt"] = new Material({
-        description: "desc item Processed wolf pelt",
-        value: 30,
-        material_type: "processed pelt",
-    });
 	
-    item_templates["Piece of boar leather"] = new Material({
-        description: "desc item Piece of boar leather",
-        value: 45,
-        material_type: "piece of leather",
-    });
-    item_templates["Processed boar hide"] = new Material({
-        description: "desc item Processed boar hide",
-        value: 45,
-        material_type: "processed pelt",
-    });
 	
-    item_templates["Piece of goat leather"] = new Material({
-        description: "desc item Piece of goat leather",
-        value: 60,
-        material_type: "piece of leather"
-    }),
-    item_templates["Processed goat hide"] = new Material({
-        description: "desc item Processed goat hide",
-        value: 60,
-        material_type: "processed pelt",
-    });
 	
-    item_templates["Piece of bear leather"] = new Material({
-        description: "desc item Piece of bear leather",
-        value: 90,
-        material_type: "piece of leather"
-    });
-    item_templates["Processed bear hide"] = new Material({
-        description: "desc item Processed bear hide",
-        value: 90,
-        material_type: "piece of leather"
-    }),
 
-    item_templates["Piece of frog leather"] = new Material({
-        description: "desc item Piece of frog leather",
-        value: 60,
-        material_type: "piece of leather"
-    });	
-	item_templates["Piece of alligator leather"] = new Material({
-        description: "desc item Piece of alligator leather",
-        value: 150,
-        material_type: "piece of leather"
-    }),
-    item_templates["Piece of snakeskin leather"] = new Material({
-        description: "desc item Piece of snakeskin leather",
-        value: 150,
-        material_type: "piece of leather"
-    }),
 
-    item_templates["Animal fat"] = new Material({
-        description: "desc item Animal fat",
-        value: 40,
-        material_type: "fat",
-    });
-    item_templates["Sinew"] = new Material({
-        description: "desc item Sinew",
-        value: 5,
-    });
-    item_templates["Sinew string"] = new Material({
-        description: "desc item Sinew string",
-        value: 20,
-    });
-    item_templates["Flax string"] = new Material({
-        description: "desc item Flax string",
-        value: 35,
-    });
-    item_templates["Wool cloth"] = new Material({
-        description: "desc item Wool cloth",
-        value: 8,
-        material_type: "fabric",
-    });
-	item_templates["Linen cloth"] = new Material({
-        description: "desc item Linen cloth",
-        value: 14,
-        material_type: "fabric",
-    });
 
-    item_templates["Iron chainmail"] = new Material({
-        description: "desc item Iron chainmail",
-        value: 30,
-        material_type: "chainmail",
-    });
-    item_templates["Steel chainmail"] = new Material({
-        description: "desc item Steel chainmail",
-        value: 60,
-        material_type: "chainmail",
-    });
 
     /*
         Plate, the other half of the metal armour line.
@@ -4962,34 +4480,9 @@ function add_gear() {
         Value is above the
         chainmail of the same metal because a plate is three ingots against its two.
     */
-    item_templates["Steel plate"] = new Material({
-        description: "desc item Steel plate",
-        value: 90,
-        material_type: "plate",
-    });
 
-    item_templates["White iron plate"] = new Material({
-        description: "desc item White iron plate",
-        value: 160,
-        material_type: "plate",
-    });
 
-    item_templates["Black iron plate"] = new Material({
-        description: "desc item Black iron plate",
-        value: 160,
-        material_type: "plate",
-    });
 
-    item_templates["White iron chainmail"] = new Material({
-        description: "desc item White iron chainmail",
-        value: 105,
-        material_type: "chainmail",
-    });
-    item_templates["Black iron chainmail"] = new Material({
-        description: "desc item Black iron chainmail",
-        value: 105,
-        material_type: "chainmail",
-    });
 
     /*
         Three items were deleted here (P-27), because nothing in the game had ever been
@@ -5007,64 +4500,8 @@ function add_gear() {
         and no recipe asks for that type. The wolf rats drop "Rat meat chunks".
     */
 	
-    item_templates["Processed rough wood"] = new Material({
-        description: "desc item Processed rough wood",
-        value: 6,
-        material_type: "wood",
-    });
-    item_templates["Processed wood"] = new Material({
-        description: "desc item Processed wood",
-        value: 11,
-        material_type: "wood",
-    });
-    item_templates["Processed ash wood"] = new Material({
-        description: "desc item Processed ash wood",
-        value: 20,
-        material_type: "wood",
-    });
-    item_templates["Processed hickory wood"] = new Material({
-        description: "desc item Processed hickory wood",
-        value: 35,
-        material_type: "wood",
-    });
-	item_templates["Alchemical Wood"] = new Material({
-        description: "desc item Alchemical Wood",
-        value: 50,
-        material_type: "wood",
-    });
-    item_templates["Processed weak monster bone"] = new Material({
-        description: "desc item Processed weak monster bone",
-        value: 40,
-        material_type: "bone",
-    });
 
-    item_templates["Wicker"] = new Material({
-        description: "desc item Wicker",
-        value: 10,
-    });
-    item_templates["Willow bark"] = new Material({
-        description: "desc item Willow bark",
-        value: 25,
-    });
 	
-    item_templates["Potash"] = new Material({
-        description: "desc item Potash",
-        value: 25
-    });
-	item_templates["Sulfur"] = new Material({
-        description: "desc item Sulfur",
-        value: 30
-    });
-    item_templates["Raw Glass"] = new Material({
-        name: "Raw glass",
-        description: "desc item Raw Glass",
-        value: 100
-    });
-    item_templates["Metal fishing hook"] = new Material({
-        name: "Metal fishing hook",
-        description: "desc item Metal fishing hook",
-        value: 10
-    });
 })();
 
 //spare parts

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 149 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 150 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -577,6 +577,21 @@ işlediğini kanıtladı (beş panel çıktı, tek yönlü import, döngü yok) 
 `guild_display.js` aynı desenin tekrarı. **Öneri: panelleri çıkarmaya devam et; `main.js`te
 kalan şey döngü, içerik yığını ve window bağları olduğunda karar ver.** İzlenecek sayı o 96
 bağ; dosya yarıya inerken onlar 96 kalıyorsa cevap evetti.
+
+**İlk aile tamam.** 112 malzemenin 111'i `src/data/materials.json` içinde; `items.js` 5.464
+yerine 4.901 satır. `Rough wood log`, `getName`i `is_rat()` çağırdığı için kaynakta kaldı.
+Kurulan kayıt defteri taşımadan önce ve sonra fotoğraflanarak kanıtlandı: 112'nin 112'si
+birebir aynı.
+
+Öğrettiği iki şey var ve ikisi de sonraki aileyi ucuzlatıyor. `with { type: "json" }` isteğe
+bağlı değil zorunlu — esbuild çıplak JSON import'unu kabul ediyor, Node reddediyor ve
+kontroller Node'da koşuyor. Ve **beş kontrol "eşya şablonu nedir"i items.js'i grepleyerek
+türetiyordu**; o yüzden taşıma, sorunsuz çalışan malzemeleri adlandıran 171 kontrol hatası
+üretti. `tests/lib/item-keys.mjs` artık bunu iki yerden birlikte cevaplıyor ve
+`check_item_data_files_are_all_read`, yeni bir veri dosyası oraya eklenmezse düşüyor.
+
+**Sırada: `crafting_recipes.js`,** 148 bildirim ve hiçbirinde fonksiyon yok. Sonra modeller;
+ki o da aynı okumayı iki kez değil bir kez yapmak.
 
 **Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü
 arkasında ölçülmüş 404'e 1 gibi bir argüman olan tek iş bu. Sonra klasör düzeni, dosyalar

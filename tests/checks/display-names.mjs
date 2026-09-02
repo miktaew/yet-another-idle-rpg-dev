@@ -14,6 +14,7 @@ import { error } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
 import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
+import { declared_item_keys } from "../lib/item-keys.mjs";
 
 /**
  * Every dialogue needs a "name <key>" row for its display name.
@@ -83,10 +84,11 @@ async function check_item_display_names() {
     const reference = await load_locale(default_language);
     if (!reference) return;
 
-    const source = strip_comments(fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8"));
-    const keys = [...source.matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(match => match[1]);
+    //Both places, since the materials moved into JSON (P-42 step 2). A name row is owed
+    //for a data-declared item exactly as much as for a hand-written one.
+    const keys = [...declared_item_keys(repo_root)];
     if (keys.length === 0) {
-        error("src/items.js declares no items - this check is out of date.");
+        error("no item templates are declared anywhere - this check is out of date.");
         return;
     }
 

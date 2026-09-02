@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 125 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 126 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,59 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### malzemeler items.js'ten çıkıp JSON'a girdi; inanılarak değil kanıtlanarak
+
+Sürüm yok: oyuncuya görünen hiçbir şey değişmedi ve asıl nokta **hiçbir şeyin
+değişmemesi**. P-42 2. adım, ilk aile. `items.js` 5.464 satırdan 4.901'e iniyor;
+`src/data/materials.json` 111 satır tutuyor.
+
+**Malzemeleri ilk sıraya koyan ve JSON'u seçtiren ölçüm.** O dosyadaki 256 eşya bildiriminden
+tam **biri** fonksiyon taşıyor — ve 112 malzemenin içinde o, `getName`i `is_rat()` çağıran
+`Rough wood log`. Yani o, sebebini söyleyen bir yorumla kaynakta kalıyor; diğer 111'i ise kod
+gibi davranan veriydi.
+
+**İki alan JSON'da yok ve iki kaldırma da işlevsel.** 112 açıklamanın her biri tam olarak
+`desc item <key>` idi; artık yükleyici onu türetiyor ve anahtarıyla uyuşmayan bir açıklama
+ifade edilemez hâle geliyor. `name` ise yalnızca adı anahtarından farklı olan **dört** tanede
+taşınıyor — Goat meat, Cooking herbs, Silica Sand, Raw Glass — çünkü `setup_ids()`, hiç ad
+belirtmemiş 67 tanesi için adı anahtardan çoktan dolduruyor; adı gereksizce tekrar eden 45
+tanesi de artık aynı yoldan geçiyor.
+
+**`with { type: "json" }` süs değil, zorunlu.** İki yönden ölçüldü: esbuild çıplak JSON
+import'unu kabul ediyor, Node düpedüz reddediyor — ve kontroller bu dosyayı Node üzerinden
+yüklüyor. Çıplak bir import derlenir, paketlenir ve yayına giderdi; eşyalara dokunan her
+kontrolü kırarken.
+
+**Kanıtlandı, inanılmadı.** Kayıt defteri taşımadan önce fotoğraflandı — her malzeme için ad,
+açıklama, değer, malzeme türü, eşya türü, kalite, temel boyut, use_quality, id ve etiketler —
+ve sonrasıyla karşılaştırıldı: **112'nin 112'si birebir aynı, sıfır fark.**
+
+**Taşıma beş kontrolü birden kırdı ve saklanmaya değer bulgu bu.** Beş ayrı yer "eşya şablonu
+nedir" sorusunu `src/items.js`i `item_templates["X"] = new ` diye grepleyerek cevaplıyordu:
+`tests/save.mjs`, `display-names.mjs`te iki, `items.mjs`te bir, `rewards.mjs`te bir.
+Malzemeleri taşımak **171 kontrol hatası ve check:save'den 76 hata** üretti; her biri
+tarayıcıda sorunsuz çalışan bir malzemeyi adlandırıyordu. Kod doğruydu; beş kontrol yanlış
+yere bakıyordu.
+
+Bu yüzden `tests/lib/item-keys.mjs` o soruyu iki yerden birlikte, bir kez cevaplıyor. Yani
+sonraki aile, adım adım güncellenecek beş grep yerine oraya eklenecek tek bir dosya adına mal
+oluyor — ve o dosya adı unutulursa düşen şey `check_item_data_files_are_all_read`; `items.js`in
+gerçekten ne import ettiğinden türetiliyor, böylece iki liste ayrışamıyor. O olmadan unutmak
+en kötü biçimde sessiz: eşyalar çalışıyor ve bütün bir aile beş kontrolün kapsamından
+öylece çıkıyor.
+
+**Ve yardımcının ilk koşusunda yanlış yaptığı bir şey; ki eski kontrol bunu çoktan yazmıştı.**
+`items.js`i yorumları soymadan okudu — ve **o dosyadaki 118 bildirim blok yorumların içinde**,
+`crafting_component_filling.js`in ürettiği parçalar tarafından geçersiz kılınmış durumda. Bu,
+artık var olmayan giysiler için görünen-ad satırı isteyen 111 hataya mal oldu.
+`display-names.mjs:155`teki yorum tam olarak bunu anlatıyordu; yerine geçecek şeyi yazmadan
+önce onu okumamıştım.
+
+**Yol boyunca beş başıboş virgül düzeltildi.** `Bonemeal`, `Piece of goat leather`, `Processed
+bear hide`, `Piece of alligator leather` ve `Piece of snakeskin leather`, `});` yerine `}),`
+ile bitiyordu; her birini sonraki ifadeye zincirliyordu. Yasal, zararsız, ve dosyayı bildirim
+bildirim okumanın ilk denemesini kıran şey.
 
 ### v0.7.47 - kalıcı tıkanabilen bir görev ve çoktan tıkanmış olan kayıt
 

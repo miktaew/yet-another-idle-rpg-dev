@@ -6,6 +6,7 @@ import { braced_body, source_files, strip_comments, top_level_keys } from "../li
 import { error } from "../lib/report.mjs";
 import { load_generated_item_templates } from "../lib/generated-items.mjs";
 import { repo_root } from "../lib/context.mjs";
+import { declared_item_keys } from "../lib/item-keys.mjs";
 
 /**
  * Every money requirement in the content must use the spendable object form.
@@ -299,9 +300,7 @@ function check_reward_keys() {
  * Generated templates count, so this asks the generator rather than only grepping.
  */
 async function check_required_items() {
-    const source_items = fs.readFileSync(path.join(repo_root, "src/items.js"), "utf8");
-    const known = new Set([...strip_comments(source_items)
-        .matchAll(/item_templates\["([^"]+)"\]\s*=\s*new /g)].map(match => match[1]));
+    const known = new Set(declared_item_keys(repo_root));
 
     const { generated, problem } = await load_generated_item_templates(repo_root);
     if (problem) {

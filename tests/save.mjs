@@ -27,6 +27,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { load_generated_item_templates } from "./lib/generated-items.mjs";
+import { declared_item_keys } from "./lib/item-keys.mjs";
 
 const repo_root = path.resolve(import.meta.dirname, "..");
 const errors = [];
@@ -172,7 +173,12 @@ function collect_item_ids() {
 }
 
 const item_ids = collect_item_ids();
-const hand_written = declared("src/items.js", /item_templates\["([^"]+)"\]\s*=\s*new /g);
+/*
+    Both places the code declares an item, which stopped being one file when the materials
+    moved into JSON (P-42 step 2). Grepping items.js alone reported 76 of this save's items
+    as unresolved, every one of them a material that was working perfectly.
+*/
+const hand_written = declared_item_keys(repo_root);
 
 /**
  * The generated templates.
