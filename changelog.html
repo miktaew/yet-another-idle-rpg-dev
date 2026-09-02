@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.7.47</button>
+    <div class="content">
+        <ul class="entries">
+            <li><b>A quest that could stall for good no longer can, and one that already has is repaired when you load.</b> Quest steps run in order, and a step granted out of order used to be thrown away silently. "No Snakes Go to the Plains" is the case that showed it: reading the ground before clearing the old hunting ground threw away the step, and because that action is one-shot it had already locked itself &mdash; so nothing could ever grant it again, however long you hunted.</li>
+            <li>Now a step granted out of order fills in the ones before it, because getting to step three means you passed steps one and two. And any save where a finished one-shot action never handed over its step gets it on load.</li>
+            <li>The <b>Guild work</b> tab shows your standing next to your rank, as F (30).</li>
+            <li>The crafting pages' never-made ring sits <b>before</b> the name instead of after it. With a long name it used to wrap onto its own line underneath; now the marks line up down the left edge.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.7.46</button>
     <div class="content">
         <ul class="entries">

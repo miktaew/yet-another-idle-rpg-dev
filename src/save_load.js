@@ -24,7 +24,8 @@ import { favourite_locations, locations } from "./data/locations.js";
 import { skills } from "./data/skills.js";
 import { player_storage } from "./data/storage.js";
 import { restore_obtained_order } from "./components/inventory_component.js";
-import { late_reputation_owed, unlocks_missed_by_finished_content } from "./save_repairs.js";
+import { late_reputation_owed, quest_progress_missed_by_finished_actions,
+         unlocks_missed_by_finished_content } from "./save_repairs.js";
 import {
          change_completed_quest_visibility,
          format_money,
@@ -1562,6 +1563,26 @@ function load(save_data) {
             only_unlocks skips money and items but not reputation, so a blanket replay would
             add standing again on every load. See save_repairs.js.
         */
+        /*
+            Quest progress a finished one-shot action dropped on its way past. Applied
+            through the same process_rewards path a live grant takes, so the task's own
+            rewards and the quest's completion behave identically - the only difference is
+            when it happens. See save_repairs.js for why the entitlement outlives the
+            trigger.
+        */
+        quest_progress_missed_by_finished_actions({locations, dialogues, quests})
+            .forEach(repair => {
+                process_rewards({
+                    rewards: {quest_progress: [{quest_id: repair.quest_id,
+                        task_index: repair.task_index}]},
+                    source_type: "action",
+                    source_name: repair.from,
+                    is_from_loading: true,
+                });
+                console.info(`[repair] ${repair.from} is finished and had never granted `
+                    + `"${repair.quest_id}" task ${repair.task_index}; granted now.`);
+            });
+
         const missed_unlocks = unlocks_missed_by_finished_content({global_flags, stances});
         missed_unlocks.forEach(missed => {
             process_rewards({

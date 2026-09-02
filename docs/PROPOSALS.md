@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 147 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 149 -->
 
 # Proposals
 
@@ -424,6 +424,31 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
   because of Q-14's ceiling - that would make giving up free for the one player with the most
   standing to lose.
 
+- **Three jobs, and deadlines on some of them.** `open`, and it **supersedes the
+  one-at-a-time reading** taken at v0.7.43. The owner: *"you can take more than one guild
+  job, up to three. Some jobs can be fixed, but some can have a time limit. If it is not done
+  in time a penalty can apply."*
+
+  Q-14 did not settle how many could be held, so v0.7.43 took the narrow reading and said so;
+  this is the answer, and the widening is what that entry predicted - `accept_from_board` and
+  a list. The save shape moves from `accepted` to `accepted[]`, and `restored_board` has to
+  read both, because saves written between v0.7.43 and this hold the single form.
+
+  **The deadline is the part that needs designing rather than widening.** A time limit needs
+  a day to measure against, and the board already keeps one - `day` is how the refresh works
+  - so a job can carry the day it is due. What has to be decided is what happens at the
+  deadline: the penalty is presumably `standing_lost_for_giving_up` applied without the
+  player choosing it, but *when* it is applied matters. Checking on the day tick is where the
+  refresh already looks, and it means a job can expire while the player is not looking at the
+  panel, so the log has to say it rather than the panel.
+
+  And which jobs get one: *"some jobs can be fixed"* means a deadline is a property of the
+  job like difficulty is, not of every job. Rolled by the generator, then, alongside plain,
+  long and brutal.
+
+  **Not to be built before the shop**, because the shop is what standing is *for* and a
+  penalty that costs standing means more once there is something to spend it on.
+
 **Next:** the shop, which is the last piece. Guild-only items at a standing price, with
 milestone rewards - and Q-14's fourth answer already bounds it, since the board's pay stops
 at the top of the ladder.
@@ -727,6 +752,19 @@ vision both reduce a penalty; a penalty reduced past nought is a bonus, and that
 different design decision from "let it go further". Literacy speeds reading and Farming
 feeds an activity, so those two extend cleanly.
 
+**A maxed skill keeps its xp, so raising a cap loses nothing - measured, because the owner
+asked.** *"Literacy is level 10 now, does it keep taking xp? It needs to keep taking xp even
+at maximum, and if there is an increase there should be no loss."* There is none:
+`Skill.add_xp` writes `this.total_xp` **unconditionally**, before the
+`if(this.current_level < this.max_level)` branch that stops the level moving; the save stores
+`{total_xp}` and nothing else; and the loader rebuilds the level by replaying that xp. So a
+cap raised later converts the accumulated xp into levels on the next load, with no migration
+and nothing to repair.
+
+That removes the risk this proposal would otherwise have had to carry, and it changes the
+order: the caps can be raised whenever the milestones are ready, without racing to do it
+before players bank xp against them.
+
 **Guard.** `check_skill_effect_descriptions` and the milestone checks already hold a skill to
 describing what it does at every level it can reach, so a cap raised past its milestones
 should fail there rather than needing a new check. Worth confirming before relying on it.
@@ -768,6 +806,26 @@ two filters, and the save's own version for the badge**, which needs no new stor
 `check_changelogs_cover_version` already holds both pages to carrying an entry for the
 shipped `game_version`, so counting versions between two points is the same list read a
 second way.
+
+### P-47 — The inventory remembers how it was sorted `open`
+
+The owner: *"the inventory sort selection should be remembered."*
+
+**Measured: nothing covers it.** `option_remember_filters` exists and sounds like it would -
+it does not. It sets `game_options.remember_message_log_filters` and nothing else, so the
+message log's filters survive a reload and the inventory's sort does not. The sort itself
+lives in `inventory_display.js` alongside the four buttons and is not saved anywhere.
+
+**Which raises the same question P-46 raises, and they should be answered together:** whether
+a display preference belongs in the save or in the browser. The inventory sort has a stronger
+claim on the save than the changelog's filters do - it is a preference about the character's
+own screen rather than about a page read outside the game - and `game_options` is already the
+place such things live and is already persisted. **PROPOSED: `game_options`, beside
+`remember_message_log_filters`, and the direction as well as the column** since clicking the
+chosen button reverses it and remembering one without the other would restore half a choice.
+
+**Small enough to be worth doing with P-46** rather than on its own, since both are one
+decision about where preferences live.
 
 ## Open decisions
 

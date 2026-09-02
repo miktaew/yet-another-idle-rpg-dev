@@ -108,7 +108,7 @@ import { ActiveEffect, effect_templates } from "./active_effects.js";
 import { open_storage, close_storage, move_item_to_storage, remove_item_from_storage, player_storage, is_storage_open } from "./data/storage.js";
 import { Verify_Game_Objects } from "./verifier.js";
 import { ReputationManager } from "./reputation.js";
-import { quests, questManager, active_quests } from "./quests.js";
+import { tasks_to_finish, quests, questManager, active_quests } from "./quests.js";
 import { get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
 import { translationManager } from "./translation.js";
@@ -2876,20 +2876,25 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         for(let i = 0; i < rewards.quest_progress.length; i++) {
             const quest_id = rewards.quest_progress[i].quest_id;
             const task_index = rewards.quest_progress[i].task_index;
-            const completed = quests[quest_id]?.getCompletedTaskCount();
-            if(task_index == completed) {
-                if(quests[quest_id]?.quest_tasks[task_index]) {
-                    questManager.finishQuestTask({quest_id: quest_id, task_index: task_index, skip_warning: true});
-                } else {
-                    console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
-                }
-            } else if(quests[quest_id]) {
-                //Deliberate - tasks run in order - but silent, which is the problem. Doing
-                //the right thing for step three while step two is unfinished looks exactly
-                //like doing nothing, and that is how three quests came to look stalled.
-                console.warn(`Quest progress for '${quest_id}' task ${task_index} was`
-                    + ` dropped: ${completed} task(s) are finished, so only task ${completed}`
-                    + ` can advance right now.`);
+            const quest = quests[quest_id];
+            if(!quest?.quest_tasks?.[task_index]) {
+                console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
+                continue;
+            }
+            /*
+                Tasks run in order, so anything earlier than the one being granted is
+                finished too rather than dropped. Dropping is what stalled
+                "No Snakes Go to the Plains" for good: `read the ground` is not repeatable,
+                so it locked itself on success and THEN had its quest_progress discarded
+                because the Old hunting ground had not been cleared yet. Nothing could ever
+                offer that task again, and the only trace was a console.warn.
+            */
+            for(const at of tasks_to_finish({
+                completed: quest.getCompletedTaskCount(),
+                task_index,
+                total: quest.quest_tasks.length,
+            })) {
+                questManager.finishQuestTask({quest_id, task_index: at, skip_warning: true});
             }
         }
     }

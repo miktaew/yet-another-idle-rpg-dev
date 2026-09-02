@@ -5,6 +5,7 @@ import * as path from "node:path";
 import { error } from "../lib/report.mjs";
 import { repo_root } from "../lib/context.mjs";
 import { braced_body, strip_comments } from "../lib/source.mjs";
+import { load_browser_free } from "../lib/browser-free-src.mjs";
 
 /**
  * A task the player can see has to be answerable.
@@ -167,7 +168,193 @@ async function check_hints_say_when_they_cannot_point() {
     console.log("[check] quest hints: 2 builders fall back through one elsewhere line");
 }
 
+
+/**
+ * Out-of-order quest progress is filled in, not dropped.
+ *
+ * The bug this is the net under stalled a quest for good, and it needed three things to
+ * line up - which is why the fix is at the engine and the net is here rather than on one
+ * quest:
+ *
+ *   1. `read the ground` at The plains grants task 2 of "No Snakes Go to the Plains";
+ *   2. task 1 is granted by CLEARING the Old hunting ground, so the two can be done either
+ *      way round;
+ *   3. the action is not repeatable, so `finish_game_action` locks it on success and
+ *      processes its rewards afterwards.
+ *
+ * Read the ground first and the grant was discarded - tasks run in order, and only the next
+ * one could advance - by which time the action that was its only granter had locked itself.
+ * The only trace was a `console.warn`. Measured in the owner's export: the action
+ * `is_finished`, the task `{progress:{}}`, and a hundred laps of the swamp changing nothing.
+ *
+ * `tasks_to_finish` is the rule, and it is pure so both ends can be driven here: content
+ * asserting task 3 is done asserts 1 and 2 as well, because the player cannot have read the
+ * ground without walking onto the plains.
+ */
+async function check_out_of_order_quest_progress_is_not_dropped() {
+    const [quests_module] = await load_browser_free(repo_root, ["src/quests.js"]);
+    const {tasks_to_finish} = quests_module;
+
+    if (typeof tasks_to_finish !== "function") {
+        error("tasks_to_finish is not where this expects it - "
+            + "check_out_of_order_quest_progress_is_not_dropped is out of date.");
+        return;
+    }
+
+    const cases = [
+        {what: "the next task, which always worked",
+         ask: {completed: 0, task_index: 0, total: 4}, want: [0]},
+        {what: "a task two ahead, which used to be dropped and stalled the quest",
+         ask: {completed: 1, task_index: 2, total: 4}, want: [1, 2]},
+        {what: "the last task from nothing, which finishes the quest",
+         ask: {completed: 0, task_index: 3, total: 4}, want: [0, 1, 2, 3]},
+        //Falls out of the loop rather than out of a guard - see the note in quests.js.
+        {what: "a task behind the count, which a repeatable reward re-grants for ever",
+         ask: {completed: 3, task_index: 1, total: 4}, want: []},
+        {what: "the task the count is already on, which must not be finished twice",
+         ask: {completed: 2, task_index: 2, total: 4}, want: [2]},
+        {what: "a task index past the end",
+         ask: {completed: 0, task_index: 9, total: 4}, want: []},
+        {what: "a task index that is not a number",
+         ask: {completed: 0, task_index: undefined, total: 4}, want: []},
+        {what: "a negative task index",
+         ask: {completed: 0, task_index: -1, total: 4}, want: []},
+    ];
+
+    for (const {what, ask, want} of cases) {
+        const got = tasks_to_finish(ask);
+        if (JSON.stringify(got) === JSON.stringify(want)) continue;
+        error(`quest progress for ${what}: tasks_to_finish returned `
+            + `${JSON.stringify(got)} and should have returned ${JSON.stringify(want)}.`);
+    }
+
+    console.log(`[check] quest progress: ${cases.length} case(s), gaps filled rather than `
+        + `dropped`);
+}
+
+/**
+ * A quest stalled by a locked action is repaired on load.
+ *
+ * The engine fix stops this happening again; it does nothing for a save where it already
+ * has, and that save cannot recover by playing - the action is gone, and the repeatable
+ * reward that grants the earlier task is now behind the count and dropped in its turn.
+ *
+ * So the repair asserts what a finished action means: its rewards were earned. This drives
+ * it against the exact state measured in the owner's export, and then against the same
+ * world with nothing wrong, because a repair that fires when nothing is broken would hand
+ * out quest progress on every load.
+ */
+async function check_a_stalled_quest_is_repaired_on_load() {
+    const [repairs, locations_module, dialogues_module, quests_module] =
+        await load_browser_free(repo_root, ["src/save_repairs.js", "src/data/locations.js",
+            "src/data/dialogues.js", "src/quests.js"]);
+    const {quest_progress_missed_by_finished_actions} = repairs;
+    const {locations} = locations_module;
+    const {dialogues} = dialogues_module;
+    const {quests} = quests_module;
+
+    if (typeof quest_progress_missed_by_finished_actions !== "function") {
+        error("the quest repair is not where this expects it - "
+            + "check_a_stalled_quest_is_repaired_on_load is out of date.");
+        return;
+    }
+
+    /*
+        First: an UNfinished action must owe nothing even when its quest is active and its
+        task is open. Asking this of a freshly built world was the first version and could
+        not fail - nothing is finished there and no quest is active either, so removing
+        either guard left the other one holding. This stages the quest and leaves the action
+        alone, which tests the is_finished guard by itself.
+    */
+    let sample = null;
+    for (const [key, location] of Object.entries(locations)) {
+        for (const [action_key, action] of Object.entries(location?.actions ?? {})) {
+            for (const grant of action?.rewards?.quest_progress ?? []) {
+                if (!quests[grant?.quest_id]?.quest_tasks?.[grant?.task_index]) continue;
+                sample = {action, grant, where: `${key} / ${action_key}`};
+                break;
+            }
+            if (sample) break;
+        }
+        if (sample) break;
+    }
+    if (sample === null) {
+        error("no location action grants quest progress, so this check cannot stage "
+            + "anything.");
+        return;
+    }
+
+    const sample_quest = quests[sample.grant.quest_id];
+    const sample_was_active = sample_quest.is_active;
+    const sample_was_finished = sample.action.is_finished;
+    sample_quest.is_active = true;
+    sample_quest.quest_tasks[sample.grant.task_index].is_finished = false;
+    sample.action.is_finished = false;
+
+    const quiet = quest_progress_missed_by_finished_actions({locations, dialogues, quests});
+    const wrongly_owed = quiet.filter(entry => entry.quest_id === sample.grant.quest_id
+        && entry.task_index === sample.grant.task_index);
+
+    sample_quest.is_active = sample_was_active;
+    sample.action.is_finished = sample_was_finished;
+
+    if (wrongly_owed.length !== 0) {
+        error(`the repair says ${sample.where} owes "${sample.grant.quest_id}" task `
+            + `${sample.grant.task_index} while that action is NOT finished. Progress the `
+            + `player has not earned would be granted on every load.`);
+    }
+
+    /*
+        Then the measured state: an action finished whose quest progress never landed. Any
+        such pair will do, so it is found rather than named - the check outlives the one
+        quest it was written for.
+    */
+    let staged = null;
+    for (const [key, location] of Object.entries(locations)) {
+        for (const [action_key, action] of Object.entries(location?.actions ?? {})) {
+            for (const grant of action?.rewards?.quest_progress ?? []) {
+                const quest = quests[grant?.quest_id];
+                if (!quest?.quest_tasks?.[grant?.task_index]) continue;
+                staged = {action, quest, grant, where: `${key} / ${action_key}`};
+                break;
+            }
+            if (staged) break;
+        }
+        if (staged) break;
+    }
+    if (staged === null) {
+        error("no location action grants quest progress, so this check cannot stage the "
+            + "state it exists for.");
+        return;
+    }
+
+    const was_finished = staged.action.is_finished;
+    const was_active = staged.quest.is_active;
+    staged.action.is_finished = true;
+    staged.quest.is_active = true;
+    staged.quest.quest_tasks[staged.grant.task_index].is_finished = false;
+
+    const owed = quest_progress_missed_by_finished_actions({locations, dialogues, quests});
+    const found = owed.some(entry => entry.quest_id === staged.grant.quest_id
+        && entry.task_index === staged.grant.task_index);
+
+    staged.action.is_finished = was_finished;
+    staged.quest.is_active = was_active;
+
+    if (!found) {
+        error(`${staged.where} is finished and "${staged.grant.quest_id}" task `
+            + `${staged.grant.task_index} is not, and the repair does not report it. A save `
+            + `in that state cannot recover by playing: the action has locked itself, so `
+            + `nothing can ever grant that task again.`);
+    }
+
+    console.log(`[check] quest repair: silent on a clean world, and finds a stalled task `
+        + `staged at ${staged.where}`);
+}
+
 export {
+    check_out_of_order_quest_progress_is_not_dropped,
+    check_a_stalled_quest_is_repaired_on_load,
     check_hints_say_when_they_cannot_point,
     check_visible_tasks_can_be_finished,
 };

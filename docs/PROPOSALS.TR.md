@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 147 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 149 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -431,6 +431,31 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
   sonra 0 döndürüyor — bu da bırakmayı, kaybedecek en çok itibarı olan oyuncu için bedava
   yapardı.
 
+- **Üç iş ve bazılarında süre.** `open`, ve v0.7.43'te alınan **aynı anda tek iş okumasının
+  yerine geçiyor**. Sahibi: *"en fazla 3 olmak üzere birden fazla lonca görevi alabilir. bazı
+  işler sabit olabilir, ama bazı işlerin zaman kısıtlaması olabilir. zamanında yapılmazsa ceza
+  uygulanabilir."*
+
+  Q-14 kaç iş tutulabileceğini karara bağlamamıştı; v0.7.43 dar okumayı alıp bunu söylemişti.
+  Bu, o sorunun cevabı ve genişletme de o girdinin öngördüğü şey: `accept_from_board` ve bir
+  liste. Kayıt şekli `accepted`ten `accepted[]`e geçiyor ve `restored_board` ikisini de okumak
+  zorunda, çünkü v0.7.43 ile bu sürüm arasında yazılmış kayıtlar tekil biçimi taşıyor.
+
+  **Süre, genişletilecek değil tasarlanacak kısım.** Bir zaman kısıtı, karşısında ölçülecek
+  bir güne ihtiyaç duyuyor ve pano zaten bir gün tutuyor — `day`, yenilenmenin çalışma biçimi
+  — dolayısıyla bir iş, teslim gününü taşıyabilir. Karara bağlanması gereken, sürenin dolduğu
+  anda ne olacağı: ceza muhtemelen oyuncu seçmeden uygulanan `standing_lost_for_giving_up`,
+  ama *ne zaman* uygulandığı önemli. Gün tick'inde kontrol etmek, yenilenmenin çoktan baktığı
+  yer; bu da bir işin oyuncu panele bakmıyorken sona erebileceği demek, yani bunu panel değil
+  log söylemek zorunda.
+
+  Ve hangi işlerin süresi olacağı: *"bazı işler sabit olabilir"*, sürenin her işin değil,
+  zorluk gibi işin bir özelliği olduğu anlamına geliyor. Yani sıradan, uzun ve acımasızın
+  yanında üretici tarafından atılıyor.
+
+  **Dükkândan önce yapılmamalı**, çünkü itibarın ne *için* olduğunu dükkân belirliyor ve
+  itibara mal olan bir ceza, harcanacak bir şey olduğunda daha fazla şey ifade ediyor.
+
 **Sırada:** dükkân, son parça. Loncaya özel eşyalar itibar fiyatıyla, milestone ödülleriyle —
 ve Q-14'ün dördüncü cevabı onu çoktan sınırlıyor, çünkü panonun ödemesi merdivenin tepesinde
 duruyor.
@@ -733,6 +758,19 @@ azaltıyor; sıfırın ötesine azaltılmış bir ceza bonustur ve bu, "daha ile
 bir tasarım kararı. Literacy okumayı hızlandırıyor, Farming bir aktiviteyi besliyor; o ikisi
 temiz biçimde uzuyor.
 
+**Tavana ulaşmış bir beceri xp'sini tutuyor, yani tavanı yükseltmek hiçbir şey
+kaybettirmiyor — sahibi sorduğu için ölçüldü.** *"literacy şu an seviye 10, hala exp almaya
+devam eder mi? maximuma ulaşsa da exp almaya devam etmesi gerekiyor ve eğer bir arttırım
+olursa kayıp yaşanmaması gerek."* Kayıp yok: `Skill.add_xp`, `this.total_xp`'yi
+**koşulsuz** yazıyor — seviyeyi durduran `if(this.current_level < this.max_level)` dalından
+önce; kayıt yalnızca `{total_xp}` saklıyor; ve yükleyici seviyeyi o xp'yi tekrar oynatarak
+kuruyor. Yani sonradan yükseltilen bir tavan, birikmiş xp'yi bir sonraki yüklemede seviyeye
+çeviriyor — migration yok, onarılacak bir şey yok.
+
+Bu, bu önerinin aksi hâlde taşımak zorunda olacağı riski ortadan kaldırıyor ve sırayı da
+değiştiriyor: tavanlar, oyuncular onlara karşı xp biriktirmeden önce yetişme telaşı olmadan,
+milestone'lar hazır olduğunda yükseltilebilir.
+
 **Muhafız.** `check_skill_effect_descriptions` ve milestone kontrolleri, bir beceriyi
 ulaşabildiği her seviyede ne yaptığını anlatmaya çoktan bağlıyor; yani milestone'larının
 ötesine yükseltilmiş bir tavanın orada düşmesi lazım, yeni bir kontrole gerek kalmadan.
@@ -774,6 +812,27 @@ listelediğiyle uyuşmak zorunda ve iki HTML kopya da birbiriyle uyuşmalı —
 `check_changelogs_cover_version` iki sayfayı da yayımlanan `game_version` için bir girdi
 taşımaya çoktan bağlıyor; yani iki nokta arasındaki sürümleri saymak, aynı listenin ikinci
 kez okunması.
+
+### P-47 — Envanter nasıl sıralandığını hatırlıyor `open`
+
+Sahibi: *"envanter seçimi sıralaması hatırlamalı."*
+
+**Ölçüldü: onu kapsayan bir şey yok.** `option_remember_filters` var ve kapsıyormuş gibi
+duruyor — kapsamıyor. Yalnızca `game_options.remember_message_log_filters`ı ayarlıyor, başka
+bir şey yapmıyor; yani mesaj logunun filtreleri yeniden yüklemeyi atlatıyor, envanterin
+sıralaması atlatmıyor. Sıralamanın kendisi dört düğmeyle birlikte `inventory_display.js`
+içinde yaşıyor ve hiçbir yere kaydedilmiyor.
+
+**Bu da P-46'nın sorduğu sorunun aynısını soruyor ve ikisi birlikte cevaplanmalı:** bir
+görüntü tercihi kayda mı yoksa tarayıcıya mı ait. Envanter sıralamasının kayıt üzerinde
+changelog filtrelerinden daha güçlü bir hakkı var — oyunun dışında okunan bir sayfa hakkında
+değil, karakterin kendi ekranı hakkında bir tercih — ve `game_options` böyle şeylerin çoktan
+yaşadığı ve çoktan kalıcı olan yer. **ÖNERİ: `remember_message_log_filters`ın yanında
+`game_options`, ve sütunun yanı sıra yönü de** — çünkü seçili düğmeye basmak sırayı tersine
+çeviriyor ve birini öbürü olmadan hatırlamak, seçimin yarısını geri yüklemek olurdu.
+
+**P-46 ile birlikte yapılmaya değecek kadar küçük**, kendi başına değil; çünkü ikisi de
+tercihlerin nerede yaşadığına dair tek bir karar.
 
 ## Bekleyen kararlar
 

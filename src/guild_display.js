@@ -192,8 +192,10 @@ function update_displayed_guild_board() {
 
     const standing_line = document.createElement("div");
     standing_line.classList.add("guild_board_note");
+    //The number beside the rank, as asked. The rank alone does not say how close the next
+    //one is, and the Data panel is a tab away.
     insert_HTML(standing_line, translationManager.getText(language, "ui guild board standing",
-        {v1: rank}));
+        {v1: `${rank} (${standing})`}));
     list.appendChild(standing_line);
 
     if(board?.accepted) {

@@ -295,7 +295,75 @@ const unlock_kinds_left_alone = {
     locks: "the opposite of an unlock",
 };
 
+
+/**
+ * Quest progress that a finished one-shot action dropped on its way past.
+ *
+ * The engine no longer drops out-of-order progress, but that does not help a save where it
+ * already happened - and the way it happens makes it unrecoverable by play. Measured in the
+ * owner's v0.7.45 export:
+ *
+ *     "read the ground": {"is_unlocked": true, "is_finished": true}
+ *     "No Snakes Go to the Plains": [done, done, {progress:{}}]
+ *
+ * `finish_game_action` locks a non-repeatable action on success and processes its rewards
+ * afterwards, so the action that was the only granter of task 2 was already gone when its
+ * grant was discarded. No amount of further play offers it again; the Old hunting ground's
+ * repeatable reward re-grants task 1, which is now behind the count and dropped in turn.
+ *
+ * So: an action that is FINISHED asserts that its rewards were earned. Where one of those
+ * rewards was quest progress that is still missing, it is landed here. That is the same
+ * argument `late_reputation_owed` makes for standing added after its trigger was spent -
+ * the trigger is gone, the entitlement is not.
+ *
+ * @param {Object} sources
+ * @param {Object} sources.locations the location registry
+ * @param {Object} sources.dialogues the dialogue registry
+ * @param {Object} sources.quests the quest registry
+ * @returns {Array<Object>} {quest_id, task_index, from} for each progress still owed
+ */
+function quest_progress_missed_by_finished_actions(
+        {locations = {}, dialogues = {}, quests = {}} = {locations: {}, dialogues: {}, quests: {}}) {
+    const owed = [];
+    const seen = new Set();
+
+    const consider = (action, where) => {
+        if(!action?.is_finished) {
+            return;
+        }
+        for(const grant of action.rewards?.quest_progress ?? []) {
+            const quest = quests[grant?.quest_id];
+            const task = quest?.quest_tasks?.[grant?.task_index];
+            //Only an ACTIVE quest: a finished one has had its tasks closed already, and an
+            //unstarted one is not stalled, it simply has not begun.
+            if(!quest?.is_active || !task || task.is_finished) {
+                continue;
+            }
+            const key = `${grant.quest_id}#${grant.task_index}`;
+            if(seen.has(key)) {
+                continue;
+            }
+            seen.add(key);
+            owed.push({quest_id: grant.quest_id, task_index: grant.task_index, from: where});
+        }
+    };
+
+    for(const [key, location] of Object.entries(locations)) {
+        for(const [action_key, action] of Object.entries(location?.actions ?? {})) {
+            consider(action, `${key} / ${action_key}`);
+        }
+    }
+    for(const [key, dialogue] of Object.entries(dialogues)) {
+        for(const [action_key, action] of Object.entries(dialogue?.actions ?? {})) {
+            consider(action, `${key} / ${action_key}`);
+        }
+    }
+
+    return owed;
+}
+
 export {
+    quest_progress_missed_by_finished_actions,
     repairable_unlock_kinds,
     unlock_kinds_left_alone,
     late_reputation_repairs,

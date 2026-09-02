@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 124 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 125 -->
 
 # Changelog
 
@@ -20,6 +20,61 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.47 - a quest that could stall for good, and the save that already had
+
+Reported as *"quest No Snakes Go to the Plains task 1 does not advance ... it is still
+hanging on read the ground. I already read the ground, found the hunting blinds and told the
+chief. Apart from that I could do a hundred laps of the swamp and nothing changes."*
+
+**Measured out of the owner's v0.7.45 export rather than reasoned about, and the state is
+exact:**
+
+    "read the ground": {"is_unlocked": true, "is_finished": true}
+    "No Snakes Go to the Plains": [done, done, {progress:{}}]
+
+**Three things had to line up, which is why the fix is at the engine.** `read the ground` at
+The plains grants task 2. Task 1 is granted by *clearing* the Old hunting ground, so the two
+can be done either way round. And the action is not repeatable, so `finish_game_action`
+**locks it on success and processes its rewards afterwards**.
+
+Read the ground first and the grant was discarded - tasks run in order, and the branch only
+applied the task that was exactly next - by which time the sole granter of that task had
+locked itself. Clearing the hunting ground afterwards finished task 1, and its repeatable
+reward now re-grants a task behind the count, which is discarded in turn. Hence a hundred
+laps changing nothing. The only trace of any of it was a `console.warn` whose own comment
+said *"that is how three quests came to look stalled"* - the warning had been added and the
+stalling had not been fixed.
+
+**Filling the gap is the fix, and it needs no new state.** `tasks_to_finish` in quests.js:
+content asserting task 3 is done asserts 1 and 2 as well, because the player cannot have
+read the ground without walking onto the plains. Whichever order things are done in, the
+count catches up the moment any later step lands.
+
+**And the repair, because the engine fix does nothing for a save where it already
+happened** - and that save cannot recover by playing.
+`quest_progress_missed_by_finished_actions` walks every location and dialogue action that is
+finished and lands any quest progress of its own that is still missing. Same argument
+`late_reputation_owed` makes for standing added after its trigger was spent: the trigger is
+gone, the entitlement is not. Verified against the owner's export - it reports exactly
+`{No Snakes Go to the Plains, task 2, from The plains / read the ground}` and nothing else.
+
+**Negative-tested, and two of the four guards did not fail.** Worth writing down because
+they were two different faults. The `task_index < completed` early return in
+`tasks_to_finish` turned out to be **dead code** - the loop below it already yields nothing
+when the count is past the index - so the case testing it could not fail, and the dead
+return is gone. And the repair's "silent on a clean world" assertion was protected by two
+guards at once, no action finished *and* no quest active, so removing either left the other
+holding; it now stages a quest as active with its task open and the action deliberately
+**not** finished, which tests `is_finished` on its own. Both fail properly now, along with a
+loop that finishes one task too many.
+
+**Two small visible things with it.** The Guild work tab shows standing beside the rank as
+`F (30)`, asked for directly. And the crafting pages' never-made ring moved from `::after`
+to `::before`: drawn after the name it wrapped onto its own line whenever the name was long
+enough - *"Yüksek kaliteli yaban domuzu azı dişi"* left a ring sitting alone underneath -
+and before the name it is inside the first line by construction, with the marks lining up
+down the left edge.
 
 ### v0.7.46 - a shop that had always thrown, two English names in Turkish sentences, and a way out
 

@@ -1523,15 +1523,21 @@ input[type=checkbox], input[type=radio] {
 }
 
 /*
-    A recipe the player has never actually made (P-39). An empty ring, drawn after the name
-    rather than inserted into the row: the items page rebuilds its first child outright when
-    it adds the craft-amount buttons, so anything put in the markup would survive on one page
-    and be wiped on another. currentColor, so it greys out with the row when the materials
-    are not there.
+    A recipe the player has never actually made (P-39). An empty ring, drawn by CSS rather
+    than inserted into the row: the items page rebuilds its first child outright when it adds
+    the craft-amount buttons, so anything put in the markup would survive on one page and be
+    wiped on another. currentColor, so it greys out with the row when the materials are not
+    there.
+
+    BEFORE the name, not after. Drawn after, it wrapped onto the next line on its own
+    whenever the name was long enough to wrap - "Yüksek kaliteli yaban domuzu azı dişi" left
+    a ring sitting alone under the row. Before the name it is inside the first line by
+    construction, and the marks line up down the left edge instead of ending wherever each
+    name happens to stop.
 */
-.recipe_never_crafted .recipe_item_name::after,
-.recipe_never_crafted .recipe_name::after {
-	content: " ○";
+.recipe_never_crafted .recipe_item_name::before,
+.recipe_never_crafted .recipe_name::before {
+	content: "○ ";
 	opacity: 0.7;
 }
 

@@ -127,7 +127,10 @@ import { check_docs_are_paired, check_thematic_breaks_are_not_headings } from ".
 import { check_no_raw_control_bytes } from "./checks/bytes.mjs";
 import { check_effect_tags_match_their_numbers } from "./checks/effects.mjs";
 import { check_action_labels_fit_a_button } from "./checks/labels.mjs";
-import { check_hints_say_when_they_cannot_point, check_visible_tasks_can_be_finished } from "./checks/quests.mjs";
+import { check_hints_say_when_they_cannot_point, check_visible_tasks_can_be_finished,
+    check_out_of_order_quest_progress_is_not_dropped,
+    check_a_stalled_quest_is_repaired_on_load,
+} from "./checks/quests.mjs";
 import {
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
@@ -196,6 +199,8 @@ await check_no_raw_control_bytes();
 await check_effect_tags_match_their_numbers();
 await check_action_labels_fit_a_button();
 await check_visible_tasks_can_be_finished();
+await check_out_of_order_quest_progress_is_not_dropped();
+await check_a_stalled_quest_is_repaired_on_load();
 await check_hints_say_when_they_cannot_point();
 check_action_branches();
 check_every_enemy_has_a_home();

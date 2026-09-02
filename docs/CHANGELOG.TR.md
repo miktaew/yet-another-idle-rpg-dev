@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 124 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 125 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,61 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.47 - kalıcı tıkanabilen bir görev ve çoktan tıkanmış olan kayıt
+
+Şöyle bildirildi: *"quest No Snakes Go to the Plains task 1 ilerlemiyor ... hala zemini oku
+olarak askıda. zaten zemini okuyup av siperlerini falan keşfedip şefe söyledik. ama onun
+dışında bataklıklarda belki 100 tur dolaşıp avlansam da birşey değişmiyor."*
+
+**Akıl yürütülerek değil, sahibinin v0.7.45 export'undan ölçülerek bulundu ve durum tam
+olarak şu:**
+
+    "read the ground": {"is_unlocked": true, "is_finished": true}
+    "No Snakes Go to the Plains": [bitti, bitti, {progress:{}}]
+
+**Üç şeyin aynı hizaya gelmesi gerekiyordu; düzeltmenin motorda olmasının sebebi de bu.** The
+plains'teki `read the ground` 2. adımı veriyor. 1. adım Old hunting ground'un
+*temizlenmesiyle* veriliyor, yani ikisi iki sırayla da yapılabiliyor. Ve eylem tekrarlanabilir
+değil, dolayısıyla `finish_game_action` onu **başarıda kilitliyor, ödüllerini ondan sonra
+işliyor**.
+
+Önce zemini oku, ve verilen adım çöpe gidiyor — adımlar sırayla işliyor ve o dal yalnızca tam
+sıradaki adımı uyguluyordu — o sırada da o adımın tek vericisi kendini kilitlemiş oluyor.
+Sonradan av alanını temizlemek 1. adımı bitiriyor ve onun tekrarlanabilir ödülü artık sayının
+gerisinde bir adımı veriyor, o da sırayla çöpe gidiyor. Yüz turun hiçbir şeyi
+değiştirmemesinin sebebi bu. Bütün bunların tek izi, yorumunda *"üç görev bu yüzden tıkanmış
+göründü"* yazan bir `console.warn`du — uyarı eklenmiş, tıkanma düzeltilmemişti.
+
+**Boşluğu doldurmak düzeltmenin kendisi ve yeni bir duruma ihtiyaç duymuyor.** quests.js
+içindeki `tasks_to_finish`: 3. adımın bittiğini söyleyen içerik, 1 ve 2'nin de bittiğini
+söylüyor; çünkü oyuncu ovalara yürümeden zemini okumuş olamaz. Ne sırayla yapılırsa yapılsın,
+sayı sonraki herhangi bir adım geldiği anda kendini toparlıyor.
+
+**Ve onarım, çünkü motor düzeltmesi bunun çoktan yaşandığı bir kayıt için hiçbir şey
+yapmıyor** — o kayıt da oynayarak kurtulamıyor.
+`quest_progress_missed_by_finished_actions`, bitmiş her mekân ve diyalog eylemini yürüyüp
+kendisine ait eksik kalmış görev ilerlemesini teslim ediyor. `late_reputation_owed`ın,
+tetiği harcandıktan sonra eklenen itibar için yaptığı argümanın aynısı: tetik gitti, hak
+gitmedi. Sahibinin export'una karşı doğrulandı — tam olarak
+`{No Snakes Go to the Plains, 2. adım, The plains / read the ground}` bildiriyor, başka
+hiçbir şey.
+
+**Negatif test edildi ve dört muhafızdan ikisi düşmedi.** Yazılmaya değer, çünkü iki farklı
+arızaydı. `tasks_to_finish` içindeki `task_index < completed` erken dönüşü **ölü koda**
+çıktı — altındaki döngü, sayı indeksin ötesindeyken zaten hiçbir şey üretmiyor — yani onu
+test eden vaka düşemezdi; ölü dönüş de kaldırıldı. Ve onarımın "temiz dünyada sessiz"
+iddiası aynı anda iki muhafızla korunuyordu: hiçbir eylem bitmemiş *ve* hiçbir görev aktif
+değil; yani birini kaldırmak öbürünü ayakta bırakıyordu. Artık bir görevi aktif, adımını
+açık ve eylemi bilerek **bitmemiş** olarak sahneliyor; bu da `is_finished`i tek başına test
+ediyor. İkisi de artık düzgün düşüyor, bir adım fazla bitiren bir döngüyle birlikte.
+
+**Yanında iki küçük görünür şey.** Lonca işleri sekmesi, doğrudan istendiği gibi itibarı
+kademenin yanında `F (30)` olarak gösteriyor. Ve üretim sayfalarındaki "hiç yapılmadı"
+halkası `::after`dan `::before`a taşındı: adın arkasına çizildiğinde, ad yeterince uzun
+olduğunda kendi satırına sarıyordu — *"Yüksek kaliteli yaban domuzu azı dişi"* altında tek
+başına bir halka bırakıyordu — adın önünde ise kuruluşu gereği ilk satırın içinde ve
+işaretler sol kenarda hizalanıyor.
 
 ### v0.7.46 - hep çöken bir dükkân, Türkçe cümlelerde iki İngilizce ad, ve bir çıkış yolu
 

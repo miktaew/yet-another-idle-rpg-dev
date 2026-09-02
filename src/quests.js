@@ -982,4 +982,42 @@ Object.keys(quests).forEach(quest => {
     quests[quest].quest_id = quest;
 });
 
-export { quests, active_quests, questManager};
+
+/**
+ * Which task indices to finish when content says a given one is done.
+ *
+ * Tasks run in order, so content asserting that task 3 is finished is content asserting
+ * that 1 and 2 are too - the player cannot have read the ground without having walked out
+ * onto the plains. The old behaviour dropped anything that was not exactly the next task
+ * and warned to a console nobody has open, which is how a quest came to be stalled for
+ * good: the action that granted the task was not repeatable, so it locked itself on success
+ * and the progress it dropped could never be offered again.
+ *
+ * Filling the gap needs no new state and repairs itself: whichever order the player does
+ * things in, the count catches up the moment any later step lands.
+ *
+ * @param {Object} params
+ * @param {Number} params.completed how many tasks are already finished
+ * @param {Number} params.task_index the task the content is completing
+ * @param {Number} params.total how many tasks the quest has
+ * @returns {Array<Number>} indices to finish, in order, empty when there is nothing to do
+ */
+function tasks_to_finish({completed, task_index, total}) {
+    if(!Number.isInteger(task_index) || task_index < 0 || task_index >= total) {
+        return [];
+    }
+    /*
+        No early return for `task_index < completed` - a repeatable reward re-granting a
+        task that is already behind the count falls out of the loop below, which yields
+        nothing when `completed` is past `task_index`. One was written here and the negative
+        test proved it dead: removing it changed no answer.
+    */
+    const indices = [];
+    for(let at = completed; at <= task_index; at++) {
+        indices.push(at);
+    }
+    return indices;
+}
+
+export {
+    tasks_to_finish, quests, active_quests, questManager};
