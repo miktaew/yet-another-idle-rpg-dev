@@ -30,6 +30,33 @@ import { guild_ranks, get_guild_rank } from "./reputation.js";
     "kill 100" becomes "kill 300" - so the span is about threefold, and the difficulty is a
     property of the job rather than of the rank. Two jobs of one rank do not pay the same.
 */
+/**
+ * How many jobs can be held at once.
+ *
+ * The owner's number. v0.7.43 held one and said the narrow reading was a reading rather than
+ * a decision, so this is the decision.
+ */
+const jobs_held_at_once = 3;
+
+/**
+ * The jobs currently held, whichever shape the board is in.
+ *
+ * **The compatibility seam, and the reason it is a function rather than a migration.** Every
+ * save written between v0.7.43 and v0.7.49 holds `accepted` as a single object or null;
+ * from here it is an array. Reading both here means no save needs rewriting and no loader
+ * needs a version check - and a board built by either version answers the same question.
+ *
+ * @param {Object} [board]
+ * @returns {Array<Object>} held jobs, oldest first, empty when none
+ */
+function accepted_jobs(board) {
+    const held = board?.accepted;
+    if (Array.isArray(held)) {
+        return held.filter(Boolean);
+    }
+    return held ? [held] : [];
+}
+
 const job_difficulties = [
     {difficulty: "plain", size: 1, pay: 1},
     {difficulty: "long", size: 2, pay: 1.6},
@@ -238,6 +265,18 @@ function generate_guild_job({rank, random = Math.random}) {
     const base = type === "hunt" ? 8 : 10;
     const count = Math.max(1, Math.round(base * difficulty.size));
 
+    /*
+        And a deadline, for some of them. The owner asked for both kinds - *"some jobs can be
+        fixed, but some can have a time limit"* - so it is a property of the job like the
+        difficulty is, rolled here and measured from acceptance rather than from generation.
+
+        The window is derived from the size rather than picked: a job asking for three times
+        as much gets three times as long, starting at four days for a plain one. Two thirds
+        of jobs stay fixed, so a deadline reads as this notice being urgent rather than as
+        the board being a stopwatch.
+    */
+    const timed = random() < 0.34;
+
     return {
         rank,
         rank_index: index,
@@ -245,6 +284,7 @@ function generate_guild_job({rank, random = Math.random}) {
         target,
         count,
         difficulty: difficulty.difficulty,
+        ...(timed ? {days_allowed: 4 * difficulty.size} : {}),
         pay_multiplier: difficulty.pay,
     };
 }
@@ -312,18 +352,52 @@ function refreshed_board({board, day, standing = 0, random = Math.random}) {
     return {
         day,
         offered: generate_guild_board({standing, random}),
-        accepted: board?.accepted ?? null,
+        //Through the seam, so a board that arrived in the old shape leaves in the new one.
+        accepted: accepted_jobs(board),
     };
 }
 
 /**
- * Taking one job off the board.
+ * The held jobs whose day has passed.
  *
- * **One at a time.** Q-14 settled four things and not this one, so it is the narrow reading:
- * the owner asked to be able to *take different jobs*, which is a choice among what is
- * offered rather than a licence to hold three at once. It keeps the save shape a single
- * object and the standing per hand-in predictable, and widening it later is this function
- * and a list rather than a redesign.
+ * A deadline is a property of the job, like its difficulty: `due_on` is the day_count it has
+ * to be handed in by, and a job without one is the fixed kind the owner asked to keep. The
+ * day is compared rather than counted down, so a player who leaves the game running
+ * overnight is treated exactly like one who does not.
+ *
+ * @param {Object} board
+ * @param {Number} day current_game_time.day_count
+ * @returns {Array<Object>} the overdue jobs, in the order they are held
+ */
+function overdue_jobs(board, day) {
+    return accepted_jobs(board)
+        .filter(job => typeof job?.due_on === "number" && day > job.due_on);
+}
+
+/**
+ * The board with the overdue jobs taken off it.
+ *
+ * Returns the same board when nothing is overdue, so the caller's `!==` decides whether to
+ * log and redraw - the same shape refreshed_board and job_after_kill use.
+ *
+ * @param {Object} board
+ * @param {Number} day
+ * @returns {Object} the board
+ */
+function without_overdue_jobs(board, day) {
+    const overdue = overdue_jobs(board, day);
+    if(overdue.length === 0) {
+        return board;
+    }
+    return {...board, accepted: accepted_jobs(board).filter(job => !overdue.includes(job))};
+}
+
+/**
+ * Taking a job off the board, up to three at once.
+ *
+ * v0.7.43 held one and said that was the narrow reading of *"we should be able to take
+ * different jobs"* rather than a decision; the owner's answer is three, and the widening is
+ * what that entry predicted - this function and a list.
  *
  * Returns a new board and never mutates the one passed in, so a refusal is simply the same
  * board back and the caller needs no error path.
@@ -331,23 +405,38 @@ function refreshed_board({board, day, standing = 0, random = Math.random}) {
  * @param {Object} params
  * @param {Object} params.board
  * @param {Number} params.index which of the offered jobs
+ * @param {Number} [params.day] current day_count, for a job that carries a deadline
  * @returns {Object} the board, unchanged if the job cannot be taken
  */
-function accept_from_board({board, index}) {
-    if(!board || board.accepted) {
+function accept_from_board({board, index, day = null}) {
+    if(!board) {
+        return board;
+    }
+    const held = accepted_jobs(board);
+    if(held.length >= jobs_held_at_once) {
         return board;
     }
     const job = (board.offered || [])[index];
     if(!job) {
         return board;
     }
+    /*
+        `progress` only ever means kills. A gather job's progress is how much the player is
+        holding right now, which is read at hand-in rather than accumulated - goods can be
+        spent, sold or eaten between taking the job and finishing it, and a stored count
+        would keep saying otherwise.
+
+        `due_on` is set here rather than at generation, because a deadline is measured from
+        when the work was taken and not from when the notice was pinned up. A job with no
+        `days_allowed` is the fixed kind and gets no `due_on` at all.
+    */
+    const taken = {...job, progress: 0};
+    if(typeof job.days_allowed === "number" && typeof day === "number") {
+        taken.due_on = day + job.days_allowed;
+    }
     return {
         ...board,
-        //`progress` only ever means kills. A gather job's progress is how much the player
-        //is holding right now, which is read at hand-in rather than accumulated - goods can
-        //be spent, sold or eaten between taking the job and finishing it, and a stored
-        //count would keep saying otherwise.
-        accepted: {...job, progress: 0},
+        accepted: [...held, taken],
         //Taken off the board, because it has been taken off the board.
         offered: board.offered.filter((_, at) => at !== index),
     };
@@ -368,13 +457,28 @@ function restored_board(saved) {
     const offered = Array.isArray(saved?.offered)
         ? saved.offered.filter(job_target_resolves)
         : [];
-    const accepted = job_target_resolves(saved?.accepted)
-        ? {...saved.accepted,
+    /*
+        Both shapes. A save from v0.7.43 to v0.7.48 holds one job or null; from v0.7.49 it
+        holds a list. Read through the same seam the rest of the module uses, so nothing
+        here needs to know which version wrote the file - and the single job comes back as a
+        list of one rather than being dropped.
+    */
+    const held = Array.isArray(saved?.accepted)
+        ? saved.accepted
+        : (saved?.accepted ? [saved.accepted] : []);
+
+    const accepted = held
+        .filter(job_target_resolves)
+        .slice(0, jobs_held_at_once)
+        .map(job => ({
+            ...job,
             //A v0.7.43 save has an accepted job and no progress on it, because nothing
             //counted yet. Nought is the true answer for those, not a guess.
-            progress: typeof saved.accepted.progress === "number"
-                ? Math.max(0, saved.accepted.progress) : 0}
-        : null;
+            progress: typeof job.progress === "number" ? Math.max(0, job.progress) : 0,
+            //A deadline that is not a number is no deadline, which is the fixed kind.
+            ...(typeof job.due_on === "number" ? {due_on: job.due_on} : {}),
+        }));
+
     return {
         //A day that is not a number rolls a new offer on the next tick.
         day: typeof saved?.day === "number" ? saved.day : null,
@@ -415,13 +519,15 @@ function standing_lost_for_giving_up(job, standing) {
  *
  * @param {Object} params
  * @param {Object} params.board
+ * @param {Number} [params.index] which held job, defaulting to the first
  * @returns {Object} the board, unchanged when nothing was held
  */
-function give_up_from_board({board}) {
-    if(!board?.accepted) {
+function give_up_from_board({board, index = 0}) {
+    const held = accepted_jobs(board);
+    if(held.length === 0 || !held[index]) {
         return board;
     }
-    return {...board, accepted: null};
+    return {...board, accepted: held.filter((_, at) => at !== index)};
 }
 
 /**
@@ -543,6 +649,10 @@ export {
     accept_from_board,
     restored_board,
     counts_towards_job,
+    jobs_held_at_once,
+    accepted_jobs,
+    overdue_jobs,
+    without_overdue_jobs,
     standing_lost_for_giving_up,
     give_up_from_board,
     held_of,

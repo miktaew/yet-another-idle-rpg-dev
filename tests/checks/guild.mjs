@@ -154,9 +154,11 @@ async function check_every_guild_rank_can_be_given_work() {
  */
 async function check_the_board_keeps_what_was_taken_off_it() {
     const [jobs_module] = await load_browser_free(repo_root, ["src/guild_jobs.js"]);
-    const {refreshed_board, accept_from_board} = jobs_module;
+    const {refreshed_board, accept_from_board, accepted_jobs, jobs_held_at_once,
+        overdue_jobs, without_overdue_jobs} = jobs_module;
 
-    if (typeof refreshed_board !== "function" || typeof accept_from_board !== "function") {
+    if (typeof refreshed_board !== "function" || typeof accept_from_board !== "function"
+            || typeof accepted_jobs !== "function") {
         error("the board's rules are not where this expects them - "
             + "check_the_board_keeps_what_was_taken_off_it is out of date.");
         return;
@@ -180,8 +182,8 @@ async function check_the_board_keeps_what_was_taken_off_it() {
             + "change continuously and no job could be read before it was gone.");
     }
 
-    const held = accept_from_board({board: first, index: 0});
-    if (held === first || !held.accepted) {
+    const held = accept_from_board({board: first, index: 0, day: 10});
+    if (held === first || accepted_jobs(held).length !== 1) {
         error("a job on the board cannot be taken off it.");
         return;
     }
@@ -189,20 +191,83 @@ async function check_the_board_keeps_what_was_taken_off_it() {
         error("taking a job leaves it on the board, so it could be taken twice.");
     }
 
-    const twice = accept_from_board({board: held, index: 0});
-    if (twice !== held) {
-        error("a second job can be taken while one is already held, which is not what the "
-            + "panel tells the player and not the save shape the board has.");
+    /*
+        Three at once, and the fourth refused. v0.7.43 held one and said so; the owner's
+        answer is three, so what this guards now is the LIMIT rather than the singularity -
+        and the limit is read from the module so raising it does not need this edited.
+    */
+    let filling = held;
+    for (let taken = 1; taken < jobs_held_at_once; taken++) {
+        const next = accept_from_board({board: filling, index: 0, day: 10});
+        if (next === filling) {
+            error(`only ${taken} job(s) can be held at once and jobs_held_at_once says `
+                + `${jobs_held_at_once}. The panel offers work the board then refuses.`);
+            break;
+        }
+        filling = next;
+    }
+    if (accepted_jobs(filling).length !== jobs_held_at_once) {
+        error(`filling the board left ${accepted_jobs(filling).length} job(s) held rather `
+            + `than ${jobs_held_at_once}.`);
+    }
+    /*
+        Refreshed to a new day first, because holding three empties a three-job board - and
+        an attempt against an empty board is refused by the "no such job" path rather than by
+        the limit. The first version of this check removed the limit entirely and stayed
+        green. This is also the real case: you hold three, the day turns, new work is posted,
+        and you cannot take it.
+    */
+    const with_more_offered = refreshed_board({board: filling, day: 12, standing: 600,
+        random});
+    if (with_more_offered.offered.length === 0) {
+        error("a refreshed board offers nothing, so the held limit cannot be tested against "
+            + "an offer that exists.");
+    } else {
+        const one_too_many = accept_from_board({board: with_more_offered, index: 0, day: 12});
+        if (one_too_many !== with_more_offered) {
+            error(`a ${jobs_held_at_once + 1}th job can be taken. The limit is what stops `
+                + `the board becoming a list of everything on offer.`);
+        }
     }
 
     const tomorrow = refreshed_board({board: held, day: 11, standing: 600, random});
-    if (tomorrow.accepted !== held.accepted) {
-        error("the accepted job does not survive the day turning. Q-14: the board may "
-            + "refresh per game day, but a job that has been taken must not disappear.");
+    if (accepted_jobs(tomorrow)[0] !== accepted_jobs(held)[0]) {
+        error("a held job does not survive the day turning. Q-14: the board may refresh "
+            + "per game day, but a job that has been taken must not disappear.");
     }
     if (tomorrow === held) {
         error("the day turned and the board handed back the same object, so the offer "
             + "never refreshes.");
+    }
+
+    /*
+        And the deadlines, which are the other half of what the owner asked for. A job with
+        no `days_allowed` is the fixed kind and must never expire; one with a deadline must
+        expire the day AFTER it falls due and not on it, or the last day is not a day the
+        player has.
+    */
+    if (typeof overdue_jobs === "function" && typeof without_overdue_jobs === "function") {
+        const fixed = {...accepted_jobs(held)[0]};
+        delete fixed.due_on;
+        const timed = {...accepted_jobs(held)[0], due_on: 12};
+        const both = {...held, accepted: [fixed, timed]};
+
+        if (overdue_jobs(both, 12).length !== 0) {
+            error("a job is overdue on the day it falls due. The day it is due is a day the "
+                + "player still has.");
+        }
+        const late = overdue_jobs(both, 13);
+        if (late.length !== 1 || late[0] !== timed) {
+            error(`the day after a deadline reports ${late.length} overdue job(s) and `
+                + `should report exactly the one that carried a deadline.`);
+        }
+        if (accepted_jobs(without_overdue_jobs(both, 13)).length !== 1) {
+            error("expiring a job takes the wrong number off the board.");
+        }
+        if (without_overdue_jobs(both, 12) !== both) {
+            error("without_overdue_jobs rebuilds the board when nothing is overdue, so the "
+                + "caller cannot tell whether anything happened and redraws every tick.");
+        }
     }
 
     console.log(`[check] guild board: ${first.offered.length} job(s) offered, refreshing by `
@@ -250,15 +315,27 @@ async function check_a_restored_board_drops_jobs_that_name_nothing() {
 
     const gone = {...real, target: "a thing no registry has ever held"};
 
-    const restored = restored_board({day: 4, offered: [real, gone], accepted: gone});
+    const restored = restored_board({day: 4, offered: [real, gone], accepted: [gone]});
     if (restored.offered.length !== 1 || restored.offered[0] !== real) {
         error(`a board restored from a save kept ${restored.offered.length} of two offered `
             + `jobs, one of which names nothing. A job nobody can fill sits on the board.`);
     }
-    if (restored.accepted !== null) {
-        error("an accepted job naming something that no longer exists survives the load. It "
-            + "cannot be completed or handed in, so the player's one job slot is gone for "
-            + "the rest of that save.");
+    if (restored.accepted.length !== 0) {
+        error("a held job naming something that no longer exists survives the load. It "
+            + "cannot be completed or handed in, so one of the player's job slots is gone "
+            + "for the rest of that save.");
+    }
+
+    /*
+        And the shape a save written before v0.7.49 holds: one job, not a list. Reading it as
+        nothing would silently take the job off every board loaded from an older save, which
+        is the same loss the engine fix in v0.7.47 was about.
+    */
+    const older = restored_board({day: 4, offered: [], accepted: real});
+    if (older.accepted.length !== 1) {
+        error("a save from v0.7.43 to v0.7.48 holds `accepted` as a single job rather than "
+            + "a list, and restoring one drops it. Every older save would lose the job the "
+            + "player was carrying.");
     }
     if (restored.day !== 4) {
         error("a restored board loses the day it was rolled for, so it rerolls immediately "
@@ -276,7 +353,8 @@ async function check_a_restored_board_drops_jobs_that_name_nothing() {
                 + `starting the player with an empty one.`);
             continue;
         }
-        if (!Array.isArray(recovered.offered) || recovered.accepted !== null) {
+        if (!Array.isArray(recovered.offered) || !Array.isArray(recovered.accepted)
+                || recovered.accepted.length !== 0) {
             error(`restored_board turned ${JSON.stringify(nonsense) ?? "undefined"} into `
                 + `something the board cannot use.`);
         }

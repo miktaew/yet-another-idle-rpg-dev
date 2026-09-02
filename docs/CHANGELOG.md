@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 129 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 130 -->
 
 # Changelog
 
@@ -20,6 +20,60 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.49 - three jobs, a deadline on some of them, and P-41 finishes
+
+The owner: *"you can take more than one guild job, up to three. Some jobs can be fixed, but
+some can have a time limit. If it is not done in time a penalty can apply."*
+
+**This supersedes v0.7.43's one-at-a-time reading, which said at the time that it was a
+reading rather than a decision** - and predicted the widening would be `accept_from_board`
+and a list. It is, plus one thing that entry did not foresee: a compatibility seam, because
+every save written from v0.7.43 to v0.7.48 holds `accepted` as a single object.
+
+**`accepted_jobs(board)` is that seam, and it is a function rather than a migration.** It
+reads either shape, so no save needs rewriting and no loader needs a version check. The rest
+of the module goes through it, which is why the refresh, the give-up and the kill hook all
+stopped caring how many jobs there are.
+
+**A kill counts towards every held job whose tag it carries**, which is new behaviour rather
+than a port: two hunts for tags the same enemy has both advance. `job_after_kill` still
+returns the same object when a kill was nothing to do with a job, so the redraw is decided by
+comparing the list against itself.
+
+**The deadline is a property of the job, like the difficulty**, and measured from acceptance
+rather than from generation - a notice does not go stale on the board. The generator rolls
+one for about a third of jobs and the window follows the size: four days for a plain job,
+twelve for a brutal one, so a job asking three times as much gets three times as long. Two
+thirds stay fixed, which is what the owner asked for and what keeps a deadline reading as
+urgency rather than as the board being a stopwatch.
+
+**The penalty is the one giving up already costs**, applied without being chosen: the guild
+does not distinguish between handing the notice back and simply not coming. Checked on the
+minute tick, because that tick is where the day turning is already noticed - and **said in
+the log rather than the panel**, since a job can run out while the player is nowhere near
+the journal.
+
+**Nine checks failed on the first run and every one of them was right.** The save shape
+changed, and the guards were asserting the old contract: `accepted !== null` where it is now
+`[]`, "a second job cannot be taken" where three now can. That is the checks doing exactly
+what they are for, so they moved to the new contract and got wider: three held and the fourth
+refused, the limit read from `jobs_held_at_once` so raising it needs no edit here, and a
+deadline that must expire the day *after* it falls due rather than on it.
+
+**And one of those new guards could not fail, which is the finding worth keeping.** The
+fourth-job test took three jobs off a three-job board - which empties `offered`, so the
+fourth attempt was refused by the "no such job" path and not by the limit. Removing the limit
+entirely changed nothing and the check stayed green. It refreshes the board to a new day
+first now, which is also the real scenario: you hold three, the day turns, new work is
+posted, and you cannot take it.
+
+**Negative-tested four ways after that fix**: the limit removed, a job overdue on the day it
+falls due, the old single-job save shape dropped, and `without_overdue_jobs` rebuilding the
+board when nothing is overdue. All four fail by name.
+
+**P-41 is finished.** Ranks, generator, board, hand-in, give-up, shop, and now three at once
+with deadlines - and its help entry updated with them, per D-10.
 
 ### v0.7.48 - the guild's quartermaster, and P-41 finishes
 

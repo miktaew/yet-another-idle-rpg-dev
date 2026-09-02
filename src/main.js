@@ -151,9 +151,10 @@ import { is_title_earned, titles } from "./data/titles.js";
 //new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
 import { place_tooltip_vertically } from "./ui_helpers.js";
 import { rolls_a_sighting } from "./data/marrowmoth.js";
-import { accept_from_board, give_up_from_board, job_after_kill, job_is_done,
-         refreshed_board, standing_lost_for_giving_up,
-         standing_paid_for } from "./guild_jobs.js";
+import { accept_from_board, accepted_jobs, give_up_from_board, job_after_kill,
+         job_is_done, jobs_held_at_once, overdue_jobs, refreshed_board,
+         standing_lost_for_giving_up, standing_paid_for,
+         without_overdue_jobs } from "./guild_jobs.js";
 import { update_displayed_guild_board } from "./guild_display.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
@@ -2238,9 +2239,16 @@ function kill_enemy(target, do_quest_events = true) {
             job_after_kill returns the same object when the kill was nothing to do with the
             job, so the comparison is what decides whether anything is redrawn.
         */
-        if(game_state.guild_board?.accepted) {
-            const advanced = job_after_kill(game_state.guild_board.accepted, target.tags);
-            if(advanced !== game_state.guild_board.accepted) {
+        const held = accepted_jobs(game_state.guild_board);
+        if(held.length) {
+            /*
+                Every held job, because up to three can be held and a kill can answer to
+                more than one of them - two hunts for tags the same enemy carries both
+                advance. job_after_kill returns the same object when the kill was nothing to
+                do with a job, so the comparison below is what decides whether to redraw.
+            */
+            const advanced = held.map(job => job_after_kill(job, target.tags));
+            if(advanced.some((job, at) => job !== held[at])) {
                 game_state.guild_board = {...game_state.guild_board, accepted: advanced};
                 update_displayed_guild_board();
             }
@@ -3742,6 +3750,34 @@ function update() {
             update_displayed_guild_board();
         }
 
+        /*
+            And the deadlines. Checked here because this tick is the in-game minute and the
+            day turning is what a deadline is measured against - and said in the LOG rather
+            than left to the panel, because a job can run out while the player is nowhere
+            near the journal. The penalty is the same one giving up costs: the guild does
+            not care whether you handed the notice back or simply did not come.
+        */
+        const still_held = without_overdue_jobs(game_state.guild_board,
+            current_game_time.day_count);
+        if(still_held !== game_state.guild_board) {
+            for(const job of overdue_jobs(game_state.guild_board,
+                    current_game_time.day_count)) {
+                const cost = standing_lost_for_giving_up(job,
+                    character.reputation["Guild"] ?? 0);
+                if(cost > 0) {
+                    process_rewards({
+                        rewards: {reputation: {Guild: -cost}},
+                        source_type: "action",
+                        source_name: "guild clerk",
+                    });
+                }
+                log_message(translationManager.getText(language, "log guild job expired",
+                    {v1: String(cost)}), "notification");
+            }
+            game_state.guild_board = still_held;
+            update_displayed_guild_board();
+        }
+
         //update effect durations and displays;
         were_stats_updated = were_stats_updated || update_effect_durations({time_in_minutes: 1});
         update_displayed_effect_durations();
@@ -4181,7 +4217,8 @@ window.change_location = change_location;
  * @param {Number} index which of the offered jobs
  */
 function accept_guild_job(index) {
-    const board = accept_from_board({board: game_state.guild_board, index});
+    const board = accept_from_board({board: game_state.guild_board, index,
+        day: current_game_time.day_count});
     if(board === game_state.guild_board) {
         //Nothing to say: either a job is already held, which the panel states, or the
         //index named nothing, which the player cannot do from the buttons that exist.
@@ -4200,9 +4237,10 @@ function accept_guild_job(index) {
  * a gather job can stop being done between the two, because selling the goods is a thing
  * a player does while the journal is open.
  */
-function hand_in_guild_job() {
+function hand_in_guild_job(index = 0) {
     const board = game_state.guild_board;
-    const job = board?.accepted;
+    const held = accepted_jobs(board);
+    const job = held[index];
     if(!job || !job_is_done(job, character.inventory)) {
         return;
     }
@@ -4246,7 +4284,7 @@ function hand_in_guild_job() {
     }
 
     const standing = standing_paid_for(job, character.reputation["Guild"] ?? 0);
-    game_state.guild_board = {...board, accepted: null};
+    game_state.guild_board = {...board, accepted: held.filter((_, at) => at !== index)};
 
     /*
         Through process_rewards, so the standing is granted and displayed the way every
@@ -4279,15 +4317,15 @@ function hand_in_guild_job() {
  * re-checks its own condition: the panel is drawn on a tick and the click is not, so the
  * standing may have moved between the two.
  */
-function give_up_guild_job() {
+function give_up_guild_job(index = 0) {
     const board = game_state.guild_board;
-    const job = board?.accepted;
+    const job = accepted_jobs(board)[index];
     if(!job) {
         return;
     }
 
     const cost = standing_lost_for_giving_up(job, character.reputation["Guild"] ?? 0);
-    game_state.guild_board = give_up_from_board({board});
+    game_state.guild_board = give_up_from_board({board, index});
 
     if(cost > 0) {
         process_rewards({

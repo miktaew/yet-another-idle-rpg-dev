@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 129 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 130 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,59 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.49 - üç iş, bazılarında süre ve P-41'in bitişi
+
+Sahibi: *"en fazla 3 olmak üzere birden fazla lonca görevi alabilir. bazı işler sabit
+olabilir, ama bazı işlerin zaman kısıtlaması olabilir. zamanında yapılmazsa ceza
+uygulanabilir."*
+
+**Bu, v0.7.43'ün aynı anda tek iş okumasının yerine geçiyor** — o girdi zamanında bunun bir
+karar değil bir okuma olduğunu söylemiş ve genişletmenin `accept_from_board` ile bir liste
+olacağını öngörmüştü. Öyle oldu, artı o girdinin öngörmediği bir şey: bir uyumluluk dikişi,
+çünkü v0.7.43'ten v0.7.48'e kadar yazılmış her kayıt `accepted`ı tek bir nesne olarak tutuyor.
+
+**`accepted_jobs(board)` o dikiş ve bir migration değil, bir fonksiyon.** İki biçimi de
+okuyor; yani hiçbir kaydın yeniden yazılması ve hiçbir yükleyicinin sürüm kontrolü yapması
+gerekmiyor. Modülün geri kalanı ondan geçiyor, yenilenmenin, bırakmanın ve öldürme kancasının
+kaç iş olduğuyla ilgilenmeyi bırakmasının sebebi de bu.
+
+**Bir öldürme, etiketini taşıdığı her elinizdeki işe sayılıyor** — bu bir aktarım değil, yeni
+davranış: aynı düşmanın taşıdığı iki etiket için iki av işi birlikte ilerliyor.
+`job_after_kill` bir öldürme işle ilgisizse hâlâ aynı nesneyi döndürüyor, yani yeniden çizim
+kararı listeyi kendisiyle karşılaştırarak veriliyor.
+
+**Süre, zorluk gibi işin bir özelliği** ve üretimden değil işin alınmasından itibaren
+ölçülüyor — bir ilan panoda beklerken bayatlamıyor. Üretici bunu işlerin yaklaşık üçte birine
+atıyor ve pencere boyu takip ediyor: sıradan bir iş için dört gün, acımasız bir iş için on
+iki; yani üç katını isteyen iş üç kat süre alıyor. Üçte ikisi sabit kalıyor, ki sahibinin
+istediği bu ve sürenin bir aciliyet olarak okunmasını, panonun bir kronometreye dönüşmemesini
+sağlayan da bu.
+
+**Ceza, bırakmanın çoktan maliyet ettiği ceza** ve seçilmeden uygulanıyor: lonca, ilanı geri
+vermekle hiç gelmemek arasında ayrım yapmıyor. Dakika tick'inde kontrol ediliyor, çünkü gün
+dönüşünün çoktan fark edildiği yer o tick — ve **panelde değil logda söyleniyor**, çünkü bir
+işin süresi oyuncu günlüğün yanında değilken dolabiliyor.
+
+**İlk koşuda dokuz kontrol düştü ve hepsi haklıydı.** Kayıt şekli değişti ve muhafızlar eski
+sözleşmeyi iddia ediyordu: artık `[]` olan yerde `accepted !== null`, artık üç tanesinin
+alınabildiği yerde "ikinci bir iş alınamaz". Bu, kontrollerin tam olarak ne için var
+olduklarını yapması; o yüzden yeni sözleşmeye taşındılar ve genişlediler: üç elde ve dördüncü
+reddedilmiş, limit `jobs_held_at_once`tan okunuyor (yükseltmek burada düzenleme
+gerektirmiyor), ve bir sürenin dolduğu günde değil *ertesi* günde geçmesi gerektiği.
+
+**Ve o yeni muhafızlardan biri düşemiyordu; saklanmaya değer bulgu bu.** Dördüncü iş testi,
+üç işlik bir panodan üç iş alıyordu — bu da `offered`ı boşaltıyor, yani dördüncü deneme
+limite değil "böyle bir iş yok" yoluna çarpıyordu. Limiti tamamen kaldırmak hiçbir şeyi
+değiştirmedi ve kontrol yeşil kaldı. Artık önce panoyu yeni bir güne yeniliyor, ki gerçek
+senaryo da bu: üç iş elinizde, gün dönüyor, yeni işler asılıyor ve alamıyorsunuz.
+
+**O düzeltmeden sonra dört yönden negatif test edildi**: limit kaldırıldı, bir iş dolduğu
+günde geçmiş sayıldı, eski tek-iş kayıt biçimi düşürüldü ve hiçbir şey geçmemişken
+`without_overdue_jobs` panoyu yeniden kurdu. Dördü de adıyla düşüyor.
+
+**P-41 bitti.** Kademeler, üretici, pano, teslim, bırakma, dükkân ve şimdi süreleriyle üç
+eşzamanlı iş — ve D-10 gereği yardım girdisi de onlarla güncellendi.
 
 ### v0.7.48 - loncanın levazımcısı ve P-41'in bitişi
 

@@ -21,8 +21,9 @@ import { translationManager } from "./translation.js";
 import { clear_HTML_content, insert_HTML } from "./ui_helpers.js";
 import { get_guild_rank } from "./reputation.js";
 import { enemy_tag_label } from "./journal_panels.js";
-import { job_is_done, job_progress, standing_lost_for_giving_up,
-         standing_paid_for } from "./guild_jobs.js";
+import { accepted_jobs, job_is_done, job_progress, jobs_held_at_once,
+         standing_lost_for_giving_up, standing_paid_for } from "./guild_jobs.js";
+import { current_game_time } from "./game_time.js";
 import { item_sources } from "./world_index.js";
 import { locations } from "./data/locations.js";
 
@@ -61,8 +62,19 @@ function job_line(job, standing) {
     return {what, difficulty, pays};
 }
 
-/** One row on the board, with its Take button when it can still be taken. */
-function create_guild_job_row(job, index, {standing, can_take}) {
+/**
+ * One row: a job on the board, or one of the jobs being held.
+ *
+ * `held_at` is the index among the held jobs, or null for a row on the board. That replaced
+ * an `index === -1` sentinel, which worked while one job could be held and stops meaning
+ * anything when three can - the buttons need to know WHICH job they act on.
+ *
+ * @param {Object} job
+ * @param {Number} index the offered index, for the Take button
+ * @param {Object} how {standing, can_take, held_at}
+ * @returns {HTMLElement}
+ */
+function create_guild_job_row(job, index, {standing, can_take, held_at = null}) {
     const row = document.createElement("div");
     row.classList.add("guild_job");
 
@@ -111,8 +123,27 @@ function create_guild_job_row(job, index, {standing, can_take}) {
         }
     }
 
-    //Progress belongs to the taken job only. On the board it would be nought every time.
-    if(!can_take && index === -1) {
+    /*
+        And when it is due, on a held job that carries a deadline. Shown as days left rather
+        than as the day it falls on, because the player counts in days remaining and the
+        calendar is a tab away.
+    */
+    if(held_at !== null && typeof job.due_on === "number") {
+        const left = job.due_on - current_game_time.day_count;
+        const due = document.createElement("div");
+        due.classList.add("guild_job_terms");
+        if(left >= 0) {
+            insert_HTML(due, translationManager.getText(language, "ui guild job due",
+                {v1: String(left)}));
+        } else {
+            due.classList.add("guild_job_overdue");
+            insert_HTML(due, translationManager.getText(language, "ui guild job overdue"));
+        }
+        body.appendChild(due);
+    }
+
+    //Progress belongs to a held job only. On the board it would be nought every time.
+    if(held_at !== null) {
         const progress = document.createElement("div");
         progress.classList.add("guild_job_terms");
         insert_HTML(progress, translationManager.getText(language, "ui guild job progress",
@@ -136,11 +167,11 @@ function create_guild_job_row(job, index, {standing, can_take}) {
         row.appendChild(take);
     }
 
-    //And the other end of it, on the taken job, once it is actually finished.
-    if(index === -1 && job_is_done(job, character.inventory)) {
+    //And the other end of it, on a held job, once it is actually finished.
+    if(held_at !== null && job_is_done(job, character.inventory)) {
         const hand_in = document.createElement("div");
         hand_in.classList.add("guild_job_take");
-        hand_in.setAttribute("onclick", "hand_in_guild_job()");
+        hand_in.setAttribute("onclick", `hand_in_guild_job(${held_at})`);
         insert_HTML(hand_in, translationManager.getText(language, "ui guild board hand in"));
         row.appendChild(hand_in);
     }
@@ -151,11 +182,11 @@ function create_guild_job_row(job, index, {standing, can_take}) {
         something they could not find. The cost is shown rather than confirmed afterwards,
         because a dialog asking "are you sure" tells you less than the number does.
     */
-    if(index === -1) {
+    if(held_at !== null) {
         const cost = standing_lost_for_giving_up(job, standing);
         const give_up = document.createElement("div");
         give_up.classList.add("guild_job_take", "guild_job_give_up");
-        give_up.setAttribute("onclick", "give_up_guild_job()");
+        give_up.setAttribute("onclick", `give_up_guild_job(${held_at})`);
         insert_HTML(give_up, translationManager.getText(language,
             "ui guild board give up", {v1: String(cost)}));
         row.appendChild(give_up);
@@ -198,19 +229,23 @@ function update_displayed_guild_board() {
         {v1: `${rank} (${standing})`}));
     list.appendChild(standing_line);
 
-    if(board?.accepted) {
+    const held = accepted_jobs(board);
+    if(held.length) {
         const heading = document.createElement("div");
         heading.classList.add("guild_board_heading");
         insert_HTML(heading, translationManager.getText(language, "ui guild board taken"));
         list.appendChild(heading);
-        list.appendChild(create_guild_job_row(board.accepted, -1,
-            {standing, can_take: false}));
+        held.forEach((job, at) => {
+            list.appendChild(create_guild_job_row(job, -1,
+                {standing, can_take: false, held_at: at}));
+        });
 
-        const only_one = document.createElement("div");
-        only_one.classList.add("guild_board_note");
-        insert_HTML(only_one,
-            translationManager.getText(language, "ui guild board one at a time"));
-        list.appendChild(only_one);
+        const how_many = document.createElement("div");
+        how_many.classList.add("guild_board_note");
+        insert_HTML(how_many, translationManager.getText(language,
+            "ui guild board how many held",
+            {v1: String(held.length), v2: String(jobs_held_at_once)}));
+        list.appendChild(how_many);
 
         /*
             v0.7.43 said here that the clerk was not taking work in yet. She is, as of
@@ -238,9 +273,10 @@ function update_displayed_guild_board() {
         return;
     }
 
+    const room_left = held.length < jobs_held_at_once;
     offered.forEach((job, index) => {
         list.appendChild(create_guild_job_row(job, index,
-            {standing, can_take: !board?.accepted}));
+            {standing, can_take: room_left}));
     });
 }
 
