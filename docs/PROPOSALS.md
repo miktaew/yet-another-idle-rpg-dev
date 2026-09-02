@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 146 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 147 -->
 
 # Proposals
 
@@ -411,6 +411,19 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
   longer calls the Guild "the merchant Guild" - the clerk has paid into that region since
   before P-41. One region, two houses.
 
+- **Giving a job up.** `done`, as **v0.7.46**, and asked for with its reason attached:
+  *"I took a job to gather heavy sand and I do not know where to gather it."* Both halves
+  were worth doing. A fetch now says **where the thing is gathered**, read from the world
+  index the Discoveries panel already answers that question with - measured first, and all 30
+  gatherable materials have at least one named place, so the line is never empty. And `Give
+  up` hands the notice back for `standing_lost_for_giving_up`: half of the rank-and-difficulty
+  pay, rounded up, never more standing than the player has, with the price on the button
+  rather than behind a confirmation.
+
+  Deliberately **not** `standing_paid_for`, which returns 0 past the top of the ladder
+  because of Q-14's ceiling - that would make giving up free for the one player with the most
+  standing to lose.
+
 **Next:** the shop, which is the last piece. Guild-only items at a standing price, with
 milestone rewards - and Q-14's fourth answer already bounds it, since the board's pay stops
 at the top of the ladder.
@@ -682,51 +695,79 @@ first piece to be built must be measured the way P-14's were, because the brief'
 are not six pieces of work - two of them (navigation, stance combat) are properties a region
 has rather than features it contains.
 
-### P-44 — What help does not say `active`
+### P-45 — The four skills that stop at ten `open`
 
-D-10's backlog, measured rather than guessed. `help.html` and `help.tr.html` are the only
-documentation a player ever sees, and they stopped keeping up somewhere around v0.7.
+The owner's request: *"let us raise the upper levels of the max-level-10 skills like night
+vision, literacy, sleeping, farming."*
 
-**Of the eight journal tabs, help names two.** Data was already there; Guild work was added
-with v0.7.44. Missing entirely: **Quests, Bestiary, Anthology, Discoveries, Lore, Titles.**
-Two of those are systems the player has to be told about rather than shown - Discoveries
-answers "where does this come from", and Lore collects threads that are otherwise only
-readable once.
+**Measured, and it is exactly those four.** The game's skills group by `max_level` like this:
 
-**And the features from the last twenty versions.** None of these is named anywhere on
-either page: the inventory's fourth sort and its short labels, the retry button under a
-failed lock, the crafting pages' discovered/undiscovered marks and the makeable-only filter,
-books that require a skill before they can be read, the town square's practice and watch
-work, and the export filename carrying its version.
+| cap | how many | which |
+|---|---|---|
+| 10 | **4** | Night vision, Farming, Sleeping, Literacy |
+| 20 | 1 | Presence sensing |
+| 25 | 1 | Haggling |
+| 30 | 16 | the stances, Shield blocking, Stance mastery … |
+| 40 | 7 | Perception, Breathing, Regeneration … |
+| 50 | 5 | Running, Climbing, Swimming … |
+| 60 | 32 | Combat, Evasion, Unarmed … |
 
-**Not the traces, and not the meeting.** P-14 phase 7's whole design is that the player
-cannot be sure the thing exists. Help is where a player goes to stop being unsure, so the
-traces and the one-in-ten-thousand sighting stay out of it. This is the one place D-10 does
-not apply, and it is worth writing down before somebody helpfully documents it.
+So the four are not a tier, they are the floor - and the next rung up holds one skill. A
+player who levels any of them hits the ceiling long before anything else in the game stops
+moving.
 
-**Then the guard, and only then.** A check that every journal tab is named on both pages is
-derivable and catches the class - it is the same shape as
-`check_help_explains_standing`, which reads one block and holds it to what
-`character.reputation` declares. It cannot be added first: it would fail on six tabs on the
-day it was written, and the contract does not allow committing a red gate.
+**What has to be decided before any number is picked, because a cap is not just a number.**
+Each of these four has milestones and an effect that scales with level, so raising a cap
+without extending the milestones gives levels that buy nothing - which is worse than a cap,
+because the xp is real and the reward is not. `get_next_skill_milestone` and
+`get_unlocked_skill_rewards` are what would have to be fed.
 
-**Order:** the six tabs, then the feature list, then the check. The tabs are the half a
-player is most likely to open help *for*.
+**And two of the four have effects that cannot simply keep scaling.** Sleeping and Night
+vision both reduce a penalty; a penalty reduced past nought is a bonus, and that is a
+different design decision from "let it go further". Literacy speeds reading and Farming
+feeds an activity, so those two extend cleanly.
 
-**The tabs are done, as v0.7.45, and the check with them.** One **journal** section rather
-than six scattered ones - that is how a player meets them, and the two that already had
-sections are pointed at from it. `check_help_names_every_journal_tab` reads the buttons out
-of `index.html`, resolves each label from the locale files and requires it on the page for
-**its own language**, so a tab with a Turkish label and only an English entry fails. It went
-in at the same moment it became passable, and was negative-tested in both directions.
+**Guard.** `check_skill_effect_descriptions` and the milestone checks already hold a skill to
+describing what it does at every level it can reach, so a cap raised past its milestones
+should fail there rather than needing a new check. Worth confirming before relying on it.
 
-**Still open: the feature list.** None of these is named on either page - the inventory's
-fourth sort and its short labels, the retry button under a failed lock, the crafting pages'
-discovered/undiscovered marks and the makeable-only filter, books that require a skill, the
-town square's practice and watch work, and the version in the export filename. Unlike the
-tabs there is no derived guard to be had for these: a check that every version in
-`changelog.html` has a help entry would be a rule invented from a number rather than a
-measurement, and D-10 is the rule that covers them going forward.
+### P-46 — The changelog page remembers where you were `open`
+
+The owner's request, in four parts: *"let us filter major versions on the changelog, e.g.
+v0.7, v0.6 - normally all selected, but if I leave only v0.7 it should remember that and show
+v0.7 next time I open it. It should also remember the last version I looked at and show that
+whole range expanded. If I have seen everything, the last one can stay open. And if I load an
+old save and there is a newer version - old save v0.7.30, latest v0.7.45, so fifteen versions
+apart - show a small (+15), and if I open the changelog by pressing it, those fifteen version
+logs should come up expanded."*
+
+**Four features, and they need separating because only two of them are about the page.**
+
+- **The major filter** is page state: read the version headings, group them by minor
+  (`v0.7`, `v0.6`), offer them as toggles, all on by default. Its memory is a browser
+  concern, not a save concern - the page is opened outside the game as often as inside it.
+- **The last version looked at** is the same kind of state and can share the same store.
+- **The (+15) badge is different**, and it is the one that needs the game rather than the
+  page: it compares the version in the loaded save against the current one. The save already
+  carries its version - P-38 is the whole reason it does - so the number is a subtraction,
+  but it has to be counted in *versions between*, not in the numbers themselves: v0.7.30 to
+  v0.7.45 is fifteen only if every version in between exists, and the changelog is the list
+  that says which do.
+- **Opening from the badge** means the page has to be told what to expand, which is a
+  parameter on the link rather than remembered state.
+
+**What must be decided before it is built.** Where the memory lives. `localStorage` keyed to
+the page is the obvious answer and needs no save key - but it is per-browser, so it does not
+follow an exported save, and it would not survive the player switching machines. The
+alternative is `game_state`, which persists properly and drags the changelog page into the
+save contract for something that is a reading preference. **PROPOSED: `localStorage` for the
+two filters, and the save's own version for the badge**, which needs no new storage at all.
+
+**And a guard worth having.** Whatever counts the fifteen has to agree with what
+`changelog.html` actually lists, and the two HTML copies must agree with each other -
+`check_changelogs_cover_version` already holds both pages to carrying an entry for the
+shipped `game_version`, so counting versions between two points is the same list read a
+second way.
 
 ## Open decisions
 

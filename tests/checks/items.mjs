@@ -656,7 +656,67 @@ async function check_books_ask_for_real_skills() {
         + `skill, each naming a real one at a reachable level`);
 }
 
+
+/**
+ * Every row on every trader's shelf names an item that exists.
+ *
+ * The bay trader threw on open from the day it was written until v0.7.46. Three of its rows
+ * named items that had **never existed** - "Piece of iron ore", "Piece of leather", "Piece
+ * of rough leather" - and the failure is worth describing because it is the shape this
+ * check exists for:
+ *
+ *     const item = getItem({...item_templates[row.item_name], quality});
+ *     inventory[item.getInventoryKey()] = ...
+ *
+ * Spreading `undefined` is legal and silent. `getItem` gets an object with only a quality on
+ * it, returns nothing, and the next line reads `getInventoryKey` off nothing. So the shop
+ * did not sell less; it took the whole panel down with a TypeError, and only for the players
+ * who got far enough to reach it.
+ *
+ * Nothing else could see it. The rows are data, the build does not resolve them, and
+ * `check:save` reads trader KEYS rather than their stock. `LOCALE_STRICT=1` says nothing
+ * either: a name that is not an item is also not a text id anybody asked for.
+ *
+ * Measured across every template rather than every trader, because a template is shared -
+ * the two cafes have one between them - and a bad row in a shared list is a bad row twice.
+ */
+async function check_trader_stock_names_resolve() {
+    const [traders_module, items_module] = await load_browser_free(repo_root,
+        ["src/traders.js", "src/items.js"]);
+    const {inventory_templates} = traders_module;
+    const {item_templates} = items_module;
+
+    if (!inventory_templates || typeof inventory_templates !== "object") {
+        error("traders.js no longer exports inventory_templates - "
+            + "check_trader_stock_names_resolve is out of date.");
+        return;
+    }
+
+    let rows = 0;
+    for (const [template, list] of Object.entries(inventory_templates)) {
+        if (!Array.isArray(list)) {
+            error(`the stock list "${template}" is not a list.`);
+            continue;
+        }
+        for (const row of list) {
+            rows++;
+            if (row?.item_name === undefined) {
+                error(`a row in the stock list "${template}" names no item at all.`);
+                continue;
+            }
+            if (item_templates[row.item_name]) continue;
+            error(`the stock list "${template}" offers "${row.item_name}", which is not an `
+                + `item. Opening that trader THROWS: getItem spreads an undefined template, `
+                + `returns nothing, and getInventoryKey is read off nothing.`);
+        }
+    }
+
+    console.log(`[check] trader stock: ${Object.keys(inventory_templates).length} list(s), `
+        + `${rows} row(s), each naming a real item`);
+}
+
 export {
+    check_trader_stock_names_resolve,
     check_books_can_be_got,
     check_books_ask_for_real_skills,
     check_no_item_shows_its_key,

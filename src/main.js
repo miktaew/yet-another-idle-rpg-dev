@@ -151,7 +151,8 @@ import { is_title_earned, titles } from "./data/titles.js";
 //new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
 import { place_tooltip_vertically } from "./ui_helpers.js";
 import { rolls_a_sighting } from "./data/marrowmoth.js";
-import { accept_from_board, job_after_kill, job_is_done, refreshed_board,
+import { accept_from_board, give_up_from_board, job_after_kill, job_is_done,
+         refreshed_board, standing_lost_for_giving_up,
          standing_paid_for } from "./guild_jobs.js";
 import { update_displayed_guild_board } from "./guild_display.js";
 const save_key = "save data";
@@ -1425,7 +1426,11 @@ function do_reading() {
     add_xp_to_skill({skill: skills["Literacy"], xp_to_add: book.literacy_xp_rate});
 
     if(book.is_finished) {
-        log_message(translationManager.getText(language, "log finished the book v1", {v1: is_reading}));
+        //getDisplayName, not the id. `is_reading` is the registry key, so a Turkish
+        //player read the English title inside a Turkish sentence - and one line above, the
+        //same book's name had already been translated correctly when it was picked up.
+        log_message(translationManager.getText(language, "log finished the book v1",
+            {v1: item_templates[is_reading].getDisplayName()}));
         update_booklist_entry(is_reading, true);
         end_reading();
 
@@ -4262,6 +4267,38 @@ function hand_in_guild_job() {
     update_displayed_guild_board();
 }
 
+/**
+ * Handing the taken job back unfinished.
+ *
+ * The cost is read here rather than taken from the button, for the same reason the hand-in
+ * re-checks its own condition: the panel is drawn on a tick and the click is not, so the
+ * standing may have moved between the two.
+ */
+function give_up_guild_job() {
+    const board = game_state.guild_board;
+    const job = board?.accepted;
+    if(!job) {
+        return;
+    }
+
+    const cost = standing_lost_for_giving_up(job, character.reputation["Guild"] ?? 0);
+    game_state.guild_board = give_up_from_board({board});
+
+    if(cost > 0) {
+        process_rewards({
+            rewards: {reputation: {Guild: -cost}},
+            source_type: "action",
+            source_name: "guild clerk",
+        });
+    }
+
+    log_message(translationManager.getText(language, cost > 0
+        ? "log guild job given up"
+        : "log guild job given up for nothing"), "notification");
+    update_displayed_guild_board();
+}
+
+window.give_up_guild_job = give_up_guild_job;
 window.hand_in_guild_job = hand_in_guild_job;
 window.accept_guild_job = accept_guild_job;
 window.reload_normal_location = reload_normal_location;

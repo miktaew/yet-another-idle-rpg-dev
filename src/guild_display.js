@@ -21,7 +21,10 @@ import { translationManager } from "./translation.js";
 import { clear_HTML_content, insert_HTML } from "./ui_helpers.js";
 import { get_guild_rank } from "./reputation.js";
 import { enemy_tag_label } from "./journal_panels.js";
-import { job_is_done, job_progress, standing_paid_for } from "./guild_jobs.js";
+import { job_is_done, job_progress, standing_lost_for_giving_up,
+         standing_paid_for } from "./guild_jobs.js";
+import { item_sources } from "./world_index.js";
+import { locations } from "./data/locations.js";
 
 /**
  * Whether the player knows there is a board.
@@ -38,8 +41,14 @@ function board_is_known() {
 
 /** One job as a sentence: what to do, how hard, and what it pays. */
 function job_line(job, standing) {
+    /*
+        getDisplayName, not getName. getName is the CANONICAL ENGLISH identity - the
+        equippable constructors use it as this.id and that id is written into save files -
+        and the board printed it, so a Turkish player was asked for "10 Tree sap" while the
+        row `"name Tree sap": "Ağaç özsuyu"` had been sitting in the locale all along.
+    */
     const target = job.type === "gather"
-        ? (item_templates[job.target]?.getName() ?? job.target)
+        ? (item_templates[job.target]?.getDisplayName() ?? job.target)
         : enemy_tag_label(job.target);
 
     const what = translationManager.getText(language, `ui guild job ${job.type}`,
@@ -77,6 +86,31 @@ function create_guild_job_row(job, index, {standing, can_take}) {
     insert_HTML(terms, `${difficulty} &middot; ${pays}`);
     body.appendChild(terms);
 
+    /*
+        Where a fetch is gathered, which is the whole reason this was asked for: a job to
+        bring thirty Heavy sand is not a job if the player has no way to find out where sand
+        comes from. Read from the world index rather than written down - the same index the
+        Discoveries panel answers "where does this come from" with - so it cannot drift from
+        where the material actually is.
+
+        Measured before relying on it: all 30 gatherable materials have at least one named
+        gather place, so this line is never empty for a job the generator can produce.
+    */
+    if(job.type === "gather") {
+        const places = item_sources(job.target)
+            .filter(source => source.kind === "gather")
+            .map(source => locations[source.location_key]?.getName())
+            .filter(Boolean);
+        const unique = [...new Set(places)];
+        if(unique.length) {
+            const where = document.createElement("div");
+            where.classList.add("guild_job_terms");
+            insert_HTML(where, translationManager.getText(language, "ui guild job where",
+                {v1: unique.join(", ")}));
+            body.appendChild(where);
+        }
+    }
+
     //Progress belongs to the taken job only. On the board it would be nought every time.
     if(!can_take && index === -1) {
         const progress = document.createElement("div");
@@ -109,6 +143,22 @@ function create_guild_job_row(job, index, {standing, can_take}) {
         hand_in.setAttribute("onclick", "hand_in_guild_job()");
         insert_HTML(hand_in, translationManager.getText(language, "ui guild board hand in"));
         row.appendChild(hand_in);
+    }
+
+    /*
+        And a way out, with the price on the button. A job that cannot be given up is a job
+        that can strand the player - which is exactly how this was reported: a fetch for
+        something they could not find. The cost is shown rather than confirmed afterwards,
+        because a dialog asking "are you sure" tells you less than the number does.
+    */
+    if(index === -1) {
+        const cost = standing_lost_for_giving_up(job, standing);
+        const give_up = document.createElement("div");
+        give_up.classList.add("guild_job_take", "guild_job_give_up");
+        give_up.setAttribute("onclick", "give_up_guild_job()");
+        insert_HTML(give_up, translationManager.getText(language,
+            "ui guild board give up", {v1: String(cost)}));
+        row.appendChild(give_up);
     }
 
     return row;

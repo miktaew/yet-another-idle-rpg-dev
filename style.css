@@ -2636,6 +2636,15 @@ i {
 			}
 
 			/*
+				Deliberately not styled like Take or Hand in. It sits in the same row as
+				them and costs standing, so it reads as the odd one out rather than as the
+				next step.
+			*/
+			.guild_job_give_up {
+				opacity: 0.7;
+			}
+
+			/*
 				A column like its siblings: header, then the list taking what is left
 				and scrolling on its own, then the hide-completed bar. The box itself
 				no longer scrolls - if it did, the bar would scroll away with the

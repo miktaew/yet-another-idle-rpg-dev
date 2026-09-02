@@ -292,6 +292,12 @@ class TradeItem {
     /*
         The bay trader. Locked until the region is - the salt house is inside it.
 
+        Three of its rows named items that never existed - "Piece of iron ore", "Piece of
+        leather" and "Piece of rough leather" - which made this shop THROW on open from the
+        day it was written until v0.7.46. `item_templates[name]` was undefined, so
+        `getItem({...undefined, quality})` returned nothing and `getInventoryKey()` threw.
+        Guarded now by check_trader_stock_names_resolve.
+
         Its stock is deliberately assembled out of templates that already exist. The
         cook promised "many spice and meat and metal and leather... from very far
         away", and the honest way to deliver that is a shelf holding things the
@@ -633,11 +639,11 @@ class TradeItem {
             //ever had by smelting them one at a time.
             new TradeItem({item_name: "Iron ingot", count: [4,8], chance: 0.8}),
             new TradeItem({item_name: "Steel ingot", count: [2,5], chance: 0.5}),
-            new TradeItem({item_name: "Piece of iron ore", count: [6,12], chance: 0.6}),
+            new TradeItem({item_name: "Iron ore", count: [6,12], chance: 0.6}),
 
             //The leather.
-            new TradeItem({item_name: "Piece of leather", count: [4,9], chance: 0.7}),
-            new TradeItem({item_name: "Piece of rough leather", count: [4,9], chance: 0.7}),
+            new TradeItem({item_name: "Piece of boar leather", count: [4,9], chance: 0.7}),
+            new TradeItem({item_name: "Piece of wolf rat leather", count: [4,9], chance: 0.7}),
 
             /*
                 And the metal the cook actually promised: "Many spice and meat and
@@ -684,10 +690,10 @@ class TradeItem {
 
             new TradeItem({item_name: "Iron ingot", count: [8,16]}),
             new TradeItem({item_name: "Steel ingot", count: [5,10]}),
-            new TradeItem({item_name: "Piece of iron ore", count: [12,24]}),
+            new TradeItem({item_name: "Iron ore", count: [12,24]}),
 
-            new TradeItem({item_name: "Piece of leather", count: [9,16]}),
-            new TradeItem({item_name: "Piece of rough leather", count: [9,16]}),
+            new TradeItem({item_name: "Piece of boar leather", count: [9,16]}),
+            new TradeItem({item_name: "Piece of wolf rat leather", count: [9,16]}),
 
             //The two ores nothing in this country mines. Out of season the shed has
             //what is left of the last landing; in season it has the landing.

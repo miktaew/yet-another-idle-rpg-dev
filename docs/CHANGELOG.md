@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 123 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 124 -->
 
 # Changelog
 
@@ -20,6 +20,71 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.46 - a shop that had always thrown, two English names in Turkish sentences, and a way out
+
+Three things the owner found by playing, and the first of them is the oldest bug this fork
+has fixed.
+
+**The bay trader has thrown on open since the day it was written.** Three of its stock rows
+named items that have **never existed** - `Piece of iron ore`, `Piece of leather`, `Piece of
+rough leather`, six rows across the two Bay templates. `git log -S` on `items.js` returns
+nothing for those names: they were invented in the commit that built the region and were
+wrong immediately.
+
+The failure is worth writing down because it is silent by construction:
+
+    const item = getItem({...item_templates[row.item_name], quality});
+    inventory[item.getInventoryKey()] = ...
+
+Spreading `undefined` is legal. `getItem` receives an object carrying only a quality,
+returns nothing, and the next line reads `getInventoryKey` off nothing - so the shop did not
+sell less, it took the panel down with a TypeError, and only for players who got far enough
+to reach the bay. Replaced with the names the rows were reaching for: the trader's own
+comment asks for *"things the player has only ever had to make or hunt for, at a price that
+says somebody carried them a long way"*, and the counts (6-12, 12-24 for ore) are bulk - so
+staples at a high margin, `Iron ore` plus the two lowest leathers, with "rough" taking the
+cheaper.
+
+`check_trader_stock_names_resolve` guards it: 11 lists, 432 rows. Nothing else could have -
+the rows are data, the build does not resolve them, `check:save` reads trader keys rather
+than their stock, and `LOCALE_STRICT=1` is silent because a name that is not an item is also
+not a text id anybody asked for.
+
+**Two English names inside Turkish sentences, and both were one method call.** `Item` is the
+one registry whose `getName()` is *not* the shown name - its own comment says why: the
+equippable constructors use it as `this.id` and that id goes into save files, so it stays
+English forever. `getDisplayName()` is the localised one.
+
+The guild board called `getName()`, so a Turkish player was asked for **"10 Tree sap"** while
+`"name Tree sap": "Ağaç özsuyu"` had been sitting in the locale all along. The
+finished-book log passed `is_reading`, which is the registry key - so the title was English
+inside a translated sentence, one line below the pickup message that had translated the same
+book's name correctly.
+
+`check_no_item_canonical_names_outside_items` guards the class. It is worth a check rather
+than a fix because the habit is *safe everywhere else*: locations, activities, stances,
+enemies and skills all have a `getName()` that is localised, so items are the exception and
+the code reads correct.
+
+**And the way out, which was asked for with its reason attached:** *"let us be able to cancel
+guild jobs with a reputation penalty - I took a job to gather heavy sand and I do not know
+where to gather it."* Both halves were worth doing. A fetch now **says where it is gathered**,
+read from the world index the Discoveries panel already answers that question with - measured
+first, and all 30 gatherable materials have at least one named place, so the line is never
+empty. And `Give up` hands the notice back for `standing_lost_for_giving_up`: half of what
+the rank and difficulty would have paid, rounded up, never more standing than the player has.
+
+Deliberately **not** `standing_paid_for`, which returns 0 at the top of the ladder because of
+Q-14's ceiling - that would have made giving up free for the one player with the most
+standing to lose. The price is on the button rather than behind a confirmation, because the
+number says more than "are you sure" does.
+
+**Help, per D-10**, for all of it: a new section on actions, activities and reading - which
+covers the Try again button, the town square's running and patrolling, and the books that
+ask for a skill - plus the inventory's four sorts, the crafting &#9675; mark and its filter,
+and the version in the export filename. That is P-44's second step, and it leaves that
+proposal with nothing outstanding.
 
 ### v0.7.45 - the six tabs help had never named
 

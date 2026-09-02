@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 123 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 124 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,70 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.46 - hep çöken bir dükkân, Türkçe cümlelerde iki İngilizce ad, ve bir çıkış yolu
+
+Sahibinin oynayarak bulduğu üç şey ve ilki, bu fork'un düzelttiği en eski hata.
+
+**Körfez tüccarı yazıldığı günden beri açılışta çöküyordu.** Stok satırlarından üçü **hiç var
+olmamış** eşyalar adlandırıyordu: `Piece of iron ore`, `Piece of leather`, `Piece of rough
+leather`; iki Bay şablonunda toplam altı satır. `items.js` üzerinde `git log -S` bu adlar için
+hiçbir şey döndürmüyor: bölgeyi inşa eden commit'te uydurulmuşlar ve o anda yanlışlardı.
+
+Arıza, kuruluşu gereği sessiz olduğu için yazılmaya değer:
+
+    const item = getItem({...item_templates[row.item_name], quality});
+    inventory[item.getInventoryKey()] = ...
+
+`undefined` yaymak yasal. `getItem`, yalnızca bir kalite taşıyan bir nesne alıyor, hiçbir şey
+döndürüyor ve sonraki satır `getInventoryKey`i hiçbir şeyin üstünden okuyor — yani dükkân az
+satmıyordu, paneli bir TypeError ile beraberinde götürüyordu; hem de yalnızca körfeze
+varabilmiş oyuncular için. Satırların uzandığı adlarla değiştirildi: tüccarın kendi yorumu
+*"oyuncunun yalnızca yapmak ya da avlamak zorunda kaldığı şeyleri, birinin onları çok
+uzaktan taşıdığını söyleyen bir fiyatla"* istiyor ve miktarlar (cevher için 6-12, 12-24)
+toptan — yani yüksek marjla temel mal: `Iron ore` artı en alt iki deri, "rough" olan da
+ucuzunu alıyor.
+
+`check_trader_stock_names_resolve` bunu koruyor: 11 liste, 432 satır. Başka hiçbir şey
+koruyamazdı — satırlar veri, derleme onları çözmüyor, `check:save` tüccarların stoklarını
+değil anahtarlarını okuyor ve `LOCALE_STRICT=1` sessiz, çünkü eşya olmayan bir ad kimsenin
+istediği bir metin kimliği de değil.
+
+**Türkçe cümlelerin içinde iki İngilizce ad ve ikisi de tek bir metot çağrısıydı.** `Item`,
+`getName()`i gösterilen ad *olmayan* tek kayıt defteri — kendi yorumu sebebini söylüyor:
+teçhizat kurucuları onu `this.id` olarak kullanıyor ve o kimlik kayıt dosyalarına yazılıyor,
+dolayısıyla sonsuza kadar İngilizce kalıyor. Yerelleşmiş olanı `getDisplayName()`.
+
+Lonca panosu `getName()` çağırıyordu; öyle olunca Türk oyuncudan **"10 Tree sap"** isteniyordu,
+oysa `"name Tree sap": "Ağaç özsuyu"` satırı ta baştan yerelleştirmede duruyordu. Kitap
+bitirme logu ise `is_reading`i geçiyordu, ki o kayıt anahtarı — yani başlık, çevrilmiş bir
+cümlenin içinde İngilizce kalıyordu; hem de aynı kitabın adını doğru çeviren toplama
+mesajının bir satır altında.
+
+`check_no_item_canonical_names_outside_items` sınıfı koruyor. Bunun düzeltme değil kontrol
+gerektirmesinin sebebi, alışkanlığın *başka her yerde güvenli* olması: mekânlar, aktiviteler,
+duruşlar, düşmanlar ve beceriler hepsinin `getName()`i yerelleşmiş; yani istisna eşyalar ve
+kod doğru okunuyor.
+
+**Ve sebebi de ekli gelen çıkış yolu:** *"lonca görevlerini bir itibar cezasıyla iptal
+edebilelim. örneğin heavy sand toplama görevi aldım ama nereden toplayacağımı bilmiyorum."*
+İki yarısı da yapmaya değerdi. Getirme işi artık **nerede toplandığını söylüyor**; Keşifler
+panelinin o soruyu çoktan cevapladığı dünya dizininden okunuyor — önce ölçüldü ve 30
+toplanabilir malzemenin hepsinin en az bir adlandırılmış yeri var, yani satır hiç boş
+kalmıyor. `Bırak` ise ilanı `standing_lost_for_giving_up` karşılığında geri veriyor: kademe
+ve zorluğun ödeyeceğinin yarısı, yukarı yuvarlanmış, hiçbir zaman oyuncunun elindekinden
+fazlası değil.
+
+Bilerek `standing_paid_for` **değil**: o, Q-14'ün tavanı yüzünden merdivenin tepesinde 0
+döndürüyor — bu da bırakmayı, kaybedecek en çok itibarı olan tek oyuncu için bedava yapardı.
+Fiyat bir onay ekranının arkasında değil düğmenin üstünde, çünkü sayı "emin misiniz"den
+fazlasını söylüyor.
+
+**D-10 gereği yardım**, hepsi için: eylemler, aktiviteler ve okumak üzerine yeni bir bölüm —
+Tekrar dene düğmesini, kasaba meydanının koşu ve devriyesini, ve beceri isteyen kitapları
+kapsıyor — artı envanterin dört sıralaması, üretimdeki &#9675; işareti ve filtresi, ve dışa
+aktarma dosya adındaki sürüm. Bu, P-44'ün ikinci adımı ve o öneriyi açıkta bir şey
+kalmadan bırakıyor.
 
 ### v0.7.45 - yardımın hiç adlandırmadığı altı sekme
 

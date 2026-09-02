@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 146 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 147 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -418,6 +418,19 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
   Lonca'ya "tüccar Loncası" demiyor — kâtip o bölgeye P-41'den önce de ödeme yapıyordu. Tek
   bölge, iki ev.
 
+- **İşi bırakmak.** `done`, **v0.7.46** olarak ve sebebi de ekli gelen bir talep:
+  *"heavy sand toplama görevi aldım ama nereden toplayacağımı bilmiyorum."* İki yarısı da
+  yapmaya değerdi. Getirme işi artık **o şeyin nerede toplandığını** söylüyor; Keşifler
+  panelinin bu soruyu çoktan cevapladığı dünya dizininden okunuyor — önce ölçüldü ve 30
+  toplanabilir malzemenin hepsinin en az bir adlandırılmış yeri var, yani satır hiç boş
+  kalmıyor. `Bırak` ise ilanı `standing_lost_for_giving_up` karşılığında geri veriyor: kademe
+  ve zorluk ödemesinin yarısı, yukarı yuvarlanmış, hiçbir zaman oyuncunun elindekinden
+  fazlası değil; fiyat da bir onay ekranının arkasında değil düğmenin üstünde.
+
+  Bilerek `standing_paid_for` **değil**: o, Q-14'ün tavanı yüzünden merdivenin tepesinden
+  sonra 0 döndürüyor — bu da bırakmayı, kaybedecek en çok itibarı olan oyuncu için bedava
+  yapardı.
+
 **Sırada:** dükkân, son parça. Loncaya özel eşyalar itibar fiyatıyla, milestone ödülleriyle —
 ve Q-14'ün dördüncü cevabı onu çoktan sınırlıyor, çünkü panonun ödemesi merdivenin tepesinde
 duruyor.
@@ -688,51 +701,79 @@ parça, P-14'ünkiler gibi ölçülmek zorunda; çünkü brief'in altı odağı 
 ikisi (navigasyon, duruş dövüşü) bir bölgenin içerdiği özellikler değil, sahip olduğu
 niteliklerdir.
 
-### P-44 — Yardımın söylemedikleri `active`
+### P-45 — Onda duran dört beceri `open`
 
-D-10'un iş listesi; tahmin değil, ölçüm. `help.html` ve `help.tr.html`, oyuncunun gördüğü
-tek dokümantasyon ve v0.7 civarında bir yerde geride kalmışlar.
+Sahibinin talebi: *"night vision, literacy, sleeping, farming gibi lv 10 max yeteneklerin üst
+seviyelerini arttıralım."*
 
-**Sekiz günlük sekmesinden yardım ikisini adlandırıyor.** Data zaten vardı; Guild work
-v0.7.44 ile eklendi. Tamamen eksik olanlar: **Quests, Bestiary, Anthology, Discoveries,
-Lore, Titles.** Bunlardan ikisi, oyuncuya gösterilerek değil anlatılarak öğretilmesi gereken
-sistemler — Discoveries "bu nereden geliyor" sorusunu cevaplıyor, Lore ise başka türlü
-yalnızca bir kez okunabilen iplikleri topluyor.
+**Ölçüldü ve tam olarak o dördü.** Oyunun becerileri `max_level`e göre şöyle gruplanıyor:
 
-**Ve son yirmi sürümün özellikleri.** Şunların hiçbiri iki sayfanın hiçbir yerinde
-adlandırılmıyor: envanterin dördüncü sıralaması ve kısa etiketleri, başarısız kilidin
-altındaki tekrar dene düğmesi, craft sayfalarındaki keşfedildi/keşfedilmedi işaretleri ve
-yalnızca yapılabilirler filtresi, okunabilmesi için yetenek isteyen kitaplar, kasaba
-meydanının idman ve nöbet işleri, ve dosya adına giren sürüm bilgisi.
+| tavan | kaç | hangileri |
+|---|---|---|
+| 10 | **4** | Night vision, Farming, Sleeping, Literacy |
+| 20 | 1 | Presence sensing |
+| 25 | 1 | Haggling |
+| 30 | 16 | duruşlar, Shield blocking, Stance mastery … |
+| 40 | 7 | Perception, Breathing, Regeneration … |
+| 50 | 5 | Running, Climbing, Swimming … |
+| 60 | 32 | Combat, Evasion, Unarmed … |
 
-**İzler hariç, karşılaşma hariç.** P-14 faz 7'nin bütün tasarımı, oyuncunun o şeyin var
-olduğundan emin olamaması. Yardım ise oyuncunun emin olmaya gittiği yer; bu yüzden izler ve
-on binde bir görme onun dışında kalıyor. D-10'un geçerli olmadığı tek yer bu ve biri
-yardımcı olmak isteyip onu belgelemeden önce yazılmaya değer.
+Yani bu dördü bir kademe değil, zeminin kendisi — ve bir üst basamakta tek bir beceri var.
+Bunlardan birini yükselten bir oyuncu, oyundaki başka hiçbir şey durmadan çok önce tavana
+çarpıyor.
 
-**Sonra muhafız, ama ancak o zaman.** Her günlük sekmesinin iki sayfada da adlandırıldığını
-kontrol etmek türetilebilir ve sınıfı yakalar — `check_help_explains_standing` ile aynı
-şekil, ki o da bir bloğu okuyup `character.reputation`ın bildirdiğine bağlıyor. Önce
-eklenemez: yazıldığı gün altı sekmede düşerdi ve sözleşme kırmızı kapıyla commit'e izin
-vermiyor.
+**Bir sayı seçilmeden önce karara bağlanması gerekenler, çünkü tavan yalnızca bir sayı
+değil.** Bu dördünün her birinin milestone'ları ve seviyeyle ölçeklenen bir etkisi var; yani
+milestone'ları uzatmadan tavanı yükseltmek, hiçbir şey satın almayan seviyeler veriyor — ki
+bu tavandan kötü, çünkü tecrübe gerçek, ödül değil. Beslenmesi gerekenler
+`get_next_skill_milestone` ve `get_unlocked_skill_rewards`.
 
-**Sıra:** altı sekme, sonra özellik listesi, sonra kontrol. Sekmeler, oyuncunun yardımı en
-çok *onlar için* açacağı yarı.
+**Ve dördünden ikisinin etkisi öylece ölçeklenemez.** Sleeping ile Night vision bir cezayı
+azaltıyor; sıfırın ötesine azaltılmış bir ceza bonustur ve bu, "daha ileri gitsin"den farklı
+bir tasarım kararı. Literacy okumayı hızlandırıyor, Farming bir aktiviteyi besliyor; o ikisi
+temiz biçimde uzuyor.
 
-**Sekmeler tamam, v0.7.45 olarak, kontrolüyle birlikte.** Altı dağınık bölüm yerine tek bir
-**Günlük** bölümü — oyuncu onlarla böyle karşılaşıyor ve zaten kendi bölümü olan ikisi oradan
-işaret ediliyor. `check_help_names_every_journal_tab`, düğmeleri `index.html`ten okuyor, her
-etiketi yerelleştirme dosyalarından çözüyor ve onu **kendi dilinin** sayfasında arıyor; yani
-Türkçe etiketli ama yalnızca İngilizce girdisi olan bir sekme düşüyor. Geçebilir hâle geldiği
-anda eklendi ve iki yönden negatif test edildi.
+**Muhafız.** `check_skill_effect_descriptions` ve milestone kontrolleri, bir beceriyi
+ulaşabildiği her seviyede ne yaptığını anlatmaya çoktan bağlıyor; yani milestone'larının
+ötesine yükseltilmiş bir tavanın orada düşmesi lazım, yeni bir kontrole gerek kalmadan.
+Buna güvenmeden önce doğrulanmaya değer.
 
-**Hâlâ açık: özellik listesi.** Şunların hiçbiri iki sayfada da adlandırılmıyor — envanterin
-dördüncü sıralaması ve kısa etiketleri, başarısız kilidin altındaki tekrar dene düğmesi,
-craft sayfalarının keşfedildi/keşfedilmedi işaretleri ve yalnızca yapılabilirler filtresi,
-yetenek isteyen kitaplar, kasaba meydanının idman ve nöbet işleri, ve dosya adındaki sürüm.
-Sekmelerin aksine bunlar için türetilebilecek bir muhafız yok: `changelog.html`teki her
-sürümün bir yardım girdisi olduğunu kontrol etmek, ölçümden değil bir sayıdan uydurulmuş bir
-kural olurdu ve bundan sonrası için onları kapsayan kural D-10.
+### P-46 — Changelog sayfası nerede kaldığını hatırlıyor `open`
+
+Sahibinin talebi, dört parça hâlinde: *"changelog'ta major sürümleri filtreleyebilelim örn
+v0.7 v0.6 gibi, normalde hepsi seçili gelsin, ancak sadece v0.7 de bırakırsam bunu
+hatırlasın ve sonraki açışımda v0.7'yi göstersin. ayrıca son changelog'a baktığım sürümü de
+hatırlasın ve o aralığın tamamını açık göstersin. eğer hepsini gördüysem sonuncu açık kalmaya
+devam edebilir. eski kayıtla yükleyip yeni sürüm varsa changelog üzerinde eski kayıt sürümü
+örn 0.7.30, son sürüm 0.7.45. yani arada 15 sürüm fark var. ufak (+15) göstersin ve ona
+basarak changelogu açtıysam 15 sürüm logu açık gelsin."*
+
+**Dört özellik ve ayrılmaları gerekiyor, çünkü yalnızca ikisi sayfayla ilgili.**
+
+- **Major filtresi** sayfa durumu: sürüm başlıklarını oku, minor'a göre grupla (`v0.7`,
+  `v0.6`), aç/kapa olarak sun, varsayılan hepsi açık. Hafızası bir tarayıcı meselesi, kayıt
+  meselesi değil — sayfa oyunun içinden olduğu kadar dışından da açılıyor.
+- **Son bakılan sürüm** aynı türden durum ve aynı depoyu paylaşabilir.
+- **(+15) göstergesi farklı** ve sayfadan çok oyuna ihtiyaç duyan parça o: yüklenen kayıttaki
+  sürümü mevcut sürümle karşılaştırıyor. Kayıt sürümünü çoktan taşıyor — P-38'in bütün sebebi
+  bu — yani sayı bir çıkarma, ama **aradaki sürüm sayısıyla** sayılmalı, sayıların kendisiyle
+  değil: v0.7.30'dan v0.7.45'e on beş, ancak aradaki her sürüm varsa; hangilerinin var
+  olduğunu söyleyen liste de changelog.
+- **Göstergeden açmak**, sayfaya neyi açacağının söylenmesi demek; bu da hatırlanan durum
+  değil, bağlantı üzerinde bir parametre.
+
+**İnşadan önce karara bağlanması gereken: hafıza nerede duracak.** Sayfaya anahtarlanmış
+`localStorage` bariz cevap ve yeni bir kayıt anahtarı istemiyor — ama tarayıcı başına, yani
+dışa aktarılan bir kaydı takip etmiyor ve oyuncu makine değiştirince hayatta kalmıyor.
+Alternatifi `game_state`; o düzgün kalıcı ama bir okuma tercihi için changelog sayfasını kayıt
+sözleşmesinin içine çekiyor. **ÖNERİ: iki filtre için `localStorage`, gösterge için kaydın
+kendi sürümü** — ki bu hiç yeni depo istemiyor.
+
+**Ve sahip olunmaya değer bir muhafız.** O on beşi sayan şey, `changelog.html`in gerçekten
+listelediğiyle uyuşmak zorunda ve iki HTML kopya da birbiriyle uyuşmalı —
+`check_changelogs_cover_version` iki sayfayı da yayımlanan `game_version` için bir girdi
+taşımaya çoktan bağlıyor; yani iki nokta arasındaki sürümleri saymak, aynı listenin ikinci
+kez okunması.
 
 ## Bekleyen kararlar
 

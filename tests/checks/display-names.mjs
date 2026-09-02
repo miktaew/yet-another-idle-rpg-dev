@@ -12,7 +12,7 @@ import * as path from "node:path";
 import { default_language, repo_root } from "../lib/context.mjs";
 import { error } from "../lib/report.mjs";
 import { load_locale } from "../lib/locale-files.mjs";
-import { braced_body, strip_comments, top_level_keys } from "../lib/source.mjs";
+import { braced_body, source_files, strip_comments, top_level_keys } from "../lib/source.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
 
 /**
@@ -699,7 +699,53 @@ async function check_equipment_slot_names() {
     console.log(`[check] equipment slot names: ${slots.length} resolved`);
 }
 
+
+/**
+ * Nothing outside items.js reads an item's canonical name.
+ *
+ * `Item` is the one registry whose `getName()` is **not** the shown name. Its own comment
+ * says why: the equippable constructors use it as `this.id` and that id goes into save
+ * files, so it has to stay English forever. `getDisplayName()` is the localised one, and it
+ * resolves the `name <English>` row or assembles the name from the item's parts.
+ *
+ * The owner found the difference on screen: the guild board printed
+ * `item_templates[job.target].getName()`, so a Turkish player was told to fetch
+ * **"10 Tree sap"** while `"name Tree sap": "Ağaç özsuyu"` had been in the locale the whole
+ * time. Nothing failed - `getName()` returns a perfectly good string, and it is the right
+ * string for an id.
+ *
+ * That is what makes it worth a check rather than a fix. Every other registry here -
+ * locations, activities, stances, enemies, skills - has a `getName()` that *is* localised,
+ * so the habit reads as safe everywhere except on items, and `LOCALE_STRICT=1` cannot see
+ * it because no text id is missing.
+ *
+ * Scoped to reads off `item_templates`, which is how the mistake is written, and to files
+ * other than `items.js`, where `getName()` is the identity and used as one on purpose.
+ */
+function check_no_item_canonical_names_outside_items() {
+    let scanned = 0;
+    for (const relative of source_files(repo_root)) {
+        if (relative === "src/items.js") continue;
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+        scanned++;
+
+        for (const found of source.matchAll(
+                /item_templates\s*\[[^\]]*\]\s*\??\.\s*getName\s*\(/g)) {
+            const line = source.slice(0, found.index).split("\n").length;
+            error(`${relative}:${line} reads an item's getName(), which is the canonical `
+                + `English id and not the shown name - so it prints untranslated wherever `
+                + `a player can see it. Use getDisplayName(); items.js is the only file `
+                + `where getName() is the identity being asked for.`);
+        }
+    }
+
+    console.log(`[check] item names: ${scanned} file(s), none reading an item's canonical `
+        + `name outside items.js`);
+}
+
 export {
+    check_no_item_canonical_names_outside_items,
     check_creation_panel_values,
     check_equippable_names_resolve,
     check_dialogue_display_names,

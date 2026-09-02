@@ -384,6 +384,47 @@ function restored_board(saved) {
 }
 
 /**
+ * What giving a job up costs.
+ *
+ * Half of what the rank and difficulty would have paid, rounded up, and never more standing
+ * than the player has. Derived from the ladder rather than picked: it is the same number the
+ * hand-in uses, halved, so a brutal SS job is expensive to walk away from and a plain F job
+ * is not.
+ *
+ * Deliberately NOT `standing_paid_for`, which returns 0 at the top of the ladder because of
+ * Q-14's ceiling - that would make giving up free for the one player who has the most
+ * standing to lose, which is backwards.
+ *
+ * @param {Object} job
+ * @param {Number} standing current Guild reputation
+ * @returns {Number} standing to take away, 0 when there is none to take
+ */
+function standing_lost_for_giving_up(job, standing) {
+    if(!job || !(standing > 0)) {
+        return 0;
+    }
+    const full = standing_for_rank(job.rank_index) * job.pay_multiplier;
+    return Math.min(standing, Math.ceil(full / 2));
+}
+
+/**
+ * The board with the taken job handed back unfinished.
+ *
+ * The job is gone rather than returned to the offer: a notice you walked away from is not
+ * one the clerk pins back up for you the same day.
+ *
+ * @param {Object} params
+ * @param {Object} params.board
+ * @returns {Object} the board, unchanged when nothing was held
+ */
+function give_up_from_board({board}) {
+    if(!board?.accepted) {
+        return board;
+    }
+    return {...board, accepted: null};
+}
+
+/**
  * Whether a kill counts towards a job.
  *
  * The tags come from the enemy that died. `kill_enemy` already walks them to fire the
@@ -502,6 +543,8 @@ export {
     accept_from_board,
     restored_board,
     counts_towards_job,
+    standing_lost_for_giving_up,
+    give_up_from_board,
     held_of,
     job_progress,
     job_is_done,
