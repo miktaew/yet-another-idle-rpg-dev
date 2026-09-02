@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 122 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 123 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,43 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.45 - yardımın hiç adlandırmadığı altı sekme
+
+P-44'ün ilk adımı ve yanında D-10'un muhafızı. Oyunda hiçbir şey değişmedi; sayfa değişti.
+
+**Bunu açan ölçüm, asıl nokta olduğu için tekrar.** Sekiz günlük sekmesinden `help.html`
+**yalnızca Data'yı** adlandırıyordu — Lonca işleri bir önceki sürümde eklenmişti. Quests,
+Bestiary, Anthology, Discoveries, Lore ve Titles sayfada hiç yoktu.
+
+**Altıdan ikisi asıl yazılmaya değer olanlardı.** Keşifler, *bu nereden geliyor* sorusunun
+cevabı — elinde bulunmuş her eşya, toplanabileceği her yer, düşüren yaratık, satan tüccar,
+yapan tarif; kaynak başına bir yolculuk düğmesi, bir arama kutusu, iki filtre ve aynı soruyu
+beceriler için soran bir *nerede idman edilir* listesi. Anlatılanlar ise sana söylenenleri
+tutuyor ve var olma sebebi, diyalogların çoğunun yalnızca bir kez okunabilmesi. İkisi de
+açarak keşfedilebilir değil: Keşifler'in ne işe yaradığı söylenmemiş bir oyuncu, sahip
+olduğunu zaten bildiği eşyaların listesini görüyor.
+
+Altı ayrı bölüm yerine tek bir **Günlük** bölümü olarak yazıldı; çünkü oyuncu onlarla böyle
+karşılaşıyor — üstünde bir sıra düğme olan tek bir panel — ve çünkü zaten kendi bölümü olan
+ikisi, Lonca işleri ile Veri, tekrar edilmek yerine oradan işaret ediliyor.
+
+**Muhafız ve neden şimdi, daha önce değil.** `check_help_names_every_journal_tab`, sekme
+düğmelerini `index.html`ten okuyor, her etiketi yerelleştirme dosyalarından çözüyor ve onu
+**kendi dilinin** yardım sayfasında arıyor. Yani Türkçe etiketle eklenmiş ama yalnızca
+İngilizce yardım girdisi olan bir sekme düşüyor — ayrışmanın gerçekten aldığı biçim de bu,
+çünkü iki sayfa elle tutuluyor.
+
+Önce yazılamazdı. Commit edildiği gün altı sekmede düşerdi ve sözleşme kırmızı kapıya izin
+vermiyor; P-44 onu bu yüzden en sona dizmişti ve geçebileceği ilk an bu. İki yönden de
+negatif test edildi: İngilizce sayfadaki Discoveries girdisi ile Türkçe sayfadaki
+Anlatılanlar girdisi yeniden adlandırıldı, ikisi de adıyla ve sayfasıyla yakalandı.
+
+**P-44'ten kalan** sekmeler değil özellik listesi: envanterin dördüncü sıralaması ve kısa
+etiketleri, başarısız kilidin altındaki tekrar dene düğmesi, craft sayfalarının keşif
+işaretleri ve yalnızca yapılabilirler filtresi, yetenek isteyen kitaplar, kasaba meydanının
+idman ve nöbet işleri, ve dosya adındaki sürüm. Sekmeler, oyuncunun yardımı en çok *onlar
+için* açacağı yarıydı; o yüzden ilk onlar gitti.
 
 ### v0.7.44 - işin teslimi ve nasıl olacağına karar veren yığın sayımı
 

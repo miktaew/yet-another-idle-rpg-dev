@@ -372,11 +372,84 @@ function check_changelogs_cover_version() {
     }
 }
 
+
+/**
+ * Every journal tab is named on both help pages.
+ *
+ * D-10, and the guard it asked for. The measurement that produced the directive: of the
+ * eight tabs, `help.html` named **only Data**. Quests, Bestiary, Anthology, Discoveries,
+ * Lore and Titles were not on the page at all - two of them systems a player has to be
+ * told about rather than shown, since Discoveries answers "where does this come from" and
+ * Lore keeps dialogue that is otherwise readable once.
+ *
+ * Derived rather than listed. The tabs come out of `index.html`, their labels out of the
+ * locale files, and each label has to appear on the help page **for its own language** -
+ * so a tab added with a Turkish label and an English help entry fails, which is the shape
+ * the drift actually took.
+ *
+ * Written only once the six were added, because a check nobody can go green on is a check
+ * that gets deleted. It is the same shape as `check_help_explains_standing`, which holds
+ * one block of the page to what `character.reputation` declares.
+ */
+async function check_help_names_every_journal_tab() {
+    const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+
+    const tabs = [...html.matchAll(
+        /id\s*=\s*"journal_show_\w+"[^>]*?data-translation\s*=\s*"([^"]+)"/g)]
+        .map(found => found[1]);
+    if (tabs.length < 4) {
+        error(`found ${tabs.length} journal tab buttons in index.html - `
+            + `check_help_names_every_journal_tab is out of date.`);
+        return;
+    }
+
+    const pages = [
+        {help: "help.html", locale: "locales/english.js", language: "English"},
+        {help: "help.tr.html", locale: "locales/turkish.js", language: "Turkish"},
+    ];
+
+    let named = 0;
+    for (const page of pages) {
+        const help_full = path.join(repo_root, page.help);
+        const locale_full = path.join(repo_root, page.locale);
+        if (!fs.existsSync(help_full) || !fs.existsSync(locale_full)) {
+            error(`${page.help} or ${page.locale} is missing.`);
+            continue;
+        }
+        const help = fs.readFileSync(help_full, "utf8");
+        const locale = fs.readFileSync(locale_full, "utf8");
+
+        for (const key of tabs) {
+            //The label the player actually reads on the button.
+            const row = new RegExp(`"${key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`
+                + `\\s*:\\s*"([^"]*)"`).exec(locale);
+            if (row === null) {
+                error(`${page.locale} has no row for the journal tab id "${key}", so that `
+                    + `tab has no label in ${page.language} and this check cannot look for `
+                    + `it on ${page.help}.`);
+                continue;
+            }
+            const label = row[1];
+            if (help.includes(label)) {
+                named++;
+                continue;
+            }
+            error(`${page.help} never names the "${label}" tab. A player opens help to `
+                + `find out what a panel is for, and this is the one page that could tell `
+                + `them (D-10).`);
+        }
+    }
+
+    console.log(`[check] help names the journal: ${tabs.length} tab(s), ${named} named `
+        + `across both pages`);
+}
+
 export {
     check_changelogs_cover_version,
     check_dev_console_is_not_saved,
     check_help_explains_standing,
     check_help_map_covers_the_world,
+    check_help_names_every_journal_tab,
     check_language_switch_repaints,
     check_site,
 };

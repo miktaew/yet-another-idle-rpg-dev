@@ -137,6 +137,7 @@ import {
     check_changelogs_cover_version,
     check_dev_console_is_not_saved,
     check_help_explains_standing,
+    check_help_names_every_journal_tab,
     check_help_map_covers_the_world,
     check_language_switch_repaints,
     check_site,
@@ -154,6 +155,7 @@ check_nothing_stamps_a_template_quality();
 check_changelogs_cover_version();
 check_help_map_covers_the_world();
 await check_help_explains_standing();
+await check_help_names_every_journal_tab();
 check_dev_console_is_not_saved();
 check_language_switch_repaints();
 await check_locales();

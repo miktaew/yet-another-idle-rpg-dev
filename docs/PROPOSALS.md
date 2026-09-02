@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 145 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 146 -->
 
 # Proposals
 
@@ -682,7 +682,7 @@ first piece to be built must be measured the way P-14's were, because the brief'
 are not six pieces of work - two of them (navigation, stance combat) are properties a region
 has rather than features it contains.
 
-### P-44 — What help does not say `open`
+### P-44 — What help does not say `active`
 
 D-10's backlog, measured rather than guessed. `help.html` and `help.tr.html` are the only
 documentation a player ever sees, and they stopped keeping up somewhere around v0.7.
@@ -712,6 +712,21 @@ day it was written, and the contract does not allow committing a red gate.
 
 **Order:** the six tabs, then the feature list, then the check. The tabs are the half a
 player is most likely to open help *for*.
+
+**The tabs are done, as v0.7.45, and the check with them.** One **journal** section rather
+than six scattered ones - that is how a player meets them, and the two that already had
+sections are pointed at from it. `check_help_names_every_journal_tab` reads the buttons out
+of `index.html`, resolves each label from the locale files and requires it on the page for
+**its own language**, so a tab with a Turkish label and only an English entry fails. It went
+in at the same moment it became passable, and was negative-tested in both directions.
+
+**Still open: the feature list.** None of these is named on either page - the inventory's
+fourth sort and its short labels, the retry button under a failed lock, the crafting pages'
+discovered/undiscovered marks and the makeable-only filter, books that require a skill, the
+town square's practice and watch work, and the version in the export filename. Unlike the
+tabs there is no derived guard to be had for these: a check that every version in
+`changelog.html` has a help entry would be a rule invented from a number rather than a
+measurement, and D-10 is the rule that covers them going forward.
 
 ## Open decisions
 

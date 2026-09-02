@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 145 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 146 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -688,7 +688,7 @@ parça, P-14'ünkiler gibi ölçülmek zorunda; çünkü brief'in altı odağı 
 ikisi (navigasyon, duruş dövüşü) bir bölgenin içerdiği özellikler değil, sahip olduğu
 niteliklerdir.
 
-### P-44 — Yardımın söylemedikleri `open`
+### P-44 — Yardımın söylemedikleri `active`
 
 D-10'un iş listesi; tahmin değil, ölçüm. `help.html` ve `help.tr.html`, oyuncunun gördüğü
 tek dokümantasyon ve v0.7 civarında bir yerde geride kalmışlar.
@@ -718,6 +718,21 @@ vermiyor.
 
 **Sıra:** altı sekme, sonra özellik listesi, sonra kontrol. Sekmeler, oyuncunun yardımı en
 çok *onlar için* açacağı yarı.
+
+**Sekmeler tamam, v0.7.45 olarak, kontrolüyle birlikte.** Altı dağınık bölüm yerine tek bir
+**Günlük** bölümü — oyuncu onlarla böyle karşılaşıyor ve zaten kendi bölümü olan ikisi oradan
+işaret ediliyor. `check_help_names_every_journal_tab`, düğmeleri `index.html`ten okuyor, her
+etiketi yerelleştirme dosyalarından çözüyor ve onu **kendi dilinin** sayfasında arıyor; yani
+Türkçe etiketli ama yalnızca İngilizce girdisi olan bir sekme düşüyor. Geçebilir hâle geldiği
+anda eklendi ve iki yönden negatif test edildi.
+
+**Hâlâ açık: özellik listesi.** Şunların hiçbiri iki sayfada da adlandırılmıyor — envanterin
+dördüncü sıralaması ve kısa etiketleri, başarısız kilidin altındaki tekrar dene düğmesi,
+craft sayfalarının keşfedildi/keşfedilmedi işaretleri ve yalnızca yapılabilirler filtresi,
+yetenek isteyen kitaplar, kasaba meydanının idman ve nöbet işleri, ve dosya adındaki sürüm.
+Sekmelerin aksine bunlar için türetilebilecek bir muhafız yok: `changelog.html`teki her
+sürümün bir yardım girdisi olduğunu kontrol etmek, ölçümden değil bir sayıdan uydurulmuş bir
+kural olurdu ve bundan sonrası için onları kapsayan kural D-10.
 
 ## Bekleyen kararlar
 

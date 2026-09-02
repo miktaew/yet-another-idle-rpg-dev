@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 122 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 123 -->
 
 # Changelog
 
@@ -20,6 +20,44 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.45 - the six tabs help had never named
+
+P-44's first step, and D-10's guard with it. Nothing in the game changed; the page did.
+
+**The measurement that opened it, restated because it is the point.** Of the eight journal
+tabs, `help.html` named **only Data** - Guild work having been added the version before.
+Quests, Bestiary, Anthology, Discoveries, Lore and Titles were not on the page at all.
+
+**Two of the six were the ones actually worth writing.** Discoveries answers *where does
+this come from* - every item ever held, each place it is gathered, the creature that drops
+it, the trader who sells it, the recipe that makes it, with a travel button per source, a
+search box, two filters, and a *where to train* list that asks the same question about
+skills. Lore keeps what was said to you, and the reason it exists is that most dialogue can
+only be read once. Neither is discoverable by opening it: a player who has not been told
+what Discoveries is for sees a list of items they already know they own.
+
+Written as one **journal** section rather than six scattered ones, because that is how a
+player meets them - one panel with a row of buttons - and because the two that already had
+sections, Guild work and Data, are pointed at from it instead of being repeated.
+
+**The guard, and why it comes now and not earlier.**
+`check_help_names_every_journal_tab` reads the tab buttons out of `index.html`, resolves each
+label from the locale files, and requires it on the help page **for its own language**. So a
+tab added with a Turkish label and only an English help entry fails - which is the shape the
+drift actually took, since both pages are maintained by hand.
+
+It could not have been written first. It would have failed on six tabs on the day it was
+committed, and the contract does not allow a red gate; P-44 sequenced it last for that
+reason and this is the first moment it can pass. Negative-tested in both directions:
+renaming the Discoveries entry on the English page and the Anlatılanlar entry on the Turkish
+one, each caught by name and by page.
+
+**What is left of P-44** is the feature list rather than the tabs: the inventory's fourth
+sort and its short labels, the retry button under a failed lock, the crafting pages'
+discovered marks and makeable-only filter, books that require a skill, the town square's
+practice and watch work, and the version in the export filename. The tabs were the half a
+player is most likely to open help *for*, so they went first.
 
 ### v0.7.44 - handing the job in, and the stack count that decided how
 
