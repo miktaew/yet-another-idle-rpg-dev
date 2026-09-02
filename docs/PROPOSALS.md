@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 139 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 140 -->
 
 # Proposals
 
@@ -161,409 +161,6 @@ not after. Each item is the request as it was given, and the state it is in.
     have no `tests/`, no `package.json` and no test runner to hang one on.
 
 
-### P-14 — v0.7, the Marrowmoth `active`
-
-The next arc, and the first one this fork writes into a hook it left itself rather
-than into one it inherited. What follows is the owner's brief measured against the
-code, not restated from it.
-
-**Canon it may use, and nothing past it.** Forty tons; out on the ebb; one crate
-unweighed; a stroke drawn twice through her account column; back twice a year; the
-tallyman will not send word. All six are already in
-`action read the departures success` and in [STORY.md](STORY.md) section 1b.
-
-**What it may not resolve.** Who paid for the robbery; why that traveller; where the
-taken object came from; why the hero had it; the architecture under the village; the
-Rat God; the banished tribe; the four-legged bird. **One layer, once** — the arc may
-show that the crate and the stolen object share a hand, and may not say whose.
-
-**Measured before planning**, at v0.6.71 with all four gates green:
-
-- The bay is three places — The bay, The salt house, Coast road — and **one** action,
-  `read the departures`, gated on Perception 15 / 34. It is the thinnest region by
-  count on purpose, and the arc must not fatten it into a fifth region.
-- Reputation has exactly three regions: `Village`, `Slums`, `Town`. **There is no
-  guild standing**, which quest 3's three-path design assumes. See Q-7.
-- Discoveries indexes *items* by where they come from; Lore lists *heard textlines*
-  grouped by speaker. Neither can hold an investigation note. See Q-8.
-- `conditions.js` already reads `season`, and `game_time` carries day, season, day of
-  week and moon phase. A twice-a-year hull needs no scheduler. See Q-10.
-- A trader's stock is read from `inventory_templates[this.inventory_template]` **at
-  refresh time**, and `inventory_template` is not written to the save. A stock that
-  changes while she is in port therefore has to be *derived* on load, never stored -
-  otherwise it silently reverts on the player's next session and nothing fails.
-- Skills that exist and could carry a check here: Perception, Presence sensing,
-  Spatial awareness, Climbing, Swimming, Equilibrium, Literacy, Haggling, Medicine.
-  **There is no lockpicking skill and no navigation skill.** Do not add one for a
-  single door.
-- `Enemy` already takes `on_hit`, `on_damaged` and `on_death`, and four enemies use
-  them. That is the reusable abstraction stance-relevant enemies need; there is no
-  case for a second one.
-- Tier 5 is blocked on recipes, not on naming - and P-12 said the opposite until this
-  was measured. The generator builds 36 white-steel and black-steel components,
-  nothing produces any of them, and their locale rows have been in place all along.
-  `check_components_can_be_made` holds the number: 159 of 203 generated components
-  are reachable, 44 are not, and 36 of those 44 are this.
-
-#### Phases
-
-Each phase ships on its own, passes `build` + `LOCALE_STRICT=1 check` + `test` +
-`check:bundle`, and gets both changelog entries. No phase starts before the one
-before it is green.
-
-**Phase 0 — the ground.** `done`. No story, and three of its four items turned out
-to be about the record rather than about the code — which is what a grounding phase
-is for.
-
-- **Q-7 to Q-10 are answered and carried.** Each now sits under
-  [Decisions carried into the phases](#decisions-carried-into-the-phases) below,
-  against the phase that spends it, so nothing in this proposal waits on
-  [Open decisions](#open-decisions) any more.
-- **STATUS was the file that was wrong** about item 48 and P-13/35. Both had closed
-  and were still listed in flight, which sent a reader into the backlog after
-  proposals that are not in it.
-- **The two quest tasks with no hint do not reproduce.** Measured against the owner's
-  own exports rather than the source: every active quest's current task resolves to
-  one named place. The gap underneath the report was real, and
-  `check_hints_say_when_they_cannot_point` holds it.
-- **The two missing material rows are not missing.** The generator asks for
-  `material name white steel` and `material name black steel`; both are in both
-  locales, and the tier-5 blocker is every recipe rather than any name.
-
-Guard: one, unplanned and owed under D-8. Correcting the record turned up a defect
-in it - a `---` written straight under P-14's closing sentence, which markdown reads
-as a setext heading over that sentence - so `check_thematic_breaks_are_not_headings`
-reads every tracked markdown file for the class rather than that line. This is the
-phase that made the following ones measurable, and it did that by replacing three
-remembered facts with three measured ones.
-
-**Phase 1 — v0.7.0, *No Word Sent*.** `done`. Three surfaces say the Marrowmoth is
-back and not one of them is a notification: the salt house holds a landing rather than
-the leavings of one, the quay gains four lines it does not have the rest of the year,
-and the guild clerk has an opinion about a forty-ton hull that ties up and posts no
-work. The window is Spring and Autumn — the equinoxes, where the year's biggest tidal
-ranges fall, which is the only pair a hull that can only work the ebb could keep, and
-the same pair phase 4's approach has to be timed against. It lives in
-`src/data/marrowmoth.js`, which imports nothing, because all three surfaces have to
-agree about it and the copy that drifted would fail silently. The shelf is derived at
-every refresh and never stored, per Q-10. Guards: `check_seasonal_content_is_reachable`
-from 1a, now reading every file under `src/` and every named season list rather than
-three files and one condition shape; and `check_trader_stock_lists` extended twice, to
-see through a derived template name and to refuse any assignment to
-`inventory_template` at all — which is Q-10's do-not-store rule made mechanical. Quest 1
-opens from none of it: that is phase 2's, and it opens from the discovery rather than
-the other way round.
-
-**Phase 2 — v0.7.1, *Forty Tons*.** `done`. Two actions on the existing bay, both
-shown by `display_conditions` on the season rather than unlocked and locked again,
-because "she is not here" is a state of the world and not a state of the player. A day
-on the plank unpaid — the quay's own noise asks who is paying the porters and answers
-itself, so paying the hero would contradict a line already overheard — and then the
-tally nailed inside the shed door: six columns, five complete lines, and one where four
-of the six were written empty with the ruling underneath unbroken. The tallyman says
-why there is no weight in the weight column, and that it is the second time, two springs
-apart, in his own hand. He will not say it is the same crate: he did not weigh or open
-either. Quest 1 opens from the work, not the other way round. The arc's first lore
-thread runs across the tallyman and the guild clerk, which is Q-8's own case — one
-subject, two speakers, a month's walk apart. Guards: the existing class-level checks,
-which the two actions joined automatically, plus `check_lore_threads_resolve` from 2a.
-
-**Phase 3 — v0.7.2, *A Stroke Through It*.** `done`. Three paths, three standing axes,
-three different pieces. The guild's seal book reads `Guild` at 50, the porters read
-`Slums` at 200 and the factor's old copies read `Town` at 150 — the row's and the
-square's own middle tiers, which their existing actions already sit on at 100/200/300
-and 50/150/250. None is season-gated: the paperwork and the people are here all year,
-and a player who read the manifest in late autumn should not wait until spring to ask
-about it. Each path is visible before it is earned and refused with a reason, like the
-six settlement actions before them. Quest 2 has one task with **three** advancers rather
-than three tasks, so no standing a player lacks can lock it; what they lose is the other
-two pieces, and the thread is shorter by saying so. Guild standing becomes earnable
-inside the arc — quest 1 pays 60, which puts the seal book's 50 in reach of anyone who
-got that far and of nobody who did not — so no save that finished *The Merchant's Word*
-early is shut out. Guard: `check_reputation_regions_have_names`, shipped with 3a; no
-second one is owed here. Measured while deciding: 61 visible tasks have advancers and
-5 have none that is ungated, all five gated on skills or items that can be trained or
-bought. That is not the dead-end class phase 4 names — a gate that refuses with a reason
-is not a check that fails — and the distinction is recorded so phase 4 does not have to
-re-derive it.
-
-**Phase 4 — v0.7.3, *Out on the Ebb*.** `done`. Two places and no more, per Q-9: the
-flats are the approach and the hold is the destination, and the anchorage and the cargo
-deck are actions on those two rather than rooms of their own. No combat — the obstacle
-is water and dark.
-
-The tide is not a clock. There is no time-of-day condition in this engine and adding one
-would have been the scheduler Q-10 put out of scope, so what gates the flats is the same
-season window the rest of the arc reads: the only reason to walk out there is that she is
-lying on the mud. `display_conditions` rather than an unlock, for phase 2's reason — an
-unlock is one-way — and the walk back to the bay carries no condition, so nobody out
-there when the season turns can be stranded.
-
-Three ways across the same mud, which is the phase's rule made content rather than left
-to a guard: wade it on Equilibrium and be turned back by the water, pay a boatman
-25,000, or be walked out on the firm line at `Slums` 250 — harder than the investigation's
-200, because being shown where the bottom holds is a bigger favour than a porter talking.
-Only the free one can fail; the other two cannot fail at all and cost money or standing
-instead. All three end at the same ladder and grant the same unlock, so nothing out here
-is behind a skill the player does not have.
-
-The phase ends on the crate being seen and not touched — reaching it is phase 5's, and
-the arc is built on finishing with more questions than answers. Guard:
-`check_no_dead_end_skill_gates`, shipped with 4a; the four new actions joined the
-class-level checks automatically, and the checks caught what the writing missed — both
-locations' display names, three travel-line ids and both help-page map entries.
-
-Note for the phases after this: 4a's guard reads `main.js`'s attempt resolver by the
-order of three call sites. Any rework of that resolver has to keep the lock on the
-winning side or say why.
-
-**Phase 5 — v0.7.4, *One Unweighed Crate*.** `done`. The crate is reached, and the check
-is not opening it — a crate is not a lock. It is Perception and Woodworking, because the
-difficulty is reading a lashing nobody at this quay would tie and remaking it well enough
-that the man who tied it would not look twice. Failure is working that out *before*
-cutting anything, so nothing is cut and nothing is lost; the player sits with their back
-against it until the water tells them to go.
-
-Inside: straw, a bed cut out of a grey material that is not felt and is not cork and does
-not compress, and one closed band the size of a wrist in a metal that is not iron, steel
-or bronze and takes no mark from a nail — cut through all the way round with squares that
-turn and come back to their own beginning. One motif, one metal, one unexplained
-material, exactly as this proposal asked, and nothing else in the crate at all.
-
-**It pays no item**, deliberately. An object in the inventory would have to do something,
-and anything it did would answer a question this arc is not allowed to answer. What the
-player leaves with is a description and a pattern they have been told about once before.
-
-The arc closes on the **antique collector** rather than the tallyman, because he is the
-only person in the game who can say *"same hand"* and be believed — forty years of
-cataloguing the town's oldest things, and the other piece in his hand for about the time
-it takes to boil water. He says three things and refuses the fourth: there are at least
-two, somebody wants them, that somebody is not whoever makes them, and *"I want to be
-careful, because you will remember what I say."* He does not say whose hand. That is the
-one-layer rule holding, and [STORY.md](STORY.md) section 3 now records the three facts
-and the list of what is still open, so the next arc cannot quietly widen them.
-
-Guard: `check_lore_threads_resolve` from 2a — Q-8 did land on threads. The thread now
-runs to five beats across three speakers, a quay, a guildhall and a shop across the
-square, which is the shape Q-8 was written for at full size.
-
-**Phase 6 — the systems pass.** `done`. Four independent pieces, all four shipped.
-
-- **Tier-4 and tier-5 materials wired to what the ebb opens.** `done`, as **v0.7.5**.
-  This is where P-12's "an ore that is mined rather than bought" belonged, and it is
-  answered from the region this arc opened rather than from one that does not exist yet:
-  `Heavy sand` is dug on the tidal flats, which are only offered in the Marrowmoth's two
-  seasons, so the tier-5 reagent inherits the arc's own window without a condition of
-  its own. 36 components went from unmakeable to makeable and the tier-5 group came off
-  `known_unmade`. What P-12 still carries is the station question, not a recipe.
-- **Stance choice made to matter through `on_hit` / `on_damaged`** rather than through
-  stat bonuses. `done`, as **v0.7.6**. Four enemies react and none of them gained a stat
-  line: a swarm closes in against a point and is swept back by a broad stance, a frog's
-  splash scales with how much of you is presented rather than with how hard you hit, and
-  both dragonflies' stingers find a body that has committed to a swing. Written into the
-  hooks that already existed, which is what P-14 measured - no second abstraction, and
-  no new enemy, because the arc itself has no combat and phase 4 said so. The honest
-  limit is that a hook can only reach `add_active_effect` and the log, so a reaction is
-  always "how you are standing changes what this gets to do to you". Guard:
-  `check_stance_reactions_name_real_stances` - a misspelt stance id compares false for
-  every stance there is, so the reaction is written, translated, shipped and never once
-  seen while the enemy behaves exactly as before.
-- **The arc's money sink priced against the existing economy.** `done`, as **v0.7.10**.
-  Measured: 43,500 in one-off quest money, 27,000 more from the guild factor's three
-  deliveries, one 30,000 sink at the collector, and **no repeatable money-paying action
-  anywhere** - the three settlement actions pay once each. So the only income that can be
-  repeated is a paid job, and the best of those is patrolling at 50 a unit. The boatman
-  was 25,000 *per trip*, which is 500 units of patrolling and about one affordable ride in
-  the whole game: the dearer way across the mud was a way you took once. 6,000 now - the
-  factor's smallest delivery, one job's pay for one boat ride, 120 units.
-
-  **No guard, and that is the finding.** A rule was written and then removed: "a
-  repeatable price must not exceed the dearest one-off price". It passes at 25,000, because
-  25,000 is less than the collector's 30,000 - so it would have certified the exact fault
-  it was written for. Every version that does catch it needs an invented constant, because
-  the real question is a price against *income at that point in the game*, and that is a
-  judgement. The numbers above are written into the proposal and beside the price in the
-  source instead, so the next price is derived rather than picked.
-- **Standing consequences that read as world-state and not as punishment.** `done`, as
-  **v0.7.11**, and it completes the phase. The tallyman's own closing line already framed
-  the choice - *"The day I write it down it is a guild matter"* - so the content did not
-  need a decision inventing for it, only the other side of one. The clerk will open the
-  file: Guild +60, Town +20, **Slums -40**, and it will be known that it came from the
-  docks. Nothing forces it; the arc finishes either way and the line simply sits there.
-  The old woman of the slums answers it, gated on a flag, and she is not angry - what she
-  says is that for a while, when somebody down here has something they would rather was
-  not written down, they will think about who they say it in front of. That is the
-  difference the phase was asking for: a place having an opinion, not a score being
-  docked.
-
-  -40 against 350 earnable and the arc's own gates at 200 and 250. It can put the firm
-  line out of reach for a while; wading the flats is free and the boatman is 6,000, so
-  nothing closes.
-
-  **And standing has a floor now**, which had to go in before the first reward in the
-  game that subtracts. `add_reputation` used `+=` with no bound, and
-  `update_displayed_reputation` draws only regions above 0 - so a player at -20 would
-  have seen no row at all, with every gate still shut: invisible and consequential at
-  once. Floored at 0, six tests, negative-tested by taking the floor out again.
-
-**Phase 7 — v0.8 groundwork, *Beyond the Lake*.** `active`. Traces first — tracks,
-feathers, noise, broken cover — and the player must be unsure the four-legged bird exists
-at all before they meet it.
-
-- **The first trace.** `done`, as **v0.7.37**. `read the shallows` at the Forest lake: four
-  toes, sand pushed up hard behind them, too big for a heron and wrong for a boar. It names
-  nothing and opens nothing. The lake's own noises already said *"an animal comes out to
-  drink"*, so the waterline was where the canon had put this before anybody planned it.
-
-  No `required` gate, which the neighbour taught: `read the departures` keeps its Perception
-  in `conditions` and gates on nothing, so the action is always there to try and a poor eye
-  is told what a better one would have read. Afterwards three more sounds are mixed into the
-  lake's six, behind a flag - the shape the quay uses when the Marrowmoth is in port.
-
-- **The second trace.** `done`, as **v0.7.38**. `read the rock shelters` at the Waterfall
-  basin, gated on having read the shallows and refused with a reason until then. A worn place
-  longer than a person and crab shells opened rather than crushed; the tense escalates from
-  "something stood here" to "something has been living here", and nothing is named.
-
-  **The wet woods were measured and rejected**, which is the finding worth keeping: their
-  noises are already in this register and `cut the standing flax` closes the thread outright.
-  A trace there would reopen what the game has finished saying.
-
-- **The third trace.** `done`, as **v0.7.39**, and a different kind: not an errand but a
-  place. Once the shelters have been looked into, the Forest lake's description gains a
-  paragraph - a run of reeds pushed flat, brown where they lie and green where they stand,
-  down since before the player first came. Broken cover, and the reader is what changed.
-
-  Added to the description rather than replacing it, so the two states cannot drift.
-
-- **The meeting.** `done`, as **v0.7.42**, and it is Q-13's answer built: one roll per in-game
-  minute, in the two places that carry a trace, once the shelters have been read. About seven
-  in-game days of standing at the water.
-
-  **The odds were the owner's; the unit was measured.** "One in ten thousand" only means
-  something once you know what it is one in ten thousand *of*, and two of the three available
-  cadences make the event a different event. An action tick is a tenth of an action-second and
-  would land this every few minutes; arriving in a location happens a few hundred times in a
-  long save and would land it never. Only the minute tick gives "almost nobody, but genuinely
-  out there", which is the distinction Q-13 drew.
-
-  **It also spends the feathers trace**, which was the awkward one for a good reason: an item
-  in the inventory would have had to do something. Here the feathers are in the meeting -
-  looked at and not carried, which was one of the two honest options this phase had named.
-  Nothing is named, there is no combat, and nothing interrupts: the arc has had no combat since
-  phase 4 and the player is in the middle of something else when it happens.
-
-  The Forest lake's description gains a third **ending** rather than a second branch, so the
-  first paragraph stays in one place. The check that matters is the one that can fail silently:
-  a one-in-ten-thousand event wired so it can never fire is indistinguishable from one nobody
-  has been lucky enough to see, so `rolls_a_sighting` takes its randomness as an argument and
-  `check_the_sighting_can_land_and_then_stops` drives both ends of it.
-
-- **Still to come.** Nothing of the brief's four kinds is left. What phase 7 has not done is
-  anything with **v0.8 itself**: the meeting is groundwork's last piece, not the arc's next
-  one, and what happens after somebody has seen the thing is a story decision this proposal
-  has not been given.
-
-#### Decisions carried into the phases
-
-The five questions this proposal asked, with their answers, each against the phase
-that spends it. They were settled under [Open decisions](#open-decisions) and moved
-here when phase 0 closed: a decision belongs beside the work it shapes, and the
-numbers are kept so the commits and changelog entries that name them still resolve.
-
-##### Q-7 — Does guild standing become a fourth reputation region? **DECIDED: yes** — spent by phase 3
-
-P-14 phase 3 wants three information paths that differ, and two of the three axes
-are already spent: the town square reads Town at 50 / 150 / 250 and the row reads
-Slums at 100 / 200 / 300. A third path off either of those is the same path twice.
-
-The cost was measured rather than feared. `character.reputation` is a plain object;
-`load()` walks the keys **in the save** and warns past a region it does not know, so
-an old save simply arrives with no `Guild` and the field keeps its declared 0.
-`update_displayed_reputation` shows only regions above 0, so nobody sees a row they
-have not earned, and the region's name goes through `getDisplayName`, which wants one
-locale row per language. `market_saturation` is a separate map and is not touched: a
-guild that prices nothing does not need a market region.
-
-So the whole cost is one field, two locale rows and a check. The alternative -
-expressing guild favour as flags and quest state - costs less code and buys nothing:
-a number the player can watch rise is exactly what makes a third path feel like a
-third path.
-
-##### Q-8 — Where do investigation notes live? **DECIDED: a lore thread, not a new panel** — spent by phase 2, and drawn on again by 3 and 5
-
-Measured, because the brief names Discoveries and Discoveries is not what it sounds
-like. `update_displayed_discoveries` renders **items** against where each one comes
-from, built from `world_index`. `update_displayed_lore` renders **textlines the
-player has heard**, grouped by speaker, with a resume line for where they left off.
-An action's success text is neither, and today it is read once in the log and gone.
-
-Three options, and the middle one is right:
-
-- **Route clues through dialogue lines flagged `lore: true`.** No code at all, and
-  it already works. But it groups by speaker, so the Marrowmoth's six facts would sit
-  under three different people and read as three conversations rather than one thread.
-- **Give `Textline` an optional `lore_thread` id and the lore panel a thread grouping
-  above the by-speaker list.** One optional field, one branch, no save impact -
-  textlines are already tracked as unlocked. Reusable by the banished tribe and the
-  Rat God, which is the test of whether an abstraction earns itself.
-- **A new investigation panel.** Excluded by the brief and by the evidence: the game
-  has four journal surfaces already and a fifth would be the parallel system every
-  standing directive here exists to prevent.
-
-##### Q-9 — How many new places does the ebb chain need? **DECIDED: two, not four** — spent by phase 4
-
-The brief sketches Bay → low-tide flats → anchorage → cargo deck → lower hold. The
-bay is deliberately the thinnest region in the game - three places, because a harbour
-is somewhere you pass through - and four more would make it the largest after the
-mountain, which says the wrong thing about it.
-
-Two carry the whole chain: the **flats**, which is the approach and the thing the
-tide gates, and the **hold**, which is the destination. The anchorage and the cargo
-deck are actions on those two. Locations are cheap here, which is the trap: the test
-is not what it costs to add a room but whether the room has anything in it, and a
-corridor does not.
-
-##### Q-10 — How does "twice a year" work? **DECIDED: two seasons, no scheduler** — spent by phase 1
-
-`conditions.js` already reads `season: {yes, not}` and `game_time` carries the
-season, the day of the week, the day count and the moon phase. Twice a year is two
-seasons, and the whole of the world-event vocabulary the brief lists - trader stock,
-ambient lines, actions, dialogue - can read the same condition.
-
-The one real hazard is not the time model, it is the state: `inventory_template` is
-**not saved**. Anything flipped on a trader while she is in port has to be recomputed
-from the season on load rather than written down, or it reverts on the next session
-and nothing fails loudly - which is the exact shape of the bug that lost the owner's
-favourites (see constraint 4 in [STATUS.md](STATUS.md)). Derive it; do not store it.
-
-A general world-event framework is explicitly out of scope. If a second event ever
-wants the same wiring, that is when the abstraction has earned itself.
-
-##### Q-13 — Does v0.8 meet the four-legged bird, or keep refusing to? **DECIDED: it can be met, at about one in ten thousand** — spent by phase 7
-
-Not the proposal's answer either, and better than it. The meeting is **possible** rather than
-scheduled: a very low chance - on the order of **1 in 10,000** - in certain places only.
-
-That keeps what the phase was protecting. The player still cannot be sure it exists, because
-almost nobody will see it; the traces stay the way the arc is normally experienced; and
-nothing has to be spent to make the meeting happen. It is the difference between a scene the
-story walks you into and a thing that is genuinely out there.
-
-**The three things it left to be decided at build time, and what they came out as.** *Which
-places*: the two that carry a trace, read out of the location data rather than chosen - the
-animal has no reason to be anywhere nothing has pointed at. *On entering, on an action, or
-per tick*: per tick, because that tick is one in-game minute and it is the only one of the
-three cadences at which "one in ten thousand" means what this decision meant by it. *What the
-encounter is*: a sighting and not a fight, which the arc had already decided by having no
-combat since phase 4 and by naming nothing in any of the three traces.
-
-#### What this proposal must not do
-
-Invent a fifth region, a second investigation UI, a scheduler framework, a
-lockpicking skill, or a mystery's answer. Where authored content already covers a
-beat, wire it up instead.
-
 ### P-15 — Books, and the skills nothing teaches `open`
 
 The owner's request: new books. Measured before planning, because a book here is cheap
@@ -661,8 +258,10 @@ Q-1's second revision is what makes this affordable: the fork diverges completel
 new skills, new stats and new systems are in scope. It is no longer "commits to nothing"
 that decides.
 
-**Not started, and deliberately not started yet.** P-14 phase 6 has two pieces left and
-phase 7 has not begun; magic goes after the current story rather than beside it.
+**Not started, and deliberately not started yet.** v0.7 closed at v0.7.42 and P-14 has
+left this file, so the story magic was waiting behind is finished - but the rule it was
+waiting for has not changed, and the current story is now P-43. Magic goes **after** it
+rather than beside it.
 
 **What is decidable, and holds under either answer:**
 
@@ -826,12 +425,97 @@ proves the registries still resolve, and `npm run check:save` proves a real save
 A check for "no file over N lines" would be a rule invented from a number rather than a
 measurement, and this file has enough of those already.
 
+### P-43 — v0.8, Beyond the Lake `open`
+
+The second main arc, and the successor to P-14. The brief names it and six focuses for it
+(TODO section 16): the Ancient Forest, navigation, rare encounters, tier 5 gathering,
+stance-focused combat, and environmental discoveries. What follows is those six measured
+against the code, because three of them already exist in some form and one of them does not
+exist at all.
+
+**Sequenced after P-41 and P-42 on purpose.** The brief's own condition is *"move on to v0.8
+after v0.7 is finished and all the quality gates pass"* - both true now - but the owner has
+live requests still open in front of it, and an arc is a worse reason to leave those than
+they are to wait.
+
+**The door is already written, and phase 7 already put a trace on it.** `desc location Forest
+lake` says the lake sits between the waterfall's cliff and *"a dense canopy leading to what
+must be the forest's heart"*. Its only exits are the Forest road it came in by and `Frogs`, a
+combat sub-zone with the lake as its `parent_location` - so the canopy is the one unopened
+direction on the map, named in canon before anybody planned this. And phase 7's third trace,
+the flattened reeds, lies *"on the far side, where the canopy comes down to the water"*. The
+traces point at the door.
+
+The Lake beach and the Waterfall basin are **not** past the lake, which is worth writing down
+before somebody builds toward them: they hang off the Riverbank and are reached by scrambling
+and rappelling. "Past Forest Lake" is the canopy and nothing else.
+
+**Navigation does not exist and there is a mechanism to extend instead.** No `Navigation`,
+`Pathfinding` or `Orienteering` skill - the brief assumes one that was never built. What does
+exist is `travel_time_skills` on a connection, used eight times across the whole map and by
+only two skills: `Scrambling` four times, `Climbing` four. A journey that a skill makes
+shorter is therefore already a first-class idea here, and a region whose connections are long
+and skill-shortened is navigation without a new system.
+
+**Rare encounters now have their mechanism, and it is one release old.** v0.7.42's
+`rolls_a_sighting` is the first per-in-game-minute, location-gated roll in the game, and
+`chance_of` inside a rewards block (two uses, both in `locations.js`) is the
+per-completion equivalent. So this focus is extension rather than invention - **and it must
+not become a world-event framework.** That is the same trap Q-10 refused for the Marrowmoth's
+timetable, and `data/marrowmoth.js` says so in its own comments. A second event wanting the
+same wiring is when the abstraction has earned itself, and not before.
+
+**Tier 5 gathering has a real, measurable hole in it, and filling it is reclamation.** Black
+iron is the top material tier - `Black iron ore`, `Black iron ingot`, `Black iron plate`,
+`Black iron chainmail`, all declared, with two crafting recipes consuming the ore. **Nothing
+in the game gathers it.** Its only sources are two traders. Gathering itself tops out at
+`skill_required: [20, 35]` across 26 activities. So this focus is exactly: somewhere past the
+lake where black iron ore comes out of the ground above 35. Every item and recipe it feeds
+already exists and is currently only buyable.
+
+**Stance-focused combat extends seven stances that are already there** - normal, quick, heavy,
+defensive, wide, berserk, flowing water - and phase 6 already made stance choice matter
+through `on_hit` / `on_damaged` on four enemies rather than through stat lines, with
+`check_stance_reactions_name_real_stances` guarding it. The honest limit that phase recorded
+still applies: a hook reaches `add_active_effect` and the log, so a reaction is always "how
+you are standing changes what this gets to do to you".
+
+**Environmental discoveries is the one with no home.** The Discoveries panel knows five source
+kinds - `gather`, `drop`, `trade`, `craft`, `train` - and every one of them is a way an
+**item** was found. There is no kind for a thing that is not an item. Either the panel gains a
+sixth kind, or environmental discovery is not a Discoveries feature at all and belongs with
+the lore threads, which is where phase 7's traces went. This needs deciding before it is
+built, not during.
+
+**What the brief forbids, and what phase 7 has already spent.** *"Do not make the four-legged
+bird a boss marker directly."* And v0.7.42 answered Q-13 by making it meetable at about one in
+ten thousand - so this arc inherits a world where the player **may** have seen it, and cannot
+assume either way. A gate on `has_seen_the_animal` would be a gate almost nobody passes; a
+region that assumes they have not would be wrong for the ones who did.
+
+**Q-15 — what does the Ancient Forest open onto, and what does the bird become? PROPOSED:
+neither a boss nor an answer.** The brief says the creature is not a boss marker, and P-14's
+whole method was that the arc names nothing. The proposal is that v0.8 is a **place**, not a
+confrontation: the canopy opens on a region with its own work - the black iron, the long
+skill-shortened journeys, the rare encounters - and the animal stays a resident of it rather
+than becoming its objective. What that leaves undecided is whether anything in the region
+*knows about* the animal, and that is the owner's call.
+
+**Guard, before any of it.** This proposal must not open a second door into the region: the
+canopy is one connection off `locations["Forest lake"]` and phase 7's reeds are already
+pointing at it, so a region reached from two places would make the traces decorative. And the
+first piece to be built must be measured the way P-14's were, because the brief's six focuses
+are not six pieces of work - two of them (navigation, stance combat) are properties a region
+has rather than features it contains.
+
 ## Open decisions
 
 Each of these changes what gets built. They are recorded here rather than guessed
 at. What is left here is project-wide; a question asked by one proposal moves into
-that proposal once it is answered, which is where Q-7 to Q-10 and Q-13 went — see
-[Decisions carried into the phases](#decisions-carried-into-the-phases) inside P-14.
+that proposal once it is answered, which is where Q-7 to Q-10 and Q-13 went. P-14 has
+since finished and left this file, so their account is in
+[CHANGELOG.md](CHANGELOG.md) - the numbers are not reused, and the commits and entries
+that name them still resolve.
 
 ### Q-1 — Does this fork diverge in content? **REVISED AGAIN: diverge completely**
 

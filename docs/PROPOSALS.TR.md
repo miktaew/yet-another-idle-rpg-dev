@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 139 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 140 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -170,421 +170,6 @@ ya da sırasında girer. Her madde, talebin verildiği hâli ve bulunduğu durum
     ne de birini asacak bir koşucu.
 
 
-### P-14 — v0.7, Marrowmoth `active`
-
-Sıradaki arc ve bu fork'un miras aldığı bir kancaya değil, kendi bıraktığı bir
-kancaya yazdığı ilk arc. Aşağıdaki, proje sahibinin briefinin kod üzerinde
-ölçülmüş hâli; briefin tekrarı değil.
-
-**Kullanabileceği kanon, bir fazlası değil.** Kırk ton; cezirle çıkış; tartılmamış
-tek sandık; hesap sütununa iki kez çekilmiş çizgi; yılda iki kez dönüş; saymanın
-haber göndermeyecek olması. Altısı da hâlihazırda
-`action read the departures success` içinde ve [STORY.TR.md](STORY.TR.md)
-bölüm 1b'de duruyor.
-
-**Çözmeyeceği şeyler.** Soygunun parasını kimin verdiği; neden o yolcunun; alınan
-objenin nereden geldiği; kahramanın ona neden sahip olduğu; köyün altındaki yapı;
-Rat God; sürgün kabile; dört ayaklı kuş. **Tek katman, bir kez** — arc, sandıkla
-çalınan objenin aynı elden çıktığını gösterebilir, o elin kime ait olduğunu
-söyleyemez.
-
-**Planlamadan önce ölçülenler**, v0.6.71'de dört kapı da yeşilken:
-
-- Körfez üç yerden ibaret — The bay, The salt house, Coast road — ve **tek** bir
-  aksiyonu var: Perception 15 / 34'e bağlı `read the departures`. Sayıca oyunun en
-  ince bölgesi olması bilinçli; arc onu beşinci bir bölgeye şişirmemeli.
-- Reputation'ın tam olarak üç bölgesi var: `Village`, `Slums`, `Town`. **Lonca
-  itibarı yok**; oysa 3. questin üç yollu tasarımı onu varsayıyor. Bkz. Q-7.
-- Discoveries *eşyaları* nereden geldiklerine göre indeksliyor; Lore ise *duyulmuş
-  textline'ları* konuşana göre grupluyor. İkisi de bir soruşturma notu tutamaz.
-  Bkz. Q-8.
-- `conditions.js` zaten `season` okuyor; `game_time` günü, mevsimi, haftanın gününü
-  ve ay evresini taşıyor. Yılda iki kez gelen bir teknenin zamanlayıcıya ihtiyacı
-  yok. Bkz. Q-10.
-- Bir tüccarın stoğu `inventory_templates[this.inventory_template]` üzerinden
-  **yenilenme anında** okunuyor ve `inventory_template` kayda yazılmıyor. Dolayısıyla
-  tekne limandayken değişen bir stok, saklanarak değil **türetilerek** kurulmalı;
-  aksi hâlde oyuncunun bir sonraki oturumunda sessizce eski hâline döner ve hiçbir
-  şey hata vermez.
-- Burada bir kontrolü taşıyabilecek, gerçekten var olan skill'ler: Perception,
-  Presence sensing, Spatial awareness, Climbing, Swimming, Equilibrium, Literacy,
-  Haggling, Medicine. **Lockpicking diye bir skill yok, navigation diye de.** Tek bir
-  kapı için birini eklemeyin.
-- `Enemy` zaten `on_hit`, `on_damaged` ve `on_death` alıyor ve dört düşman bunları
-  kullanıyor. Stance kararını anlamlı kılacak düşmanların ihtiyaç duyduğu yeniden
-  kullanılabilir soyutlama budur; ikincisine gerek yok.
-- Tier 5'i tıkayan şey adlandırma değil, tarifler — ve ölçülene kadar P-12 bunun
-  tersini söylüyordu. Üretici 36 white-steel ve black-steel bileşeni kuruyor, hiçbir
-  şey bunların hiçbirini üretmiyor ve locale satırları en başından beri yerinde.
-  Sayıyı `check_components_can_be_made` tutuyor: üretilen 203 bileşenin 159'una
-  ulaşılabiliyor, 44'üne ulaşılamıyor ve o 44'ün 36'sı bu.
-
-#### Fazlar
-
-Her faz kendi başına yayınlanır, `build` + `LOCALE_STRICT=1 check` + `test` +
-`check:bundle` kapılarından geçer ve her iki changelog girdisini alır. Bir önceki
-faz yeşile dönmeden sonraki başlamaz.
-
-**Faz 0 — zemin.** `bitti`. Hikâye yok; dört maddesinin üçü koddan çok kaydın
-kendisiyle ilgili çıktı — zemin fazı zaten bunun için var.
-
-- **Q-7 ile Q-10 cevaplandı ve taşındı.** Her biri aşağıda
-  [Fazlara taşınan kararlar](#fazlara-taşınan-kararlar) altında, onu harcayan fazın
-  karşısında duruyor. Bu önerinin
-  [Bekleyen kararlar](#bekleyen-kararlar) bölümünde beklediği bir şey kalmadı.
-- **Yanılan dosya STATUS'tü.** 48. madde de P-13/35 de kapanmıştı ama hâlâ "devam
-  ediyor" listesindeydi; bu da okuyanı, iş listesinde bulunmayan önerilerin peşine
-  düşürüyordu.
-- **İpucu göstermeyen iki quest task'ı yeniden üretilemedi.** Kaynaktan değil,
-  sahibin kendi export'larından ölçüldü: açık her questin güncel task'ı adı olan tek
-  bir yere çözülüyor. Raporun altındaki asıl boşluk gerçekti ve onu artık
-  `check_hints_say_when_they_cannot_point` tutuyor.
-- **Eksik iki malzeme satırı eksik değil.** Üretici `material name white steel` ve
-  `material name black steel` istiyor; ikisi de iki dilde de yerinde duruyor. Tier
-  5'i tıkayan şey bir isim değil, hiç var olmayan tariflerin kendisi.
-
-Muhafız: bir tane, planda yoktu ama D-8 gereği borçtu. Kaydı düzeltirken kaydın
-kendisinde bir kusur çıktı — P-14'ün son cümlesinin hemen altına yazılmış bir `---`,
-ki markdown bunu o cümlenin üstüne çekilmiş setext başlığı olarak okuyor — bu yüzden
-`check_thematic_breaks_are_not_headings` o satırı değil sınıfı, izlenen bütün markdown
-dosyalarını okuyarak koruyor. Sonraki fazları ölçülebilir kılan faz buydu; bunu da
-hatırlanan üç bilginin yerine ölçülmüş üçünü koyarak yaptı.
-
-**Faz 1 — v0.7.0, *No Word Sent*.** `bitti`. Üç yüzey Marrowmoth'un döndüğünü
-söylüyor ve hiçbiri bildirim değil: tuz evi bir öncekinden kalanı değil, az önce
-boşaltılanı tutuyor; rıhtım yılın geri kalanında olmayan dört replik kazanıyor; lonca
-kâtibinin de yanaşıp tek bir iş ilanı asmayan kırk tonluk bir tekne hakkında
-söyleyecekleri var. Pencere İlkbahar ile Sonbahar — ekinokslar, yani yılın en büyük
-gelgit farklarının düştüğü yer; yalnızca cezirle çalışabilen bir teknenin
-tutabileceği tek çift bu ve Faz 4'ün yaklaşımının da zamanlanacağı çift aynısı.
-Pencere hiçbir şey import etmeyen `src/data/marrowmoth.js` içinde yaşıyor, çünkü üç
-yüzeyin de aynı şeyi söylemesi gerekiyor ve kayan kopya sessizce bozardı. Raf her
-yenilemede türetiliyor, asla saklanmıyor — Q-10 böyle diyor. Muhafızlar: 1a'dan gelen
-`check_seasonal_content_is_reachable`, artık üç dosya ve tek koşul biçimi yerine
-`src/` altındaki her dosyayı ve adlandırılmış her mevsim listesini okuyor; bir de iki
-kez genişletilen `check_trader_stock_lists`, hem türetilmiş şablon adını görüyor hem
-de `inventory_template` alanına yapılan her atamayı reddediyor — Q-10'un "saklama"
-kuralının mekanik hâli. 1. quest bunların hiçbirinden açılmıyor; o Faz 2'nin işi ve
-tersi değil, keşiften açılıyor.
-
-**Faz 2 — v0.7.1, *Forty Tons*.** `bitti`. Mevcut körfez üzerinde iki aksiyon; ikisi
-de açılıp yeniden kilitlenmek yerine mevsime bakılan `display_conditions` ile
-gösteriliyor, çünkü "tekne burada değil" oyuncunun değil dünyanın durumu. Tahtada
-bir gün, para almadan — rıhtımın kendi repliği hamalların parasını kimin verdiğini
-soruyor ve kendisi cevaplıyor, dolayısıyla kahramana para vermek oyuncunun zaten
-duyduğu bir satırla çelişirdi — ardından deponun kapısının içine çakılı çetele:
-altı sütun, beş tam satır ve altısının dördü boş yazılmış bir satır; altındaki
-cetvel çizgisi kesintisiz. Sayman ağırlık sütununda neden ağırlık olmadığını
-söylüyor, sonra da bunun aralarında iki ilkbahar olan ikinci kez olduğunu, ikisini de
-kendi elinin yazdığını. Aynı sandık olduğunu söylemiyor: ikisini de ne tarttı ne
-açtı. 1. quest işten açılıyor, tersi değil. Arc'ın ilk lore ipliği sayman ile lonca
-kâtibi arasında uzanıyor; Q-8'in kendi örneği — tek konu, iki konuşan, aralarında bir
-aylık yürüyüş. Muhafızlar: iki aksiyonun otomatik olarak dâhil olduğu mevcut sınıf
-düzeyi kontroller ve 2a'dan gelen `check_lore_threads_resolve`.
-
-**Faz 3 — v0.7.2, *A Stroke Through It*.** `bitti`. Üç yol, üç itibar ekseni, üç farklı
-parça. Loncanın mühür defteri `Guild`'i 50'de, hamallar `Slums`'ı 200'de, faktörün eski
-suretleri `Town`'u 150'de okuyor — sokağın ve meydanın kendi orta kademeleri; mevcut
-aksiyonları zaten 100/200/300 ve 50/150/250 üzerinde oturuyor. Hiçbiri mevsime bağlı
-değil: evrak da insanlar da yıl boyu burada ve manifestoyu geç sonbaharda okuyan bir
-oyuncu, onun hakkında soru sormak için ilkbaharı beklememeli. Her yol kazanılmadan önce
-görünüyor ve sebebiyle birlikte reddediliyor; kendinden önceki altı yerleşim aksiyonu
-gibi. 2. quest üç görev yerine **üç ilerleticisi olan tek bir görev** taşıyor; böylece
-oyuncunun sahip olmadığı hiçbir itibar questi kilitleyemiyor. Kaybettiği şey diğer iki
-parça oluyor ve iplik de kısalarak bunu söylüyor. Lonca itibarı arc'ın içinde
-kazanılabilir hâle geldi — 1. quest 60 ödüyor, bu da mühür defterinin 50'sini o kadarını
-yapmış herkesin menziline sokuyor, yapmamış hiç kimsenin menziline sokmuyor — yani
-*The Merchant's Word*'ü erken bitirmiş hiçbir kayıt dışarıda kalmıyor. Muhafız: 3a ile
-gelen `check_reputation_regions_have_names`; burada ikinci bir muhafız borç değil. Karar
-verirken ölçüldü: ilerleticisi olan 61 görünür görevin 5'inde kapısız hiçbir ilerletici
-yok; beşi de eğitilebilen ya da satın alınabilen skill ve eşya kapılarına bağlı. Bu,
-Faz 4'ün adlandırdığı çıkmaz sınıfı değil — sebebini söyleyerek reddeden bir kapı,
-başarısız olan bir kontrol değildir — ve ayrım, Faz 4 yeniden türetmek zorunda kalmasın
-diye kayda geçirildi.
-
-**Faz 4 — v0.7.3, *Out on the Ebb*.** `bitti`. Q-9 uyarınca iki yer, fazlası değil:
-düzlükler yaklaşım, ambar ise varış; demirleme yeri ile yük güvertesi de kendi odaları
-değil, bu ikisi üzerinde aksiyon. Combat yok — engel su ve karanlık.
-
-Gelgit bir saat değil. Bu motorda günün saatine bakan bir koşul yok ve bir tane eklemek,
-Q-10'un kapsam dışı bıraktığı zamanlayıcı olurdu; düzlükleri kapayan şey, arc'ın geri
-kalanının okuduğu aynı mevsim penceresi: oraya yürümenin tek sebebi teknenin çamurda
-yatıyor olması. Açılma değil `display_conditions`, Faz 2'nin gerekçesiyle — açılma tek
-yönlüdür — ve körfeze dönüş yolunda hiçbir koşul yok, yani mevsim dönerken orada olan
-kimse mahsur kalmıyor.
-
-Aynı çamurun üstünde üç yol; fazın kuralı bir muhafıza bırakılmak yerine içeriğe
-yazıldı: Equilibrium ile yürüyüp suya geri çevrilmek, kayıkçıya 25.000 ödemek ya da
-`Slums` 250'de sağlam hattan yürütülmek — soruşturmanın 200'ünden daha zor, çünkü
-zeminin nerede tuttuğunun gösterilmesi, bir hamalın konuşmasından daha büyük bir iyilik.
-Yalnızca bedava olan başarısız olabiliyor; diğer ikisi hiç başarısız olamıyor ve onun
-yerine paraya ya da itibara mal oluyor. Üçü de aynı merdivende bitiyor ve aynı açılmayı
-veriyor, yani burada oyuncunun sahip olmadığı bir skill'in arkasında hiçbir şey yok.
-
-Faz, sandığın görülüp dokunulmaması üzerine bitiyor — ona ulaşmak Faz 5'in işi ve arc,
-cevaptan çok soruyla bitirmek üzerine kurulu. Muhafız: 4a ile gelen
-`check_no_dead_end_skill_gates`; dört yeni aksiyon sınıf düzeyi kontrollere kendiliğinden
-katıldı ve kontroller yazının kaçırdıklarını yakaladı — iki yerin görünen adları, üç
-seyahat satırı kimliği ve iki yardım sayfasının harita girdileri.
-
-Sonraki fazlar için not: 4a'nın muhafızı `main.js` içindeki deneme çözümleyicisini üç
-çağrı yerinin sırasına bakarak okuyor. O çözümleyicide yapılacak her düzenleme, kilidi
-kazanan tarafta tutmak ya da niçin tutmadığını söylemek zorunda.
-
-**Faz 5 — v0.7.4, *One Unweighed Crate*.** `bitti`. Sandığa ulaşılıyor ve kontrol onu
-açmak değil — sandık bir kilit değil. Perception ve Woodworking okunuyor, çünkü zorluk
-bu rıhtımda kimsenin atmayacağı bir bağı okumak ve onu, bağlayan adamın iki kez
-bakmayacağı kadar iyi yeniden yapmak. Başarısızlık, bunu hiçbir şeyi *kesmeden önce*
-anlamak; yani hiçbir şey kesilmiyor ve hiçbir şey kaybedilmiyor: oyuncu, su gitmesini
-söyleyene kadar sırtını ona yaslayıp oturuyor.
-
-İçinde: saman; keçe olmayan, mantar olmayan ve sıkışmayan gri bir malzemeden kesilmiş bir
-yatak; ve demir, çelik ya da tunç olmayan, tırnaktan iz almayan bir metalden, bir bilek
-genişliğinde kapalı bir halka — çepeçevre, kendi başlangıcına dönen karelerle oyulmuş.
-Tek motif, tek metal, tek açıklanmamış malzeme; tam olarak bu önerinin istediği gibi ve
-sandıkta başka hiçbir şey yok.
-
-**Hiçbir eşya ödemiyor**, bilerek. Envanterdeki bir nesnenin bir şey yapması gerekirdi ve
-yaptığı her şey, bu arc'ın cevaplamasına izin verilmeyen bir soruyu cevaplardı. Oyuncunun
-elinde kalan şey bir tarif ve daha önce bir kez anlatılmış bir desen.
-
-Arc, sayman değil **antika koleksiyoncusu** üzerinde kapanıyor; çünkü oyunda *"aynı el"*
-diyip inandırabilecek tek kişi o — kasabanın en eski şeylerini kırk yıl kataloglamış ve
-öteki parçayı suyun kaynama süresi kadar elinde tutmuş biri. Üç şey söylüyor ve
-dördüncüsünü reddediyor: en az iki tane var, onları isteyen biri var, o biri onları
-yapanla aynı değil ve *"dikkatli olmak istiyorum, çünkü söylediğimi hatırlayacaksınız."*
-Kimin eli olduğunu söylemiyor. "Tek katman" kuralı burada tutuyor ve
-[STORY.TR.md](STORY.TR.md) bölüm 3 artık bu üç olguyu ve hâlâ açık olanların listesini
-kayda geçiriyor; böylece sonraki arc onları sessizce genişletemiyor.
-
-Muhafız: 2a'dan gelen `check_lore_threads_resolve` — Q-8 gerçekten iplik seçeneğine
-oturdu. İplik artık üç konuşan üzerinde beş beat: bir rıhtım, bir lonca ve meydanın
-karşısındaki bir dükkân; Q-8'in yazıldığı şeklin tam boyu.
-
-**Faz 6 — sistem geçişi.** `done`. Birbirinden bağımsız dört parça, dördü de yayınlandı.
-
-- **4. ve 5. kademe malzemelerinin cezirin açtığına bağlanması.** `bitti`, **v0.7.5**
-  olarak. P-12'nin "satın alınan değil, çıkarılan bir cevher" maddesinin yeri burasıydı
-  ve henüz var olmayan bir bölgeden değil, bu arc'ın açtığı bölgeden cevaplandı:
-  `Heavy sand` gelgit düzlüklerinde kazılıyor; o düzlükler de yalnızca Marrowmoth'un iki
-  mevsiminde sunulduğu için, 5. kademe reaktifi kendi koşuluna sahip olmadan arc'ın
-  penceresini miras alıyor. 36 bileşen yapılamazdan yapılabilire geçti ve 5. kademe
-  grubu `known_unmade` listesinden kalktı. P-12'de kalan şey istasyon sorusu, bir tarif
-  değil.
-- **Stance seçiminin stat bonusuyla değil `on_hit` / `on_damaged` üzerinden anlam
-  kazanması.** `bitti`, **v0.7.6** olarak. Dört yaratık tepki veriyor ve hiçbiri bunun
-  için bir stat satırı kazanmadı: sürü, bir noktaya karşı üstünüze kapanıyor ve geniş
-  bir duruşla geri süpürülüyor; kurbağanın sıçraması ne kadar sert vurduğunuzla değil
-  önünde ne kadarınızın durduğuyla ölçekleniyor; iki yusufçuğun iğnesi de bir savuruşa
-  kendini vermiş bedeni buluyor. Hepsi zaten var olan kancaların içine yazıldı; P-14'ün
-  ölçtüğü şey de buydu — ikinci bir soyutlama yok ve yeni bir yaratık da yok, çünkü
-  arc'ın kendisinde combat yok ve Faz 4 bunu söylemişti. Dürüst sınır şu: bir kanca
-  yalnızca `add_active_effect`'e ve log'a ulaşabiliyor, dolayısıyla tepki her zaman
-  "nasıl durduğunuz, bunun size ne yapabileceğini değiştirir" oluyor. Muhafız:
-  `check_stance_reactions_name_real_stances` — yanlış yazılmış bir stance kimliği, var
-  olan her stance için yanlış döner; yani tepki yazılır, çevrilir, yayınlanır ve bir kez
-  bile görülmez, yaratık ise tam eskisi gibi davranır.
-- **Arc'ın para kuyusunun mevcut ekonomiye göre fiyatlanması.** `bitti`, **v0.7.10**
-  olarak. Ölçüldü: tek seferlik quest parası 43.500, lonca faktörünün üç teslimatından
-  27.000 daha, koleksiyoncuda 30.000'lik bir kuyu ve **hiçbir yerde tekrarlanabilir para
-  ödeyen aksiyon yok** — üç yerleşim aksiyonu birer kez ödüyor. Yani tekrarlanabilen tek
-  gelir ücretli bir iş ve onların en iyisi birim başına 50 ödeyen devriye. Kayıkçı *sefer
-  başına* 25.000'di; bu 500 birim devriye ve bütün oyunda aşağı yukarı bir karşılanabilir
-  yolculuk demek: çamuru geçmenin pahalı yolu, bir kez kullandığınız bir yoldu. Artık
-  6.000 — faktörün en küçük teslimatı, bir günlük iş parasına bir kayık yolculuğu, 120
-  birim.
-
-  **Muhafız yok ve bulgu da bu.** Bir kural yazıldı, sonra kaldırıldı: "tekrarlanabilir
-  bir fiyat, en pahalı tek seferlik fiyatı aşmamalı." 25.000'de geçiyor, çünkü 25.000
-  koleksiyoncunun 30.000'inden küçük — yani yazıldığı hatanın tam kendisini onaylardı.
-  Yakalayan her versiyonu uydurulmuş bir sabit istiyor; çünkü asıl soru, bir fiyatın
-  *oyunun o noktasındaki gelire* göre durumu ve bu bir yargı. Bunun yerine yukarıdaki
-  sayılar öneriye ve kaynakta fiyatın yanına yazıldı; böylece sonraki fiyat seçilmek
-  yerine türetiliyor.
-- **İtibar sonuçlarının ceza değil, dünya durumu gibi okunması.** `bitti`, **v0.7.11**
-  olarak; ve fazı tamamlıyor. Saymanın kapanış repliği seçimi zaten çerçevelemişti —
-  *"Yazdığım gün bu bir lonca meselesi olur"* — yani içeriğe karar uydurmak gerekmedi,
-  yalnızca kararın öteki tarafı gerekti. Kâtip dosyayı açıyor: Guild +60, Town +20,
-  **Slums −40** ve bunun rıhtımdan geldiği bilinecek. Kimse zorlamıyor; arc her iki hâlde
-  de bitiyor ve replik öylece duruyor. Kenar mahallenin yaşlı kadını cevap veriyor, bir
-  bayrağa bağlı, ve sinirli değil — söylediği şu: bir süre boyunca, buradan biri yazıya
-  geçmesini istemediği bir şeye sahip olduğunda, onu kimin yanında söyleyeceğini
-  düşünecek. Fazın istediği fark da bu: bir yerin bir fikri olması, bir puanın kesilmesi
-  değil.
-
-  350 kazanılabilir değere ve arc'ın 200 ile 250'deki kendi kapılarına karşı −40. Sağlam
-  hattı bir süre menzil dışına çıkarabiliyor; düzlükleri yürümek bedava ve kayıkçı 6.000,
-  yani hiçbir şey kapanmıyor.
-
-  **Ve itibarın artık bir tabanı var**; bu, oyunun eksiltme yapan ilk ödülünden önce
-  girmek zorundaydı. `add_reputation` sınırsız bir `+=` kullanıyordu ve
-  `update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri çiziyor — yani −20'deki
-  bir oyuncu hiçbir satır görmezdi, bütün kapılar da kapalı kalırdı: aynı anda görünmez ve
-  sonuçlu. 0'da tabanlandı, altı test, tabanı yeniden kaldırarak negatif test edildi.
-
-**Faz 7 — v0.8 hazırlığı, *Beyond the Lake*.** `active`. Önce izler — ayak izleri,
-tüyler, ses, kırılmış örtü — ve oyuncu yaratıkla karşılaşmadan önce onun var olup
-olmadığından emin olmamalıdır.
-
-- **İlk iz.** `done`, **v0.7.37** olarak. Orman gölünde `read the shallows`: dört parmak,
-  arkalarında sertçe itilmiş kum, bir balıkçıl için fazla büyük ve bir yaban domuzu için
-  yanlış. Hiçbir şey adlandırmıyor, hiçbir şey açmıyor. Gölün kendi sesleri zaten *"bir
-  hayvan su içmeye iniyor"* diyordu; yani su kıyısını kanon, kimse planlamadan önce
-  seçmişti.
-
-  `required` kapısı yok ve bunu komşusu öğretti: `read the departures` Algısını `conditions`
-  içinde tutuyor ve hiçbir şeye kapatmıyor; yani aksiyon denenmek için hep orada ve zayıf bir
-  göze, daha iyi bir gözün ne okuyacağı söyleniyor. Sonrasında gölün altı sesinin arasına bir
-  bayrağın arkasından üç ses daha karışıyor — Marrowmoth limandayken rıhtımın kullandığı
-  biçim.
-
-- **İkinci iz.** `done`, **v0.7.38** olarak. Şelale havzasında `read the rock shelters`;
-  sığlığı okumuş olmaya kapatılmış ve o zamana dek sebebiyle reddediliyor. Bir insandan uzun
-  aşınmış bir yer ve ezilmiş değil açılmış yengeç kabukları; zaman kipi "burada bir şey
-  durmuştu"dan "burada bir şey yaşıyor"a yükseliyor ve hiçbir şey adlandırılmıyor.
-
-  **Islak orman ölçüldü ve elendi**, ki asıl saklanmaya değer bulgu bu: sesleri zaten bu
-  kayıtta ve `cut the standing flax` ipliği açıkça kapatıyor. Oraya bir iz koymak, oyunun
-  söylemeyi bitirdiğini yeniden açardı.
-
-- **Üçüncü iz.** `done`, **v0.7.39** olarak ve farklı bir tür: bir angarya değil bir yer.
-  Barınaklara bakıldıktan sonra Orman gölünün açıklaması bir paragraf kazanıyor — yatırılmış
-  bir sazlık şeridi, yattıkları yerde kahverengi dik durdukları yerde yeşil, oyuncu ilk
-  geldiğinden beri yatık. Kırılmış örtü ve değişen şey okuyan.
-
-  Açıklamanın yerine geçmek yerine ona ekleniyor, böylece iki durum ayrışamıyor.
-
-- **Karşılaşma.** `done`, **v0.7.42** olarak, ve bu Q-13'ün cevabının inşası: oyun içi dakikada
-  bir zar, iz taşıyan iki yerde, barınaklar okunduktan sonra. Suyun kenarında yaklaşık yedi
-  oyun günü durmaya karşılık geliyor.
-
-  **Oran sahibinin; birim ölçüldü.** "On binde bir", neyin on binde biri olduğu bilinmeden bir
-  şey söylemiyor ve mevcut üç kadanstan ikisi olayı bambaşka bir olay yapıyor. Bir aksiyon
-  tick'i, aksiyon-saniyesinin onda biri: olayı birkaç dakikada bir düşürürdü. Bir mekâna varmak
-  uzun bir kayıtta birkaç yüz kez olur: hiç düşürmezdi. "Neredeyse hiç kimse, ama gerçekten
-  orada" ifadesini yalnızca dakika tick'i veriyor ve Q-13'ün çizdiği ayrım da buydu.
-
-  **Tüy izini de harcıyor.** O iz iyi bir sebeple zordu: envanterdeki bir eşyanın bir şey
-  yapması gerekirdi. Burada tüyler karşılaşmanın içinde — taşınan değil, bakılan; ki bu, fazın
-  kendi saydığı iki dürüst seçenekten biriydi. Hiçbir şey adlandırılmıyor, dövüş yok ve hiçbir
-  şey kesilmiyor: ark faz 4'ten beri dövüşsüz ve olay olurken oyuncu başka bir işin ortasında.
-
-  Orman gölünün açıklaması ikinci bir dal değil üçüncü bir **kapanış** kazanıyor; böylece ilk
-  paragraf tek yerde kalıyor. Önemli olan kontrol, sessizce düşebilecek olan: asla
-  ateşlenemeyecek şekilde bağlanmış, on binde bir olan bir olay, kimsenin görecek kadar şanslı
-  olmadığı bir olaydan ayırt edilemez. Bu yüzden `rolls_a_sighting` rastgeleliği argüman olarak
-  alıyor ve `check_the_sighting_can_land_and_then_stops` iki ucu birden sürüyor.
-
-- **Sırada olanlar.** Brief'in dört türünden geriye kalan yok. Faz 7'nin yapmadığı şey
-  **v0.8'in kendisiyle** ilgili olan: karşılaşma zemin işinin son parçası, arkın sonraki
-  parçası değil — ve birisi o şeyi gördükten sonra ne olacağı, bu önerinin verilmemiş bir
-  hikâye kararı.
-
-#### Fazlara taşınan kararlar
-
-Bu önerinin sorduğu beş soru, cevaplarıyla birlikte ve her biri onu harcayan fazın
-karşısında. [Bekleyen kararlar](#bekleyen-kararlar) altında karara bağlanmışlardı;
-faz 0 kapanınca buraya taşındılar: bir karar, biçimlendirdiği işin yanında durur.
-Numaraları korunuyor, böylece onları anan commit'ler ve changelog girdileri hâlâ
-çözülüyor.
-
-##### Q-7 — Lonca itibarı dördüncü bir reputation bölgesi mi olsun? **KARAR: evet** — faz 3 harcar
-
-P-14'ün 3. fazı birbirinden farklı üç bilgi yolu istiyor ve üç eksenin ikisi zaten
-harcanmış durumda: kasaba meydanı Town'u 50 / 150 / 250'de, sıra evleri Slums'ı
-100 / 200 / 300'de okuyor. Bunlardan birinin üzerine kurulacak üçüncü bir yol, aynı
-yolun iki kez yürünmesidir.
-
-Maliyet korkulmadan ölçüldü. `character.reputation` düz bir nesne; `load()`
-**kayıttaki** anahtarları dolaşıyor ve tanımadığı bir bölgeyi uyarıp geçiyor, yani
-eski bir kayıt `Guild` olmadan geliyor ve alan bildirilmiş 0 değerinde kalıyor.
-`update_displayed_reputation` yalnızca 0'ın üstündeki bölgeleri gösteriyor, yani
-kimse kazanmadığı bir satırı görmüyor; bölgenin adı da `getDisplayName` üzerinden
-geçiyor, o da dil başına bir locale satırı istiyor. `market_saturation` ayrı bir
-harita ve ellenmiyor: hiçbir şeyi fiyatlamayan bir loncanın market bölgesine
-ihtiyacı yok.
-
-Yani bütün maliyet bir alan, iki locale satırı ve bir kontrol. Alternatif — lonca
-gözdeliğini flag ve quest durumuyla ifade etmek — daha az kod tutar ve hiçbir şey
-kazandırmaz: üçüncü bir yolu üçüncü bir yol gibi hissettiren şey, tam olarak
-oyuncunun yükselişini izleyebildiği bir sayıdır.
-
-##### Q-8 — Soruşturma notları nerede durur? **KARAR: yeni panel değil, bir lore ipliği** — faz 2 harcar, faz 3 ve 5 üstüne kurar
-
-Ölçüldü; çünkü brief Discoveries diyor ve Discoveries kulağa geldiği şey değil.
-`update_displayed_discoveries` **eşyaları** nereden geldiklerine karşı çiziyor;
-kaynağı `world_index`. `update_displayed_lore` ise **oyuncunun duyduğu
-textline'ları** konuşana göre gruplayıp kaldığı yeri gösteren bir satır ekliyor.
-Bir aksiyonun başarı metni ikisi de değil; bugün günlükte bir kez okunup gidiyor.
-
-Üç seçenek var ve doğrusu ortadaki:
-
-- **İpuçlarını `lore: true` işaretli diyalog satırlarından geçirmek.** Hiç kod
-  gerekmez, hâlihazırda çalışır. Ama konuşana göre grupladığı için Marrowmoth'un
-  altı olgusu üç ayrı kişinin altında dağılır ve tek bir iplik değil, üç ayrı sohbet
-  gibi okunur.
-- **`Textline`'a opsiyonel bir `lore_thread` kimliği, lore paneline de konuşan
-  listesinin üstünde bir iplik gruplaması vermek.** Bir opsiyonel alan, bir dal,
-  kayıt üzerinde hiçbir etki — textline'lar zaten açılmış olarak izleniyor. Sürgün
-  kabile ve Rat God için yeniden kullanılabilir; bir soyutlamanın kendini hak edip
-  etmediğinin ölçüsü de budur.
-- **Yeni bir soruşturma paneli.** Hem brief hem de kanıt bunu dışlıyor: oyunun zaten
-  dört günlük yüzeyi var ve beşincisi, buradaki her kalıcı direktifin önlemek için
-  var olduğu paralel sistem olurdu.
-
-##### Q-9 — Cezir zinciri kaç yeni yer ister? **KARAR: dört değil, iki** — faz 4 harcar
-
-Brief şu zinciri çiziyor: Körfez → cezir düzlüğü → demirleme yeri → güverte → alt
-ambar. Körfez oyunun bilerek en ince bölgesi — üç yer, çünkü liman insanın içinden
-geçtiği bir yerdir — ve dört yeni oda onu dağdan sonraki en büyük bölge yapar ki bu
-onun hakkında yanlış bir şey söyler.
-
-Zincirin tamamını iki yer taşır: yaklaşımı ve gelgitin kapattığı şeyi temsil eden
-**düzlük**, ve varış noktası olan **ambar**. Demirleme yeri ile güverte, bu ikisinin
-üzerindeki aksiyonlardır. Burada yer eklemek ucuzdur; tuzak da budur: ölçü bir odayı
-eklemenin maliyeti değil, o odanın içinde bir şey olup olmadığıdır — koridorun
-içinde yoktur.
-
-##### Q-10 — "Yılda iki kez" nasıl çalışır? **KARAR: iki mevsim, zamanlayıcı yok** — faz 1 harcar
-
-`conditions.js` zaten `season: {yes, not}` okuyor; `game_time` mevsimi, haftanın
-gününü, gün sayısını ve ay evresini taşıyor. Yılda iki kez, iki mevsim demektir ve
-briefin saydığı bütün dünya-olayı sözlüğü — tüccar stoğu, fon replikleri,
-aksiyonlar, diyalog — aynı koşulu okuyabilir.
-
-Tek gerçek tehlike zaman modeli değil, durum: `inventory_template` **kayda
-yazılmıyor**. Tekne limandayken bir tüccarın üzerinde çevrilen ne varsa, yazılmak
-yerine yüklemede mevsimden yeniden hesaplanmalı; yoksa bir sonraki oturumda geri
-döner ve hiçbir şey yüksek sesle hata vermez — ki bu, sahibin favori yerlerini
-kaybettiren hatanın tam olarak biçimidir (bkz. [STATUS.TR.md](STATUS.TR.md), 4.
-kısıt). Türet; saklama.
-
-Genel bir dünya-olayı çatısı açıkça kapsam dışıdır. İkinci bir olay aynı tesisatı
-isterse, soyutlama kendini o zaman hak etmiş olur.
-
-##### Q-13 — v0.8 dört bacaklı kuşla karşılaşacak mı? **KARAR: karşılaşılabilir, on binde bir civarında** — faz 7 harcadı
-
-Bu da önerinin cevabı değil ve ondan iyi. Karşılaşma programlanmış değil **mümkün**: yalnızca
-belli yerlerde, **10.000'de 1** mertebesinde çok düşük bir şans.
-
-Bu, fazın korumaya çalıştığı şeyi koruyor. Oyuncu onun var olduğundan hâlâ emin olamıyor,
-çünkü neredeyse hiç kimse görmeyecek; izler arkın normalde yaşandığı biçim olarak kalıyor; ve
-karşılaşmanın olması için hiçbir şeyin harcanması gerekmiyor. Bu, hikâyenin içine yürüttüğü bir
-sahne ile gerçekten dışarıda olan bir şey arasındaki fark.
-
-**İnşa anına bıraktığı üç şey ve nasıl sonuçlandıkları.** *Hangi yerler*: iz taşıyan ikisi;
-seçilerek değil, mekân verisinden okunarak — hayvanın, hiçbir şeyin işaret etmediği bir yerde
-olmak için sebebi yok. *Girişte mi, aksiyonda mı, tick başına mı*: tick başına, çünkü o tick
-oyun içi bir dakika ve üç kadanstan yalnızca onda "on binde bir" bu kararın kastettiği şeyi
-söylüyor. *Karşılaşma nedir*: dövüş değil, bir görme — ki arkın kendisi buna faz 4'ten beri
-dövüşsüz kalarak ve üç izin hiçbirinde hiçbir şeyi adlandırmayarak çoktan karar vermişti.
-
-#### Bu önerinin yapmayacakları
-
-Beşinci bir bölge, ikinci bir soruşturma arayüzü, bir zamanlayıcı çatısı, bir
-lockpicking skill'i ya da bir gizemin cevabı uydurmak. Yazılmış içerik bir anı
-zaten karşılıyorsa, paralelini yazmak yerine onu bağlayın.
-
 ### P-15 — Kitaplar ve hiçbir şeyin öğretmediği yetenekler `open`
 
 Sahibinin isteği: yeni kitaplar. Planlamadan önce ölçüldü; çünkü burada bir kitap ucuza
@@ -681,10 +266,9 @@ Bunu karşılanabilir kılan şey Q-1'in ikinci revizyonu: fork artık tamamen a
 yeni yetenekler, yeni statlar ve yeni sistemler kapsam içinde. Kararı veren şey artık
 "hiçbir şeye bağlanmıyor" değil.
 
-**Başlanmadı ve bilerek henüz başlanmıyor.** v0.7.39 itibarıyla Faz 6 bitti ve Faz 7 sürüyor;
-yani burada duran "Faz 6'nın iki parçası kaldı, Faz 7 hiç başlamadı" cümlesi artık doğru bir
-şey söylemiyor. Değişmeyen şey kural: büyü, mevcut hikâyenin yanına değil **sonrasına**
-geliyor.
+**Başlanmadı ve bilerek henüz başlanmıyor.** v0.7, v0.7.42 ile kapandı ve P-14 bu dosyadan
+ayrıldı; yani büyünün arkasında beklediği hikâye bitti — ama beklediği kural değişmedi ve
+mevcut hikâye artık P-43. Büyü onun yanına değil **sonrasına** geliyor.
 
 **Karar verilebilen ve iki cevap altında da geçerli olan:**
 
@@ -851,13 +435,94 @@ defterlerinin hâlâ çözüldüğünü, `npm run check:save` gerçek bir kaydı
 kanıtlıyor. "Hiçbir dosya N satırı geçmesin" kontrolü ise ölçümden değil bir sayıdan uydurulmuş
 bir kural olurdu ve bu dosyada onlardan yeterince var.
 
+### P-43 — v0.8, Beyond the Lake `open`
+
+İkinci ana ark ve P-14'ün ardılı. Brief onu ve onun için altı odağı adlandırıyor (TODO
+bölüm 16): Ancient Forest, navigasyon, nadir karşılaşmalar, tier 5 toplama, duruş odaklı
+dövüş ve çevresel keşifler. Aşağıdaki, bu altısının koda karşı ölçülmüş hâli — çünkü üçü
+zaten bir biçimde var ve biri hiç yok.
+
+**P-41 ve P-42'den sonraya bilerek dizildi.** Brief'in kendi koşulu *"v0.7 bittikten ve bütün
+quality gate'ler geçtikten sonra v0.8'e geç"* — ikisi de artık doğru — ama sahibinin önünde
+hâlâ açık talepleri var ve bir ark, onları bırakmak için onların beklemesinden daha kötü bir
+sebep.
+
+**Kapı çoktan yazılmış ve faz 7 üstüne bir iz bile koymuş.** `desc location Forest lake`,
+gölün şelalenin kayalığı ile *"ormanın kalbi olsa gerek bir yere açılan yoğun bir örtü"*
+arasında durduğunu söylüyor. Gölün tek çıkışları, geldiği Forest road ve `Frogs` — gölü
+`parent_location` alan bir dövüş alt-alanı. Yani örtü, haritadaki tek açılmamış yön ve bunu
+kimse planlamadan önce kanon adlandırmış. Faz 7'nin üçüncü izi, yatırılmış sazlar, tam olarak
+*"karşı kıyıda, örtünün suya indiği yerde"* duruyor. İzler kapıyı gösteriyor.
+
+Lake beach ve Waterfall basin gölün ötesinde **değil** ve biri o yöne doğru inşaya başlamadan
+önce bunun yazılması gerekiyor: ikisi de Riverbank'ten sarkıyor, tırmanarak ve halatla
+inilerek varılıyor. "Forest Lake'in ötesi" örtüdür, başka bir şey değil.
+
+**Navigasyon yok ve yerine genişletilecek bir mekanizma var.** `Navigation`, `Pathfinding` ya
+da `Orienteering` diye bir yetenek yok — brief hiç inşa edilmemiş bir yeteneği varsayıyor.
+Var olan şey, bir bağlantı üzerindeki `travel_time_skills`: bütün haritada sekiz kez ve
+yalnızca iki yetenekle kullanılıyor — `Scrambling` dört, `Climbing` dört. Yani bir yeteneğin
+kısalttığı yolculuk burada zaten birinci sınıf bir fikir ve bağlantıları uzun olup yetenekle
+kısalan bir bölge, yeni bir sistem olmadan navigasyondur.
+
+**Nadir karşılaşmaların mekanizması artık var ve bir sürüm yaşında.** v0.7.42'nin
+`rolls_a_sighting`i, oyundaki ilk "oyun içi dakika başına, mekâna bağlı" zarı; bir ödül bloğu
+içindeki `chance_of` (iki kullanım, ikisi de `locations.js` içinde) ise tamamlama başına
+karşılığı. Yani bu odak icat değil genişletme — **ve bir dünya-olayı çatısına dönüşmemeli.**
+Q-10'un Marrowmoth'un takvimi için reddettiği tuzağın aynısı ve `data/marrowmoth.js` bunu
+kendi yorumlarında söylüyor. Aynı tesisatı isteyen ikinci bir olay, soyutlamanın kendini hak
+ettiği andır; ondan önce değil.
+
+**Tier 5 toplamanın gerçek ve ölçülebilir bir boşluğu var; onu doldurmak geri kazanım.** Black
+iron en üst malzeme kademesi — `Black iron ore`, `Black iron ingot`, `Black iron plate`,
+`Black iron chainmail`, hepsi bildirilmiş ve cevheri tüketen iki tarif var. **Oyunda onu
+toplayan hiçbir şey yok.** Tek kaynağı iki tüccar. Toplamanın kendisi 26 aktivite boyunca
+`skill_required: [20, 35]`te tepe yapıyor. Yani bu odak tam olarak şu: gölün ötesinde, black
+iron cevherinin 35'in üstünde topraktan çıktığı bir yer. Beslediği bütün eşyalar ve tarifler
+zaten var ve şu anda yalnızca satın alınabiliyor.
+
+**Duruş odaklı dövüş, hâlihazırda var olan yedi duruşu genişletiyor** — normal, quick, heavy,
+defensive, wide, berserk, flowing water — ve faz 6, duruş seçimini stat satırlarıyla değil
+dört düşman üzerinde `on_hit` / `on_damaged` ile çoktan önemli kıldı;
+`check_stance_reactions_name_real_stances` de onu koruyor. O fazın kaydettiği dürüst sınır
+hâlâ geçerli: bir hook `add_active_effect`e ve loga uzanır, dolayısıyla bir tepki her zaman
+"nasıl durduğun, bunun sana ne yapabileceğini değiştirir"dir.
+
+**Çevresel keşifler, evi olmayan tek odak.** Keşifler paneli beş kaynak türü biliyor —
+`gather`, `drop`, `trade`, `craft`, `train` — ve her biri bir **eşyanın** nasıl bulunduğunun
+bir yolu. Eşya olmayan bir şey için tür yok. Ya panel altıncı bir tür kazanır, ya da çevresel
+keşif hiç bir Keşifler özelliği değildir ve faz 7'nin izlerinin gittiği yere, lore ipliklerine
+aittir. Bunun inşa sırasında değil öncesinde kararlaştırılması gerekiyor.
+
+**Brief'in yasakladığı şey ve faz 7'nin çoktan harcadığı şey.** *"Dört bacaklı kuşu doğrudan
+bir boss işareti yapma."* Ve v0.7.42, Q-13'ü onu yaklaşık on binde bir karşılaşılabilir
+kılarak cevapladı — yani bu ark, oyuncunun onu görmüş **olabileceği** bir dünyayı miras
+alıyor ve iki yönde de varsayım yapamıyor. `has_seen_the_animal` üzerine bir kapı, neredeyse
+hiç kimsenin geçmediği bir kapı olurdu; görmediklerini varsayan bir bölge ise görenler için
+yanlış olurdu.
+
+**Q-15 — Ancient Forest neye açılıyor ve kuş neye dönüşüyor? ÖNERİ: ne bir boss ne bir cevap.**
+Brief yaratığın bir boss işareti olmadığını söylüyor ve P-14'ün bütün yöntemi arkın hiçbir şeyi
+adlandırmamasıydı. Öneri şu: v0.8 bir **yer**, bir hesaplaşma değil — örtü, kendi işi olan bir
+bölgeye açılıyor (black iron, yetenekle kısalan uzun yolculuklar, nadir karşılaşmalar) ve
+hayvan, bölgenin hedefi olmak yerine sakini olarak kalıyor. Bunun karara bağlamadığı şey,
+bölgede hayvanı *bilen* bir şey olup olmadığı ve bu sahibinin kararı.
+
+**Muhafız, her şeyden önce.** Bu öneri bölgeye ikinci bir kapı açmamalı: örtü,
+`locations["Forest lake"]` üzerinde tek bir bağlantı ve faz 7'nin sazları çoktan onu
+gösteriyor; iki yerden varılan bir bölge, izleri süs hâline getirir. Ve inşa edilecek ilk
+parça, P-14'ünkiler gibi ölçülmek zorunda; çünkü brief'in altı odağı altı iş parçası değil —
+ikisi (navigasyon, duruş dövüşü) bir bölgenin içerdiği özellikler değil, sahip olduğu
+niteliklerdir.
+
 ## Bekleyen kararlar
 
 Bunların her biri neyin inşa edileceğini değiştirir. Tahmin edilmek yerine burada
 kayda geçiriliyorlar. Burada kalanlar projenin tamamını ilgilendiriyor; tek bir
 önerinin sorduğu soru, cevaplandığı anda o önerinin içine geçer. Q-7 ile Q-10 ve Q-13 de
-oraya gitti — bkz. P-14 içindeki
-[Fazlara taşınan kararlar](#fazlara-taşınan-kararlar).
+oraya gitti. P-14 o zamandan beri bitti ve bu dosyadan ayrıldı; dolayısıyla onların kaydı
+[CHANGELOG.TR.md](CHANGELOG.TR.md) içinde — numaralar yeniden kullanılmıyor ve onları anan
+commit'ler ile girdiler hâlâ çözülüyor.
 
 ### Q-1 — Bu fork içerik olarak ayrışacak mı? **YENİDEN GÜNCELLENDİ: tamamen ayrış**
 

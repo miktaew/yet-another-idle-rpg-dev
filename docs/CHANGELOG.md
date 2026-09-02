@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 118 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 119 -->
 
 # Changelog
 
@@ -20,6 +20,74 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### P-14 closes, and v0.8 opens as P-43
+
+No version: every one of the eight phases already shipped with its own, and the player has
+already read each of them. This is the bookkeeping the loop's own rules ask for - a finished
+proposal leaves `PROPOSALS.md`, because the backlog is what is still open.
+
+**The arc, end to end.** Phase 0 was ground with no story in it. Phases 1 to 5 were the
+Marrowmoth: v0.7.0 *No Word Sent*, v0.7.1 *Forty Tons*, v0.7.2 *A Stroke Through It*, v0.7.3
+*Out on the Ebb*, v0.7.4 *One Unweighed Crate*. Phase 6 was the systems pass - four
+independent pieces, v0.7.5 through v0.7.10. Phase 7 was v0.8's groundwork: three traces at
+v0.7.37, v0.7.38 and v0.7.39, and the meeting at v0.7.42.
+
+**The five decisions it consumed, kept here because their proposal is gone.** Numbers are
+never reused, so the commits and entries that name them still resolve:
+
+- **Q-7 — does guild standing become a fourth reputation region? Yes.** Spent by phase 3.
+  Two of the three information axes phase 3 needed were already spent - the town square reads
+  Town, the row houses read Slums - so a third built on either would have been the same path
+  walked twice.
+- **Q-8 — where do investigation notes live? A lore thread, not a new panel.** Spent by
+  phase 2, drawn on again by 3 and 5. The brief excluded a new panel and the evidence agreed.
+- **Q-9 — how many new places does the ebb chain need? Two, not four.** Spent by phase 4.
+- **Q-10 — how does "twice a year" work? Two seasons, no scheduler.** Spent by phase 1, and
+  it is the decision that has kept paying: it is the reason `data/marrowmoth.js` is a leaf
+  module holding a constant rather than a world-event framework, and the reason v0.8's rare
+  encounters are told not to become one either.
+- **Q-13 — does v0.8 meet the four-legged bird? It can be, at about one in ten thousand.**
+  Spent by phase 7, at v0.7.42. The three things it left for build time came out as: the two
+  places that carry a trace, read from the location data rather than chosen; per in-game
+  minute, the only cadence at which the odds mean what the decision meant; and a sighting
+  rather than a fight, which the arc had already decided by having no combat since phase 4.
+
+**P-43 is v0.8, and it is the brief's six focuses measured rather than restated.** Three of
+them already exist in some form, one has a hole in it that is worth the arc on its own, and
+one has no home at all:
+
+- **The door is already written.** `desc location Forest lake` names *"a dense canopy leading
+  to what must be the forest's heart"*, and the lake's only other exits are the road it came
+  in by and a combat sub-zone. Phase 7's third trace - the flattened reeds - lies exactly
+  where that canopy comes down to the water. Also written down before somebody builds toward
+  them: the Lake beach and the Waterfall basin are **not** past the lake. They hang off the
+  Riverbank.
+- **Navigation does not exist.** No such skill, and the brief assumes one. What exists is
+  `travel_time_skills` on a connection - eight uses across the whole map, two skills only.
+- **Rare encounters have their mechanism and it is one release old**, and it must not become
+  the framework Q-10 refused.
+- **Tier 5 gathering has a measurable hole.** Black iron is the top tier and every piece of
+  it is declared - ore, ingot, plate, chainmail, two recipes consuming the ore - and
+  **nothing in the game gathers it.** Its only sources are two traders, while gathering tops
+  out at `skill_required: [20, 35]` across 26 activities. Filling that is reclamation, not
+  invention.
+- **Stances are already seven**, and phase 6 already made the choice matter through hooks
+  rather than stat lines.
+- **Environmental discoveries has no home.** The Discoveries panel knows five source kinds
+  and all five are ways an *item* was found. Either it gains a sixth, or this belongs with
+  the lore threads. Q-15 asks the owner what the region opens onto, with the proposal that
+  v0.8 is a place rather than a confrontation.
+
+**Sequenced after P-41 and P-42**, not into P-14's slot. The brief's condition for starting
+v0.8 is met, but the owner has live requests still open, and an arc is a worse reason to
+leave those waiting than they are to wait themselves.
+
+**Two stale cross-references fell out of the removal and were fixed.** P-16 still said "P-14
+phase 6 has two pieces left and phase 7 has not begun", and the Open decisions preamble
+linked into a section that no longer exists. The two files had also drifted at that first
+spot: the Turkish note had been corrected at v0.7.39 and the English one was still carrying
+the sentence the correction was about.
 
 ### v0.7.42 - the meeting, at one in ten thousand
 

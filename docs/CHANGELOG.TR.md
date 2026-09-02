@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 118 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 119 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,72 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### P-14 kapanıyor, v0.8 ise P-43 olarak açılıyor
+
+Sürüm yok: sekiz fazın her biri kendi sürümüyle çoktan yayınlandı ve oyuncu her birini çoktan
+okudu. Bu, döngünün kendi kurallarının istediği kayıt işi — biten bir öneri `PROPOSALS.md`'den
+ayrılır, çünkü iş listesi hâlâ açık olanlardır.
+
+**Ark, uçtan uca.** Faz 0 içinde hikâye olmayan zemindi. Faz 1'den 5'e Marrowmoth'tu: v0.7.0
+*No Word Sent*, v0.7.1 *Forty Tons*, v0.7.2 *A Stroke Through It*, v0.7.3 *Out on the Ebb*,
+v0.7.4 *One Unweighed Crate*. Faz 6 sistem geçişiydi — dört bağımsız parça, v0.7.5'ten
+v0.7.10'a. Faz 7 v0.8'in zemin işiydi: v0.7.37, v0.7.38 ve v0.7.39'da üç iz, v0.7.42'de de
+karşılaşma.
+
+**Harcadığı beş karar, önerileri gittiği için burada tutuluyor.** Numaralar asla yeniden
+kullanılmıyor, dolayısıyla onları anan commit'ler ve girdiler hâlâ çözülüyor:
+
+- **Q-7 — lonca itibarı dördüncü bir reputation bölgesi mi olsun? Evet.** Faz 3 harcadı. Faz
+  3'ün ihtiyaç duyduğu üç bilgi ekseninden ikisi zaten harcanmıştı — kasaba meydanı Town'u,
+  sıra evleri Slums'ı okuyor — yani ikisinden birinin üstüne kurulacak bir üçüncüsü, aynı yolu
+  iki kez yürümek olurdu.
+- **Q-8 — soruşturma notları nerede yaşar? Yeni bir panel değil, bir lore ipliği.** Faz 2
+  harcadı, 3 ve 5 yine kullandı. Brief yeni bir paneli dışlıyordu ve kanıt da aynı şeyi
+  söylüyordu.
+- **Q-9 — ebb zinciri kaç yeni yere ihtiyaç duyuyor? Dört değil iki.** Faz 4 harcadı.
+- **Q-10 — "yılda iki kez" nasıl işliyor? İki sezon, zamanlayıcı yok.** Faz 1 harcadı ve
+  ödemeyi sürdüren karar bu oldu: `data/marrowmoth.js`in bir dünya-olayı çatısı değil, bir
+  sabit taşıyan yaprak modül olmasının sebebi de, v0.8'in nadir karşılaşmalarına "sen de öyle
+  bir şeye dönüşme" denmesinin sebebi de o.
+- **Q-13 — v0.8 dört bacaklı kuşla karşılaşıyor mu? Karşılaşılabilir, yaklaşık on binde bir.**
+  Faz 7, v0.7.42'de harcadı. İnşa anına bıraktığı üç şey şöyle sonuçlandı: iz taşıyan iki yer,
+  seçilerek değil mekân verisinden okunarak; oyun içi dakika başına, çünkü oranların kararın
+  kastettiği şeyi söylediği tek kadans o; ve dövüş değil bir görme — ki arkın kendisi buna faz
+  4'ten beri dövüşsüz kalarak çoktan karar vermişti.
+
+**P-43 v0.8 ve brief'in altı odağının yeniden anlatılmışı değil, ölçülmüşü.** Üçü zaten bir
+biçimde var, birinin tek başına arkı hak eden bir boşluğu var ve birinin hiç evi yok:
+
+- **Kapı çoktan yazılmış.** `desc location Forest lake`, *"ormanın kalbi olsa gerek bir yere
+  açılan yoğun bir örtü"*yü adlandırıyor ve gölün diğer tek çıkışları geldiği yol ile bir dövüş
+  alt-alanı. Faz 7'nin üçüncü izi — yatırılmış sazlar — tam olarak o örtünün suya indiği yerde
+  duruyor. Biri o yöne inşaya başlamadan önce şu da yazıldı: Lake beach ve Waterfall basin
+  gölün ötesinde **değil**. İkisi de Riverbank'ten sarkıyor.
+- **Navigasyon yok.** Öyle bir yetenek yok ve brief birini varsayıyor. Var olan şey, bir
+  bağlantı üzerindeki `travel_time_skills` — bütün haritada sekiz kullanım, yalnızca iki
+  yetenek.
+- **Nadir karşılaşmaların mekanizması var ve bir sürüm yaşında**; Q-10'un reddettiği çatıya
+  dönüşmemeli.
+- **Tier 5 toplamanın ölçülebilir bir boşluğu var.** Black iron en üst kademe ve her parçası
+  bildirilmiş — cevher, külçe, plaka, zırh, cevheri tüketen iki tarif — ve **oyunda onu
+  toplayan hiçbir şey yok.** Tek kaynağı iki tüccar; toplama ise 26 aktivite boyunca
+  `skill_required: [20, 35]`te tepe yapıyor. Bunu doldurmak icat değil, geri kazanım.
+- **Duruşlar zaten yedi** ve faz 6, seçimi stat satırlarıyla değil hook'larla çoktan önemli
+  kıldı.
+- **Çevresel keşiflerin evi yok.** Keşifler paneli beş kaynak türü biliyor ve beşi de bir
+  *eşyanın* nasıl bulunduğunun yolu. Ya altıncısını kazanır, ya da bu iş lore ipliklerine
+  aittir. Q-15 sahibine bölgenin neye açıldığını soruyor; öneri, v0.8'in bir hesaplaşma değil
+  bir yer olması.
+
+**P-41 ve P-42'den sonraya dizildi**, P-14'ün yerine değil. Brief'in v0.8'e başlama koşulu
+sağlanmış durumda, ama sahibinin hâlâ açık talepleri var ve bir ark, onları bekletmek için
+kendisinin beklemesinden daha kötü bir sebep.
+
+**Kaldırma işleminden iki eskimiş çapraz referans düştü ve düzeltildi.** P-16 hâlâ "P-14 faz
+6'nın iki parçası kaldı ve faz 7 hiç başlamadı" diyordu ve Bekleyen kararlar girişi artık var
+olmayan bir bölüme bağlanıyordu. İki dosya o ilk noktada ayrışmış da durumdaydı: Türkçe not
+v0.7.39'da düzeltilmişti, İngilizcesi ise düzeltmenin konusu olan cümleyi hâlâ taşıyordu.
 
 ### v0.7.42 - karşılaşma, on binde bir
 
