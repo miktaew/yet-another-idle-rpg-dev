@@ -24,6 +24,13 @@ const game_state = {
     save_counter: 0,
     gathered_materials: {},
     lore_last: null,
+    /*
+        The guild's board (P-41): {day, offered, accepted}, or null before the first tick
+        rolls one. Here rather than in guild_jobs.js because that module is the rules and
+        this one is the state - and because a board the player has taken a job off has to
+        be saved, which is what game_state.js is for.
+    */
+    guild_board: null,
     is_loading_error: false,
 };
 

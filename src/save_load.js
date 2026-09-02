@@ -45,6 +45,7 @@ import {
         } from "./display.js";
 import { enemy_killcount } from "./enemies.js";
 import { game_state } from "./game_state.js";
+import { restored_board } from "./guild_jobs.js";
 import { current_game_time } from "./game_time.js";
 import { game_version } from "./game_version.js";
 import { book_stats, getArmorSlot, getItem, item_log, item_templates } from "./items.js";
@@ -88,6 +89,7 @@ function create_save() {
         save_data.global_flags = global_flags;
         save_data.titles = Object.keys(titles).filter(id => titles[id].is_earned);
         save_data.lore_last = game_state.lore_last;
+        save_data.guild_board = game_state.guild_board;
         save_data.last_rewarded_export = game_state.last_rewarded_export || 0;
         save_data["character"] = {
                                 name: character.name, titles: character.titles,
@@ -489,6 +491,13 @@ function load(save_data) {
         //Absent in a save from before the lore panel, which is fine: the panel simply
         //has no "where you left off" until the next line is read.
         game_state.lore_last = save_data.lore_last || null;
+        /*
+            Through restored_board rather than straight across: a job names an enemy tag or
+            a material, and both are registry keys that can stop existing between a save
+            being written and being read. A job holding a name nothing answers to can never
+            be finished or handed in, so it would sit on the board for ever.
+        */
+        game_state.guild_board = restored_board(save_data.guild_board);
 
         game_state.last_rewarded_export = save_data.last_rewarded_export || game_state.last_rewarded_export;
 

@@ -258,6 +258,121 @@ function generate_guild_board({standing = 0, random = Math.random} = {}) {
         .filter(Boolean);
 }
 
+/**
+ * Whether a saved job still names something the game has.
+ *
+ * A hunt names an enemy TAG and a gather names a material, and both are registry keys that
+ * can stop existing between the save being written and being loaded - a tag that only one
+ * enemy carries any more stops being a brief, a material can be renamed. A job holding a
+ * name nothing answers to is worse than no job: it cannot be completed and it cannot be
+ * handed in, so it sits on the board for ever.
+ *
+ * @param {Object} job as generate_guild_job returns
+ * @returns {Boolean}
+ */
+function job_target_resolves(job) {
+    if(!job || typeof job.target !== "string") {
+        return false;
+    }
+    if(job.type === "gather") {
+        return Boolean(item_templates[job.target]);
+    }
+    if(job.type === "hunt") {
+        return Object.values(enemy_templates)
+            .some(enemy => Boolean(enemy.tags?.[job.target]));
+    }
+    return false;
+}
+
+/**
+ * The board for a given in-game day, rolled once and then left alone.
+ *
+ * **The accepted job survives the refresh**, which is the half of Q-14 that is a rule rather
+ * than a number: *"it can refresh per game day, but a job that has been taken must not
+ * disappear."* So the day turning replaces the offer and never the commitment.
+ *
+ * Rolled per day rather than per visit, also Q-14. Per visit would make the board something
+ * to walk in and out of until it offers what you wanted, which is a different thing from a
+ * board - and it is the same reason nothing here reseeds from the day number: the day's offer
+ * is *kept*, in the save, so a reload shows what was there rather than rolling again.
+ *
+ * @param {Object} params
+ * @param {Object} [params.board] the board as it stands, or nothing on a new game
+ * @param {Number} params.day current_game_time.day_count
+ * @param {Number} [params.standing] Guild reputation
+ * @param {function(): Number} [params.random] returns [0,1). Typed precisely rather than
+ *     as `Function`, which is assignable from anything callable and so is not assignable
+ *     TO the narrower type generate_guild_board infers from its own `Math.random` default.
+ * @returns {Object} the board, the same object when the day has not turned
+ */
+function refreshed_board({board, day, standing = 0, random = Math.random}) {
+    if(board && board.day === day) {
+        return board;
+    }
+    return {
+        day,
+        offered: generate_guild_board({standing, random}),
+        accepted: board?.accepted ?? null,
+    };
+}
+
+/**
+ * Taking one job off the board.
+ *
+ * **One at a time.** Q-14 settled four things and not this one, so it is the narrow reading:
+ * the owner asked to be able to *take different jobs*, which is a choice among what is
+ * offered rather than a licence to hold three at once. It keeps the save shape a single
+ * object and the standing per hand-in predictable, and widening it later is this function
+ * and a list rather than a redesign.
+ *
+ * Returns a new board and never mutates the one passed in, so a refusal is simply the same
+ * board back and the caller needs no error path.
+ *
+ * @param {Object} params
+ * @param {Object} params.board
+ * @param {Number} params.index which of the offered jobs
+ * @returns {Object} the board, unchanged if the job cannot be taken
+ */
+function accept_from_board({board, index}) {
+    if(!board || board.accepted) {
+        return board;
+    }
+    const job = (board.offered || [])[index];
+    if(!job) {
+        return board;
+    }
+    return {
+        ...board,
+        accepted: job,
+        //Taken off the board, because it has been taken off the board.
+        offered: board.offered.filter((_, at) => at !== index),
+    };
+}
+
+/**
+ * A board read back from a save, with anything that no longer names something dropped.
+ *
+ * Deliberately forgiving about everything except the targets. A save from a version whose
+ * board held a shape this one does not understand should leave the player with an empty
+ * board and a working game, not a load that throws - `day: null` makes the next tick roll a
+ * fresh offer, which is the correct recovery from every kind of nonsense here.
+ *
+ * @param {*} saved whatever was in the save file
+ * @returns {Object} a board this version can use
+ */
+function restored_board(saved) {
+    const offered = Array.isArray(saved?.offered)
+        ? saved.offered.filter(job_target_resolves)
+        : [];
+    const accepted = job_target_resolves(saved?.accepted) ? saved.accepted : null;
+    return {
+        //A day that is not a number rolls a new offer on the next tick.
+        day: typeof saved?.day === "number" ? saved.day : null,
+        offered,
+        accepted,
+    };
+}
+
 export {
     job_difficulties,
     too_broad_to_be_a_brief,
@@ -269,4 +384,8 @@ export {
     gather_targets_for,
     generate_guild_job,
     generate_guild_board,
+    job_target_resolves,
+    refreshed_board,
+    accept_from_board,
+    restored_board,
 };

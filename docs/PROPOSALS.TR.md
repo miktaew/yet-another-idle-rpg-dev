@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 141 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 142 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -282,7 +282,7 @@ mevcut hikâye artık P-43. Büyü onun yanına değil **sonrasına** geliyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
-### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
+### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `active`
 
 Sahibinin isteği: *"loncadan random A'dan S'ye kadar görevler ekleyelim. farklı görevleri
 alabilelim ve bunlar lonca görevleri adıyla farklı bir yerde dursun. x kadar canavar avla, y
@@ -339,8 +339,47 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
   `beast` on bir düşman kademesinin hepsine yayılıyor ve "her hammadde", getirilecek şey olarak
   Black iron chainmail sunuyordu.
 
-**Sırada, bu sırayla:** panonun kendisi — gün başına yenilenme ve alınmış işin kalıcılığıyla
-(kayıt biçimi isteğe bağlı olmayan kısım) — sonra biten işin teslimi, sonra dükkân.
+- **Pano.** `done`, **v0.7.43** olarak ve oyunda bir içerik parçasını çalışma zamanında inşa
+  eden ilk şey. `game_state.guild_board`, `{day, offered, accepted}` tutuyor; `guild_jobs.js`
+  ise içine ne girebileceğine karar veriyor — kuralların hiç test edilebilir olmasının sebebi
+  de bu ayrım, çünkü `refreshed_board`, `accept_from_board` ve `restored_board` o nesne
+  üzerinde saf fonksiyonlar.
+
+  **Q-14'ün sayı değil kural olan iki cevabı da uygulanıyor.** Oyun günü başına: bu yüzden
+  `refreshed_board`, gün dönene kadar *aynı nesneyi* geri veriyor — her tick'te sorulmasının,
+  gün sınırına kancalanmamasının ve panosunda gün bilgisi olmayan bir kaydın hiçbir yerde özel
+  bir duruma ihtiyaç duymadan sonraki tick'te pano açmasının sebebi de bu. Ve alınmış iş, o
+  yenilenmenin üzerinden elle taşınarak hayatta kalıyor.
+
+  **Aynı anda tek iş** — Q-14 bunu karara bağlamadı, dar okuma alındı: *farklı* işler almak,
+  sunulanlar arasından seçim yapmaktır; üç işi bir arada tutma izni değil. Genişletmek
+  `accept_from_board` ve bir liste meselesi.
+
+  **Kayıt şeklinin ilginç yarısı hedefler.** Bir av işi düşman etiketi, bir toplama işi malzeme
+  adlandırıyor — ikisi de kayıt yazılırken var olup okunurken var olmamış olabilecek kayıt
+  anahtarları — ve hiçbir şeyin cevap vermediği bir ad taşıyan iş asla tamamlanamaz ya da
+  teslim edilemez. Tek iş yuvası varken alınmış bir işin sıkışması, o kayıt için özelliğin
+  bitmesidir. Bu yüzden `restored_board`, hedefi artık çözülmeyen her işi düşürüyor ve geri
+  kalan her şey için bağışlayıcı: tanınmayan bir pano, `day: null` ile boş bir panoya
+  dönüşüyor. Sahibinin, içinde pano anahtarı olmayan v0.7.26 export'u temiz yükleniyor.
+
+  İnşa edilmek yerine kullanılan üç şey: bir `*_display.js` modülü (P-42'nin ölçtüğü desen),
+  mevcut `changeTab` sekme mekanizması ve panoyu açan şey olarak kâtibin kendi `is_heard`i —
+  kendine ait bir bayrak, hâlihazırda var olan ve hâlihazırda kaydedilen bir duruma katılan
+  ikinci bir durum olurdu.
+
+**Sırada, bu sırayla:** bitmiş bir işin teslim edilmesi, sonra dükkân.
+
+**Teslim, bir işi bitirmenin neye mal olduğunu belirleyen parça** ve yazılmadan önce ölçülecek
+bir şeyi var: bir av işi, iş alındığından beri bir *etiketin* öldürülme sayısını saymak
+zorunda ve etiket başına öldürme sayacı yok — yalnızca bestiary'nin çoktan gösterdiği düşman
+başına sayılar var. O sayıları etiketi taşıyan düşmanlar üzerinden toplamak ve iş alınırken
+anlık görüntü almak, var olan durumu kullanmak olur; başka her şey yeni bir sayaç. Toplama işi
+ise mal teslim ediyor, ki bataklık teslimatları bunu çoktan yapıyor.
+
+O zamana kadar panel bunu, oyuncunun iş aldığı yerde söylüyor: almak çalışıyor ve kalıcı,
+kâtip bitmiş işi henüz teslim alamıyor. İşi yapıp koyacak yer bulamayan bir oyuncunun bunu
+bozuk sanmakta hakkı olurdu.
 
 ### P-42 — Büyük dosyalar ve TypeScript yerine ne kullanılacağı `active`
 

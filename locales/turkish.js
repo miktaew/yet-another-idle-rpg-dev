@@ -2948,6 +2948,23 @@ const descriptions = {
 
     //LOG MESSAGES. %HeroName% is substituted by the log itself and must survive untouched.
     "log the animal seen": "Orada olduğunu anlamadan önce orada. Suyun kıyısında, dizine kadar içinde, başı önde &mdash; sonra önde değil, çünkü durduğunu duydu. Dört bacak. Tüyler, yanı boyunca ıslaklıktan siyaha, sırtında kuruyup daha açık bir şeye çalıyor; ve o boyda bir gövdede hiç işi olmayan bir kuş kafası. Sana sığırların baktığı gibi bakıyor: yani senin bir hiç olduğuna çoktan karar vermiş. Sonra acele etmeden sudan çıkıyor ve girdiği yerin örtüsü arkasından kapanıyor. Uzun bir süre öyle kalıyorsun. Buna kimse inanmayacak; anlatmayı da pek istemediğini fark ediyorsun.",
+    //THE GUILD'S BOARD (P-41). The clerk's own line already described it.
+    "ui tab guild board": "Lonca işleri",
+    "ui guild board unknown": "Lonca, kasabadaki Serüvenciler Loncası'nın kapısının yanında bir iş panosu tutuyor. Henüz kimse size onu göstermedi.",
+    "ui guild board standing": "Kâtip sizi {v1} kademesinde kayıtlı tutuyor. Pano o kademeyi ve bir altını, bir üstünü gösteriyor — kendi kademenizin üstündeki işler rütbenizi daha hızlı yükseltir ve sağ kalmanız daha zordur.",
+    "ui guild board offered": "Panoda",
+    "ui guild board taken": "Aldığınız iş",
+    "ui guild board empty": "Bugün kademenize verilebilecek bir şey yok. Yarın tekrar uğrayın.",
+    "ui guild board one at a time": "Aynı anda tek iş. Yenisini almadan önce bunu teslim edin.",
+    "ui guild board no hand in yet": "Kâtip bitmiş işi henüz teslim almıyor. Aldığınız iş kayda geçti ve öyle kalacak.",
+    "ui guild board take": "Al",
+    "ui guild job hunt": "{v1} {v2} öldür",
+    "ui guild job gather": "{v1} {v2} getir",
+    "ui guild job pays": "{v1} itibar öder",
+    "ui guild job difficulty plain": "sıradan iş",
+    "ui guild job difficulty long": "uzun iş",
+    "ui guild job difficulty brutal": "acımasız iş",
+    "log guild job taken": "İlanı panodan indiriyorsunuz. Kâtip, başını kaldırmadan adınızın yanına bir şey yazıyor.",
     "log entering v1": "[ {v1} bölgesine giriliyor ]",
     "log you need to equip a": "Bunu yapmak için uygun bir alet kuşanmalısın!",
     "log heroname finished v1": "%HeroName% {v1} işini bitirdi",

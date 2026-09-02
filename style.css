@@ -2556,7 +2556,7 @@ i {
 				height: 255px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #guild_board_box_div{
 				width: 100%;
 				overflow-y: scroll;
 			}
@@ -2577,13 +2577,62 @@ i {
 				100% of whatever the content div was left with, rather than a number
 				that has to be kept in step with the height of a tab bar that wraps.
 			*/
-			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div, #guild_board_box_div{
 				height: 100%;
 				min-height: 0;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #discoveries_box_div, #lore_box_div, #titles_box_div, #guild_board_box_div{
 				display: none;
+			}
+
+			/*
+				The board (P-41). The BOX scrolls, like the bestiary and the book list, so
+				this needs no control row held above a scrolling list - every line of it,
+				headings included, moves together.
+			*/
+			.guild_board_note {
+				padding: 4px 6px;
+				opacity: 0.75;
+			}
+
+			.guild_board_heading {
+				padding: 6px 6px 2px 6px;
+				font-weight: bold;
+			}
+
+			.guild_job {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				padding: 4px 6px;
+				border-top: 1px solid var(--border_color, #555);
+			}
+
+			.guild_job_rank {
+				flex: 0 0 2.5em;
+				text-align: center;
+				font-weight: bold;
+			}
+
+			.guild_job_body {
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+
+			.guild_job_terms {
+				opacity: 0.75;
+			}
+
+			.guild_job_take {
+				flex: 0 0 auto;
+				padding: 2px 8px;
+				border: 1px solid var(--border_color, #555);
+				cursor: pointer;
+			}
+
+			.guild_job_take:hover {
+				filter: brightness(1.25);
 			}
 
 			/*

@@ -344,6 +344,13 @@ async function check_no_unused_locale_rows() {
             and an assembled id is invisible to the scan above.
         */
         "ui time ",
+        /*
+            `ui guild job ${type}` for the two job types and
+            `ui guild job difficulty ${difficulty}` for the three sizes (P-41). Both are
+            built off keys the generator produces, so adding a job type or a difficulty
+            adds rows nothing in src/ names literally.
+        */
+        "ui guild job ",
     ];
 
     /*

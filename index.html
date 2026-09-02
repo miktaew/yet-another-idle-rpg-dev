@@ -739,6 +739,7 @@
                         <div id = "journal_show_quests" class = "journal_control_button active_selection_button" onclick = "showQuests()" data-translation="ui tab quests"></div>
                         <div id = "journal_show_bestiary" class = "journal_control_button" onclick = "showBestiary()" data-translation="ui tab bestiary"></div>
                         <div id = "journal_show_books" class = "journal_control_button" onclick = "showReadBooks()" data-translation="ui tab anthology"></div>
+                        <div id = "journal_show_guild_board" class = "journal_control_button" onclick = "showGuildBoard()" data-translation="ui tab guild board"></div>
                         <div id = "journal_show_discoveries" class = "journal_control_button" onclick = "showDiscoveries()" data-translation="ui tab discoveries"></div>
                         <div id = "journal_show_lore" class = "journal_control_button" onclick = "showLore()" data-translation="ui tab lore"></div>
                         <div id = "journal_show_titles" class = "journal_control_button" onclick = "showTitles()" data-translation="ui titles tab"></div>
@@ -758,6 +759,11 @@
                         </div>
                         <div id = "bestiary_box_div">
                             <div id = "bestiary_list">
+
+                            </div>
+                        </div>
+                        <div id = "guild_board_box_div">
+                            <div id = "guild_board_list">
 
                             </div>
                         </div>
@@ -1287,6 +1293,13 @@
             }
             function showBestiary() {
                 changeTab(document.getElementById("bestiary_box_div"));
+            }
+            function showGuildBoard() {
+                //Rebuilt on open, like lore and Discoveries: the day may have turned while
+                //the tab was shut, and a board showing yesterday's work is the one thing
+                //this panel must never do.
+                changeTab(document.getElementById("guild_board_box_div"));
+                update_displayed_guild_board();
             }
             function showLore() {
                 //Rebuilt on open: every conversation adds to it, and it is only on

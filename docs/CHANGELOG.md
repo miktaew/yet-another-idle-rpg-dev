@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 120 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 121 -->
 
 # Changelog
 
@@ -20,6 +20,66 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.43 - the guild's board, and the save shape under it
+
+P-41's third piece. The ranks shipped at v0.7.41 and the generator shipped unversioned
+because nothing drew it; this is what draws it, and the first thing in the game that builds
+a piece of content at runtime.
+
+**The board is state and rules, kept apart.** `game_state.guild_board` holds
+`{day, offered, accepted}` and `guild_jobs.js` decides what may go in it. That split is why
+the rules are testable at all: `refreshed_board`, `accept_from_board` and `restored_board` are
+pure functions over that object, and the two new checks drive them without a browser.
+
+**Q-14's two answers that are rules rather than numbers, both enforced.** *Per game day*, so
+`refreshed_board` hands back the **same object** when the day has not turned - which is also
+why it is asked on every tick rather than hooked onto the day boundary: the identity
+comparison is the whole cost, and a save whose board has no day in it rolls one on the next
+tick with no special case anywhere. And *a job that has been taken must not disappear*, so
+the accepted job is carried across the refresh by hand.
+
+**One job at a time**, which Q-14 did not settle, so it is the narrow reading: the owner asked
+to be able to take *different* jobs, which is a choice among what is offered rather than a
+licence to hold three. It keeps the save a single object and the pay per hand-in predictable,
+and widening it is `accept_from_board` and a list rather than a redesign.
+
+**The save shape is the part that was not optional, and the interesting half is the targets.**
+A hunt names an enemy **tag** and a gather names a material, and both are registry keys that
+can stop existing between a save being written and read. A job holding a name nothing answers
+to cannot be completed, so it cannot be handed in, so it sits there for the rest of that
+playthrough - and with one job slot, an accepted one being stuck means the feature is over for
+that save. So `restored_board` drops any job whose target no longer resolves, and is
+deliberately forgiving about everything else: a board shape this version does not understand
+becomes an empty board with `day: null`, which the next tick fills. The owner's v0.7.26 export,
+which has no board key at all, loads clean.
+
+**Three things reused rather than rebuilt.** The panel is a `*_display.js` module, the pattern
+P-42 measured and the five existing splits followed. The journal tab is the existing
+`changeTab` mechanism and the box joins the three CSS groups that already style its siblings.
+And what opens the board is the clerk's own textline being heard - `is_heard` is already saved
+and already loaded, so a flag of its own would have been a second piece of state agreeing with
+one that exists. The clerk's line had described the board since v0.7.x: *"An escort nobody
+sane takes. A cellar full of something. Two notices for the same missing dog, posted by two
+people who each think it is theirs."*
+
+**The checks asked for four things and each was a real omission.** No height and no display
+rule for the new panel, which `check_journal_panels_are_styled` refused - it would have grown
+past the journal box and sat on top of whichever tab was open. Two families of runtime-built
+locale ids (`ui guild job ${type}`, `ui guild job difficulty ${difficulty}`) that
+`check_no_unused_locale_rows` reported as dead rows. And a `@param {Function}` that the
+whole-project type probe rejected: `Function` is assignable *from* anything callable and so is
+not assignable *to* the narrower `() => number` that `generate_guild_board` infers from its own
+default.
+
+**Negative-tested with seven reintroduced bugs**, each caught by its own message: the accepted
+job dropped on the day turning, the board rerolling every tick, a second job held, a taken job
+left on the board, a restored offer keeping a job that names nothing, a restored *accepted*
+job keeping one, and a restored board forgetting its day.
+
+**Where it stops, said in the panel and not only here.** Taking works and persists; the clerk
+cannot take finished work in yet. A player who did the work and found nowhere to put it would
+be right to think it was broken, so the note sits under the job they took.
 
 ### the seven files that were nearly clean, and the dead guard behind one of them
 

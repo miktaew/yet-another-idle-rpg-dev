@@ -1,0 +1,177 @@
+"use strict";
+// @ts-check
+
+/**
+ * The guild's board: the work on offer, and the one job taken off it.
+ *
+ * A `*_display.js` module rather than more of display.js, which is the pattern P-42 measured
+ * and the one the five existing splits already followed. It takes nothing back out, so the
+ * import is one-way and there is no cycle here.
+ *
+ * The board itself is state and rules, not drawing: `game_state.guild_board` holds it and
+ * `guild_jobs.js` decides what goes on it. This file only renders what those two agree on.
+ */
+
+import { language } from "./main.js";
+import { game_state } from "./game_state.js";
+import { character } from "./character.js";
+import { dialogues } from "./data/dialogues.js";
+import { item_templates } from "./items.js";
+import { translationManager } from "./translation.js";
+import { clear_HTML_content, insert_HTML } from "./ui_helpers.js";
+import { get_guild_rank } from "./reputation.js";
+import { enemy_tag_label } from "./journal_panels.js";
+import { standing_paid_for } from "./guild_jobs.js";
+
+/**
+ * Whether the player knows there is a board.
+ *
+ * The clerk's own line describes it - *"An escort nobody sane takes. A cellar full of
+ * something. Two notices for the same missing dog"* - so the board was in canon before it
+ * was in the game, and being told about it is what opens it. That textline's `is_heard` is
+ * already saved and already loaded, so this needs no flag of its own: a piece of state that
+ * exists is better than a second piece of state that agrees with it.
+ */
+function board_is_known() {
+    return Boolean(dialogues["guild clerk"]?.textlines?.["board"]?.is_heard);
+}
+
+/** One job as a sentence: what to do, how hard, and what it pays. */
+function job_line(job, standing) {
+    const target = job.type === "gather"
+        ? (item_templates[job.target]?.getName() ?? job.target)
+        : enemy_tag_label(job.target);
+
+    const what = translationManager.getText(language, `ui guild job ${job.type}`,
+        {v1: String(job.count), v2: target});
+    const difficulty = translationManager.getText(language,
+        `ui guild job difficulty ${job.difficulty}`);
+    const pays = translationManager.getText(language, "ui guild job pays",
+        {v1: String(standing_paid_for(job, standing))});
+
+    return {what, difficulty, pays};
+}
+
+/** One row on the board, with its Take button when it can still be taken. */
+function create_guild_job_row(job, index, {standing, can_take}) {
+    const row = document.createElement("div");
+    row.classList.add("guild_job");
+
+    const rank = document.createElement("div");
+    rank.classList.add("guild_job_rank");
+    insert_HTML(rank, job.rank);
+    row.appendChild(rank);
+
+    const body = document.createElement("div");
+    body.classList.add("guild_job_body");
+
+    const {what, difficulty, pays} = job_line(job, standing);
+
+    const brief = document.createElement("div");
+    brief.classList.add("guild_job_brief");
+    insert_HTML(brief, what);
+    body.appendChild(brief);
+
+    const terms = document.createElement("div");
+    terms.classList.add("guild_job_terms");
+    insert_HTML(terms, `${difficulty} &middot; ${pays}`);
+    body.appendChild(terms);
+
+    row.appendChild(body);
+
+    /*
+        No button at all once a job is held, rather than a disabled one. One at a time is a
+        rule and not a failure, and a row of dead buttons reads as the game being broken.
+        The reason is said once, above the list, where a reason belongs.
+    */
+    if(can_take) {
+        const take = document.createElement("div");
+        take.classList.add("guild_job_take");
+        take.setAttribute("onclick", `accept_guild_job(${index})`);
+        insert_HTML(take, translationManager.getText(language, "ui guild board take"));
+        row.appendChild(take);
+    }
+
+    return row;
+}
+
+/**
+ * Redraws the board.
+ *
+ * Called when the day turns and when a job is taken, and safe to call when the tab is not
+ * open: it writes into a div that is simply not on screen. Rebuilt rather than patched, the
+ * way the lore and Discoveries panels are - the whole thing is three rows.
+ */
+function update_displayed_guild_board() {
+    const list = document.getElementById("guild_board_list");
+    if(!list) {
+        return;
+    }
+    clear_HTML_content(list);
+
+    if(!board_is_known()) {
+        const unknown = document.createElement("div");
+        unknown.classList.add("guild_board_note");
+        insert_HTML(unknown, translationManager.getText(language, "ui guild board unknown"));
+        list.appendChild(unknown);
+        return;
+    }
+
+    const board = game_state.guild_board;
+    const standing = character.reputation["Guild"] ?? 0;
+    const {rank} = get_guild_rank(standing);
+
+    const standing_line = document.createElement("div");
+    standing_line.classList.add("guild_board_note");
+    insert_HTML(standing_line, translationManager.getText(language, "ui guild board standing",
+        {v1: rank}));
+    list.appendChild(standing_line);
+
+    if(board?.accepted) {
+        const heading = document.createElement("div");
+        heading.classList.add("guild_board_heading");
+        insert_HTML(heading, translationManager.getText(language, "ui guild board taken"));
+        list.appendChild(heading);
+        list.appendChild(create_guild_job_row(board.accepted, -1,
+            {standing, can_take: false}));
+
+        const only_one = document.createElement("div");
+        only_one.classList.add("guild_board_note");
+        insert_HTML(only_one,
+            translationManager.getText(language, "ui guild board one at a time"));
+        list.appendChild(only_one);
+
+        /*
+            And where the feature stops, said in the panel rather than left in a changelog.
+            The job is taken, it is saved, and it survives the day - but the clerk cannot
+            take finished work in yet, so a player who does the work and finds nowhere to
+            put it would be right to think it was broken.
+        */
+        const not_yet = document.createElement("div");
+        not_yet.classList.add("guild_board_note");
+        insert_HTML(not_yet,
+            translationManager.getText(language, "ui guild board no hand in yet"));
+        list.appendChild(not_yet);
+    }
+
+    const heading = document.createElement("div");
+    heading.classList.add("guild_board_heading");
+    insert_HTML(heading, translationManager.getText(language, "ui guild board offered"));
+    list.appendChild(heading);
+
+    const offered = board?.offered ?? [];
+    if(offered.length === 0) {
+        const empty = document.createElement("div");
+        empty.classList.add("guild_board_note");
+        insert_HTML(empty, translationManager.getText(language, "ui guild board empty"));
+        list.appendChild(empty);
+        return;
+    }
+
+    offered.forEach((job, index) => {
+        list.appendChild(create_guild_job_row(job, index,
+            {standing, can_take: !board?.accepted}));
+    });
+}
+
+export { update_displayed_guild_board, board_is_known };

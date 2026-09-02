@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 120 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 121 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,67 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.43 - loncanın iş panosu ve altındaki kayıt şekli
+
+P-41'in üçüncü parçası. Kademeler v0.7.41'de yayınlandı, üretici ise onu çizen bir şey
+olmadığı için sürümsüz yayınlanmıştı; bu, onu çizen parça — ve oyunda bir içerik parçasını
+çalışma zamanında inşa eden ilk şey.
+
+**Pano durum ve kurallar; ikisi ayrı tutuluyor.** `game_state.guild_board`,
+`{day, offered, accepted}` tutuyor; `guild_jobs.js` ise içine ne girebileceğine karar veriyor.
+Kuralların hiç test edilebilir olmasının sebebi de bu ayrım: `refreshed_board`,
+`accept_from_board` ve `restored_board`, o nesne üzerinde saf fonksiyonlar ve iki yeni kontrol
+onları tarayıcısız sürüyor.
+
+**Q-14'ün sayı değil kural olan iki cevabı, ikisi de uygulanıyor.** *Oyun günü başına*: bu
+yüzden `refreshed_board`, gün dönmediğinde **aynı nesneyi** geri veriyor — ki her tick'te
+sorulmasının, gün sınırına kancalanmamasının sebebi de bu: kimlik karşılaştırması işin bütün
+maliyeti ve içinde gün bilgisi olmayan bir kayıt, hiçbir yerde özel bir duruma ihtiyaç
+duymadan sonraki tick'te bir pano açıyor. Ve *alınmış bir iş kaybolmamalı*: bu yüzden alınan
+iş, yenilenmenin üzerinden elle taşınıyor.
+
+**Aynı anda tek iş** — Q-14 bunu karara bağlamadı, dolayısıyla dar okuma geçerli: sahibi
+*farklı* işler alabilmeyi istedi, ki bu, sunulanlar arasından seçim yapmak demek; üç işi bir
+arada tutma izni değil. Kaydı tek bir nesne, teslim başına ödemeyi de öngörülebilir tutuyor;
+genişletmek ise yeniden tasarım değil, `accept_from_board` ve bir liste meselesi.
+
+**Kayıt şekli, opsiyonel olmayan kısımdı ve ilginç yarısı hedefler.** Bir av işi bir düşman
+**etiketi**, bir toplama işi bir malzeme adlandırıyor; ikisi de kayıt yazılırken var olup
+okunurken var olmamış olabilecek kayıt anahtarları. Hiçbir şeyin cevap vermediği bir ad taşıyan
+iş tamamlanamaz, dolayısıyla teslim edilemez, dolayısıyla o oyunun sonuna kadar orada durur —
+ve tek iş yuvası varken alınmış bir işin sıkışması, o kayıt için özelliğin bitmesi demektir. Bu
+yüzden `restored_board`, hedefi artık çözülmeyen her işi düşürüyor ve geri kalan her şey için
+bilerek bağışlayıcı: bu sürümün anlamadığı bir pano şekli, `day: null` ile boş bir panoya
+dönüşüyor ve sonraki tick onu dolduruyor. Sahibinin, içinde hiç pano anahtarı olmayan v0.7.26
+export'u temiz yükleniyor.
+
+**Yeniden inşa edilmek yerine kullanılan üç şey.** Panel bir `*_display.js` modülü — P-42'nin
+ölçtüğü ve mevcut beş bölmenin izlediği desen. Günlük sekmesi mevcut `changeTab` mekanizması ve
+kutu, kardeşlerini çoktan biçimlendiren üç CSS grubuna katılıyor. Panoyu açan şey ise kâtibin
+kendi satırının duyulmuş olması: `is_heard` zaten kaydediliyor ve zaten yükleniyor, dolayısıyla
+kendine ait bir bayrak, var olan bir duruma katılan ikinci bir durum olurdu. Kâtibin satırı
+panoyu v0.7.x'ten beri anlatıyordu: *"Aklı başında kimsenin almadığı bir refakat işi. İçi bir
+şeyle dolu bir mahzen. Aynı kayıp köpek için iki ilan; ikisini de köpeği kendisinin sandığı iki
+kişi asmış."*
+
+**Kontroller dört şey istedi ve her biri gerçek bir eksikti.** Yeni panel için yükseklik ve
+display kuralı yoktu; `check_journal_panels_are_styled` bunu reddetti — panel günlük kutusunu
+aşıp hangi sekme açıksa onun üstüne oturacaktı. Çalışma zamanında kurulan iki yerelleştirme
+kimliği ailesi (`ui guild job ${type}`, `ui guild job difficulty ${difficulty}`), ki
+`check_no_unused_locale_rows` onları ölü satır olarak bildirdi. Ve proje çapındaki tür
+sondasının reddettiği bir `@param {Function}`: `Function`, çağrılabilir her şeyden atanabilir
+olduğu *için*, `generate_guild_board`ın kendi varsayılanından çıkarsadığı daha dar
+`() => number` türüne atanamaz.
+
+**Yedi hata geri konularak negatif test edildi**, her biri kendi mesajıyla yakalandı: gün
+dönünce düşürülen alınmış iş, her tick'te yeniden atılan pano, bir arada tutulan ikinci iş,
+alındığı hâlde panoda kalan iş, hiçbir şeyi adlandırmayan bir işi koruyan geri yüklenmiş sunum,
+aynısını yapan geri yüklenmiş *alınmış* iş ve kendi gününü unutan geri yüklenmiş pano.
+
+**Nerede bittiği, yalnızca burada değil panelde de söylüyor.** Almak çalışıyor ve kalıcı;
+kâtip bitmiş işi henüz teslim alamıyor. İşi yapıp koyacak yer bulamayan bir oyuncunun bunu
+bozuk sanmakta hakkı olurdu, o yüzden not, aldığı işin altında duruyor.
 
 ### neredeyse temiz olan yedi dosya ve birinin arkasındaki ölü muhafız
 

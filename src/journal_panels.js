@@ -770,6 +770,7 @@ function update_displayed_titles() {
 }
 
 export {
+    enemy_tag_label,
     update_displayed_titles,
     booklist_entry_divs,
     clear_bestiary,

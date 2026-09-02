@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 141 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 142 -->
 
 # Proposals
 
@@ -275,7 +275,7 @@ rather than beside it.
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
 
-### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
+### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `active`
 
 The owner's request: *"let us add random quests from the guild, A through S. We should be able
 to take different ones, and they should sit somewhere separate called guild quests. Different
@@ -333,9 +333,47 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
   span all eleven enemy ranks, and "every material" offered Black iron chainmail as something
   to fetch.
 
-**Next, in order:** the board itself with its per-day refresh and its accepted-job persistence
-(the save shape is the part that is not optional), then handing a finished job in, then the
-shop.
+- **The board.** `done`, as **v0.7.43**, and it is the first thing in the game that builds a
+  piece of content at runtime. `game_state.guild_board` holds `{day, offered, accepted}` and
+  `guild_jobs.js` decides what may go in it - that split is why the rules are testable at all,
+  since `refreshed_board`, `accept_from_board` and `restored_board` are pure functions over
+  that object.
+
+  **Q-14's two answers that are rules rather than numbers are both enforced.** Per game day,
+  so `refreshed_board` hands back the *same object* until the day turns - which is why it is
+  asked every tick rather than hooked onto the day boundary, and why a save with no day in its
+  board rolls one on the next tick with no special case anywhere. And an accepted job survives
+  that refresh, carried across by hand.
+
+  **One job at a time**, which Q-14 did not settle, taken as the narrow reading: taking
+  *different* jobs is a choice among what is offered, not a licence to hold three. Widening it
+  is `accept_from_board` and a list.
+
+  **The save shape's interesting half is the targets.** A hunt names an enemy tag and a gather
+  names a material - both registry keys that can stop existing between a save being written
+  and read - and a job holding a name nothing answers to can never be completed or handed in.
+  With one job slot, an accepted one being stuck ends the feature for that save. So
+  `restored_board` drops any job whose target no longer resolves and is forgiving about
+  everything else: an unrecognised board becomes an empty one with `day: null`. The owner's
+  v0.7.26 export, which has no board key, loads clean.
+
+  Three things reused rather than built: a `*_display.js` module (P-42's measured pattern),
+  the existing `changeTab` tab machinery, and the clerk's own `is_heard` as what opens the
+  board - a flag of its own would have been a second piece of state agreeing with one that
+  already exists and is already saved.
+
+**Next, in order:** handing a finished job in, then the shop.
+
+**Handing in is the piece that decides what a job costs to finish**, and it has one thing to
+measure before it is written: a hunt has to count kills of a *tag* since the job was accepted,
+and there is no per-tag kill counter - only per-enemy counts, which the bestiary already
+shows. Summing those over the enemies carrying the tag and snapshotting at acceptance would
+reuse state that exists; anything else is a new counter. A gather job hands goods over, which
+the swamp deliveries already do.
+
+Until then the panel says so where the player takes a job: taking works and persists, and the
+clerk cannot take finished work in yet. A player who did the work and found nowhere to put it
+would be right to think it was broken.
 
 ### P-42 — The big files, and what to use instead of TypeScript `active`
 

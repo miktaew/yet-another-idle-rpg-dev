@@ -151,6 +151,8 @@ import { is_title_earned, titles } from "./data/titles.js";
 //new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
 import { place_tooltip_vertically } from "./ui_helpers.js";
 import { rolls_a_sighting } from "./data/marrowmoth.js";
+import { accept_from_board, refreshed_board } from "./guild_jobs.js";
+import { update_displayed_guild_board } from "./guild_display.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
 const backup_key = "backup save";
@@ -3695,6 +3697,23 @@ function update() {
             }
         }
 
+        /*
+            The guild's board (P-41, Q-14: per game day). Asked every tick rather than
+            hooked onto the day boundary two blocks up, because refreshed_board hands back
+            the SAME object when the day has not turned - so the comparison below is the
+            whole cost, and a board loaded from a save with no day in it rolls one on the
+            next tick without needing a special case anywhere.
+        */
+        const board = refreshed_board({
+            board: game_state.guild_board,
+            day: current_game_time.day_count,
+            standing: character.reputation["Guild"] ?? 0,
+        });
+        if(board !== game_state.guild_board) {
+            game_state.guild_board = board;
+            update_displayed_guild_board();
+        }
+
         //update effect durations and displays;
         were_stats_updated = were_stats_updated || update_effect_durations({time_in_minutes: 1});
         update_displayed_effect_durations();
@@ -4128,6 +4147,24 @@ window.equip_item = character_equip_item;
 window.unequip_item = character_unequip_item;
 
 window.change_location = change_location;
+/**
+ * Taking a job off the guild's board.
+ *
+ * @param {Number} index which of the offered jobs
+ */
+function accept_guild_job(index) {
+    const board = accept_from_board({board: game_state.guild_board, index});
+    if(board === game_state.guild_board) {
+        //Nothing to say: either a job is already held, which the panel states, or the
+        //index named nothing, which the player cannot do from the buttons that exist.
+        return;
+    }
+    game_state.guild_board = board;
+    log_message(translationManager.getText(language, "log guild job taken"), "notification");
+    update_displayed_guild_board();
+}
+
+window.accept_guild_job = accept_guild_job;
 window.reload_normal_location = reload_normal_location;
 window.handleLocationIconClick = handle_location_icon_click;
 window.remove_location_from_favourites = remove_location_from_favourites;
@@ -4181,6 +4218,7 @@ window.do_enemy_combat_action = do_enemy_combat_action;
 
 window.sort_displayed_inventory = sort_displayed_inventory;
 window.update_displayed_discoveries = update_displayed_discoveries;
+window.update_displayed_guild_board = update_displayed_guild_board;
 //The crafting page's "only what I can make" box calls it (P-39).
 window.update_displayed_crafting_recipes = update_displayed_crafting_recipes;
 window.update_displayed_lore = update_displayed_lore;

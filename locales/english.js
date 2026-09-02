@@ -2902,6 +2902,23 @@ const descriptions = {
     //LOG MESSAGES. %HeroName% is substituted by the log itself and must survive
     //untouched; {v1}, {v2} are names and numbers filled in at the call site.
     "log the animal seen": "It is there before you understand that it is. Out at the edge of the water, in to the knee, head down &mdash; and then not down, because it has heard you stop. Four legs. Feathers, wet to black along the flank and dried to something paler over the back, and the head of a bird that has no business on a body that size. It looks at you the way cattle do, which is to say it decided some time ago that you are nothing. Then it goes back out of the water, unhurried, and the cover closes over the place it went in. You stand there a long while. Nobody is going to believe this, and you find you do not much want to tell them.",
+    //THE GUILD'S BOARD (P-41). The clerk's own line already described it.
+    "ui tab guild board": "Guild work",
+    "ui guild board unknown": "The guild keeps a board of work by the door of the Adventurer's guild, in town. Nobody has shown it to you yet.",
+    "ui guild board standing": "The clerk has you down as rank {v1}. The board shows that rank and the one either side of it - work above your rank promotes you faster and is harder to survive.",
+    "ui guild board offered": "On the board",
+    "ui guild board taken": "Taken",
+    "ui guild board empty": "Nothing your rank can be given today. Come back tomorrow.",
+    "ui guild board one at a time": "One job at a time. Hand this one in before you take another.",
+    "ui guild board no hand in yet": "The clerk is not taking finished work in yet. What you have taken is written down and will keep.",
+    "ui guild board take": "Take",
+    "ui guild job hunt": "Kill {v1} {v2}",
+    "ui guild job gather": "Bring {v1} {v2}",
+    "ui guild job pays": "pays {v1} standing",
+    "ui guild job difficulty plain": "plain work",
+    "ui guild job difficulty long": "long work",
+    "ui guild job difficulty brutal": "brutal work",
+    "log guild job taken": "You take the notice down off the board. The clerk writes something next to your name without looking up.",
     "log entering v1": "[ Entering {v1} ]",
     "log you need to equip a": "You need to equip a proper tool to do that!",
     "log heroname finished v1": "%HeroName% finished {v1}",
