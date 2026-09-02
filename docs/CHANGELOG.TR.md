@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 115 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 116 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,55 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### loncanın iş üreteci, oyunun zaten bildirdiğinden türetildi
+
+Sürüm yok: üreteç var ama onu çizen bir şey henüz yok, yani ekranda bir şey değişmiyor. P-41'in
+kademelerden sonraki ikinci parçası.
+
+**Motorun çoğunu zaten sayıyor.** `questManager.catchQuestEvent`; `kill`, **etikete göre**
+`kill_any`, `clear`, `enter_location` ve `reach_skill` olaylarını kaldırıyor. Yani "şunlardan
+şu kadar avla", yazılacak bir makine değil zaten var olan bir `QuestTask` biçimi. Toplama olayı
+yok — beş tür tetikleniyor ve hiçbiri eşyayla ilgili değil — dolayısıyla toplama işi, malı
+oyundaki her teslimin zaten kullandığı yolla teslim edecek.
+
+**Burada uydurulmuş bir zorluk tablosu yok ve tasarımın tamamı bu.** Oyun, şeylerin ne kadar
+zor olduğunu bildiriyor ve bu onu okuyor: her düşman 1'den 11'e bir `rank` taşıyor, her
+hammadde bir `value` taşıyor ve lonca merdiveni bir kademeden ötekine olan itibarı taşıyor.
+Yani bir işin hedefi, boyutu ve ödemesi türetiliyor — merdivende bir eşiği oynatın, ödeme
+onunla birlikte oynasın.
+
+**İki hedef havuzu da ilk denemede yanlıştı ve ölçüm ikisini de hiçbir şey gönderilmeden
+yakaladı.**
+
+- Avlar `living` ve `beast` sunuyordu. Ölçüldü: bunlar **on bir düşman kademesinin hepsinde**
+  ve `medium` sekizinde; yani "on altı canlı avla" oyuncuya nereye gideceğine dair hiçbir şey
+  söylemiyor. Bir etiketin brief olabilmesi için artık kademelerin üçte ikisinden azına yayılmış
+  olması gerekiyor — yasaklı isim listesi değil, yayılımdan türetilmiş bir kural.
+- Toplamalar **Black iron chainmail** sunuyordu — türü MATERIAL, doğası zırh parçası. Havuz
+  artık toplama faaliyetlerinin kendisinden okunuyor: dünyada bir `gained_resources`'ın
+  gerçekten verdiği şeyler; oyunun 112 hammaddesinden 30'u ve her birinin gidip alınacağı bir
+  yeri var.
+
+**Q-14'ün istediği tavan tek bir fonksiyonda.** Merdivenin tepesinden sonra pano hiçbir şey
+ödemiyor; böylece Lonca itibarı sınırlı kalıyor ve
+`check_a_standing_gate_can_be_reached` bölge hakkında konuşabilmeyi sürdürüyor.
+
+**Muhafız: `check_every_guild_rank_can_be_given_work`** — ve ilk hâli **düşemiyordu**, üst üste
+üç negatif testte.
+
+- Bir etiketin fazla geniş olup olmadığını üretecin kendi `too_broad_to_be_a_brief`'ine
+  soruyordu; yani sınırı gevşetmek kontrolü de gevşetiyordu. Artık genişliği düşman verisinden
+  kendisi hesaplıyor ve modülü gevşetmek onu adıyla düşürüyor.
+- Yalnızca **iki** havuz da boşken şikâyet ediyordu; yani toplama havuzunu boşaltmak görünmezdi:
+  avlar panoyu doldururken özelliğin yarısı hiçbir şey döndürüyordu. Artık her havuz ayrı ayrı
+  şart.
+- Üçüncüsü kaydedilmeye değer bir yanlış alarmdı: tavanın erken dönüşünü silmek tavanı bozmadı,
+  çünkü altındaki `Math.min` zaten kırpıyor. O guard taşıyıcı değil fazlalıktı ve kontrol
+  susmakta haklıydı.
+
+9 kademe, sabit bir diziye karşı çekilen 360 iş — zar atan bir kontrol her çalıştırmada başka
+bir şey bildirir ve tutarsız bir kontrol, okunmak yerine yeniden çalıştırılan kontroldür.
 
 ### v0.7.41 - loncanın kademeleri var ve onlar zaten sahip olduğunuz itibar
 

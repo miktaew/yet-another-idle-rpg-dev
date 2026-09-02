@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 136 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 137 -->
 
 # Proposals
 
@@ -686,9 +686,21 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
   derived rank needs no new save key. 255 is everything the existing content pays and lands on
   D. `get_offered_guild_ranks` is the board's window, already written and guarded.
 
-**Next, in order:** the job generator (two types to begin with, difficulty scaling the numbers
-in the brief), then the board itself with its per-day refresh and its accepted-job persistence,
-then the standing payout with the ceiling Q-14 requires, then the shop.
+- **The job generator.** `done`, and unversioned because nothing draws it yet. `guild_jobs.js`
+  derives everything from data the game already declares: enemy `rank` 1-11 for how hard a hunt
+  is, material `value` for goods, and the ladder's own gaps for the pay. The ceiling Q-14 asked
+  for lives in `standing_paid_for`.
+
+  **Measured, and it moved the design twice.** The quest engine already counts `kill_any` by
+  tag, so a hunt is an existing `QuestTask` shape rather than new machinery - but there is **no
+  gather event** among the five it fires, so a gather job has to hand goods over the way the
+  swamp deliveries do. And both target pools were wrong until measured: `living` and `beast`
+  span all eleven enemy ranks, and "every material" offered Black iron chainmail as something
+  to fetch.
+
+**Next, in order:** the board itself with its per-day refresh and its accepted-job persistence
+(the save shape is the part that is not optional), then handing a finished job in, then the
+shop.
 
 ### P-42 — The big files, and what to use instead of TypeScript `open`
 

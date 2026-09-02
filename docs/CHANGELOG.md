@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 115 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 116 -->
 
 # Changelog
 
@@ -20,6 +20,55 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### the guild's job generator, derived from what the game already declares
+
+No version: the generator exists and nothing draws it yet, so there is nothing on screen. P-41's
+second piece, after the ranks.
+
+**The engine already counts most of this.** `questManager.catchQuestEvent` handles `kill`,
+`kill_any` **by tag**, `clear`, `enter_location` and `reach_skill`, so "hunt so many of these"
+is a `QuestTask` shape that exists rather than machinery to write. There is no gather event -
+five types are fired and none of them is about items - so a gather job will hand goods over the
+way every delivery in the game already does.
+
+**Nothing here is an invented difficulty table, and that is the whole design.** The game
+declares how hard things are and this reads it: every enemy carries a `rank` from 1 to 11,
+every material carries a `value`, and the guild ladder carries the standing between one rank
+and the next. So a job's target, its size and its pay are all derived - move a ladder
+threshold and the pay moves with it.
+
+**Both target pools were wrong on the first attempt, and measuring caught both before anything
+shipped.**
+
+- Hunts were offering `living` and `beast`. Measured: those are on **all eleven** enemy ranks
+  and `medium` is on eight, so "hunt sixteen living things" tells the player nothing about
+  where to go. A tag now has to span less than two thirds of the ranks to be a brief, which is
+  a rule derived from the spread rather than a list of banned names.
+- Gathers were offering **Black iron chainmail** - a MATERIAL by type and a piece of armour by
+  nature. The pool is read from the gathering activities themselves now, whatever some
+  `gained_resources` in the world actually yields: 30 of the game's 112 materials, each with a
+  place to go and get it.
+
+**The ceiling Q-14 asked for is in one function.** Past the top of the ladder the board pays
+nothing, so Guild standing stays bounded and
+`check_a_standing_gate_can_be_reached` keeps being able to say something about the region.
+
+**Guard: `check_every_guild_rank_can_be_given_work`** - and the first version of it **could not
+fail**, three negative tests in a row.
+
+- It asked the generator's own `too_broad_to_be_a_brief` whether a tag was too broad, so
+  loosening the limit loosened the check with it. It works breadth out from the enemy data
+  itself now, and loosening the module fails it by name.
+- It only complained when **both** pools were empty, so emptying the gather pool was invisible:
+  hunts filled the board while half the feature returned nothing. Each pool is now required
+  separately.
+- The third was a false alarm worth recording: deleting the ceiling's early return did not
+  break the ceiling, because the `Math.min` below it clamps anyway. That guard was redundant,
+  not load-bearing, and the check was right to stay quiet.
+
+9 ranks, 360 jobs drawn against a fixed sequence - a check that rolls dice reports something
+different on every run, and a flaky check is one people re-run instead of read.
 
 ### v0.7.41 - the guild has ranks, and they are the standing you already have
 

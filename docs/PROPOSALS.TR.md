@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 136 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 137 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -710,9 +710,20 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
   türetilmiş bir kademenin yeni kayıt anahtarına ihtiyacı yok. 255, mevcut içeriğin ödediği her
   şey ve D'ye düşüyor. `get_offered_guild_ranks` panonun penceresi; yazıldı ve muhafızlandı.
 
-**Sırada, bu sırayla:** iş üreteci (başlangıç için iki tür, zorluk brief'teki sayıları
-ölçekliyor), sonra panonun kendisi — gün başına yenilenme ve alınmış işin kalıcılığıyla —
-sonra Q-14'ün istediği tavanla itibar ödemesi, sonra dükkân.
+- **İş üreteci.** `done` ve sürümsüz, çünkü onu çizen bir şey henüz yok. `guild_jobs.js`,
+  her şeyi oyunun zaten bildirdiği veriden türetiyor: avın zorluğu için düşman `rank` 1-11,
+  mallar için `value` ve ödeme için merdivenin kendi aralıkları. Q-14'ün istediği tavan
+  `standing_paid_for` içinde.
+
+  **Ölçüldü ve tasarımı iki kez oynattı.** Görev motoru etikete göre `kill_any`'i zaten
+  sayıyor, yani av yeni makine değil var olan bir `QuestTask` biçimi — ama tetiklediği beş
+  olayın arasında **toplama olayı yok**, dolayısıyla toplama işi malı bataklık teslimlerinin
+  yaptığı gibi teslim etmeli. Ve iki hedef havuzu da ölçülene kadar yanlıştı: `living` ile
+  `beast` on bir düşman kademesinin hepsine yayılıyor ve "her hammadde", getirilecek şey olarak
+  Black iron chainmail sunuyordu.
+
+**Sırada, bu sırayla:** panonun kendisi — gün başına yenilenme ve alınmış işin kalıcılığıyla
+(kayıt biçimi isteğe bağlı olmayan kısım) — sonra biten işin teslimi, sonra dükkân.
 
 ### P-42 — Büyük dosyalar ve TypeScript yerine ne kullanılacağı `open`
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 58 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 59 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -224,6 +224,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `flag gates` | Hiçbir ödülün vermediği bir bayrağı bekleyen içerik; sonsuza dek kendi sözleriyle reddediyor. 7 bayrak bekleniyor. |
 | `book requirements` | Var olmayan ya da becerinin tavanının üstünde bir seviye isteyen bir kitap; kimse okuyamaz. 13 kitap. |
 | `guild ranks` | Sırası bozuk bir kademe eşiği — üstündeki her kademeyi sessizce kilitliyor — ya da sıfırdan başlamayan bir merdiven. 9 kademe. |
+| `guild jobs` | Panonun av ya da toplama sunamadığı bir kademe, ya da hiçbir düşmanın taşımadığı bir etiketi adlandıran bir iş. 9 kademe, 360 çekiliş. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

@@ -97,6 +97,7 @@ import {
     check_every_required_flag_can_be_set,
 } from "./checks/reachable.mjs";
 import { check_no_content_object_repeats_a_key } from "./checks/literals.mjs";
+import { check_every_guild_rank_can_be_given_work } from "./checks/guild.mjs";
 import { check_a_panel_is_not_redrawn_before_the_value_changes } from "./checks/panels.mjs";
 import {
     check_duration_units_have_rows,
@@ -225,6 +226,7 @@ await check_a_standing_gate_can_be_reached();
 await check_a_late_repair_still_finds_its_grants();
 await check_the_unlock_repair_knows_every_kind();
 await check_every_guild_rank_can_be_reached();
+await check_every_guild_rank_can_be_given_work();
 await check_every_quest_can_be_started();
 await check_every_location_can_be_unlocked();
 await check_a_timed_activity_can_ever_be_started();
