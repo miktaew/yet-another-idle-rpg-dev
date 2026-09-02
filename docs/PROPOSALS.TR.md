@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 125 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 126 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -361,8 +361,7 @@ Muhafız: 2a'dan gelen `check_lore_threads_resolve` — Q-8 gerçekten iplik se�
 oturdu. İplik artık üç konuşan üzerinde beş beat: bir rıhtım, bir lonca ve meydanın
 karşısındaki bir dükkân; Q-8'in yazıldığı şeklin tam boyu.
 
-**Faz 6 — sistem geçişi.** `kısmen tamam`. Birbirinden bağımsız dört parça; biri
-yayınlandı.
+**Faz 6 — sistem geçişi.** `done`. Birbirinden bağımsız dört parça, dördü de yayınlandı.
 
 - **4. ve 5. kademe malzemelerinin cezirin açtığına bağlanması.** `bitti`, **v0.7.5**
   olarak. P-12'nin "satın alınan değil, çıkarılan bir cevher" maddesinin yeri burasıydı
@@ -423,9 +422,26 @@ yayınlandı.
   bir oyuncu hiçbir satır görmezdi, bütün kapılar da kapalı kalırdı: aynı anda görünmez ve
   sonuçlu. 0'da tabanlandı, altı test, tabanı yeniden kaldırarak negatif test edildi.
 
-**Faz 7 — v0.8 hazırlığı, *Beyond the Lake*.** Faz 6 yeşile dönmeden başlamaz. Önce
-izler — ayak izleri, tüyler, ses, kırılmış örtü — ve oyuncu yaratıkla karşılaşmadan
-önce onun var olup olmadığından emin olmamalıdır.
+**Faz 7 — v0.8 hazırlığı, *Beyond the Lake*.** `active`. Önce izler — ayak izleri,
+tüyler, ses, kırılmış örtü — ve oyuncu yaratıkla karşılaşmadan önce onun var olup
+olmadığından emin olmamalıdır.
+
+- **İlk iz.** `done`, **v0.7.37** olarak. Orman gölünde `read the shallows`: dört parmak,
+  arkalarında sertçe itilmiş kum, bir balıkçıl için fazla büyük ve bir yaban domuzu için
+  yanlış. Hiçbir şey adlandırmıyor, hiçbir şey açmıyor. Gölün kendi sesleri zaten *"bir
+  hayvan su içmeye iniyor"* diyordu; yani su kıyısını kanon, kimse planlamadan önce
+  seçmişti.
+
+  `required` kapısı yok ve bunu komşusu öğretti: `read the departures` Algısını `conditions`
+  içinde tutuyor ve hiçbir şeye kapatmıyor; yani aksiyon denenmek için hep orada ve zayıf bir
+  göze, daha iyi bir gözün ne okuyacağı söyleniyor. Sonrasında gölün altı sesinin arasına bir
+  bayrağın arkasından üç ses daha karışıyor — Marrowmoth limandayken rıhtımın kullandığı
+  biçim.
+
+- **Sırada olanlar.** Aynı yabanla sınırdaş yerlerde daha fazla iz: ovalarda sürülmüş kabile
+  için `read the ground` zaten var, ıslak ormanla şelale havzasında hiç yok. Ve izler
+  yeterli olduğunda bir karar: v0.8 o şeyle karşılaşacak mı, yoksa karşılaşmamayı
+  sürdürecek mi.
 
 #### Fazlara taşınan kararlar
 

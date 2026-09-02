@@ -161,6 +161,13 @@ const global_flags = {
     is_strength_proved: false, //this role could be fulfilled by a quest, but it was originally added before that mechanic; besides, flags are cool and elegant
     is_mofu_mofu_enabled: true,
     is_guard_met: false,
+    /*
+        P-14 phase 7. Set by reading the shallows at the Forest lake, and read by the
+        lake's own background noises: once the player has seen the print, the water makes
+        a different set of sounds. A flag rather than a quest because there is no quest -
+        the arc has not started and the player is not supposed to be sure it will.
+    */
+    has_read_the_shallows: false,
     is_hero_created: false, //changed after going through hero creation panel
     //P-10 region 4. Read live by the Mountain camp's crafting tiers, so the flue is
     //a flag rather than a saved tier - global_flags are already saved and loaded.

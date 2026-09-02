@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 125 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 126 -->
 
 # Proposals
 
@@ -347,8 +347,7 @@ Guard: `check_lore_threads_resolve` from 2a — Q-8 did land on threads. The thr
 runs to five beats across three speakers, a quay, a guildhall and a shop across the
 square, which is the shape Q-8 was written for at full size.
 
-**Phase 6 — the systems pass.** `partly done`. Four independent pieces; one has
-shipped.
+**Phase 6 — the systems pass.** `done`. Four independent pieces, all four shipped.
 
 - **Tier-4 and tier-5 materials wired to what the ebb opens.** `done`, as **v0.7.5**.
   This is where P-12's "an ore that is mined rather than bought" belonged, and it is
@@ -407,9 +406,24 @@ shipped.
   have seen no row at all, with every gate still shut: invisible and consequential at
   once. Floored at 0, six tests, negative-tested by taking the floor out again.
 
-**Phase 7 — v0.8 groundwork, *Beyond the Lake*.** Not started before phase 6 is
-green. Traces first — tracks, feathers, noise, broken cover — and the player must be
-unsure the four-legged bird exists at all before they meet it.
+**Phase 7 — v0.8 groundwork, *Beyond the Lake*.** `active`. Traces first — tracks,
+feathers, noise, broken cover — and the player must be unsure the four-legged bird exists
+at all before they meet it.
+
+- **The first trace.** `done`, as **v0.7.37**. `read the shallows` at the Forest lake: four
+  toes, sand pushed up hard behind them, too big for a heron and wrong for a boar. It names
+  nothing and opens nothing. The lake's own noises already said *"an animal comes out to
+  drink"*, so the waterline was where the canon had put this before anybody planned it.
+
+  No `required` gate, which the neighbour taught: `read the departures` keeps its Perception
+  in `conditions` and gates on nothing, so the action is always there to try and a poor eye
+  is told what a better one would have read. Afterwards three more sounds are mixed into the
+  lake's six, behind a flag - the shape the quay uses when the Marrowmoth is in port.
+
+- **Still to come.** More traces, in the places that border the same wild: the plains already
+  have `read the ground` for the banished tribe, and the wet woods and the waterfall basin
+  have none. And a decision, when the traces are enough: whether v0.8 meets the thing or
+  keeps refusing to.
 
 #### Decisions carried into the phases
 

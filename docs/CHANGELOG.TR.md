@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 108 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 109 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,49 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.37 - ilk iz, gölde
+
+P-14'ün 7. fazı açılıyor. *Önce izler — ayak izleri, tüyler, ses, kırılmış örtü — ve oyuncu,
+dört bacaklı kuşla karşılaşmadan önce onun var olduğundan emin olmamalı.*
+
+**Ve ondan önceki faz zaten bitmişti.** Faz 6'nın başlığı hâlâ `partly done`, "dört bağımsız
+parça; biri gönderildi" diyordu; oysa dört maddesinin dördü de `done` ve sonuncusu fazı
+tamamladığını söylüyor. Düzeltildi, çünkü faz 7 açıkça "faz 6 yeşil olmadan başlamaz" diyor ve
+plan sessizce yeşil olmadığını söylüyordu.
+
+**Yayın kendi kanonu bunu kimse planlamadan önce yerine koymuştu.** Orman gölünün arka plan
+sesleri arasında zaten *"bir hayvan su içmeye iniyor"* vardı. Yer, su kıyısıydı; bunun tek
+yaptığı oyuncunun oraya çömelmesine izin vermek.
+
+`read the shallows` dört parmak ve arkalarında sertçe itilmiş kum buluyor — sudan aceleyle
+uzaklaşmış, yüzmemiş, bir balıkçıl için fazla büyük ve bir yaban domuzu için yanlış bir şey.
+Hiçbir şey adlandırmıyor, hiçbir şey açmıyor, hiçbir eşya vermiyor. **Bir katman, bir kez**;
+yayın 1. fazdan beri taşıdığı kural.
+
+**`required` kapısı yok ve bunu komşusu öğretti.** İlk hâli Algı 12'ye kapatıyordu. Körfezin
+kendi ilk izi olan `read the departures`'a karşı ölçüldü: onun `required`'ı boş ve Algı 15/34
+`conditions` içinde yaşıyor; yani aksiyon denenmek için hep orada ve denemenin ne getireceğine
+beceri karar veriyor. Bu, projenin kilitli kapılar kuralının istediği şey de: zayıf bir göze,
+daha iyi bir gözün ne okuyacağı söyleniyor. Rampa boyunca ölçüldü: 12'nin altında hiç, 20'de
+yarısı, 30'da tamamı.
+
+**Sonrasında göl farklı ses veriyor.** Üç ses daha; her zaman sahip olduğu altısının yerine
+geçmeden aralarına karışmış hâlde, bir bayrağın arkasında. İçinde sivrisinek, kurbağa ve ördek
+olan bir göl hâlâ o göldür — içinde uymayan bir şey daha vardır. Marrowmoth limandayken
+rıhtımın kullandığı biçimin aynısı. Değişen şey, oyuncunun artık fark eden türden biri olması.
+
+**Bu yazılırken bir kontrol bir açığı yakaladı:** `check_actions_can_explain_failure`, başarı
+koşulu olup `conditional_loss` satırı olmayan bir aksiyonu reddetti — ki bu, zayıf gözlü bir
+oyuncunun tam da bir cümleye ihtiyaç duyduğu anda eksik metin işareti basardı.
+
+**Ve yeni muhafız yok, ki bunu anlamak biraz sürdü.** Yanlış yazılmış bir bayrak adı
+`undefined`'dır, `undefined` falsy'dir ve bayrağa bağlı içerik yazılır, çevrilir, gönderilir ve
+bir kez bile görülmez — tutulacak sınıf bu gibi görünüyordu. Onun için bir kontrol yazıldı ve
+`check_global_flags`'in **iki yönü de zaten kapsadığı** görüldü: özellik okuması ve dizgeyle
+adlandırılmış bağış, üç biçimde. İlk negatif testin aksini göstermesinin tek sebebi, grep'in
+yeni ifadeyi aramasıydı. Gönderilmek yerine silindi; mevcut kontrol her iki yönde de yanlış
+yazımda düşüyor, ikisi de ölçüldü.
 
 ### v0.7.36 - sadece yapabildiklerim ve P-39 kapanıyor
 

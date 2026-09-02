@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 108 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 109 -->
 
 # Changelog
 
@@ -20,6 +20,51 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.37 - the first trace, at the lake
+
+P-14 phase 7 opens. *Traces first - tracks, feathers, noise, broken cover - and the player
+must be unsure the four-legged bird exists at all before they meet it.*
+
+**And the phase before it was already finished.** Phase 6's heading still read
+`partly done`, "four independent pieces; one has shipped", while all four of its bullets
+say `done` and the last one says it completes the phase. Corrected, because phase 7 is
+explicitly "not started before phase 6 is green" and the plan was quietly saying it was not.
+
+**Where the arc's own canon put this before anybody planned it.** The Forest lake's
+background noises already included *"an animal comes out to drink"*. The waterline was the
+place; all this did was let the player kneel down at it.
+
+`read the shallows` finds four toes and sand pushed up hard behind them - something that left
+the water in a hurry and did not swim, too big for a heron and wrong for a boar. It names
+nothing, opens nothing, and grants no item. **One layer, once**, which is the rule the arc has
+had since phase 1.
+
+**No `required` gate, and the neighbour taught that.** The first version gated it on
+Perception 12. Measured against `read the departures`, the bay's own first trace: its
+`required` is empty and its Perception 15/34 lives in `conditions`, so the action is always
+there to try and the skill decides what the trying yields. That is also what this project's
+rule about locked doors asks for - a poor eye is told what a better one would have read.
+Measured across the ramp: nothing below 12, half at 20, everything at 30.
+
+**Afterwards the lake sounds different.** Three more noises, mixed in with the six it always
+had rather than replacing them, behind a flag. A lake with mosquitoes and frogs and ducks in
+it is still that lake, with one more thing in it that does not fit - the same shape the quay
+uses when the Marrowmoth is in port. What changed is that the player is now the sort of person
+who notices.
+
+**A check caught a gap while this was being written:**
+`check_actions_can_explain_failure` refused an action with success conditions and no
+`conditional_loss` line, which would have printed a missing-text marker at exactly the moment
+a player with a poor eye needed a sentence.
+
+**And no new guard, which took some finding out.** A misspelt flag name is `undefined`,
+`undefined` is falsy, and flag-gated content is written, translated, shipped and never once
+seen - so that looked like the class to hold. A check was written for it, and
+`check_global_flags` **already covers both directions**: the property read and the
+string-named grant, in three shapes. The first negative test appeared to show otherwise only
+because the grep looked for the new wording. Deleted rather than shipped; the existing check
+fails on a misspelling either way, measured both ways.
 
 ### v0.7.36 - only what I can make, and P-39 closes
 

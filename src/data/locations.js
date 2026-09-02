@@ -1492,7 +1492,30 @@ function get_location_type_penalty(type, stage, stat, category) {
         connected_locations: [{location: locations["Forest road"], travel_time: 120}],
         description: "desc location Forest lake",
         name: "Forest lake",
-        getBackgroundNoises: () => [translationManager.getText(language, "noise Forest lake 1"), translationManager.getText(language, "noise Forest lake 2"), translationManager.getText(language, "noise Forest lake 3"), translationManager.getText(language, "noise Forest lake 4"), translationManager.getText(language, "noise Forest lake 5"), translationManager.getText(language, "noise Forest lake 6")],
+        /*
+            The lake says it before anyone does, the way the quay does.
+
+            Three more sounds once the player has read the shallows, mixed in with the six
+            it always had rather than replacing them - a lake with mosquitoes and frogs and
+            ducks in it is still that lake, with one more thing in it that does not fit.
+            Nothing here names anything: what changes is that the player is now the sort of
+            person who notices.
+        */
+        getBackgroundNoises: function() {
+            const ordinary = [translationManager.getText(language, "noise Forest lake 1"),
+                    translationManager.getText(language, "noise Forest lake 2"),
+                    translationManager.getText(language, "noise Forest lake 3"),
+                    translationManager.getText(language, "noise Forest lake 4"),
+                    translationManager.getText(language, "noise Forest lake 5"),
+                    translationManager.getText(language, "noise Forest lake 6")];
+            if(!global_flags.has_read_the_shallows) {
+                return ordinary;
+            }
+            return ordinary.concat([
+                    translationManager.getText(language, "noise Forest lake watched 1"),
+                    translationManager.getText(language, "noise Forest lake watched 2"),
+                    translationManager.getText(language, "noise Forest lake watched 3")]);
+        },
         is_unlocked: false,
     });
     locations["Forest road"].connected_locations.push({ location: locations["Forest lake"], travel_time: 120 });
@@ -5328,6 +5351,49 @@ function get_location_type_penalty(type, stage, stat, category) {
             fire at all - with no conditions, process_conditions returns 1 - while its
             text was copy-pasted from the deep dive and talked about lung capacity.
         */
+        /*
+            P-14 phase 7, and the first trace of it. Traces first, and the player must be
+            unsure the four-legged bird exists at all before they meet it - which is why
+            this finds a print and not an animal, names nothing, and opens nothing.
+
+            The lake already had "*an animal comes out to drink*" among its noises, so the
+            waterline was where the arc's own canon put this before anybody planned it.
+
+            One-time, and it locks itself: a track in wet sand is read once. Perception is
+            the gate because Perception is what the bay's first trace asked for too, and
+            reading ground the player has walked past a hundred times is the same skill.
+        */
+        "read the shallows": new GameAction({
+            action_id: "read the shallows",
+            action_name: "action read the shallows name",
+            starting_text: "action read the shallows starting",
+            description: "action read the shallows desc",
+            action_text: "action read the shallows during",
+            success_text: "action read the shallows success",
+            failure_texts: {
+                conditional_loss: ["action read the shallows fail conditional_loss 1"],
+                random_loss: ["action read the shallows fail random_loss 1"],
+            },
+            is_unlocked: true,
+            /*
+                No `required`, and that is the neighbour's own shape: `read the departures`
+                puts its Perception 15/34 in `conditions` and gates on nothing, so the action
+                is always there to try and the skill decides whether the trying comes to
+                anything. It is also what this project's rule about locked doors asks for -
+                a player with a poor eye is told what a better one would have read, rather
+                than shown nothing.
+            */
+            conditions: [{skills: {Perception: 12}}, {skills: {Perception: 30}}],
+            attempt_duration: 240,
+            success_chances: [0.35, 0.9],
+            keep_progress: true,
+            rewards: {
+                skill_xp: {Perception: 900},
+                //The whole of what it gives, besides the sentence: the lake sounds
+                //different afterwards. No item, no quest, no name.
+                flags: ["has_read_the_shallows"],
+            },
+        }),
         "gaze": new GameAction({
             action_id: "gaze",
             action_name: "action gaze name",
