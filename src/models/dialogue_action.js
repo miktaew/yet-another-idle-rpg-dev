@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 import { GameAction } from "./game_action.js";
 

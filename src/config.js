@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 const config = {
     trade_price_recovery_flat: 5, //flat recovery of market saturation

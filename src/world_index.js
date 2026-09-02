@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 /**
  * What the world holds, indexed the other way round.

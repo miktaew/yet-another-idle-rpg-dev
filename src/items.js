@@ -37,7 +37,7 @@
 //as a note, try to not give dexterity/agility from weapons and instead use attack_points/evasion_points, this is in regards of possible skill checks;
 //leaving it on armor seems fine on the other hand, as it makes much more sense for worn clothing to impact such a situation
 
-import materials from "./data/materials.json" with { type: "json" };
+import { material_rows as materials } from "./data/content_rows.js";
 import { round_item_price } from "./misc.js";
 import { group_key_prefix, get_item_value_with_market_saturation, get_total_tier_saturation, get_loot_price_multiple} from "./market_saturation.js";
 import { is_rat } from "./character.js";

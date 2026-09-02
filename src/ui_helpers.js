@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 /**
  * The small helpers every panel uses: writing into an element, comparing two display

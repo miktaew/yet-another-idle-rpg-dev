@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 127 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 128 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,58 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### modeller ve bir düzeltme: tür kapısı hiçbir şeyi denetlemiyormuş
+
+Sürüm yok. P-42 2. adımın üçüncü parçası ve üstündeki iki girdiye bir düzeltmeyle açılıyor.
+
+**`npm run check:types`, eklendiği günden beri inert çalışıyordu.** `// @ts-check` bir
+dosyanın **öndeki yorum bloğunda** durmak zorunda — her ifadeden önce — ve 1. adımda dâhil
+edilen 26 dosyanın hepsi onu `"use strict";`in *altındaki* satırda taşıyordu; ki o bir ifade.
+Yani pragma sıradan bir yorumdu, TypeScript o dosyaların hiçbirini denetlemedi ve kapı hiçbir
+şeye bakmadan geçti. Dört bakım girdisi "19 dosya dâhil ve geçiyor", sonra 26 diye bildirdi;
+sayı doğruydu, denetleme değildi.
+
+Tahmin değil kanıt: dâhil edilmiş bir dosyaya
+`/** @type {Number} */ const planted = "not a number"` koymak kapıyı yeşil bıraktı; o tek
+pragmayı `"use strict";`in üstüne taşımak aynı satırı anında düşürdü. 26'sı da taşındı;
+**dosyalar gerçekten temizdi, yani sayı doğruydu, yalnızca kapı boştu.**
+
+`check_checked_files_stay_checked` bunu yakalayamazdı ve bunu söylemeye değer, çünkü hatanın
+kendisiyle aynı şekil: hangi dosyaların geçeceğini proje çapında bir `checkJs` sondasıyla
+ölçüyor ve o sonda pragmaları hiç görmüyor. Bu yüzden yerleşim artık ayrıca, kaynaktan iddia
+ediliyor — önünde herhangi bir ifade olan bir pragma, o ifadeyi adlandıran bir hata.
+Birini `"use strict";` altına geri iterek negatif test edildi.
+
+**Ve adımın asıl sebebi olan modeller.** `src/models/data_rows.js`, `MaterialRow`,
+`RecipeRow` ve `RecipeMaterial`ı typedef olarak bildiriyor; `src/data/content_rows.js` ise iki
+JSON dosyasını import edip o şekillere karşı iddia eden küçük, denetlenen bir modül.
+
+**Bu belgelendirme değil, denetleme.** TypeScript bir JSON import'unun türünü dosyanın
+gerçek içeriğinden çıkarıyor; yani iddia, her `check:types`ta **111 malzeme satırının ve 148
+tarif satırının her birini** karşılaştırıyor. Ölçüldü: `"value": "four"` düşüyor,
+`"success_chance": ["low","high"]` düşüyor, her biri dosyayı adlandırarak. Bu, üç ayrı yerde
+birbiriyle uyuşma imkânı olmadan tekrarlanan şekil bilgisinin yerine geçiyor: satırı kurucuya
+yayan yükleyici, aynı satırları geri okuyan test yardımcısı ve iki alanı elle kontrol eden
+muhafız.
+
+**Dikiş yerinin var olma sebebi, yukarıdaki pragma kuralı.** `items.js` ve
+`crafting_recipes.js` henüz tür denetimli değil; yani onların içinde iddia edilen bir typedef
+doğrulanmamış olarak kalırdı. İddianın ısırmasını sağlayan şey, *şimdi* denetlenebilir küçük
+bir modül; iki yükleyici de satırlarını ondan import ediyor.
+
+**Typedef'in yapamadığı bir şey, elle kapatıldı.** TypeScript'in fazla-özellik denetimi taze
+nesne sabitlerine uygulanıyor; `Record<...>`a atanmış bir JSON import'u ise bir değişken,
+dolayısıyla **bildirilmemiş** bir alan sessizce geçiyor — `"worth": 9` kabul edildi.
+`mateiral_type` gibi bir yazım hatası da tam olarak böyle gelirdi: tür kabul eder, yükleyici
+yok sayar ve malzemenin türü sessizce olmaz. Bu yüzden muhafız, izinli alan adlarını
+listelemek yerine typedef'in kendi `@property` satırlarından okuyor; tek doğruluk kaynağı
+korunuyor, yani modele alan eklemek onu veride mümkün kılan şey oluyor.
+
+**Yolda bulunan bozuk bir JSDoc.** `find_recipe_material`, `@returns { count, items[] }`
+taşıyordu; TypeScript bunu tür ifadesi olarak ayrıştırıp `TS1005: '}' expected` diye
+bildiriyor — Node'un ve esbuild'in ikisinin de kusursuz ayrıştırdığı bir dosyada sözdizimi
+hatası, çünkü o bir yorum. Artık `@returns {Object}` ve şekil düz yazıda.
 
 ### tarifler JSON'a, ve geri sayılması gereken kapsam
 

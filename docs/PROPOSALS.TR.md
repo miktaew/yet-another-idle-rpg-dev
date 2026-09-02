@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 151 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 152 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -602,9 +602,25 @@ türetme düşmüyor, yalan söylüyor. Ve iki kapsam kaybı sayılana kadar ses
 hâlâ yeşil) ve `material_type` toplam kıpırdamadan 9 değerden 3'e daraldı. **Yani kalan
 aileler için yöntem şu: önce kapsam sayılarını yakala, sonra karşılaştır.**
 
-**Sırada: modeller.** İki veri dosyasının da artık aynı anda üç yerde iddia edilen bir şekli
-var — yükleyici, yardımcı ve muhafız — ki bu, üçü yerine aile başına tek bir modelin
-gerekçesi. Aynı okumayı üç kez değil bir kez yapmak demek ve TS2353 ile TS2740'ın (tür
+**Modeller tamam ve yanlarında bir düzeltmeyle geldiler.** `src/models/data_rows.js`
+typedef'leri tutuyor, `src/data/content_rows.js` ise iki JSON dosyasını onlara karşı iddia
+eden küçük, denetlenen bir modül — yani 111 malzeme ve 148 tarif satırının hepsi her
+`check:types`ta karşılaştırılıyor, biri yanlışsa dosya ve alan adlandırılarak.
+
+**Ve `check:types` 1. adımdan beri inert çalışıyordu.** `// @ts-check` her ifadeden önce
+gelmek zorunda ve dâhil edilen 26 dosyanın hepsi onu `"use strict";` altında taşıyordu.
+Dosyalar gerçekten temizdi, yani sayı doğruydu, yalnızca kapı boştu. Yerleşim artık kaynaktan
+iddia ediliyor; çünkü mandal kontrolü proje çapında pragmaları görmeyen bir `checkJs`
+sondasıyla ölçüyor ve bunu asla fark edemezdi.
+
+**Bir typedef'in yapamadığı:** bildirilmemiş bir alan geçiyor, çünkü fazla-özellik denetimi
+taze sabitlere uygulanıyor ve JSON import'u bir değişken. Muhafız izinli adları listelemek
+yerine typedef'in kendi `@property` satırlarından okuyor.
+
+**Sırada olan, ölçüm değil yargı:** `src/data/skills.js` 5.797 satırla kalan en büyük dosya
+ama becerilerin çoğu `get_effect_description` fonksiyonu taşıyor, yani malzeme vakası değil.
+`items.js` içindeki kalan saf-veri aileleri ucuz olanlar — ve bir de dosyalar hareket etmeyi
+bıraktıktan sonraya dizilmiş olan klasör düzeni. Aynı okumayı üç kez değil bir kez yapmak demek ve TS2353 ile TS2740'ın (tür
 hatalarının üçte ikisi) gerçekten yaşadığı yer de burası.
 
 **Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü

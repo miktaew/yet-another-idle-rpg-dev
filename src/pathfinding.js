@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 import { skills } from "./data/skills.js";
 

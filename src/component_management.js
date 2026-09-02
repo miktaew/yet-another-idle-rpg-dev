@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 import { availability_havers } from "./data/component_references.js";
 

@@ -754,35 +754,72 @@ function check_item_data_files_are_all_read() {
         recipe-rows.mjs. Moving the recipes cost 255 check errors for exactly the missing
         half of this, so the rule is worth stating for every family rather than one.
     */
+    const seam = "src/data/content_rows.js";
     const pairs = [
-        {source: "src/items.js", listed: item_data_files, helper: "tests/lib/item-keys.mjs"},
-        {source: "src/crafting_recipes.js", listed: recipe_data_files,
-            helper: "tests/lib/recipe-rows.mjs"},
+        {listed: item_data_files, helper: "tests/lib/item-keys.mjs", what: "items"},
+        {listed: recipe_data_files, helper: "tests/lib/recipe-rows.mjs", what: "recipes"},
     ];
 
-    const imported = [];
-    for (const pair of pairs) {
-        const source = fs.readFileSync(path.join(repo_root, pair.source), "utf8");
-        const reads = [...source.matchAll(/from\s+"\.\/(data\/[\w.-]+\.json)"/g)]
-            .map(found => `src/${found[1]}`);
-        if (reads.length === 0) {
-            error(`${pair.source} imports no JSON data file. If that family moved back into `
-                + `source, this check and ${pair.helper} are both out of date.`);
-            continue;
-        }
-        imported.push(...reads);
+    /*
+        One seam reads the JSON now - `src/data/content_rows.js` - because that is the file
+        the typedefs are asserted in, and asserting them inside items.js would leave them
+        unverified until items.js itself is type-checked. So the imports are read from there
+        rather than from each family's own module.
+    */
+    const source = fs.readFileSync(path.join(repo_root, seam), "utf8");
+    const imported = [...source.matchAll(/from\s+"\.\/([\w.-]+\.json)"/g)]
+        .map(found => `src/data/${found[1]}`);
+    if (imported.length === 0) {
+        error(`${seam} imports no JSON data file. If the families moved back into source, `
+            + `this check and both helpers are out of date.`);
+        return;
+    }
 
-        for (const file of reads) {
-            if (pair.listed.includes(file)) continue;
-            error(`${pair.source} reads "${file}" and ${pair.helper} does not list it, so `
-                + `everything in it is invisible to the checks that ask what exists. `
-                + `Nothing would fail: the content works and the checks stop covering it.`);
-        }
+    for (const pair of pairs) {
         for (const file of pair.listed) {
-            if (reads.includes(file)) continue;
-            error(`${pair.helper} lists "${file}" and ${pair.source} does not read it, so `
-                + `the checks believe in content the game never builds.`);
+            if (imported.includes(file)) continue;
+            error(`${pair.helper} lists "${file}" and ${seam} does not read it, so the `
+                + `checks believe in ${pair.what} the game never builds.`);
         }
+    }
+    const all_listed = pairs.flatMap(pair => pair.listed);
+    for (const file of imported) {
+        if (all_listed.includes(file)) continue;
+        error(`${seam} reads "${file}" and no helper in tests/lib lists it, so everything `
+            + `in it is invisible to the checks that ask what exists. Nothing would fail: `
+            + `the content works and the checks stop covering it.`);
+    }
+
+    /*
+        And the field NAMES, which the typedef cannot police on its own.
+
+        `src/models/data_rows.js` is compared against both JSON files at check:types, and it
+        catches a field of the wrong type - measured: `"value": "four"` and
+        `"success_chance": ["low","high"]` both fail there, naming the file. What it does not
+        catch is a field nobody declared: TypeScript's excess-property check applies to fresh
+        object literals, and a JSON import assigned to a `Record<...>` is a variable, so
+        `"worth": 9` passes silently. Which is exactly how a typo like `mateiral_type` would
+        arrive - accepted by the type, ignored at runtime, and the material quietly has no
+        type.
+
+        So the allowed names are read out of the typedef's own `@property` lines rather than
+        listed here. One source of truth, and adding a field to the model is what permits it
+        in the data.
+    */
+    const model = fs.readFileSync(
+        path.join(repo_root, "src/models/data_rows.js"), "utf8");
+    const properties_of = (typedef) => {
+        const at = model.indexOf(`@typedef {Object} ${typedef}`);
+        if (at === -1) return null;
+        const block = model.slice(at, model.indexOf("*/", at));
+        return new Set([...block.matchAll(/@property\s+\{[^}]*\}\s+\[?(\w+)\]?/g)]
+            .map(found => found[1]));
+    };
+
+    const material_fields = properties_of("MaterialRow");
+    if (material_fields === null || material_fields.size === 0) {
+        error("src/models/data_rows.js declares no MaterialRow properties - "
+            + "check_item_data_files_are_all_read is out of date.");
     }
 
     //And the rows themselves, since nothing else parses them.
@@ -802,6 +839,14 @@ function check_item_data_files_are_all_read() {
             error(`${row.from} states name "${key}" for the key "${key}". The name is only `
                 + `carried when it DIFFERS from the key - setup_ids() fills it from the key `
                 + `otherwise - so a row repeating it is a row that will drift.`);
+        }
+        for (const field of Object.keys(row)) {
+            if (field === "from" || material_fields === null) continue;
+            if (material_fields.has(field)) continue;
+            error(`${row.from} gives "${key}" a field "${field}", which MaterialRow in `
+                + `src/models/data_rows.js does not declare. The loader spreads the row into `
+                + `the constructor, so an undeclared field is silently ignored - which is how `
+                + `a misspelt one behaves too.`);
         }
         if (source_keys.has(key)) {
             error(`"${key}" is declared both in ${row.from} and in src/items.js. Whichever `

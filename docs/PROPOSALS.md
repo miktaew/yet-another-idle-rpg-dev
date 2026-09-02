@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 151 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 152 -->
 
 # Proposals
 
@@ -597,9 +597,26 @@ ranges unbounded, check still green) and `material_type` narrowed from 9 values 
 the total moving. **So the method for the remaining families is: capture the coverage counts
 first, and compare them after.**
 
-**Next: the models.** Both data files now have a shape that is asserted in three places at
-once - the loader, the helper and the guard - which is the argument for one model per family
-rather than the three. That is the same reading done once instead of thrice, and it is where
+**The models are done, and they came with a correction.** `src/models/data_rows.js` holds
+the typedefs and `src/data/content_rows.js` is a small checked module that asserts both JSON
+files against them - so all 111 material rows and 148 recipe rows are compared on every
+`check:types`, naming the file and field when one is wrong.
+
+**And `check:types` had been inert since step 1.** `// @ts-check` has to precede every
+statement, and all 26 opted-in files carried it under `"use strict";`. The files were
+genuinely clean, so the count was right and only the gate was hollow. The placement is now
+asserted from the source, because the ratchet check measures with a project-wide `checkJs`
+probe that ignores pragmas and so could never have noticed.
+
+**What a typedef cannot do:** an undeclared field passes, because excess-property checking
+applies to fresh literals and a JSON import is a variable. The guard reads the allowed names
+out of the typedef's own `@property` lines instead of listing them.
+
+**Next, and it is a judgement rather than a measurement:** `src/data/skills.js` is the
+biggest file left at 5,797 lines, but most skills carry a `get_effect_description` function,
+so it is not the materials case. The remaining pure-data families in `items.js` are the
+cheap ones - and the folder layout, which was always sequenced after the files stopped
+moving. That is the same reading done once instead of thrice, and it is where
 TS2353 and TS2740 (two thirds of the type errors) actually live.
 
 **Sequenced:** JSON + models for `items.js` and `crafting_recipes.js` first, because it is

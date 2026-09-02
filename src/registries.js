@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 /**
  * Registries a low-level module needs to read at call time, without importing the module

@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";
 import { capitalize_first_letter } from "./ui_helpers.js";
 

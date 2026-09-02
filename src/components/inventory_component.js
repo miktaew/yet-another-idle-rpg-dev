@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 import { getItem, getItemFromKey, item_templates } from "../items.js";
 

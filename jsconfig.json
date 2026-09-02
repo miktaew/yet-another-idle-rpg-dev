@@ -20,7 +20,8 @@
     "checkJs": false,
     "noEmit": true,
     "strict": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*.js"]
 }

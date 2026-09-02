@@ -1,6 +1,6 @@
 "use strict";
 
-import recipe_data from "./data/recipes.json" with { type: "json" };
+import { recipe_rows as recipe_data } from "./data/content_rows.js";
 import { character, get_total_skill_level } from "./character.js";
 import { Armor, ArmorComponent, Cape, Shield, ShieldComponent, Weapon, WeaponComponent, Amulet, item_templates } from "./items.js";
 import { skills } from "./data/skills.js";
@@ -394,7 +394,11 @@ class EquipmentRecipe extends Recipe {
  * @param {Object} data.material material_id/material_type, count, result_id?
  * @param {Boolean} data.ignore_stop ignores the optional stop when material changes, used for display purposes
  * @param {Number} data.needed_count only used when stopping on material change is enabled
- * @returns { count, items[] } - items: [{item_key, count, item_id (if no key), quality (optional if no key)},...] - same as inventory
+ * @returns {Object} {count, items[]} - items: [{item_key, count, item_id (if no key), quality
+ *     (optional if no key)},...] - same as inventory. The shape is in prose because
+ *     `@returns { count, items[] }` is parsed as a TYPE expression: TypeScript reported it
+ *     as `TS1005: '}' expected`, a syntax error in a file Node and esbuild both parse
+ *     perfectly, because it is a comment.
  */
 function find_recipe_material({material, ignore_stop, needed_count}) {
     /*

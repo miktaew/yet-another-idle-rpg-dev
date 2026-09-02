@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 /**
  * Counters for the current run: what has been killed, crafted, survived and hit hardest.

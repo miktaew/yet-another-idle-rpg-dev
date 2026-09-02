@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 /**
  * The guild's board: the work on offer, and the one job taken off it.

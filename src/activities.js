@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 import { language } from "./main.js";
 import { translationManager } from "./translation.js";
 

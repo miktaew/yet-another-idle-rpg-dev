@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 import { InventoryHaver } from "./components/inventory_component.js";
 import { racial_height_modifiers } from "./races.js";

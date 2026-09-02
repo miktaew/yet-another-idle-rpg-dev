@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 127 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 128 -->
 
 # Changelog
 
@@ -20,6 +20,60 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### the models, and a correction: the type gate had been checking nothing
+
+No version. P-42 step 2's third piece, and it opens with a correction to the two entries
+above it.
+
+**`npm run check:types` had been inert since it was introduced.** `// @ts-check` has to sit
+in a file's **leading comment block** - before any statement - and every one of the 26 files
+opted in at step 1 carried it on the line *after* `"use strict";`, which is a statement. So
+the pragma was an ordinary comment, TypeScript checked none of those files, and the gate
+passed by looking at nothing. Four maintenance entries reported "19 files opted in and
+passing", then 26, and the number was true while the checking was not.
+
+Proved rather than guessed: planting `/** @type {Number} */ const planted = "not a number"`
+in an opted-in file left the gate green, and moving that one pragma above `"use strict";`
+made the same line fail immediately. All 26 moved; **the files were genuinely clean, so the
+count was right and only the gate was hollow.**
+
+`check_checked_files_stay_checked` could not have caught this, and that is worth saying
+because it is the same shape as the bug: it measures which files *would* pass using a
+project-wide `checkJs` probe, and that probe ignores pragmas entirely. So the placement is
+now asserted separately from the source - a pragma with any statement before it is an error
+naming the statement. Negative-tested by pushing one back under `"use strict";`.
+
+**And the models themselves, which is what the step was for.**
+`src/models/data_rows.js` declares `MaterialRow`, `RecipeRow` and `RecipeMaterial` as
+typedefs, and `src/data/content_rows.js` is a small checked module that imports both JSON
+files and asserts them against those shapes.
+
+**This is checking, not documentation.** TypeScript types a JSON import from the file's
+actual contents, so the assertion compares **every one of the 111 material rows and 148
+recipe rows** on every `check:types`. Measured: `"value": "four"` fails, and
+`"success_chance": ["low","high"]` fails, each naming the file. That replaces the shape
+knowledge that was duplicated in three places with no way of agreeing - the loader spreading
+a row into a constructor, the test helper reading the same rows back, and the guard checking
+two fields by hand.
+
+**The seam exists because of the pragma rule above.** `items.js` and `crafting_recipes.js`
+are not type-checked yet, so a typedef asserted inside them would sit unverified. A small
+module that is checkable *now* is what makes the assertion bite, and the two loaders import
+their rows from it.
+
+**One thing the typedef cannot do, closed by hand.** TypeScript's excess-property check
+applies to fresh object literals; a JSON import assigned to a `Record<...>` is a variable, so
+an **undeclared** field passes silently - `"worth": 9` was accepted. That is exactly how a
+typo like `mateiral_type` would arrive: accepted by the type, ignored by the loader, and the
+material quietly has no type. So the guard reads the allowed field names out of the typedef's
+own `@property` lines rather than listing them, which keeps one source of truth: adding a
+field to the model is what permits it in the data.
+
+**A malformed JSDoc found on the way.** `find_recipe_material` carried
+`@returns { count, items[] }`, which TypeScript parses as a type expression and reports as
+`TS1005: '}' expected` - a syntax error in a file that Node and esbuild both parse perfectly,
+because it is a comment. It is `@returns {Object}` with the shape in prose now.
 
 ### the recipes into JSON, and the coverage that had to be counted back
 

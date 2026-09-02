@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 class BackgroundParticle {
     constructor({canvas, size}) {

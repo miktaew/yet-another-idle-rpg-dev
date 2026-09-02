@@ -119,6 +119,34 @@ function check_checked_files_stay_checked() {
         //Only the pragma near the top counts, which is where TypeScript looks for it too.
         if (/^[\s\S]{0,400}?\/\/\s*@ts-check/.test(source)) {
             opted_in.add(relative);
+            /*
+                And it has to come before every STATEMENT, which is the rule that had this
+                whole gate inert for four versions.
+
+                `// @ts-check` must sit in the file's leading comment block. `"use strict";`
+                is a statement, so a pragma written under it is an ordinary comment and
+                TypeScript does not check the file at all. Twenty-six files were opted in
+                that way and `npm run check:types` passed while checking **nothing** -
+                proved by planting `const x = "not a number"` under a `@type {Number}` in an
+                opted-in file and watching the gate stay green.
+
+                This check could not have noticed on its own: it measures which files WOULD
+                pass using a project-wide `checkJs` probe, and that probe ignores pragmas
+                entirely. So the placement is asserted here, from the source.
+            */
+            const before = source.slice(0, source.search(/\/\/\s*@ts-check/));
+            //Comments and blank lines may precede the pragma; nothing else may.
+            const statement = before
+                .replace(/\/\*[\s\S]*?\*\//g, "")
+                .replace(/^\s*\/\/.*$/gm, "")
+                .trim();
+            if (statement.length > 0) {
+                const first = statement.split("\n")[0].trim().slice(0, 30);
+                error(`${relative} carries "// @ts-check" after "${first}". The pragma has `
+                    + `to precede every statement - TypeScript reads it out of the leading `
+                    + `comment block only - so this file is NOT being checked, and the gate `
+                    + `passes without having looked at it.`);
+            }
         }
         if (!complained.has(relative)) {
             clean.push(relative);

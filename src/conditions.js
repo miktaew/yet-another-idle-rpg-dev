@@ -1,5 +1,5 @@
-"use strict";
 // @ts-check
+"use strict";
 
 import { get_total_skill_level } from "./character.js";
 import { current_game_time } from "./game_time.js";
