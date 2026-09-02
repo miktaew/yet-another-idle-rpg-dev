@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 135 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 136 -->
 
 # Proposals
 
@@ -689,6 +689,65 @@ Data panel once it is above nought, so the milestones have somewhere to be read 
 **Next, in order:** the job generator (two types to begin with, difficulty scaling the numbers
 in the brief), then the board itself with its per-day refresh and its accepted-job persistence,
 then the standing payout with the ceiling Q-14 requires, then the shop.
+
+### P-42 — The big files, and what to use instead of TypeScript `open`
+
+The owner's request: *"files like display.js have got very big, we need to apply a general
+component approach. You said TypeScript is illogical - what is the alternative?"*
+
+**Measured first, and it moves the target twice.**
+
+- **`display.js` is not the biggest file.** 3988 lines, against `src/data/skills.js` 5797,
+  `src/items.js` 5464, `src/data/locations.js` 5537 and `src/main.js` 4751.
+- **It is not a tangle either.** 118 top-level functions, and grouped by what they draw the
+  largest cluster is *two*: money. It is one function per thing - stats, time, temperature,
+  storage, the purse - sharing a file. So the cost of its size is **navigation, not coupling**,
+  and that is a different problem with a different fix.
+- **The project already splits it this way, and it worked.** `inventory_display.js`,
+  `crafting_display.js`, `skills_display.js`, `journal_panels.js` and `item_tooltips.js` all
+  came out of display.js.
+- **A component system already exists.** `src/components/` holds `availability_component.js`
+  and `inventory_component.js`, and `component_management.js` grafts shared methods onto every
+  class that registers itself. That is the mechanism to extend rather than replace.
+
+**So the answer to "a general component approach" is: the two patterns already here.** A panel
+becomes a `*_display.js` module; behaviour shared between classes becomes a component with a
+graft. Neither needs inventing, and the file that would pay most for a split is **not
+display.js** - it is `items.js`, one file holding every item declaration in the game.
+
+**And the alternative to TypeScript is JSDoc with `checkJs`.**
+
+A `jsconfig.json` carrying `"checkJs": true` type-checks the JavaScript that is already
+written, from the JSDoc that is already there - 76 annotations in `main.js`, 41 in
+`display.js`. What that buys, against a TypeScript migration:
+
+- **no syntax change**: the source stays the JavaScript the browser runs, and esbuild keeps
+  doing exactly what it does;
+- **no migration**: it is turned on one file at a time with `// @ts-check`, so it never
+  produces a thousand errors nobody will read;
+- **reversible**: it is one file, and deleting it changes nothing about the build.
+
+**But the measured argument matters more than the tooling one.** Almost none of the faults this
+project has actually shipped were shape errors. They were reachability and ordering: a flag
+nothing grants, a quest nothing starts, a panel redrawn before the value it shows is written, a
+recipe that cannot say whether it can be made, an unlock whose trigger was already spent.
+**TypeScript catches none of those.** The 232 checks do, and they were written because it does
+not. Typing is worth having for what it is good at - a misspelt property, a wrong argument
+count - and it is not the answer to the problem the size of these files is causing.
+
+**The order this should go in, smallest first.**
+
+1. `jsconfig.json` with `checkJs`, and `// @ts-check` on the leaf modules that have no imports
+   or one - `game_time.js`, `misc.js`, `config.js`, `reputation.js`. Measure how much it finds.
+2. One split, chosen by measurement rather than by feel: `items.js` into the item families it
+   already groups itself into in comments.
+3. `display.js` only after that, and by panel, the way the five existing splits went.
+
+**Guard.** Whatever a split does, it must not change behaviour, and this project has the tool
+for saying so: `npm run check:bundle` proves the bundle still evaluates, `Verify_Game_Objects()`
+proves the registries still resolve, and `npm run check:save` proves a real save still loads.
+A check for "no file over N lines" would be a rule invented from a number rather than a
+measurement, and this file has enough of those already.
 
 ## Open decisions
 

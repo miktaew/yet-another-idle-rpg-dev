@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 135 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 136 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -713,6 +713,67 @@ anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı
 **Sırada, bu sırayla:** iş üreteci (başlangıç için iki tür, zorluk brief'teki sayıları
 ölçekliyor), sonra panonun kendisi — gün başına yenilenme ve alınmış işin kalıcılığıyla —
 sonra Q-14'ün istediği tavanla itibar ödemesi, sonra dükkân.
+
+### P-42 — Büyük dosyalar ve TypeScript yerine ne kullanılacağı `open`
+
+Sahibinin isteği: *"display.js gibi dosyalar çok büyüdü, uygulamaya genel bir component haline
+getirme uygulamak gerek. TS kullanmak mantıksız demiştin, yerine alternatif ne var?"*
+
+**Önce ölçüldü ve hedefi iki kez kaydırıyor.**
+
+- **`display.js` en büyük dosya değil.** 3988 satır; buna karşılık `src/data/skills.js` 5797,
+  `src/items.js` 5464, `src/data/locations.js` 5537 ve `src/main.js` 4751.
+- **Karışık bir yumak da değil.** 118 üst düzey fonksiyon ve çizdikleri şeye göre
+  gruplandığında en büyük küme *iki*: para. Her şey için bir fonksiyon — statlar, zaman,
+  sıcaklık, depo, kese — bir dosyayı paylaşıyor. Yani boyutunun maliyeti **gezinme, bağlılık
+  değil**; bu da farklı çözümü olan farklı bir problem.
+- **Proje onu zaten böyle bölüyor ve işe yaradı.** `inventory_display.js`,
+  `crafting_display.js`, `skills_display.js`, `journal_panels.js` ve `item_tooltips.js` hepsi
+  display.js'ten çıktı.
+- **Bir component sistemi zaten var.** `src/components/` içinde `availability_component.js` ve
+  `inventory_component.js` duruyor; `component_management.js` de kendini kaydeden her sınıfa
+  ortak metotları graft ediyor. Değiştirilecek değil genişletilecek mekanizma bu.
+
+**Yani "genel bir component yaklaşımı"nın cevabı: burada zaten olan iki kalıp.** Bir panel bir
+`*_display.js` modülü oluyor; sınıflar arasında paylaşılan davranış graft'lı bir component
+oluyor. İkisinin de icat edilmesi gerekmiyor ve bölünmesi en çok kazandıracak dosya
+**display.js değil** — oyundaki her eşya bildirimini tek başına taşıyan `items.js`.
+
+**TypeScript'in alternatifi de JSDoc + `checkJs`.**
+
+`"checkJs": true` taşıyan bir `jsconfig.json`, zaten yazılmış JavaScript'i zaten var olan
+JSDoc'tan tip denetliyor — `main.js`'te 76, `display.js`'te 41 açıklama. TypeScript göçüne
+karşı kazandırdıkları:
+
+- **sözdizimi değişmiyor**: kaynak, tarayıcının çalıştırdığı JavaScript olarak kalıyor ve
+  esbuild tam olarak yaptığı şeyi yapmaya devam ediyor;
+- **göç yok**: `// @ts-check` ile dosya dosya açılıyor, yani kimsenin okumayacağı bin hata
+  üretmiyor;
+- **geri alınabilir**: tek bir dosya ve silmek derleme hakkında hiçbir şeyi değiştirmiyor.
+
+**Ama araç argümanından çok ölçüm argümanı önemli.** Bu projenin gerçekten gönderdiği
+hataların neredeyse hiçbiri biçim hatası değildi. Ulaşılabilirlik ve sıra hatalarıydı: hiçbir
+şeyin vermediği bir bayrak, hiçbir şeyin başlatmadığı bir görev, gösterdiği değer yazılmadan
+önce çizilen bir panel, yapılabilir olup olmadığını söyleyemeyen bir tarif, tetikleyicisi
+çoktan harcanmış bir kilit açma. **TypeScript bunların hiçbirini yakalamaz.** 232 kontrol
+yakalıyor ve zaten yakalamadığı için yazıldılar. Tipleme, iyi olduğu şey için değerli — yanlış
+yazılmış bir özellik, hatalı argüman sayısı — ve bu dosyaların boyutunun yarattığı problemin
+cevabı değil.
+
+**Gitmesi gereken sıra, küçükten büyüğe.**
+
+1. `checkJs` ile `jsconfig.json` ve import'u olmayan ya da bir tane olan yaprak modüllere
+   `// @ts-check`: `game_time.js`, `misc.js`, `config.js`, `reputation.js`. Ne kadar şey
+   bulduğu ölçülür.
+2. Hisle değil ölçümle seçilmiş tek bir bölme: `items.js`, yorumlarında kendini zaten
+   grupladığı eşya ailelerine.
+3. `display.js` ancak ondan sonra ve mevcut beş bölmenin gittiği gibi panel panel.
+
+**Muhafız.** Bir bölme ne yaparsa yapsın davranışı değiştirmemeli ve bu projenin bunu söyleyecek
+aracı var: `npm run check:bundle` paketin hâlâ değerlendiğini, `Verify_Game_Objects()` kayıt
+defterlerinin hâlâ çözüldüğünü, `npm run check:save` gerçek bir kaydın hâlâ yüklendiğini
+kanıtlıyor. "Hiçbir dosya N satırı geçmesin" kontrolü ise ölçümden değil bir sayıdan uydurulmuş
+bir kural olurdu ve bu dosyada onlardan yeterince var.
 
 ## Bekleyen kararlar
 
