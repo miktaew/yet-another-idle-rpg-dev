@@ -61,9 +61,12 @@ function Game_Time(new_time) {
     }
 
     /**
-     * 
-     * @param {Number} day_count for how far in future to check, leaving at 0 will just return the current season
-     * @returns 
+     * The season, now or at some remove.
+     *
+     * @param {Number} [day_count] how far in future to check; omitted or 0 returns
+     *     the current season. Optional, and the brackets are what say so -
+     *     getDateString below has called it with no argument all along.
+     * @returns {String}
      */
     this.getSeason = function(day_count) {
         let month;

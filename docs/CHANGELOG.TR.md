@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 119 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 120 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,68 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### neredeyse temiz olan yedi dosya ve birinin arkasındaki ölü muhafız
+
+Sürüm yok: buradaki hiçbir şey oyuncuya görünmüyor. P-42 1b adımı — 1. adımın ölçtüğü pistten
+alındı: temizliğe bir ya da iki tür hatası uzaklıktaki yedi dosya. Yedisi de artık dâhil ve
+**56 dosyanın 26'sı `// @ts-check` taşıyor**, 19'dan yukarı. Proje toplamı 37 dosyada 1690
+hatadan 30 dosyada 1672'ye indi.
+
+**Dokuz hata ve ikisi ek açıklama değil, arızaydı.** Bunu açmaya değip değmediğinin cevabı da
+bu:
+
+- **`combat_stances.js`, asla ateşlenemeyen bir doğrulama taşıyordu.**
+  `if(this.target_count < 1) { throw(...) }`, `this.target_count = target_count` satırının
+  **iki satır üstünde** duruyor; yani her seferinde `undefined` okuyordu. `undefined < 1`
+  false olduğu için, `target_count: 0` ile bildirilmiş bir duruş sessizce kabul ediliyordu ve
+  o mesaj bir kez bile yazılmamıştı. Ne loglanıyordu ne bir şey düşüyordu; kontrol yazıldığı
+  günden beri ölüydü. Artık parametreyi test ediyor.
+- **`world_index.js`, kendisini değil çağırıcısını anlatan bir JSDoc taşıyordu.**
+  `enemy_zones`, *"okunmak üzere adlandırılmış ve sıralanmış"* diye belgelenmiş ve
+  `@returns {String[]} görünen adlar` demişti. Oysa **mekân nesneleri döndürüyor, sırasız** —
+  adlandırma ve sıralama `journal_panels.js` içinde oluyor, o cümlenin yeri de orası. Bir şey
+  bozulmuyordu, ama her çağırıcıyı yanlış gösteriyordu: TypeScript belgeye inandı, `zone`u
+  string sandı ve `zone.id`yi hata olarak bildirdi.
+
+**Ve üçüncü bir arıza gibi görünüp arıza olmayan bir şey**, kayda değer; çünkü kaynaktan akıl
+yürütmek bunu iki kere yanlış anladı. `world_index.js`, `location_key: zone.id` geçiriyor ve
+`locations.js` içinde yalnızca dört mekân `id` bildiriyor — yani Keşifler panelindeki her
+"düşürdü" satırı, `if(!location) return line` ile boş bir div dönecekmiş gibi görünüyordu.
+Tartışmak yerine ölçüldü: **46'nın 46'sı çözülüyor.** `locations.js`, başlangıçta her mekân
+için `locations[key].id = key` atıyor. Arıza yoktu.
+
+**Geri kalanlar, var olmayan şeyleri adlandıran JSDoc'lardı.** `process_conditions`, önce
+`character`ı belgeliyordu ve ilk parametresine `condition` diyordu — ne adı öyle ne de tekil.
+`add_connection`ın üçüncü parametresi `distance` diye belgelenmişti; adı `travel_time`.
+`getSeason`ın tek parametresi zorunlu işaretliydi, oysa üç fonksiyon aşağıdaki `getDateString`
+onu ta baştan argümansız çağırıyor; artık `[day_count]`. `required_tool_type` ile
+`related_skill` bildirilmemiş-opsiyoneldi — beş toplama aktivitesi hiç alet istemiyor ve normal
+duruşun yeteneği yok, ikisi de zaten öyle yazılmıştı; varsayılanlar artık bunu söylüyor
+(`null`, her ikisinin de tek çağrı yerinde yalnızca doğruluk için kontrol ediliyor, yani
+çalışma zamanında hiçbir şey değişmiyor). `SEARCH_FOLDING`, `[RegExp, String]` çiftlerinden
+oluşan bir tablo; çıkarsanan türü iki yarısını da her iki tür yapıp `replace`in hiçbir
+aşırı yüklemesine uymuyordu. `Person`, argüman almayan ve onu hiç okumayan bir üst kurucuya
+`data` geçiriyordu.
+
+**Muhafız ve bilerek olmadığı o geniş kural.** D-8 sınıfı istiyor; bu yüzden
+`check_constructors_do_not_test_fields_before_setting_them` genel soruyu soruyor — ve önce
+ölçülen o genel soru kullanılamaz durumda: *"bir kurucu `this.X`i atamadan önce okuyor"*
+burada **on üç** yer buluyor ve on üçü de doğru.
+`if(!this.id) { this.id = this.getName(); }` çalışmak için alanı okumak zorunda olan bir
+varlık testi; `this.draw = () => ... this.y ...` ise kurucu döndükten çok sonra koşan bir
+kapanış. Bir yanlışı yakalamak için on üç doğruyu bildiren bir kontrol kapatılır.
+
+Bu yüzden gerçek hatanın üç parçasının hepsini istiyor: kurucu `X` diye bir parametre alıyor,
+onu düz biçimde `this.X = X` olarak saklıyor ve o saklamayı **içermeyen** bir `if` içinde
+`this.X`i test ediyor. Bir parametre düz biçimde saklanıyorsa, parametre yerine alanı okumanın
+hiçbir sebebi yok; yani bu şekil her zaman yanlış — ve on üçünün hiçbirinde üç parça birden
+yok. İki geçiş isteyen kısım da içerme koşulu oldu: o olmadan kontrol, `items.js` içinde
+kendi atamasını koruyan bir `if` olan `if(!this.getName) { this.getName = getName; }`i
+işaretliyordu; ki o varlık testi, arıza değil.
+
+**İki kez negatif test edildi**: gerçek hata geri konuldu, dosya ve ad ile yakalandı; aynı
+şekil `activities.js` içine ekildi, orada da yakalandı — yani örnek değil sınıf korunuyor.
 
 ### P-14 kapanıyor, v0.8 ise P-43 olarak açılıyor
 

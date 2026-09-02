@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * What the world holds, indexed the other way round.
@@ -192,10 +193,16 @@ function build_enemy_locations_index() {
 }
 
 /**
- * The zones a creature can be met in, named and sorted for reading.
+ * The zones a creature can be met in.
+ *
+ * Returns the LOCATION OBJECTS, not names, and in declaration order. The previous
+ * description - "named and sorted for reading", with `@returns {String[]}` - was the
+ * journal panel's line about them rather than this function's: `journal_panels.js` is
+ * where the `.getName()` and the sort happen, and `world_index.js` reads `.id` off
+ * each one. Nothing was broken by it, but it made every caller look wrong.
  *
  * @param {String} enemy_name the registry key, which is what the zones list
- * @returns {String[]} display names, or an empty array
+ * @returns {Array} the zones, or an empty array
  */
 function enemy_zones(enemy_name) {
     if(!enemy_locations_index) {

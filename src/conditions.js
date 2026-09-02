@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 import { get_total_skill_level } from "./character.js";
 import { current_game_time } from "./game_time.js";
@@ -146,10 +147,16 @@ function money_spent(condition, is_won) {
 }
 
 /**
-     * Analyzes passed conditions, returns their status (0 or 1 if single element array, fuzzy value if two element array)
-     * @param {*} character 
-     * @param {*} condition 
-    **/
+ * Analyzes passed conditions, returns their status (0 or 1 if single element array,
+ * fuzzy value if two element array).
+ *
+ * The names and the order were both wrong: it documented `character` first and called
+ * the first parameter `condition`, which is neither its name nor singular.
+ *
+ * @param {Array} conditions the condition list, in declaration order
+ * @param {Object} character who is being tested against them
+ * @returns {Number} 0, 1, or a value between them
+ */
 const process_conditions = (conditions, character) => {
     let met = 1;
 

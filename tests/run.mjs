@@ -98,6 +98,8 @@ import {
 } from "./checks/reachable.mjs";
 import { check_no_content_object_repeats_a_key } from "./checks/literals.mjs";
 import { check_every_guild_rank_can_be_given_work } from "./checks/guild.mjs";
+import { check_constructors_do_not_test_fields_before_setting_them }
+    from "./checks/constructors.mjs";
 import { check_the_sighting_can_land_and_then_stops,
     check_the_sighting_places_are_the_traced_places } from "./checks/sighting.mjs";
 import { check_checked_files_stay_checked } from "./checks/types.mjs";
@@ -230,6 +232,7 @@ await check_a_late_repair_still_finds_its_grants();
 await check_the_unlock_repair_knows_every_kind();
 await check_every_guild_rank_can_be_reached();
 await check_every_guild_rank_can_be_given_work();
+await check_constructors_do_not_test_fields_before_setting_them();
 await check_the_sighting_can_land_and_then_stops();
 await check_the_sighting_places_are_the_traced_places();
 check_checked_files_stay_checked();

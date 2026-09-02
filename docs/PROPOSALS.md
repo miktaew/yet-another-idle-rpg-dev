@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 140 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 141 -->
 
 # Proposals
 
@@ -408,6 +408,24 @@ inferred shape (448), TS2353 object literal with a property the shape does not d
 TS2740 a literal missing properties the shape requires (99). Those last two are one thing -
 **the data files declare content objects that carry more fields than any constructor names**,
 which is the same finding the registry checks keep making from the other direction.
+
+**Step 1b is done, and it paid for the whole exercise.** All seven of those files are clean and
+opted in - **26 of 56 now**, up from 19; the project total is 1672 errors across 30 files. Two
+of the nine errors were real: `combat_stances.js` tested `this.target_count` two lines before
+assigning it, so a validation that throws on `target_count: 0` had never once run; and
+`enemy_zones` was documented as returning sorted display names when it returns unsorted
+location objects, which is what made TypeScript call every caller wrong. One more *looked*
+real and was not - `zone.id` reads fine because `locations.js` backfills an id for every
+location, measured at 46 of 46 resolving rather than argued from the four literal `id:`
+declarations. The guard is
+`check_constructors_do_not_test_fields_before_setting_them`, narrow on purpose: the wide
+version of that rule finds thirteen correct lines here.
+
+**Next is step 2, and step 1c is optional.** Nothing else is within two errors of clean; the
+cheapest remaining files are `mods/glassmaking.js` and `data/storage.js` at four each, then
+`races.js`, `market_saturation.js` and `crafting.js` at six. Whether to keep walking that list
+or move to the `items.js` split is a judgement about which the owner would rather have, not a
+measurement.
 
 **And two silent failures, because this check exists to answer one question and got it wrong
 twice.** It first reported all 38 unchecked files as needing a pragma: the probe config was

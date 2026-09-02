@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 import { get_total_skill_level } from "./character.js";
 import { skills } from "./data/skills.js";
 import { translationManager } from "./translation.js";
@@ -10,7 +11,9 @@ class Stance {
             {
                 name,
                 id,
-                related_skill,
+                //Optional: the normal stance has no skill behind it, and the check below
+                //has always treated it that way. The default is what says so.
+                related_skill = null,
                 target_count = 1,
                 randomize_target_count = false,
                 is_unlocked = false,
@@ -28,7 +31,13 @@ class Stance {
         this.id = id;
         this.related_skill = related_skill;
         this.description = description;
-        if(this.target_count < 1) {
+        /*
+            The PARAMETER, not this.target_count - which is assigned two lines below this
+            check and was therefore undefined every time it ran. `undefined < 1` is false,
+            so a stance declared with target_count: 0 was accepted in silence and this
+            message had never once been printed.
+        */
+        if(target_count < 1) {
             throw("Combat stance cannot target less than 1 enemy!");
         }  
         this.target_count = target_count;

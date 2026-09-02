@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 140 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 141 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -416,6 +416,23 @@ kod toplamın üçte ikisi: TS2345 yanlış argüman türü (679), TS2339 çıka
 şeklin gerektirdiği özellikleri eksik bırakan sabit (99). Son ikisi tek bir şey: **veri
 dosyaları, hiçbir kurucunun adını anmadığı fazladan alanlar taşıyan içerik nesneleri
 bildiriyor** — kayıt defteri kontrollerinin öbür yönden söyleyip durduğu bulgunun aynısı.
+
+**1b adımı tamam ve bütün bu işin bedelini o ödedi.** O yedi dosyanın hepsi temiz ve dâhil —
+**artık 56'nın 26'sı**, 19'dan yukarı; proje toplamı 30 dosyada 1672 hata. Dokuz hatadan ikisi
+gerçekti: `combat_stances.js`, `this.target_count`i atamasından iki satır önce test ediyordu,
+yani `target_count: 0`da fırlatan bir doğrulama bir kez bile koşmamıştı; ve `enemy_zones`,
+sırasız mekân nesneleri döndürdüğü hâlde sıralı görünen adlar döndürüyor diye belgelenmişti —
+TypeScript'in her çağırıcıyı yanlış saymasının sebebi de bu. Bir tanesi daha gerçek *gibi*
+göründü ama değildi: `zone.id` sorunsuz okunuyor, çünkü `locations.js` her mekân için bir id
+geri dolduruyor — dört adet düz `id:` bildiriminden akıl yürütmek yerine ölçüldü, 46'nın 46'sı
+çözülüyor. Muhafız `check_constructors_do_not_test_fields_before_setting_them` ve bilerek dar:
+o kuralın geniş hâli burada on üç doğru satır buluyor.
+
+**Sırada 2. adım var, 1c ise opsiyonel.** Temizliğe iki hata mesafesinde başka bir şey kalmadı;
+en ucuz kalan dosyalar dörderle `mods/glassmaking.js` ve `data/storage.js`, sonra altışarla
+`races.js`, `market_saturation.js` ve `crafting.js`. O listeyi yürümeye devam etmek mi yoksa
+`items.js` bölmesine geçmek mi — bu bir ölçüm değil, sahibinin hangisini tercih edeceğine dair
+bir yargı.
 
 **Ve iki sessiz arıza, çünkü bu kontrol tek bir soruyu cevaplamak için var ve onu iki kez
 yanlış cevapladı.** İlk seferde kontrol edilmeyen 38 dosyanın tamamının pragmaya ihtiyaç

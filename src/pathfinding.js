@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 import { skills } from "./data/skills.js";
 
@@ -41,7 +42,7 @@ class Pathfinder {
      * Creates connection from 1 to 2 with provided travel time. Does it one way only, as travel times can be assymetrical
      * @param {*} loc1 
      * @param {*} loc2 
-     * @param {*} distance 
+     * @param {*} travel_time
      */
     add_connection(loc1, loc2, travel_time) {
 

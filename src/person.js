@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 import { InventoryHaver } from "./components/inventory_component.js";
 import { racial_height_modifiers } from "./races.js";
@@ -33,7 +34,9 @@ const height_stats = {
 
 class Person extends InventoryHaver {
     constructor(data = {}){
-        super(data);
+        //InventoryHaver's constructor takes no arguments and never read this one. Passing
+        //it suggested the base did something with the data, and it does not.
+        super();
         this.personal = {
             race: data.race,
             height: data.height,

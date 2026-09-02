@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 119 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 120 -->
 
 # Changelog
 
@@ -20,6 +20,67 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### the seven files that were nearly clean, and the dead guard behind one of them
+
+No version: nothing here is player-visible. P-42 step 1b, taken from the runway step 1
+measured - the seven files that were one or two type errors from clean. All seven are now
+opted in, and **26 of 56 files carry `// @ts-check`**, up from 19. The project total went
+from 1690 errors across 37 files to 1672 across 30.
+
+**Nine errors, and two of them were defects rather than annotations.** Which is the answer to
+whether this was worth turning on:
+
+- **`combat_stances.js` held a validation that could never fire.** `if(this.target_count < 1)
+  { throw(...) }` sits **two lines above** `this.target_count = target_count`, so it read
+  `undefined` every single time. `undefined < 1` is false, so a stance declared with
+  `target_count: 0` was accepted in silence and that message had never once been printed.
+  Nothing logged it and nothing failed; the check was dead from the day it was written. It
+  now tests the parameter.
+- **`world_index.js` had JSDoc describing its caller instead of itself.** `enemy_zones` was
+  documented as *"named and sorted for reading"* returning `@returns {String[]} display
+  names`. It returns **location objects, unsorted** - the naming and the sort happen in
+  `journal_panels.js`, which is where that sentence belongs. Nothing was broken by it, but it
+  made every caller look wrong: TypeScript believed the doc, inferred `zone` as a string and
+  reported `zone.id` as an error.
+
+**And one thing that looked like a third defect and was not**, which is worth recording
+because reasoning from the source got it wrong twice over. `world_index.js` passes
+`location_key: zone.id`, and only four locations in `locations.js` declare an `id` - so every
+drop line in the Discoveries panel looked like it would fail `if(!location) return line` and
+render blank. Measured instead of argued: **46 of 46 resolve.** `locations.js` backfills
+`locations[key].id = key` for every location at init. There was no bug.
+
+**The rest were JSDoc that named things that do not exist.** `process_conditions` documented
+`character` first and called its first parameter `condition` - neither its name nor singular.
+`add_connection`'s third parameter was documented as `distance` and is called `travel_time`.
+`getSeason`'s only parameter was marked required while `getDateString` three functions below
+has called it with no argument all along; it is `[day_count]` now. `required_tool_type` and
+`related_skill` were undeclared-optional - five gathering activities need no tool and the
+normal stance has no skill, and both were already written that way, so the defaults now say
+so (`null`, checked only for truthiness at its single call site in both cases, so nothing
+changes at runtime). `SEARCH_FOLDING` is a table of `[RegExp, String]` pairs whose inferred
+type made both halves either kind and matched no overload of `replace`. `Person` passed
+`data` to a base constructor that takes no arguments and never read it.
+
+**The guard, and the wider rule it is deliberately not.** D-8 wants the class, so
+`check_constructors_do_not_test_fields_before_setting_them` asks the general question - and
+the general question, measured first, is unusable: *"a constructor reads `this.X` before
+assigning it"* finds **thirteen** places here and all thirteen are correct.
+`if(!this.id) { this.id = this.getName(); }` is a presence test that has to read the field,
+and `this.draw = () => ... this.y ...` is a closure that runs long after the constructor
+returned. A check reporting thirteen right lines to catch one wrong one gets switched off.
+
+So it asks for all three parts of the real mistake: the constructor takes a parameter `X`, it
+stores it plainly as `this.X = X`, and it tests `this.X` in an `if` that does not contain
+that store. When a parameter is stored plainly there is no reason to read the field instead of
+the parameter, so that shape is always wrong - and none of the thirteen has all three parts.
+The containment clause is the part that took two passes: without it the check flagged
+`if(!this.getName) { this.getName = getName; }` in `items.js`, an `if` guarding its own
+assignment, which is the presence test and not the bug.
+
+**Negative-tested twice**: the real bug put back, caught by file and by name; and the same
+shape planted in `activities.js`, caught there too - so it is the class and not the instance.
 
 ### P-14 closes, and v0.8 opens as P-43
 

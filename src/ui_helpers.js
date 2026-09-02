@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 
 /**
  * The small helpers every panel uses: writing into an element, comparing two display
@@ -104,6 +105,15 @@ function is_element_above_x(element, x) {
     under Turkish rules "Iron" lowercases to "ıron" while "iron" stays "iron", and the two
     stop matching.
 */
+/**
+ * Each entry is a pattern and its plain replacement.
+ *
+ * Annotated because the inferred type of a literal array of pairs is
+ * `(RegExp | String)[][]`, which makes both halves of the destructuring either kind and
+ * so matches no overload of `String.replace`. The pairing is the whole point of the table.
+ *
+ * @type {Array<[RegExp, String]>}
+ */
 const SEARCH_FOLDING = [
     [/[İIıi]/g, "i"],
     [/[çÇ]/g, "c"],

@@ -1,4 +1,5 @@
 "use strict";
+// @ts-check
 import { language } from "./main.js";
 import { translationManager } from "./translation.js";
 
@@ -68,7 +69,10 @@ class Gathering extends Training {
         action_text,
         base_skills_names,
         is_unlocked = false,
-        required_tool_type,
+        //Optional, and the default says so. Five of the game's gathering activities need
+        //no tool at all - animal care does not want a sickle - and main.js reads this as
+        //`!required_tool_type`, so null and undefined behave identically there.
+        required_tool_type = null,
         getBackgroundNoises = null
     }) {
         super({name, description, action_text, base_skills_names, is_unlocked, getBackgroundNoises});
