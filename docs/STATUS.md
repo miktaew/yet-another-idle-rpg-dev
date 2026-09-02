@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 55 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 56 -->
 
 # Status
 
@@ -220,6 +220,7 @@ but the ones that encode a bug that shipped:
 | `panel ordering` | A panel redrawn just before the value it shows is written, so it is built from the old one. 16 pieces of state. |
 | `crafted marks` | A craft path that hands over its result without recording it, leaving the recipe marked as never made. 3 paths. |
 | `recipe availability` | A kind of recipe that cannot say whether it can be made, so a whole crafting page filters wrongly in silence. 148 recipes. |
+| `flag gates` | Content waiting on a flag that no reward grants, which refuses for ever in its own words. 7 flags waited on. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

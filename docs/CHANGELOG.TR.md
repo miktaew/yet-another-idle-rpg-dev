@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 109 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 110 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,45 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.38 - ikinci iz ve yatıp kalkan bir şey
+
+P-14'ün 7. fazı sürüyor. Göl bir iz verdi; bu, o izin peşine düşmeye değeni.
+
+**Islak orman bariz yerdi ve yanlış yer.** Önce komşuları okumak bu projenin yazım
+kurallarından biri ve burada karşılığını verdi: ıslak ormanın arka plan sesleri *zaten* bu
+kayıtta — *"Ağır bir şey kendini yere bırakıyor"*, *"Kurbağalar, sonra kurbağa yok"* — ve
+`cut the standing flax` o ipliği açıkça kapatıyor: *"Griler gitti. Orman artık sadece
+orman."* Oraya bir iz koymak, oyunun söylemeyi bitirdiği bir şeyi yeniden açardı.
+
+**Şelale havzası kendini iki kez seçti.** Kendi açıklaması kaya barınaklarını ve taştan
+ayırt edilemeyen yengeçleri adlandırıyor; yani orası zaten şeyleri görememekle ilgili bir
+yer, ve bir şelalenin altında olduğu için hiçbir şeyin duyulmadığı bir yer. Üstelik hiç
+aksiyonu ve tam olarak tek bir arka plan sesi vardı.
+
+Baştan üçüncü barınakta olan şey, bir insandan uzun aşınmış bir yer ve **ezilmiş değil
+açılmış** yengeç kabuklarından bir taban — bir taşın altında ölen yengeç parça parça olur,
+bunlar sökülmüş. Hiçbir şey adlandırılmıyor. Yükselen tek şey zaman kipi: gölde bir şey
+durmuştu; burada bir şey yaşıyor.
+
+**İlk ize kapatılmış ve kapalıyken bile görünür.** `required: {flags:
+["has_read_the_shallows"]}` ve nedenini söyleyen bir reddetme — içinde yengeç olan oyuklar, bir
+sebebiniz olana kadar aranmaya değmez. Bu, projenin kilitli kapılar kuralı ve ilk izi anlamlı
+kılan şey.
+
+**Muhafız: `check_every_required_flag_can_be_set`.** Hiçbir şeyin vermediği bir bayrağa
+kapatılmış bir kapı sonsuza dek, kibarca, kendi sözleriyle reddeder ve tam olarak oyuncunun
+henüz hak etmediği bir kapı gibi okunur. `check_global_flags` *yanlış yazılmış* bir bayrağı
+iki yönde de zaten yakalıyor; bu, öteki yarı — doğru yazılmış, bildirilmiş, istenmiş ve bir
+kez bile verilmemiş.
+
+**`every_reward_block` üzerine kurulu ve asıl mesele bu.** `rewards: {flags: [...]}` için elle
+yazılmış bir tarama `is_strength_proved`'ı verilemez diye bildirdi. O, iki savaş bölgesinin
+`first_reward`'ında veriliyor — o taramanın bilmediği bir biçim ve aynı dosyanın tam olarak bu
+hatayı kaydettiği üçüncü kez. `true` başlayan bir bayrağın vericiye ihtiyacı yok ve atlanıyor;
+isimle muaf tutularak değil bildirimden türetilerek. 7 bayrak bekleniyor, 10 tanesi veriliyor,
+biri baştan açık. İki yönde negatif test edildi: verilmeyen bir bayrağa çevrilmiş bir kapı ve
+gölün kendi bayrağını vermeyi bırakması.
 
 ### v0.7.37 - ilk iz, gölde
 

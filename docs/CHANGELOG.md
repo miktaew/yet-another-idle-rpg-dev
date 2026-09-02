@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 109 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 110 -->
 
 # Changelog
 
@@ -20,6 +20,45 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.38 - the second trace, and something has been lying up
+
+P-14 phase 7 continues. The lake gave a print; this is what the print is worth following.
+
+**The wet woods were the obvious place and are the wrong one.** Reading the neighbours first
+is one of this project's authoring rules, and it paid here: the wet woods' background noises
+are *already* in this register - *"Something heavy setting itself down"*, *"Frogs, and then
+no frogs"* - and `cut the standing flax` closes that thread outright, *"The grey shapes are
+gone. The woods are just woods now."* A trace there would reopen something the game has
+finished saying.
+
+**The waterfall basin chose itself twice over.** Its own description names rock shelters and
+crabs that cannot be told from the stone, so it is already a place about not seeing things,
+and it is under a waterfall, so it is a place where nothing is heard either. It also had no
+actions at all and exactly one background noise.
+
+What is in the third shelter along is a worn place longer than a person and a floor of crab
+shells **opened rather than crushed** - a crab that dies under a rock is broken to pieces,
+these have been taken apart. Nothing is named. What escalates is only the tense: at the lake
+something had stood; here something has been living.
+
+**Gated on the first trace, and visible while it is.** `required: {flags:
+["has_read_the_shallows"]}` with a refusal that says why - holes with crabs in them are not
+worth a search until you have a reason. That is the project's rule about locked doors, and it
+makes the first trace matter.
+
+**Guard: `check_every_required_flag_can_be_set`.** A gate on a flag nothing grants refuses for
+ever, politely, in its own words, and reads exactly like a gate the player has not earned yet.
+`check_global_flags` already catches a *misspelt* flag in either direction; this is the other
+half - spelt correctly, declared, required, and never given out.
+
+**It is built on `every_reward_block`, and that is the point.** A hand-rolled scan for
+`rewards: {flags: [...]}` reported `is_strength_proved` as ungrantable. It is granted by
+`first_reward` on two combat zones - a shape that scan did not know, and the third time this
+same file has recorded making that exact mistake. A flag that starts `true` needs no giver and
+is skipped, derived from the declaration rather than excused by name. 7 flags waited on, 10
+granted, one on from the start. Negative-tested both ways: a gate pointed at an ungranted flag,
+and the lake told to stop granting its own.
 
 ### v0.7.37 - the first trace, at the lake
 

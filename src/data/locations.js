@@ -2167,8 +2167,16 @@ function get_location_type_penalty(type, stage, stat, category) {
                 return translationManager.getText(language, "desc location Waterfall basin dyn 3");
             }
         },
+        /*
+            One sound, and it is the water. Reading the shelters adds the second (P-14
+            phase 7) - a place that is nothing but roar is a place where anything could
+            come and go, and the point of the trace is that something has been.
+        */
         getBackgroundNoises: function() {
             let noises = [translationManager.getText(language, "noise Waterfall basin 1")];
+            if(global_flags.has_read_the_shelters) {
+                noises.push(translationManager.getText(language, "noise Waterfall basin watched 1"));
+            }
             return noises;
         },
         temperature_modifier: 2,
@@ -3689,6 +3697,49 @@ function get_location_type_penalty(type, stage, stat, category) {
             availability_time: {start: 20, end: 6},
             availability_seasons: ["Spring", "Summer", "Autumn", "Winter"],
             skill_xp_per_tick: 1,
+        }),
+    };
+
+    /*
+        P-14 phase 7, the second trace, and the basin had no actions at all.
+
+        The place chose itself twice over. Its own description names rock shelters and crabs
+        that cannot be told from the stone, so it is already a place about not seeing things;
+        and it is under a waterfall, so it is a place where nothing is heard either.
+
+        The wet woods were considered first and are the wrong place: their noises are already
+        in this register - "*Something heavy setting itself down*" - and `cut the standing
+        flax` closes that thread outright, "the woods are just woods now". Adding a trace
+        there would reopen something the game has finished saying.
+
+        Gated on having read the shallows, because that is what gives a person a reason to
+        look into a hole full of crabs. Visible and refused with a sentence, not hidden.
+    */
+    locations["Waterfall basin"].actions = {
+        "read the rock shelters": new GameAction({
+            action_id: "read the rock shelters",
+            action_name: "action read the rock shelters name",
+            starting_text: "action read the rock shelters starting",
+            description: "action read the rock shelters desc",
+            action_text: "action read the rock shelters during",
+            success_text: "action read the rock shelters success",
+            failure_texts: {
+                unable_to_begin: ["action read the rock shelters fail unable_to_begin 1"],
+                conditional_loss: ["action read the rock shelters fail conditional_loss 1"],
+                random_loss: ["action read the rock shelters fail random_loss 1"],
+            },
+            is_unlocked: true,
+            required: {
+                flags: ["has_read_the_shallows"],
+            },
+            conditions: [{skills: {Perception: 12}}, {skills: {Perception: 30}}],
+            attempt_duration: 240,
+            success_chances: [0.3, 1],
+            keep_progress: true,
+            rewards: {
+                skill_xp: {Perception: 900},
+                flags: ["has_read_the_shelters"],
+            },
         }),
     };
 

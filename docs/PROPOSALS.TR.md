@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 126 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 127 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -438,10 +438,20 @@ olmadığından emin olmamalıdır.
   bayrağın arkasından üç ses daha karışıyor — Marrowmoth limandayken rıhtımın kullandığı
   biçim.
 
-- **Sırada olanlar.** Aynı yabanla sınırdaş yerlerde daha fazla iz: ovalarda sürülmüş kabile
-  için `read the ground` zaten var, ıslak ormanla şelale havzasında hiç yok. Ve izler
-  yeterli olduğunda bir karar: v0.8 o şeyle karşılaşacak mı, yoksa karşılaşmamayı
-  sürdürecek mi.
+- **İkinci iz.** `done`, **v0.7.38** olarak. Şelale havzasında `read the rock shelters`;
+  sığlığı okumuş olmaya kapatılmış ve o zamana dek sebebiyle reddediliyor. Bir insandan uzun
+  aşınmış bir yer ve ezilmiş değil açılmış yengeç kabukları; zaman kipi "burada bir şey
+  durmuştu"dan "burada bir şey yaşıyor"a yükseliyor ve hiçbir şey adlandırılmıyor.
+
+  **Islak orman ölçüldü ve elendi**, ki asıl saklanmaya değer bulgu bu: sesleri zaten bu
+  kayıtta ve `cut the standing flax` ipliği açıkça kapatıyor. Oraya bir iz koymak, oyunun
+  söylemeyi bitirdiğini yeniden açardı.
+
+- **Sırada olanlar.** Şimdiye kadarki iki iz de "yeni bir yerde yeri okumak". Brief'te kalan
+  türler tüyler, ses ve kırılmış örtü; tüy olan zor olanı — envanterdeki bir eşyanın bir şey
+  yapması gerekir ve yapacağı her şey, bu yayın cevaplamaya hakkı olmayan bir soruyu
+  cevaplardı. Ve izler yeterli olduğunda bir karar: v0.8 o şeyle karşılaşacak mı, yoksa
+  karşılaşmamayı sürdürecek mi.
 
 #### Fazlara taşınan kararlar
 

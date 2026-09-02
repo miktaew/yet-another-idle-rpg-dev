@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 126 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 127 -->
 
 # Proposals
 
@@ -420,10 +420,20 @@ at all before they meet it.
   is told what a better one would have read. Afterwards three more sounds are mixed into the
   lake's six, behind a flag - the shape the quay uses when the Marrowmoth is in port.
 
-- **Still to come.** More traces, in the places that border the same wild: the plains already
-  have `read the ground` for the banished tribe, and the wet woods and the waterfall basin
-  have none. And a decision, when the traces are enough: whether v0.8 meets the thing or
-  keeps refusing to.
+- **The second trace.** `done`, as **v0.7.38**. `read the rock shelters` at the Waterfall
+  basin, gated on having read the shallows and refused with a reason until then. A worn place
+  longer than a person and crab shells opened rather than crushed; the tense escalates from
+  "something stood here" to "something has been living here", and nothing is named.
+
+  **The wet woods were measured and rejected**, which is the finding worth keeping: their
+  noises are already in this register and `cut the standing flax` closes the thread outright.
+  A trace there would reopen what the game has finished saying.
+
+- **Still to come.** The traces so far are both "read the ground" in a new place. The
+  remaining kinds in the brief are feathers, noise and broken cover, and a feather is the
+  awkward one - an item in the inventory would have to do something, and anything it did would
+  answer a question this arc may not answer. And a decision, when the traces are enough:
+  whether v0.8 meets the thing or keeps refusing to.
 
 #### Decisions carried into the phases
 

@@ -168,6 +168,9 @@ const global_flags = {
         the arc has not started and the player is not supposed to be sure it will.
     */
     has_read_the_shallows: false,
+    //The second trace, in the basin's rock shelters. Set by reading them, and read by the
+    //basin's own noise - which it badly needed, having exactly one.
+    has_read_the_shelters: false,
     is_hero_created: false, //changed after going through hero creation panel
     //P-10 region 4. Read live by the Mountain camp's crafting tiers, so the flue is
     //a flag rather than a saved tier - global_flags are already saved and loaded.

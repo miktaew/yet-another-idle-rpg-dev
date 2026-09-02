@@ -5,6 +5,7 @@ import * as path from "node:path";
 import { repo_root } from "../lib/context.mjs";
 import { error } from "../lib/report.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
+import { strip_comments } from "../lib/source.mjs";
 
 /**
  * Every reward block in the game, wherever it is written.
@@ -275,9 +276,118 @@ async function check_every_trader_can_be_opened() {
         + `start, each of those opened by something`);
 }
 
+/**
+ * Every flag something waits on is a flag something can set.
+ *
+ * A flag is the cheapest way to make one piece of content wait for another - the basin's rock
+ * shelters wait on having read the shallows at the lake (P-14 phase 7) - and it is also the
+ * quietest way to make content unreachable. A gate on a flag nothing grants refuses for ever,
+ * politely, with its own refusal text, and reads exactly like a gate the player has not earned
+ * yet.
+ *
+ * `check_global_flags` already catches a MISSPELT flag, in either direction. This is the other
+ * half: a flag spelt correctly, declared, required, and never once given out.
+ *
+ * The reward shapes are taken from `every_reward_block`, and that is the whole reason this is
+ * cheap and correct. A hand-rolled scan for `rewards: {flags: [...]}` reported
+ * `is_strength_proved` as ungrantable; it is granted by `first_reward` on two combat zones,
+ * which is a shape that scan did not know. The same mistake, one more time, in the same file
+ * that already records making it twice.
+ */
+async function check_every_required_flag_can_be_set() {
+    const {blocks} = await every_reward_block();
+    const [dialogues_module, locations_module] = await load_browser_free(repo_root,
+        ["src/data/dialogues.js", "src/data/locations.js"]);
+
+    //Flags handed out. They are bare strings in the array, not objects.
+    const granted = new Set();
+    for (const {rewards} of blocks) {
+        for (const flag of rewards.flags || []) {
+            if (typeof flag === "string") granted.add(flag);
+        }
+    }
+
+    /*
+        And flags waited on. Four shapes, all of which mean "this cannot happen until":
+        `required: {flags: [...]}`, a condition set's `flags`, `display_conditions.flags`,
+        and a textline's `required_flags: {yes: [...]}`.
+    */
+    const required = new Map();
+    const want = (holder, where) => {
+        for (const field of ["required", "display_conditions", "conditions"]) {
+            for (const set of [holder[field]].flat(2)) {
+                for (const flag of set?.flags || []) {
+                    if (typeof flag === "string" && !required.has(flag)) required.set(flag, where);
+                }
+            }
+        }
+        for (const flag of holder.required_flags?.yes || []) {
+            if (!required.has(flag)) required.set(flag, where);
+        }
+    };
+
+    for (const [name, dialogue] of Object.entries(dialogues_module.dialogues)) {
+        want(dialogue, name);
+        for (const bucket of ["textlines", "actions"]) {
+            for (const [key, entry] of Object.entries(dialogue[bucket] || {})) {
+                want(entry, `${name}/${key}`);
+            }
+        }
+    }
+    for (const [name, location] of Object.entries(locations_module.locations)) {
+        for (const [key, action] of Object.entries(location.actions || {})) {
+            want(action, `${name}/${key}`);
+        }
+        for (const [key, activity] of Object.entries(location.activities || {})) {
+            want(activity, `${name}/${key}`);
+        }
+    }
+
+    if (required.size === 0) {
+        error("nothing in the game waits on a flag - check_every_required_flag_can_be_set is "
+            + "out of date.");
+        return;
+    }
+
+    /*
+        A flag that starts true needs nothing to grant it - it is already on, and whatever
+        waits on it is open from the first minute. `is_mofu_mofu_enabled` is one: an option
+        the player turns off rather than a state they earn. Derived from the declaration
+        rather than excused by name, so a flag that later starts false is caught the moment
+        it does.
+    */
+    const main_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src", "main.js"), "utf8"));
+    const at = main_source.indexOf("const global_flags = {");
+    const open = at === -1 ? -1 : main_source.indexOf("{", at);
+    let depth = 0;
+    let body = "";
+    for (let i = open; i > -1 && i < main_source.length; i++) {
+        if (main_source[i] === "{") depth++;
+        else if (main_source[i] === "}") {
+            depth--;
+            if (depth === 0) { body = main_source.slice(open + 1, i); break; }
+        }
+    }
+    const starts_set = new Set(
+        [...body.matchAll(/(\w+)\s*:\s*true/g)].map(m => m[1]));
+
+    for (const [flag, where] of required) {
+        if (granted.has(flag) || starts_set.has(flag)) continue;
+        error(`"${where}" waits on the flag "${flag}", and no reward anywhere grants it. It `
+            + `refuses for ever, with its own refusal text, which reads exactly like something `
+            + `the player has not earned yet.`);
+    }
+
+    console.log(`[check] flag gates: ${required.size} flag(s) waited on, `
+        + `${granted.size} granted by a reward, ${starts_set.size} on from the start, `
+        + `each gate openable`);
+}
+
 export {
     check_every_quest_can_be_started,
     check_every_location_can_be_unlocked,
     check_a_timed_activity_can_ever_be_started,
     check_every_trader_can_be_opened,
+    check_every_required_flag_can_be_set,
 };
