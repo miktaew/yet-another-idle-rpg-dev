@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 128 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 131 -->
 
 # Proposals
 
@@ -554,9 +554,9 @@ Candidates measured against what is there rather than invented:
 
 - The **guild** has a clerk, a board, a seal book and, since v0.7.2, standing. A book
   bought or earned there is the natural home for Literacy and Haggling.
-- The **salt house** and the **bay** sell what came off a boat and have no book at all.
-  A pilot's or a tallyman's book is where Perception, Spatial awareness and Swimming
-  belong.
+- ~~The **salt house** and the **bay**~~ **filled since, by the Marrowmoth arc.** *Nothing
+  Bites Here* is in the bay's two stock lists and teaches Fishing. The niche this named is
+  taken.
 - The **mountain** has the game's only tier-3 station and no book. Forging and Smelting
   have no teaching surface anywhere.
 - The **antique collector** catalogues; the **old woman of the slums** keeps a roster.
@@ -577,10 +577,22 @@ Also measured: `finish_reward` and `required_skills` on `BookData` are read by n
 multiplies is the weakest thing `BookData` can do; the two most interesting existing ones
 unlock *recipes*, and that is the shape to follow.
 
-**Guard.** `check_books_can_be_got`, on the class
-`check_components_can_be_made` already covers for components: every `Book` item must be
-obtainable - by trader, drop, reward or recipe - or be on a written list with a reason.
-Ten books and nothing checks that any of them can be reached today.
+**Guard.** `check_books_can_be_got` **exists and passes** - written since this proposal
+was, on the class `check_components_can_be_made` covers for components: every `Book` item
+must be obtainable, by trader, drop, reward or recipe, or be on a written list with a
+reason. 12 books, all templated and all reachable.
+
+**Re-measured, and every candidate this proposal named is now closed or blocked.** The bay
+and the guild are filled; the mountain, the collector and the old woman have no stock list,
+so each needs a delivery invented rather than reused, and all twelve books in the game come
+from a trader's.
+
+**One candidate this proposal could not have known about:** the square stallholder, added in
+v0.7.33, is a trader with a stock list and no book. What it would teach is the open part.
+Measured: 66 skills and 12 books, 56 skills untouched by any book, and **no locked recipe is
+unlocked by nothing** - so a new book cannot reclaim recipes the way *Wood for Witches* did.
+It would have to bring recipes of its own, which is a content job rather than a book, or be
+an xp multiplier, which this proposal rules out in its own words.
 
 ### P-16 — Magic, as its own arc `open`
 
@@ -818,7 +830,7 @@ panel. Each gets an explicit repaint in `option_language`, and `npm run check`
 fails if one of them is missing, so the list cannot silently grow. No reload, and
 nothing had to be split.
 
-### Q-11 — Should a book be able to require a skill to read it? **PROPOSED: no, delete both fields**
+### Q-12 — Should a book be able to require a skill to read it? **PROPOSED: no, delete both fields**
 
 P-26 found two `BookData` fields that nothing in `src/` reads: `required_skills`, which looks
 like a gate on being able to read a book, and `finish_reward`, which looks like a reward on
@@ -840,6 +852,30 @@ is a feature to design, not a field to switch on.
 
 If gated books are wanted, the field comes back with that refusal text beside it, and *Nothing
 Bites Here* is where it starts.
+
+### Q-13 — Does v0.8 meet the four-legged bird, or keep refusing to? **PROPOSED: keep refusing, once more**
+
+P-14 phase 7 exists to reach this. Three traces have shipped - a print in the sand at the
+Forest lake (v0.7.37), a lying-up place in the basin's rock shelters (v0.7.38), and a run of
+reeds that was always down (v0.7.39) - and the phase's own brief says the player must be
+unsure the thing exists at all before they meet it. Three is enough that the next piece has to
+answer this rather than be a fourth trace.
+
+**Why it is not derivable.** Both answers are consistent with the canon. STORY.md lists the
+four-legged bird past the Forest lake as one of the things the current arc *opens and does not
+close*, so meeting it is a decision to close a dead end that was left open on purpose. That is
+the owner's call about what v0.8 is, not a measurement.
+
+**PROPOSED: keep refusing, and make the refusal itself the content.** The traces so far are
+all the player finding evidence. The strongest next beat that is not a meeting is the world
+having an opinion: somebody who lives out there - the swampland scout, the tallyman, the
+harbour - knowing exactly what the player is describing and declining to name it. That gives
+the arc a second voice without answering anything, and it leaves the meeting for v0.8 proper
+to be built around rather than spent on.
+
+**What the other answer costs, so it is a fair choice.** Meeting it needs an enemy or an
+encounter, which needs combat content the arc has deliberately had none of since phase 4, and
+it spends the game's oldest open thread on a single scene.
 
 ---
 

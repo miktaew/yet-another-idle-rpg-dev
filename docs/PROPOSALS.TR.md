@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 128 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 131 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -578,8 +578,8 @@ olan bir şeyi öğretir ve zaten var olan bir yerden gelir. Uydurulmak yerine m
 
 - **Lonca**'nın bir kâtibi, bir panosu, bir mühür defteri ve v0.7.2'den beri itibarı var.
   Orada satın alınan ya da kazanılan bir kitap, Literacy ile Haggling için doğal yer.
-- **Tuz evi** ve **körfez** bir tekneden ineni satıyor ve hiç kitabı yok. Bir kılavuzun
-  ya da saymanın kitabı, Perception, Spatial awareness ve Swimming'in ait olduğu yer.
+- ~~**Tuz evi** ve **körfez**~~ **Marrowmoth yayıyla dolduruldu.** *Nothing Bites Here*
+  körfezin iki stok listesinde ve Balıkçılık öğretiyor. Buranın işaret ettiği boşluk dolu.
 - **Dağ**'da oyunun tek 3. kademe istasyonu var ve hiç kitabı yok. Forging ile Smelting'in
   hiçbir yerde öğretme yüzeyi yok.
 - **Antika koleksiyoncusu** katalog tutuyor; **kenar mahallenin yaşlı kadını** bir liste
@@ -599,10 +599,22 @@ tarafından okunmuyor (P-26); yani yeni bir kitap ikisine de yaslanmamalı.
 bir kitap, `BookData`'nın yapabileceği en zayıf şey; mevcut en ilginç iki kitap *tarif*
 açıyor ve izlenecek şekil de bu.
 
-**Muhafız.** `check_books_can_be_got`; `check_components_can_be_made`'in bileşenler için
-kapsadığı sınıfın aynısı: her `Book` eşyası ya elde edilebilir olmak zorunda — tüccar,
-düşürme, ödül ya da tarif yoluyla — ya da gerekçesiyle yazılı bir listede durmak. On
-kitap var ve bugün hiçbirinin ulaşılabilir olduğunu hiçbir şey denetlemiyor.
+**Muhafız.** `check_books_can_be_got` **var ve geçiyor** — bu teklif yazıldıktan sonra
+yazıldı; `check_components_can_be_made`'in bileşenler için kapsadığı sınıfın aynısı: her
+`Book` eşyası ya elde edilebilir olmak zorunda — tüccar, düşürme, ödül ya da tarif yoluyla —
+ya da gerekçesiyle yazılı bir listede durmak. 12 kitap, hepsi şablonlu ve hepsi ulaşılabilir.
+
+**Yeniden ölçüldü ve bu teklifin adlandırdığı her aday artık ya kapalı ya bloke.** Körfez ve
+lonca dolu; dağın, antikacının ve kenar mahalledeki yaşlı kadının stok listesi yok, yani her
+biri yeniden kullanılacak değil icat edilecek bir teslim yolu gerektiriyor — oysa oyundaki on
+iki kitabın hepsi bir tüccarın listesinden geliyor.
+
+**Bu teklifin bilemeyeceği tek aday:** v0.7.33'te eklenen meydan tezgâhtarı, stok listesi olan
+ve kitabı olmayan bir tüccar. Neyi öğreteceği açık kısım. Ölçüldü: 66 beceriye karşı 12 kitap,
+56 beceriye hiçbir kitap dokunmuyor ve **kilitli hiçbir tarif "hiçbir şey tarafından
+açılmıyor" durumunda değil** — yani yeni bir kitap, *Wood for Witches*'ın yaptığı gibi tarif
+geri kazanamaz. Ya kendi tariflerini getirmesi gerekir, ki bu bir kitap değil bir içerik işi,
+ya da bir tecrübe çarpanı olması, ki bunu bu teklif kendi sözleriyle dışlıyor.
 
 ### P-16 — Büyü, kendi arc'ı olarak `open`
 
@@ -636,8 +648,10 @@ Bunu karşılanabilir kılan şey Q-1'in ikinci revizyonu: fork artık tamamen a
 yeni yetenekler, yeni statlar ve yeni sistemler kapsam içinde. Kararı veren şey artık
 "hiçbir şeye bağlanmıyor" değil.
 
-**Başlanmadı ve bilerek henüz başlanmıyor.** P-14 Faz 6'nın iki parçası kaldı, Faz 7 ise
-hiç başlamadı; büyü, mevcut hikâyenin yanına değil sonrasına geliyor.
+**Başlanmadı ve bilerek henüz başlanmıyor.** v0.7.39 itibarıyla Faz 6 bitti ve Faz 7 sürüyor;
+yani burada duran "Faz 6'nın iki parçası kaldı, Faz 7 hiç başlamadı" cümlesi artık doğru bir
+şey söylemiyor. Değişmeyen şey kural: büyü, mevcut hikâyenin yanına değil **sonrasına**
+geliyor.
 
 **Karar verilebilen ve iki cevap altında da geçerli olan:**
 
@@ -842,7 +856,7 @@ Her biri `option_language` içinde açık bir yeniden çizim alıyor ve biri eks
 olursa `npm run check` düşüyor; böylece liste sessizce büyüyemiyor. Yeniden yükleme
 yok ve hiçbir şeyin bölünmesi gerekmedi.
 
-### Q-11 — Bir kitap, okunmak için beceri isteyebilmeli mi? **ÖNERİ: hayır, iki alan da silinsin**
+### Q-12 — Bir kitap, okunmak için beceri isteyebilmeli mi? **ÖNERİ: hayır, iki alan da silinsin**
 
 P-26, `src/` içinde hiçbir şeyin okumadığı iki `BookData` alanı buldu: bir kitabın
 okunabilmesine kapı gibi görünen `required_skills` ve bitirmeye ödül gibi görünen
@@ -864,6 +878,30 @@ değmesinin bir sebebi. Bu, açılacak bir alan değil tasarlanacak bir özellik
 
 Kapılı kitaplar isteniyorsa alan, yanında o reddetme metniyle geri gelir ve *Nothing Bites
 Here* başlangıç noktasıdır.
+
+### Q-13 — v0.8 dört bacaklı kuşla karşılaşacak mı, yoksa karşılaşmamayı sürdürecek mi? **ÖNERİ: bir kez daha sürdürsün**
+
+P-14'ün 7. fazı buraya varmak için var. Üç iz gönderildi — Orman gölünün kumundaki bir iz
+(v0.7.37), havzanın kaya barınaklarında yatıp kalkılan bir yer (v0.7.38) ve hep yatık olan bir
+sazlık şeridi (v0.7.39) — ve fazın kendi brief'i, oyuncunun onunla karşılaşmadan önce var olup
+olmadığından emin olmaması gerektiğini söylüyor. Üç iz, sonraki parçanın dördüncü bir iz değil
+buna bir cevap olması gerektiği kadar yeterli.
+
+**Neden türetilemez.** İki cevap da kanonla tutarlı. STORY.md, Orman gölünün ötesindeki dört
+bacaklı kuşu, mevcut yayın *açıp kapatmadığı* şeylerden biri olarak listeliyor; yani onunla
+karşılaşmak, bilerek açık bırakılmış bir ucu kapatma kararı. Bu bir ölçüm değil, v0.8'in ne
+olduğuna dair sahibinin kararı.
+
+**ÖNERİ: karşılaşmamayı sürdürsün ve reddedişin kendisi içerik olsun.** Şimdiye kadarki izlerin
+hepsi oyuncunun kanıt bulması. Karşılaşma olmayan en güçlü sonraki vuruş, dünyanın bir görüşü
+olması: orada yaşayan biri — bataklık izcisi, sayman, liman — oyuncunun tarif ettiği şeyin ne
+olduğunu tam olarak bilip adını koymayı reddetmesi. Bu, yaya hiçbir şeyi cevaplamadan ikinci
+bir ses kazandırıyor ve karşılaşmayı, üzerine kurulacak asıl v0.8'e bırakıyor; tek bir sahnede
+harcamıyor.
+
+**Öteki cevabın maliyeti, seçim adil olsun diye.** Karşılaşmak bir düşman ya da bir karşılaşma
+gerektiriyor; bu da yayın 4. fazdan beri bilerek hiç kullanmadığı savaş içeriğini gerektirir ve
+oyunun en eski açık ipliğini tek bir sahneye harcar.
 
 ---
 

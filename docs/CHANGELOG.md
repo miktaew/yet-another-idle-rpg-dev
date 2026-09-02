@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 111 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 112 -->
 
 # Changelog
 
@@ -20,6 +20,43 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### the backlog corrected against what the code says
+
+No version. Documentation only, and it is the sort of work that pays for itself: three of
+this session's wrong turns started from a proposal that was true when it was written and had
+stopped being true since.
+
+**A question number was reused, which is the one thing this file says never to do.** The
+BookData question recorded last iteration was numbered Q-11. Q-11 was already taken - it is
+the magic decision, answered by the owner and carried into P-16, which still refers to it
+twice by number. Renumbered to **Q-12** in both files.
+
+**P-15's premises, both stale.** It names the salt house and the bay as places with no book;
+*Nothing Bites Here* has been in the bay's two stock lists since the Marrowmoth arc. And its
+guard section reads "ten books and nothing checks that any of them can be reached today" -
+`check_books_can_be_got` exists, passes, and counts twelve.
+
+Re-measured while correcting it, and every candidate P-15 named is now closed or blocked: the
+bay and the guild are filled, and the mountain, the antique collector and the old woman have
+no stock list, so each needs a delivery invented rather than reused - while all twelve books
+in the game come from a trader's.
+
+**One candidate it could not have known about**, and the measurement that makes it hard: the
+square stallholder from v0.7.33 is a trader with a stock list and no book. 66 skills against
+12 books, 56 of them untouched by any book - and **no locked recipe is unlocked by nothing**,
+so a new book cannot reclaim recipes the way *Wood for Witches* did. It would have to bring
+recipes of its own, which is a content job rather than a book, or be an xp multiplier, which
+P-15 rules out in its own words.
+
+**P-16's precondition**, "phase 6 has two pieces left and phase 7 has not begun", stopped
+being true at v0.7.37. The rule it was protecting has not changed: magic goes after the
+current story, not beside it.
+
+**And the decision phase 7 exists to reach is now on the table as Q-13** - whether v0.8 meets
+the four-legged bird or keeps refusing to - with a proposal, the reason it is not derivable
+(both answers fit the canon; STORY.md lists the bird among the threads this arc opens and
+does not close), and what the other answer costs.
 
 ### v0.7.39 - the reeds were always down
 

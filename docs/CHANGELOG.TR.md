@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 111 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 112 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,41 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### kuyruk, kodun söylediğine göre düzeltildi
+
+Sürüm yok. Yalnızca dokümantasyon ve masrafını çıkaran türden bir iş: bu oturumdaki yanlış
+dönüşlerin üçü, yazıldığında doğru olup sonradan doğru olmaktan çıkmış bir teklikten başladı.
+
+**Bir soru numarası yeniden kullanıldı, ki bu dosyanın asla yapılmaz dediği tek şey o.** Geçen
+iterasyonda kaydedilen BookData sorusu Q-11 numarasını almıştı. Q-11 zaten alınmıştı — büyü
+kararı; sahibi cevaplamış ve P-16'ya taşınmış, ve P-16 hâlâ ona numarasıyla iki kez atıf
+yapıyor. İki dosyada da **Q-12** olarak yeniden numaralandı.
+
+**P-15'in öncülleri, ikisi de bayat.** Tuz evini ve körfezi kitabı olmayan yerler diye
+adlandırıyor; oysa *Nothing Bites Here*, Marrowmoth yayından beri körfezin iki stok listesinde.
+Ve muhafız bölümü "on kitap var ve bugün hiçbirinin ulaşılabilir olduğunu hiçbir şey
+denetlemiyor" diyor — `check_books_can_be_got` var, geçiyor ve on iki sayıyor.
+
+Düzeltirken yeniden ölçüldü: P-15'in adlandırdığı her aday artık ya kapalı ya bloke. Körfez ve
+lonca dolu; dağın, antikacının ve yaşlı kadının stok listesi yok, yani her biri yeniden
+kullanılacak değil icat edilecek bir teslim yolu gerektiriyor — oysa oyundaki on iki kitabın
+hepsi bir tüccarın listesinden geliyor.
+
+**Bilemeyeceği tek aday** ve onu zorlaştıran ölçüm: v0.7.33'ten gelen meydan tezgâhtarı, stok
+listesi olan ve kitabı olmayan bir tüccar. 66 beceriye karşı 12 kitap, 56'sına hiçbir kitap
+dokunmuyor — ve **kilitli hiçbir tarif "hiçbir şey açmıyor" durumunda değil**, yani yeni bir
+kitap *Wood for Witches*'ın yaptığı gibi tarif geri kazanamaz. Ya kendi tariflerini getirmesi
+gerekir, ki bu bir kitap değil bir içerik işi, ya da bir tecrübe çarpanı olması — ki bunu P-15
+kendi sözleriyle dışlıyor.
+
+**P-16'nın önkoşulu**, "Faz 6'nın iki parçası kaldı, Faz 7 hiç başlamadı", v0.7.37'de doğru
+olmaktan çıktı. Koruduğu kural değişmedi: büyü mevcut hikâyenin yanına değil sonrasına geliyor.
+
+**Ve 7. fazın varmak için var olduğu karar artık Q-13 olarak masada** — v0.8 dört bacaklı kuşla
+karşılaşacak mı, yoksa karşılaşmamayı sürdürecek mi — bir öneriyle, neden türetilemeyeceğiyle
+(iki cevap da kanona uyuyor; STORY.md kuşu, bu yayın açıp kapatmadığı iplikler arasında
+sayıyor) ve öteki cevabın maliyetiyle birlikte.
 
 ### v0.7.39 - sazlar zaten yatıktı
 
