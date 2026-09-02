@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 114 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 115 -->
 
 # Changelog
 
@@ -20,6 +20,40 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.41 - the guild has ranks, and they are the standing you already have
+
+P-41's first piece, and the one everything else in it stands on. Q-14 settled the ladder:
+**F, E, D, C, B, A, S, SS, SSS**, and a player is offered the board's work for their own rank,
+one below and one above.
+
+**A rank is derived from Guild standing, not saved - and that is the decision worth defending.**
+The owner's rule is that taking work above your rank promotes you faster, and higher-rank work
+pays more standing; so standing already *is* the promotion track, and a second number beside it
+would be two things counting the same thing. It also means there is no new save key, which is
+what the ladder question was really about: a rank is a name, and this project does not rename
+names that have been written into somebody's save.
+
+**The thresholds are set against what the game can already pay.** 255 Guild standing is
+grantable from the content that exists - measured when P-41 was triaged - and 255 lands exactly
+on **D**, which is the rank the owner used in their own example. The arc carries you to the
+middle of the letters and the board is how you climb past it, which is why the numbers keep
+going well past anything obtainable today. SS at 4000 and SSS at 6000 are meant to stay rare.
+
+Nothing was reset. Every point the guild has ever paid counts, so a player who has finished
+the Marrowmoth arc opens the Data panel and finds they are already ranked.
+
+**Guard: `check_every_guild_rank_can_be_reached`.** The ladder is *walked* - the lookup steps
+up while the standing clears the next threshold and stops at the first one it does not - so a
+threshold out of order does not throw and does not warn. It makes every rank above it
+unreachable for ever, and the only symptom is a player who stops being promoted. Measured
+behaviourally: for each rank, does any standing yield it.
+
+**And the check's own claim had to be made true.** It said it caught a ladder that does not
+start at nought; it did not, because the lookup starts at the bottom rung by default and never
+walks below it - so a first threshold above nought is simply ignored and everybody holds the
+bottom rank anyway. That is data saying one thing and the game doing another, so it is now
+asserted rather than described. 9 ranks, 26 standings probed, negative-tested both ways.
 
 ### v0.7.40 - a book that asks for a rank first
 

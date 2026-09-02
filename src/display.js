@@ -21,6 +21,7 @@ import { current_enemies, game_options,
 import { dialogues } from "./data/dialogues.js";
 import { activities } from "./activities.js";
 import { format_time, split_duration, current_game_time, seasons } from "./game_time.js";
+import { get_guild_rank } from "./reputation.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, get_location_type_penalty, location_types, locations } from "./data/locations.js";
 import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
@@ -2314,6 +2315,34 @@ function update_displayed_reputation() {
             rep_div.appendChild(rep_value_span);
 
             data_entry_divs.reputation.appendChild(rep_div);
+
+            /*
+                The guild is the one region whose standing is also a rank (P-41). Shown on a
+                line of its own under the number rather than beside it, because the number is
+                what rises and the rank is what it buys - and the next threshold is there so
+                the ladder is legible without a wiki.
+            */
+            if(reputation_region === "Guild") {
+                const standing = character.reputation[reputation_region];
+                const {rank, next} = get_guild_rank(standing);
+
+                const rank_div = document.createElement("div");
+                const rank_name_span = document.createElement("span");
+                const rank_value_span = document.createElement("span");
+                rank_div.classList.add("data_entry");
+                rank_name_span.classList.add("data_entry_name");
+                rank_value_span.classList.add("data_entry_value");
+
+                insert_HTML(rank_name_span, translationManager.getText(language, "ui guild rank"));
+                insert_HTML(rank_value_span, next
+                    ? translationManager.getText(language, "ui guild rank and next",
+                        {v1: rank, v2: next.rank, v3: next.at_least - standing})
+                    : rank);
+
+                rank_div.appendChild(rank_name_span);
+                rank_div.appendChild(rank_value_span);
+                data_entry_divs.reputation.appendChild(rank_div);
+            }
         }
     });
 }

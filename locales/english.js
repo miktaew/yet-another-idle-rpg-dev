@@ -3563,6 +3563,8 @@ const descriptions = {
     "ui bestiary found in": "Found in",
     "ui unlocks repaired": "{v1} thing(s) you had already earned were unlocked: conversations and work that had been promised by something you finished before the promise could be kept.",
     "ui reputation repaired": "Your standing with {v1} was raised by {v2}, for work you had already finished before it counted for anything.",
+    "ui guild rank": "Guild rank",
+    "ui guild rank and next": "{v1} &mdash; {v3} more for {v2}",
     "ui region reputation": "{v1} reputation",
     "name Town": "Town",
     "ui stance col fav": "Fav",

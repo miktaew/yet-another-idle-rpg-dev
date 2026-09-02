@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 114 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 115 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,41 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.41 - loncanın kademeleri var ve onlar zaten sahip olduğunuz itibar
+
+P-41'in ilk parçası ve içindeki her şeyin üstünde duracağı parça. Q-14 merdiveni belirledi:
+**F, E, D, C, B, A, S, SS, SSS**; ve oyuncuya panonun işlerinden kendi kademesi, bir altı ve
+bir üstü sunuluyor.
+
+**Kademe kaydedilmiyor, lonca itibarından türetiliyor — ve savunmaya değer karar bu.** Sahibin
+kuralı, kendi kademenizin üstünden iş almanın sizi daha hızlı yükselttiği; yüksek kademeli iş
+de daha çok itibar ödüyor. Yani terfi yolunu zaten itibar taşıyor ve yanına ikinci bir sayı
+koymak, aynı şeyi sayan iki şey olurdu. Ayrıca yeni bir kayıt anahtarı yok — ki kademe sorusu
+aslında bununla ilgiliydi: kademe bir isimdir ve bu proje, birinin kaydına yazılmış isimleri
+yeniden adlandırmaz.
+
+**Eşikler, oyunun hâlihazırda ödeyebildiğine göre belirlendi.** Mevcut içerikten 255 Lonca
+itibarı kazanılabiliyor — P-41 triyaj edilirken ölçüldü — ve 255 tam olarak **D**'ye düşüyor;
+sahibinin kendi örneğinde kullandığı kademe. Yay sizi harflerin ortasına taşıyor, panonun işi
+de oradan yukarısı; sayıların bugün elde edilebilenin çok ötesine gitmesinin sebebi bu. 4000'de
+SS ve 6000'de SSS nadir kalsın diye orada.
+
+Hiçbir şey sıfırlanmadı. Loncanın bugüne dek ödediği her puan sayılıyor; yani Marrowmoth yayını
+bitirmiş bir oyuncu Veri panelini açtığında kendini çoktan kademelenmiş buluyor.
+
+**Muhafız: `check_every_guild_rank_can_be_reached`.** Merdiven *yürünüyor* — arama, itibar bir
+sonraki eşiği geçtikçe yukarı çıkıyor ve geçemediği ilk eşikte duruyor — yani sırası bozuk bir
+eşik ne hata fırlatıyor ne uyarıyor. Üstündeki her kademeyi sonsuza dek ulaşılamaz yapıyor ve
+tek belirti, terfi etmeyi bırakan bir oyuncu. Davranışsal ölçüldü: her kademe için, onu veren
+bir itibar var mı.
+
+**Ve kontrolün kendi iddiasının doğru kılınması gerekti.** Sıfırdan başlamayan bir merdiveni
+yakaladığını söylüyordu; yakalamıyordu, çünkü arama varsayılan olarak en alt basamaktan
+başlıyor ve altına hiç inmiyor — yani sıfırın üstündeki bir ilk eşik tamamen yok sayılıyor ve
+herkes en alt kademeyi zaten taşıyor. Bu, verinin bir şey söyleyip oyunun başka bir şey yapması
+demek; artık tarif edilmiyor, iddia ediliyor. 9 kademe, 26 itibar noktası, iki yönde negatif
+test.
 
 ### v0.7.40 - önce rütbe isteyen bir kitap
 

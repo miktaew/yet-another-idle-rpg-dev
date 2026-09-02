@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 134 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 135 -->
 
 # Proposals
 
@@ -678,6 +678,17 @@ reload.
 
 **Where it should live.** A separate panel, as asked. `Guild` standing already has a row in the
 Data panel once it is above nought, so the milestones have somewhere to be read off.
+
+**Done so far.**
+
+- **The ranks.** `done`, as **v0.7.41**. F to SSS, derived from Guild standing rather than
+  saved - higher work pays more standing, so standing already is the promotion track, and a
+  derived rank needs no new save key. 255 is everything the existing content pays and lands on
+  D. `get_offered_guild_ranks` is the board's window, already written and guarded.
+
+**Next, in order:** the job generator (two types to begin with, difficulty scaling the numbers
+in the brief), then the board itself with its per-day refresh and its accepted-job persistence,
+then the standing payout with the ceiling Q-14 requires, then the shop.
 
 ## Open decisions
 

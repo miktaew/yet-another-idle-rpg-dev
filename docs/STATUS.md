@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 57 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 58 -->
 
 # Status
 
@@ -222,6 +222,7 @@ but the ones that encode a bug that shipped:
 | `recipe availability` | A kind of recipe that cannot say whether it can be made, so a whole crafting page filters wrongly in silence. 148 recipes. |
 | `flag gates` | Content waiting on a flag that no reward grants, which refuses for ever in its own words. 7 flags waited on. |
 | `book requirements` | A book asking for a skill that does not exist, or one above that skill's cap, so nobody can ever read it. 13 books. |
+| `guild ranks` | A rank threshold out of order, which silently locks every rank above it, or a ladder that does not start at nought. 9 ranks. |
 | `help explains standing` | A reputation region the help page's account of standing never names. 4 regions. |
 | `dev console` | The dev console's session key touched outside sessionStorage, or mentioned by the save. |
 | `trader market regions` | A shop with no saturation counter, and a trader no location lists. 6 shops, 8 traders. |

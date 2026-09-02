@@ -315,8 +315,88 @@ async function check_the_unlock_repair_knows_every_kind() {
         + `lines, ${counted} repaired, ${declared.size - counted} excused by name`);
 }
 
+/**
+ * Every guild rank can actually be reached, and every rank sees work.
+ *
+ * The ladder is walked, not indexed: `get_guild_rank` steps up while the standing clears the
+ * next threshold and **stops at the first one it does not**. So a threshold that is out of
+ * order does not throw and does not warn - it makes every rank above it unreachable for ever,
+ * and the only symptom is a player who stops being promoted.
+ *
+ * Measured behaviourally rather than by restating the rule: for each rank in the ladder, ask
+ * whether any standing yields it. That catches an out-of-order threshold, a duplicate one, and
+ * a first entry that is not 0 - which would leave a fresh character with no rank at all -
+ * without this check having to know which of those went wrong.
+ *
+ * The offer window is checked too. It is the mechanism the board is built on (your rank, one
+ * below, one above), so an empty one is a board with nothing on it and a wide one is a board
+ * that ignores rank.
+ */
+async function check_every_guild_rank_can_be_reached() {
+    const [reputation_module] = await load_browser_free(repo_root, ["src/reputation.js"]);
+    const {guild_ranks, get_guild_rank, get_offered_guild_ranks} = reputation_module;
+
+    if (!Array.isArray(guild_ranks) || guild_ranks.length === 0) {
+        error("reputation.js exports no guild_ranks - check_every_guild_rank_can_be_reached "
+            + "is out of date.");
+        return;
+    }
+
+    /*
+        The bottom rung has to be 0, and that is not a restatement of the data: get_guild_rank
+        starts at index 0 and only ever walks up, so a first threshold above nought is ignored
+        entirely - everybody is the bottom rank whether they have cleared it or not. The data
+        would say one thing and the game another, which is the shape of a rule nobody can see
+        being broken.
+    */
+    if (guild_ranks[0].at_least !== 0) {
+        error(`the guild ladder starts at ${guild_ranks[0].at_least} standing, so `
+            + `"${guild_ranks[0].rank}" reads as earned. get_guild_rank walks up from the `
+            + `bottom rung and never below it, so that threshold is never actually tested and `
+            + `a fresh character holds the rank anyway.`);
+    }
+
+    //Every threshold, and one either side of it, is enough to find any gap.
+    const probes = new Set([0]);
+    for (const entry of guild_ranks) {
+        probes.add(Math.max(0, entry.at_least - 1));
+        probes.add(entry.at_least);
+        probes.add(entry.at_least + 1);
+    }
+    const reached = new Set([...probes].map(standing => get_guild_rank(standing).rank));
+
+    for (const entry of guild_ranks) {
+        if (reached.has(entry.rank)) continue;
+        error(`the guild rank "${entry.rank}" at ${entry.at_least} standing cannot be reached `
+            + `by any standing. get_guild_rank walks the ladder and stops at the first `
+            + `threshold it does not clear, so a threshold out of order silently locks every `
+            + `rank above it.`);
+    }
+
+    const names = new Set(guild_ranks.map(entry => entry.rank));
+    for (const standing of probes) {
+        const offered = get_offered_guild_ranks(standing);
+        if (offered.length === 0) {
+            error(`at ${standing} standing the board would offer no ranks at all.`);
+        } else if (offered.length > 3) {
+            error(`at ${standing} standing the board would offer ${offered.length} ranks `
+                + `(${offered.join(", ")}); the rule is your own rank, one below and one above.`);
+        }
+        for (const rank of offered) {
+            if (!names.has(rank)) {
+                error(`the board would offer rank "${rank}" at ${standing} standing, and no `
+                    + `such rank is in the ladder.`);
+            }
+        }
+    }
+
+    console.log(`[check] guild ranks: ${guild_ranks.length} rank(s), each reachable, `
+        + `${probes.size} standings probed and none offering outside the ladder`);
+}
+
 export {
     check_a_standing_gate_can_be_reached,
     check_a_late_repair_still_finds_its_grants,
     check_the_unlock_repair_knows_every_kind,
+    check_every_guild_rank_can_be_reached,
 };

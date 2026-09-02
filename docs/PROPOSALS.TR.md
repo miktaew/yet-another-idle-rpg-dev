@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 134 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 135 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -702,6 +702,17 @@ atlatmalı.
 
 **Nerede yaşamalı.** İstendiği gibi ayrı bir panel. `Guild` itibarının sıfırın üzerine çıktığı
 anda Veri panelinde zaten bir satırı oluyor, yani milestone'ların okunacağı bir yer var.
+
+**Şimdiye kadar yapılanlar.**
+
+- **Kademeler.** `done`, **v0.7.41** olarak. F'den SSS'e, kaydedilmek yerine lonca itibarından
+  türetiliyor — yüksek iş daha çok itibar ödüyor, yani terfi yolunu zaten itibar taşıyor ve
+  türetilmiş bir kademenin yeni kayıt anahtarına ihtiyacı yok. 255, mevcut içeriğin ödediği her
+  şey ve D'ye düşüyor. `get_offered_guild_ranks` panonun penceresi; yazıldı ve muhafızlandı.
+
+**Sırada, bu sırayla:** iş üreteci (başlangıç için iki tür, zorluk brief'teki sayıları
+ölçekliyor), sonra panonun kendisi — gün başına yenilenme ve alınmış işin kalıcılığıyla —
+sonra Q-14'ün istediği tavanla itibar ödemesi, sonra dükkân.
 
 ## Bekleyen kararlar
 

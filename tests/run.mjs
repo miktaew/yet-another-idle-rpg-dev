@@ -87,6 +87,7 @@ import {
     check_a_standing_gate_can_be_reached,
     check_a_late_repair_still_finds_its_grants,
     check_the_unlock_repair_knows_every_kind,
+    check_every_guild_rank_can_be_reached,
 } from "./checks/reputation.mjs";
 import {
     check_every_quest_can_be_started,
@@ -223,6 +224,7 @@ check_every_sort_button_is_understood();
 await check_a_standing_gate_can_be_reached();
 await check_a_late_repair_still_finds_its_grants();
 await check_the_unlock_repair_knows_every_kind();
+await check_every_guild_rank_can_be_reached();
 await check_every_quest_can_be_started();
 await check_every_location_can_be_unlocked();
 await check_a_timed_activity_can_ever_be_started();

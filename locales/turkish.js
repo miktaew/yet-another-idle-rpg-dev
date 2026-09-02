@@ -3604,6 +3604,8 @@ const descriptions = {
     "ui bestiary found in": "Bulunduğu yerler",
     "ui unlocks repaired": "Zaten hak etmiş olduğunuz {v1} şey açıldı: söz tutulamadan önce tamamladığınız bir şeyin size vaat ettiği konuşmalar ve işler.",
     "ui reputation repaired": "{v1} nezdindeki itibarınız {v2} arttı; bir işe yaramadan önce zaten tamamlamış olduğunuz işler için.",
+    "ui guild rank": "Lonca kademesi",
+    "ui guild rank and next": "{v1} &mdash; {v2} için {v3} daha",
     "ui region reputation": "{v1} itibarı",
     "name Town": "Kasaba",
     "ui stance col fav": "Fav.",
