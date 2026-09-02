@@ -1359,6 +1359,26 @@ function start_reading(book_key) {
         return; //already read
     }
 
+    /*
+        A book may ask for a skill (Q-12). Reading needs nothing in general - that is what a
+        book is for - but a mastery book is about a skill at a level its reader has to have
+        reached, and asking for it is the point of the series.
+
+        Refused with a sentence naming what it wants, not hidden: this project's rule is that
+        a locked door nobody can see is not a goal. The book stays in the bag and stays
+        clickable, and clicking it says why not yet.
+    */
+    const wanted = book_stats[book_id].required_skills || {};
+    const short_of = Object.keys(wanted).find(skill_id =>
+        (skills[skill_id]?.current_level ?? 0) < wanted[skill_id]);
+    if(short_of) {
+        log_message(translationManager.getText(language, "log book needs skill", {
+            v1: translationManager.getDisplayName(language, short_of),
+            v2: wanted[short_of],
+        }), "notification");
+        return;
+    }
+
     if(is_sleeping) {
         end_sleeping();
     }

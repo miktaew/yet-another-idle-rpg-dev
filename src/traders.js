@@ -821,6 +821,13 @@ class TradeItem {
     [
         ...inventory_templates["Intermediate"],
 
+        /*
+            The first mastery book (Q-12). Here rather than on a general shelf because it
+            refuses anybody under Sword mastery, and the back room is where this game puts
+            the things that are no use to most people who walk past them.
+        */
+        new TradeItem({item_name: "The Long Guard", count: [1], chance: 0.25}),
+
         new TradeItem({item_name: "Pristine mountain goat horn", count: [1], chance: 0.12}),
         new TradeItem({item_name: "Sharp bear claw", count: [1], chance: 0.15}),
         new TradeItem({item_name: "High quality wolf fang", count: [1,2], chance: 0.2}),

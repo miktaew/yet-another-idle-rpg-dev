@@ -1,4 +1,4 @@
-<!-- doc-source: docs/STATUS.md  doc-version: 56 -->
+<!-- doc-source: docs/STATUS.md  doc-version: 57 -->
 
 > **Kanonik dosya: [STATUS.md](STATUS.md).** Bu çeviri bilgilendirme amaçlıdır.
 > Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -222,6 +222,7 @@ yayımlanmış bir hatayı kodlayanlar:
 | `crafted marks` | Sonucunu verip kaydetmeyen bir craft yolu; tarif "hiç yapılmamış" işaretli kalıyor. 3 yol. |
 | `recipe availability` | Yapılabilir olup olmadığını söyleyemeyen bir tarif türü; koca bir zanaat sayfası sessizce yanlış filtreleniyor. 148 tarif. |
 | `flag gates` | Hiçbir ödülün vermediği bir bayrağı bekleyen içerik; sonsuza dek kendi sözleriyle reddediyor. 7 bayrak bekleniyor. |
+| `book requirements` | Var olmayan ya da becerinin tavanının üstünde bir seviye isteyen bir kitap; kimse okuyamaz. 13 kitap. |
 | `help explains standing` | Yardım sayfasının itibar anlatımının hiç anmadığı bir reputation bölgesi. 4 bölge. |
 | `dev console` | Dev konsolunun oturum anahtarına sessionStorage dışında dokunulması ya da kaydın onu anması. |
 | `trader market regions` | Doygunluk sayacı olmayan bir dükkân ve hiçbir yerin listelemediği bir tüccar. 6 dükkân, 8 tüccar. |

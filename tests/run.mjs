@@ -60,6 +60,7 @@ import {
 } from "./checks/dom-text.mjs";
 import {
     check_books_can_be_got,
+    check_books_ask_for_real_skills,
     check_components_can_be_made,
     check_generated_items,
     check_items_can_be_got,
@@ -204,6 +205,7 @@ await check_content_text_ids();
 await check_generated_items();
 await check_components_can_be_made();
 check_books_can_be_got();
+await check_books_ask_for_real_skills();
 await check_items_can_be_got();
 await check_no_two_items_share_a_name();
 await check_no_item_shows_its_key();

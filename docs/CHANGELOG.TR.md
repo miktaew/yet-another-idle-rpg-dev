@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 113 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 114 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,46 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-01
+
+### v0.7.40 - önce rütbe isteyen bir kitap
+
+Q-12, sahibi tarafından ve **teklifin aksine** cevaplandı — sormanın anlamı da bu. Okumak
+genel olarak hiçbir şey istemiyor ve Okuma becerisini artırıyor, çünkü bir kitabın var olma
+sebebi bu; ama okuyanın ulaşmış olması gereken bir seviyedeki bir beceri *hakkında* olan bir
+kitap onu isteyebilir. Yani `required_skills` kalıyor ve gerçek oluyor — P-26'nın silinecek bir
+alan değil bir özellik dediği yarı.
+
+**Kitabın adını oyun, kimseden önce koymuştu.** `skills["Swords"]`, 20. seviyedeki kendi
+rütbesine **"Sword mastery"** diyor — sahibinin söylediği seviye ile oyunun zaten ustalık
+dediği seviye aynı sayı. *Uzun Muhafaza* tam olarak onu istiyor.
+
+**Bir cümleyle reddediyor, asla saklamıyor.** Hazır olmadığınız bir kitap çantada kalıyor ve
+tıklanabilir kalıyor; tıkladığınızda hangi beceriyi hangi seviyede istediğini söylüyor. Bu,
+projenin kilitli kapılar kuralı ve gereksinimin zahmete değmesinin sebebi de bu: reddetmenin
+kendisi içerik.
+
+**Yanında iki ölü şey gitti.** `finish_reward` kaldırıldı — hiçbir kitap onu ayarlamamış,
+hiçbir şey okumamış. Ve *Nothing Bites Here* `{literacy: 6}` bildiriyordu, ki bu iki ayrı
+sebepten ölüydü: alanı hiçbir şey okumuyordu ve beceri büyük harfle `Literacy`, yani anahtar
+zaten hiç eşleşmezdi. Alanı bağlayıp onu kaldırmamak, oyuncuların bugün okuyabildiği bir kitabı
+geriye dönük kilitlerdi — ki asıl teklifin bütün itirazı buydu.
+
+**Kitabın ne yaptığı ve ne olmaması gerektiği.** Kılıç tecrübesi ×1,5 ve küçük bir el becerisi
+çarpanı — *Twist liek a snek*'in zaten kullandığı biçim: çıplak bir sayı değil bir beceri ve
+bir stat. P-15'in kuralı, yalnızca çarpanlardan oluşan bir kütüphanenin `BookData`'nın
+yapabileceği en zayıf şey olduğu; bir ustalık kitabı çarpanını, önce rütbeyi isteyerek hak
+ediyor. Kenar mahallenin arka odasında satılıyor, çünkü bu oyun, yanından geçen çoğu insana
+yaramayan şeyleri oraya koyuyor.
+
+**`check_books_can_be_got` ihtiyaç duyulduğu dakikada hakkını verdi** — yeni kitabın kaynağı
+yoktu ve kontrol bunu derleme bitmeden söyledi.
+
+**Muhafız: `check_books_ask_for_real_skills`.** Alan yeni, yani bu ilk hatadan sonra değil ilk
+günden itibaren bir ağ. `start_reading` seviyeyi `(skills[id]?.current_level ?? 0)` diye
+okuyor; yani yanlış yazılmış bir beceri kimliği sıfır oluyor, sıfır her gereksinimin altında ve
+kitap **sonsuza dek** reddediliyor — üstelik reddetme, görüntü satırı olmayan bir beceriyi
+adlandırıyor. Becerinin kendi tavanının üstündeki bir gereksinimi de yakalıyor. 13 kitap, biri
+istiyor; hem yanlış yazılmış ad hem ulaşılamaz seviye üzerinden negatif test edildi.
 
 ### lonca işleri ölçüldü ve bloke edildi, kuyruk tamamen triyaj edildi
 

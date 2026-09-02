@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 133 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 134 -->
 
 # Proposals
 
@@ -639,37 +639,6 @@ phase 7 has not begun; magic goes after the current story rather than beside it.
 - The existing combat formulas are not to be broken to fit it. `intuition` and the
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
-
-### P-26 — Two BookData fields that are read by nothing `open`
-
-Found while measuring P-23. `BookData` declares six things a book can carry, and **two of
-them are never read anywhere in `src/`**:
-
-- `required_skills`, which looks like a gate on being able to read the book. *Nothing
-  Bites Here* declares `{literacy: 6}` and the game does not enforce it; the book can be
-  read at literacy 0.
-- `finish_reward`, which looks like a reward that fires on finishing. Nothing consumes it,
-  and no book sets it - so nobody has been bitten yet.
-
-The second is a trap and the first is already a small lie in the data. P-15's own text
-claims "`BookData` already supports everything a new book could want" and lists both,
-which is how a future book would come to declare a requirement that is not one.
-
-**Two honest ways out, and they are not equal.** Wiring `required_skills` up is a real
-feature - a book you cannot read yet has to say so, and say why, or it is a locked door
-nobody can see, which this project has a directive about. Deleting both fields is smaller
-and loses nothing that exists. The measurement does not settle which; the owner's appetite
-for gated books does.
-
-**What must not happen** is a third book declaring `required_skills`. *What the Water Gives
-Up* was written without one on purpose and says so where the field would have gone.
-
-**Guard.** Whichever way it goes, the class is "a declared field that nothing reads", and
-it is checkable: every field a data class declares should be named somewhere outside its
-own constructor. That is a broader check than this proposal and would probably find more
-than two.
-
-
 
 ### P-41 — Guild work: a board of jobs, standing, and a shop that answers it `open`
 

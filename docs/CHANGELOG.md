@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 113 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 114 -->
 
 # Changelog
 
@@ -20,6 +20,46 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-01
+
+### v0.7.40 - a book that asks for a rank first
+
+Q-12, answered by the owner and **against the proposal** - which is the point of asking.
+Reading needs nothing in general and raises Literacy, because that is what a book is for; but
+a book about a skill at a level its reader has to have reached may ask for it. So
+`required_skills` stays and becomes real, which is the half P-26 called a feature rather than
+a field to delete.
+
+**The game named the book before anybody did.** `skills["Swords"]` calls its own rank at level
+20 **"Sword mastery"** - the level the owner named and the level the game already calls
+mastery are the same number. *The Long Guard* asks for exactly that.
+
+**Refused with a sentence, never hidden.** A book you are not ready for stays in the bag and
+stays clickable, and clicking it says which skill it wants and at what level. That is this
+project's rule about locked doors, and it is the reason the requirement is worth having at
+all: the refusal is the content.
+
+**Two dead things went with it.** `finish_reward` is gone - no book ever set it and nothing
+ever read it. And *Nothing Bites Here* declared `{literacy: 6}`, which was dead twice over:
+nothing read the field, and the skill is `Literacy` with a capital L, so the key would never
+have matched. Wiring the field up without removing that would have retroactively locked a book
+players can read today, which was the whole objection in the original proposal.
+
+**What the book does, and what it must not be.** Swords xp ×1.5 and a small dexterity
+multiplier - the shape *Twist liek a snek* already uses, a skill and a stat rather than a bare
+number. P-15's rule is that a library of nothing but multipliers is the weakest thing
+`BookData` can do; a mastery book earns its multiplier by asking for the rank first. It is
+stocked in the slums back room, because that is where this game puts the things that are no
+use to most people who walk past them.
+
+**`check_books_can_be_got` earned itself in the same minute it was needed** - the new book had
+no source, and the check said so before the build finished.
+
+**Guard: `check_books_ask_for_real_skills`.** The field is new, so this is a net under it from
+the first day rather than after the first mistake. `start_reading` reads the level as
+`(skills[id]?.current_level ?? 0)`, so a misspelt skill id is nought, nought is below any
+requirement, and the book is refused **for ever** - while the refusal names a skill with no
+display row. It also catches a requirement above the skill's own cap. 13 books, one asking;
+negative-tested on both a misspelt name and an unreachable level.
 
 ### guild work measured and blocked, and the backlog is fully triaged
 

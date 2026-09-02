@@ -1219,9 +1219,12 @@ class Ring extends Equippable {
 class BookData{
     constructor({
         required_time = 1,
-        required_skills = {literacy: 0},
+        //Q-12: a book requires nothing to read in general, and MAY require a skill when
+        //it is about that skill at a level its reader has to have reached. Read by
+        //start_reading, which refuses with a sentence naming what it wants.
+        required_skills = {},
         literacy_xp_rate = 1,
-        finish_reward = {},
+
         bonuses = {}, //xp/stat bonuses
         rewards = {}, //unlocks, etc
     }) {
@@ -1229,7 +1232,7 @@ class BookData{
         this.accumulated_time = 0;
         this.required_skills = required_skills;
         this.literacy_xp_rate = literacy_xp_rate;
-        this.finish_reward = finish_reward;
+
         this.is_finished = false;
         this.bonuses = bonuses;
         this.rewards = rewards;
@@ -1541,7 +1544,6 @@ book_stats["Wood for Witches"] = new BookData({
 */
 book_stats["Nothing Bites Here"] = new BookData({
     required_time: 420,
-    required_skills: {literacy: 6},
     literacy_xp_rate: 2,
     bonuses: {
         xp_multipliers: {
@@ -1560,13 +1562,35 @@ book_stats["Nothing Bites Here"] = new BookData({
 
     The longest read in the game, because it is also the dearest thing anybody sells.
 */
+/*
+    Sword mastery, and the shape is Twist liek a snek's: a skill and a stat, not a bare
+    multiplier. P-15's rule is that a library of nothing but multipliers is the weakest
+    thing BookData can do - a mastery book earns its multiplier by asking for the rank
+    first.
+*/
+book_stats["The Long Guard"] = new BookData({
+    required_time: 480,
+    required_skills: {Swords: 20},
+    literacy_xp_rate: 2,
+    bonuses: {
+        xp_multipliers: {
+            Swords: 1.5,
+        },
+        multipliers: {
+            dexterity: 1.05,
+        },
+    },
+});
+
 book_stats["What the Water Gives Up"] = new BookData({
     required_time: 600,
     /*
-        No required_skills, deliberately. BookData declares the field and NOTHING in src/
-        ever reads it - the same is true of finish_reward - so the {literacy: 6} on
-        "Nothing Bites Here" is a requirement the game does not enforce. Writing a second
-        one would be adding data that reads as a rule and is not one. Recorded as P-26.
+        No required_skills, and now for a reason rather than because the field did nothing.
+        Since Q-12 the field is real: start_reading refuses a book whose skill the reader
+        has not reached, and says what it wants. This is not a mastery book - it is a thing
+        the collector sells to whoever can pay - so it asks for nothing.
+
+        `finish_reward` is gone entirely: no book ever set it and nothing ever read it.
     */
     literacy_xp_rate: 3,
     rewards: {
@@ -1637,6 +1661,20 @@ book_stats["Counting Mice"] = new BookData({
         name: "Nothing Bites Here",
         description: "desc item Nothing Bites Here",
         value: 900
+    });
+    /*
+        The first of the mastery series (Q-12). The game names it before anybody does:
+        `skills["Swords"]` calls its own rank at level 20 "Sword mastery", so the level the
+        owner named and the level the game already calls mastery are the same number.
+
+        It asks for that level and says so when it is not there. A book about the second
+        half of an education is no use to somebody still in the first half, and saying that
+        out loud is the whole reason the requirement is worth having.
+    */
+    item_templates["The Long Guard"] = new Book({
+        name: "The Long Guard",
+        description: "desc item The Long Guard",
+        value: 4000
     });
     item_templates["What the Water Gives Up"] = new Book({
         name: "What the Water Gives Up",

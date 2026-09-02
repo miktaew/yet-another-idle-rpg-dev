@@ -600,8 +600,65 @@ async function check_no_item_shows_its_key() {
     }
 }
 
+/**
+ * A book that asks for a skill asks for one that exists.
+ *
+ * Since Q-12 a book may require a skill, and `start_reading` reads the level out of the skill
+ * registry: `(skills[id]?.current_level ?? 0) < wanted[id]`. A misspelt id is not there, the
+ * `?? 0` makes it nought, nought is below any requirement, and the book is refused **for
+ * ever** - while the refusal names a skill with no display row, so the sentence the player is
+ * shown has a registry key in it.
+ *
+ * Nothing else can see it. The book builds, ships, sits in a trader's stock and is bought;
+ * only reading it fails, and it fails the way a book you have not earned yet fails.
+ *
+ * The whole field is new, so this is a net under it from the first day rather than after the
+ * first mistake.
+ */
+async function check_books_ask_for_real_skills() {
+    const [items_module, skills_module] = await load_browser_free(repo_root,
+        ["src/items.js", "src/data/skills.js"]);
+
+    const books = Object.entries(items_module.book_stats ?? {});
+    if (books.length === 0) {
+        error("there are no books at all - check_books_ask_for_real_skills is out of date.");
+        return;
+    }
+
+    let asking = 0;
+    for (const [title, stats] of books) {
+        const wanted = stats.required_skills ?? {};
+        const names = Object.keys(wanted);
+        if (names.length === 0) continue;
+        asking++;
+
+        for (const skill_id of names) {
+            if (!skills_module.skills[skill_id]) {
+                error(`the book "${title}" requires the skill "${skill_id}", which is not in `
+                    + `the skill registry. start_reading reads a missing skill as level 0, so `
+                    + `the book can never be read by anybody, and the refusal it prints names `
+                    + `a skill that does not exist.`);
+                continue;
+            }
+            const level = wanted[skill_id];
+            const cap = skills_module.skills[skill_id].max_level;
+            if (typeof level !== "number" || level <= 0) {
+                error(`the book "${title}" requires "${skill_id}" at ${JSON.stringify(level)}, `
+                    + `which is not a level. A requirement of nought is not a requirement.`);
+            } else if (typeof cap === "number" && level > cap) {
+                error(`the book "${title}" requires "${skill_id}" at ${level}, and that skill `
+                    + `stops at ${cap}. Nobody can ever read it.`);
+            }
+        }
+    }
+
+    console.log(`[check] book requirements: ${books.length} books, ${asking} asking for a `
+        + `skill, each naming a real one at a reachable level`);
+}
+
 export {
     check_books_can_be_got,
+    check_books_ask_for_real_skills,
     check_no_item_shows_its_key,
     check_items_can_be_got,
     check_no_two_items_share_a_name,

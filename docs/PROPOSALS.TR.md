@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 133 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 134 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -664,37 +664,6 @@ geliyor.
   insanlar üzerinden gelmek zorunda.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
-
-### P-26 — Hiçbir şeyin okumadığı iki BookData alanı `open`
-
-P-23 ölçülürken bulundu. `BookData`, bir kitabın taşıyabileceği altı şey tanımlıyor ve
-**ikisi `src/` içinde hiçbir yerde okunmuyor**:
-
-- `required_skills`; kitabı okuyabilmenin önündeki bir kapı gibi görünüyor. *Nothing Bites
-  Here* `{literacy: 6}` beyan ediyor ve oyun bunu uygulamıyor; kitap 0 okuryazarlıkla
-  okunabiliyor.
-- `finish_reward`; bitirince tetiklenen bir ödül gibi görünüyor. Hiçbir şey onu tüketmiyor
-  ve hiçbir kitap onu ayarlamıyor — yani henüz kimse yanmadı.
-
-İkincisi bir tuzak, birincisi ise veride zaten küçük bir yalan. P-15'in kendi metni
-"`BookData` yeni bir kitabın isteyebileceği her şeyi zaten destekliyor" diyor ve ikisini de
-sayıyor; ileride bir kitabın kural olmayan bir şartı beyan etmesi de böyle olurdu.
-
-**İki dürüst çıkış yolu var ve eşit değiller.** `required_skills`'i bağlamak gerçek bir
-özellik — henüz okuyamadığınız bir kitap bunu ve sebebini söylemek zorunda, yoksa kimsenin
-göremediği kilitli bir kapı olur; bu projenin bu konuda bir direktifi var. İki alanı da
-silmek daha küçük ve var olan hiçbir şeyi kaybetmiyor. Ölçüm hangisi olacağını
-belirlemiyor; sahibinin kapılı kitaplara iştahı belirler.
-
-**Olmaması gereken şey**, üçüncü bir kitabın `required_skills` beyan etmesi. *Suyun Geri
-Verdikleri* bilerek onsuz yazıldı ve alanın olacağı yerde bunu söylüyor.
-
-**Muhafız.** Hangi yol seçilirse seçilsin sınıf şu: "hiçbir şeyin okumadığı, beyan edilmiş
-alan" — ve bu kontrol edilebilir: bir veri sınıfının beyan ettiği her alan, kendi
-kurucusunun dışında bir yerde adlandırılmalı. Bu, bu teklifin kapsamından geniş bir kontrol
-ve muhtemelen ikiden fazlasını bulur.
-
-
 
 ### P-41 — Lonca işleri: bir iş panosu, itibar ve ona cevap veren bir dükkân `open`
 
