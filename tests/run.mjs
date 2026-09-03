@@ -85,6 +85,7 @@ import {
 import {
     check_a_sorted_field_is_saved,
     check_every_sort_button_is_understood,
+    check_a_remembered_sort_can_be_put_back,
 } from "./checks/inventory.mjs";
 import {
     check_a_standing_gate_can_be_reached,
@@ -252,6 +253,7 @@ check_every_craft_records_that_it_happened();
 await check_every_recipe_can_say_if_it_is_makeable();
 check_a_sorted_field_is_saved();
 check_every_sort_button_is_understood();
+check_a_remembered_sort_can_be_put_back();
 await check_a_standing_gate_can_be_reached();
 await check_a_late_repair_still_finds_its_grants();
 check_standing_is_not_restored_and_replayed_at_once();

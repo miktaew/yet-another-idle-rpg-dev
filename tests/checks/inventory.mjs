@@ -181,4 +181,126 @@ function check_every_sort_button_is_understood() {
         + `${understood.size} understood by the comparator`);
 }
 
-export { check_a_sorted_field_is_saved, check_every_sort_button_is_understood };
+
+/**
+ * A remembered sort can actually be put back - button highlight included.
+ *
+ * `check_every_sort_button_is_understood` above asks that a button's ordering exists in the
+ * comparator. This asks the question that only matters once the choice is saved: can the
+ * restore find the button again, and does it move the highlight when it does.
+ *
+ * **The highlight is the half with no other owner.** It is moved by `set_active_button` in
+ * index.html, on click, and by nothing else - no drawing code touches it. So a restore that
+ * sets the sort and leaves the highlight alone brings the list back ordered by "latest" with
+ * "name" lit, which is worse than not remembering at all: the panel would be lying about
+ * itself rather than merely forgetting. Nothing else in the build can notice that, because
+ * both halves are individually correct.
+ *
+ * **And the ids are built rather than listed**, which is the part that rots. The restore
+ * turns a sort key into `inventory_sort_by_${by}`; the markup writes those ids out one by
+ * one. Rename a button and the sort still works, the save still round-trips, and the restore
+ * quietly finds nothing - the `if(!button) continue` that keeps an old save safe is the same
+ * line that would swallow a typo. So every ordering a persisted target offers is checked to
+ * resolve to an id that exists.
+ */
+function check_a_remembered_sort_can_be_put_back() {
+    const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+    const display = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src", "inventory_display.js"), "utf8"));
+
+    //Which targets the save carries, asked of the function that builds what is saved.
+    const state_at = display.indexOf("function inventory_sorting_state(");
+    if (state_at === -1) {
+        error("inventory sorting: inventory_sorting_state is gone - "
+            + "check_a_remembered_sort_can_be_put_back is out of date.");
+        return;
+    }
+    const state_body = display.slice(state_at, display.indexOf("\n}", state_at));
+    const persisted = [...state_body.matchAll(/^\s{8}(\w+):\s*\{/gm)].map(m => m[1]);
+
+    //And how the restore turns a sort into an element id.
+    const ids_at = display.indexOf("const sorting_button_ids = {");
+    if (ids_at === -1) {
+        error("inventory sorting: sorting_button_ids is gone - "
+            + "check_a_remembered_sort_can_be_put_back is out of date.");
+        return;
+    }
+    const ids_body = display.slice(ids_at, display.indexOf("\n};", ids_at));
+    const patterns = new Map();
+    for (const found of ids_body.matchAll(/(\w+):\s*\(by\)\s*=>\s*`([^`]+)`/g)) {
+        patterns.set(found[1], found[2]);
+    }
+
+    if (persisted.length === 0 || patterns.size === 0) {
+        error(`inventory sorting: read ${persisted.length} persisted target(s) and `
+            + `${patterns.size} id pattern(s) - check_a_remembered_sort_can_be_put_back `
+            + `would accept anything.`);
+        return;
+    }
+
+    for (const target of persisted) {
+        if (!patterns.has(target)) {
+            error(`inventory sorting: the save carries the ${target} sort and `
+                + `sorting_button_ids has no id for it, so restore_inventory_sorting cannot `
+                + `find a button and the remembered choice is dropped in silence.`);
+        }
+    }
+
+    //Every ordering each persisted target offers, and the id of the button that offers it.
+    const offered = new Map();
+    for (const button of html.matchAll(
+            /id\s*=\s*"([^"]+)"[^>]*onclick\s*=\s*'sort(Character|Trader|Storage)Inventory\("([^"]+)"\)'/g)) {
+        const target = button[2] === "Character" ? "character" : button[2].toLowerCase();
+        if (!offered.has(target)) {
+            offered.set(target, new Map());
+        }
+        offered.get(target).set(button[3], button[1]);
+    }
+    if (offered.size === 0) {
+        error("inventory sorting: no sort button ids could be read out of index.html - "
+            + "check_a_remembered_sort_can_be_put_back is out of date.");
+        return;
+    }
+
+    let resolved = 0;
+    for (const target of persisted) {
+        const pattern = patterns.get(target);
+        const buttons = offered.get(target);
+        if (!pattern || !buttons) {
+            continue;
+        }
+        for (const [by, id] of buttons) {
+            const built = pattern.replace("${by}", by);
+            resolved++;
+            if (built === id) {
+                continue;
+            }
+            error(`inventory sorting: the ${target} list can be sorted by "${by}" and the `
+                + `save remembers it, but restore_inventory_sorting looks for "${built}" `
+                + `while the button is "${id}". The sort comes back and the highlight does `
+                + `not move, so the list is ordered one way and says another.`);
+        }
+    }
+
+    //And the restore has to move the highlight at all.
+    const restore_at = display.indexOf("function restore_inventory_sorting(");
+    if (restore_at === -1) {
+        error("inventory sorting: restore_inventory_sorting is gone - "
+            + "check_a_remembered_sort_can_be_put_back is out of date.");
+        return;
+    }
+    const restore_body = display.slice(restore_at, display.indexOf("\n}", restore_at));
+    if (!/active_selection_button/.test(restore_body)) {
+        error("inventory sorting: restore_inventory_sorting puts the sort back without "
+            + "touching active_selection_button. Nothing else moves that highlight - "
+            + "set_active_button in index.html only runs on click - so the restored list "
+            + "would come back ordered by one thing with another lit.");
+    }
+
+    console.log(`[check] remembered sort: ${persisted.length} target(s) saved, `
+        + `${resolved} ordering(s) resolving to a real button`);
+}
+
+export { check_a_sorted_field_is_saved,
+         check_every_sort_button_is_understood,
+         check_a_remembered_sort_can_be_put_back };

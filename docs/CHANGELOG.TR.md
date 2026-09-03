@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 136 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 137 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,56 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.54 - envanter nasıl sıralandığını hatırlıyor
+
+Sahibi, iki kez: *"envanter seçimi sıralaması hatırlamalı. örneğin son'u seçtiysem, sayfayı
+yenilediğimde son'da kalması gerekiyordu."*
+
+**Önce ölçüldü, çünkü bunu çoktan kapsıyormuş gibi duran bir şey var.**
+`option_remember_filters` yalnızca `remember_message_log_filters`ı ayarlıyor, başka hiçbir
+şeyi; yani mesaj logunun süzgeçleri yeniden yüklemeden sağ çıkıyordu ama sıralama hiç
+çıkmıyordu — inventory_display.js içinde modül düzeyinde `let`lerde duruyor ve hiçbir yere
+yazılmıyordu.
+
+**Başka sahibi olmayan yarısı düğme vurgusu.** Onu index.html'deki `set_active_button`
+tıklamada taşıyor ve başka hiçbir şey taşımıyor — hiçbir çizim kodu ona dokunmuyor. Yani
+yalnızca sıralamayı geri yüklemek, listeyi Son'a göre sıralı ama Ad yanıyor hâlde geri
+getiriyordu; bu, unutmaktan kötü: panel sadece sıfırlanmış olmaz, kendisi hakkında yalan
+söylemiş olur. P-47 tam bunu öngörmüştü — *"birini öteki olmadan hatırlamak yarım bir seçimi
+geri getirir"* — ve mesele yönden çok vurgu çıktı.
+
+**Liste çizilmeden önce geri yükleniyor**, sonra değil.
+`update_displayed_character_inventory` modülün o an tuttuğu şeye göre sıralıyor, yani sonradan
+yapılan bir geri yükleme bu açılışı varsayılana göre sıralı bırakır ve ancak bir sonraki
+yeniden çizimde etkisini gösterirdi.
+
+**`options` içinde değil ve bu bilinçli bir hayır.** P-47, `remember_message_log_filters`ın
+yanında `game_options` önermişti; inşa etmek komşuluğun neden yanlış olduğunu gösterdi: o
+nesnedeki her anahtarın seçenekler panelinde bir kontrolü var, bunun ise envanterin üstünde
+dört düğmesi. Orada panelde onu ayarlayacak hiçbir şeyi olmayan bir anahtar, birinin bağlamayı
+unuttuğu bir seçenek gibi okunur. Kendi kayıt anahtarı oldu: `inventory_sorting` —
+`check_save_keys_round_trip` onu kendiliğinden yakaladı: 57 yazılan, 57 okunan.
+
+**Tüccarın sıralaması bilerek geçici bırakıldı.** O panel tüccar başına açılıyor ve ticaretle
+kapanıyor, yani dönülecek bir "geçen sefer"i yok — ayrıca dört değil üç sıralama düğmesi olan
+tek hedef o, çünkü bir tüccarın stoğunda oyuncunun eşyaları topladığı bir sıra yok.
+
+**Muhafız, hatırlanan bir sıralamanın geri konulabilir olup olmadığını soruyor**; bu, ancak
+seçim kaydedildikten sonra var olan soru. Kimlikler kuruluyor — `inventory_sort_by_${by}` — ve
+markup onları tek tek yazıyor; yani bir düğmeyi yeniden adlandırmak sıralamayı çalışır, kaydı
+gidip gelir ve geri yüklemeyi sessizce hiçbir şey bulmaz hâlde bırakır: eski bir kaydı güvende
+tutan `if(!button) continue`, bir yazım hatasını yutacak satırın ta kendisi. O yüzden
+kalıcılaştırılan her hedefin sunduğu her sıralamanın var olan bir kimliğe çözüldüğü ve geri
+yüklemenin `active_selection_button`a hiç dokunup dokunmadığı kontrol ediliyor.
+
+Üç yönden negatif test edildi — vurgu satırları kaldırıldı, kimlik kalıbı yeniden adlandırıldı
+ve kimliği olmayan üçüncü bir hedef kaydedildi — üçü de adıyla düşüyor. Çalışan oyunda
+doğrulandı: Son seçildi, kaydedildi, yeniden yüklendi ve liste Son'a göre sıralı, Son yanıyor
+hâlde geri geldi; ilk eşyası taze bir Ad sıralamasıyla değil taze bir Son sıralamasıyla
+eşleşti.
+
+Yardım iki dilde güncellendi, D-10 gereği.
 
 ### Büyü arkı v0.8'in içine geçiyor, kitaplar v0.7'de kalıyor
 

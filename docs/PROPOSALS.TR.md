@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 159 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 160 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -597,6 +597,20 @@ bölüm 16): Ancient Forest, navigasyon, nadir karşılaşmalar, tier 5 toplama,
 dövüş ve çevresel keşifler. Aşağıdaki, bu altısının koda karşı ölçülmüş hâli — çünkü üçü
 zaten bir biçimde var ve biri hiç yok.
 
+**SAHİBİ TARAFINDAN YEŞİL IŞIK ALDI, 2026-09-03**, koşulu korunarak: *"v0.7'yi
+tamamladıktan sonra v0.8'e başlayabilirsin. v0.8 için yeni bölge, büyü gibi özellikler
+eklenecek."* Yani bu artık bir karara değil yalnızca bir listeye bağlı — ve listeyi yazmaya
+değer, çünkü "v0.7 bitti" aksi hâlde her oturumun farklı vereceği bir hüküm:
+
+- sahibinin açık talepleri: **P-45**, **P-46**, **P-48**, **P-50**, **P-51**;
+- aynı talimatın v0.7'de tuttuğu ve dolayısıyla bu serinin son içerik parçası olan **P-15**,
+  kitaplar;
+- klasör düzeni ve `main.js` ayrımı v0.8'in üzerine inşa edileceği zemin olan ve bir bölge var
+  olmadan önce sonrasından ucuz olan **P-42**.
+
+O listede hiçbir şey kalmadığında v0.8 başlıyor. Sahibinin eklediği her şey ark'a değil
+listeye katılıyor; "v0.7 bitince" bugüne kadar her seferinde bu anlama geldi.
+
 **P-41 ve P-42'den sonraya bilerek dizildi.** Brief'in kendi koşulu *"v0.7 bittikten ve bütün
 quality gate'ler geçtikten sonra v0.8'e geç"* — ikisi de artık doğru — ama sahibinin önünde
 hâlâ açık talepleri var ve bir ark, onları bırakmak için onların beklemesinden daha kötü bir
@@ -770,27 +784,6 @@ listelediğiyle uyuşmak zorunda ve iki HTML kopya da birbiriyle uyuşmalı —
 `check_changelogs_cover_version` iki sayfayı da yayımlanan `game_version` için bir girdi
 taşımaya çoktan bağlıyor; yani iki nokta arasındaki sürümleri saymak, aynı listenin ikinci
 kez okunması.
-
-### P-47 — Envanter nasıl sıralandığını hatırlıyor `open`
-
-Sahibi: *"envanter seçimi sıralaması hatırlamalı."*
-
-**Ölçüldü: onu kapsayan bir şey yok.** `option_remember_filters` var ve kapsıyormuş gibi
-duruyor — kapsamıyor. Yalnızca `game_options.remember_message_log_filters`ı ayarlıyor, başka
-bir şey yapmıyor; yani mesaj logunun filtreleri yeniden yüklemeyi atlatıyor, envanterin
-sıralaması atlatmıyor. Sıralamanın kendisi dört düğmeyle birlikte `inventory_display.js`
-içinde yaşıyor ve hiçbir yere kaydedilmiyor.
-
-**Bu da P-46'nın sorduğu sorunun aynısını soruyor ve ikisi birlikte cevaplanmalı:** bir
-görüntü tercihi kayda mı yoksa tarayıcıya mı ait. Envanter sıralamasının kayıt üzerinde
-changelog filtrelerinden daha güçlü bir hakkı var — oyunun dışında okunan bir sayfa hakkında
-değil, karakterin kendi ekranı hakkında bir tercih — ve `game_options` böyle şeylerin çoktan
-yaşadığı ve çoktan kalıcı olan yer. **ÖNERİ: `remember_message_log_filters`ın yanında
-`game_options`, ve sütunun yanı sıra yönü de** — çünkü seçili düğmeye basmak sırayı tersine
-çeviriyor ve birini öbürü olmadan hatırlamak, seçimin yarısını geri yüklemek olurdu.
-
-**P-46 ile birlikte yapılmaya değecek kadar küçük**, kendi başına değil; çünkü ikisi de
-tercihlerin nerede yaşadığına dair tek bir karar.
 
 ### P-48 — Körfezde bir sandık ve Keşifler'de neyin aranabildiği `open`
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 159 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 160 -->
 
 # Proposals
 
@@ -595,6 +595,20 @@ after v0.7 is finished and all the quality gates pass"* - both true now - but th
 live requests still open in front of it, and an arc is a worse reason to leave those than
 they are to wait.
 
+**GREEN-LIT BY THE OWNER, 2026-09-03**, with the condition kept: *"you can start v0.8 once
+you have finished v0.7. New areas and features like magic will be added for v0.8."* So this
+no longer waits on a decision, only on a list - and the list is worth writing down, because
+"v0.7 is finished" is otherwise a judgement call every session would make differently:
+
+- the owner's open requests: **P-45**, **P-46**, **P-48**, **P-50**, **P-51**;
+- **P-15**, books, which the same instruction kept in v0.7 and which is therefore this
+  series' last piece of content;
+- **P-42**, whose folder layout and `main.js` split are the ground v0.8 gets built on and are
+  cheaper before a region exists than after.
+
+When nothing on that list is left, v0.8 starts. Anything the owner adds joins the list rather
+than the arc, which is what "after v0.7 is finished" has meant every time so far.
+
 **The door is already written, and phase 7 already put a trace on it.** `desc location Forest
 lake` says the lake sits between the waterfall's cliff and *"a dense canopy leading to what
 must be the forest's heart"*. Its only exits are the Forest road it came in by and `Frogs`, a
@@ -765,26 +779,6 @@ two filters, and the save's own version for the badge**, which needs no new stor
 `check_changelogs_cover_version` already holds both pages to carrying an entry for the
 shipped `game_version`, so counting versions between two points is the same list read a
 second way.
-
-### P-47 — The inventory remembers how it was sorted `open`
-
-The owner: *"the inventory sort selection should be remembered."*
-
-**Measured: nothing covers it.** `option_remember_filters` exists and sounds like it would -
-it does not. It sets `game_options.remember_message_log_filters` and nothing else, so the
-message log's filters survive a reload and the inventory's sort does not. The sort itself
-lives in `inventory_display.js` alongside the four buttons and is not saved anywhere.
-
-**Which raises the same question P-46 raises, and they should be answered together:** whether
-a display preference belongs in the save or in the browser. The inventory sort has a stronger
-claim on the save than the changelog's filters do - it is a preference about the character's
-own screen rather than about a page read outside the game - and `game_options` is already the
-place such things live and is already persisted. **PROPOSED: `game_options`, beside
-`remember_message_log_filters`, and the direction as well as the column** since clicking the
-chosen button reverses it and remembering one without the other would restore half a choice.
-
-**Small enough to be worth doing with P-46** rather than on its own, since both are one
-decision about where preferences live.
 
 ### P-48 — A chest in the bay, and what Discoveries can be searched for `open`
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 136 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 137 -->
 
 # Changelog
 
@@ -20,6 +20,54 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.54 - the inventory remembers how it was sorted
+
+The owner, twice: *"the inventory sort selection should be remembered. If I picked Newest, it
+should still be on Newest when I refresh the page."*
+
+**Measured first, because a thing that sounds like it already covers this exists.**
+`option_remember_filters` sets `remember_message_log_filters` and nothing else, so the message
+log's filters survive a reload and the sort never did - it lives in module-level `let`s in
+inventory_display.js and was written nowhere.
+
+**The half that had no other owner is the button highlight.** It is moved by
+`set_active_button` in index.html, on click, and by nothing else - no drawing code touches it.
+So restoring the sort alone brings the list back ordered by Newest with Name still lit, which
+is worse than forgetting: the panel would be lying about itself rather than merely resetting.
+P-47 predicted exactly this - *"remembering one without the other would restore half a
+choice"* - and it turned out to be about the highlight as much as the direction.
+
+**Restored before the list is drawn**, not after. `update_displayed_character_inventory` sorts
+by whatever the module holds, so a restore afterwards would leave this load ordered by the
+default and only take effect the next time something happened to redraw it.
+
+**Not in `options`, and that is a deliberate no.** P-47 proposed `game_options` beside
+`remember_message_log_filters`, and building it showed why the neighbourhood is wrong: every
+key in that object has a control in the options panel, and this one has four buttons over the
+inventory instead. A key in there with nothing in the panel to set it reads as an option
+somebody forgot to wire up. It is its own save key, `inventory_sorting`, which
+`check_save_keys_round_trip` picked up on its own - 57 written, 57 read.
+
+**The trader's sort is left transient on purpose.** That panel is opened per trader and closes
+with the trade, so it has no "last time" to return to - and it is the one target with three
+sort buttons rather than four, since a trader's stock has no order the player picked things up
+in.
+
+**The guard asks whether a remembered sort can be put back**, which is the question that only
+exists once the choice is saved. The ids are built - `inventory_sort_by_${by}` - and the
+markup writes them out one by one, so renaming a button leaves the sort working, the save
+round-tripping, and the restore quietly finding nothing: the `if(!button) continue` that keeps
+an old save safe is the same line that would swallow a typo. So every ordering each persisted
+target offers is checked to resolve to an id that exists, and the restore is checked to touch
+`active_selection_button` at all.
+
+Negative-tested three ways - the highlight lines removed, a renamed id pattern, and a third
+target saved with no id for it - and all three fail by name. Verified in the running game:
+Newest picked, saved, reloaded, and the list came back ordered by Newest with Newest lit, its
+first item matching a fresh Newest sort rather than a Name sort.
+
+Help updated in both languages, per D-10.
 
 ### The magic arc moves inside v0.8, and books stay in v0.7
 

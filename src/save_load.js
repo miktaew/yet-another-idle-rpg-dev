@@ -61,7 +61,8 @@ import { translationManager } from "./translation.js";
 import { create_displayed_crafting_recipes } from "./crafting_display.js";
 import { create_new_bestiary_entry, update_booklist_entry } from "./journal_panels.js";
 import { skill_category_order, skill_list, update_displayed_stance_list } from "./skills_display.js";
-import { update_displayed_character_inventory } from "./inventory_display.js";
+import { inventory_sorting_state, restore_inventory_sorting,
+         update_displayed_character_inventory } from "./inventory_display.js";
 import { titles } from "./data/titles.js";
 /**
  * puts all important stuff into a string
@@ -346,6 +347,15 @@ function create_save() {
         save_data["last_location_with_bed"] = game_state.last_location_with_bed;
 
         save_data["options"] = game_options;
+
+        /*
+            How the player's own lists were sorted. Not in `options` beside
+            remember_message_log_filters, because that object is the options PANEL - every
+            key in it has a control the player can see, and this one has four buttons over
+            the inventory instead. A key in there with nothing in the panel to set it reads
+            as an option somebody forgot to wire up.
+        */
+        save_data["inventory_sorting"] = inventory_sorting_state();
 
         save_data["stances"] = {};
         Object.keys(stances).forEach(stance => {
@@ -1988,6 +1998,15 @@ function load(save_data) {
         }
 
         update_character_stats();
+
+        /*
+            Before the list is drawn, not after: update_displayed_character_inventory sorts
+            by whatever the module currently holds, so restoring afterwards would leave the
+            order from this load's default and only take effect the next time something
+            happened to redraw it. The button highlight goes with it - see
+            restore_inventory_sorting for why that half matters.
+        */
+        restore_inventory_sorting(save_data.inventory_sorting);
         update_displayed_character_inventory();
 
         update_displayed_health();

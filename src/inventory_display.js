@@ -48,6 +48,71 @@ let character_inventory_sorting = "name";
 
 let character_inventory_sorting_direction = "asc";
 
+/**
+ * How the player's own lists are sorted, for the save to carry.
+ *
+ * The character's inventory and the storage only. A trader's sort is left out on purpose:
+ * that panel is opened per trader and closed with the trade, so it has no "last time" to
+ * return to - and it is the one target with three sort buttons rather than four, since a
+ * trader's stock has no order the player picked things up in.
+ */
+function inventory_sorting_state() {
+    return {
+        character: {by: character_inventory_sorting,
+                    direction: character_inventory_sorting_direction},
+        storage: {by: storage_sorting, direction: storage_sorting_direction},
+    };
+}
+
+/** The sort buttons, per target, keyed by the sort they choose. */
+const sorting_button_ids = {
+    character: (by) => `inventory_sort_by_${by}`,
+    storage: (by) => `storage_sort_by_${by}`,
+};
+
+/**
+ * Puts a target's sort back, button highlight included.
+ *
+ * The highlight is the half that is easy to forget, because nothing in the drawing code
+ * touches it: `set_active_button` in index.html moves it on click and that is the only
+ * thing that ever does. Restore the sort without it and the list comes back ordered by
+ * "latest" with "name" still lit, which is a worse state than not remembering at all -
+ * the panel would be lying about itself rather than merely forgetting.
+ *
+ * Not `toggle_exclusive_class`, which is a toggle: handed the button that is already
+ * active - "name", the common case - it would take the highlight off and leave nothing
+ * lit. This has to set, not toggle.
+ *
+ * A sort this version no longer offers is ignored rather than trusted, so an old save
+ * cannot leave the list sorted by something with no button to say so.
+ */
+function restore_inventory_sorting(saved) {
+    if(!saved || typeof saved !== "object") {
+        return;
+    }
+    for(const [target, ids] of Object.entries(sorting_button_ids)) {
+        const wanted = saved[target];
+        if(!wanted) {
+            continue;
+        }
+        const button = document.getElementById(ids(wanted.by));
+        if(!button) {
+            continue;
+        }
+        if(target === "character") {
+            character_inventory_sorting = wanted.by;
+            character_inventory_sorting_direction = wanted.direction === "desc" ? "desc" : "asc";
+        } else {
+            storage_sorting = wanted.by;
+            storage_sorting_direction = wanted.direction === "desc" ? "desc" : "asc";
+        }
+        for(const sibling of button.parentNode.children) {
+            sibling.classList.remove("active_selection_button");
+        }
+        button.classList.add("active_selection_button");
+    }
+}
+
 const equipment_slots_divs = {head: document.getElementById("head_slot"), torso: document.getElementById("torso_slot"),
                               arms: document.getElementById("arms_slot"), ring: document.getElementById("ring_slot"),
                               weapon: document.getElementById("weapon_slot"), "off-hand": document.getElementById("off-hand_slot"),
@@ -998,6 +1063,8 @@ function exit_displayed_trade() {
 }
 
 export {
+    inventory_sorting_state,
+    restore_inventory_sorting,
     equipment_slots_divs,
     exit_displayed_trade,
     item_divs,
