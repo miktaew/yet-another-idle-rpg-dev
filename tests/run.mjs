@@ -137,6 +137,7 @@ import {
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
     check_required_items,
+    check_reward_entries_have_the_right_shape,
     check_a_rolled_set_is_not_mostly_nothing,
     check_reward_keys,
 } from "./checks/rewards.mjs";
@@ -227,6 +228,7 @@ check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();
 await check_required_items();
+await check_reward_entries_have_the_right_shape();
 await check_content_text_ids();
 await check_generated_items();
 await check_components_can_be_made();

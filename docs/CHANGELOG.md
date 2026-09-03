@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 131 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 132 -->
 
 # Changelog
 
@@ -20,6 +20,44 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### the guard for the reward shape that broke loading
+
+No version: this is the check that should have existed before v0.7.48, written after the fix
+at the owner's request to ship the fix first.
+
+**`check_reward_entries_have_the_right_shape` derives the contract from the code that reads
+it**, rather than tabling it. For each kind, `process_rewards` tells it which of three things
+an entry is: a field used as a registry key (`traders[rewards.traders[i].trader]`) means an
+object carrying that field; any other field read means an object; neither means the entry is
+used bare, as a key. A table would have drifted the moment `process_rewards` changed.
+
+**Walked over the loaded registries rather than the source text**, because a reward block can
+be declared in six places - `rewards`, `first_reward`, `repeatable_reward`,
+`entrance_rewards`, `quest_rewards`, `task_rewards` - and a text scan would need to know all
+of them. 514 array entries across 514 reward blocks.
+
+**A workflow swept every content file against the derived contract first**, with an
+adversarial verifier on each candidate. It confirmed nothing beyond the one already fixed,
+which is the answer worth having: the bug was not a symptom of a wider pattern.
+
+**But the check found three latent ones the sweep's verifier had correctly refused.**
+`actions: [{dialogue: "swampland tanner", action: ["swamptanner deliver 1"]}]` - the action
+key written as a one-element array. It works, and only by accident: `actions[["a"]]` coerces
+to `actions["a"]`. Add a second element and `actions[["a","b"]]` is undefined, silently. Three
+of those, now written as strings. The verifier was right that they were not bugs *yet*, and
+the check is right that they are bugs waiting.
+
+**My own derivation was wrong twice, and running it is what said so.** First it demanded
+*every* indexed field, so it reported 72 perfectly good `rewards.actions` entries - main.js
+branches on `.dialogue` or `.location`, so an entry legitimately carries one. Then it missed
+`chance_of` and `items` entirely, because both are read through a local
+(`const group = rewards.chance_of[i]`, then `group.chance`) and neither field pattern could
+see that. Fixed by following the binding.
+
+**Negative-tested three ways**, including putting the exact bug back: the bare-string
+`traders` entry, an object where a bare key belongs, and an action key as an array. All three
+fail by name.
 
 ### v0.7.50 - a reward of the wrong shape, which broke loading
 

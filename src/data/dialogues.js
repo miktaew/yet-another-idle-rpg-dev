@@ -2454,7 +2454,7 @@ class Textline {
                 is_unlocked: false,
                 rewards: {
                     quest_progress: [{quest_id: "In Times of Need", task_index: 6}], 
-                    actions: [{dialogue: "swampland tanner", action: ["swamptanner deliver 1"]}],
+                    actions: [{dialogue: "swampland tanner", action: "swamptanner deliver 1"}],
                 },
                 locks_lines: ["swamptanner help"],
             }),
@@ -2464,7 +2464,7 @@ class Textline {
                 is_unlocked: false,
                 rewards: {
                     quest_progress: [{quest_id: "In Times of Need", task_index: 8}], 
-                    actions: [{dialogue: "swampland tanner", action: ["swamptanner deliver 2"]}],
+                    actions: [{dialogue: "swampland tanner", action: "swamptanner deliver 2"}],
                 },
                 locks_lines: ["swamptanner known"],
             }),
@@ -2631,7 +2631,7 @@ class Textline {
                 is_unlocked: false,
                 rewards: {
                     actions: [
-                        {dialogue: "swampland scout", action: ["swampscout help"]},
+                        {dialogue: "swampland scout", action: "swampscout help"},
                     ],
                 },
             }),

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 131 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 132 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,45 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### yükleme kıran ödül biçiminin muhafızı
+
+Sürüm yok: bu, v0.7.48'den önce var olması gereken kontrol; sahibinin "önce düzeltmeyi
+gönder" isteği üzerine düzeltmeden sonra yazıldı.
+
+**`check_reward_entries_have_the_right_shape`, sözleşmeyi tablo hâlinde tutmak yerine onu
+okuyan koddan türetiyor.** Her tür için `process_rewards` ona bir girdinin üç şeyden hangisi
+olduğunu söylüyor: kayıt anahtarı olarak kullanılan bir alan
+(`traders[rewards.traders[i].trader]`) o alanı taşıyan bir nesne demek; okunan başka herhangi
+bir alan yine nesne demek; hiçbiri yoksa girdi düz biçimde, anahtar olarak kullanılıyor
+demek. Bir tablo, `process_rewards` değiştiği anda kayardı.
+
+**Metin yerine yüklenmiş kayıt defterleri üzerinden yürünüyor**, çünkü bir ödül bloğu altı
+yerde bildirilebiliyor — `rewards`, `first_reward`, `repeatable_reward`, `entrance_rewards`,
+`quest_rewards`, `task_rewards` — ve bir metin taraması hepsini bilmek zorunda kalırdı. 514
+ödül bloğunda 514 dizi girdisi.
+
+**Önce bir workflow, türetilen sözleşmeye karşı bütün içerik dosyalarını taradı**; her aday
+için ayrı bir çürütücü ajanla. Çoktan düzeltilmiş olanın ötesinde hiçbir şey doğrulamadı, ki
+asıl istenen cevap bu: hata daha geniş bir desenin belirtisi değildi.
+
+**Ama kontrol, taramanın çürütücüsünün haklı olarak reddettiği üç latent vakayı buldu.**
+`actions: [{dialogue: "swampland tanner", action: ["swamptanner deliver 1"]}]` — eylem
+anahtarı tek elemanlı dizi olarak yazılmış. Çalışıyor, ama kazara: `actions[["a"]]`,
+`actions["a"]`ya dönüşüyor. İkinci bir eleman ekle, `actions[["a","b"]]` sessizce `undefined`.
+Üç tanesi vardı, artık dizge. Çürütücü "henüz hata değil" derken haklıydı; kontrol de
+"olmayı bekleyen hata" derken haklı.
+
+**Kendi türetmem iki kez yanlıştı ve bunu söyleyen şey onu koşmak oldu.** Önce *her* indeksli
+alanı şart koştu ve 72 gayet doğru `rewards.actions` girdisini bildirdi — main.js `.dialogue`
+ya da `.location` üzerinden dallanıyor, yani bir girdi haklı olarak birini taşıyor. Sonra
+`chance_of` ile `items`ı tamamen kaçırdı, çünkü ikisi de bir ara değişken üzerinden okunuyor
+(`const group = rewards.chance_of[i]`, sonra `group.chance`) ve hiçbir alan deseni bunu
+göremiyordu. Bağlamayı izleyerek düzeltildi.
+
+**Üç yönden negatif test edildi**, hatanın kendisi geri konularak dâhil: düz dizge `traders`
+girdisi, düz anahtar beklenen yere nesne, ve dizi olarak yazılmış eylem anahtarı. Üçü de
+adıyla düşüyor.
 
 ### v0.7.50 - yanlış biçimde bir ödül, yüklemeyi kıran
 

@@ -7,6 +7,7 @@ import { error } from "../lib/report.mjs";
 import { load_generated_item_templates } from "../lib/generated-items.mjs";
 import { repo_root } from "../lib/context.mjs";
 import { declared_item_keys } from "../lib/item-keys.mjs";
+import { load_browser_free } from "../lib/browser-free-src.mjs";
 
 /**
  * Every money requirement in the content must use the spendable object form.
@@ -464,7 +465,227 @@ function check_a_rolled_set_is_not_mostly_nothing() {
         + `nothing than something${skipped ? ` (${skipped} derived chance(s) skipped)` : ""}`);
 }
 
+
+/**
+ * How process_rewards reads each kind of reward entry, derived from the code that reads it.
+ *
+ * Three answers per kind, and they are told apart by what main.js does with an entry:
+ *
+ *   - `indexed`: a field used as a registry key - `traders[rewards.traders[i].trader]` -
+ *     so an entry MUST be an object and MUST carry that field;
+ *   - `fields`: any other field read off an entry, which also proves it is an object;
+ *   - neither: the entry is used bare, as a key or an argument, so it is a plain string.
+ *
+ * Derived rather than tabled because a table would drift the moment process_rewards changed
+ * how it reads something - and the whole point of this check is that the declaration and the
+ * reader must agree.
+ */
+function reward_entry_shapes() {
+    const source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+
+    //Only the function that applies them; `rewards.` appears elsewhere in main.js.
+    const at = source.indexOf("function process_rewards(");
+    const body = at === -1 ? source : source.slice(at, source.indexOf("\nfunction ", at + 10));
+
+    const shapes = new Map();
+    const note = (kind, how) => {
+        if (!shapes.has(kind)) {
+            shapes.set(kind, {indexed: new Set(), fields: new Set(), union: false});
+        }
+        return shapes.get(kind);
+    };
+
+    //Every kind the function mentions, so one read only in passing still gets an entry.
+    for (const found of body.matchAll(/rewards\.(\w+)/g)) {
+        note(found[1]);
+    }
+
+    //A field used as a registry key: `something[rewards.KIND[i].FIELD]`.
+    for (const found of body.matchAll(
+            /\[\s*rewards\.(\w+)\[\w+\]\.(\w+)\s*\]/g)) {
+        note(found[1]).indexed.add(found[2]);
+    }
+    //Any field read off an entry directly.
+    for (const found of body.matchAll(/rewards\.(\w+)\[\w+\]\.(\w+)/g)) {
+        note(found[1]).fields.add(found[2]);
+    }
+
+    /*
+        And the entries read through a local first, which neither pattern above can see:
+        `const group = rewards.chance_of[i];` and then `group.chance`. Without this,
+        chance_of looked like a list of bare strings and every rolled reward group in the
+        game was reported as the wrong shape.
+    */
+    for (const bound of body.matchAll(/const\s+(\w+)\s*=\s*rewards\.(\w+)\[\w+\]\s*;/g)) {
+        const local = bound[1];
+        const kind = bound[2];
+        const after = body.slice(bound.index, bound.index + 600);
+        for (const read of after.matchAll(new RegExp("(?<![.\\w])" + local + "\\.(\\w+)", "g"))) {
+            note(kind).fields.add(read[1]);
+        }
+        /*
+            A kind main.js accepts in BOTH shapes. `items` is the one: it binds the entry and
+            then asks `typeof entry === "string"`, so a bare name and an object are both
+            legal. Found by the test rather than by naming the kind.
+        */
+        if (new RegExp("typeof\\s+" + local + "\\s*===\\s*\"string\"").test(after)) {
+            note(kind).union = true;
+        }
+    }
+
+    return shapes;
+}
+
+/**
+ * Every reward entry is the shape process_rewards reads.
+ *
+ * **This is the net under the bug that broke loading at v0.7.49.** v0.7.48 declared
+ *
+ *     rewards: { traders: ["guild quartermaster"] }
+ *
+ * while `process_rewards` reads `traders[rewards.traders[i].trader]`. So the lookup was
+ * `traders[undefined]` and `.is_unlocked` was read off nothing - and because a heard
+ * textline's rewards are **replayed when a save loads**, it threw inside the load. The load
+ * stopped there, everything after it was skipped including building the quest list, and the
+ * game carried on from a half-loaded state. The player saw an empty Quests panel while the
+ * message log was plainly finishing quests, which points at everything except the cause.
+ *
+ * **The shape is easy to get wrong because its neighbours differ.** There are three lists of
+ * traders in this codebase: `rewards.traders` takes `{trader}`, `rewards.locks.traders` takes
+ * bare names, and a LOCATION's own `traders` property takes bare names. Two of the three are
+ * strings, so the wrong one reads as right.
+ *
+ * Walked over the loaded registries rather than the source text, because a reward block can
+ * be declared in six different places - `rewards`, `first_reward`, `repeatable_reward`,
+ * `entrance_rewards`, `quest_rewards`, `task_rewards` - and a text scan would have to know
+ * all of them. The objects know what they are.
+ */
+async function check_reward_entries_have_the_right_shape() {
+    const [dialogues_module, locations_module, quests_module] = await load_browser_free(
+        repo_root, ["src/data/dialogues.js", "src/data/locations.js", "src/quests.js"]);
+
+    const shapes = reward_entry_shapes();
+    if (shapes.size < 20) {
+        error(`only ${shapes.size} reward kind(s) could be read out of process_rewards - `
+            + `the scan is out of date and would accept anything.`);
+        return;
+    }
+
+    //Every reward block in the game, with somewhere to point when one is wrong.
+    const blocks = [];
+    const collect = (rewards, where) => {
+        if (rewards && typeof rewards === "object") {
+            blocks.push({rewards, where});
+        }
+    };
+
+    for (const [key, dialogue] of Object.entries(dialogues_module.dialogues ?? {})) {
+        for (const [line, textline] of Object.entries(dialogue?.textlines ?? {})) {
+            collect(textline?.rewards, `dialogue "${key}" textline "${line}"`);
+        }
+        for (const [name, action] of Object.entries(dialogue?.actions ?? {})) {
+            collect(action?.rewards, `dialogue "${key}" action "${name}"`);
+        }
+    }
+    for (const [key, location] of Object.entries(locations_module.locations ?? {})) {
+        collect(location?.first_reward, `location "${key}" first_reward`);
+        collect(location?.repeatable_reward, `location "${key}" repeatable_reward`);
+        collect(location?.entrance_rewards, `location "${key}" entrance_rewards`);
+        for (const tier of location?.rewards_with_clear_requirement ?? []) {
+            collect(tier, `location "${key}" rewards_with_clear_requirement`);
+        }
+        for (const [name, action] of Object.entries(location?.actions ?? {})) {
+            collect(action?.rewards, `location "${key}" action "${name}"`);
+        }
+    }
+    for (const [key, quest] of Object.entries(quests_module.quests ?? {})) {
+        collect(quest?.quest_rewards, `quest "${key}" quest_rewards`);
+        for (const [at, task] of (quest?.quest_tasks ?? []).entries()) {
+            collect(task?.task_rewards, `quest "${key}" task ${at} task_rewards`);
+        }
+    }
+
+    if (blocks.length < 50) {
+        error(`only ${blocks.length} reward block(s) found - this check is out of date.`);
+        return;
+    }
+
+    let entries = 0;
+    for (const {rewards, where} of blocks) {
+        for (const [kind, value] of Object.entries(rewards)) {
+            //`locks` is a container of its own kinds, each with different shapes.
+            if (kind === "locks" || !Array.isArray(value)) {
+                continue;
+            }
+            const shape = shapes.get(kind);
+            if (!shape) {
+                continue;   //check_reward_keys owns unknown kinds.
+            }
+            const wants_object = shape.indexed.size > 0 || shape.fields.size > 0;
+
+            for (const entry of value) {
+                entries++;
+                const is_object = entry !== null && typeof entry === "object"
+                    && !Array.isArray(entry);
+
+                if (wants_object && !shape.union && !is_object) {
+                    const wanted = [...shape.indexed][0] ?? [...shape.fields][0];
+                    error(`${where} declares rewards.${kind} entry `
+                        + `${JSON.stringify(entry)}, but process_rewards reads `
+                        + `\`rewards.${kind}[i].${wanted}\` off it - so it looks up `
+                        + `undefined and throws. Rewards on a heard line are REPLAYED when a `
+                        + `save loads, so this stops the load partway.`);
+                    continue;
+                }
+                if (!wants_object && is_object) {
+                    error(`${where} declares rewards.${kind} entry `
+                        + `${JSON.stringify(entry)}, but process_rewards uses each entry `
+                        + `bare, as a key. An object is not a key and the reward is lost.`);
+                    continue;
+                }
+                if (is_object) {
+                    /*
+                        AT LEAST ONE of the indexed fields, not all of them: main.js branches
+                        for some kinds - `rewards.actions` reads `.dialogue` when it is there
+                        and `.location` otherwise, so an entry legitimately carries one. The
+                        first version of this check demanded every field and reported 72
+                        perfectly good declarations.
+                    */
+                    if (shape.indexed.size > 0
+                            && ![...shape.indexed].some(field => entry[field] !== undefined)) {
+                        error(`${where} declares a rewards.${kind} entry carrying none of `
+                            + `${[...shape.indexed].map(f => `"${f}"`).join(" or ")}, which `
+                            + `process_rewards uses as a registry key. The reward names `
+                            + `nothing.`);
+                    }
+                    //An array where a key is wanted works only by coercion, and only for
+                    //one element: `actions[["a"]]` finds "a" and `actions[["a","b"]]` finds
+                    //nothing. That is a bug waiting for a second element.
+                    for (const field of shape.indexed) {
+                        if (!Array.isArray(entry[field])) continue;
+                        error(`${where} declares rewards.${kind}.${field} as an array. It `
+                            + `works only because a one-element array coerces to its `
+                            + `element when used as a key - add a second and it silently `
+                            + `finds nothing. Write it as a string.`);
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+        Entries, not blocks: a reward block carries several array-valued kinds and most of
+        them are empty, so the two numbers being equal here is a coincidence rather than a
+        copy-paste. Values that are not arrays - money, xp, the reputation map, the whole
+        `locks` container - are a different question and belong to check_reward_keys.
+    */
+    console.log(`[check] reward shapes: ${entries} array entr(y/ies) in ${blocks.length} `
+        + `reward block(s), each the shape process_rewards reads`);
+}
+
 export {
+    check_reward_entries_have_the_right_shape,
     check_a_rolled_set_is_not_mostly_nothing,
     check_money_requirements,
     check_nothing_stamps_a_template_quality,
