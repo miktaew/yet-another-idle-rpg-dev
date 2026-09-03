@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 157 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 158 -->
 
 # Proposals
 
@@ -771,27 +771,6 @@ expects one box to find all of it. Worth checking whether the creature names sho
 display names or registry keys before writing the filter, because the two differ and the box
 has to match what the player can read.
 
-### P-49 — A retroactive reward announced on every load `open`
-
-The owner, with a screenshot of the message log showing the same line twice in a row:
-*"it adds this 300 reputation thing on every reload. If it has already been added, it should
-stay after saving and there's no need to announce it again on later openings."*
-
-The line is the swamp tribe's retroactive grant - reputation for work already finished before
-that reputation existed. It is a migration, and a migration must run once.
-
-**This is the same mechanism as v0.7.49's crash and worth reading as one family.** Rewards on
-a heard textline are replayed when a save loads, which is what made a bad `traders` entry
-throw inside the load. Here nothing throws, so it is louder but easier to miss: the grant runs
-again on every load. Two things to measure before touching it, because the report cannot tell
-them apart from the outside - whether the reputation is actually being **added** again each
-time or only announced, and whether the once-only flag is written but not read, read but not
-saved, or never written at all. The screenshot shows it twice in one session, which suggests
-the announcement is not even guarded within a single load.
-
-Whatever the finding, the guard belongs on the class: a retroactive grant is a migration, and
-no migration may be observable twice.
-
 ### P-50 — An inspiration spark should extend what is running, not restart it `open`
 
 The owner: *"the inspiration spark given during export gives it by resetting the current
@@ -802,6 +781,27 @@ remainder is replaced by a fresh full one, which is a loss whenever the remainde
 than the grant. Worth checking whether the effect registry has an "extend" path already, since
 other timed effects may want the same and a second hand-rolled duration sum is how the two
 drift apart.
+
+### P-51 — The floor the recalc used to keep, for every region `open`
+
+Making the save authoritative for reputation (v0.7.53) gave up something real, and it should
+be on the record rather than discovered later.
+
+While standing was recomputed on every load, **every** region was automatically topped up to
+what finished content owes. So a player whose save predated a grant got it silently, in any
+region. Now only the save is read, and only `Swamp` is repaired - `late_reputation_repairs`
+holds one entry, scoped on purpose.
+
+The obvious move is to widen that list to every region, which turns the repair into the floor
+the recalc was accidentally providing while keeping standing the player earned above it -
+`late_reputation_owed` only ever tops up, never replaces. **The module argues against it and
+the argument was measured:** across every source in the game the floor came out ten above one
+save's actual Town standing, cause unexplained. Widening would grant that ten. Worth
+re-measuring now that standing is restored rather than rebuilt, because the number that made
+the floor unreliable may itself have been an artefact of the rebuild.
+
+If it re-measures clean, widen it. If it does not, the ten is a real finding about some grant
+and worth chasing on its own.
 
 ## Open decisions
 

@@ -93,7 +93,20 @@ function create_save() {
         save_data.guild_board = game_state.guild_board;
         save_data.last_rewarded_export = game_state.last_rewarded_export || 0;
         save_data["character"] = {
-                                name: character.name, titles: character.titles,
+                                /*
+                                    `titles` used to be written here too and was found by
+                                    check_saved_character_fields_are_read_back: nothing ever
+                                    read it back, and nothing ever put anything in it either -
+                                    `character.titles` is initialised to {} in character.js
+                                    and never assigned, so every save in existence carries an
+                                    empty object under it. What the player actually earned is
+                                    the top-level `titles` array, written from the registry's
+                                    own is_earned flags and restored further down.
+
+                                    Removed rather than given a read: adding one would restore
+                                    an empty object over the real thing.
+                                */
+                                name: character.name,
                                 personal: character.personal,
                                 inventory: {}, equipment: character.equipment,
                                 money: character.money, 
@@ -593,6 +606,31 @@ function load(save_data) {
         })
 
         /*
+            The standing as the save left it.
+
+            This was commented out upstream in favour of recomputing it: every reward of every
+            finished thing is replayed on load, and `rewards.reputation` was made to ignore
+            `only_unlocks` so the replay pays standing again. That works only while every
+            source of standing is replayable from something the save records.
+
+            Ours are not. A guild job pays when it is handed in, the board drops the job, and
+            nothing is left to replay - the same for the give-up and overdue penalties. So a
+            player handed in four notices, watched their standing rise, reloaded, and was back
+            where they started, with no message to say anything had been taken.
+
+            Measured rather than argued: a save edited to hold Village 777, Swamp 999 and
+            Guild 4242 loaded as 460, 300 and 100. The field was written on every save and
+            read by nothing.
+
+            The stored number is not a second opinion to be reconciled with the replay - it is
+            written from the live standing at save time, so it already contains everything the
+            replay would recompute AND everything the replay cannot see. Reading it is
+            therefore strictly more information, which is why the replay's own payment is
+            switched off in process_rewards rather than both being kept and added up.
+
+            A save from before a grant existed is short, and stays short: that is what
+            late_reputation_owed repairs, further down, and it still runs.
+        */
         Object.keys(save_data.character.reputation || {}).forEach(rep_region => {
             if(rep_region in character.reputation) {
                 character.reputation[rep_region] = save_data.character.reputation[rep_region];
@@ -601,7 +639,6 @@ function load(save_data) {
                 any_warnings = true;
             }
         });
-        */
         update_displayed_reputation();
 
         set_loading_screen_progress(translationManager.getText(language, "ui loading books"));

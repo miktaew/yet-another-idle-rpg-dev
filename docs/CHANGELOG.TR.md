@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 134 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 135 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,57 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.53 - her kayda yazılan, hiçbirinden okunmayan itibar
+
+Sahibi, aynı satırın iki kez göründüğü bir ekran görüntüsüyle: *"her yeniden yüklemede bu 300
+itibar konusunu ekliyor. zaten eklediyse kayıt sonrası kalıcı kalması sonraki açılışlarda
+tekrar bildirmesine gerek yok."*
+
+**Bildirilen belirti küçük olan yarısıydı.** `late_reputation_owed`, bitmiş içeriğin borcunu
+mevcut itibarla karşılaştırıp farkı ödüyor — kuruluşu gereği idempotent, çünkü ikinci yükleme
+tabanın çoktan karşılandığını görür. Her seferinde çalıştı; bu da karşılaştırdığı itibarın
+kayıttaki itibar olmadığı anlamına geliyordu.
+
+**Değildi de. İtibar her kayda yazılıyor ve hiçbir yerden okunmuyordu.** Hiçbir şeye
+dokunmadan önce ölçüldü: Village 777, Swamp 999 ve Guild 4242 tutacak şekilde düzenlenmiş bir
+kayıt 460, 300 ve 100 olarak yüklendi. Geri yükleme, itibarı açılışta yeniden hesaplamak
+lehine upstream'de yorumlanmıştı — `1371f2e "fixes, tweaks, rep recalc"`, ki aynı commit
+`rewards.reputation`ın `only_unlocks`u bilerek yok saymasını da sağlamış, böylece bitmiş her
+şeyin yeniden oynatılması itibarı tekrar ödüyor. Tutarlı bir tasarım ve sayılar doğru çıkıyor;
+hayatta kalmasının sebebi de bu: gördüğünüz, içeriğin borcuna eşit.
+
+**Ama bu ancak her itibar kaynağı yeniden oynatılabilirse geçerli ve bizimkiler değil.** Bir
+lonca işi teslim edildiğinde ödüyor ve pano işi ardından düşürüyor; bırakma ve süre aşımı
+cezaları da arkalarında bir şey bırakmıyor. Yani bu projenin v0.7.43..v0.7.49 arasında
+eklediği her teslim, bir sonraki yeniden yüklemede siliniyordu, cezalarla birlikte. Kanıt
+sahibinin kendi kaydı: mesaj logunda dört teslim, lonca itibarı 100, kademe E — tam olarak
+konuşmaların tek başına verdiği kadar. **İki oturum önce "itibarları nasıl arttıracağız
+peki?" diye sormuşlardı.** Sorulan şey buydu ve bir içerik sorusu olarak cevaplanmıştı.
+
+**Kaydı yetkili kılarak düzeltildi**; bu, tek başına her biri güvensiz olan iki değişiklik:
+geri yükleme yorumdan çıkarıldı ve `rewards.reputation`, bir replay'in artık ödeme yapmaması
+için `!is_from_loading` koşuluna bağlandı. Kayıttaki sayı uzlaştırılacak ikinci bir görüş
+değil — canlı itibardan yazılıyor, yani replay'in yeniden hesaplayacağı her şeyi *ve*
+replay'in göremediği her şeyi zaten içeriyor. Onarım iki bayrağın hiçbirini geçirmiyor; bir
+onarımı bir replay'den ayıran da bu, dolayısıyla eksik bir kayıt hâlâ tamamlanıyor.
+
+**Çalışan oyunda, sahibinin kaydıyla doğrulandı**: ekilen Guild 4242 ve Village 777 geri
+geldi, Swamp 300 olarak yüklendi ve sıfır onarım mesajı çıktı, Swamp 0 olarak ekildiğinde tam
+bir kez onarıldı. O kayda karşı `check:save` geçiyor.
+
+**İki muhafız, çünkü iki yarı birlikte hareket etmek zorunda.** Biri, üst düzey kayıt
+kontrolünün çoktan sorduğu sınıfı bir kat aşağıda soruyor: `save_data["character"]` içine
+yazılan her alan geri okunmak zorunda. Anında ikinci bir örnek buldu — `titles`; `{}` olarak
+başlatılıp hiç atanmayan bir `character.titles`tan yazılıyor, yani var olan her kayıt onun
+altında boş bir nesne taşıyor. Okuma eklemek yerine kaldırıldı: okuma eklemek, üst düzey
+dizide duran gerçek unvanların üzerine boş bir nesne geri yüklerdi. Öteki muhafız, itibarın ya
+geri yüklendiğini ya oynatıldığını ama asla ikisini birden yapmadığını soruyor ve iki yönde de
+düşüyor — katlama ve tam kayıp — çünkü her iki yarı tek başına zararsız okunuyor.
+
+İlk muhafız bunu ancak bakmadan önce yorumları soyduğu için görebildi. Aradığı okuma orada,
+bir yorum bloğunun içinde duruyordu; kaynağı okuyan hiçbir ölçümün bunu bugüne kadar fark
+etmemesinin sebebi de tam olarak bu.
 
 ### v0.7.52 - lonca panosu canlı yenilemeye katılıyor
 

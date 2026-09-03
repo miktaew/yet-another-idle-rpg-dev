@@ -257,6 +257,15 @@
     </header>
 
     <main class="versions">
+    <button type="button" class="collapsible">v0.7.53</button>
+    <div class="content">
+        <ul class="entries">
+            <li><b>Your standing survives a reload.</b> It was written into every save and read back from none: on load the game recomputed it from the work it could still see, so everything else was quietly dropped.</li>
+            <li><b>Guild standing was what it dropped.</b> Every notice you had handed in paid you, and every payment was gone the next time you opened the game &mdash; along with the penalties for giving one up or letting it run out. Rank stopped where the conversations left it, however much work you did.</li>
+            <li>The swamp tribe's back pay no longer announces itself every time you open the game. It was being handed over again on each load, because the standing it compared against had not been loaded yet.</li>
+            <li>Nothing was lost that a save still holds: the number in your save is the true one and is now what you get back.</li>
+        </ul>
+    </div>
     <button type="button" class="collapsible">v0.7.52</button>
     <div class="content">
         <ul class="entries">

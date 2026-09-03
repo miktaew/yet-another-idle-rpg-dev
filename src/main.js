@@ -2613,7 +2613,7 @@ function get_location_rewards(location) {
  * @param {Boolean} rewards_data.inform_overall //if unlocks are to be logged
  * @param {Boolean} rewards_data.inform_textline //if textline unlock is to be logged (requires inform_overall to also be true)
  * @param {String} rewards_data.source_name //in case it's needed for logging a message
- * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
+ * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, rep, etc)
  */
 function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
     let was_any_location_availability_changed = false;
@@ -2982,7 +2982,17 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         }
     }
 
-    if(rewards.reputation) {
+    /*
+        Not while loading. Standing is restored from the save now, so a replay that paid it
+        again would double every grant the player has ever earned - which is why this went
+        together with uncommenting the restore in save_load.js and neither half is safe alone.
+
+        `is_from_loading` rather than `only_unlocks` alone, because two of the load's replays
+        pass only the former. The one grant that must still land during a load -
+        late_reputation_owed's repair - passes neither, which is what tells a repair apart
+        from a replay.
+    */
+    if(rewards.reputation && !only_unlocks && !is_from_loading) {
         Object.keys(rewards.reputation).forEach(region => {
             ReputationManager.add_reputation({region, reputation: rewards.reputation[region]});
         });

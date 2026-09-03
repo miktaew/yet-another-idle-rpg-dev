@@ -1,7 +1,7 @@
 // @ts-check
 "use strict";
 
-const game_version = "v0.7.52";
+const game_version = "v0.7.53";
 
 function get_game_version() {
     return game_version;

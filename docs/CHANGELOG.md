@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 134 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 135 -->
 
 # Changelog
 
@@ -20,6 +20,57 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.53 - the standing that was written to every save and read from none
+
+The owner, with a screenshot of the same line twice: *"it adds this 300 reputation thing on
+every reload. If it has already been added, it should stay after saving and there's no need
+to announce it again."*
+
+**The reported symptom was the small half.** `late_reputation_owed` compares what finished
+content owes against what the standing is, and pays the difference - idempotent by
+construction, because the second load finds the floor already met. It fired every time,
+which meant the standing it compared against was not the saved one.
+
+**It was not. Reputation was written on every save and read by nothing.** Measured before
+touching anything: a save edited to hold Village 777, Swamp 999 and Guild 4242 loaded as 460,
+300 and 100. The restore had been commented out upstream in favour of recomputing standing on
+load - `1371f2e "fixes, tweaks, rep recalc"`, which also made `rewards.reputation` ignore
+`only_unlocks` on purpose, so the replay of every finished thing pays standing again. It is a
+coherent design and the numbers come out right, which is why it survived: what you see equals
+what the content owes.
+
+**It holds only while every source of standing is replayable, and ours are not.** A guild job
+pays when it is handed in and the board then drops the job; the give-up and overdue penalties
+leave nothing behind either. So every hand-in this project added in v0.7.43..v0.7.49 was
+erased by the next reload, and the penalties with it. The owner's own save is the evidence:
+four hand-ins in the message log, Guild standing 100, rank E - exactly what the conversations
+alone grant. **They asked "so how are we going to raise the standings?" two sessions ago.**
+That was this, and it was answered as a content question.
+
+**Fixed by making the save authoritative**, which is two changes that are each unsafe alone:
+the restore is uncommented, and `rewards.reputation` is gated on `!is_from_loading` so a
+replay no longer pays. The stored number is not a second opinion to reconcile - it is written
+from the live standing, so it already contains everything the replay would recompute *and*
+everything the replay cannot see. The repair passes neither flag, which is what tells a repair
+apart from a replay, so a short save is still topped up.
+
+**Verified in the running game, on the owner's save**: Guild 4242 and Village 777 planted and
+returned, Swamp restored at 300 with zero repair messages, and Swamp planted at 0 repaired
+once and only once. `check:save` passes against that save.
+
+**Two guards, because the two halves must move together.** One asks the class the top-level
+save check already asks, a level down: every field written into `save_data["character"]` must
+be read back. It found a second instance immediately - `titles`, written from a
+`character.titles` that is initialised to `{}` and never assigned, so every save in existence
+carries an empty object under it. Removed rather than given a read: adding one would restore
+an empty object over the real titles, which live in the top-level array. The other guard asks
+that standing is restored *or* replayed and never both, and fails in both directions -
+double-counting and total loss - because either half alone reads as harmless.
+
+The first guard could see this only because it strips comments before looking. The read it
+wanted was there to be read, inside a block comment, which is precisely why no source-reading
+measure had ever noticed.
 
 ### v0.7.52 - the guild board joins the live refresh
 

@@ -1,8 +1,11 @@
 /** Standing: what grants it, what it opens, and what repairs it. */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { repo_root } from "../lib/context.mjs";
 import { error, warn } from "../lib/report.mjs";
 import { load_browser_free } from "../lib/browser-free-src.mjs";
+import { strip_comments } from "../lib/source.mjs";
 
 /**
  * Every reputation source and gate in the game, read off the live objects.
@@ -394,7 +397,70 @@ async function check_every_guild_rank_can_be_reached() {
         + `${probes.size} standings probed and none offering outside the ladder`);
 }
 
+
+/**
+ * Standing is either restored from the save or replayed from finished content, never both.
+ *
+ * These two halves have to move together and each looks harmless alone, which is why they get
+ * a check rather than a comment. The loader restores `character.reputation` from the save;
+ * every reward of every finished thing is ALSO replayed on load, and `process_rewards` pays
+ * `rewards.reputation` when it does. Leave both on and every grant the player ever earned is
+ * counted twice on the next load - silently, and again on the load after that.
+ *
+ * Upstream resolved it the other way round, by commenting the restore out and letting the
+ * replay recompute standing from scratch (`1371f2e "fixes, tweaks, rep recalc"`, which also
+ * made the reputation branch ignore `only_unlocks` on purpose). That is coherent only while
+ * every source of standing is replayable, and ours are not: a guild job pays when it is
+ * handed in and the board then drops the job, so nothing is left to replay and four hand-ins
+ * were erased by a reload.
+ *
+ * So the invariant is exclusivity, not a particular choice - either arrangement is sound and
+ * the pair of them is not. Read from the source of both files, because there is no way to
+ * observe double-counting without a save and a reload: the number is simply wrong afterwards,
+ * with nothing to say so.
+ *
+ * The repair that tops up a short standing passes neither flag, which is what tells a repair
+ * apart from a replay - and `check_a_late_repair_still_finds_its_grants` above owns that.
+ */
+function check_standing_is_not_restored_and_replayed_at_once() {
+    const loader = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/save_load.js"), "utf8"));
+    const main = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+
+    const restores = /save_data\.character\.reputation/.test(loader);
+
+    const at = main.indexOf("if(rewards.reputation");
+    if (at === -1) {
+        error("process_rewards no longer has a rewards.reputation branch - "
+            + "check_standing_is_not_restored_and_replayed_at_once is out of date and would "
+            + "accept anything.");
+        return;
+    }
+    const condition = main.slice(at, main.indexOf(")", at) + 1);
+    const replays_on_load = !/is_from_loading/.test(condition);
+
+    if (restores && replays_on_load) {
+        error(`src/save_load.js restores character.reputation from the save while `
+            + `process_rewards still pays rewards.reputation during a load `
+            + `(\`${condition.trim()}\`). Every grant the player has earned is then counted `
+            + `twice on the next load, and again on the one after. Gate the branch on `
+            + `is_from_loading, or stop restoring.`);
+        return;
+    }
+    if (!restores && !replays_on_load) {
+        error("nothing restores character.reputation from the save and process_rewards "
+            + "skips reputation while loading, so standing is lost on every load. One of "
+            + "the two has to carry it.");
+        return;
+    }
+
+    console.log(`[check] standing persistence: ${restores ? "restored from the save" : "replayed from finished content"}, `
+        + `and not both`);
+}
+
 export {
+    check_standing_is_not_restored_and_replayed_at_once,
     check_a_standing_gate_can_be_reached,
     check_a_late_repair_still_finds_its_grants,
     check_the_unlock_repair_knows_every_kind,

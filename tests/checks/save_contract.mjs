@@ -102,7 +102,115 @@ function check_an_export_names_its_version() {
     console.log(`[check] export name: "${template}"`);
 }
 
+
+/**
+ * Every field the save writes into `character` is read back when it loads.
+ *
+ * `check_save_keys_round_trip` above asks this of the save's top-level keys and has caught a
+ * real loss. It could not see this one: the player's own fields are written as one nested
+ * object literal - `save_data["character"] = {name, money, xp, reputation, ...}` - so
+ * `reputation` never appears as a `save_data.<key>` write and neither side of that check knew
+ * it existed.
+ *
+ * **What that hid.** Reputation was written on every save and read by nothing: the restore
+ * had been commented out upstream in favour of recomputing standing from the rewards of
+ * finished content, replayed on load. That holds only while every source of standing is
+ * replayable, and ours are not - a guild job pays when it is handed in, the board then drops
+ * the job, and nothing is left to replay. So a player handed in four notices, watched their
+ * standing rise, reloaded, and was back where they started. Measured: a save edited to hold
+ * Village 777, Swamp 999 and Guild 4242 loaded as 460, 300 and 100.
+ *
+ * A field written and never read is worse than an absent one, because the save looks complete
+ * and the export carries a number that means nothing. That is the class, and it is the same
+ * class the top-level check was written for - so this asks the same question one level down
+ * rather than being a second check with its own idea of what a save is.
+ *
+ * Comments are stripped first, which is the whole point: the read that was missing was still
+ * there to read, inside a block comment.
+ */
+function check_saved_character_fields_are_read_back() {
+    const file = "src/save_load.js";
+    const full = path.join(repo_root, file);
+    if (!fs.existsSync(full)) {
+        error(`${file} is missing - this check is out of date.`);
+        return;
+    }
+    const source = strip_comments(fs.readFileSync(full, "utf8"));
+
+    const at = source.indexOf(`save_data["character"] = {`);
+    if (at === -1) {
+        error(`${file} no longer writes save_data["character"] as one object literal - `
+            + `check_saved_character_fields_are_read_back cannot find the payload and would `
+            + `accept anything.`);
+        return;
+    }
+
+    /*
+        Only the literal's own keys. `xp: {total_xp}` is one field of the character and
+        total_xp is a field of the xp object - reading them at the same level would demand
+        `save_data.character.total_xp`, which nothing writes and nothing should read.
+    */
+    const open = source.indexOf("{", at);
+    let depth = 0;
+    let close = -1;
+    for (let i = open; i < source.length; i++) {
+        if (source[i] === "{") depth++;
+        else if (source[i] === "}") {
+            depth--;
+            if (depth === 0) { close = i; break; }
+        }
+    }
+    if (close === -1) {
+        error(`${file}: the character payload literal is unterminated.`);
+        return;
+    }
+
+    const fields = [];
+    depth = 0;
+    for (let i = open + 1; i < close; i++) {
+        const c = source[i];
+        if (c === "{" || c === "[" || c === "(") depth++;
+        else if (c === "}" || c === "]" || c === ")") depth--;
+        else if (depth === 0) {
+            const rest = source.slice(i, close);
+            const key = /^([A-Za-z_]\w*)\s*:/.exec(rest);
+            if (key && !/[\w.]/.test(source[i - 1] ?? "")) {
+                fields.push(key[1]);
+                i += key[0].length - 1;
+            }
+        }
+    }
+    if (fields.length < 5) {
+        error(`only ${fields.length} character field(s) were read out of the save payload - `
+            + `check_saved_character_fields_are_read_back is out of date.`);
+        return;
+    }
+
+    const load_at = source.indexOf("function load(save_data)");
+    const loader = load_at === -1 ? source : source.slice(load_at);
+
+    const orphans = fields.filter(field => {
+        //Every way the loader reaches one, optional chaining and bracket form included.
+        const dotted = new RegExp(`save_data\\??\\.character\\??\\.\\s*${field}(?![\\w])`);
+        const bracket = new RegExp(`save_data\\??\\.character\\??\\[\\s*["']${field}["']`);
+        return !dotted.test(loader) && !bracket.test(loader);
+    });
+
+    for (const field of orphans) {
+        error(`${file} saves character.${field} and the loader never reads it back. The save `
+            + `looks complete and the value is dead: whatever the player earned in it is `
+            + `replaced on load by whatever the game happens to compute instead, with no `
+            + `message to say anything was taken.`);
+    }
+
+    if (orphans.length === 0) {
+        console.log(`[check] saved character fields: ${fields.length} written, `
+            + `all read back on load`);
+    }
+}
+
 export {
+    check_saved_character_fields_are_read_back,
     check_save_keys_round_trip,
     check_an_export_names_its_version,
 };
