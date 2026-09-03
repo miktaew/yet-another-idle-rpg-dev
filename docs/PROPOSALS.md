@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 156 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 157 -->
 
 # Proposals
 
@@ -770,6 +770,38 @@ also holds a "where to train" section and names creatures as drop sources, and t
 expects one box to find all of it. Worth checking whether the creature names shown there are
 display names or registry keys before writing the filter, because the two differ and the box
 has to match what the player can read.
+
+### P-49 — A retroactive reward announced on every load `open`
+
+The owner, with a screenshot of the message log showing the same line twice in a row:
+*"it adds this 300 reputation thing on every reload. If it has already been added, it should
+stay after saving and there's no need to announce it again on later openings."*
+
+The line is the swamp tribe's retroactive grant - reputation for work already finished before
+that reputation existed. It is a migration, and a migration must run once.
+
+**This is the same mechanism as v0.7.49's crash and worth reading as one family.** Rewards on
+a heard textline are replayed when a save loads, which is what made a bad `traders` entry
+throw inside the load. Here nothing throws, so it is louder but easier to miss: the grant runs
+again on every load. Two things to measure before touching it, because the report cannot tell
+them apart from the outside - whether the reputation is actually being **added** again each
+time or only announced, and whether the once-only flag is written but not read, read but not
+saved, or never written at all. The screenshot shows it twice in one session, which suggests
+the announcement is not even guarded within a single load.
+
+Whatever the finding, the guard belongs on the class: a retroactive grant is a migration, and
+no migration may be observable twice.
+
+### P-50 — An inspiration spark should extend what is running, not restart it `open`
+
+The owner: *"the inspiration spark given during export gives it by resetting the current
+duration. Instead, if there is an active duration, it should add to it."*
+
+A player who exports while a spark is still burning is currently punished for it - a long
+remainder is replaced by a fresh full one, which is a loss whenever the remainder was longer
+than the grant. Worth checking whether the effect registry has an "extend" path already, since
+other timed effects may want the same and a second hand-rolled duration sum is how the two
+drift apart.
 
 ## Open decisions
 

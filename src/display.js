@@ -67,6 +67,7 @@ import { clear_skill_bars, clear_skill_list, create_new_skill_bar, skill_categor
 import { equipment_slots_divs, exit_displayed_trade, item_divs, sort_displayed_inventory,
          update_displayed_character_inventory, update_displayed_storage_inventory,
          update_displayed_trader, update_displayed_trader_inventory } from "./inventory_display.js";
+import { update_displayed_guild_board } from "./guild_display.js";
 let activity_anim; //for the activity and gameAction animation interval
 
 let location_choice_divs = {}; //for dropdowns
@@ -2393,6 +2394,16 @@ function refresh_open_journal_panels() {
     }
     if(is_journal_tab_open("lore_box_div")) {
         update_displayed_lore();
+    }
+    /*
+        And the guild's board, which was added after this function was written and never
+        joined it. A gather job's progress is read live off `character.inventory`, so it
+        showed "4 of 20" while the player was picking up the seventh - and the Hand in
+        button, which appears only when the job is done, is read the same way. So a player
+        could finish the work and be shown no way to hand it in.
+    */
+    if(is_journal_tab_open("guild_board_box_div")) {
+        update_displayed_guild_board();
     }
 }
 

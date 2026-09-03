@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 133 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 134 -->
 
 # Changelog
 
@@ -20,6 +20,41 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.52 - the guild board joins the live refresh
+
+The owner, watching a gather job: *"the quests aren't quite in sync either. I'm picking the
+item up but it says 4 of 20, when I had collected 7 by then."*
+
+**The number was right every time it was drawn, and nothing drew it again.** A gather job's
+progress is read live off `character.inventory` - so the panel is correct at the moment it is
+built and goes stale on the next pickup. The board was redrawn when the day turned, when a
+job was taken, on a kill, and on hand-in or give-up. Picking something up is none of those.
+
+**`refresh_open_journal_panels` already existed for exactly this** - P-31's "it looks
+stateless" - and is already called whenever the inventory changes. The board simply was never
+put in it, having been written afterwards. Two lines.
+
+**The half the report did not mention is the worse one.** Hand in is shown only when
+`job_is_done`, read off the inventory the same way, so a player could gather the last of the
+twenty and be given nothing on screen to hand it in with - the panel had to be closed and
+reopened before the button existed.
+
+**The quests panel was measured before assuming it shared the fault, and it does not.**
+`update_displayed_character_inventory` calls `update_displayed_quest_item_counts` on its
+first line, so every gathering counter in the journal already follows the inventory by a
+different route. Two working routes, and the guild board was on neither.
+
+**The guard follows calls rather than matching them**, which is the finding worth keeping: no
+panel updater reads `character.inventory` in its own body. The board reads it two calls down,
+in the row builder. A check matching the updater's own text passed happily against the bug it
+was written for. It walks the call graph now, asks index.html which tabs exist rather than
+holding a list - a list would have been written by whoever forgot the board - and accepts
+either refresh route, because demanding the journal helper alone reported the working quests
+panel as broken.
+
+Negative-tested: with the two lines removed it names showGuildBoard, the updater, and the
+path down to `create_guild_job_row`.
 
 ### v0.7.51 - a missing space, and the ebb in Turkish
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 156 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 157 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -775,6 +775,39 @@ dövüşün gerçekte ne düşürdüğüne göre gelmeli.
 sahibi de tek kutunun hepsini bulmasını bekliyor. Filtreyi yazmadan önce orada gösterilen
 yaratık adlarının görünen ad mı kayıt anahtarı mı olduğunu kontrol etmeye değer, çünkü ikisi
 farklı ve kutu, oyuncunun okuyabildiğiyle eşleşmek zorunda.
+
+### P-49 — Her yüklemede duyurulan geçmişe dönük bir ödül `open`
+
+Sahibi, mesaj logunda aynı satırı arka arkaya iki kez gösteren bir ekran görüntüsüyle: *"her
+yeniden yüklemede bu 300 itibar konusunu ekliyor. zaten eklediyse kayıt sonrası kalıcı kalması
+sonraki açılışlarda tekrar bildirmesine gerek yok."*
+
+Satır, bataklık kabilesinin geçmişe dönük bağışı — o itibar var olmadan önce çoktan bitirilmiş
+işlerin karşılığı. Bu bir migration ve bir migration bir kez çalışmak zorunda.
+
+**Bu, v0.7.49'un çökmesiyle aynı mekanizma ve tek bir aile olarak okunmaya değer.** Duyulmuş
+bir metin satırının ödülleri kayıt yüklenirken yeniden oynatılıyor; hatalı bir `traders`
+girdisinin yüklemenin içinde patlamasının sebebi buydu. Burada hiçbir şey patlamıyor, yani
+daha gürültülü ama gözden kaçırması daha kolay: bağış her yüklemede yeniden çalışıyor.
+Dokunmadan önce ölçülecek iki şey var, çünkü rapor bunları dışarıdan ayırt edemez — itibar
+gerçekten her seferinde yeniden **ekleniyor** mu yoksa yalnızca duyuruluyor mu, ve bir kerelik
+bayrağı yazılıp okunmuyor mu, okunup kaydedilmiyor mu, yoksa hiç yazılmıyor mu. Ekran
+görüntüsü tek oturumda iki kez gösteriyor, ki bu duyurunun tek bir yükleme içinde bile
+korunmadığına işaret ediyor.
+
+Bulgu ne olursa olsun, muhafız sınıfa ait: geçmişe dönük bir bağış bir migration'dır ve hiçbir
+migration iki kez gözlemlenebilir olamaz.
+
+### P-50 — İlham kıvılcımı çalışanı uzatmalı, sıfırlamamalı `open`
+
+Sahibi: *"dışa aktarma esnasında verilen ilham kıvılcımı mevcut süresini sıfırlayarak veriyor.
+onun yerine eğer aktif bir süresi varsa üzerine eklemeli."*
+
+Kıvılcım hâlâ yanarken dışa aktaran bir oyuncu şu an bunun cezasını çekiyor — uzun bir kalan
+süre, tazelenmiş tam bir süreyle değiştiriliyor ki kalan süre bağıştan uzunken bu bir kayıp.
+Etki kaydında hazır bir "uzat" yolu olup olmadığına bakmaya değer, çünkü süreli başka etkiler
+de aynısını isteyebilir ve elle yazılmış ikinci bir süre toplamı, ikisinin birbirinden
+ayrılma biçiminin ta kendisidir.
 
 ## Bekleyen kararlar
 

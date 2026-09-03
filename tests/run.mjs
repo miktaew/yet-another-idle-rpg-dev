@@ -112,7 +112,8 @@ import { check_constructors_do_not_test_fields_before_setting_them }
 import { check_the_sighting_can_land_and_then_stops,
     check_the_sighting_places_are_the_traced_places } from "./checks/sighting.mjs";
 import { check_checked_files_stay_checked } from "./checks/types.mjs";
-import { check_a_panel_is_not_redrawn_before_the_value_changes } from "./checks/panels.mjs";
+import { check_a_panel_is_not_redrawn_before_the_value_changes,
+         check_every_inventory_panel_is_refreshed_when_it_changes } from "./checks/panels.mjs";
 import {
     check_duration_units_have_rows,
     check_interpolated_pairs,
@@ -269,6 +270,7 @@ await check_a_timed_activity_can_ever_be_started();
 await check_every_trader_can_be_opened();
 await check_every_required_flag_can_be_set();
 check_a_panel_is_not_redrawn_before_the_value_changes();
+check_every_inventory_panel_is_refreshed_when_it_changes();
 check_no_content_object_repeats_a_key();
 
 for (const message of warnings) {

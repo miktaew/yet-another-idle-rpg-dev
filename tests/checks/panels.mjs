@@ -200,4 +200,121 @@ function check_a_panel_is_not_redrawn_before_the_value_changes() {
         + `${pairs} function(s) both writing and redrawing one, ${faults} out of order`);
 }
 
-export { check_a_panel_is_not_redrawn_before_the_value_changes };
+
+/**
+ * Every journal panel drawn from the inventory is redrawn when the inventory changes.
+ *
+ * The owner watched a gather job say "4 of 20" while picking up the seventh. The number was
+ * right when it was drawn; nothing drew it again. `refresh_open_journal_panels` exists for
+ * exactly this - it is called whenever the inventory changes - and the guild board, added
+ * after that function was written, was never put in it. The worse half was the Hand in
+ * button, which appears only when the job is done and is read the same way, so the work could
+ * be finished with no way on screen to hand it in.
+ *
+ * **The panels are asked, rather than listed.** The journal's tabs come from the markup - the
+ * buttons in `journal_control_div` and the openers they name - so a tab added to index.html
+ * is in this check the day it is added, which is precisely how the guild board slipped past.
+ * A list written here would have been written by whoever forgot the board.
+ *
+ * **What "shows the inventory" means is followed, not matched.** No panel updater reads
+ * `character.inventory` in its own body; the guild board reads it two calls down, in the row
+ * builder. So the call graph is walked, and a panel counts if the read is anywhere under it.
+ *
+ * **Two routes count as refreshed, because both are real.** `refresh_open_journal_panels` is
+ * one. The other is `update_displayed_character_inventory`, which the quests panel rides: it
+ * calls `update_displayed_quest_item_counts` at the top, so every gathering counter follows
+ * the inventory without the journal helper knowing anything about it. Demanding the helper
+ * alone would have reported that working panel as broken.
+ */
+function check_every_inventory_panel_is_refreshed_when_it_changes() {
+    const {spans} = read_functions();
+
+    const by_name = new Map();
+    for (const [relative, found] of spans) {
+        for (const f of found) {
+            if (!by_name.has(f.name)) by_name.set(f.name, {relative, body: f.body});
+        }
+    }
+
+    /*
+        Does this function end up reading the inventory? `create_guild_job_row` does, and it is
+        two calls below the panel, so a direct match on the updater finds nothing at all - the
+        first attempt at this check passed happily against the bug it was written for.
+    */
+    const reads_inventory = (name, seen = new Set()) => {
+        if (seen.has(name)) return null;
+        seen.add(name);
+        const f = by_name.get(name);
+        if (!f) return null;
+        if (/(?<![.\w])character\.inventory/.test(f.body)) return name;
+        for (const call of f.body.matchAll(/(?<![.\w])(\w+)\s*\(/g)) {
+            const under = reads_inventory(call[1], seen);
+            if (under) return `${name} -> ${under}`;
+        }
+        return null;
+    };
+
+    //The journal's tabs, and the updater each one runs when it is opened.
+    const markup = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
+    const controls = markup.indexOf('id = "journal_control_div"');
+    if (controls === -1) {
+        error("journal_control_div is gone from index.html - "
+            + "check_every_inventory_panel_is_refreshed_when_it_changes cannot find the tabs.");
+        return;
+    }
+    const buttons = markup.slice(controls, markup.indexOf("</div>", markup.indexOf("journal_content_div")));
+
+    const panels = [];
+    for (const button of buttons.matchAll(/onclick\s*=\s*"(\w+)\(\)"/g)) {
+        const opener = button[1];
+        const at = markup.indexOf(`function ${opener}(`);
+        if (at === -1) continue;
+        const body = markup.slice(at, markup.indexOf("\n            }", at));
+        const tab = /getElementById\("(\w+)"\)/.exec(body);
+        for (const call of body.matchAll(/(?<![.\w])(update_\w+)\s*\(/g)) {
+            panels.push({opener, tab: tab ? tab[1] : null, updater: call[1]});
+        }
+    }
+    if (panels.length < 3) {
+        error(`only ${panels.length} journal panel(s) were read out of index.html - `
+            + `check_every_inventory_panel_is_refreshed_when_it_changes is out of date and `
+            + `would accept anything.`);
+        return;
+    }
+
+    //What the two refresh routes reach.
+    const refreshed = new Set();
+    const collect = (from) => {
+        const f = by_name.get(from);
+        if (!f) return;
+        for (const call of f.body.matchAll(/(?<![.\w])(\w+)\s*\(/g)) {
+            refreshed.add(call[1]);
+        }
+    };
+    collect("refresh_open_journal_panels");
+    collect("update_displayed_character_inventory");
+    if (refreshed.size === 0) {
+        error("neither refresh_open_journal_panels nor update_displayed_character_inventory "
+            + "could be read - this check would pass on anything.");
+        return;
+    }
+
+    let shown = 0;
+    for (const {opener, tab, updater} of panels) {
+        const via = reads_inventory(updater);
+        if (!via) continue;
+        shown++;
+        if (refreshed.has(updater)) continue;
+        error(`${opener} draws "${tab}" with ${updater}, which reads the inventory `
+            + `(${via}), but nothing redraws it when the inventory changes. The panel keeps `
+            + `the count it was opened with, so a player watching it picks things up and `
+            + `sees nothing move - and anything the panel only shows once the count is `
+            + `reached never appears at all. Add it to refresh_open_journal_panels.`);
+    }
+
+    console.log(`[check] journal refresh: ${panels.length} panel(s) drawn on open, `
+        + `${shown} of them from the inventory, each redrawn when it changes`);
+}
+
+export { check_a_panel_is_not_redrawn_before_the_value_changes,
+         check_every_inventory_panel_is_refreshed_when_it_changes };

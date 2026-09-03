@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 133 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 134 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,41 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.52 - lonca panosu canlı yenilemeye katılıyor
+
+Sahibi, bir toplama işini izlerken: *"görevlerde de tam senkron değil. eşyayı topluyorum ama
+20'den 4 diyor halbuki o esnada 7 tane topladım."*
+
+**Sayı her çizildiğinde doğruydu ve onu yeniden çizen bir şey yoktu.** Bir toplama işinin
+ilerlemesi `character.inventory`den canlı okunuyor — yani panel kurulduğu anda doğru,
+sonraki toplamada bayat. Pano; gün döndüğünde, bir iş alındığında, bir öldürmede ve teslimde
+ya da bırakmada yeniden çiziliyordu. Bir şey toplamak bunların hiçbiri değil.
+
+**`refresh_open_journal_panels` tam bunun için çoktan vardı** — P-31'in "durumsuz görünüyor"u
+— ve envanter her değiştiğinde zaten çağrılıyor. Pano sonradan yazıldığı için ona hiç
+konmamıştı. İki satır.
+
+**Raporun değinmediği yarısı daha kötü olanı.** Teslim et yalnızca `job_is_done` iken
+gösteriliyor ve envanterden aynı şekilde okunuyor; yani oyuncu yirminin sonuncusunu toplayıp
+ekranda teslim edecek hiçbir şey bulamayabiliyordu — düğmenin var olması için panelin
+kapatılıp açılması gerekiyordu.
+
+**Görevler paneli aynı arızayı paylaştığı varsayılmadan önce ölçüldü ve paylaşmıyor.**
+`update_displayed_character_inventory` daha ilk satırında
+`update_displayed_quest_item_counts`ı çağırıyor, yani günlükteki her toplama sayacı envanteri
+başka bir yoldan zaten takip ediyor. İki çalışan yol ve lonca panosu ikisinde de yoktu.
+
+**Muhafız çağrıları eşleştirmiyor, izliyor**; saklanmaya değer bulgu bu: hiçbir panel
+güncelleyicisi `character.inventory`yi kendi gövdesinde okumuyor. Pano onu iki çağrı aşağıda,
+satır kurucusunda okuyor. Güncelleyicinin kendi metnine bakan bir kontrol, yazıldığı hatanın
+karşısında mutlu mesut geçti. Artık çağrı çizgesini yürüyor, hangi sekmelerin var olduğunu
+bir liste tutmak yerine index.html'e soruyor — bir listeyi panoyu unutan kişi yazardı — ve
+iki yenileme yolunu da kabul ediyor, çünkü yalnızca günlük yardımcısını şart koşmak çalışan
+görevler panelini bozuk diye bildiriyordu.
+
+Negatif test edildi: iki satır kaldırıldığında showGuildBoard'ı, güncelleyiciyi ve
+`create_guild_job_row`a inen yolu adıyla söylüyor.
 
 ### v0.7.51 - eksik bir boşluk ve Türkçedeki gelgit
 
