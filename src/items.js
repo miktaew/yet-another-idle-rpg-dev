@@ -1819,7 +1819,13 @@ book_stats["Counting Mice"] = new BookData({
         description: "A wild nutrient-rich stem tuber that can be used in a variety of dishes. Can't be eaten raw",
         value: 20,
     });
-	
+    item_templates["Flour"] = new Material({
+        name: "Flour",
+        description: "Powdered plant matter, used for making various baked goods",
+        value: 8,
+    });
+
+
     item_templates["Ratfish"] = new Material({
         name: "Ratfish",
         description: "A small sweetwater fish, named after its unremarkable coloration and propensity to travel in large groups",
@@ -3627,6 +3633,16 @@ function add_gear() {
             }
         });
 
+        item_templates["Steel pickaxe"] = new Tool({
+            name: "Steel pickaxe",
+            description: "A sharp pickaxe made of steel, strong enough to break through even very tough rock",
+            value: 2000,
+            equip_slot: "pickaxe",
+            base_bonus_skill_levels: {
+                "Mining": 5,
+            }
+        });
+
         item_templates["Iron chopping axe"] = new Tool({
             name: "Iron chopping axe",
             description: "A decent axe made of iron, hard and sharp enough for most of trees, even if they will still require an effort",
@@ -3634,6 +3650,16 @@ function add_gear() {
             equip_slot: "axe",
             base_bonus_skill_levels: {
                 "Woodcutting": 3,
+            }
+        });
+
+        item_templates["Steel chopping axe"] = new Tool({
+            name: "Steel chopping axe",
+            description: "A sharp axe made of steel, hard and sharp enough for most trees",
+            value: 2000,
+            equip_slot: "axe",
+            base_bonus_skill_levels: {
+                "Woodcutting": 5,
             }
         });
 
@@ -3647,6 +3673,16 @@ function add_gear() {
             }
         });
 
+        item_templates["Steel sickle"] = new Tool({
+            name: "Steel sickle",
+            description: "A sharp sickle made of steel, can esily cut through most of plants",
+            value: 2000,
+            equip_slot: "sickle",
+            base_bonus_skill_levels: {
+                "Herbalism": 5,
+            }
+        });
+
         item_templates["Iron shovel"] = new Tool({
             name: "Iron shovel",
             description: "A decent shovel made of iron, solid enough for most of your digging needs",
@@ -3654,6 +3690,16 @@ function add_gear() {
             equip_slot: "shovel",
             base_bonus_skill_levels: {
                 "Digging": 3,
+            }
+        });
+
+        item_templates["Steel shovel"] = new Tool({
+            name: "Steel shovel",
+            description: "A sturdy shovel made of steel, for heavy duty digging needs",
+            value: 2000,
+            equip_slot: "shovel",
+            base_bonus_skill_levels: {
+                "Digging": 5,
             }
         });
 
