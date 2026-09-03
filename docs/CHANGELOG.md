@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 132 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 133 -->
 
 # Changelog
 
@@ -20,6 +20,25 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.51 - a missing space, and the ebb in Turkish
+
+Two things the owner spotted on screen.
+
+**The separator was missing in both languages**, which is worth noting because it looked like
+a Turkish problem and was not. `display.js` assembled the next-level line as
+`${duration}${getText("ui realtime")}` with nothing between them: *"1 saat 50 dakikagerçek
+zamanda"*, and *"50 minutesrealtime"* in English. The space went into the assembly rather
+than into a locale row - a leading space inside data is the kind of thing a later edit trims
+without noticing it was load-bearing.
+
+**And "Ebb", which the owner wanted as "gelgit".** Measured before changing it, because a
+flat swap would have cost something: the same passage already renders `*Tide:*` as
+"Gelgit:", so using the same word for both flattens a distinction the English keeps - and
+the plot turns on the water going **out**, which is the half "gelgit" alone does not carry.
+"Cezir" is exact and nobody says it. Phrased to use the owner's word and keep the direction:
+*gelgit çekilirken*, and the quest is *Gelgit Çekilirken*. Four passages, and "cezir" is gone
+from the locale entirely.
 
 ### the guard for the reward shape that broke loading
 

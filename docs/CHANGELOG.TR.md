@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 132 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 133 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,25 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.51 - eksik bir boşluk ve Türkçedeki gelgit
+
+Sahibinin ekranda gördüğü iki şey.
+
+**Ayırıcı iki dilde birden eksikti**, ki bunu belirtmeye değer: bir Türkçe sorunu gibi
+görünüyordu ama değildi. `display.js`, sonraki seviye satırını
+`${süre}${getText("ui realtime")}` diye, aralarına hiçbir şey koymadan birleştiriyordu:
+*"1 saat 50 dakikagerçek zamanda"* ve İngilizcesinde *"50 minutesrealtime"*. Boşluk bir
+yerelleştirme satırına değil birleştirmeye kondu — verinin içindeki baştaki bir boşluk,
+sonraki bir düzenlemenin işlevsel olduğunu fark etmeden kırptığı türden bir şeydir.
+
+**Ve sahibinin "gelgit" olmasını istediği "Ebb".** Değiştirmeden önce ölçüldü, çünkü düz bir
+takas bir şeye mal olurdu: aynı pasaj `*Tide:*`ı çoktan "Gelgit:" diye veriyor, yani ikisine
+de aynı kelimeyi kullanmak İngilizcenin koruduğu ayrımı düzleştirirdi — üstelik olay örgüsü
+suyun **çekilmesine** dayanıyor, ki bu "gelgit"in tek başına taşımadığı yarısı. "Cezir" tam
+ama kimse kullanmıyor. Sahibinin kelimesini kullanıp yönü koruyacak şekilde yazıldı:
+*gelgit çekilirken*, görev de *Gelgit Çekilirken*. Dört pasaj, ve "cezir" yerelleştirmeden
+tamamen kalktı.
 
 ### yükleme kıran ödül biçiminin muhafızı
 

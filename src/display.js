@@ -2771,7 +2771,7 @@ function update_displayed_ongoing_activity(current_activity) {
                 : NaN;
 
             if(Number.isFinite(time_needed)) {
-                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_duration_in_words({ minutes: time_needed / 60 })}${translationManager.getText(language, "ui realtime")})`);
+                insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level in")} ${format_reading_time(time_needed)} (${format_duration_in_words({ minutes: time_needed / 60 })} ${translationManager.getText(language, "ui realtime")})`);
             } else {
                 insert_HTML(action_xp_div, `<br>${translationManager.getText(language, "ui next level unknown")}`);
             }
