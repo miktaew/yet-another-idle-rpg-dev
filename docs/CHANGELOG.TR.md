@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 130 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 131 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,38 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.50 - yanlış biçimde bir ödül, yüklemeyi kıran
+
+*"son sürümle birlikte görevler alanı kayboldu"* diye bildirildi;
+`TypeError: Cannot read properties of undefined (reading 'is_unlocked')` ve
+*"Something went wrong on loading from localStorage!"* uyarısıyla.
+
+**Kod okunarak değil, kaynak haritasıyla bulundu.** Yığın `bundle.js:1089:19285` diyordu;
+bunu `dist/bundle.js.map` üzerinden çözmek doğrudan `src/main.js:2747`i gösterdi — tek satır,
+tahmin yok:
+
+    const trader = traders[rewards.traders[i].trader];
+    if(!trader.is_unlocked) {
+
+`process_rewards`, girdi başına bir nesne olan `rewards.traders[i].trader`ı okuyor. v0.7.48
+ise `traders: ["guild quartermaster"]` yazmıştı — düz dizgeler — yani arama
+`traders[undefined]` oluyor ve `.is_unlocked` hiçbir şeyin üstünden okunuyordu.
+
+**Yalnızca yanlış değil, yüklemede ölümcül; bir görev hatası gibi görünmesinin sebebi de bu.**
+Duyulmuş bir textline'ın ödülleri kayıt yüklenirken yeniden işleniyor; dolayısıyla kâtibin
+panosundan söz ettiğini duymuş her oyuncu yüklemenin içinde hata alıyordu. Yükleme orada
+durup sonrasındaki her şeyi — görev listesinin kurulması dâhil — atlıyor, oyun ise yarım
+yüklenmiş durumdan devam ediyordu. Mesaj logu görevleri bitirirken Görevler panelinin boş
+görünmesinin sebebi bu.
+
+**Bu biçimi yanlış yazmak kolay, çünkü komşuları farklı** — ve bunu dikkatsizlik diye
+geçmek yerine yazmaya değer: `rewards.locks.traders` düz ad alıyor, bir mekânın kendi
+`traders: ["ad"]` özelliği de düz ad alıyor. Aynı kod tabanında üç tüccar listesi, ikisi
+dizge.
+
+Hiçbir kayıtta bir şey bozulmadı — düzeltme tek bir bildirim ve yeniden yükleme paneli geri
+getiriyor.
 
 ### v0.7.49 - üç iş, bazılarında süre ve P-41'in bitişi
 

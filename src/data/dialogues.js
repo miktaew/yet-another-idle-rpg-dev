@@ -3055,7 +3055,18 @@ class Textline {
                     behind a door the player cannot see.
                 */
                 rewards: {
-                    traders: ["guild quartermaster"],
+                    /*
+                        `[{trader}]`, not `["name"]`. process_rewards reads
+                        `rewards.traders[i].trader`, so a bare string makes it look up
+                        `traders[undefined]` and read `.is_unlocked` off nothing - which
+                        threw on LOAD, because a heard textline's rewards are replayed when
+                        the save loads. The load stopped there and the quest panel never got
+                        built.
+
+                        Easy to get wrong because the neighbours differ: `rewards.locks.traders`
+                        takes bare names, and so does a location's own `traders` list.
+                    */
+                    traders: [{trader: "guild quartermaster"}],
                 },
                 locks_lines: ["board"],
             }),

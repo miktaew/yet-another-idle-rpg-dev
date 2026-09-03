@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 130 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 131 -->
 
 # Changelog
 
@@ -20,6 +20,38 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.50 - a reward of the wrong shape, which broke loading
+
+Reported as *"the quests area disappeared with the latest version"*, with
+`TypeError: Cannot read properties of undefined (reading 'is_unlocked')` and
+*"Something went wrong on loading from localStorage!"*
+
+**Found by the source map rather than by reading code.** The stack named
+`bundle.js:1089:19285`, and resolving that through `dist/bundle.js.map` pointed at
+`src/main.js:2747` - one line, no guessing:
+
+    const trader = traders[rewards.traders[i].trader];
+    if(!trader.is_unlocked) {
+
+`process_rewards` reads `rewards.traders[i].trader`, an object per entry. v0.7.48 wrote
+`traders: ["guild quartermaster"]` - bare strings - so the lookup was `traders[undefined]`
+and `.is_unlocked` was read off nothing.
+
+**Fatal on load rather than merely wrong, which is why it looked like a quest bug.** A heard
+textline's rewards are replayed when a save loads, so any player who had heard the clerk
+mention her board threw inside the load. The load aborted there and everything after it was
+skipped - including building the quest list - while the game itself carried on from a
+half-loaded state. Hence a Quests panel showing nothing while the message log was plainly
+finishing quests.
+
+**The shape is easy to get wrong because its neighbours differ**, and that is worth writing
+down rather than filing as carelessness: `rewards.locks.traders` takes bare names, and a
+location's own `traders: ["name"]` property takes bare names too. Three lists of traders in
+the same codebase, two of which are strings.
+
+Nothing in any save was damaged - the fix is one declaration, and reloading restores the
+panel.
 
 ### v0.7.49 - three jobs, a deadline on some of them, and P-41 finishes
 
