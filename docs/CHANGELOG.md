@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 135 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 136 -->
 
 # Changelog
 
@@ -20,6 +20,39 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### The magic arc moves inside v0.8, and books stay in v0.7
+
+The owner: *"let's take the magic arc into v0.8. New areas and new regions will be planned
+with v0.8. A magic tower discovery added there could make magic usable. Books can stay in
+v0.7."*
+
+Recorded rather than acted on, because it is a sequencing decision and the loop works from
+the proposals. Three things changed in them.
+
+**P-16 stops being its own version series.** It was written as a phase to run *after* the
+current story, on the reasoning that a third combat axis is a bigger change than the whole
+Marrowmoth arc. It still is - but it is now one of v0.8's pieces rather than its successor,
+entered through a tower the player finds in the new region.
+
+**And it reverses one of P-16's own rules, so that is written as a supersede rather than an
+edit.** The proposal said *"No new region. Magic has to arrive through places and people that
+exist, the way tier 5 arrived through the flats."* That rule existed because a region is a
+large thing to build for one system, and v0.8 is building the region regardless - so the
+reason is gone while the intent is kept in a narrower form: magic still gets no region of its
+own, it gets a building in someone else's. Struck through with its date, the way v0.7.49
+superseded v0.7.43's one-job-at-a-time reading, because a rule that is quietly deleted is a
+rule that gets re-derived a month later.
+
+**One thing worth flagging before anything is built**, and P-43 now carries it: "discovery" is
+a word this codebase already uses two ways. The Discoveries panel is a record of how *items*
+were found; a tower found by exploring is not that. It is the same shape as v0.8's
+environmental-discoveries focus, which P-43 had already flagged as the one focus with no home -
+so the two want deciding together rather than becoming two mechanisms a version apart.
+
+Also written down: the tower is **not** a second door. P-43's guard is that the canopy off
+`locations["Forest lake"]` is the region's only entrance, and "a discovery that unlocks magic"
+reads like an entrance unless somebody says otherwise.
 
 ### v0.7.53 - the standing that was written to every save and read from none
 

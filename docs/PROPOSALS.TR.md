@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 158 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 159 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -255,7 +255,7 @@ açılmıyor" durumunda değil** — yani yeni bir kitap, *Wood for Witches*'ın
 geri kazanamaz. Ya kendi tariflerini getirmesi gerekir, ki bu bir kitap değil bir içerik işi,
 ya da bir tecrübe çarpanı olması, ki bunu bu teklif kendi sözleriyle dışlıyor.
 
-### P-16 — Büyü, kendi arc'ı olarak `open`
+### P-16 — Büyü, kendi arc'ı olarak, v0.8'in içinde `open`
 
 Sahibinin tespiti; doğru ve kulağa geldiğinden kötü. Ölçüldü:
 
@@ -291,6 +291,21 @@ yeni yetenekler, yeni statlar ve yeni sistemler kapsam içinde. Kararı veren ş
 ayrıldı; yani büyünün arkasında beklediği hikâye bitti — ama beklediği kural değişmedi ve
 mevcut hikâye artık P-43. Büyü onun yanına değil **sonrasına** geliyor.
 
+**SAHİBİ TARAFINDAN SIRAYA KONDU, 2026-09-03: büyü v0.8'in İÇİNE giriyor, ardına değil.**
+*"büyü arkını v0.8'e alalım. v0.8 ile yeni alanlar ve yeni bölgeler planlanacak. burada
+eklenecek bir büyü kulesi keşfi ile büyü kullanımı mümkün olabilir. kitaplar v0.7'de
+kalabilir."*
+
+Yani bu, kendi sürüm serisi olmayı bırakıp v0.8'in parçalarından biri hâline geliyor ve
+oyuncunun yeni bölgede keşfettiği bir **büyü kulesinden** giriliyor. Bu, bu proposal'ın akıl
+yürüterek vardığı kapıdan daha iyi bir kapı ve nedenini açıkça yazmaya değer: büyünün bir
+yerden gelmesi gerekiyordu ve zaten inşa edilen bir bölge bir kule taşıyabilir; alternatif ise
+hiç büyücüsü olmamış bir köye sonradan bir büyücü yerleştirmekti.
+
+**Maliyeti aşağıda yazıyor, çünkü bu proposal'ın kendi kurallarından birini tersine
+çeviriyor.** Ayrıca P-15'e karşı sırayı da belirliyor: kitaplar v0.7'de kalıyor ve bu serinin
+son içerik işi oluyor.
+
 **Karar verilebilen ve iki cevap altında da geçerli olan:**
 
 - Ne yayınlanırsa yayınlansın `Wands` ile `Staffs`'ı seviye atlanabilir kılmalı; çünkü
@@ -298,8 +313,17 @@ mevcut hikâye artık P-43. Büyü onun yanına değil **sonrasına** geliyor.
   kötüdür.
 - Üç mana statı `//currently useless` olmayı bırakıyor — o yorum, onları okuyan bir şey
   olduğunda kalkar ve bu cevap altında olacak.
-- Yeni bölge yok. Büyü, 5. kademenin düzlükler üzerinden geldiği gibi, var olan yerler ve
-  insanlar üzerinden gelmek zorunda.
+- ~~Yeni bölge yok. Büyü, 5. kademenin düzlükler üzerinden geldiği gibi, var olan yerler ve
+  insanlar üzerinden gelmek zorunda.~~ **2026-09-03'te sahibinin yukarıdaki sıralamasıyla
+  GEÇERSİZ KILINDI.** Bu kuralın var olma sebebi, tek bir sistem için yeni bir bölge inşa
+  etmenin büyük bir iş olmasıydı; o sebep ortadan kalktı: v0.8 bölgeyi zaten inşa ediyor, yani
+  kule kendi başına bir iş değil, çoktan planlanmış bir işin içindeki bir yer. Kuralın niyeti
+  daha dar bir biçimde yaşıyor — **büyü hâlâ kendine ait bir bölge almıyor**, başkasının
+  bölgesinde bir bina alıyor.
+- Ve bu ikinci bir kapı değil. P-43'ün muhafızı, `locations["Forest lake"]`ten çıkan
+  kanopinin bölgenin tek girişi olması; bölgenin **içindeki** bir kule buna dokunmuyor. Bunu
+  yazıyoruz çünkü "büyüyü açan bir keşif" ifadesi, kimse aksini söylemezse bir giriş gibi
+  okunuyor.
 - Mevcut savaş formülleri ona uydurulmak için kırılmayacak. `intuition` ile `magic` hasar
   türünün adı zaten konmuş; üçüncü eksen onların yanına değil üzerine kurulur.
 
@@ -638,6 +662,20 @@ adlandırmamasıydı. Öneri şu: v0.8 bir **yer**, bir hesaplaşma değil — �
 bölgeye açılıyor (black iron, yetenekle kısalan uzun yolculuklar, nadir karşılaşmalar) ve
 hayvan, bölgenin hedefi olmak yerine sakini olarak kalıyor. Bunun karara bağlamadığı şey,
 bölgede hayvanı *bilen* bir şey olup olmadığı ve bu sahibinin kararı.
+
+**Ve sahibinin 2026-09-03'te eklediği yedinci odak: büyü kulesi.** *"v0.8 ile yeni alanlar
+ve yeni bölgeler planlanacak. burada eklenecek bir büyü kulesi keşfi ile büyü kullanımı mümkün
+olabilir."* Yani P-16 artık bunun arkasında bekleyen bir seri değil — bunun bir parçası ve
+kule, oyuncunun ona ulaşma yolu. Ölçümü P-16 tutuyor (seviye atlanamayan iki yetenek, üç tane
+`//currently useless` mana statı, oyunda tek bir asa ya da değnek eşyası yok) ve artık tersine
+çevirdiği kısıtı da o tutuyor; buraya ait olan yalnızca nereye oturduğu.
+
+Oturduğu yer bir **keşif** ve bu, bu kod tabanının çoktan iki anlamda kullandığı bir kelime;
+aradaki fark, bir şey inşa edilmeden önce önemli: Keşifler paneli eşyaların nasıl bulunduğunun
+kaydı, sahibinin tarif ettiği ise gezerek bulunan bir yer. Kule ikinci türden. Bu da onu
+yukarıdaki çevresel keşifler odağıyla aynı şekle sokuyor — bu proposal'ın "yeri yok" diye
+işaretlediği odak — yani ikisi, bir sürüm arayla iki ayrı mekanizma uydurmak yerine birlikte
+karara bağlanmalı.
 
 **Muhafız, her şeyden önce.** Bu öneri bölgeye ikinci bir kapı açmamalı: örtü,
 `locations["Forest lake"]` üzerinde tek bir bağlantı ve faz 7'nin sazları çoktan onu

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 135 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 136 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,39 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### Büyü arkı v0.8'in içine geçiyor, kitaplar v0.7'de kalıyor
+
+Sahibi: *"büyü arkını v0.8'e alalım. v0.8 ile yeni alanlar ve yeni bölgeler planlanacak.
+burada eklenecek bir büyü kulesi keşfi ile büyü kullanımı mümkün olabilir. kitaplar v0.7'de
+kalabilir."*
+
+Uygulanmak yerine kaydedildi, çünkü bu bir sıralama kararı ve döngü proposal'lardan çalışıyor.
+Onlarda üç şey değişti.
+
+**P-16 kendi sürüm serisi olmayı bırakıyor.** Mevcut hikâyenin *ardından* çalışacak bir faz
+olarak yazılmıştı; gerekçesi, üçüncü bir savaş ekseninin bütün Marrowmoth arkından daha büyük
+bir değişiklik olmasıydı. Hâlâ öyle — ama artık v0.8'in ardılı değil parçalarından biri ve
+oyuncunun yeni bölgede bulduğu bir kuleden giriliyor.
+
+**Ve bu, P-16'nın kendi kurallarından birini tersine çeviriyor; o yüzden bir düzenleme değil
+bir geçersiz kılma olarak yazıldı.** Proposal *"Yeni bölge yok. Büyü, 5. kademenin düzlükler
+üzerinden geldiği gibi, var olan yerler ve insanlar üzerinden gelmek zorunda"* diyordu. O
+kural, tek bir sistem için bölge inşa etmenin büyük bir iş olmasından vardı ve v0.8 bölgeyi
+zaten inşa ediyor — yani sebep kalktı, niyet daha dar bir biçimde korundu: büyü hâlâ kendine
+ait bir bölge almıyor, başkasının bölgesinde bir bina alıyor. Tarihiyle birlikte üstü çizildi;
+v0.7.49'un v0.7.43'ün aynı anda tek iş okumasını geçersiz kılışı gibi, çünkü sessizce silinen
+bir kural, bir ay sonra yeniden türetilen bir kuraldır.
+
+**Bir şey inşa edilmeden önce işaretlenmeye değer bir nokta** ve P-43 artık bunu taşıyor:
+"keşif", bu kod tabanının çoktan iki anlamda kullandığı bir kelime. Keşifler paneli
+*eşyaların* nasıl bulunduğunun kaydı; gezerek bulunan bir kule o değil. Bu, v0.8'in çevresel
+keşifler odağıyla aynı şekle sahip — P-43'ün "yeri yok" diye işaretlediği tek odak — yani
+ikisi, bir sürüm arayla iki ayrı mekanizmaya dönüşmek yerine birlikte karara bağlanmalı.
+
+Şu da yazıldı: kule ikinci bir kapı **değil**. P-43'ün muhafızı, `locations["Forest lake"]`ten
+çıkan kanopinin bölgenin tek girişi olması ve "büyüyü açan bir keşif" ifadesi, kimse aksini
+söylemezse bir giriş gibi okunuyor.
 
 ### v0.7.53 - her kayda yazılan, hiçbirinden okunmayan itibar
 

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 158 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 159 -->
 
 # Proposals
 
@@ -248,7 +248,7 @@ unlocked by nothing** - so a new book cannot reclaim recipes the way *Wood for W
 It would have to bring recipes of its own, which is a content job rather than a book, or be
 an xp multiplier, which this proposal rules out in its own words.
 
-### P-16 — Magic, as its own arc `open`
+### P-16 — Magic, as its own arc, inside v0.8 `open`
 
 The owner's observation, and it is correct and worse than it sounds. Measured:
 
@@ -281,8 +281,22 @@ that decides.
 
 **Not started, and deliberately not started yet.** v0.7 closed at v0.7.42 and P-14 has
 left this file, so the story magic was waiting behind is finished - but the rule it was
-waiting for has not changed, and the current story is now P-43. Magic goes **after** it
-rather than beside it.
+waiting for has not changed, and the current story is now P-43.
+
+**SEQUENCED BY THE OWNER, 2026-09-03: magic goes INSIDE v0.8, not after it.** *"Let's take
+the magic arc into v0.8. New areas and new regions will be planned with v0.8. A magic tower
+discovery added there could make magic usable. Books can stay in v0.7."*
+
+So this stops being its own version series and becomes one of v0.8's pieces, entered through
+a **magic tower** the player discovers in the new region. That is a better door than the one
+this proposal had reasoned its way to, and it is worth being explicit about why: magic needed
+somewhere to come from, and a region being built anyway can hold a tower, whereas the
+alternative was retrofitting a caster into a village that has never had one.
+
+**What it costs is written below, because it reverses one of this proposal's own rules.** It
+also settles the ordering against P-15: books stay in v0.7 and are the last content job of
+this series, ahead of the owner's open requests only in the sense that they are content
+rather than fixes.
 
 **What is decidable, and holds under either answer:**
 
@@ -290,8 +304,17 @@ rather than beside it.
   can see and can never raise is worse than no skill.
 - The three mana stats stop being `//currently useless` - that comment goes when
   something reads them, and under this answer something will.
-- No new region. Magic has to arrive through places and people that exist, the way tier 5
-  arrived through the flats.
+- ~~No new region. Magic has to arrive through places and people that exist, the way tier 5
+  arrived through the flats.~~ **SUPERSEDED 2026-09-03 by the owner's sequencing above.** The
+  reason this rule existed was that a new region is a large thing to build for one system, and
+  that reason is gone: v0.8 is building the region regardless, so the tower is a place inside
+  work already planned rather than work of its own. The rule's intent survives in a narrower
+  form - **magic still does not get a region to itself**, it gets a building in someone
+  else's.
+- And it is not a second door. P-43's guard is that the canopy off `locations["Forest lake"]`
+  is the region's only entrance; a tower **within** the region does not touch that, and this
+  is written down because "a discovery that unlocks magic" reads like an entrance if nobody
+  says otherwise.
 - The existing combat formulas are not to be broken to fit it. `intuition` and the
   `magic` damage type are already named; a third axis is built on those rather than beside
   them.
@@ -634,6 +657,20 @@ confrontation: the canopy opens on a region with its own work - the black iron, 
 skill-shortened journeys, the rare encounters - and the animal stays a resident of it rather
 than becoming its objective. What that leaves undecided is whether anything in the region
 *knows about* the animal, and that is the owner's call.
+
+**And a seventh focus, added by the owner on 2026-09-03: the magic tower.** *"New areas and
+new regions will be planned with v0.8. A magic tower discovery added there could make magic
+usable."* So P-16 is no longer a series waiting behind this one - it is a piece of this one,
+and the tower is how the player reaches it. P-16 holds the measurement (two unlevellable
+skills, three `//currently useless` mana stats, no wand or staff item in the game) and now
+also holds the constraint this reverses; what belongs here is only where it sits.
+
+Where it sits is a **discovery**, which is a word this codebase already uses two ways and the
+difference matters before anything is built: the Discoveries panel is a record of how items
+were found, while what the owner is describing is a place found by exploring. The tower is the
+second kind. That makes it the same shape as the environmental-discoveries focus above - the
+one this proposal already flagged as having no home - so the two should be decided together
+rather than inventing two mechanisms a version apart.
 
 **Guard, before any of it.** This proposal must not open a second door into the region: the
 canopy is one connection off `locations["Forest lake"]` and phase 7's reeds are already
