@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 160 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 161 -->
 
 # Proposals
 
@@ -693,7 +693,7 @@ first piece to be built must be measured the way P-14's were, because the brief'
 are not six pieces of work - two of them (navigation, stance combat) are properties a region
 has rather than features it contains.
 
-### P-45 — The four skills that stop at ten `open`
+### P-45 — The four skills that stop at ten `blocked`
 
 The owner's request: *"let us raise the upper levels of the max-level-10 skills like night
 vision, literacy, sleeping, farming."*
@@ -741,6 +741,52 @@ before players bank xp against them.
 **Guard.** `check_skill_effect_descriptions` and the milestone checks already hold a skill to
 describing what it does at every level it can reach, so a cap raised past its milestones
 should fail there rather than needing a new check. Worth confirming before relying on it.
+
+**BLOCKED on Q-16, 2026-09-03, by a measurement this proposal did not have.** Every one of
+these skills expresses its effect as a **fraction of the way to its own cap** - the game's
+standard idiom, used ten times across stances, pathfinding, regeneration and crafting quality.
+So raising a cap does not extend the curve, it **re-scales** it, and every level below the new
+cap gets weaker:
+
+| skill | effect | at level 10 today | at level 10 if the cap were 20 | at 20 |
+|---|---|---|---|---|
+| Night vision | `0.5 + 0.5 × level/max` | 1.000 (no darkness penalty) | **0.750** | 1.000 |
+| Sleeping | heal `× (1 + level/max)` | 2.000× | **1.500×** | 2.000× |
+
+A player who has already maxed either would open the game to a straight nerf, and the ceiling
+would not move at all. That is the opposite of what was asked for, and no choice of number
+avoids it - the divisor has to change, and what it changes to is a balance decision.
+
+**One correction to this proposal's own reading while we are here.** It says *"Sleeping and
+Night vision both reduce a penalty"*. Measured, only Night vision does - `light_modifier` runs
+0.5 to 1.0, so past 1.0 would be seeing better in the dark than in daylight. Sleeping
+multiplies healing and extends cleanly with a frozen divisor. Literacy is milestones only, and
+Farming rides `max_level_coefficient`, which has the same re-scaling problem in a different
+shape.
+
+### Q-16 — What do levels 11-20 of the four capped skills give? `open`
+
+Three answers, and they differ for the player rather than for the code:
+
+- **A - freeze the divisor at 10.** Level 10 keeps exactly today's effect and 11-20 go past
+  it. Cleanest for Sleeping (healing keeps climbing). For Night vision it means a light
+  modifier above 1.0, which is a new thing: seeing better than daylight.
+- **B - cap the effect, extend only the milestones.** Nobody's current effect changes at all
+  and 11-20 hand out the xp multipliers and stat flats these four already deal in. The most
+  conservative, and the one that needs no balance call - but a player who reaches 20 in Night
+  vision sees no more than at 10.
+- **C - raise the caps and accept the re-scale.** Rejected here rather than offered: it takes
+  effect away from players who already earned it, silently, on load.
+
+**PROPOSED: B for Night vision, A for the other three.** It keeps the one effect that cannot
+grow past its own ceiling from having to, and lets the three that can, grow. What it costs is
+that Night vision's higher levels are worth having for their milestones rather than for the
+dark - which is worth saying in its effect description rather than leaving the player to
+notice.
+
+No xp is at risk either way: `Skill.add_xp` writes `total_xp` unconditionally and the loader
+rebuilds levels from it, so a cap raised later converts banked xp into levels on the next load.
+That was measured for this proposal already and it is why this can wait.
 
 ### P-46 — The changelog page remembers where you were `open`
 
@@ -801,17 +847,6 @@ also holds a "where to train" section and names creatures as drop sources, and t
 expects one box to find all of it. Worth checking whether the creature names shown there are
 display names or registry keys before writing the filter, because the two differ and the box
 has to match what the player can read.
-
-### P-50 — An inspiration spark should extend what is running, not restart it `open`
-
-The owner: *"the inspiration spark given during export gives it by resetting the current
-duration. Instead, if there is an active duration, it should add to it."*
-
-A player who exports while a spark is still burning is currently punished for it - a long
-remainder is replaced by a fresh full one, which is a loss whenever the remainder was longer
-than the grant. Worth checking whether the effect registry has an "extend" path already, since
-other timed effects may want the same and a second hand-rolled duration sum is how the two
-drift apart.
 
 ### P-51 — The floor the recalc used to keep, for every region `open`
 

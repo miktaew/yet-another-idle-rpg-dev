@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 137 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 138 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,53 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.55 - kıvılcım yananın üstüne ekleniyor, ve bu konuda yalan söyleyen geliştirici aracı
+
+Sahibi: *"dışa aktarma esnasında verilen ilham kıvılcımı mevcut süresini sıfırlayarak veriyor.
+onun yerine eğer aktif bir süresi varsa üzerine eklemeli."*
+
+**P-50'nin istediği gibi önce ölçüldü.** Etki kaydında uzatma yolu yok. `add_active_effect`,
+dördüncü satırında `old_duration`ı hesaplıyor ve onu tam olarak tek bir yerde kullanıyor —
+dönüş değerinde, "bu onu uzattı mı" — sonra etkiyi doğrudan değiştiriyor. Yani yirmi beş
+dakika kalmışken dışa aktarmak hiçbir şeye mal olmuyor, kırk kalmışken on dakikaya mal oluyor
+ve oyuncu karar vermeden önce kalanı göremiyor.
+
+**Çağrı yerinde toplanmak yerine `add_active_effect`e eklendi**; P-50'nin uyardığı şey buydu:
+süre toplamayı bilen iki yer, birbiriyle anlaşmazlığa düşecek iki yerdir. **Yeni varsayılan
+değil, isteğe bağlı** — tazeleme bir tüketilebilir için doğru olan davranış, çünkü ilki hâlâ
+işlerken yenen ikinci bir yemek bir saatlik tokluğa doğru yığılmamalı.
+
+**Uzatmadan önce kontrol edildi: kıvılcım yetenek xp'si vermiyor.** Süreli bir etkinin xp'si
+`duration ** .3333` ile hesaplanıyor, yani oyuncunun içtiği bir şeyi uzatmak, zaten sahip
+olduğu süre için xp ödemek olurdu. `Spark of Inspiration` yalnızca `buff` etiketli ve xp yolu
+medicine, food ve poison okuyor.
+
+**Sonra sahibi uzatmanın yanlış göründüğünü söyledi — "önce siliyor sonra ekliyor, orada da
+kayboluyor" — ve ölçüm onu doğruladı.** Konsoldan: 1785 dakika kalmış, üzerine 1800, sonuç
+1800. Öngördükleri hata buydu ve orada değildi.
+
+**Argümanı düşüren şey geliştirici konsolunun sarmalayıcısıydı.**
+`add_active_effect: (effect_key, duration = 600) => real_add_active_effect(effect_key,
+duration)` diye yazılmış ve süreden sonra duruyor; yani konsola yazılan `{extend: true}`
+fonksiyona hiç ulaşmıyordu — etki tam olarak yeni süreyle geri geliyor ve kanıt gibi
+görünüyordu. Ekleyen kod baştan beri doğruydu: `old_duration` dördüncü satırda, otuzuncu
+satırdaki silmeden önce okunuyor ve `duration` ilk süre değil kalan süre, çünkü tick ondan
+düşüyor.
+
+Düzeltilmiş sarmalayıcıyla yeniden ölçüldü: 1000, 800 eklenince 1800; düz bir 500 verişi hâlâ
+değiştiriyor. **Argümanı sessizce düşüren bir geliştirici aracı, hiç araç olmamasından
+kötüdür**, çünkü oyunla ilgili bir soruya kendisiyle ilgili bir cevap veriyor — üstelik tam da
+birinin oyunun bozuk olup olmadığını kontrol ettiği anda.
+
+**Üç iddia, üçü de negatif test edildi.** Ödül uzatıyor; `add_active_effect` bayrağı kabul
+etmekle kalmayıp kalanı gerçekten ekliyor; ve sarmalayıcı, gerçek fonksiyonun aldığı her
+parametreyi iletiyor. "Zamanlayıcıya bağlı ödülleri" bulmanın ilk denemesi yakınlık
+kullanıyordu — bir bağışın yakınında geçen bir soğuma — ve `update`ı dört kez bildirdi, çünkü
+main.js'in tick'i var olan her zamanlayıcıyı okuyor. Dürüst bağ çağrı kenarı: soğumayı
+**damgalayan** fonksiyon bağışı bir sonraki satırda çağırıyor, çünkü damgalamak ve bağışlamak
+tek bir karar. Damgalamayı geri yüklemekten ayırmak da gerekti — `load` aynı alanı kayıttan
+atıyor ve onu izlemek oyundaki her ödülü izlemek olurdu.
 
 ### v0.7.54 - envanter nasıl sıralandığını hatırlıyor
 

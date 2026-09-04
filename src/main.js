@@ -3441,7 +3441,14 @@ function change_item_favourite_status(target, item_key) {
  * @param {Boolean} was_xp_added whether this code should skip xp gain for relevant skill (if such exists) 
  * @returns {Boolean} whether effect was in fact applied (it wasn't active, it had shorter duration, or a weaker was active)
  */
-function add_active_effect(effect_key, duration, was_xp_added){
+/**
+ * @param {String} effect_key
+ * @param {Number} duration in in-game minutes
+ * @param {Boolean} [was_xp_added]
+ * @param {Object} [options]
+ * @param {Boolean} [options.extend] add to what is left instead of replacing it
+ */
+function add_active_effect(effect_key, duration, was_xp_added, {extend = false} = {}){
     let do_not_apply_because_stronger_is_active = false; //readable names are good, right?
     const was_already_active = active_effects[effect_key];
     const old_duration = active_effects[effect_key]?.duration ?? 0;
@@ -3474,7 +3481,19 @@ function add_active_effect(effect_key, duration, was_xp_added){
     } else {
         delete active_effects[effect_key];
     }
-    active_effects[effect_key] = new ActiveEffect({...effect_templates[effect_key], duration});
+    /*
+        `extend` adds to what is left rather than replacing it, for a reward the player earns
+        on a timer they do not control. Exporting while a spark is still burning used to cost
+        them the remainder: a fresh thirty minutes is a loss the moment more than thirty were
+        left, and the player has no way to see how long is left before deciding.
+
+        Not the default, because refresh-to-full is right for a consumable - a second meal
+        eaten while the first is working should not stack toward an hour of food - and it is
+        what every other caller here relies on.
+    */
+    const total = extend ? old_duration + duration : duration;
+    active_effects[effect_key] = new ActiveEffect({...effect_templates[effect_key],
+                                                   duration: total});
     update_displayed_effects();
     
     if(!was_already_active) {
@@ -3541,7 +3560,12 @@ function do_quest_event({quest_event_type, quest_event_target, quest_event_count
  * 
  */
 function give_export_reward() {
-    add_active_effect("Spark of Inspiration", 1800);
+    /*
+        Extended, not restarted. The reward is on a sixteen-hour timer the player does not
+        control, so exporting while one is still burning used to take the remainder away -
+        punishing them for exporting at the moment the game invited them to.
+    */
+    add_active_effect("Spark of Inspiration", 1800, undefined, {extend: true});
     log_message(translationManager.getText(language, "log gained a spark of inspiration"), "export_reward");
 }
 
@@ -4609,13 +4633,20 @@ function enable_dev_console() {
     const helpers = {
         //The one this was added for. Duration is in in-game minutes, like every
         //duration in content: {effect: "Coffee", duration: 150} is what an item says.
-        add_active_effect: (effect_key, duration = 600) => {
+        add_active_effect: (effect_key, duration = 600, {extend = false} = {}) => {
             if(!effect_templates[effect_key]) {
                 console.error(`No such effect as "${effect_key}". Try list_effects().`);
                 return;
             }
-            real_add_active_effect(effect_key, duration);
-            return `${effect_key} for ${duration} minutes`;
+            /*
+                `extend` is forwarded. It used to stop at `duration`, so measuring the
+                extension from the console measured the wrapper instead - the effect came
+                back at exactly the new duration and looked like a bug in the adding.
+                A dev tool that quietly drops an argument is worse than no dev tool: it
+                answers a question about the game with an answer about itself.
+            */
+            real_add_active_effect(effect_key, duration, undefined, {extend});
+            return `${effect_key} for ${duration} minutes${extend ? " on top of what was left" : ""}`;
         },
 
         //Everything the content can grant, through the path the content grants it by.

@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 160 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 161 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -698,7 +698,7 @@ parça, P-14'ünkiler gibi ölçülmek zorunda; çünkü brief'in altı odağı 
 ikisi (navigasyon, duruş dövüşü) bir bölgenin içerdiği özellikler değil, sahip olduğu
 niteliklerdir.
 
-### P-45 — Onda duran dört beceri `open`
+### P-45 — Onda duran dört beceri `blocked`
 
 Sahibinin talebi: *"night vision, literacy, sleeping, farming gibi lv 10 max yeteneklerin üst
 seviyelerini arttıralım."*
@@ -747,6 +747,52 @@ milestone'lar hazır olduğunda yükseltilebilir.
 ulaşabildiği her seviyede ne yaptığını anlatmaya çoktan bağlıyor; yani milestone'larının
 ötesine yükseltilmiş bir tavanın orada düşmesi lazım, yeni bir kontrole gerek kalmadan.
 Buna güvenmeden önce doğrulanmaya değer.
+
+**Q-16 ÜZERİNDEN BLOKE EDİLDİ, 2026-09-03; bu proposal'ın sahip olmadığı bir ölçümle.** Bu
+becerilerin her biri etkisini **kendi tavanına ne kadar kaldığının oranı** olarak ifade
+ediyor — oyunun standart deyimi; duruşlarda, yol bulmada, yenilenmede ve zanaat kalitesinde
+toplam on yerde kullanılıyor. Yani bir tavanı yükseltmek eğriyi uzatmıyor, **yeniden
+ölçekliyor** ve yeni tavanın altındaki her seviye zayıflıyor:
+
+| beceri | etki | bugün 10. seviyede | tavan 20 olsa 10. seviyede | 20'de |
+|---|---|---|---|---|
+| Gece görüşü | `0.5 + 0.5 × seviye/tavan` | 1.000 (karanlık cezası yok) | **0.750** | 1.000 |
+| Uyku | iyileşme `× (1 + seviye/tavan)` | 2.000× | **1.500×** | 2.000× |
+
+İkisinden birini çoktan maksimuma çıkarmış bir oyuncu, oyunu düpedüz bir zayıflatmayla açardı
+ve tavandaki etki hiç değişmezdi. Bu, istenenin tam tersi ve hiçbir sayı seçimi bundan
+kaçınmıyor — bölenin değişmesi gerekiyor ve neye değişeceği bir denge kararı.
+
+**Hazır buradayken bu proposal'ın kendi okumasına bir düzeltme.** *"Uyku ve gece görüşü ikisi
+de bir cezayı azaltıyor"* diyor. Ölçüldü, yalnızca gece görüşü öyle — `light_modifier` 0.5 ile
+1.0 arasında gidiyor, yani 1.0'ın ötesi karanlıkta gündüzden iyi görmek olurdu. Uyku
+iyileşmeyi çarpıyor ve dondurulmuş bir bölenle temiz uzuyor. Okuryazarlık yalnızca milestone,
+Çiftçilik ise `max_level_coefficient` üzerinden gidiyor; onda da aynı yeniden ölçekleme sorunu
+başka bir biçimde var.
+
+### Q-16 — Tavanı onda duran dört becerinin 11-20. seviyeleri ne veriyor? `open`
+
+Üç cevap ve farkları kodda değil oyuncuda:
+
+- **A — böleni 10'da dondur.** 10. seviye bugünkü etkisini birebir koruyor, 11-20 onun ötesine
+  geçiyor. Uyku için en temizi (iyileşme tırmanmaya devam ediyor). Gece görüşü içinse 1.0'ın
+  üstünde bir ışık çarpanı demek, ki bu yeni bir şey: gündüzden iyi görmek.
+- **B — etkiyi tavanla, yalnızca milestone'ları uzat.** Hiç kimsenin mevcut etkisi değişmiyor
+  ve 11-20, bu dördünün zaten kullandığı xp çarpanlarını ve stat artışlarını dağıtıyor. En
+  muhafazakârı ve denge kararı gerektirmeyeni — ama gece görüşünde 20'ye ulaşan oyuncu 10'da
+  gördüğünden fazlasını görmüyor.
+- **C — tavanları yükselt ve yeniden ölçeklemeyi kabul et.** Sunulmak yerine burada
+  reddediliyor: çoktan hak edilmiş etkiyi, sessizce, açılışta oyuncudan geri alıyor.
+
+**ÖNERİ: Gece görüşü için B, diğer üçü için A.** Kendi tavanının ötesine büyüyemeyecek tek
+etkiyi büyümek zorunda bırakmıyor, büyüyebilecek üçünün büyümesine izin veriyor. Maliyeti,
+gece görüşünün üst seviyelerinin karanlık için değil milestone'ları için değerli olması — ki
+bunu oyuncunun fark etmesine bırakmak yerine etki açıklamasında söylemeye değer.
+
+Hiçbir xp risk altında değil: `Skill.add_xp`, `total_xp`i koşulsuz yazıyor ve yükleyici
+seviyeleri ondan yeniden kuruyor, yani sonradan yükseltilen bir tavan biriken xp'yi bir
+sonraki açılışta seviyeye çeviriyor. Bu, bu proposal için zaten ölçülmüştü ve beklemesinin
+mümkün olmasının sebebi de bu.
 
 ### P-46 — Changelog sayfası nerede kaldığını hatırlıyor `open`
 
@@ -806,17 +852,6 @@ dövüşün gerçekte ne düşürdüğüne göre gelmeli.
 sahibi de tek kutunun hepsini bulmasını bekliyor. Filtreyi yazmadan önce orada gösterilen
 yaratık adlarının görünen ad mı kayıt anahtarı mı olduğunu kontrol etmeye değer, çünkü ikisi
 farklı ve kutu, oyuncunun okuyabildiğiyle eşleşmek zorunda.
-
-### P-50 — İlham kıvılcımı çalışanı uzatmalı, sıfırlamamalı `open`
-
-Sahibi: *"dışa aktarma esnasında verilen ilham kıvılcımı mevcut süresini sıfırlayarak veriyor.
-onun yerine eğer aktif bir süresi varsa üzerine eklemeli."*
-
-Kıvılcım hâlâ yanarken dışa aktaran bir oyuncu şu an bunun cezasını çekiyor — uzun bir kalan
-süre, tazelenmiş tam bir süreyle değiştiriliyor ki kalan süre bağıştan uzunken bu bir kayıp.
-Etki kaydında hazır bir "uzat" yolu olup olmadığına bakmaya değer, çünkü süreli başka etkiler
-de aynısını isteyebilir ve elle yazılmış ikinci bir süre toplamı, ikisinin birbirinden
-ayrılma biçiminin ta kendisidir.
 
 ### P-51 — Yeniden hesaplamanın koruduğu taban, her bölge için `open`
 

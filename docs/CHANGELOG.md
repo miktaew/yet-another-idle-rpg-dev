@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 137 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 138 -->
 
 # Changelog
 
@@ -20,6 +20,53 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.55 - the spark extends what is burning, and the dev tool that lied about it
+
+The owner: *"the inspiration spark given during export gives it by resetting the current
+duration. Instead, if there is an active duration, it should add to it."*
+
+**Measured first, as P-50 asked.** There is no extend path in the effect registry.
+`add_active_effect` computes `old_duration` on its fourth line and uses it in exactly one
+place - the return value, "did this make it longer" - then replaces the effect outright. So
+exporting with twenty-five minutes left costs nothing and exporting with forty costs ten, and
+the player cannot see the remainder before deciding.
+
+**Added to `add_active_effect` rather than summed at the call site**, which is what P-50
+warned about: two places that both know how to add durations are two places that come to
+disagree. **Opt-in rather than the new default** - refresh-to-full is right for a consumable,
+since a second meal eaten while the first is working should not stack toward an hour of food.
+
+**Checked before extending: the spark grants no skill xp.** A timed effect's xp is computed
+from `duration ** .3333`, so extending something the player drinks would pay xp for time they
+already had. `Spark of Inspiration` is tagged `buff` only and the xp path reads medicine, food
+and poison.
+
+**Then the owner said the extension looked wrong - "it deletes first and then adds, it is lost
+there too" - and the measurement agreed with them.** From the console: 1785 minutes left, plus
+1800, gave 1800. That is the bug they predicted, and it was not there.
+
+**The dev console's wrapper was dropping the argument.** It reads
+`add_active_effect: (effect_key, duration = 600) => real_add_active_effect(effect_key,
+duration)` and stops at the duration, so `{extend: true}` typed at the console never reached
+the function - the effect came back at exactly the new duration and looked like proof. The
+adder was right the whole time: `old_duration` is captured on line four, before the delete on
+line thirty, and `duration` is the remainder rather than the original because the tick
+subtracts from it.
+
+Re-measured through the fixed wrapper: 1000, extended by 800, gives 1800; a plain grant of 500
+still replaces. **A dev tool that quietly drops an argument is worse than no dev tool**,
+because it answers a question about the game with an answer about itself - and it does so at
+the exact moment somebody is checking whether the game is broken.
+
+**Three assertions, all negative-tested.** The reward extends; `add_active_effect` actually
+adds the remainder rather than merely accepting the flag; and the wrapper forwards every
+parameter the real function takes. The first attempt at finding "rewards on a timer" used
+proximity - a cooldown mentioned near a grant - and reported `update` four times, because
+main.js's tick reads every timer there is. The honest link is the call edge: the function that
+**stamps** the cooldown calls the grant on the next line, since stamping and granting are one
+decision. Stamping had to be told from restoring, too - `load` assigns the same field from the
+save, and following that meant following every reward in the game.
 
 ### v0.7.54 - the inventory remembers how it was sorted
 

@@ -131,7 +131,8 @@ import { check_save_keys_round_trip, check_an_export_names_its_version,
          check_saved_character_fields_are_read_back } from "./checks/save_contract.mjs";
 import { check_docs_are_paired, check_thematic_breaks_are_not_headings } from "./checks/docs.mjs";
 import { check_no_raw_control_bytes } from "./checks/bytes.mjs";
-import { check_effect_tags_match_their_numbers } from "./checks/effects.mjs";
+import { check_effect_tags_match_their_numbers,
+         check_a_timed_reward_extends_what_is_running } from "./checks/effects.mjs";
 import { check_action_labels_fit_a_button } from "./checks/labels.mjs";
 import { check_hints_say_when_they_cannot_point, check_visible_tasks_can_be_finished,
     check_out_of_order_quest_progress_is_not_dropped,
@@ -206,6 +207,7 @@ await check_docs_are_paired();
 await check_thematic_breaks_are_not_headings();
 await check_no_raw_control_bytes();
 await check_effect_tags_match_their_numbers();
+check_a_timed_reward_extends_what_is_running();
 await check_action_labels_fit_a_button();
 await check_visible_tasks_can_be_finished();
 await check_out_of_order_quest_progress_is_not_dropped();
