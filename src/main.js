@@ -197,6 +197,7 @@ let current_location;
 let current_activity;
 
 let game_action_interval;
+let game_action_tick;
 let current_game_action;
 
 //loot from currently active source (combat location or specific activity), used for display if dynamic loot logging option is enabled
@@ -232,7 +233,8 @@ let save_counter = 0;
 const backup_period = 3600;
 let backup_counter = 0;
 
-const tickrate = config.tickrate;
+//can be changed without reloading if dev mode is active, hence not a const
+let tickrate = config.tickrate;
 
 //accumulates deviations
 let time_variance_accumulator = 0;
@@ -697,11 +699,11 @@ function start_activity(selected_activity) {
             current_activity = null;
             return;
         }
-        current_activity.gathered_materials = {};
     } else throw `"${activities[current_activity.activity_name].type}" is not a valid activity type!`;
 
     current_activity.earnings = 0;
     current_activity.gathering_time = 0;
+    current_activity.gathered_materials = {};
     current_activity.gathering_time_needed = current_activity.getActivityEfficiency().gathering_time_needed;
 
     add_to_content_stack({content_type: "activity", data: {activity: current_activity}});
@@ -776,9 +778,10 @@ function start_game_action(action_key, event) {
         let current_iterations = game_action.keep_progress?game_action.accumulated_progress:0;
         const total_iterations = game_action.attempt_duration/0.1;
 
-        game_action_interval = setInterval(()=>{
+        //kept in a variable rather than passed inline, so the interval can be re-armed at a new speed without losing the progress
+        game_action_tick = ()=>{
             if(current_iterations >= total_iterations - 1) {
-                clearInterval(game_action_interval);
+                stop_game_action_interval();
                 finish_game_action({action_key, conditions_status, dialogue_key: current_dialogue});
             }
 
@@ -787,13 +790,33 @@ function start_game_action(action_key, event) {
                 game_action.accumulated_progress = current_iterations;
             }
             update_game_action_progress_bar(current_iterations/total_iterations);
-        }, 1000*0.1/tickrate);
+        };
+        game_action_interval = setInterval(game_action_tick, game_action_period());
     } else {
         update_game_action_progress_bar(1);
         finish_game_action({action_key, conditions_status,dialogue_key: current_dialogue});
     }
 }
 
+//the action ticker's period at the current speed
+function game_action_period() {
+    return 1000 * 0.1 / tickrate;
+}
+
+function stop_game_action_interval() {
+    clearInterval(game_action_interval);
+    game_action_interval = undefined;
+    game_action_tick = undefined;
+}
+
+//re-arms the running action at the current speed, used for speed changing in dev mode
+function rearm_game_action_interval() {
+    if(!game_action_tick) {
+        return;
+    }
+    clearInterval(game_action_interval);
+    game_action_interval = setInterval(game_action_tick, game_action_period());
+}
 /**
  * Handles the finish, successful or not, of a game action. Not to be mistaken for end_game_action
  * @param {String} action_key 
@@ -843,7 +866,10 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         } else {
             //random loss
 
-            result_message = action.failure_texts.random_loss[Math.floor(action.failure_texts.random_loss.length * Math.random())];
+            const lines = action.failure_texts.random_loss;
+            result_message = lines?.length
+                ? lines[Math.floor(lines.length * Math.random())]
+                : result_message;
         }
 
         const success_conditions = action.getAvailabilityComponent().success_conditions;
@@ -852,7 +878,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         Object.keys(success_conditions[0]?.items_by_id || {}).forEach(item_id => {
             //no need to check if they are in inventory, as without them action would have been conditionally failed before reaching here
             if(success_conditions[0].items_by_id[item_id].remove) {
-                character.removeFromInventory([{item_key: item_templates[item_id].getInventoryKey(), item_count: action.success_conditions[0].items_by_id[item_id].count}]);
+                character.removeFromInventory([{item_key: item_templates[item_id].getInventoryKey(), item_count: success_conditions[0].items_by_id[item_id].count}]);
             }
         });
         Object.keys(start_conditions.items_by_id || {}).forEach(item_id => {
@@ -881,7 +907,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
  */
 function end_game_action() {
     end_activity_animation();
-    clearInterval(game_action_interval);
+    stop_game_action_interval();
     current_game_action = null;
     remove_from_content_stack(content_stack_removal_options.TOP);
 }
@@ -1329,7 +1355,7 @@ function unlock_combat_stance(stance_id) {
         log_message(`You have learned a new stance: "${stances[stance_id].name}"`, "location_unlocked");
     }
     stances[stance_id].setUnlocked();
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
 }
 
 function change_stance({stance_id, is_temporary = false}) {
@@ -1774,6 +1800,39 @@ function get_location_rewards(location) {
     }
 }
 
+
+/*
+    The reward keys process_rewards reads, and the lock keys it reads inside `locks`.
+
+    Here so that a key it does NOT read gets said out loud. data/locations.js has a
+    reward written as `action:` where the function reads `rewards.actions`, so that
+    reward has never done anything - and nothing said so, because the skill_xp next to it
+    worked. A typo in a content file should not be invisible.
+*/
+const reward_keys = [
+    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
+    "housing", "items", "locations", "locks", "messages", "money", "move_to", "npcs",
+    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
+    "textlines", "traders", "xp",
+];
+const special_keys = ["required_clear_count"];
+const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];
+
+function warn_about_unread_reward_keys(rewards, source_type, source_name) {
+    const where = source_name ? ` (${source_type} "${source_name}")` : "";
+    const valid_keys = [...reward_keys, ...special_keys];
+    for(const key of Object.keys(rewards)) {
+        if(!valid_keys.includes(key)) {
+            console.warn(`Reward key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${valid_keys.join(", ")}.`);
+        }
+    }
+    for(const key of Object.keys(rewards.locks || {})) {
+        if(!lock_keys.includes(key)) {
+            console.warn(`Lock key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${lock_keys.join(", ")}.`);
+        }
+    }
+}
+
 /**
  * processes rewards and logs all necessary messages
  * @param {Object} rewards_data
@@ -1786,6 +1845,7 @@ function get_location_rewards(location) {
  * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
  */
 function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
+    warn_about_unread_reward_keys(rewards, source_type, source_name); //remember to update keys it accepts if process_rewards gets expanded to new ones
     let was_any_location_availability_changed = false;
     let is_current_location_reload_needed = false;
     if(rewards.messages && !is_from_loading) {
@@ -2076,17 +2136,21 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
 
     if(rewards.items && !only_unlocks) {
         for(let i = 0; i < rewards.items.length; i++) {
-            let item;
-            let count;
-            if(typeof rewards.items[i] === "string") {
-                item = item_templates[rewards.items[i]];
-                count = 1;
-            } else {
-                item = item_templates[rewards.items[i].item];
-                count = rewards.items[i].count || 1;
-                item.quality = rewards.items[i].quality;
+            const entry = rewards.items[i];
+            const is_bare_name = typeof entry === "string";
+            const item_id = is_bare_name ? entry : entry.item;
+            const template = item_templates[item_id];
+
+            if(!template) {
+                console.error(`No such item as "${item_id}" - reward skipped.`);
+                continue;
             }
-            
+
+            const count = is_bare_name ? 1 : (entry.count || 1);
+            const quality = is_bare_name ? undefined : entry.quality;
+
+            const item = quality ? getItem({...template, quality}) : template;
+
             log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
             character.addToInventory([{item_key: item.getInventoryKey(), count}]);
         }
@@ -2485,7 +2549,7 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                     }
                     
                     update_displayed_material_choice({category, subcategory, recipe_id, refreshing: true});
-                    //update_displayed_crafting_recipes();
+                    update_displayed_crafting_recipes();
                 } else {
                     console.log("Tried to create an item without having necessary materials");
                 }
@@ -2636,7 +2700,7 @@ function switch_action_box_content() {
     } else if(current_game_action) {
         current_game_action = null;
         end_activity_animation();
-        clearInterval(game_action_interval);
+        stop_game_action_interval();
     }
 
     if(content_stack.length) {
@@ -3097,6 +3161,10 @@ function create_save() {
                 }
             }
 
+            
+            /*
+            no need to save since availabilities get saved separately?
+
             //write_availability_status(save_data["npcs"][npc_key], npc_availability);
             //write_availability_status(save_data["npcs"][npc_key]["dialogue"], dialogue_availability);
             //write_availability_status(save_data["npcs"][npc_key]["trader"], trader_availability);
@@ -3106,6 +3174,7 @@ function create_save() {
                 save_data["npcs"][npc_key]["dialogue"]["textlines"][textline_key] = {};
                 //write_availability_status(save_data["npcs"][npc_key]["dialogue"]["textlines"][textline_key], textline_availability);
             });
+            */
 
             Object.keys(dialogue.actions).forEach(action_key => {
                 //const action_availability = dialogue.actions[action_key].getAvailabilityComponent();
@@ -3204,6 +3273,25 @@ function create_save() {
     }
 } 
 
+//encodes provided text (presumably: JSONified save data) to base64, necessary as 'btoa' does not support any characters outside of Latin1 encoding
+function to_base64(text) {
+    const bytes = new TextEncoder().encode(text);
+    let latin1 = "";
+    for(let i = 0; i < bytes.length; i++) {
+        latin1 += String.fromCharCode(bytes[i]);
+    }
+    return btoa(latin1);
+}
+
+function from_base64(encoded) {
+    const latin1 = atob(encoded);
+    const bytes = new Uint8Array(latin1.length);
+    for(let i = 0; i < latin1.length; i++) {
+        bytes[i] = latin1.charCodeAt(i);
+    }
+    return new TextDecoder().decode(bytes);
+}
+
 /**
  * called from index.html
  * @returns save string encoded to base64
@@ -3216,7 +3304,7 @@ function save_to_file() {
 
     //will create save twice...
     save_progress();
-    return btoa(create_save());
+    return to_base64(create_save());
 }
 
 /**
@@ -3533,7 +3621,7 @@ function load(save_data) {
             });
         }
 
-        update_displayed_stance_list(stances, current_stance, faved_stances);
+        update_displayed_stance_list(stances, current_stance);
 
         if(save_data.faved_stances) {
             Object.keys(save_data.faved_stances).forEach(stance_id=> {
@@ -4020,16 +4108,16 @@ function load(save_data) {
                 if(key) {
                     const npc = NPCRegistry.get(key);
                     const dialogue = npc.getDialogueComponent();
-                    //const dialogue_availability = npc.getDialogueAvailability();
+                    const dialogue_availability = npc.getDialogueAvailability();
 
-                    //write_availability_status(dialogue_availability, save_data.dialogues[dialogue_key]);
+                    write_availability_status(dialogue_availability, save_data.dialogues[dialogue_key]);
                     
                     
                     if(save_data.dialogues[dialogue_key].textlines) {  
                         Object.keys(save_data.dialogues[dialogue_key].textlines).forEach(textline_key => {
                             if(dialogue.textlines[textline_key]) {
-                                //const textline_availability = dialogue.textlines[textline_key].getAvailabilityComponent();
-                                //write_availability_status(textline_availability, save_data["dialogues"][dialogue_key]["textlines"][textline_key]);
+                                const textline_availability = dialogue.textlines[textline_key].getAvailabilityComponent();
+                                write_availability_status(textline_availability, save_data["dialogues"][dialogue_key]["textlines"][textline_key]);
                             } else {
                                 console.warn(`Textline "${textline_key}" in npc "${dialogue_key}" couldn't be found!`);
                                 any_warnings = true;
@@ -4041,8 +4129,8 @@ function load(save_data) {
                         Object.keys(save_data.dialogues[dialogue_key].actions).forEach(action_key => {
                             if(dialogue.actions[action_key]) {
 
-                                //const action_availability = dialogue.actions[action_key].getAvailabilityComponent();
-                                //write_availability_status(action_availability, save_data["dialogues"][dialogue_key]["actions"][action_key]);
+                                const action_availability = dialogue.actions[action_key].getAvailabilityComponent();
+                                write_availability_status(action_availability, save_data["dialogues"][dialogue_key]["actions"][action_key]);
 
                                 dialogue.actions[action_key].setCurrentProgress(save_data.dialogues[dialogue_key].actions[action_key]["accumulated_progress"]);
                                 dialogue.actions[action_key].setCompletionCount(save_data.dialogues[dialogue_key].actions[action_key]["completion_count"]);
@@ -4063,9 +4151,9 @@ function load(save_data) {
                     const npc = NPCRegistry.get(key);
                     if(npc?.tags?.trader) {
                         const trader = npc.getTraderComponent();
-                        //const trader_availability = npc.getTraderAvailability();
+                        const trader_availability = npc.getTraderAvailability();
                         
-                        //write_availability_status(trader_availability, save_data.traders[trader_key]);
+                        write_availability_status(trader_availability, save_data.traders[trader_key]);
                         
                         let trader_item_list = [];
 
@@ -4936,9 +5024,9 @@ function load(save_data) {
 function load_from_file(save_string) {
     try{
         if(is_on_dev()) {
-            localStorage.setItem(dev_save_key, atob(save_string));
+            localStorage.setItem(dev_save_key, from_base64(save_string));
         } else {
-            localStorage.setItem(save_key, atob(save_string));
+            localStorage.setItem(save_key, from_base64(save_string));
         }        
         window.location.reload(false);
     } catch (error) {
@@ -5044,7 +5132,7 @@ function hard_reset() {
 //update game time
 function update_timer(time_in_minutes) {
     const was_night = is_night(current_game_time);
-    current_game_time.goUp(time_in_minutes || (is_sleeping ? 6 : 1));
+    current_game_time.goUp(time_in_minutes || (is_sleeping ? config.time_speedup_when_sleeping : 1));
 
     //character.updateStatsAndDisplay(); //done every second, probably only used for day-night cycle at this point
     const daynight_change = was_night !== is_night(current_game_time);
@@ -5070,6 +5158,10 @@ function update_effect_durations({time_in_minutes = 1, is_travel}) {
     let were_stats_updated = false;
     Object.keys(active_effects).forEach(key => {
         if(!is_travel || is_travel && active_effects[key].affected_by_travel) {
+
+            if(time_in_minutes == 1 && is_sleeping && active_effects[key].tags.debuff) {
+                time_in_minutes = config.time_speedup_when_sleeping;
+            }
 
             active_effects[key].duration-= time_in_minutes;
             if(active_effects[key].duration <= 0) {
@@ -5650,6 +5742,131 @@ window.get_game_version = get_game_version;
 window.run = run;
 
 //Verify_Game_Objects();
+
+//speed multiplier for dev mode, not saved
+let game_speed = 1;
+
+function set_game_speed(multiplier) {
+    const allowed = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+    //tickrate later divides some 
+    if(!allowed.includes(multiplier)) {
+        console.error(`Speed must be one of ${allowed.join(", ")}.`);
+        return game_speed;
+    }
+    if(multiplier >= 200) {
+        console.warn('Too high game speed might cause issues, as well as make combat behave a lot differently than it would normally.');
+    }
+    game_speed = multiplier;
+    //tickrate from config, so function sets speed relative to it and not to previous speed
+    tickrate = config.tickrate * game_speed;
+
+    //an action already running holds its own interval, which has to be re-armed to be affected by speed change
+    rearm_game_action_interval();
+    return game_speed;
+}
+
+/**
+ * development console, can be enabled in config.js
+ * exposes a bunch of useful functions to browser console
+ *
+ *     add_active_effect("Coffee", 1800)
+ *     give({items: [{item: "Iron sword", quality: 120}], money: 50000}) //can use any valid reward argument
+ *     goto("Slums")
+ *     set_speed(100)
+ */
+function enable_dev_console() {
+    const list = (registry) => Object.keys(registry).sort();
+
+    const real_add_active_effect = add_active_effect;
+
+    const helpers = {
+        //duration is in in-game minutes, like every duration in content
+        add_active_effect: (effect_key, duration = 600) => {
+            if(!effect_templates[effect_key]) {
+                console.error(`No such effect as "${effect_key}". Try list_effects().`);
+                return;
+            }
+            real_add_active_effect(effect_key, duration);
+            return `${effect_key} for ${duration} minutes`;
+        },
+
+        give: (rewards) => {
+            process_rewards({rewards, source_type: "dev console", source_name: "dev console"});
+            return Object.keys(rewards);
+        },
+
+        /*
+            adds all buff-type effects at once, selecting strongest possible effect for mutually exclusive ones,
+            and skipping the rest;
+            returns applied and skipped effects
+        */
+        add_best_effects: (duration = 1800) => {
+            if(typeof duration !== "number" || !(duration > 0)) {
+                console.error(`Duration has to be a positive number of in-game minutes, got "${duration}".`);
+                return;
+            }
+
+            const buffs = Object.keys(effect_templates).filter(key => effect_templates[key].tags?.buff);
+            const applied = [];
+            const skipped = [];
+            buffs.sort().forEach(key => {
+                real_add_active_effect(key, duration);
+                (active_effects[key] ? applied : skipped).push(key);
+            });
+
+            return skipped.length
+                ? {applied, held_back_by_a_stronger_effect: skipped}
+                : applied;
+        },
+        add_money: (amount) => { add_money_to_character(amount); return character.money; },
+        add_xp: (amount) => { add_xp_to_character(amount); return character.xp.current_level; },
+        add_skill_xp: (skill, amount) => {
+            if(!skills[skill]) {
+                console.error(`No such skill as "${skill}". Try list_skills().`);
+                return;
+            }
+            add_xp_to_skill({skill: skills[skill], xp_to_add: amount});
+            return skills[skill].current_level;
+        },
+
+        //goes to specified location, unlocks it if needed
+        go_to: (location_name) => {
+            if(!locations[location_name]) {
+                console.error(`No such location as "${location_name}". Try list_locations().`);
+                return;
+            }
+            unlock_location({location: locations[location_name], skip_message: true});
+            change_location({location_id: location_name});
+            return location_name;
+        },
+
+        set_flag: (flag, value = true) => {
+            if(!(flag in global_flags)) {
+                console.error(`No such flag as "${flag}". Known: ${list(global_flags).join(", ")}`);
+                return;
+            }
+            global_flags[flag] = value;
+            return `${flag} = ${value}`;
+        },
+
+        list_effects: () => list(effect_templates),
+        list_items: () => list(item_templates),
+        list_locations: () => list(locations),
+        list_skills: () => list(skills),
+        list_quests: () => list(quests),
+        list_dialogues: () => list(dialogues),
+        list_flags: () => list(global_flags),
+
+        set_speed: (multiplier) => set_game_speed(multiplier),
+    };
+
+    Object.keys(helpers).forEach(name => { window[name] = helpers[name]; });
+
+    console.log("Dev console is active.");
+    console.log("Available functions:\n");
+    console.log(Object.keys(helpers).join("(),\n") + "()");
+}
+
 window.Verify_Game_Objects = Verify_Game_Objects;
 
 set_loading_screen_progress("Waking up from a nyap...");
@@ -5676,7 +5893,7 @@ if(!is_on_dev() && save_key in localStorage || is_on_dev() && (dev_save_key in l
     update_displayed_money();
     character.updateStatsAndDisplay();
 
-    update_displayed_stance_list(stances, current_stance, faved_stances);
+    update_displayed_stance_list(stances, current_stance);
     change_stance({stance_id: "normal"});
     create_displayed_crafting_recipes();
     change_location({location_id: "Village", skip_travel_time: true});
@@ -5803,6 +6020,10 @@ if(is_on_dev()) {
         document.getElementById("bottom_panel_div"), 
         `<img id = "hits_counter" src="https://hitscounter.dev/api/hit?label=dummy+hit+counter&color=%23084298&message=&style=flat&tz=UTC">`
     );
+}
+
+if(config.enable_dev_mode) {
+    enable_dev_console();
 }
 export { 
     current_enemies, 

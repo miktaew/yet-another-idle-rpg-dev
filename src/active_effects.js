@@ -43,6 +43,7 @@ class ActiveEffect {
                 cold_tolerance: {flat: -5},
             }
         },
+        tags: {"debuff": true},
     });
 
     effect_templates["Cold"] = new ActiveEffect({
@@ -54,6 +55,7 @@ class ActiveEffect {
             }
         },
         group_tags: {cold: 1},
+        tags: {"debuff": true},
     });
     effect_templates["Very cold"] = new ActiveEffect({
         name: "Very cold",
@@ -66,6 +68,7 @@ class ActiveEffect {
             }
         },
         group_tags: {cold: 2},
+        tags: {"debuff": true},
     });
     effect_templates["Freezing"] = new ActiveEffect({
         name: "Freezing",
@@ -83,6 +86,7 @@ class ActiveEffect {
             }
         },
         group_tags: {cold: 3},
+        tags: {"debuff": true},
     });
     effect_templates["Hypothermia"] = new ActiveEffect({
         name: "Hypothermia",
@@ -100,6 +104,7 @@ class ActiveEffect {
             }
         },
         group_tags: {cold: 4},
+        tags: {"debuff": true},
     });
 })();
 /////////////////////////////////////////

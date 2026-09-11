@@ -293,7 +293,7 @@ class CombatZone extends BaseLocation {
             this.light_level = "normal";
         }
 
-        this.tags["combat_zone"] = true;
+        this.tags.combat_zone = true;
     }
 
     get_next_enemies() {

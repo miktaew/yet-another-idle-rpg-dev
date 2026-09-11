@@ -260,9 +260,12 @@ class Skill {
                         Object.keys(gains.xp_multipliers).forEach(xp_multiplier => {
                             let name;
                             if(xp_multiplier !== "all" && xp_multiplier !== "hero" && xp_multiplier !== "all_skill" && !xp_multiplier.includes("category_")) {
-                                name = skills[xp_multiplier].getName();
+
                                 if(!skills[xp_multiplier]) {
                                     console.warn(`Skill ${this.skill_id} tried to reward an xp multiplier for something that doesn't exist: ${xp_multiplier}. I could be a misspelled skill name`);
+                                    name = xp_multiplier;
+                                } else {
+                                    name = skills[xp_multiplier].getName();
                                 }
                             } else {
                                 

@@ -75,6 +75,9 @@
 
     - added a parent skill for resource gathering skill, with lower bonus that stance/weapon parent skills
     - 'Infested woods' location is now marked as 'narrow'
+    - buffed 'cheap wooden shield'
+    - when sleeping, debuff-type active effects will go down with game time rather than with game ticks (i.e. a lot faster than they used to)
+
     - tooltips of no-quality items now show how much is in player inventory
     - conditions for items to appear in traders are now supported, can be applied both directly to each trade item and/or to groups of them 
         (for less copypasting and minor optimization)
@@ -91,6 +94,13 @@
 
     - fixed minor display issue where background effects would not cover entire game window upon scrolling horizontally
     - tweaked display of crafting quality caps, it should now match actual caps (including the quality rounding)
+    - fixed a small issue on firefox, where if playing zoomed out, some scrollbars would cover content (due to firefox scrollbars being unaffected by zoom level)
+        - some places might have been missed
+
+    courtesy of Kuroiteiken, with some additional tweaks from your favourite cat (Mik):
+        * equipment tooltips now show comparison between hovered vs equipped
+        * some useful dev functions can now be accessed from browser console (if dev mode is enabled in config)
+        * tweaks and a lot of bugfixes
     - fixed a small issue on firefox, where if playing zoomed out, some scrollbars would cover content (due to firefox scrollbars being unaffected by zoom level)
         - some places might have been missed
 

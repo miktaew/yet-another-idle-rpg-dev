@@ -359,7 +359,11 @@ const questManager = {
             xp: 250,
             reputation: {
                 Village: 100,
-            }
+            },
+            actions: [
+                { location: "Eastern mill", action: "unlock weightlifting" },
+                { location: "Eastern mill", action: "unlock balancing"}
+            ],
         }
     });
 

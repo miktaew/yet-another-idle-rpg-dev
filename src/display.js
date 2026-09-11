@@ -326,6 +326,73 @@ function round(number) {
     return +number.toFixed(1);
 }
 
+
+/**
+ * Writes comparison of hovered equippable item vs one currently equipped in same slot, to be used in item tooltip
+ *
+ * @param {Object} item the item being hovered
+ * @param {Number} quality
+ * @returns {String} HTML string
+ */
+function create_equipment_comparison(item, quality) {
+    if(!item?.equip_slot) {
+        return "";
+    }
+
+    const worn = character.getEquipment()[item.equip_slot];
+    if(!worn || worn === item) {
+        return "";
+    }
+
+    let comparison = "";
+
+    const flat_line = (label, mine, theirs) => {
+        const delta = Math.round(((mine || 0) - (theirs || 0))*100)/100;
+        if(!delta) {
+            return;
+        }
+        const better = delta > 0 ? "comparison_better" : "comparison_worse";
+        comparison += `<br><span class="${better}">${label}: ${delta > 0 ? "+" : ""}${delta}</span>`;
+    };
+
+    const multiplier_line = (label, mine, theirs) => {
+        const multi = 1 + Math.round(((mine || 1) / (theirs || 1) - 1) * 100) / 100;
+        if(multi == 1) {
+            return;
+        }
+        const better = multi > 1 ? "comparison_better" : "comparison_worse";
+        comparison += `<br><span class="${better}">${label}: ${multi > 0 ? "x" : "x"}${multi}</span>`;
+    };
+
+
+    if(item.getAttack && worn.getAttack) {
+        flat_line("Attack", item.getAttack(quality), worn.getAttack());
+    } else if(item.getDefense && worn.getDefense) {
+        flat_line("Defense", item.getDefense(quality), worn.getDefense());
+    } else if(item.getShieldStrength && worn.getShieldStrength) {
+        flat_line("Block", item.getShieldStrength(quality), worn.getShieldStrength());
+    }
+
+    const mine = item.getStats(quality);
+    const theirs = worn.getStats();
+    for(const stat_key of new Set([...Object.keys(mine), ...Object.keys(theirs)])) {
+        const label = capitalize_first_letter(stat_names[stat_key] ?? stat_key.replace("_", " "));
+        if(mine[stat_key]?.flat != null || theirs[stat_key]?.flat != null) {
+            flat_line(label, mine[stat_key]?.flat, theirs[stat_key]?.flat);
+        }
+        if(mine[stat_key]?.multiplier != null || theirs[stat_key]?.multiplier != null) {
+            multiplier_line(label, mine[stat_key]?.multiplier, theirs[stat_key]?.multiplier);
+        }
+    }
+
+    if(!comparison) {
+        return "";
+    } else {
+        return "<br><br>Compared to equipped:" + comparison;
+    }
+
+}
+
 /**
  * @param {Object} params
  * @param {Item} params.item
@@ -499,6 +566,11 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         });
     }
 
+    //for singular tooltips (i.e. not ones in crafting), add comparison with worn item
+    if(!(options?.quality?.length > 1)) {
+        item_tooltip += create_equipment_comparison(item, quality);
+    }
+
     if(item?.base_size) {
         item_tooltip += `<br><br>Size: ${item.getSize()}cm`;
     }
@@ -568,9 +640,25 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
     return item_tooltip;
 }
 
+function xp_target_name(target) {
+    if(target === "all" || target === "hero" || target === "all_skill") {
+        return target.replace("_", " ");
+    }
+    if(target.includes("category_")) {
+        return target.replace("category_", "") + " skills";
+    }
+    if(!skills[target]) {
+        console.warn(`An xp multiplier names "${target}", which is not a skill, a category`
+            + ` or an aggregate.`);
+        return target;
+    }
+    return skills[target].getName();
+}
+
 /** 
  * @param {Object} item_effect from item effects[]
  */
+
 function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     const effect = effect_templates[effect_name];
     const tooltip = document.createElement("div");
@@ -630,13 +718,9 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
     
     const xp_multipliers = Object.keys(effects.xp_multipliers);
     if(xp_multipliers.length > 0) {
-        let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            name = skills[xp_multipliers[0]].getName();
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
-        name = capitalize_first_letter(name);
+        //Same three cases models/skill.js handles, including category_ - which this copy
+        //did not, so a category target would have asked the skill registry for it.
+        const name = capitalize_first_letter(xp_target_name(xp_multipliers[0]));
         if(tooltip_html_content) {
             tooltip_html_content += `<br>${name} xp gain: x${effects.xp_multipliers[xp_multipliers[0]]}`;
         } else {
@@ -878,12 +962,7 @@ function format_book_bonuses(bonuses) {
     }
     if(bonuses.xp_multipliers) {
         const xp_multipliers = Object.keys(bonuses.xp_multipliers);
-        let name;
-        if(xp_multipliers[0] !== "all" && xp_multipliers[0] !== "hero" && xp_multipliers[0] !== "all_skill") {
-            name = skills[xp_multipliers[0]].getName();
-        } else {
-            name = xp_multipliers[0].replace("_"," ");
-        }
+        const name = xp_target_name(xp_multipliers[0]);
 
         if(formatted) {
             formatted += `, x${bonuses.xp_multipliers[xp_multipliers[0]]} ${name} xp gain`;
@@ -970,6 +1049,12 @@ function start_activity_animation(settings) {
     end_activity_animation();
     activity_anim = setInterval(() => { //sets a tiny little "animation" for activity text
         const action_status_div = document.getElementById("action_status_div");
+        
+        //small safeguard in case something clears out activity without cancelling the animation
+        if(!action_status_div) {
+            end_activity_animation();
+            return;
+        }
         let end = "";
         if(action_status_div.innerText.endsWith("...")) {
             end = "...";
@@ -1928,6 +2013,11 @@ function update_displayed_book(book_id) {
 
     item_divs[book_key].getElementsByClassName("item_tooltip")[0].remove();
     item_divs[book_key].getElementsByClassName("item_book")[0].appendChild(create_item_tooltip(book));
+
+
+
+    let percent = Math.min(book_stats[book_key].accumulated_time / book_stats[book_key].required_time, 1);
+    document.getElementById("action_progress_bar").style.width = 385*percent+"px";
 }
 
 /**
@@ -4385,6 +4475,16 @@ function start_reading_display(title) {
     action_status_div.innerText = `Reading the book, ${format_reading_time(item_templates[title].getRemainingTime())} left`;
     action_status_div.id = "action_status_div";
 
+
+    const action_progress_bar_max = document.createElement("div");
+    const action_progress_bar = document.createElement("div");
+    action_progress_bar_max.appendChild(action_progress_bar);
+    action_progress_bar.id = "action_progress_bar";
+    action_progress_bar.style.width = "0px";
+    action_progress_bar_max.id = "action_progress_bar_max";
+    action_div.appendChild(action_progress_bar_max);
+
+
     const action_end_div = document.createElement("div");
     action_end_div.setAttribute("onclick", "end_reading()");
     action_end_div.id = "action_end_div";
@@ -4716,7 +4816,7 @@ function update_skill_category_order() {
 /**
  * @description updates the list of stances, 
  */
-function update_displayed_stance_list(stances, current_stance, fav_stances) {
+function update_displayed_stance_list(stances, current_stance) {
 
     clear_HTML_content(stance_list);
 
@@ -4781,7 +4881,7 @@ function update_displayed_stance_list(stances, current_stance, fav_stances) {
     }).forEach(node=>stance_list.appendChild(node));
 
     update_displayed_stance(current_stance);
-    update_displayed_faved_stances(fav_stances);
+    update_displayed_faved_stances(stances);
 }
 
 function create_stance_tooltip(stance) {
@@ -4913,13 +5013,8 @@ function create_new_bestiary_entry(enemy_name) {
         if(rank_a != rank_b) {
             return rank_a - rank_b;
         } else {
-            const name_a = a.querySelector(".bestiary_entry_name").innerText;
-            const name_b = b.querySelector(".bestiary_entry_name").innerText;
-            if(name_a > name_b) {
-                return 1;
-            } else {
-                return -1;
-            }
+            return a.querySelector(".bestiary_entry_name").innerText
+                .localeCompare(b.querySelector(".bestiary_entry_name").innerText);
         }
     }).forEach(node=>bestiary_list.appendChild(node));
 }
@@ -5129,8 +5224,10 @@ function create_new_booklist_entry(book_name) {
 
     booklist_list.appendChild(booklist_entry_divs[book_name]);
 
-    //sorts booklist_list div by book title
-    [...booklist_list.children].sort((a,b)=>a.getAttribute("data-book") - b.getAttribute("data-book"))
+    //sorts by title
+    [...booklist_list.children].sort((a, b) =>
+                                    a.getAttribute("data-book")
+                                        .localeCompare(b.getAttribute("data-book")))
                                 .forEach(node=>booklist_list.appendChild(node));
 }
 

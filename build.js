@@ -25,12 +25,12 @@ esbuild
         let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
         if(htmlContent.search(bundle_regex) == -1) {
-            console.log(styleText("red", 'Failed to update the bundle version in .html!'));
-            return;
+            console.error(styleText("red", 'Failed to update the bundle version in .html!'));
+            process.exit(1);
         }
         if(htmlContent.search(style_regex) == -1) {
-            console.log(styleText("red", 'Failed to update the style version in .html!'));
-            return;
+            console.error(styleText("red", 'Failed to update the style version in .html!'));
+            process.exit(1);
         }
 
         htmlContent = htmlContent.replace(
@@ -45,6 +45,7 @@ esbuild
             console.log("Bundle and style versions in .html have been updated!");
         } catch (err) {
             console.error(err);
+            process.exit(1);
         }
         
     }).catch(() => process.exit(1));
