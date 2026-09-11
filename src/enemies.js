@@ -124,6 +124,10 @@ class Enemy {
 
         return droprate_modifier;
     }
+
+    hasShield() {
+        return false; // ¯\_(ツ)_/¯
+    }
 }
 
 const enemy_abilites = {

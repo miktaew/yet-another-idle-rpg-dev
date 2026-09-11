@@ -2144,6 +2144,11 @@ i {
 	left: 410px;
 	top: 68px;
 }
+
+    #enemies_div {
+        overflow-y: scroll;
+        height: 540px;
+    }
 		.enemy_div {
 			color: white;
 			display: var(--enemy_div_display);
@@ -2155,18 +2160,17 @@ i {
 				
 				.enemy_name, .enemy_stats, #attack_stats  {
 					height: 18px;
-					width: 400px;
+					width: 100%;
 					overflow: hidden;
 					white-space: nowrap;
 				}
 				.enemy_name {
 					text-align: right;
 					margin-top: 1px;
-					padding-right: 10px;
-					width: 390px;
+					width: 100%px;
 				}
 				.enemy_stats {
-					padding-right: 10px;
+                    width: 100%;
 				}
 					.enemy_stat, .attack_stat {
 						display: inline-block;
@@ -2247,7 +2251,7 @@ i {
 				display: block;
 			}
 
-		#character_attack_bar {
+		#attacker_attack_bar {
 			background-color: rgb(156, 0, 156);
 			height: 20px;
 		}			

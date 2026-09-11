@@ -18,7 +18,7 @@ const lowest_tolerable_temperature = cold_status_temperatures[0];
 //array for matching the names of aforementioned effects
 const cold_status_effects = ["Cold","Very cold","Freezing","Hypothermia"];
 
-const character = new Hero({bio: {}, id: hero_id});
+const character = new Hero({bio: {}, id: hero_id, tags: {"main_character": true}});
 
 export {character,  
         time_until_wet, time_until_cold, time_until_cold_when_wet, 

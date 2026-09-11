@@ -7,7 +7,7 @@ class StatHaver {
             max_health: data.max_health || 60,
             health: data.health || 60,
             health_regeneration_flat: data.health_regeneration_flat ?? 0, //in combat
-            health_regeneration_percent: data.health_loss_percent ?? 0, //in combat
+            health_regeneration_percent: data.health_regeneration_percent ?? 0, //in combat
             health_loss_flat: data.health_loss_flat ?? 0, //despite the name, it's values below 0 that mean actual health loss
             health_loss_percent: data.health_loss_percent ?? 0,
             max_stamina: data.max_stamina ?? 40,
@@ -29,6 +29,7 @@ class StatHaver {
             crit_rate: data.crit_rate ?? 0.05,
             crit_multiplier: data.crit_multiplier || 1.3,
             attack_power: data.attack_power ?? 0,
+            attack_count: data.attack_count ?? 1,
             defense: data.defense ?? 0,
             block_strength: data.block_strength ?? 0,
             block_chance: data.block_chance ?? 0,

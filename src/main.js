@@ -22,7 +22,7 @@ import { activities } from "./activities.js";
 import { end_activity_animation, 
          update_displayed_character_inventory, update_displayed_trader_inventory, sort_displayed_inventory, sort_displayed_skills,
          update_displayed_money, log_message,
-         update_displayed_enemies, update_displayed_health_of_enemies,
+         update_displayed_enemies,
          update_displayed_combat_location, update_displayed_normal_location,
          log_loot, update_displayed_equipment,
          update_displayed_health, update_displayed_stamina,
@@ -32,7 +32,6 @@ import { end_activity_animation,
          start_sleeping_display,
          create_new_skill_bar, update_displayed_skill_bar, update_displayed_skill_description,
          update_displayed_ongoing_activity, 
-         update_enemy_attack_bar, update_character_attack_bar,
          remove_fast_travel_choice,
          create_new_bestiary_entry,
          start_reading_display,
@@ -83,11 +82,8 @@ import { end_activity_animation,
          update_bestiary_entry_killcount,
          update_bestiary_entry_tooltip,
          set_play_button_text,
-         do_enemy_onhit_animation,
-         remove_enemy_onhit_animation,
          create_floating_effect,
          booklist_entry_divs,
-         do_enemy_onstart_animation,
          update_location_kill_count,
          change_completed_quest_visibility,
          update_fav_display,
@@ -97,6 +93,7 @@ import { end_activity_animation,
          fill_character_bio,
          insert_HTML,
         } from "./display.js";
+import { do_defender_onhit_animation, remove_defender_onhit_animation, update_defender_stats, } from "./ui/combat_display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { recipes, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
@@ -120,6 +117,8 @@ import { height_values } from "./models/person.js";
 import { playable_races } from "./races.js";
 import { fill_availability_methods } from "./component_management.js";
 import { traders } from "./data/traders.js";
+import { update_displayed_health_of_defenders } from "./ui/combat_display.js";
+import Combat from "./models/combat.js";
 
 fill_availability_methods();
 
@@ -150,20 +149,22 @@ let language = languages.english;
 
 let is_loading_error = false;
 
-//in seconds
-let total_playtime = 0;
 
 //some random stats to keep count of in case they ever become relevant
-let total_deaths = 0;
-let total_crafting_attempts = 0;
-let total_crafting_successes = 0;
-let total_kills = 0; 
-let total_crits_done = 0;
-let total_crits_taken = 0;
-let total_hits_done = 0;
-let total_hits_taken = 0;
-let strongest_hit = 0;
-let gathered_materials = {};
+const game_stats = {
+    total_playtime: 0, //in seconds
+    total_deaths: 0,
+    total_crafting_attempts: 0,
+    total_crafting_successes: 0,
+    total_kills: 0,
+    total_crits_done: 0,
+    total_crits_taken: 0,
+    total_hits_done: 0,
+    total_hits_taken: 0,
+    strongest_hit: 0,
+    gathered_materials: {},
+}
+
 
 //keeping the time to use it for export bonus
 let last_rewarded_export = 0;
@@ -180,19 +181,15 @@ let was_starry = false;
 //current enemy
 let current_enemies = null;
 
+let current_combat = null;
+
 const enemy_attack_loops = {};
 let enemy_attack_cooldowns;
-let enemy_timer_variance_accumulator = [];
-let enemy_timer_adjustment = [];
-let enemy_timers = [];
 let character_attack_loop;
 
 let character_timer_variance_accumulator = 0;
 let character_timer_adjustment = 0;
 let character_timers = [];
-
-const maximum_time_correction = 10;
-//maximum time correction for combat, in miliseconds
 
 //current location
 let current_location;
@@ -593,7 +590,7 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
 
     clear_all_enemy_attack_loops();
     clear_character_attack_loop();
-    clear_enemies();
+    end_combat();
 
     if(!location) {
         throw `No such location as "${location_id}"`;
@@ -1386,52 +1383,15 @@ function set_new_combat({enemies} = {}) {
 
     //remove animations
     for(let i = 0; i < current_enemies?.length; i++) {
-        remove_enemy_onhit_animation(i);
+        remove_defender_onhit_animation(i);
     }
 
     current_enemies = enemies || current_location.get_next_enemies();
     clear_all_enemy_attack_loops();
 
-    let character_attack_cooldown = 1/(full_stats.attack_speed);
-    enemy_attack_cooldowns = [...current_enemies.map(x => 1/x.stats.attack_speed)];
+    current_combat = new Combat({attackers: [character], defenders: current_enemies});
 
-    let fastest_cooldown = [character_attack_cooldown, ...enemy_attack_cooldowns].sort((a,b) => a - b)[0];
-
-    //scale all attacks to be not faster than 1 per second
-    if(fastest_cooldown < 1) {
-        const cooldown_multiplier = 1/fastest_cooldown;
-        
-        character_attack_cooldown *= cooldown_multiplier;
-        for(let i = 0; i < current_enemies.length; i++) {
-            enemy_attack_cooldowns[i] *= cooldown_multiplier;
-            enemy_timer_variance_accumulator[i] = 0;
-            enemy_timer_adjustment[i] = 0;
-            enemy_timers[i] = [Date.now(), Date.now()];
-        }
-    } else {
-        for(let i = 0; i < current_enemies.length; i++) {
-            enemy_timer_variance_accumulator[i] = 0;
-            enemy_timer_adjustment[i] = 0;
-            enemy_timers[i] = [Date.now(), Date.now()];
-        }
-    }
-    character_timer_variance_accumulator = 0;
-    character_timer_adjustment = 0;
-    character_timers = [Date.now(), Date.now()];
-
-    //attach loops and animations
-    for(let i = 0; i < current_enemies.length; i++) {
-        if(game_options.do_enemy_onhit_animations) {
-            do_enemy_onstart_animation(i);
-        }
-        
-        do_enemy_attack_loop(i, 0, true);
-    }
-
-    set_character_attack_loop({base_cooldown: character_attack_cooldown});
-    
-    update_displayed_enemies();
-    update_displayed_health_of_enemies();
+    current_combat.start();
 }
 
 /**
@@ -1461,177 +1421,8 @@ function reset_combat_loops(skip_persistence_xp_for_stance_change) {
     set_character_attack_loop({base_cooldown: character_attack_cooldown, skip_persistence_xp_for_stance_change});
 }
 
-/**
- * @description Creates an Interval responsible for performing the attack loop of enemy and updating their attack_bar progress
- * @param {*} enemy_id 
- * @param {*} cooldown 
- */
-function do_enemy_attack_loop(enemy_id, count, is_new = false) {
-    count = count || 0;
-    update_enemy_attack_bar(enemy_id, count/60);
-
-    if(is_new) {
-        enemy_timer_variance_accumulator[enemy_id] = 0;
-        enemy_timer_adjustment[enemy_id] = 0;
-    }
-
-    clearTimeout(enemy_attack_loops[enemy_id]);
-    enemy_attack_loops[enemy_id] = setTimeout(() => {
-        enemy_timers[enemy_id][0] = Date.now();
-        enemy_timer_variance_accumulator[enemy_id] += ((enemy_timers[enemy_id][0] - enemy_timers[enemy_id][1]) - enemy_attack_cooldowns[enemy_id]*1000/(60*tickrate));
-
-        enemy_timers[enemy_id][1] = Date.now();
-        update_enemy_attack_bar(enemy_id, count/60);
-        count++;
-        if(count >= 60) {
-            count = 0;
-            do_enemy_combat_action(enemy_id);
-        }
-        do_enemy_attack_loop(enemy_id, count);
-
-        if(enemy_timer_variance_accumulator[enemy_id] <= maximum_time_correction/tickrate && enemy_timer_variance_accumulator[enemy_id] >= -maximum_time_correction/tickrate) {
-            enemy_timer_adjustment[enemy_id] = enemy_timer_variance_accumulator[enemy_id];
-        } else {
-            if(enemy_timer_variance_accumulator[enemy_id] > maximum_time_correction/tickrate) {
-                enemy_timer_adjustment[enemy_id] = maximum_time_correction/tickrate;
-            }
-            else {
-                if(enemy_timer_variance_accumulator[enemy_id] < -maximum_time_correction/tickrate) {
-                    enemy_timer_adjustment[enemy_id] = -maximum_time_correction/tickrate;
-                }
-            }
-        } //limits the maximum correction, just to be safe
-
-    }, enemy_attack_cooldowns[enemy_id]*1000/(60*tickrate) - enemy_timer_adjustment[enemy_id]);
-}
-
 function clear_enemy_attack_loop(enemy_id) {
     clearTimeout(enemy_attack_loops[enemy_id]);
-}
-
-/**
- * 
- * @param {Number} base_cooldown basic cooldown based on attack speeds of enemies and character (ignoring stamina penalty) 
- * @param {String} attack_type type of attack, not yet implemented
- */
-function set_character_attack_loop({base_cooldown, skip_persistence_xp_for_stance_change}) {
-    clear_character_attack_loop();
-
-    //little safety, as this function would occasionally throw an error due to not having any enemies left 
-    //(can happen on forced leave after first win)
-    if(!current_enemies) {
-        return;
-    }
-
-    //tries to switch stance back to the one that was actually selected if there's enough stamina, otherwise tries to switch stance to "normal" if not enough stamina
-    if(full_stats.stamina >= (selected_stance.stamina_cost / full_stats.stamina_efficiency)){ 
-        if(selected_stance.id !== current_stance.id) {
-            change_stance({stance_id: selected_stance.id});
-            return;
-        }
-    } else if(current_stance.id !== "normal") {
-        change_stance({stance_id: "normal", is_temporary: true});
-        return;
-    }
-
-    let target_count = current_stance.target_count;
-    if(target_count > 1 && current_stance.related_skill) {
-        target_count = target_count + Math.round(target_count * character.getTotalSkillLevel(current_stance.related_skill)/skills[current_stance.related_skill].max_level);
-    }
-
-    if(current_stance.randomize_target_count) {
-        target_count = Math.floor(Math.random()*target_count) || 1;
-    }
-
-    let targets = [];
-    const alive_targets = current_enemies.filter(enemy => enemy.is_alive).slice(-target_count);
-
-    while(alive_targets.length>0) {
-        targets.push(alive_targets.pop());
-    }
-
-    use_stamina({stamina_to_use: current_stance.stamina_cost, skip_persistence_xp_for_stance_change});
-    let actual_cooldown = base_cooldown / character.getStaminaMultiplier();
-
-    let attack_power = character.getAttackPower();
-    do_character_attack_loop({base_cooldown, actual_cooldown, attack_power, targets, target_count});
-}
-
-/**
- * @description updates character's attack bar, performs combat action when it reaches full
- * @param {Number} base_cooldown 
- * @param {Number} actual_cooldown 
- * @param {String} attack_power 
- * @param {String} attack_type 
- */
-function do_character_attack_loop({base_cooldown, actual_cooldown, attack_power, targets, count = 0, is_new = true, target_count = 1, do_quest_events = true}) {
-    update_character_attack_bar(count/60);
-
-    if(is_new) {
-        character_timer_variance_accumulator = 0;
-        character_timer_adjustment = 0;
-    }
-
-    clear_character_attack_loop();
-    character_attack_loop = setTimeout(() => {
-        character_timers[0] = Date.now();
-        character_timer_variance_accumulator += ((character_timers[0] - character_timers[1]) - actual_cooldown*1000/(60*tickrate));
-
-        character_timers[1] = Date.now();
-        update_character_attack_bar(count/60);
-        count++;
-        if(count >= 60) {
-            count = 0;
-            let leveled = false;
-
-            for(let i = 0; i < targets.length; i++) {
-                do_character_combat_action({target: targets[i], attack_power, target_count: targets.length});
-            }
-
-            if(current_stance.related_skill) {
-                leveled = add_xp_to_skill({skill: skills[current_stance.related_skill], xp_to_add: targets.reduce((sum,enemy)=>sum+enemy.xp_value,0)/targets.length});
-                
-                if(leveled) {
-                    update_stance_tooltip(current_stance);
-                    character.updateStatsAndDisplay();
-                }
-            }
-
-            if(current_enemies.filter(enemy => enemy.is_alive).length != 0) { //set next loop if there's still an enemy left;
-                set_character_attack_loop({base_cooldown});
-            } else { //all enemies defeated, do relevant things and set new combat
-                current_location.enemy_groups_killed += 1;
-                if(current_location.enemy_groups_killed > 0 && current_location.enemy_groups_killed % current_location.enemy_count == 0) {
-                    get_location_rewards(current_location);
-
-                    if(do_quest_events) {
-                        do_quest_event({
-                            quest_event_type: "clear",
-                            quest_event_target: current_location.id,
-                            quest_event_count: 1,
-                        });
-                    }
-                }
-                update_location_kill_count(current_location);
-                set_new_combat();
-            }
-        } else {
-            do_character_attack_loop({base_cooldown, actual_cooldown, attack_power, targets, target_count, count, is_new: false});
-        }
-
-        if(character_timer_variance_accumulator <= maximum_time_correction/tickrate && character_timer_variance_accumulator >= -maximum_time_correction/tickrate) {
-            character_timer_adjustment = character_timer_variance_accumulator;
-        } else {
-            if(character_timer_variance_accumulator > maximum_time_correction/tickrate) {
-                character_timer_adjustment = maximum_time_correction/tickrate;
-            }
-            else {
-                if(character_timer_variance_accumulator < -maximum_time_correction/tickrate) {
-                    character_timer_adjustment = -maximum_time_correction/tickrate;
-                }
-            }
-        } //limits the maximum correction, just to be safe
-    }, actual_cooldown*1000/(60*tickrate) - character_timer_adjustment);
 }
 
 function clear_character_attack_loop() {
@@ -1650,232 +1441,21 @@ function start_combat() {
     }
 }
 
-/**
- * performs a single combat action (that is attack, as there isn't really any other kind for now),
- * called when attack cooldown finishes
- * 
- * @param {String} attacker id of enemy
-*/ 
-function do_enemy_combat_action(enemy_id) {
-    
-    /*
-    tiny workaround, as character being defeated while facing multiple enemies,
-    sometimes results in enemy attack animation still finishing before character retreats,
-    launching this function and causing an error
-    */
-    if(!current_enemies) { 
-        return;
-    }
+function finish_combat_round(was_special_combat) {
+    current_location.enemy_groups_killed += 1;
+    if(current_location.enemy_groups_killed > 0 && current_location.enemy_groups_killed % current_location.enemy_count == 0) {
+        get_location_rewards(current_location);
 
-    const enemy_count_xp_mod = current_enemies.filter(enemy => enemy.is_alive).length**(2/3);
-    
-    const attacker = current_enemies[enemy_id];
-
-    let evasion_chance_modifier = current_enemies.filter(enemy => enemy.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
-    let defense_modifier = 0;
-    
-    Object.keys(attacker.tags).forEach(enemy_tag => {
-        if(enemy_tag_to_skill_mapping[enemy_tag]) {
-            for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
-                const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
-                add_xp_to_skill({skill, xp_to_add: attacker.xp_value/enemy_count_xp_mod});
-                const {modifier_to_evasion, modifier_to_defense} = skill.get_stat_modifiers();
-                evasion_chance_modifier *= modifier_to_evasion || 1;
-                defense_modifier += modifier_to_defense || 1;
-            }
-        }
-    });
-
-    const enemy_base_damage = attacker.stats.attack;
-
-    let damages_dealt = [];
-
-    let critted = false;
-
-    let partially_blocked = false; //only used for combat info in message log
-
-    for(let i = 0; i < attacker.stats.attack_count; i++) {
-        damages_dealt.push(enemy_base_damage * (1.2 - Math.random() * 0.4)); //basic 20% deviation for damage
-    }
-
-    damages_dealt = damages_dealt.sort((a,b)=>b-a);
-    
-    if(character.getEquipment()["off-hand"]?.offhand_type === "shield") { //HAS SHIELD
-        if(full_stats.block_chance > Math.random()) {//BLOCKED THE ATTACK
-
-            if(!character.getEquipment()["off-hand"].tags["ignore_skill"]){
-                damages_dealt = damages_dealt.map(x => x*(1-character.getTotalSkillLevel("Shield blocking")/100));
-            }
-
-            add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: attacker.xp_value/enemy_count_xp_mod});
-            const blocked = character.getEquipment()["off-hand"].getShieldStrength() * (character.getEquipment()["off-hand"].tags.ignore_skill?1:character.getStats().total_multiplier.block_strength);
-
-            if(blocked > damages_dealt[0]) {
-                log_message("%HeroName% blocked an attack", "hero_blocked");
-                return; //damage fully blocked, nothing more can happen 
-            } else {
-                damages_dealt = damages_dealt.map(val => Math.max(0,val-blocked));
-                partially_blocked = true;
-            }
-         } else {
-            add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: attacker.xp_value/(2*enemy_count_xp_mod)});
-         }
-    } else { // HAS NO SHIELD
-        const hit_chance = get_hit_chance(attacker.stats.dexterity * Math.sqrt(attacker.stats.intuition ?? 1), full_stats.evasion_points*evasion_chance_modifier);
-
-        if(hit_chance < Math.random()) { //EVADED ATTACK
-            const xp_to_add = character.isWearingArmor() ? attacker.xp_value : attacker.xp_value * 1.5;
-            //50% more evasion xp if going without armor
-            add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add/enemy_count_xp_mod});
-            log_message("%HeroName% evaded an attack", "enemy_missed");
-            return; //damage fully evaded, nothing more can happen
-        } else {
-            add_xp_to_skill({skill: skills["Evasion"], xp_to_add: attacker.xp_value/(2*enemy_count_xp_mod)});
+        if(!was_special_combat) {
+            do_quest_event({
+                quest_event_type: "clear",
+                quest_event_target: current_location.id,
+                quest_event_count: 1,
+            });
         }
     }
-
-    total_hits_taken++;
-    if(config.enemy_crit_chance > Math.random()){
-        damages_dealt = damages_dealt.map(val => val*config.enemy_crit_damage);
-        critted = true;
-        total_crits_taken++;
-    }
-
-    if(!character.isWearingArmor()) //no armor so either completely naked or in things with 0 def
-    {
-        add_xp_to_skill({skill: skills["Iron skin"], xp_to_add: attacker.xp_value/enemy_count_xp_mod});
-    } 
-    
-    let {damage_taken, fainted} = character.takeDamage({damage_values: damages_dealt, defense_modifier});
-
-    add_xp_to_skill({skill: skills["Fortitude"], xp_to_add: (damage_taken**0.6)/enemy_count_xp_mod});
-
-    const hit_count_msg = damages_dealt.length > 1?` x${damages_dealt.length}`:"";
-
-    if(critted) {
-        if(partially_blocked) {
-            log_message("%HeroName% partially blocked, was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
-        } 
-        else {
-            log_message("%HeroName% was critically hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked_critically");
-        }
-    } else {
-        if(partially_blocked) {
-            log_message("%HeroName% partially blocked, was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
-        }
-        else {
-            log_message("%HeroName% was hit" + hit_count_msg + " for " + Math.ceil(10*damage_taken)/10 + " dmg", "hero_attacked");
-        }
-    }
-
-    attacker.on_hit(character);
-
-    if(fainted) {
-        kill_player();
-        return;
-    }
-
-    update_displayed_health();
-}
-
-function do_character_combat_action({target, attack_power, target_count}) {
-    const hero_base_damage = attack_power;
-
-    const groupsize_xp_multiplier = current_enemies.length**0.3334;
-
-    let damage_dealt;
-    
-    let critted = false;
-    
-    let hit_chance_modifier = current_enemies.filter(enemy => enemy.is_alive).length**(-1/4); // down to ~ 60% if there's full 8 enemies
-    let damage_modifier = 1;
-    
-    add_xp_to_skill({skill: skills["Combat"], xp_to_add: target.xp_value*groupsize_xp_multiplier/target_count});
-
-    Object.keys(target.tags).forEach(enemy_tag => {
-        if(enemy_tag_to_skill_mapping[enemy_tag]) {
-            for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
-                const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
-                add_xp_to_skill({skill, xp_to_add: target.xp_value*groupsize_xp_multiplier/target_count});
-                const {modifier_to_damage, modifier_to_hit_chance} = skill.get_stat_modifiers();
-                hit_chance_modifier *= modifier_to_hit_chance || 1;
-                damage_modifier *= modifier_to_damage || 1;
-            }
-        }
-    });
-
-    const hit_chance = get_hit_chance(full_stats.attack_points * hit_chance_modifier, target.stats.agility * Math.sqrt(target.stats.intuition ?? 1));
-
-    if(hit_chance > Math.random()) {//hero's attack hits
-
-        total_hits_done++;
-        if(character.getEquipment().weapon != null) {
-            //if has weapon
-            damage_dealt = Math.round(10 * damage_modifier * hero_base_damage * (1.2 - Math.random() * 0.4))/10;
-
-            add_xp_to_skill({skill: skills[weapon_type_to_skill[character.getEquipment().weapon.weapon_type]], xp_to_add: target.xp_value*groupsize_xp_multiplier/target_count});
-
-        } else {
-            //if has no weapon
-            damage_dealt = Math.round(10 * hero_base_damage * (1.2 - Math.random() * 0.4) )/10;
-            add_xp_to_skill({skill: skills['Unarmed'], xp_to_add: target.xp_value*groupsize_xp_multiplier/target_count});
-        }
-        //small randomization by up to 20%, then bonus from skill
-
-        if(game_options.do_enemy_onhit_animations) {
-            const enemy_id = current_enemies.findIndex(enemy => enemy===target);
-            do_enemy_onhit_animation(enemy_id);
-        }
-        if(full_stats.crit_rate > Math.random()) {
-            damage_dealt = Math.round(10*damage_dealt * full_stats.crit_multiplier)/10;
-            critted = true;
-            total_crits_done++;
-            add_xp_to_skill({skill: skills['Perception'], xp_to_add: 1/target_count}); //gains unaffected by damage nor by enemy xp value
-        }
-        else {
-            critted = false;
-        }
-        
-        damage_dealt = Math.ceil(10*Math.max(damage_dealt - Math.max(0,target.stats.defense-full_stats.armor_penetration), damage_dealt*0.1, 1))/10;
-
-        target.stats.health -= damage_dealt;
-        if(damage_dealt > strongest_hit) {
-            strongest_hit = damage_dealt;
-        }
-        if(critted) {
-            log_message(target.name + " was critically hit for " + damage_dealt + " dmg", "enemy_attacked_critically");
-        }
-        else {
-            log_message(target.name + " was hit for " + damage_dealt + " dmg", "enemy_attacked");
-        }
-
-        target.on_damaged(character);
-
-        if(target.stats.health <= 0) {
-            total_kills++;
-            target.stats.health = 0; //to not go negative on displayed value
-            target.on_death(character);
-
-            log_message(target.name + " was defeated", "enemy_defeated");
-
-            //gained xp multiplied by TOTAL size of enemy group raised to 1/3
-            let xp_reward = target.xp_value * groupsize_xp_multiplier;
-            add_xp_to_character(xp_reward/target_count, true);
-
-            let loot = target.get_loot({drop_chance_modifier: 1/target_count**0.6667});
-            if(loot.length > 0) {
-                process_current_loot({loot_list: loot, is_combat: true});
-                loot = loot.map(x => {return {item_key: item_templates[x.item_id].getInventoryKey(), count: x.count}});
-                character.addToInventory(loot);
-            }
-            
-            kill_enemy(target);
-        }
-
-        update_displayed_health_of_enemies();
-    } else {
-        log_message("%HeroName% has missed", "hero_missed");
-    }
+    update_location_kill_count(current_location);
+    set_new_combat();
 }
 
 /**
@@ -1916,7 +1496,7 @@ function kill_enemy(target, do_quest_events = true) {
 
 function kill_player({is_combat = true} = {}) {
     if(is_combat) {
-        total_deaths++;
+        game_stats.total_deaths++;
         log_message("%HeroName% has lost consciousness", "hero_defeat");
 
         update_displayed_health();
@@ -1932,6 +1512,8 @@ function kill_player({is_combat = true} = {}) {
 }
 
 function use_stamina({stamina_to_use = 1, skip_persistence_xp_for_stance_change = false}) {
+
+    //todo: move to hero?
     
     full_stats.stamina -= stamina_to_use/(full_stats.stamina_efficiency || 1);
 
@@ -2458,13 +2040,13 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             Object.keys(rewards.locks.textlines).forEach(dialogue_key => {
                 const dialogue = dialogues[dialogue_key];
                 for(let i = 0; i < rewards.locks.textlines[dialogue_key].length; i++) {
-                    dialogue.textlines[rewards.locks.textlines[dialogue_key][i]].setFinished();
+                    dialogue.textlines[rewards.locks.textlines[dialogue_key][i]].setLocked();
                 }
             });
         }
         if(rewards.locks.npcs) {
             for(let i = 0; i < rewards.locks.npcs.length; i++) {
-                NPCRegistry.get(rewards.locks.npcs[i]).setFinished();
+                NPCRegistry.get(rewards.locks.npcs[i]).setLocked();
                 if(current_location.npcs.includes(rewards.locks.npcs[i])) {
                     is_current_location_reload_needed = true;
                 }
@@ -2610,9 +2192,9 @@ function lock_location({location, challenge_self_lock = false}) {
         }
     }
 
-    if(!location.isFinished()) {
+    if(!location.isLocked()) {
         was_locked = true;
-        location.setFinished();
+        location.setLocked();
     }
     if(last_combat_location === location.id) {
         last_combat_location = null;
@@ -2644,10 +2226,13 @@ function remove_location_from_favourites({location_id, update_choices = true}) {
     }
 }
 
-function clear_enemies() {
-    current_enemies = null;
-    for(let i = 0; i < 7; i++) {
-        remove_enemy_onhit_animation(i);
+function end_combat() {
+    if(current_combat) {
+        for(let i = 0; i < current_combat.defenders.length; i++) {
+            remove_defender_onhit_animation(i);
+        }
+        current_combat.reset();
+        current_combat = null;
     }
 }
 
@@ -2723,8 +2308,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
 
                 xp_to_add = current_gained_xp + xp_per_craft*(success+fail/4);
 
-                total_crafting_attempts += attempted_crafting_ammount;
-                total_crafting_successes += successful_crafting_ammount;
+                game_stats.total_crafting_attempts += attempted_crafting_ammount;
+                game_stats.total_crafting_successes += successful_crafting_ammount;
 
                 //remove used materials
                 for (let i = 0; i < selected_recipe.materials.length; i++) {
@@ -2858,8 +2443,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                             needed_xp = recipe_skill.getTotalXPToNextLvl() - recipe_skill.getTotalXP();
                         }
                     }
-                    total_crafting_attempts+=ammount_that_can_be_crafted;
-                    total_crafting_successes+=ammount_that_can_be_crafted;
+                    game_stats.total_crafting_attempts+=ammount_that_can_be_crafted;
+                    game_stats.total_crafting_successes+=ammount_that_can_be_crafted;
 
                     if(crafted_count > 0) {
                         const qualities = Object.keys(crafted_items).map(x => Number(x)).sort((a,b)=>b-a);
@@ -2974,8 +2559,8 @@ function use_recipe(target, ammount_wanted_to_craft = 1) {
                 }
             }
 
-            total_crafting_attempts+=ammount_that_can_be_crafted;
-            total_crafting_successes+=ammount_that_can_be_crafted;
+            game_stats.total_crafting_attempts+=ammount_that_can_be_crafted;
+            game_stats.total_crafting_successes+=ammount_that_can_be_crafted;
 
             if(crafted_count > 0) {
                 const qualities = Object.keys(crafted_items).map(x => Number(x)).sort((a,b)=>b-a);
@@ -3094,9 +2679,9 @@ function switch_action_box_content() {
 
 function character_equip_item(item_key) {
     character.equipItemFromInventory(item_key);
-    if(current_enemies) {
+    if(current_combat) {
         reset_combat_loops(true);
-        update_displayed_enemies();
+        update_defender_stats();
     } else if(current_location.tags.safe_zone) {
         //update resource gathering tooltips in case there's a skill lvl bonus change
         //done on any change as of now, but could be slightly optimized
@@ -3110,9 +2695,8 @@ function character_equip_item(item_key) {
 
 function character_unequip_item(item_slot) {
     character.unequipItem(item_slot);
-    if(current_enemies) {
+    if(current_combat) {
         reset_combat_loops(true);
-        update_displayed_enemies();
     }
 }
 
@@ -3384,17 +2968,17 @@ function create_save() {
         save_data["current time"] = current_game_time;
         save_data["language"] = language;
         save_data.saved_at = get_date();
-        save_data.total_playtime = total_playtime;
-        save_data.total_deaths = total_deaths;
-        save_data.total_crafting_attempts = total_crafting_attempts;
-        save_data.total_crafting_successes = total_crafting_successes;
-        save_data.total_kills = total_kills;
-        save_data.total_crits_done = total_crits_done;
-        save_data.total_crits_taken = total_crits_taken;
-        save_data.total_hits_done = total_hits_done;
-        save_data.total_hits_taken = total_hits_taken;
-        save_data.strongest_hit = strongest_hit;
-        save_data.gathered_materials = gathered_materials;
+        save_data.total_playtime = game_stats.total_playtime;
+        save_data.total_deaths = game_stats.total_deaths;
+        save_data.total_crafting_attempts = game_stats.total_crafting_attempts;
+        save_data.total_crafting_successes = game_stats.total_crafting_successes;
+        save_data.total_kills = game_stats.total_kills;
+        save_data.total_crits_done = game_stats.total_crits_done;
+        save_data.total_crits_taken = game_stats.total_crits_taken;
+        save_data.total_hits_done = game_stats.total_hits_done;
+        save_data.total_hits_taken = game_stats.total_hits_taken;
+        save_data.strongest_hit = game_stats.strongest_hit;
+        save_data.gathered_materials = game_stats.gathered_materials;
         save_data.global_flags = global_flags;
         save_data.last_rewarded_export = last_rewarded_export || 0;
         save_data["character"] = {
@@ -3696,17 +3280,17 @@ function load(save_data) {
         //for some edge cases like people having wrong year in their system and then fixing it
         last_rewarded_export = save_data.last_rewarded_export < Date.now() ? (save_data.last_rewarded_export || last_rewarded_export) : Date.now();
 
-        total_playtime = save_data.total_playtime || 0;
-        total_deaths = save_data.total_deaths || 0;
-        total_crafting_attempts = save_data.total_crafting_attempts || 0;
-        total_crafting_successes = save_data.total_crafting_successes || 0;
-        total_kills = save_data.total_kills || 0;
-        total_crits_done = save_data.total_crits_done || 0;
-        total_crits_taken = save_data.total_crits_taken || 0;
-        total_hits_done = save_data.total_hits_done || 0;
-        total_hits_taken = save_data.total_hits_taken || 0;
-        strongest_hit = save_data.strongest_hit || 0;
-        gathered_materials = save_data.gathered_materials || {};
+        game_stats.total_playtime = save_data.total_playtime || 0;
+        game_stats.total_deaths = save_data.total_deaths || 0;
+        game_stats.total_crafting_attempts = save_data.total_crafting_attempts || 0;
+        game_stats.total_crafting_successes = save_data.total_crafting_successes || 0;
+        game_stats.total_kills = save_data.total_kills || 0;
+        game_stats.total_crits_done = save_data.total_crits_done || 0;
+        game_stats.total_crits_taken = save_data.total_crits_taken || 0;
+        game_stats.total_hits_done = save_data.total_hits_done || 0;
+        game_stats.total_hits_taken = save_data.total_hits_taken || 0;
+        game_stats.strongest_hit = save_data.strongest_hit || 0;
+        game_stats.gathered_materials = save_data.gathered_materials || {};
 
         name_field.value = save_data.character.name;
         character.name = save_data.character.name;
@@ -5760,7 +5344,7 @@ function update() {
 
                                 items.push({item_id: gained_resources[i].name, quality: quality, count: count});
 
-                                gathered_materials[gained_resources[i].name] = (gathered_materials[gained_resources[i].name] || 0) + count;
+                                game_stats.gathered_materials[gained_resources[i].name] = (game_stats.gathered_materials[gained_resources[i].name] || 0) + count;
                             }
                         }
 
@@ -5931,7 +5515,7 @@ function update() {
             }
         }
 
-        total_playtime += 1/tickrate;
+        game_stats.total_playtime += 1/tickrate;
         update();
     }, 1000/tickrate - time_adjustment);
     //uses time_adjustment based on time_variance_accumulator for more precise overall stabilization
@@ -6011,8 +5595,6 @@ window.use_item = use_item;
 window.change_consumable_favourite_status = change_consumable_favourite_status;
 window.change_item_favourite_status = change_item_favourite_status;
 window.update_fav_display = update_fav_display;
-
-window.do_enemy_combat_action = do_enemy_combat_action;
 
 window.sort_displayed_inventory = sort_displayed_inventory;
 window.update_displayed_character_inventory = update_displayed_character_inventory;
@@ -6223,7 +5805,8 @@ if(is_on_dev()) {
     );
 }
 export { 
-    current_enemies,
+    current_enemies, 
+    current_combat,
     current_location,
     can_work, active_effects,
     enough_time_for_earnings, add_xp_to_skill,
@@ -6243,5 +5826,8 @@ export {
     language,
     add_active_effect,
     favourite_items, remove_item_from_favourites,
-    run, 
+    run,
+    tickrate,
+    finish_combat_round,
+    game_stats,
 };

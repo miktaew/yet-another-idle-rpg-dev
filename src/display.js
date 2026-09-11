@@ -37,6 +37,7 @@ import { playable_races } from "./races.js";
 import { config } from "./config.js";
 import { height_stats } from "./models/person.js";
 import NPCRegistry from "./data/npcs.js";
+import { fill_defender_divs } from "./ui/combat_display.js";
 let activity_anim; //for the activity and gameAction animation interval
 
 let location_choice_divs = {}; //for dropdowns
@@ -77,38 +78,6 @@ const enemies_div = document.getElementById("enemies_div");
 const enemy_count_div = document.getElementById("enemy_count_div");
 const clear_count_div = document.getElementById("clear_count_div");
 
-//enemy onhit animation
-const onhitAnimation = [
-    {
-        "backgroundColor": "rgba(0, 0, 0, 0)",
-        "rotate": "0deg",
-    },
-    {
-        "backgroundColor": "rgba(255, 0, 0, 0.2)",
-        "rotate": "0.3deg",
-    }
-]
-const onhitAnimationTiming = {
-    duration: 100,
-	iterations: 2,
-    direction: "alternate",
-}
-
-const onstartAnimation = [
-    {
-        "opacity": "0.2",
-        "backgroundColor": "rgba(0, 124, 17, 0.2)",
-    },
-    {
-        "opacity": "1",
-    },
-]
-const onstartAnimationTiming = {
-    duration: 800,
-	iterations: 1,
-}
-
-const enemy_animations = {};
 
 //character health display
 const current_health_value_div = document.getElementById("character_health_value");
@@ -198,8 +167,6 @@ const other_combat_divs = {attack_points: document.getElementById("hit_chance_sl
                           };
 
 let effect_divs = {};
-
-const character_attack_bar = document.getElementById("character_attack_bar");
 
 //equipment slots
 const equipment_slots_divs = {head: document.getElementById("head_slot"), torso: document.getElementById("torso_slot"),
@@ -502,7 +469,7 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         });
     }
 
-    if (item.component_stats) {
+    if(item.component_stats) {
         if(item.component_tier) {
             item_tooltip += `<br><br>Component tier: ${item.component_tier}`;
         }
@@ -1965,11 +1932,13 @@ function update_displayed_book(book_id) {
 
 /**
  * sets visibility of divs for enemies (based on how many there are in current combat),
- * and enemies' AP / EP
+ * and enemies' stats
  * 
  * called when new enemies get loaded and when player stats change
  */
 function update_displayed_enemies() {
+    fill_defender_divs({attackers: [character], defenders: current_enemies, ui_slot: enemies_div});
+    return;
     const full_stats = character.getFullStats();
 
     for(let i = 0; i < 8; i++) { //go to max enemy count
@@ -2023,27 +1992,6 @@ function update_displayed_enemies() {
         } else {
             enemies_div.children[i].children[0].style.display = "none"; //just hide it
         }     
-    }
-}
-
-/**
- * updates displayed health and healthbars of enemies
- */
-function update_displayed_health_of_enemies() {
-    for(let i = 0; i < current_enemies.length; i++) {
-        if(current_enemies[i].is_alive) {
-            enemies_div.children[i].children[0].style.filter = "brightness(100%)";
-        } else {
-            enemies_div.children[i].children[0].style.filter = "brightness(30%)";
-            update_displayed_enemies();
-        }
-
-        //update size of health bar
-        enemies_div.children[i].children[0].children[2].children[0].children[0].style.width = 
-            Math.max(0, 100*current_enemies[i].stats.health/current_enemies[i].stats.max_health) + "%";
-
-            enemies_div.children[i].children[0].children[2].children[1].innerText = `${Math.ceil(current_enemies[i].stats.health)}/${Math.ceil(current_enemies[i].stats.max_health)} hp`;
-
     }
 }
 
@@ -4668,8 +4616,14 @@ function update_displayed_skill_xp_gain(skill) {
     if(!skill_bar_divs[skill.category] || !skill_bar_divs[skill.category][skill.skill_id]){
         return;
     }
-    const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*character.getSkillXPGain(skill.skill_id))/100 || 1;
-    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], `XP gain: x${xp_gain}<br><span>XP cost scaling: x${skill.xp_scaling}</span>`);
+    const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*character.getSkillXPGain(skill.skill_id))/100 ?? 1;
+    let html_content = `XP gain: x${xp_gain}<br>`;
+    if(skill.can_level) {
+        html_content += "<span>XP cost scaling: x${skill.xp_scaling}</span>"
+    } else {
+        html_content += "<br>This skill cannot receive xp and levels can only be gained from temporary sources."
+    }
+    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], html_content);
 }
 
 function update_all_displayed_skills_xp_gain(){
@@ -5202,30 +5156,6 @@ function clear_booklist() {
 function clear_skill_list(){
     clear_HTML_content(skill_list);
     //remove skill bars from display
-}
-
-function update_enemy_attack_bar(enemy_id, num) {
-    enemies_div.children[enemy_id].querySelector(".enemy_attack_bar").style.width = `${Math.min(num*100,100)}%`;
-}
-
-function do_enemy_onhit_animation(enemy_id) {
-    const enemy_div = enemies_div.children[enemy_id];
-    enemy_animations[enemy_id]?.cancel(); //almost certainly unnecessary
-    enemy_animations[enemy_id] = enemy_div.animate(onhitAnimation, onhitAnimationTiming);
-}
-
-function remove_enemy_onhit_animation(enemy_id) {
-    enemy_animations[enemy_id]?.cancel();
-}
-
-function do_enemy_onstart_animation(enemy_id) {
-    const enemy_div = enemies_div.children[enemy_id];
-    enemy_animations[enemy_id]?.cancel(); //almost certainly unnecessary
-    enemy_animations[enemy_id] =  enemy_div.animate(onstartAnimation, onstartAnimationTiming);
-}
-
-function update_character_attack_bar(num) {
-    character_attack_bar.style.width = `${Math.min(num*100,100)}%`;
 }
 
 /**
@@ -5792,7 +5722,7 @@ export {
     update_displayed_money,
     log_message,
     clear_action_div,
-    update_displayed_enemies, update_displayed_health_of_enemies, update_displayed_normal_location, update_displayed_combat_location,
+    update_displayed_enemies, update_displayed_normal_location, update_displayed_combat_location,
     log_loot,
     update_displayed_equipment, update_displayed_health, update_displayed_stamina, update_displayed_stats, update_displayed_effects, update_displayed_effect_durations,
     capitalize_first_letter,
@@ -5808,10 +5738,7 @@ export {
     clear_skill_bars,
     update_displayed_ongoing_activity,
     clear_skill_list,
-    update_character_attack_bar,
     clear_message_log,
-    update_enemy_attack_bar, 
-    do_enemy_onhit_animation, remove_enemy_onhit_animation, do_enemy_onstart_animation,
     remove_fast_travel_choice,
     create_new_bestiary_entry, update_bestiary_entry, update_bestiary_entry_killcount, clear_bestiary, update_bestiary_entry_tooltip,
     start_reading_display,
@@ -5850,5 +5777,5 @@ export {
     set_light_based_background_color,
     unassign_dynamic_loot_message,
     fill_character_bio, create_race_tooltip, create_height_tooltip,
-    insert_HTML
+    insert_HTML, clear_HTML_content
 }

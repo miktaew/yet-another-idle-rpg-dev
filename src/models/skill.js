@@ -33,6 +33,7 @@ class Skill {
                   parent_multiplier = 1.1,
                   is_unlocked = true,
                   xp_gain_conditions = {},
+                  can_level = true,
                 }) 
     {
         if(skill_id === "all" || skill_id === "hero" || skill_id === "all_skill") {
@@ -87,6 +88,9 @@ class Skill {
         //refer to how it's used in "Pest killer"/"Giant slayer"
 
         this.parent_multiplier = parent_multiplier; //used only in parent skills, ignored otherwise; multiplier to xp per level of difference with parent
+
+        this.can_level = can_level; 
+        //for special skills that are not meant to be levelable; multiplies all xp gains by 0;
     }
 
     getAvailabilityComponent() {
@@ -172,6 +176,11 @@ class Skill {
         if(!skillXP) {
             skillXP = this.getDefaultSkillXP();
         }
+
+        if(!this.can_level) {
+            xp_to_add = 0;
+        }
+
         if(xp_to_add == 0 || !this.isUnlocked()) {
             return {};
         }

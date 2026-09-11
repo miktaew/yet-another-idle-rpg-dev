@@ -570,15 +570,16 @@ class Equippable extends Item {
                         } else {
                             if(rarity_multipliers[this.getRarity(quality)] >= 2) {
                                 //penalty is removed
-                                delete stats[stat].multiplier;
+                                stats[stat].multiplier = 1;
                             } else {
                                 //penalty is reduced
                                 stats[stat].multiplier = Math.round(100 * (stats[stat].multiplier + (1 - stats[stat].multiplier) * rarity_multipliers[this.getRarity(quality)]/2))/100;
                                 //e.g. 90% multi on eq with 1.6 rarity multi should result in 90% + (10%*1.6/2 = 8%) = 98%
+                                
+                                /*
                                 if(stats[stat].multiplier == 1) {
-                                    //can happen with small enough penalties
                                     delete stats[stat].multiplier;
-                                }
+                                }*/
                             }
                         }
                     } else {

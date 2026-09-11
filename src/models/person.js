@@ -53,6 +53,7 @@ class Person{
     constructor(data){
         this.id = data.id || data.name;
         this.name = data.name || "";
+        this.is_alive = true;
         this.getName = data.getName || function(){return this.name};
         this.#inventory = new InventoryComponent(data.inventory);
         this.#equipment = new EquipmentComponent(data.equipment);
@@ -63,6 +64,10 @@ class Person{
 
         this.xp_multiplier = 1;
         this.skill_xp_multiplier = 1;
+
+        this.on_hit = data.on_hit;
+        this.on_damaged = data.on_damaged;
+        this.on_death = data.on_death;
     }
 
     getInventoryComponent() {
@@ -71,6 +76,10 @@ class Person{
 
     getItems() {
         return this.getInventoryComponent().getItems();
+    }
+
+    hasShield() {
+        return this.getEquipment()["off-hand"]?.offhand_type === "shield";
     }
 
     /**
@@ -444,6 +453,9 @@ class Person{
      * @returns [actual damage taken; Boolean if target should faint] 
      */
     takeDamage({damage_values, can_faint = true, give_skill_xp = true, defense_modifier = 0}) {
+
+        //TODO: move this to levelable, only make a shortcut in Person?
+
         /*
         TODO:
                 - damage types: "physical", "elemental", "magic"

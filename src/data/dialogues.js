@@ -1279,8 +1279,8 @@ const dialogues = {};
                     //traders: [{trader: "swampland trader 2"}], //no longer exists, instead items unlocked in trader by finishing the quest
                     crafting: ["Swampland tribe"],
                     locks: {
-                        traders: ["swampland trader"],
-                    }
+                        //traders: ["swampland trader"],
+                    },
                 },
                 locks_lines: ["swampchief accept"],
             }),

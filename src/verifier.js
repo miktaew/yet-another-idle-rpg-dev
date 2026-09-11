@@ -473,6 +473,32 @@ function Verify_Game_Objects() {
     return results[1] == 0;
 }
 
+//valid reward keys for additional check
+//todo: move to verifier
+const reward_keys = [
+    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
+    "housing", "items", "locations", "locks", "messages", "money", "move_to", "npcs",
+    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
+    "textlines", "traders", "xp",
+];
+const special_keys = ["required_clear_count"];
+const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];
+
+function warn_about_unread_reward_keys(rewards, source_type, source_name) {
+    const where = source_name ? ` (${source_type} "${source_name}")` : "";
+    const valid_keys = [...reward_keys, ...special_keys];
+    for(const key of Object.keys(rewards)) {
+        if(!valid_keys.includes(key)) {
+            console.warn(`Reward key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${valid_keys.join(", ")}.`);
+        }
+    }
+    for(const key of Object.keys(rewards.locks || {})) {
+        if(!lock_keys.includes(key)) {
+            console.warn(`Lock key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${lock_keys.join(", ")}.`);
+        }
+    }
+}
+
 function verify_rewards(rewards, source_type, source_key, subsource_key) {
     //todo
     //doesn't yet cover: actions, activities, global activities, locking, quest unlocks, traders, money, reputation, items, flags
@@ -526,6 +552,16 @@ function verify_rewards(rewards, source_type, source_key, subsource_key) {
                 }
                 if(quests[rewards[reward_type][i].quest_id].quest_tasks.length < rewards[reward_type][i].task_index) {
                     console.error(create_reward_error_message(source_type, source_key, subsource_key) + `too high task index for progressing quest '${rewards[reward_type][i].quest_id}'`);
+                    is_correct = false;
+                }
+            }
+        } else if(![...reward_keys, ...special_keys].includes(reward_type)) {
+            console.error(create_reward_error_message(source_type, source_key, subsource_key) + "unsupported type of reward: '"+reward_type+"'");
+            is_correct = false;
+        } else if(reward_type === "locks") {
+            for(const key of Object.keys(rewards.locks || {})) {
+                if(!lock_keys.includes(key)) {
+                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + "unsupported type of reward: '"+key+"'");
                     is_correct = false;
                 }
             }

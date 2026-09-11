@@ -96,9 +96,9 @@ const skill_category_crafting = "Crafting";
                                     },
                                     
                                 },
-                                get_stat_modifiers: () => {
+                                get_stat_modifiers: (target) => {
                                     return {
-                                       modifier_to_hit_chance: character.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Pest killer"})
+                                       modifier_to_hit_chance: (target || character).getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Pest killer"})
                                     };
                                 }
                             });    
@@ -111,9 +111,9 @@ const skill_category_crafting = "Crafting";
                                 get_effect_description: ()=> {
                                     return `Multiplies EP against large-type enemies by ${Math.round(character.getTotalSkillCoefficient({skill_id:"Giant slayer",scaling_type:"multiplicative"})*1000)/1000}`;
                                 },
-                                get_stat_modifiers: () => {
+                                get_stat_modifiers: (target) => {
                                     return {
-                                       modifier_to_evasion: character.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Giant slayer"}) 
+                                       modifier_to_evasion: (target || character).getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id: "Giant slayer"}) 
                                     };
                                 }
                             });

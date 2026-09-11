@@ -14,6 +14,7 @@ import { Person } from "./person.js";
 class Hero extends Person {
     constructor(data) {
         super(data);
+        
         this.titles = {};
         this.reputation = { //effects would go up to 1000?
                 Village: 0,
@@ -29,6 +30,8 @@ class Hero extends Person {
         equipments["person"][this.id] = this.getEquipmentComponent();
         levels["person"][this.id] = this.getLevelableComponent();
         bios[this.id] = this.getBioComponent();
+
+        this.tags = data.tags;
 
         this.is_inventory_viewable = true; //just so code knows whether certain items in inventory need to have their displays updated in certain situations
     }
