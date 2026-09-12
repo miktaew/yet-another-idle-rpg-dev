@@ -4,7 +4,7 @@
 class StatHaver {
     constructor(data) {
         this.base_stats = {
-            max_health: data.max_health || 60,
+            max_health: data.max_health || data.health || 60,
             health: data.health || 60,
             health_regeneration_flat: data.health_regeneration_flat ?? 0, //in combat
             health_regeneration_percent: data.health_regeneration_percent ?? 0, //in combat
@@ -14,7 +14,7 @@ class StatHaver {
             stamina: data.stamina ?? 40,
             stamina_regeneration_flat: data.stamina_regeneration_flat ?? 0, //in combat
             stamina_regeneration_percent: data.stamina_regeneration_percent ?? 0, //in combat
-            stamina_efficiency: data.stamina_efficiency || 0,
+            stamina_efficiency: data.stamina_efficiency || 1,
             max_mana: data.max_mana ?? 0, //currently useless
             mana: data.mana ?? 0, //currently useless
             mana_regeneration_flat: data.mana_regeneration_flat ?? 0, //in combat //currently useless

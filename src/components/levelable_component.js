@@ -106,7 +106,7 @@ class LevelableComponent extends StatHaver {
         return this.skill_progress[skill_id];
     }
 
-    addXPToSkill({skill, xp_to_add, xp_multiplier, should_info, use_bonus, add_to_parent, cap_gained_xp}) {
+    addXPToSkill({skill, xp_to_add, xp_multiplier, should_info, use_bonus, add_to_parent, cap_gained_xp, owner}) {
         this.fillSkillXPObject({skill_id: skill.skill_id})
         
         let leveled = false;
@@ -114,10 +114,10 @@ class LevelableComponent extends StatHaver {
         if(xp_to_add == 0) {
             return leveled;
         } else if(xp_to_add < 0) {
-            console.error(`Tried to add negative xp to skill ${skill.skill_id}, for ${this.name}`);
+            console.error(`Tried to add negative xp to skill ${skill.skill_id}, for ${owner.name}`);
             return leveled;
         } else if(isNaN(xp_to_add)) {
-            console.error(`Tried to add NaN xp to skill ${skill.skill_id}, for ${this.name}`);
+            console.error(`Tried to add NaN xp to skill ${skill.skill_id}, for ${owner.name}`);
             return leveled;
         }
 

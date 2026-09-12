@@ -124,6 +124,39 @@ class BaseLocation {
     getAvailabilityComponent() {
         return this.#availability;
     }
+
+    //calculates total penalty with and without hero skills
+    get_total_effect() {
+        const effects = {multipliers: {}, flats: {}};
+        const hero_effects = {multipliers: {}, flats: {}};
+        
+        //iterate over types of location
+        for(let i = 0; i < this.types.length; i++) {
+            const type = location_types[this.types[i].type].stages[this.types[i].stage];
+
+            if(!type.related_skill || !type.effects) { 
+                continue; 
+            }
+
+            //iterate over effects each type has 
+
+            Object.keys(type.effects).forEach(stat => { 
+                if(type.effects[stat].multiplier) {
+                    effects.multipliers[stat] = (effects.multipliers[stat] || 1) * type.effects[stat].multiplier;
+                
+                    hero_effects.multipliers[stat] = (hero_effects.multipliers[stat] || 1) * get_location_type_penalty(this.types[i].type, this.types[i].stage, stat, "multiplier");
+                }
+
+                if(type.effects[stat].flat) {
+                    effects.flats[stat] = (effects.flats[stat] || 0) + type.effects[stat].flat;
+                
+                    hero_effects.flats[stat] = (hero_effects.flats[stat] || 0) + get_location_type_penalty(this.types[i].type, this.types[i].stage, stat, "flat");
+                }
+            });
+        }
+
+        return {base_penalty: effects, hero_penalty: hero_effects};
+    }
 }
 
 class SafeLocation extends BaseLocation {
@@ -235,7 +268,9 @@ class CombatZone extends BaseLocation {
         this.is_enemy_groups_list_random = is_enemy_groups_list_random; //only used when enemy_groups_list is present; false will result in enemy groups being used in the provided order
         this.predefined_lineup_on_nth_group = predefined_lineup_on_nth_group; //if not 0, every nth fight will be from enemy_groups_list instead of randomized from enemies_list
         this.enemies_list = enemies_list; //possible enemies (to be used if there's no enemy_groups_list or if it exists but is to only be used every n fights), names only
-        this.enemy_group_size = enemy_group_size; // [min, max], used only if enemy_groups_list is not provided
+        this.enemy_group_size = enemy_group_size; // [min, max], used only if enemy_groups_list is not provided; 
+        //                                           up to 8 enemies should fit in display without triggering a scroll bar,
+        //                                           but actual number that can be handled is limited solely by game performance
         if(!this.enemy_groups_list){
             if(this.enemy_group_size[0] < 1) {
                 this.enemy_group_size[0] = 1;
@@ -348,48 +383,12 @@ class CombatZone extends BaseLocation {
             } else {
                 newEnemy = new Enemy({...enemy, stats: {...enemy.stats, attack_count: enemy.stats.attack_count || 1}});
             }
-            newEnemy.is_alive = true;
+            newEnemy.is_alive = true
+            newEnemy.init();
 
             enemies.push(newEnemy);
         }
         return enemies;
-    }
-
-    //calculates total penalty with and without hero skills
-    //launches on every combat action (which is probably suboptimal as it could instead be stored and recalculated only on skill change)
-    get_total_effect() {
-        const effects = {multipliers: {}, flats: {}};
-        const hero_effects = {multipliers: {}, flats: {}};
-        
-        //iterate over types of location
-        for(let i = 0; i < this.types.length; i++) {
-            const type = location_types[this.types[i].type].stages[this.types[i].stage];
-
-            if(!type.related_skill || !type.effects) { 
-                continue; 
-            }
-
-            //iterate over effects each type has 
-
-            Object.keys(type.effects).forEach(stat => { 
-                if(type.effects[stat].multiplier) {
-                    effects.multipliers[stat] = (effects.multipliers[stat] || 1) * type.effects[stat].multiplier;
-                
-                    hero_effects.multipliers[stat] = (hero_effects.multipliers[stat] || 1) * get_location_type_penalty(this.types[i].type, this.types[i].stage, stat, "multiplier");
-                }
-
-                if(type.effects[stat].flat) {
-                    effects.flats[stat] = (effects.flats[stat] || 0) + type.effects[stat].flat;
-                
-                    hero_effects.flats[stat] = (hero_effects.flats[stat] || 0) + get_location_type_penalty(this.types[i].type, this.types[i].stage, stat, "flat");
-                }
-
-            })
-        }
-
-        
-
-        return {base_penalty: effects, hero_penalty: hero_effects};
     }
 }
 

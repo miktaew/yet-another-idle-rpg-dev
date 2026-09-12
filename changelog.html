@@ -68,10 +68,6 @@
     - added a hero creation page; includes age, height, and race;
         they are mostly cosmetic and used only for conditions (mostly to allow fluff with some unique dialogues), 
         but additional effects from height and race are supported and can be enabled in config.js, though they are very far from being balanced
-    
-    - restructured a lot of code; dropped some inheritance in favour of composition;
-        replaced all simple is_unlocked/is_finished values with Availability component, technically allowing display/start conditions on anything with them
-        (though it's not actually supported in many cases, as it wouldn't even make sense there)
 
     - added a parent skill for resource gathering skill, with lower bonus that stance/weapon parent skills
     - 'Infested woods' location is now marked as 'narrow'
@@ -82,6 +78,11 @@
     - conditions for items to appear in traders are now supported, can be applied both directly to each trade item and/or to groups of them 
         (for less copypasting and minor optimization)
 
+    - added Hits Counter https://hitscounter.dev
+
+    - restructured a lot of code; dropped some inheritance in favour of composition;
+        replaced all simple is_unlocked/is_finished values with Availability component, technically allowing display/start conditions on anything with them
+        (though it's not actually supported in many cases, as it wouldn't even make sense there)
     - conditions objects can now include:
         - having at least / at most a certain number of clears of a specified location
         - having finished / not-finished specified quests
@@ -89,18 +90,11 @@
     - parent skills can now have custom multipliers to child skill xp gains per level of difference, instead of static *1.1
     - added another locking-related property; now elements can be marked as locked (by a differing choice) instead of previous lack of distinction between this and being completed
     - made it possible to make skills incapable of gaining xp, limiting them to levels gained from temporary sources
+    - rewrote combat to be fully symmetrical (with some player-related exceptions) and to allow any fighters on either side (including fights without player)
 
-    - added Hits Counter https://hitscounter.dev
-
+    - non-combat locations now properly support location types
     - fixed minor display issue where background effects would not cover entire game window upon scrolling horizontally
     - tweaked display of crafting quality caps, it should now match actual caps (including the quality rounding)
-    - fixed a small issue on firefox, where if playing zoomed out, some scrollbars would cover content (due to firefox scrollbars being unaffected by zoom level)
-        - some places might have been missed
-
-    courtesy of Kuroiteiken, with some additional tweaks from your favourite cat (Mik):
-        * equipment tooltips now show comparison between hovered vs equipped
-        * some useful dev functions can now be accessed from browser console (if dev mode is enabled in config)
-        * tweaks and a lot of bugfixes
     - fixed a small issue on firefox, where if playing zoomed out, some scrollbars would cover content (due to firefox scrollbars being unaffected by zoom level)
         - some places might have been missed
 
@@ -111,7 +105,8 @@
     
     courtesy of OnonokiNonon:
         * new activities in Eastern Mill
-        * tool crafting
+        * new fishing spots
+        * tool crafting; a few other new recipes
 </pre></div>
 <button type="button" class="collapsible">v0.5.5 - The Boring Stuff [testing release: 26/05/2026 / main release: 21.06.2026]</button>
 <div class="content"><pre>
