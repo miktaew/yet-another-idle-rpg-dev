@@ -129,6 +129,10 @@ function create_defender_div(i) {
     return attacker_div;
 }
 
+function update_attacker_stats() {
+    //todo
+}
+
 function update_defender_stats() {
     const full_stats = current_combat.attackers[0].getFullStats();
 
@@ -214,6 +218,19 @@ function update_displayed_health_of_defenders() {
     }
 }
 
+function update_displayed_health_of_fighter({fighter_index, is_attacker}) {
+    const fighter = is_attacker?current_combat.attackers[fighter_index] : current_combat.defenders[fighter_index];
+    const fighter_div = is_attacker?current_combat.attacker_ui_slot.children[fighter_index] : current_combat.defenders_ui_slot.children[fighter_index];
+
+    if(fighter.is_alive) {
+        fighter_div.children[0].style.filter = "brightness(100%)";
+    } else {
+        fighter_div.children[0].style.filter = "brightness(30%)";
+        update_defender_stats();
+        update_attacker_stats();
+    }
+}
+
 function update_attack_bar({fighter_index, is_attacker, progress}) {
     (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot)
         .children[fighter_index].querySelector("[data-attack_bar]").style.width = `${Math.min(progress*100,100)}%`;
@@ -243,4 +260,5 @@ export {
     update_defender_stats,
     update_attack_bar,
     clear_combat_divs,
+    update_displayed_health_of_fighter,
 }

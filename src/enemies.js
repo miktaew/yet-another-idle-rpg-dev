@@ -45,9 +45,9 @@ class Enemy {
         size = "small",
         add_to_bestiary = true,
         tags = [],
-        on_hit = (character) => { },
-        on_damaged = (character) => { },
-        on_death = (character) => { },
+        on_hit = (attacker) => { },
+        on_damaged = (target) => { },
+        on_death = (attacker) => { },
     }) {
                     
         this.name = name;
