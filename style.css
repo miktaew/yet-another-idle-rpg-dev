@@ -2158,7 +2158,7 @@ i {
 			width: 100%;
 		}
 				
-				.enemy_name, .enemy_stats, #attack_stats  {
+				.enemy_name, .enemy_stats, .attack_stats  {
 					height: 18px;
 					width: 100%;
 					overflow: hidden;
@@ -2251,11 +2251,11 @@ i {
 				display: block;
 			}
 
-		#attacker_attack_bar {
+		.attacker_attack_bar {
 			background-color: rgb(156, 0, 156);
 			height: 20px;
 		}			
-		#attack_stats {
+		.attack_stats {
 			text-align: left;
 		}		
 

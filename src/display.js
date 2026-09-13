@@ -4,7 +4,7 @@ import { current_trader, to_buy, to_sell } from "./trade.js";
 import { skills } from "./data/skills.js";
 import { get_next_skill_milestone, get_unlocked_skill_rewards } from "./models/skill.js";
 import { character, cold_status_temperatures, lowest_tolerable_temperature } from "./data/character.js";
-import { current_enemies, game_options, 
+import { game_options, 
     can_work, current_location, 
     active_effects, enough_time_for_earnings, 
     get_current_book, last_location_with_bed, 
@@ -2020,71 +2020,6 @@ function update_displayed_book(book_id) {
     document.getElementById("action_progress_bar").style.width = 385*percent+"px";
 }
 
-/**
- * sets visibility of divs for enemies (based on how many there are in current combat),
- * and enemies' stats
- * 
- * called when new enemies get loaded and when player stats change
- */
-function update_displayed_enemies() {
-    fill_defender_divs({attackers: [character], defenders: current_enemies, ui_slot: enemies_div});
-    return;
-    const full_stats = character.getFullStats();
-
-    for(let i = 0; i < 8; i++) { //go to max enemy count
-        if(i < current_enemies.length) {
-            enemies_div.children[i].children[0].style.display = null;
-            set_HTML(enemies_div.children[i].children[0].children[0], current_enemies[i].name)
-
-            let disp_speed;
-
-            if(current_enemies[i].stats.attack_speed > 20) {
-                disp_speed = Math.round(current_enemies[i].stats.attack_speed);
-            } else if (current_enemies[i].stats.attack_speed > 2) {
-                disp_speed = Math.round(current_enemies[i].stats.attack_speed*10)/10;
-            } else {
-                disp_speed = Math.round(current_enemies[i].stats.attack_speed*100)/100;
-            }
-
-            let hero_hit_chance_modifier = current_enemies.filter(enemy => enemy.is_alive).length**(-1/4); // down to ~ 60% if there's full 8 enemies
-            let hero_evasion_chance_modifier = current_enemies.filter(enemy => enemy.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
-
-            let target = current_enemies[i];
-            Object.keys(target.tags).forEach(enemy_tag => {
-                if(enemy_tag_to_skill_mapping[enemy_tag]) {
-                    for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
-                        const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
-                        const {modifier_to_hit_chance, modifier_to_evasion} = skill.get_stat_modifiers();
-                        hero_hit_chance_modifier *= modifier_to_hit_chance || 1;
-                        hero_evasion_chance_modifier *= modifier_to_evasion || 1;
-                    }
-                }
-            });
-        
-            const evasion_chance = 1 - get_hit_chance(full_stats.attack_points*hero_hit_chance_modifier, current_enemies[i].stats.agility * Math.sqrt(current_enemies[i].stats.intuition ?? 1));
-            let hit_chance = get_hit_chance(current_enemies[i].stats.dexterity * Math.sqrt(current_enemies[i].stats.intuition ?? 1), full_stats.evasion_points*hero_evasion_chance_modifier);
-
-            if(character.getEquipment()["off-hand"]?.offhand_type === "shield") { //has shield
-                hit_chance = 1;
-            }
-
-            let html_string = `Atk: ${current_enemies[i].stats.attack}dmg`;
-            
-            if(current_enemies[i].stats.attack_count > 1) {
-                html_string +=` x${current_enemies[i].stats.attack_count}`;
-            }
-            enemies_div.children[i].children[0].children[1].children[0].innerText = html_string;
-            enemies_div.children[i].children[0].children[1].children[1].innerText = `Spd: ${disp_speed}`;
-            enemies_div.children[i].children[0].children[1].children[2].innerText = `Hit: ${Math.min(100,Math.max(0,Math.round(100*hit_chance)))}%`; //100% if shield!
-            enemies_div.children[i].children[0].children[1].children[3].innerText = `Ddg: ${Math.min(100,Math.max(0,Math.round(100*evasion_chance)))}%`;
-            enemies_div.children[i].children[0].children[1].children[4].innerText = `Def: ${current_enemies[i].stats.defense}`;
-
-        } else {
-            enemies_div.children[i].children[0].style.display = "none"; //just hide it
-        }     
-    }
-}
-
 function update_displayed_normal_location(location) {
     clear_action_div();
     clear_HTML_content(location_types_div);
@@ -3610,7 +3545,7 @@ function update_displayed_stats() {
         update_stat_description(key);
     });
 
-    const attack_stats = document.getElementById("attack_stats");
+    const attack_stats = document.querySelector?.("[data-character_attack_div]")?.getElementById?.("attack_stats");
 
     const ap = Math.round(full_stats.attack_points);
     other_combat_divs.attack_points.innerText = `${ap}`;
@@ -3621,7 +3556,7 @@ function update_displayed_stats() {
         other_combat_divs.defensive_points.innerText = `${dp}%`;
         other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = "Chance to block an attack";
 
-        attack_stats.children[3].innerText = `Block : ${Math.round(dp)}%`;
+        if(attack_stats) attack_stats.children[3].innerText = `Block : ${Math.round(dp)}%`;
     }
     else { //NO SHIELD
         const ep = Math.round(full_stats.evasion_points);
@@ -3630,7 +3565,7 @@ function update_displayed_stats() {
         other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = 
         "Evasion points, a total value of everything that contributes to the evasion chance, except for some situational skills and modifiers";
 
-        attack_stats.children[3].innerText = `EP: ${Math.round(ep)} `;
+        if(attack_stats) attack_stats.children[3].innerText = `EP: ${Math.round(ep)} `;
     }
 
     update_stat_description("defensive_points");
@@ -3643,10 +3578,12 @@ function update_displayed_stats() {
     } else {
         atk = Math.round(10*atk)/10;
     }
-    attack_stats.children[0].innerText = `Atk: ${atk}`;
-    attack_stats.children[1].innerText = `Spd: ${Math.round(character.getAttackSpeed()*100)/100}`;
-    attack_stats.children[2].innerText = `AP:  ${Math.round(ap)}`;
-    attack_stats.children[4].innerText = `Def: ${Math.round(full_stats.defense)} `;
+    if(attack_stats) {
+        attack_stats.children[0].innerText = `Atk: ${atk}`;
+        attack_stats.children[1].innerText = `Spd: ${Math.round(character.getAttackSpeed()*100)/100}`;
+        attack_stats.children[2].innerText = `AP:  ${Math.round(ap)}`;
+        attack_stats.children[4].innerText = `Def: ${Math.round(full_stats.defense)} `;
+    }
 }
 
 function update_stat_description(stat) {
@@ -4934,8 +4871,12 @@ function update_stance_tooltip(stance) {
  * @param {Stance} stance current stance 
  */
 function update_displayed_stance(stance) {
+    const stance_div = document.getElementById("character_stance_div");
+    if(!stance_div) {
+        return;
+    }
     stance_bar_divs[stance.id].children[1].children[0].checked = true;
-    document.getElementById("character_stance_name").children[0].innerText = stance.name;
+    stance_div.children[0].innerText = stance.name;
 
     const selection = document.getElementById("character_stance_selection");
 
@@ -4949,6 +4890,10 @@ function update_displayed_stance(stance) {
 }
 
 function update_displayed_faved_stances(stances) {
+    const stance_div = document.getElementById("character_stance_div");
+    if(!stance_div) {
+        return;
+    }
     
     const list = document.getElementById("character_stance_selection");
     clear_HTML_content(list);
@@ -5819,7 +5764,7 @@ export {
     update_displayed_money,
     log_message,
     clear_action_div,
-    update_displayed_enemies, update_displayed_normal_location, update_displayed_combat_location,
+    update_displayed_normal_location, update_displayed_combat_location,
     log_loot,
     update_displayed_equipment, update_displayed_health, update_displayed_stamina, update_displayed_stats, update_displayed_effects, update_displayed_effect_durations,
     capitalize_first_letter,

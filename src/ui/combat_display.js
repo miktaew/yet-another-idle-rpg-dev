@@ -6,8 +6,6 @@ import { enemy_tag_to_skill_mapping } from "../enemies.js";
 import { current_combat } from "../main.js";
 import { get_hit_chance } from "../misc.js";
 
-const attacker_attack_bar = document.getElementById("attacker_attack_bar");
-
 //enemy onhit animation
 const onhitAnimation = [
     {
@@ -39,6 +37,7 @@ const onstartAnimationTiming = {
 	iterations: 1,
 }
 
+const attacker_animations = {};
 const defender_animations = {};
 
 
@@ -46,12 +45,54 @@ function fill_attacker_divs() {
     for(let i = 0; i < current_combat.attackers.length; i++) {
         current_combat.attackers_ui_slot.appendChild(create_attacker_div(i));
     }
+
+    update_attacker_stats();
 }
 
 function create_attacker_div(i) {
     const attacker_div = document.createElement("div");
-    attacker_div.id = `enemy_${i}_div`;
+    attacker_div.id = `attacker_${i}_div`;
     attacker_div.classList.add("attacker_div");
+
+    const attack_stats = document.createElement("div");
+    attack_stats.classList.add("attack_stats");
+
+    attacker_div.appendChild(attack_stats);
+
+    const attack_stat_divs = Array.from({length: 5}, () => document.createElement("div"));
+
+    attack_stat_divs[0].classList.add("attack_stat", "attack_stat_short");
+    attack_stat_divs[1].classList.add("attack_stat", "attack_stat_veryshort");
+    attack_stat_divs[2].classList.add("attack_stat", "attack_stat_long");
+    attack_stat_divs[3].classList.add("attack_stat", "attack_stat_long");
+    attack_stat_divs[4].classList.add("attack_stat", "attack_stat_short");
+
+    attack_stats.append(...attack_stat_divs);
+
+    if(current_combat.attackers[i].tags.main_character) {
+
+        attacker_div.dataset.character_attack_div = true;
+        
+        const stance_div = document.createElement("div");
+        stance_div.id = "stance_div";
+
+        const name_span = document.createElement("span");
+        name_span.innerText = "Normal stance";
+
+        const stance_selection = document.createElement("div");
+        stance_selection.id = "character_stance_selection";
+
+        stance_div.appendChild(name_span);
+        stance_div.appendChild(stance_selection);
+
+        attacker_div.appendChild(stance_div);
+    }
+
+    const attacker_attack_bar = document.createElement("div");
+    attacker_attack_bar.classList.add("attacker_attack_bar");
+    attacker_attack_bar.dataset.attack_bar = true;
+
+    attacker_div.appendChild(attacker_attack_bar);
     
     return attacker_div;
 }
@@ -86,7 +127,7 @@ function fill_defender_divs() {
 
 function create_defender_div(i) {
     const attacker_div = document.createElement("div");
-    attacker_div.id = `enemy_${i}_div`;
+    attacker_div.id = `defender_${i}_div`;
     attacker_div.classList.add("defender_div", "enemy_div");
 
     const name_div = document.createElement("div");
@@ -127,6 +168,16 @@ function create_defender_div(i) {
     attacker_div.appendChild(enemy_attack_bar);
 
     return attacker_div;
+}
+
+function fill_fighter_divs() {
+    fill_attacker_divs();
+    fill_defender_divs();
+}
+
+function update_displayed_fighter_stats() {
+    update_attacker_stats();
+    update_defender_stats();
 }
 
 function update_attacker_stats() {
@@ -233,32 +284,35 @@ function update_displayed_health_of_fighter({fighter_index, is_attacker}) {
 
 function update_attack_bar({fighter_index, is_attacker, progress}) {
     (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot)
-        .children[fighter_index].querySelector("[data-attack_bar]").style.width = `${Math.min(progress*100,100)}%`;
+        .children.item(fighter_index).querySelector("[data-attack_bar]").style.width = `${Math.min(progress*100,100)}%`;
 }
 
-function do_defender_onhit_animation(defender_id) {
-    const defender_div = current_combat.defenders_ui_slot.children[defender_id];
-    defender_animations[defender_id]?.cancel(); //almost certainly unnecessary
-    defender_animations[defender_id] = defender_div.animate(onhitAnimation, onhitAnimationTiming);
+function do_onhit_animation({fighter_index, is_attacker}) {
+    const animations = (is_attacker ? attacker_animations : defender_animations);
+    const fighter_div = (is_attacker ? current_combat.defenders_ui_slot : current_combat.attackers_ui_slot).children[fighter_index];
+    animations[fighter_index]?.cancel(); //likely unnecessary, but won't hurt
+    animations[fighter_index] = fighter_div.animate(onhitAnimation, onhitAnimationTiming);
 }
 
-function remove_defender_onhit_animation(defender_id) {
-    defender_animations[defender_id]?.cancel();
+function remove_onhit_animation({fighter_index, is_attacker}) {
+    (is_attacker ? attacker_animations[fighter_index] : defender_animations[fighter_index])?.cancel();
 }
 
-function do_defender_onstart_animation(defender_id) {
-    const defender_div = current_combat.defenders_ui_slot.children[defender_id];
+function do_onstart_animation({fighter_index, is_attacker}) {
+    const animations = (is_attacker ? attacker_animations : defender_animations);
+    const fighter_div = (is_attacker ? current_combat.defenders_ui_slot : current_combat.attackers_ui_slot).children[fighter_index];
+    
+    animations[fighter_index]?.cancel(); //almost certainly unnecessary
+    animations[fighter_index] =  fighter_div.animate(onstartAnimation, onstartAnimationTiming);
 
-    defender_animations[defender_id]?.cancel(); //almost certainly unnecessary
-    defender_animations[defender_id] =  defender_div.animate(onstartAnimation, onstartAnimationTiming);
 }
 
 export {
-    fill_attacker_divs, fill_defender_divs,
+    fill_attacker_divs, fill_defender_divs, fill_fighter_divs,
     update_displayed_health_of_defenders,
-    do_defender_onhit_animation, remove_defender_onhit_animation, do_defender_onstart_animation,
+    do_onhit_animation, remove_onhit_animation, do_onstart_animation,
     update_defender_stats,
     update_attack_bar,
     clear_combat_divs,
-    update_displayed_health_of_fighter,
+    update_displayed_health_of_fighter, update_displayed_fighter_stats,
 }

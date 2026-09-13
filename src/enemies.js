@@ -1,5 +1,6 @@
 "use strict";
 
+import LevelableComponent from "./components/levelable_component.js";
 import { character } from "./data/character.js";
 import { log_message } from "./display.js";
 import { add_active_effect } from "./main.js";
@@ -34,6 +35,9 @@ Object.keys(droprate_modifier_skills_for_tags).forEach(tag => {
 const droplist = {};
 
 class Enemy {
+
+    #levelable;
+
     constructor({
         name, 
         id,
@@ -61,6 +65,8 @@ class Enemy {
         this.loot_list = loot_list;
         this.tags = {};
 
+        this.#levelable = new LevelableComponent(stats);
+
         if(tags.length) {
             for(let i = 0; i < tags.length; i++) {
                 this.tags[tags[i]] = true;
@@ -86,6 +92,67 @@ class Enemy {
         this.on_death = on_death;
         //try to limit the usage of those 3
     }
+
+    getLevelableComponent() {
+        return this.#levelable;
+    }
+
+    getAttackSpeed() {
+        return this.getLevelableComponent().getAttackSpeed();
+    }
+
+    getAttackPower() {
+        return this.getLevelableComponent().getAttackPower();
+    }
+
+    getFullStats() {
+        return this.getLevelableComponent().getFullStats();
+    }
+
+    isWearingArmor() {
+        return false;
+    }
+
+    /**
+     * 
+     * @param {*}
+     * @returns [actual damage taken; Boolean if target should faint] 
+     */
+    takeDamage({damage_values, can_faint = true, defense_modifier = 0}) {
+
+        //TODO: move this to levelable, only make a shortcut in Person?
+
+        /*
+        TODO:
+                - damage types: "physical", "elemental", "magic"
+                - each with it's own defense on equipment (and potentially spells)
+                - damage elements (for elemental damage type)
+                - resistance skills
+        */
+
+        const levelable = this.getLevelableComponent();
+        let fainted;
+    
+        damage_values = damage_values.map(val => {
+            if(val < 1) {
+                return Math.max(Math.ceil(10*val)/10, 0);
+            } else {
+                return Math.ceil(10*Math.max(val - (levelable.stats.full.defense + defense_modifier), val*0.05, 1))/10;
+            }
+        });
+        const damage_taken = damage_values.reduce((a,b)=>a+b);
+        levelable.stats.full.health -= damage_taken;
+    
+        if(levelable.stats.full.health <= 0 && can_faint) {
+            fainted = true;
+            levelable.stats.full.health = 0;
+        } else {
+            fainted = false;
+        }
+    
+        return {damage_taken, fainted};
+    }
+
     get_loot({drop_chance_modifier = 1} = {}) {
         // goes through items and calculates drops
         // result is in form [{item: Item, count: item_count}, {...}, {...}]

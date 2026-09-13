@@ -1,12 +1,14 @@
 "use strict";
 
 import { config } from "../config.js";
+import { character } from "../data/character.js";
 import { skills } from "../data/skills.js";
-import { log_message, update_displayed_enemies, update_displayed_health, update_stance_tooltip } from "../display.js";
+import { log_message, update_displayed_health, update_stance_tooltip } from "../display.js";
 import { enemy_tag_to_skill_mapping } from "../enemies.js";
-import { add_xp_to_skill, change_stance, current_stance, finish_combat_round, game_options, game_stats, selected_stance, tickrate, use_stamina } from "../main.js";
+import { item_templates } from "../items.js";
+import { add_xp_to_character, add_xp_to_skill, change_stance, current_stance, finish_combat_round, game_options, game_stats, kill_target, kill_player, process_current_loot, selected_stance, tickrate, use_stamina } from "../main.js";
 import { get_hit_chance } from "../misc.js";
-import { do_defender_onstart_animation, fill_attacker_divs, fill_defender_divs, update_attack_bar, update_displayed_health_of_defenders } from "../ui/combat_display.js";
+import { do_onhit_animation, do_onstart_animation, fill_attacker_divs, fill_defender_divs, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_defenders, update_displayed_health_of_fighter } from "../ui/combat_display.js";
 
 let maximum_time_correction = 10;
 
@@ -58,17 +60,18 @@ class Combat {
             this.defenders[i].is_alive = true;
         }
 
-        Object.keys(this.#data).forEach(fighter_type => {
-            const loops = this.#data[fighter_type].attack_loops;
-            for(let i = 0; i < loops.length; i++) {
-                clearTimeout(loops[i]);
-            }
-        });
-
+        this.clearAllAttackLoops();
         this.clearUI();
     }
 
     clearUI() {
+        for(let i = 0; i < this.defenders.length; i++) {
+            remove_onhit_animation({fighter_index: i, is_attacker: false});
+        }
+        for(let i = 0; i < this.attackers.length; i++) {
+            remove_onhit_animation({fighter_index: i, is_attacker: true});
+        }
+
         if(this.attackers_ui_slot) this.attackers_ui_slot.replaceChildren();
         if(this.defenders_ui_slot) this.defenders_ui_slot.replaceChildren();
     }
@@ -97,31 +100,18 @@ class Combat {
             }
         });
 
-        update_displayed_enemies();
+        fill_fighter_divs();
         update_displayed_health_of_defenders();
 
-        //attach loops and animations
-        /*
         for(let i = 0; i < this.defenders.length; i++) {
             if(game_options.do_enemy_onhit_animations) {
-                do_defender_onstart_animation(i);
+                do_onstart_animation({fighter_index: i, is_attacker: false});
             }
-            
-            this.do_defender_attack_loop(i, 0, true);
-        }
-        */
-
-        for(let i = 0; i < this.defenders.length; i++) {
-            if(game_options.do_enemy_onhit_animations) {
-                do_defender_onstart_animation(i);
-            }
-            this.set_attack_loop({target: this.defenders[i], base_cooldown: this.#data.defenders.attack_cooldowns[i]});
+            this.setAttackLoop({fighter_index: i, is_attacker: false, base_cooldown: this.#data.defenders.attack_cooldowns[i]});
         }
         for(let i = 0; i < this.attackers.length; i++) {
-            this.set_attack_loop({target: this.attackers[i], base_cooldown: this.#data.attackers.attack_cooldowns[i]});
+            this.setAttackLoop({fighter_index: i, is_attacker: true, base_cooldown: this.#data.attackers.attack_cooldowns[i]});
         }
-
-        //set_character_attack_loop({base_cooldown: character_attack_cooldown});
     }
 
     /**
@@ -130,8 +120,8 @@ class Combat {
      * @param {Boolean} data.is_attacker - false equals it being a defender
      * @returns 
      */
-    set_attack_loop({fighter_index, base_cooldown, is_attacker, skip_persistence_xp_for_stance_change}) {
-        this.clear_attack_loop({fighter_index, is_attacker});
+    setAttackLoop({fighter_index, base_cooldown, is_attacker, skip_persistence_xp_for_stance_change}) {
+        this.clearAttackLoop({fighter_index, is_attacker});
 
         const fighter = is_attacker ? this.attackers[fighter_index] : this.defenders[fighter_index];
 
@@ -175,10 +165,10 @@ class Combat {
 
         let attack_power = fighter.getAttackPower();
         //do_character_attack_loop({base_cooldown, actual_cooldown, attack_power, targets, target_count});
-        this.do_attack_loop({base_cooldown, actual_cooldown, attack_power, targets, target_count});
+        this.doAttackLoop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, is_new: true});
     }
 
-    do_attack_loop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, is_new = false, count = 0}) {
+    doAttackLoop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, is_new = false, count = 0}) {
 
         const fighter = is_attacker ? this.attackers[fighter_index] : this.defenders[fighter_index];
 
@@ -191,9 +181,9 @@ class Combat {
             target_data.timer_adjustments[fighter_index] = 0;
         }
 
-        this.clear_attack_loop({fighter_index, is_attacker});
+        this.clearAttackLoop({fighter_index, is_attacker});
         target_data.attack_loops[fighter_index] = setTimeout(() => {
-
+            target_data.timers[fighter_index] = [];
             target_data.timers[fighter_index][0] = Date.now();
             target_data.time_variance_acumulators[fighter_index] = Date.now();
 
@@ -209,7 +199,7 @@ class Combat {
                 let leveled = false;
 
                 for(let i = 0; i < targets.length; i++) {
-                    this.do_combat_action({fighter_index, is_attacker, target: targets[i], attack_power, target_count: targets.length});
+                    this.doCombatAction({fighter_index: i, is_attacker, target: targets[i], attack_power, target_count: targets.length});
                 }
 
                 if(fighter.tags?.main_character && current_stance.related_skill) {
@@ -222,16 +212,16 @@ class Combat {
                 }
 
                 if((is_attacker ? this.defenders : this.attackers).filter(enemy => enemy.is_alive).length != 0) { //set next loop if there's still an enemy left;
-                    this.set_attack_loop({fighter_index, base_cooldown, is_attacker});
+                    this.setAttackLoop({fighter_index, base_cooldown, is_attacker});
                 } else { //all enemies defeated, do relevant things and set new combat if applicable
-                    if(!this.is_special_combat) { 
-                        this.clear_all_attack_loops();
+                    if(this.is_special_combat) { 
+                        this.clearAllAttackLoops();
                     } else {
                         finish_combat_round(this.is_special_combat);                        
                     }
                 }
             } else {
-                this.do_attack_loop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, count, is_new: false});
+                this.doAttackLoop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, count, is_new: false});
             }
 
             if(Math.abs(target_data.time_variance_acumulators[fighter_index] <= maximum_time_correction/tickrate)) {
@@ -257,17 +247,19 @@ class Combat {
      * @param {Number} data.attack_power
      * @param {Number} data.target_count only used for xp calculations (if applicable)
      */
-    do_combat_action({fighter_index, is_attacker, target, attack_power, target_count}) {
+    doCombatAction({fighter_index, is_attacker, target, attack_power, target_count}) {
 
         const fighters = is_attacker ? this.attackers : this.defenders;
         const fighter = fighters[fighter_index];
         const opponents = is_attacker ? this.defenders : this.attackers;
         const base_damage = attack_power;
         const opponent_count_xp_multiplier = this.is_special_combat? 1 : opponents.length**(1/3);
+        const fighter_count_xp_multiplier = this.is_special_combat? 1 : fighters.length**(1/3);
         //xp mult for fighting multiple targets, up to x2 at 8 (assuming standard combat size, since it's technically uncapped)
         //based on raw opponent count instead of only on living ones, because Mik sometimes is a benevolent cat
 
         const target_count_xp_modifier = opponent_count_xp_multiplier/target_count;
+        const fighter_count_xp_modifier = fighter_count_xp_multiplier/fighters.length;
         //with penalty for xp from attacking, since multi-target attacks would be too powerful at farming xp otherwise
 
         let evasion_chance_modifier = fighters.filter(x => x.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
@@ -294,12 +286,12 @@ class Combat {
                     }
                 });
             } else if(target.tags.main_character){
-                Object.keys(fighters.tags).forEach(tag => {
+                Object.keys(fighter.tags).forEach(tag => {
                     if(enemy_tag_to_skill_mapping[tag]) {
                         for(let i = 0; i < enemy_tag_to_skill_mapping[tag].length; i++) {
                             const skill = skills[enemy_tag_to_skill_mapping[tag][i]];
 
-                            add_xp_to_skill({skill, xp_to_add: target.xp_value*target_count_xp_modifier});
+                            add_xp_to_skill({skill, xp_to_add: fighter.xp_value*fighter_count_xp_modifier});
 
                             const {modifier_to_evasion, modifier_to_defense} = skill.get_stat_modifiers();
                             
@@ -354,9 +346,9 @@ class Combat {
                 log_message(target.name + " evaded an attack", (!this.is_special_combat && fighter.tags.main_character ? "hero_missed" : "enemy_missed"));
 
                 if(!this.is_special_combat && target.tags.main_character) {
-                    const xp_to_add = fighter.isWearingArmor() ? target.xp_value : target.xp_value * 1.5;
+                    const xp_to_add = target.isWearingArmor() ? fighter.xp_value : fighter.xp_value * 1.5;
                     //50% more evasion xp if going without armor
-                    add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add*target_count_xp_modifier});
+                    add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add*fighter_count_xp_modifier});
                 }
                 
                 return; //damage fully evaded, nothing more can happen
@@ -420,12 +412,15 @@ class Combat {
         }
 
 
+
         if(fainted) {
             if(target.tags.main_character) {
-                kill_player();
+                kill_player({is_combat: true});
                 return;
             } else {
-                target.on_death(character);
+                if(fighter.tags.main_character) {
+                    target.on_death(fighter);
+                }
 
                 log_message(target.name + " was defeated", "enemy_defeated");
 
@@ -434,53 +429,71 @@ class Combat {
 
                     let loot = target.get_loot({drop_chance_modifier: 1/target_count**0.6667});
                     if(loot.length > 0) {
-                        process_current_lool({loot_list: loot, is_combat: true});
+                        process_current_loot({loot_list: loot, is_combat: true});
                         loot = loot.map(x => {return {item_key: item_templates[x.item_id].getInventoryKey(), count: x.count}});
                         character.addToInventory(loot);
                     }
                 }
                 
-                kill_enemy(target);
+                const index = (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target);
+
+                kill_target({fighter_index: index, is_attacker: !is_attacker});
+                this.clearAttackLoop({fighter_index: index, is_attacker: !is_attacker});
+                
+                //todo: check if any opponent is alive?
             }
         } else {
             if(!this.is_special_combat && target.tags.main_character) {
                 update_displayed_health();
             } else {
-                if(is_attacker) {
-                    if(game_options.do_enemy_onhit_animations) {
-                        const enemy_id = current_combat.defenders.findIndex(enemy => enemy===target);
-                        do_defender_onhit_animation(enemy_id);
-                    }
-                    update_displayed_health_of_fighter({fighter_index, is_attacker});
-                } else {
-
+                if(game_options.do_enemy_onhit_animations) {
+                    do_onhit_animation({fighter_index, is_attacker});
                 }
+                update_displayed_health_of_fighter({fighter_index, is_attacker});
             }
         }
     }
 
-    clear_all_attack_loops() {
+    clearAllAttackLoops() {
         for(let i = 0; i < this.attackers; i++) {
-            this.clear_attack_loop({fighter_index: i, is_attacker: true});
+            this.clearAttackLoop({fighter_index: i, is_attacker: true});
         }
         for(let i = 0; i < this.defenders; i++) {
-            this.clear_attack_loop({fighter_index: i});
+            this.clearAttackLoop({fighter_index: i});
         }
     }
 
-    clear_attack_loop({fighter_index, is_attacker}) {
+    clearAttackLoop({fighter_index, is_attacker}) {
         clearTimeout(is_attacker ? this.#data.attackers.attack_loops[fighter_index] : this.#data.defenders.attack_loops[fighter_index]);
     }
 
-    reset_combat_loops(skip_persistence_xp_for_stance_change) {
+    /**
+     * @description Recalculates attack speeds; resets attack loop for hero (if present), rescales for other fighters
+     * @param {*} skip_persistence_xp_for_stance_change 
+     * @returns 
+     */
+    resetCombatLoops(skip_persistence_xp_for_stance_change) {
         if(this.is_special_combat) {
             return;
         }
 
-        //todo
-        //only if it's not a special fight
-        //reset main character's loop, rescale all others
+
+        let fastest_cooldown = [... this.#data.attackers.attack_cooldowns, ... this.#data.defenders.attack_cooldowns].sort((a,b) => a - b)[0];
+
+        //scale all attacks to be not faster than 1 per second
+        const cooldown_multiplier = fastest_cooldown < 1 ? 1/fastest_cooldown : 1;
+            
+        Object.keys(this.#data).forEach(fighter_type => {
+            for(let i = 0; i < this.#data[fighter_type].length; i++) {
+                
+                if(fighter_type === "attackers" && this.attackers[i].tags.main_character) {
+                    this.setAttackLoop({fighter_index: i, is_attacker: true, base_cooldown: this.#data.attackers.attack_cooldowns[i], skip_persistence_xp_for_stance_change})
+                }
+                this.#data[fighter_type].attack_cooldowns[i] *= cooldown_multiplier;
+            }
+        });
     }
+
 }
 
 export default Combat;

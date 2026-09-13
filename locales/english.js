@@ -758,7 +758,7 @@ const ui = {
     "option fahrenheit": "Use Fahrenheit instead of Celsius",
     "option animate background": "Enable rain/snow/stars animations",
     "option background color": "Enable light-level based background color change",
-    "option combat animation": "Enable on-hit / on-appear animations for enemies",
+    "option combat animation": "Enable on-hit / on-appear animations for combat",
     "option skip loading": "Automatically skip the loading screen",
     "option kemonomimi": "Enable kemonomimi mode",
 };

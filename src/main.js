@@ -4,10 +4,10 @@ import { current_game_time, is_night } from "./game_time.js";
 import { item_templates, item_log, getItem, book_stats, rarity_multipliers, getArmorSlot, getItemFromKey, getItemRarity} from "./items.js";
 import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_market_saturations, set_loot_sold_count, capped_at } from "./market_saturation.js";
 import { locations, favourite_locations, location_types } from "./data/locations.js";
-import { skills, weapon_type_to_skill } from "./data/skills.js";
+import { skills } from "./data/skills.js";
 import { which_skills_affect_skill } from "./models/skill.js";
 import { dialogue_owners } from "./components/dialogue_component.js";
-import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates, tags_for_droprate_modifier_skills } from "./enemies.js";
+import { enemy_killcount, enemy_templates, tags_for_droprate_modifier_skills } from "./enemies.js";
 import { is_in_trade, start_trade, cancel_trade, accept_trade, exit_trade,
          add_to_buying_list, remove_from_buying_list, add_to_selling_list, remove_from_selling_list} from "./trade.js";
 import { character, 
@@ -22,7 +22,6 @@ import { activities } from "./activities.js";
 import { end_activity_animation, 
          update_displayed_character_inventory, update_displayed_trader_inventory, sort_displayed_inventory, sort_displayed_skills,
          update_displayed_money, log_message,
-         update_displayed_enemies,
          update_displayed_combat_location, update_displayed_normal_location,
          log_loot, update_displayed_equipment,
          update_displayed_health, update_displayed_stamina,
@@ -37,7 +36,7 @@ import { end_activity_animation,
          start_reading_display,
          update_displayed_xp_bonuses, 
          update_displayed_skill_xp_gain, update_all_displayed_skills_xp_gain, update_displayed_stance_list, 
-         update_displayed_stamina_efficiency, update_displayed_stance, update_displayed_faved_stances, update_stance_tooltip,
+         update_displayed_stamina_efficiency, update_displayed_stance, update_displayed_faved_stances,
          update_gathering_tooltip,
          open_crafting_window,
          update_displayed_location_types,
@@ -93,8 +92,8 @@ import { end_activity_animation,
          fill_character_bio,
          insert_HTML,
         } from "./display.js";
-import { do_defender_onhit_animation, remove_defender_onhit_animation, update_defender_stats, } from "./ui/combat_display.js";
-import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
+import { fill_fighter_divs, update_defender_stats, update_displayed_fighter_stats, } from "./ui/combat_display.js";
+import { compare_game_version, crafting_tags_to_skills, get_component_name, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { recipes, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
 import { game_version, get_game_version } from "./game_version.js";
@@ -117,7 +116,6 @@ import { height_values } from "./models/person.js";
 import { playable_races } from "./races.js";
 import { fill_availability_methods } from "./component_management.js";
 import { traders } from "./data/traders.js";
-import { update_displayed_health_of_defenders } from "./ui/combat_display.js";
 import Combat from "./models/combat.js";
 
 fill_availability_methods();
@@ -178,9 +176,7 @@ const cold_status_counters = [0,0,0,0];
 let was_raining = false;
 let was_starry = false;
 
-//current enemy
-let current_enemies = null;
-
+//current Combat object
 let current_combat = null;
 
 const enemy_attack_loops = {};
@@ -590,8 +586,9 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
         return;
     }
 
-    clear_all_enemy_attack_loops();
-    clear_character_attack_loop();
+    if(current_combat) {
+        end_combat();
+    }
     end_combat();
 
     if(!location) {
@@ -1375,9 +1372,9 @@ function change_stance({stance_id, is_temporary = false}) {
     current_stance = stances[stance_id];
 
     character.updateStatsAndDisplay();
-    if(current_enemies) {
-        reset_combat_loops(true); //param will be used to award 'Persistence' xp only when change was due to low stamina and not to a player click
-        update_displayed_enemies();
+    if(current_combat && !current_combat.is_special_combat) {
+        current_combat.resetCombatLoops(true); //param will be used to award 'Persistence' xp only when change was due to low stamina and not to a player click
+        update_displayed_fighter_stats();
     }
 }
 
@@ -1401,68 +1398,24 @@ function fav_stance(stance_id) {
  * @param {List<Enemy>} enemies 
  */
 function set_new_combat({enemies} = {}) {
+
+    if(current_combat) {
+        end_combat();
+    }
+
     if(!current_location.get_next_enemies){
-        clear_all_enemy_attack_loops();
-        clear_character_attack_loop();
         return;
     }
 
-    //remove animations
-    for(let i = 0; i < current_enemies?.length; i++) {
-        remove_defender_onhit_animation(i);
-    }
+    enemies ||= current_location.get_next_enemies();
 
-    current_enemies = enemies || current_location.get_next_enemies();
-    clear_all_enemy_attack_loops();
-
-    current_combat = new Combat({attackers: [character], defenders: current_enemies});
+    current_combat = new Combat({attackers: [character], defenders: enemies});
 
     current_combat.start();
 }
 
-/**
- * @description Recalculates attack speeds;
- * 
- * For enemies, modifies their existing cooldowns, for hero it restarts the attack bar with a new cooldown 
- */
-function reset_combat_loops(skip_persistence_xp_for_stance_change) {
-    if(!current_enemies) { 
-        return;
-    }
-
-    let character_attack_cooldown = 1/(full_stats.attack_speed);
-    enemy_attack_cooldowns = [...current_enemies.map(x => 1/x.stats.attack_speed)];
-
-    let fastest_cooldown = [character_attack_cooldown, ...enemy_attack_cooldowns].sort((a,b) => a - b)[0];
-
-    //scale all attacks to be not faster than 1 per second
-    if(fastest_cooldown < 1) {
-        const cooldown_multiplier = 1/fastest_cooldown;
-        character_attack_cooldown *= cooldown_multiplier;
-        for(let i = 0; i < current_enemies.length; i++) {
-            enemy_attack_cooldowns[i] *= cooldown_multiplier;
-        }
-    }
-
-    set_character_attack_loop({base_cooldown: character_attack_cooldown, skip_persistence_xp_for_stance_change});
-}
-
-function clear_enemy_attack_loop(enemy_id) {
-    clearTimeout(enemy_attack_loops[enemy_id]);
-}
-
-function clear_character_attack_loop() {
-    clearTimeout(character_attack_loop);
-}
-
-function clear_all_enemy_attack_loops() {
-    Object.keys(enemy_attack_loops).forEach((key) => {
-        clearTimeout(enemy_attack_loops[key]);
-    });
-}
-
 function start_combat() {
-    if(current_enemies == null) {
+    if(current_combat == null) {
         set_new_combat();
     }
 }
@@ -1489,9 +1442,16 @@ function finish_combat_round(was_special_combat) {
  * @param {Enemy} enemy 
  * @return {Boolean} if that was the last of an enemy group
  */
-function kill_enemy(target, do_quest_events = true) {
+function kill_target({fighter_index, is_attacker, do_quest_events = true, is_special_combat}) {
+    const target = is_attacker ? current_combat.attackers[fighter_index] : current_combat.defenders[fighter_index];
+    const fighter = is_attacker ? current_combat.defenders[fighter_index] : current_combat.attackers[fighter_index];
+
+    if(target.tags.main_character) {
+        console.error("Main character was designed as a target of kill_target()!");
+    }
+
     target.is_alive = false;
-    if(target.add_to_bestiary) {
+    if(target.add_to_bestiary && is_attacker && !is_special_combat) {
         if(enemy_killcount[target.name]) {
             enemy_killcount[target.name] += 1;
             update_bestiary_entry_killcount(target.name);
@@ -1500,10 +1460,8 @@ function kill_enemy(target, do_quest_events = true) {
             create_new_bestiary_entry(target.name);
         }
     }
-    const enemy_id = current_enemies.findIndex(enemy => enemy===target);
-    clear_enemy_attack_loop(enemy_id);
 
-    if(do_quest_events) {
+    if(fighter.tags.main_character && do_quest_events && !is_special_combat) {
         do_quest_event({
             quest_event_type: "kill",
             quest_event_target: target.id,
@@ -1520,7 +1478,7 @@ function kill_enemy(target, do_quest_events = true) {
     }
 }
 
-function kill_player({is_combat = true} = {}) {
+function kill_player({is_combat = true}) {
     if(is_combat) {
         game_stats.total_deaths++;
         log_message("%HeroName% has lost consciousness", "hero_defeat");
@@ -2292,9 +2250,6 @@ function remove_location_from_favourites({location_id, update_choices = true}) {
 
 function end_combat() {
     if(current_combat) {
-        for(let i = 0; i < current_combat.defenders.length; i++) {
-            remove_defender_onhit_animation(i);
-        }
         current_combat.reset();
         current_combat = null;
     }
@@ -6026,7 +5981,6 @@ if(config.enable_dev_mode) {
     enable_dev_console();
 }
 export { 
-    current_enemies, 
     current_combat,
     current_location,
     can_work, active_effects,
@@ -6043,10 +5997,12 @@ export {
     get_context,
     travel_times,
     language,
-    add_active_effect,
+    add_active_effect, add_xp_to_character,
     favourite_items, remove_item_from_favourites,
     run,
     tickrate,
     finish_combat_round, use_stamina,
-    game_stats,
+    game_stats, 
+    kill_target, kill_player,
+    process_current_loot,
 };

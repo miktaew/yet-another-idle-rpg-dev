@@ -4,7 +4,7 @@
 class StatHaver {
     constructor(data) {
         this.base_stats = {
-            max_health: data.max_health || 60,
+            max_health: data.max_health || data.health || 60,
             health: data.health || 60,
             health_regeneration_flat: data.health_regeneration_flat ?? 0, //in combat
             health_regeneration_percent: data.health_regeneration_percent ?? 0, //in combat

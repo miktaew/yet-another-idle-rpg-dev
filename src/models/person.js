@@ -65,9 +65,9 @@ class Person{
         this.xp_multiplier = 1;
         this.skill_xp_multiplier = 1;
 
-        this.on_hit = data.on_hit;
-        this.on_damaged = data.on_damaged;
-        this.on_death = data.on_death;
+        this.on_hit = data.on_hit || (()=>{});
+        this.on_damaged = data.on_damaged || (()=>{});
+        this.on_death = data.on_death || (()=>{});
     }
 
     getInventoryComponent() {
@@ -446,7 +446,6 @@ class Person{
         return this.getLevelableComponent().getFullStats();
     }
 
-    
     /**
      * 
      * @param {*}
