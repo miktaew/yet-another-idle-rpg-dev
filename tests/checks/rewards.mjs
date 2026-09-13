@@ -404,6 +404,34 @@ function check_nothing_stamps_a_template_quality() {
  * nothing - that is what a trap is - and a function-valued chance cannot be read
  * statically, so those are skipped and named in the count.
  */
+/**
+ * Every `new Location...Activity({ ... })` body in a source, with the span it covers.
+ *
+ * Spans rather than "the nearest one before", which is what the first version of the
+ * exemption above used: in a location file there is always some earlier activity behind a
+ * rolled set, so "nearest preceding" matched a sibling that had already closed and excused
+ * every set in the game. The check's own "nothing rolls a reward set" guard caught it
+ * immediately, which is the argument for writing those guards.
+ */
+function activity_bodies(source) {
+    const bodies = [];
+    for (const opening of source.matchAll(/new\s+Location\w*Activity\s*\(\s*\{/g)) {
+        const brace = source.indexOf("{", opening.index);
+        let depth = 0;
+        for (let i = brace; i < source.length; i++) {
+            if (source[i] === "{") { depth++; }
+            else if (source[i] === "}") {
+                depth--;
+                if (depth === 0) {
+                    bodies.push({from: brace, to: i});
+                    break;
+                }
+            }
+        }
+    }
+    return bodies;
+}
+
 function check_a_rolled_set_is_not_mostly_nothing() {
     let sets = 0;
     let skipped = 0;
@@ -424,6 +452,29 @@ function check_a_rolled_set_is_not_mostly_nothing() {
                 }
             }
             if (close === -1) continue;
+
+            /*
+                An activity's rolled set is a bonus, not the payout, so it is allowed to miss.
+
+                The bay pays in fish every period through `gained_resources`; the set beside
+                it is the chest that turns up now and again, and it is *supposed* to be rare -
+                0.001, against the 0.004 the same chest drops at in combat. Under the plain
+                rule the only way to pass would be to make a rare find common.
+
+                Deliberately narrower than "something guaranteed sits beside it": the Village
+                lock's `money: 1400` sits right beside its own groups, and the lock is the case
+                this check was written for. What earns the exemption is the enclosing
+                declaration being an activity that already pays out on its own.
+            */
+            const inside_an_activity = activity_bodies(source)
+                .some((body) => body.from < opening.index && opening.index < body.to
+                    && /(?:^|[{,\s])gained_resources\s*:/.test(
+                        source.slice(body.from, body.to)));
+            if (inside_an_activity) {
+                skipped++;
+                continue;
+            }
+
             sets++;
 
             const chances = [];

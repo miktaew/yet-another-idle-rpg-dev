@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 141 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 142 -->
 
 # Changelog
 
@@ -20,6 +20,58 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.56 - a chest in the bay, and a search that finds what it shows
+
+Both halves of P-48, both of them widenings of something that already existed.
+
+**The chest, and the number is derived rather than picked.** The owner asked for one *"very
+rarely - rarer than in combat"*, and `Locked chest` already drops off four enemies at 0.004,
+so the bay's is 0.001. The gap is wider than the numbers look: a kill takes seconds and a
+catch takes between 30 and 110 in-game minutes, so a fisherman meets it far less often than a
+fighter. It is the same chest, so it opens at the same lock in the Village - a second source
+for one chest rather than a second chest.
+
+**P-48 predicted the hard part and was right.** A gathering activity had no rewards block at
+all: it produces `gained_resources`, a list of items rolled per resource, which is a different
+path from an action's rewards. So the activity gained an optional `rewards` object of the
+ordinary shape, handed to `process_rewards` when a period completes - `chance_of` does the
+rolling, the same code the Village lock's own contents use. Nothing new was invented.
+
+**And measured in the running game rather than trusted**, which took three attempts and was
+worth every one: the first found no chest, the second found no fish either, and the third
+found the clock frozen - the page needed `run()`. With the chance temporarily at 1 the count
+went 5 to 6. A `chance_of` that nothing rolls is the silent failure P-48 named, and reading
+the code would not have told me the difference.
+
+**One check had to be taught the difference between a pool and a bonus.**
+`check_a_rolled_set_is_not_mostly_nothing` says a set that usually gives nothing reads as
+empty however good the contents are - true of a chest, since the player opened it. An
+activity is the other case: the bay pays in fish every period, and the rolled set beside it is
+*supposed* to miss. Under the plain rule the only way to pass would have been to make a rare
+find common. The exemption is narrow on purpose - not "something guaranteed sits beside it",
+which would also excuse the Village lock and its `money: 1400`, but "the enclosing declaration
+is an activity that already pays out". The first attempt used "the nearest declaration before
+this point", which in a location file is always some earlier activity, and it excused every
+set in the game - caught immediately by the check's own "nothing rolls a reward set" guard,
+which is the argument for writing those.
+
+**The search now matches what the entry says.** Measured first, as P-48 asked: the creature on
+a drop line is drawn with `getName()`, which is localised, so a filter on registry keys would
+find "Wolf rat" for a player reading "Kurt sıçanı". Widened past creatures to everything the
+line shows - the place, the trader - because a box that found one label on a line but not its
+neighbour is arbitrary in a way no player could predict. Drawing and filtering ask one
+function what a source is called, so they cannot drift.
+
+**The "where to train" section obeys the box too**, which P-48 asked for in the same breath:
+one search that finds everything on the panel. A section ignoring the query while the list
+below it obeys reads as the search being broken.
+
+Measured after: 204 entries, 5 for a creature, 1 for a trainable skill, 0 for nonsense.
+
+**And one bug of my own, caught by reading what I had written.** The training section took the
+query as a new argument, and its call sat above the line that reads the query - `const` in the
+temporal dead zone, a ReferenceError that esbuild compiles happily and no check runs into.
 
 ### The fold ends where the families do, and a document stops being a rumour
 

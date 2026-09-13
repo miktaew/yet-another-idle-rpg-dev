@@ -383,6 +383,7 @@ class LocationActivity{
                  xp_given_per_working_period = false, //true => xp every working period, false => xp every in-game minute
                  unlock_text,
                  gained_resources,
+                 rewards,
                  require_tool = false,
                  applied_effects = [],
                 })
@@ -399,6 +400,18 @@ class LocationActivity{
             : this.unlock_text;
 
         this.get_payment = get_payment;
+
+        /*
+            An ordinary rewards object, rolled once each time a working period completes.
+
+            Separate from `gained_resources`, which is the list of things the activity is FOR
+            and is rolled per resource. This is for what the activity is not for: something
+            the water gives up now and again. Written as a rewards object rather than a second
+            drop list so that `chance_of` and everything else process_rewards understands is
+            available here without being reimplemented - see the bay's fishing.
+        */
+        this.rewards = rewards;
+
         this.is_unlocked = is_unlocked;
         this.unlock_text = unlock_text;
         this.working_period = working_period; //if exists -> time that needs to be worked to earn anything; only for jobs
@@ -2667,6 +2680,27 @@ function get_location_type_penalty(type, stage, stat, category) {
                 roll_quality: true,
                 time_period: [110, 30],
                 skill_required: [4, 24],
+            },
+            /*
+                Rarer than in combat, and the number is derived from it: `Locked chest` drops
+                off four enemies at 0.004, so a quarter of that is 0.001 here. The gap is
+                wider than the numbers look - a kill takes seconds and a catch takes between
+                30 and 110 in-game minutes - so a fisherman meets the chest far less often
+                than a fighter does, which is what was asked for.
+
+                The chest is the same item the boar drops, so it opens at the same lock in the
+                Village. A second source for one chest rather than a second chest.
+            */
+            rewards: {
+                chance_of: [
+                    {
+                        chance: 0.001,
+                        rewards: {
+                            items: [{item: "Locked chest", count: 1}],
+                            messages: ["log the line came up heavy"],
+                        },
+                    },
+                ],
             },
             require_tool: true,
             unlock_text: "activity The bay fishing unlock",

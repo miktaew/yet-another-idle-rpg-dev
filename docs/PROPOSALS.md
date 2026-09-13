@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 164 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 165 -->
 
 # Proposals
 
@@ -876,28 +876,6 @@ two filters, and the save's own version for the badge**, which needs no new stor
 `check_changelogs_cover_version` already holds both pages to carrying an entry for the
 shipped `game_version`, so counting versions between two points is the same list read a
 second way.
-
-### P-48 — A chest in the bay, and what Discoveries can be searched for `open`
-
-Two small requests from the same session, kept together because both are about widening
-something that already exists rather than building anything.
-
-**A chest while fishing.** The owner: *"very rarely - rarer than in combat - a chest could
-turn up while fishing in the bay too."* The mechanism exists and is measured: `chance_of`
-inside a reward block rolls a group, and the Village's `work at the lock` already uses it for
-exactly this - a chest with a false bottom, a trap, a wool scarf. What is new is putting one
-on a **gathering activity** rather than an action, which is where it has to be checked: an
-activity's rewards are handled by a different path from an action's, and a `chance_of` that
-nothing rolls is the silent failure this project keeps finding.
-
-**Rarer than in combat** is the constraint to derive rather than pick, so the number should
-come from what combat actually drops rather than from feel.
-
-**Discoveries should search creatures too.** The search box filters the item list; the panel
-also holds a "where to train" section and names creatures as drop sources, and the owner
-expects one box to find all of it. Worth checking whether the creature names shown there are
-display names or registry keys before writing the filter, because the two differ and the box
-has to match what the player can read.
 
 ### P-51 — The floor the recalc used to keep, for every region `open`
 

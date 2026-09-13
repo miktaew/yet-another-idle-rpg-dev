@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 164 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 165 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -880,28 +880,6 @@ listelediğiyle uyuşmak zorunda ve iki HTML kopya da birbiriyle uyuşmalı —
 `check_changelogs_cover_version` iki sayfayı da yayımlanan `game_version` için bir girdi
 taşımaya çoktan bağlıyor; yani iki nokta arasındaki sürümleri saymak, aynı listenin ikinci
 kez okunması.
-
-### P-48 — Körfezde bir sandık ve Keşifler'de neyin aranabildiği `open`
-
-Aynı oturumdan iki küçük talep; ikisi de bir şey inşa etmekten çok var olanı genişletmekle
-ilgili olduğu için birlikte tutuluyor.
-
-**Balık tutarken sandık.** Sahibi: *"çok nadir olmakla birlikte (dövüştende nadir) körfezde
-balık tutarkende sandık denk gelebilir."* Mekanizma var ve ölçülü: bir ödül bloğunun
-içindeki `chance_of` bir grup atıyor ve Köy'ün `work at the lock` eylemi tam olarak bunu
-kullanıyor — sahte dipli bir sandık, bir tuzak, bir yün atkı. Yeni olan, bunu bir eyleme
-değil bir **toplama aktivitesine** koymak; kontrol edilmesi gereken yer de burası: bir
-aktivitenin ödülleri bir eylemin ödüllerinden farklı bir yoldan işleniyor ve hiçbir şeyin
-atmadığı bir `chance_of`, bu projenin bulup durduğu sessiz arızanın ta kendisi.
-
-**"Dövüşten de nadir"** seçilecek değil türetilecek kısıt; yani sayı, hisse göre değil
-dövüşün gerçekte ne düşürdüğüne göre gelmeli.
-
-**Keşifler yaratıkları da aramalı.** Arama kutusu eşya listesini süzüyor; oysa panel bir
-"nerede idman edilir" bölümü de tutuyor ve yaratıkları düşüren kaynak olarak adlandırıyor,
-sahibi de tek kutunun hepsini bulmasını bekliyor. Filtreyi yazmadan önce orada gösterilen
-yaratık adlarının görünen ad mı kayıt anahtarı mı olduğunu kontrol etmeye değer, çünkü ikisi
-farklı ve kutu, oyuncunun okuyabildiğiyle eşleşmek zorunda.
 
 ### P-51 — Yeniden hesaplamanın koruduğu taban, her bölge için `open`
 

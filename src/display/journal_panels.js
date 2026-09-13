@@ -197,6 +197,46 @@ function update_bestiary_entry_killcount(enemy_name) {
     bestiary_entry_divs[enemy_name].children[1].innerText = enemy_killcount[enemy_name];
 }
 
+/**
+ * What a source line says, without the element around it.
+ *
+ * Shared with the search box, which filters on it. Two functions deciding what a source
+ * reads would be two answers to one question, and the one the player cannot see is the one
+ * that would go quietly wrong - a box that finds a creature the entry does not name, or
+ * misses one it does.
+ *
+ * Returns the names only, not the label: the player searching for a wolf rat is looking for
+ * the creature, not for the words "dropped by".
+ *
+ * A list rather than one joined string, because the drawing joins them with " - " and the
+ * search matches each on its own. The first version handed back one string and had the
+ * drawing split the last word off again, which breaks the moment a place is called two
+ * words: "Kurt sıçanı Kasaba dışı" would have been drawn as "Kurt sıçanı Kasaba - dışı".
+ *
+ * @param {Object} source one entry from item_sources
+ * @returns {String[]}
+ */
+function discovery_source_names(source) {
+    if(source.kind === "craft") {
+        const discipline = skills[capitalize_first_letter(source.via)];
+        return [discipline
+            ? translationManager.getDisplayName(language, discipline.names[0])
+            : source.via];
+    }
+
+    const location = locations[source.location_key];
+    if(!location) {
+        return [];
+    }
+    if(source.kind === "drop") {
+        return [enemy_templates[source.via]?.getName() ?? source.via, location.getName()];
+    }
+    if(source.kind === "trade") {
+        return [traders[source.via]?.getDisplayName() ?? source.via, location.getName()];
+    }
+    return [location.getName()];
+}
+
 function create_discovery_source_line(source) {
     const line = document.createElement("div");
     line.classList.add("discovery_source_line");
@@ -232,14 +272,9 @@ function create_discovery_source_line(source) {
 
     //`drop` and `trade` name the creature or the trader as well as the place, because
     //"in the Deep forest" is not an answer on its own when a zone holds several.
-    let text = `${translationManager.getText(language, label)}: `;
-    if(source.kind === "drop") {
-        text += `${enemy_templates[source.via]?.getName() ?? source.via} - ${location.getName()}`;
-    } else if(source.kind === "trade") {
-        text += `${traders[source.via]?.getDisplayName() ?? source.via} - ${location.getName()}`;
-    } else {
-        text += location.getName();
-    }
+    //The same names the search box filters on, joined for reading rather than matching.
+    const text = `${translationManager.getText(language, label)}: `
+        + discovery_source_names(source).join(" - ");
 
     const text_div = document.createElement("div");
     text_div.innerText = text;
@@ -259,10 +294,22 @@ function create_discovery_source_line(source) {
  * Above the items rather than below, because it is fifteen rows against several hundred
  * and a section behind all of those is a section nobody reads.
  */
-function append_training_section(list) {
+function append_training_section(list, query = "") {
     const places = training_places();
     const skill_ids = Object.keys(places)
         .filter(skill_id => skills[skill_id])
+        /*
+            The same box that filters the items filters these. The owner asked for one search
+            that finds everything on the panel, and a section that ignores the query while
+            the list above it obeys reads as the search being broken rather than as the
+            section being exempt.
+
+            A skill matches on its own name or on any place it can be trained, which is the
+            same rule the items follow: whatever the entry shows, you can search for.
+        */
+        .filter(skill_id => !query
+            || matches_search(skills[skill_id].name(), query)
+            || places[skill_id].some(place => matches_search(place.getName(), query)))
         .sort((first, second) => compare_display_names(
             skills[first].name(), skills[second].name()));
 
@@ -477,10 +524,6 @@ function update_displayed_discoveries() {
     }
     clear_HTML_content(list);
 
-    //Fifteen rows before several hundred: a section behind all the items is a
-    //section nobody reads.
-    append_training_section(list);
-
     //getDisplayName, not getName: getName is the canonical English and the translation
     //key, so the whole list came out in English whatever the language was.
     const hide_sourceless = document.getElementById("discoveries_hide_sourceless")?.checked;
@@ -488,9 +531,25 @@ function update_displayed_discoveries() {
     const hide_traded = document.getElementById("discoveries_hide_traded")?.checked;
     const query = document.getElementById("discoveries_search")?.value.trim() ?? "";
 
+    /*
+        Fifteen rows before several hundred: a section behind all the items is a section
+        nobody reads. Below the query rather than above it, because it takes the query
+        now - and `const` in the dead zone is a ReferenceError that esbuild compiles
+        happily and no check runs into.
+    */
+    append_training_section(list, query);
+
     const found = Object.keys(item_log.items)
         .filter(item_id => item_templates[item_id])
-        .filter(item_id => matches_search(item_templates[item_id].getDisplayName(), query))
+        /*
+            The item's own name, or anything its entry says about where it came from - the
+            creature that drops it, the trader who sells it, the place it is found. The owner
+            asked for creatures; the rest comes with them because they share a line, and a box
+            that found one label on a line but not its neighbour would be arbitrary.
+        */
+        .filter(item_id => matches_search(item_templates[item_id].getDisplayName(), query)
+            || item_sources(item_id).some(source => discovery_source_names(source)
+                .some(name => matches_search(name, query))))
         .filter(item_id => {
             const sources = item_sources(item_id);
             if(hide_sourceless && sources.length === 0) {

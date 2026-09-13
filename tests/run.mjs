@@ -38,6 +38,8 @@ import {
     check_a_reputation_region_opens_something,
     check_no_action_hides_on_a_recurring_condition,
     check_no_content_is_left_inside_a_comment,
+    check_an_activity_reward_is_processed,
+    check_the_discoveries_search_reads_what_it_shows,
 } from "./checks/content.mjs";
 import {
     check_creation_panel_values,
@@ -243,6 +245,8 @@ check_a_failed_attempt_keeps_what_it_needs();
 check_a_reputation_region_opens_something();
 check_no_action_hides_on_a_recurring_condition();
 check_no_content_is_left_inside_a_comment();
+check_an_activity_reward_is_processed();
+check_the_discoveries_search_reads_what_it_shows();
 check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();

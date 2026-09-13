@@ -3920,6 +3920,7 @@ const descriptions = {
     "action work at the lock fail unable_to_begin 1": "You have nothing locked to work at.",
     "action work at the lock fail random_loss 1": "The wire slips, straightens, and has to be bent back. The chest is exactly as shut as it was, which is the only good thing about it.",
     "action work at the lock fail conditional_loss 1": "Your hands are not steady enough for this today.",
+    "log the line came up heavy": "The line goes taut and stays taut. What comes up is not a fish: a chest, small and swollen with water, its lock still holding.",
     "log the chest had a false bottom": "The bottom of the chest is not the bottom of the chest.",
     "log the chest was trapped": "Something under the lid goes into your hand as it opens - a needle, set there on purpose, and not a clean one.",
     "action build a hearth fail unable_to_begin 1": "A hundred and twenty bricks, six bars of iron, and charcoal to light it with. The mill boys are already standing about looking hopeful, which is worse than if they were not.",

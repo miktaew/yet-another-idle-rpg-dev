@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 141 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 142 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,58 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.56 - körfezde bir sandık ve gösterdiğini bulan bir arama
+
+P-48'in iki yarısı da; ikisi de var olan bir şeyi genişletiyor.
+
+**Sandık, ve sayı seçilmedi türetildi.** Sahibi *"çok nadir olmakla birlikte (dövüştende
+nadir)"* bir tane istedi; `Locked chest` zaten dört düşmandan 0.004 ile düşüyor, yani
+körfezinki 0.001. Aradaki fark sayıların göründüğünden geniş: bir öldürme saniyeler, bir olta
+turu 30 ile 110 oyun-içi dakika sürüyor, yani bir balıkçı ona bir dövüşçüden çok daha seyrek
+rastlıyor. Aynı sandık olduğu için Köy'deki aynı kilitte açılıyor — ikinci bir sandık değil,
+tek bir sandığa ikinci bir kaynak.
+
+**P-48 zor kısmı öngörmüştü ve haklıydı.** Bir toplama aktivitesinin ödül bloğu hiç yoktu:
+kaynak başına atılan bir eşya listesi olan `gained_resources` üretiyor ve bu, bir eylemin
+ödüllerinden farklı bir yol. Bu yüzden aktivite, sıradan biçimde isteğe bağlı bir `rewards`
+nesnesi kazandı; bir tur tamamlandığında `process_rewards`a veriliyor ve atmayı `chance_of`
+yapıyor — Köy kilidinin kendi içeriğinin kullandığı kodun aynısı. Hiçbir şey uydurulmadı.
+
+**Ve güvenilmek yerine çalışan oyunda ölçüldü**, ki bu üç deneme aldı ve hepsine değdi:
+birincisi sandık bulamadı, ikincisi balık da bulamadı, üçüncüsü saatin donduğunu buldu —
+sayfanın `run()` çağrısına ihtiyacı vardı. Şans geçici olarak 1 yapıldığında sayı 5'ten 6'ya
+çıktı. Hiçbir şeyin atmadığı bir `chance_of`, P-48'in adını koyduğu sessiz arıza ve kodu
+okumak bana bu farkı söylemezdi.
+
+**Bir kontrole havuz ile ikramiye arasındaki farkı öğretmek gerekti.**
+`check_a_rolled_set_is_not_mostly_nothing`, çoğunlukla hiçbir şey vermeyen bir kümenin içeriği
+ne kadar iyi olursa olsun boş okunduğunu söylüyor — bir sandık için doğru, çünkü oyuncu onu
+açtı. Aktivite öteki durum: körfez her turda balıkla ödüyor ve yanındaki küme ıskalamak
+**zorunda**. Düz kuralla geçmenin tek yolu nadir bir buluşu sıradanlaştırmak olurdu. Muafiyet
+bilerek dar: "yanında garanti bir şey var" değil — o, Köy kilidini ve onun `money: 1400`ünü de
+affederdi — "çevreleyen bildirim zaten kendi başına ödeyen bir aktivite". İlk deneme "bu
+noktadan önceki en yakın bildirim"i kullandı, ki bir konum dosyasında bu hep daha önceki bir
+aktivitedir ve oyundaki her kümeyi affetti — kontrolün kendi "hiçbir şey ödül kümesi atmıyor"
+muhafızı anında yakaladı, ki o muhafızları yazmanın gerekçesi tam da bu.
+
+**Arama artık girdinin söylediğiyle eşleşiyor.** P-48'in istediği gibi önce ölçüldü: bir düşme
+satırındaki yaratık `getName()` ile çiziliyor, yani yerelleştirilmiş; kayıt anahtarlarına bakan
+bir filtre, "Kurt sıçanı" okuyan bir oyuncuya "Wolf rat" bulurdu. Yaratıkların ötesine, satırın
+gösterdiği her şeye genişletildi — yer, tüccar — çünkü bir satırdaki bir etiketi bulup
+komşusunu bulmayan bir kutu, hiçbir oyuncunun öngöremeyeceği biçimde keyfî. Çizim ve süzme, bir
+kaynağın adını tek bir fonksiyona soruyor, yani ayrışamıyorlar.
+
+**"Nerede çalışılır" bölümü de kutuya uyuyor**; P-48 bunu aynı nefeste istemişti: panelde her
+şeyi bulan tek bir arama. Altındaki liste uyarken sorguyu yok sayan bir bölüm, aramanın bozuk
+olduğu izlenimi veriyor.
+
+Sonrasında ölçüldü: 204 girdi, bir yaratıkta 5, çalışılabilir bir yetenekte 1, saçmada 0.
+
+**Ve yazdığımı okurken yakaladığım kendi hatam.** Çalışma bölümü sorguyu yeni bir argüman
+olarak aldı ve çağrısı, sorguyu okuyan satırın üstünde duruyordu — geçici ölü bölgede bir
+`const`, yani esbuild'in mutlulukla derlediği ve hiçbir kontrolün içine girmediği bir
+ReferenceError.
 
 ### Katlama, ailelerin bittiği yerde bitiyor ve bir belge söylenti olmaktan çıkıyor
 

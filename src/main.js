@@ -4047,6 +4047,21 @@ function update() {
                             add_to_character_inventory(items);
                         }
 
+                        /*
+                            And whatever else the activity can turn up, which is not what it
+                            is for: the bay's chest. Rolled once per completed period rather
+                            than per resource, through process_rewards so that `chance_of`
+                            does the rolling - the same path the Village lock's own contents
+                            take. An activity with no rewards block is every activity but one.
+                        */
+                        if(current_activity.rewards) {
+                            process_rewards({
+                                rewards: current_activity.rewards,
+                                source_type: "activity",
+                                source_name: current_activity.activity_name,
+                            });
+                        }
+
                         update_gathering_tooltip(current_activity);
                     }
 

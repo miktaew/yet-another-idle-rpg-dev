@@ -2191,7 +2191,117 @@ function check_no_content_is_left_inside_a_comment() {
     }
 }
 
+
+/**
+ * An activity that declares rewards has them processed.
+ *
+ * P-48 named this failure before it could happen: "an activity's rewards are handled by a
+ * different path from an action's, and a `chance_of` that nothing rolls is the silent failure
+ * this project keeps finding." It was right to. A gathering activity had no rewards block at
+ * all - it produces `gained_resources`, a list of items with per-period chances - so the bay's
+ * chest needed the field to be added AND read, and the half that is easy to ship alone is the
+ * declaration. Content that declares a reward nothing reads is content that does nothing, and
+ * at one in a thousand nobody would ever notice.
+ *
+ * Both ends are checked because either alone is worthless: some activity has to declare
+ * `rewards`, and the gathering tick has to hand it to `process_rewards`.
+ */
+function check_an_activity_reward_is_processed() {
+    const locations_source = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/data/locations.js"), "utf8"));
+    const main = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+
+    const declaring = [...locations_source.matchAll(
+        /new\s+Location\w*Activity\s*\(\s*\{/g)].filter((opening) => {
+            const brace = locations_source.indexOf("{", opening.index);
+            let depth = 0;
+            for (let i = brace; i < locations_source.length; i++) {
+                if (locations_source[i] === "{") { depth++; }
+                else if (locations_source[i] === "}") {
+                    depth--;
+                    if (depth === 0) {
+                        return /(?:^|[{,\s])rewards\s*:/.test(
+                            locations_source.slice(brace, i));
+                    }
+                }
+            }
+            return false;
+        });
+
+    if (declaring.length === 0) {
+        console.log("[check] activity rewards: none declared, nothing to process");
+        return;
+    }
+
+    /*
+        And the tick that would pay them. Read as "the gathering branch hands
+        current_activity.rewards to process_rewards", because a field that is declared and
+        never read is exactly the shape this is here to refuse.
+    */
+    const paid = /process_rewards\s*\(\s*\{[^}]*rewards:\s*current_activity\.rewards/
+        .test(main);
+    if (!paid) {
+        error(`${declaring.length} activity/activities declare a rewards block and nothing `
+            + `in main.js hands current_activity.rewards to process_rewards, so every one of `
+            + `them grants nothing. A reward nobody rolls is invisible: the content reads as `
+            + `correct and the player simply never sees it.`);
+        return;
+    }
+
+    console.log(`[check] activity rewards: ${declaring.length} activity/activities declaring `
+        + `a rewards block, and the gathering tick processes it`);
+}
+
+/**
+ * The Discoveries search matches what a Discoveries entry actually says.
+ *
+ * The owner asked for the box to find creatures. The creature on a drop line is drawn with
+ * `enemy_templates[via].getName()`, which is localised - so a filter matching registry keys
+ * would find "Wolf rat" for a player reading "Kurt sıçanı" and nothing for the name in front
+ * of them.
+ *
+ * The way that stays true is for the drawing and the filtering to ask one function what a
+ * source is called. This checks that neither has grown its own answer: `discovery_source_names`
+ * exists, and both the line builder and the filter call it. A second place deciding what a
+ * source reads is a search box that disagrees with the list it is filtering, and it would
+ * disagree quietly.
+ */
+function check_the_discoveries_search_reads_what_it_shows() {
+    const panels = strip_comments(fs.readFileSync(
+        path.join(repo_root, "src/display/journal_panels.js"), "utf8"));
+
+    if (!/function\s+discovery_source_names\s*\(/.test(panels)) {
+        error("discovery_source_names is gone from journal_panels.js - the Discoveries "
+            + "search and the source lines it filters no longer share what a source is "
+            + "called, so either can drift without the other noticing.");
+        return;
+    }
+
+    const users = ["create_discovery_source_line", "update_displayed_discoveries"];
+    for (const name of users) {
+        const at = panels.indexOf(`function ${name}(`);
+        if (at === -1) {
+            error(`${name} is gone from journal_panels.js - `
+                + `check_the_discoveries_search_reads_what_it_shows is out of date.`);
+            return;
+        }
+        const body = braced_body(panels, panels.indexOf("{", panels.indexOf(")", at)));
+        if (body && /discovery_source_names\s*\(/.test(body)) {
+            continue;
+        }
+        error(`${name} does not ask discovery_source_names what a source is called, so the `
+            + `Discoveries list and the box that filters it have separate ideas of it. A `
+            + `player searching for a creature would get whichever of the two is wrong.`);
+    }
+
+    console.log(`[check] discoveries search: ${users.length} reader(s), all naming a source `
+        + `through one function`);
+}
+
 export {
+    check_an_activity_reward_is_processed,
+    check_the_discoveries_search_reads_what_it_shows,
     check_no_content_is_left_inside_a_comment,
     check_action_branches,
     check_every_enemy_has_a_home,
