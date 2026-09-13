@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 140 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 141 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,48 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### Katlama, ailelerin bittiği yerde bitiyor ve bir belge söylenti olmaktan çıkıyor
+
+Sıradaki klasör ailesinin peşine düşmek, kalan 36 üst düzey dosyayı kaç modülün import
+ettiğine göre ölçtü ve cevap katlamayı sürdürmek yerine bitirdi:
+
+| kaç modül import ediyor | dosyalar |
+|---|---|
+| 10 ve üzeri | `main.js` 31, `translation.js` 25, `character.js` 23, `items.js` 19, `misc.js` 13, `traders.js` 11 ve 10'da üç tane |
+| 3 ile 6 arası | on iki tanesi |
+| 0 ile 1 arası | on tanesi, hepsi yaprak |
+
+**`src/display/` gerçek bir aileydi çünkü projenin kendisi onu çoktan aile yapmıştı** —
+dokuzunun beşi `display.js`'ten elle ayrılmıştı. Geriye kalan, sırasını bekleyen başka bir aile
+değil: her şeyin okuduğu paylaşılan katman ve onun yaprakları. *Onu* konusuna göre katlamak,
+`crafting_recipes.js`i bir zanaat klasörüne koyup dışarıdaki on modülün içeri uzanmasına yol
+açardı; bu da uzun bir yol alıp hiç bütünlük vermemek demek. Sıkı görünen iki aday — zanaat ve
+ticaret — sayılarda dağılıyor: `crafting.js` ile `crafting_component_filling.js`in birer
+import edeni var, `crafting_recipes.js`in ise on tane.
+
+Yani katlama tek klasörde bitti ve P-42 bunu artık kimsenin yeniden türetmeyeceği bir plan
+bırakmak yerine ölçümüyle söylüyor.
+
+**Aynı ölçümün ortaya çıkardığı şey: `src/rewards.js`i hiçbir şey import etmiyor.** 136 satır
+yorum, sıfır kod — bir ödül nesnesinin neler tutabileceğinin referansı — ve
+`process_rewards`ın üç tür gerisinde kalmış: `chance_of`, `effects` ve `titles`. Neyin mevcut
+olduğunu öğrenmek için okuyan biri bunları bulamazdı, eksiksizlik için okuyan biri ise var
+olmadıkları sonucuna varırdı.
+
+**Ve onunla ilgili not da sırası gelince bayatlamış; saklanmaya değer kısım bu.**
+`check_reward_keys` kendi yorumunda belgenin *"`global_activities` ve `skills`i eksik"*
+olduğunu söylüyor. İkisi de o zamandan beri yazılmış. Yani belge düzeltilmiş, sonradan üç
+başka tür eksilmiş ve projede belgenin yanlış olduğunu iddia eden tek cümle, nasıl yanlış
+olduğu konusunda kendisi yanlışmış. Düz yazıya yazılmış bir arıza, düz yazının hızında
+yaşlanır.
+
+Üç tür artık belgelenmiş durumda; yükleme sırasında atlanan ikisi ve nedeni dahil — `effects`
+ile `chance_of`, oyuncuya **şimdi** olan şeyler, yani birini açılışta yeniden oynatmak onu
+oyuncuya bir daha vermek demek. `check_the_reward_schema_is_complete` de belgeyi
+`process_rewards` ile iki yönden karşılaştırıyor: belgede eksik bir tür, kimsenin bulamayacağı
+bir yetenek; belgede uydurulmuş bir tür ise oyunun tutmadığı bir söz. İki yönde de negatif
+test edildi.
 
 ### Çizim dosyaları src/display/ altına taşındı, ve fark etmeyen iki araç
 

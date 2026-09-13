@@ -85,9 +85,12 @@ function check_money_requirements() {
  * author's note beside it read "locked as the reward doesn't really have any uses
  * yet", and it was half right for the wrong reason.
  *
- * The list is taken from what main.js reads, not from the schema in
- * src/rewards.js - that document is missing `global_activities` and `skills`, so
- * trusting it would reject two working keys.
+ * The list is taken from what main.js reads rather than from the schema in
+ * src/rewards.js, because the reader is the thing that decides and a document is a claim
+ * about it. This note used to name the two kinds the document was missing, which is the
+ * trouble with writing a document's faults into a comment: the document was fixed, three
+ * different kinds went missing later, and the note stayed confidently wrong about both.
+ * check_the_reward_schema_is_complete below compares the two instead.
  */
 /*
     Top-level `key: value` entries of an object literal body, and the top-level members of
@@ -684,7 +687,90 @@ async function check_reward_entries_have_the_right_shape() {
         + `reward block(s), each the shape process_rewards reads`);
 }
 
+
+/**
+ * The reward schema document lists exactly the kinds process_rewards reads.
+ *
+ * `src/rewards.js` is 136 lines of comment and nothing else - no code, no exports, and
+ * nothing imports it. It is where somebody writing content looks up what a rewards object
+ * may hold, which makes it load-bearing in the only way documentation ever is: it is trusted.
+ *
+ * **It had fallen three kinds behind** - `chance_of`, `effects` and `titles` - so a
+ * content author reading it would not have known those were available, and one reading it
+ * for completeness would have concluded they were not.
+ *
+ * **And the note about it had gone stale in turn**, which is the part worth keeping.
+ * `check_reward_keys` said in its own comment that the document "is missing
+ * `global_activities` and `skills`". Both had since been written in. So the document was
+ * fixed, three different kinds went missing later, and the only sentence in the project
+ * claiming the document was wrong was itself wrong about how. A fault written into prose
+ * ages at the speed of the prose.
+ *
+ * So the comparison is made rather than described. The kinds come from `process_rewards` -
+ * the thing that actually decides - and the document has to name each one at the depth its
+ * own schema uses. Both directions are errors: a kind missing from the document is a
+ * capability nobody can find, and a kind in the document that nothing reads is a promise the
+ * game does not keep, which is exactly the fault `check_reward_keys` exists for from the
+ * content side.
+ */
+function check_the_reward_schema_is_complete() {
+    const document_path = path.join(repo_root, "src/rewards.js");
+    if (!fs.existsSync(document_path)) {
+        error("src/rewards.js is gone - check_the_reward_schema_is_complete is out of date. "
+            + "If the schema document was deliberately removed, remove this check with it.");
+        return;
+    }
+
+    const main = strip_comments(
+        fs.readFileSync(path.join(repo_root, "src/main.js"), "utf8"));
+    const at = main.indexOf("function process_rewards(");
+    if (at === -1) {
+        error("process_rewards is gone - check_the_reward_schema_is_complete would accept "
+            + "anything.");
+        return;
+    }
+    const body = main.slice(at, main.indexOf("\nfunction ", at + 10));
+    const read = new Set([...body.matchAll(/rewards\.(\w+)/g)].map(found => found[1]));
+
+    /*
+        The document is one comment, so it is read as text. Its entries sit at eight spaces -
+        the depth of the `{ ... }` it draws - which is what tells a reward kind apart from a
+        field inside one: `items:` is a kind, and the `item:` and `count:` under it are not.
+    */
+    const document = fs.readFileSync(document_path, "utf8");
+    const documented = new Set(
+        [...document.matchAll(/^ {8}(\w+)\s*:/gm)].map(found => found[1]));
+
+    if (read.size < 15 || documented.size < 15) {
+        error(`read ${read.size} kind(s) out of process_rewards and ${documented.size} out `
+            + `of src/rewards.js - check_the_reward_schema_is_complete is out of date and `
+            + `would accept anything.`);
+        return;
+    }
+
+    for (const kind of [...read].sort()) {
+        if (documented.has(kind)) {
+            continue;
+        }
+        error(`process_rewards reads rewards.${kind} and src/rewards.js does not document `
+            + `it. That file is where somebody writing content looks up what a rewards `
+            + `object may hold, so a kind missing from it is a capability nobody can find.`);
+    }
+    for (const kind of [...documented].sort()) {
+        if (read.has(kind)) {
+            continue;
+        }
+        error(`src/rewards.js documents rewards.${kind} and process_rewards never reads it. `
+            + `Content written against it would declare the key, the game would grant `
+            + `nothing, and nothing else would say so.`);
+    }
+
+    console.log(`[check] reward schema: ${read.size} kind(s) read by process_rewards, `
+        + `each documented in src/rewards.js and none invented there`);
+}
+
 export {
+    check_the_reward_schema_is_complete,
     check_reward_entries_have_the_right_shape,
     check_a_rolled_set_is_not_mostly_nothing,
     check_money_requirements,

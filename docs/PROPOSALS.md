@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 163 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 164 -->
 
 # Proposals
 
@@ -512,11 +512,22 @@ name as strings and requires each to exist. It prints immediately rather than th
 `report.mjs`, because a moved file usually makes a later check die in the module loader before
 the collected errors are ever flushed.
 
-**Remaining families, in the order they look cheapest:** crafting and trade
-(`crafting.js`, `crafting_recipes.js`, `crafting_component_filling.js`, `trade.js`,
-`traders.js`, `market_saturation.js`), the save files (`save_load.js`, `save_repairs.js`,
-`run_stats.js`), and the world rules (`activities.js`, `combat_stances.js`, `weather.js`,
-`pathfinding.js`, `world_index.js`, `conditions.js`).
+**And the fold stops there, measured rather than decided.** The 36 remaining top-level
+files were counted by how many modules import each: `main.js` 31, `translation.js` 25,
+`character.js` 23, `items.js` 19, `misc.js` 13, `traders.js` 11, three more at 10, twelve
+between 3 and 6, and ten leaves at 0 or 1. That is not a set of families - it is the shared
+layer everything reads, plus its leaves. `display/` was a real family because the project had
+already made it one by hand; nothing else here has that shape.
+
+The two candidates that looked tight dissolve on the numbers. **Crafting:** `crafting.js` and
+`crafting_component_filling.js` have one importer each while `crafting_recipes.js` has ten, so
+a crafting folder would be two leaves and a registry that ten modules outside it reach into.
+**Trade:** `traders.js` has eleven importers and `market_saturation.js` six. Folding either
+buys a longer path and no cohesion, and it is the opposite of why the fold was asked for.
+
+So: one folder, and this is the note that stops it being re-derived. If a future split
+produces a genuine cluster - as `display.js` did, over several versions - it gets a folder
+then, on the same evidence.
 
 #### Why these questions keep coming, and what the measurements say back
 

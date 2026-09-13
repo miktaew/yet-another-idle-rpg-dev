@@ -119,6 +119,26 @@
         move_to: {
             location: String //location key
         }
+
+        titles: [String] //an array with title keys; a title already earned is skipped
+
+        effects: [
+            {
+                effect: String //effect template key
+                duration: Number //in in-game minutes
+            }
+        ]
+        //skipped entirely while loading, and by only_unlocks: an effect is a thing that
+        //happens to the player now, so replaying one on load would hand it to them again
+
+        chance_of: [
+            {
+                chance: Number //0..1, or a Function returning one - rolled per entry
+                rewards: //a whole rewards object, processed only if the roll lands
+            }
+        ]
+        //also skipped while loading and by only_unlocks, for the same reason: a roll
+        //replayed on every load is a reward the player keeps being given
     }
 */
 

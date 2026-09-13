@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 140 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 141 -->
 
 # Changelog
 
@@ -20,6 +20,47 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### The fold ends where the families do, and a document stops being a rumour
+
+Going after the next folder family measured the 36 remaining top-level files by how many
+modules import each, and the answer ended the fold rather than continuing it:
+
+| imported by | files |
+|---|---|
+| 10 or more | `main.js` 31, `translation.js` 25, `character.js` 23, `items.js` 19, `misc.js` 13, `traders.js` 11, and three at 10 |
+| 3 to 6 | twelve of them |
+| 0 to 1 | ten, all leaves |
+
+**`src/display/` was a real family because the project had already made it one** - five of its
+nine were split out of `display.js` by hand. What is left is not another family waiting: it is
+the shared layer everything reads, plus its leaves. Folding *that* by subject would put
+`crafting_recipes.js` in a crafting folder while ten modules outside it reach in, which buys a
+longer path and no cohesion. The two candidates that looked tight - crafting, and trade - both
+dissolve on the numbers: `crafting.js` and `crafting_component_filling.js` have one importer
+each, and `crafting_recipes.js` has ten.
+
+So the fold is done at one folder, and P-42 now says so with the measurement rather than
+leaving a plan nobody will re-derive.
+
+**What the same measurement turned up: `src/rewards.js` is imported by nothing.** It is 136
+lines of comment and no code - the reference for what a rewards object may hold - and it had
+fallen three kinds behind `process_rewards`: `chance_of`, `effects` and `titles`. Somebody
+reading it to find out what is available would not have found those, and somebody reading it
+for completeness would have concluded they do not exist.
+
+**And the note about it had gone stale in turn, which is the part worth keeping.**
+`check_reward_keys` says in its own comment that the document "is missing `global_activities`
+and `skills`". Both had since been written in. So the document was fixed, three different
+kinds went missing later, and the one sentence in the project claiming the document was wrong
+was itself wrong about how. A fault written into prose ages at the speed of the prose.
+
+The three kinds are documented now, including the two that are skipped while loading and why -
+`effects` and `chance_of` are things that happen to the player *now*, so replaying either on
+load hands it to them again. And `check_the_reward_schema_is_complete` compares the document
+against `process_rewards` in both directions: a kind missing from it is a capability nobody
+can find, and a kind invented in it is a promise the game does not keep. Negative-tested both
+ways.
 
 ### The drawing files move into src/display/, and two tools that did not notice
 

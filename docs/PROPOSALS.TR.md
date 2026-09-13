@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 163 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 164 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -511,11 +511,23 @@ kaynak yolunu okuyup her birinin var olmasını şart koşuyor. `report.mjs` üz
 yazıyor, çünkü taşınmış bir dosya genellikle sonraki bir kontrolün modül yükleyicisinde
 ölmesine yol açıyor ve toplanan hatalar hiç basılamıyor.
 
-**Kalan aileler, en ucuz göründükleri sırayla:** zanaat ve ticaret (`crafting.js`,
-`crafting_recipes.js`, `crafting_component_filling.js`, `trade.js`, `traders.js`,
-`market_saturation.js`), kayıt dosyaları (`save_load.js`, `save_repairs.js`, `run_stats.js`) ve
-dünya kuralları (`activities.js`, `combat_stances.js`, `weather.js`, `pathfinding.js`,
-`world_index.js`, `conditions.js`).
+**Ve katlama orada duruyor; bu bir karar değil bir ölçüm.** Kalan 36 üst düzey dosya, kaç
+modülün import ettiğine göre sayıldı: `main.js` 31, `translation.js` 25, `character.js` 23,
+`items.js` 19, `misc.js` 13, `traders.js` 11, 10'da üç tane daha, 3 ile 6 arasında on iki tane
+ve 0 ya da 1'de on yaprak. Bu bir aileler kümesi değil — her şeyin okuduğu paylaşılan katman ve
+yaprakları. `display/` gerçek bir aileydi çünkü projenin kendisi onu elle öyle yapmıştı;
+buradaki başka hiçbir şeyin o şekli yok.
+
+Sıkı görünen iki aday sayılarda dağılıyor. **Zanaat:** `crafting.js` ile
+`crafting_component_filling.js`in birer import edeni var, `crafting_recipes.js`in ise on; yani
+bir zanaat klasörü iki yaprak ve dışarıdaki on modülün içine uzandığı bir kayıt olurdu.
+**Ticaret:** `traders.js`in on bir, `market_saturation.js`in altı import edeni var. İkisini de
+katlamak uzun bir yol alıp hiç bütünlük vermemek demek — ki bu, katlamanın istenme sebebinin
+tam tersi.
+
+Yani tek klasör ve bu, onun yeniden türetilmesini engelleyen not. İleride bir ayırma gerçek bir
+küme üretirse — `display.js`in birkaç sürüm boyunca ürettiği gibi — o zaman aynı kanıtla kendi
+klasörünü alır.
 
 **Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü
 arkasında ölçülmüş 404'e 1 gibi bir argüman olan tek iş bu. Sonra klasör düzeni, dosyalar

@@ -147,6 +147,7 @@ import {
     check_reward_entries_have_the_right_shape,
     check_a_rolled_set_is_not_mostly_nothing,
     check_reward_keys,
+    check_the_reward_schema_is_complete,
 } from "./checks/rewards.mjs";
 import {
     check_changelogs_cover_version,
@@ -169,6 +170,7 @@ check_site();
 check_interpolated_pairs();
 await check_duration_units_have_rows();
 check_reward_keys();
+check_the_reward_schema_is_complete();
 check_a_rolled_set_is_not_mostly_nothing();
 check_location_types();
 check_content_is_reachable();
