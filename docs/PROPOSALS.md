@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 161 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 162 -->
 
 # Proposals
 
@@ -466,6 +466,21 @@ probe that ignores pragmas and so could never have noticed.
 **What a typedef cannot do:** an undeclared field passes, because excess-property checking
 applies to fresh literals and a JSON import is a variable. The guard reads the allowed names
 out of the typedef's own `@property` lines instead of listing them.
+
+**The dead declarations are gone, and they were most of what was left.** Measuring
+`items.js` for the next JSON family found 263 declarations in the text and 145 once comments
+are stripped: 118 sat inside eleven block comments, 1,754 lines, superseded when
+`crafting_component_filling.js` started generating the components. 66 of their keys are still
+in the game as generated items; of the 52 that are not, 43 are the old side of
+`component_name_mapping`, which an old save still needs. Removed, with 459 of 459 constructed
+templates identical and all 122 coverage counts unchanged - `items.js` is 3,130 lines rather
+than 4,902.
+
+**So the remaining families are smaller than this proposal thought**: 145 live declarations,
+of which 39 usables, 22 armour, 15 weapons, 13 books, 13 tools, 12 other, 11 shields and 6
+capes. One of the 145 carries a function - `Rough wood log`, already known. Whether they are
+worth a JSON move is now a smaller question than it was, and the folder layout is the next
+thing either way.
 
 **Next, and it is a judgement rather than a measurement:** `src/data/skills.js` is the
 biggest file left at 5,797 lines, but most skills carry a `get_effect_description` function,

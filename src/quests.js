@@ -945,37 +945,19 @@ const questManager = {
 
 
 /*
-quests["Test quest"] = new Quest({
-    quest_name: "quest Test quest",              //a text id; the text lives in locales/
-    id: "Test quest",                            //the registry key, never translated
-    quest_description: "quest Test quest desc 1", //also a text id
-    quest_tasks: [
-        new QuestTask({
-            task_description: "quest Test quest task 0",
-            task_condition: {
-                any: {
-                    kill: {
-                        "Wolf rat": {target: 10}
-                    }
-                }
-            }
-        }),
-        new QuestTask({
-            task_description: "quest Test quest task 1",
-            is_hidden: true,
-        }),
-        new QuestTask({
-            task_description: "quest Test quest task 2",
-            task_condition: {
-                any: {
-                    kill: {
-                        "Wolf rat": {target: 20}
-                    }
-                }
-            }
-        }),
-    ]
-});
+    A quest carries two names and they are not interchangeable, which is the one thing worth
+    saying here and the one thing easy to get wrong:
+
+      - `quest_name` and `quest_description` hold TEXT IDS. The text lives in locales/, and
+        `resolve_quest_text` above turns an id into words;
+      - `id` is the registry key. It is written into save files and never translated, so it
+        is one of the permanent keys - renaming it breaks every save that holds it.
+
+    This used to be followed by a commented-out "Test quest" showing the shape. It went, for
+    the reason check_no_content_is_left_inside_a_comment gives: it read as a twenty-fourth
+    quest to anything looking at the raw file, and it named four text ids that were never in
+    locales/, so copying it produced a quest with no words. The twenty-three real quests below
+    are the better example, and they are the ones that have to keep working.
 */
 
 Object.keys(quests).forEach(quest => {

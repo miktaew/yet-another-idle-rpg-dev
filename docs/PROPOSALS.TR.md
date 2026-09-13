@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 161 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 162 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -472,6 +472,19 @@ sondasıyla ölçüyor ve bunu asla fark edemezdi.
 **Bir typedef'in yapamadığı:** bildirilmemiş bir alan geçiyor, çünkü fazla-özellik denetimi
 taze sabitlere uygulanıyor ve JSON import'u bir değişken. Muhafız izinli adları listelemek
 yerine typedef'in kendi `@property` satırlarından okuyor.
+
+**Ölü bildirimler kalktı ve kalanın çoğu onlardı.** Sıradaki JSON ailesi için `items.js`i
+ölçmek, metinde 263, yorumlar soyulunca 145 bildirim buldu: 118'i on bir yorum bloğunun
+içinde, 1.754 satır; `crafting_component_filling.js` bileşenleri üretmeye başlayınca
+geçersizleşmişler. Anahtarlarının 66'sı oyunda üretilmiş eşya olarak hâlâ var; olmayan 52'nin
+43'ü ise eski bir kaydın hâlâ ihtiyaç duyduğu `component_name_mapping`in eski tarafı.
+Kaldırıldı; 459 kurulmuş şablonun 459'u aynı ve 122 kapsama sayısının hepsi değişmedi —
+`items.js` 4.902 yerine 3.130 satır.
+
+**Yani kalan aileler bu proposal'ın sandığından küçük**: 145 canlı bildirim; 39 kullanılabilir,
+22 zırh, 15 silah, 13 kitap, 13 alet, 12 diğer, 11 kalkan ve 6 pelerin. 145'inden biri
+fonksiyon taşıyor — `Rough wood log`, zaten biliniyordu. Bunların JSON'a taşınmaya değip
+değmediği artık eskisinden küçük bir soru ve klasör düzeni her hâlükârda sıradaki iş.
 
 **Sırada olan, ölçüm değil yargı:** `src/data/skills.js` 5.797 satırla kalan en büyük dosya
 ama becerilerin çoğu `get_effect_description` fonksiyonu taşıyor, yani malzeme vakası değil.

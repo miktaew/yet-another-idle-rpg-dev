@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 138 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 139 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,49 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### Var gibi yapan 118 eşya
+
+P-42'nin sıradaki adımı *"`items.js`'te kalan saf-veri aileleri"*ydi. Onları ölçmek önce başka
+bir şey buldu: **o dosyada 263 eşya bildirimi var ve yalnızca 145'i gerçek.** Diğer 118'i,
+toplamı 1.754 satır tutan on bir yorum bloğunun içinde duruyor — kırk iki silah bileşeni, otuz
+beş zırh bileşeni, on bir kalkan bileşeni, otuz zırh parçası — `crafting_component_filling.js`
+bileşenleri bildirmek yerine üretmeye başlayınca geride kalmışlar. Her blok doğrudan bir
+bildirimle açılıyor, içinde tek satır açıklama yok: birinin çalıştırmayı bıraktığı kod, birinin
+açıkladığı kod değil.
+
+**Hiçbir şey silinmeden önce iki yönden de kontrol edildi.** Anahtarların 66'sı oyunda hâlâ
+var; bildirilmiş değil üretilmiş hâlde — kontrol onları baştan beri *"generated components can
+be made: 195 of 203"* diye sayıyormuş. Diğer 52'si hiçbir yerde yok ve bunların 43'ü,
+misc.js'teki `component_name_mapping`in sol tarafı: yeniden adlandırılmadan önceki bir bileşeni
+bugünkü adına eşleyip eski bir kaydın yüklenmesini sağlıyor. Yani adlar orada hâlâ gerekli,
+bildirimler değil.
+
+**Okuyarak değil anlık görüntüyle kanıtlandı**, malzeme ve tarif taşımalarındaki gibi: önce 459
+kurulmuş eşya şablonu, sonra 459 — **eksik yok, fazla yok, değişen yok** — ve `npm run
+check`teki 122 kapsama sayısının hepsi satır satır aynı. `items.js` 4.902 satır yerine 3.130
+satır.
+
+**Bunun bir kontrolü hak etmesinin sebebi, beni tek oturumda iki kez yanıltmış olması.**
+Bileşen ailelerini ham dosyadan saymak, var olmayan doksan üç bileşen verdi. Ardından
+`description` alanlarını okumak, her eşyanın `desc item <key>` kimliği taşıdığı yerde düz
+İngilizce cümleler çıkardı — ki bu tıpatıp bir D-5 ihlali gibi göründü ve üreticiden önceki bir
+satırmış. Tek dosyadan iki kendinden emin yanlış cevap ve **ikisi de hiçbir şeyi düşürmedi**:
+yoruma alınmış bir bildirim, `strip_comments`ten geçen her şeye görünmez ve ham metni okuyan
+her şeye apaçık görünür; yani araçların iki yarısı neyin var olduğu konusunda anlaşmazlığa
+düşüyor ve bunu kimse söylemiyor.
+
+Bu yüzden `check_no_content_is_left_inside_a_comment`, içeriğin ya bildirilmiş ya da gitmiş
+olduğu kuralını tutuyor. Kayıt adları aynı dosyada hâlâ canlı olan atamalardan öğreniliyor,
+yani yeni bir kayıt, ondan bir şey yoruma alındığı gün kapsama giriyor.
+
+**Anında ikinci bir örnek buldu**: `quests.js`, yoruma alınmış bir `"Test quest"` taşıyordu. O,
+terk edilmiş içerik değil belgelenmiş bir örnekti — hangi alanın metin kimliği, hangisinin
+kayıt anahtarı olduğu satır satır açıklanmıştı — o yüzden düpedüz silinmedi. Hayatta kalan şey
+açıklama, çünkü söylenmeye değer olan o ayrımdı, sahte görev değil: ham dosyaya bakan her şeye
+yirmi dördüncü bir görev gibi okunuyordu ve `locales/` içinde hiç var olmamış dört metin
+kimliği adlandırıyordu, yani kopyalansa sözü olmayan bir görev üretirdi. Yirmi üç gerçek görev
+daha iyi bir örnek.
 
 ### v0.7.55 - kıvılcım yananın üstüne ekleniyor, ve bu konuda yalan söyleyen geliştirici aracı
 

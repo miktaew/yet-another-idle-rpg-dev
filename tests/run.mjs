@@ -37,6 +37,7 @@ import {
     check_a_failed_attempt_keeps_what_it_needs,
     check_a_reputation_region_opens_something,
     check_no_action_hides_on_a_recurring_condition,
+    check_no_content_is_left_inside_a_comment,
 } from "./checks/content.mjs";
 import {
     check_creation_panel_values,
@@ -231,6 +232,7 @@ check_moon_phases_are_real();
 check_a_failed_attempt_keeps_what_it_needs();
 check_a_reputation_region_opens_something();
 check_no_action_hides_on_a_recurring_condition();
+check_no_content_is_left_inside_a_comment();
 check_actions_can_explain_failure();
 check_content_object_keys();
 check_quest_task_item_sources();

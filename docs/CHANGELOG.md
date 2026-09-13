@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 138 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 139 -->
 
 # Changelog
 
@@ -20,6 +20,49 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### The 118 items that were only pretending to exist
+
+P-42's next step was "the remaining pure-data families in `items.js`". Measuring them found
+something else first: **263 item declarations in that file, and only 145 of them are real.**
+The other 118 sit inside eleven block comments totalling 1,754 lines - forty-two weapon
+components, thirty-five armor components, eleven shield components, thirty pieces of armour -
+left behind when `crafting_component_filling.js` started generating the components instead of
+declaring them. Every block opens straight onto a declaration with no prose in it: code
+somebody stopped running, not code somebody was explaining.
+
+**Checked both ways before deleting anything.** 66 of the keys still exist in the game,
+generated rather than declared - the check has been counting them all along as *"generated
+components can be made: 195 of 203"*. The other 52 exist nowhere, and 43 of those are the
+left-hand side of `component_name_mapping` in misc.js, which maps a pre-rename component to
+its current name so an old save still loads. So the names are still needed there; the
+declarations are not.
+
+**Proved by snapshot rather than by reading**, the same way the materials and recipes moves
+were: 459 constructed item templates before, 459 after, **none missing, none added, none
+changed** - and all 122 coverage counts in `npm run check` identical line for line.
+`items.js` is 3,130 lines rather than 4,902.
+
+**The reason this earns a check is that it made me wrong twice in one sitting.** Counting the
+component families off the raw file gave ninety-three components that do not exist. Reading
+their `description` fields then turned up raw English sentences where every other item carries
+a `desc item <key>` id - which looked exactly like a D-5 violation, and was a line from before
+the generator. Two confident wrong answers from one file, and **neither of them failed
+anything**: a commented-out declaration is invisible to everything reading through
+`strip_comments` and plainly visible to everything reading the raw text, so the two halves of
+the tooling disagree about what exists and nothing says so.
+
+So `check_no_content_is_left_inside_a_comment` holds the rule that content is either declared
+or gone. The registry names are learned from the assignments still live in the same file, so a
+new registry is covered the day something is commented out of it.
+
+**It found a second one immediately**: `quests.js` carried a commented-out `"Test quest"`.
+That one was a documented example rather than abandoned content - annotated line by line with
+which field is a text id and which is the registry key - so it was not simply deleted. What
+survives is the annotation, because that distinction is worth stating and the fake quest was
+not: it read as a twenty-fourth quest to anything looking at the raw file, and it named four
+text ids that were never in `locales/`, so copying it would have produced a quest with no
+words. The twenty-three real quests are the better example.
 
 ### v0.7.55 - the spark extends what is burning, and the dev tool that lied about it
 

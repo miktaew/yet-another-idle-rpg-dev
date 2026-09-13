@@ -2116,7 +2116,83 @@ function check_no_action_hides_on_a_recurring_condition() {
         + `a moon`);
 }
 
+
+/**
+ * No registry declaration is left sitting inside a comment.
+ *
+ * `items.js` carried 118 of them across eleven blocks and 1,754 lines - forty-two weapon
+ * components, thirty-five armor components, eleven shield components, thirty pieces of
+ * armour - left behind when `crafting_component_filling.js` started generating the
+ * components instead. Every one of the blocks opened straight onto a declaration, with no
+ * prose in it: it was code somebody stopped running, not code somebody was explaining.
+ *
+ * **Why this is worth a check rather than a tidy-up.** A commented-out declaration is
+ * invisible to anything reading through `strip_comments` and plainly visible to anything
+ * reading the raw text, and this project derives what content exists by reading these files
+ * both ways. That gap is not theoretical: measuring this very file produced ninety-three
+ * components that do not exist, and then a raw English description that looked like a D-5
+ * violation until it turned out to be a line from before the generator. Two wrong answers
+ * from one file, neither of which failed anything - they just lied.
+ *
+ * So the rule is that content lives in exactly one state: declared, or gone. Something worth
+ * keeping for reference belongs in git, which still has it, or in a sentence saying what
+ * replaced it - not in a thousand lines of parseable-looking text that half the tooling can
+ * see.
+ *
+ * The pattern is derived from the assignments that are actually live in the same file, so a
+ * new registry is covered the day something is commented out of it, and a file with no
+ * registry writes cannot trip it.
+ */
+function check_no_content_is_left_inside_a_comment() {
+    let files = 0;
+    let found = 0;
+
+    for (const relative of source_files(repo_root)) {
+        const raw = fs.readFileSync(path.join(repo_root, relative), "utf8");
+        const live = strip_comments(raw);
+
+        /*
+            What a registry write looks like HERE, learned from the ones still running.
+            `item_templates[...] = new Material({`, `effect_templates[...] = new ...`,
+            `skills[...] = new Skill({`. A file that writes to no registry has nothing for
+            this check to be wrong about.
+        */
+        const registries = new Set(
+            [...live.matchAll(/(\w+)\s*\[\s*"[^"]+"\s*\]\s*=\s*new\s+\w+\s*\(/g)]
+                .map(match => match[1]));
+        if (registries.size === 0) {
+            continue;
+        }
+        files++;
+
+        const pattern = new RegExp(
+            `(?:${[...registries].join("|")})\\s*\\[\\s*"([^"]+)"\\s*\\]\\s*=\\s*new\\s+(\\w+)\\s*\\(`,
+            "g");
+
+        const in_comments = [...raw.matchAll(pattern)]
+            .map(match => match[1])
+            .filter(key => !live.includes(`"${key}"`));
+
+        if (in_comments.length === 0) {
+            continue;
+        }
+        found += in_comments.length;
+        error(`${relative} holds ${in_comments.length} registry declaration(s) inside a `
+            + `comment - ${in_comments.slice(0, 3).map(k => `"${k}"`).join(", ")}`
+            + `${in_comments.length > 3 ? ", ..." : ""}. Commented-out content is invisible `
+            + `to every derivation that strips comments and visible to every one that does `
+            + `not, so the two disagree about what exists and neither fails. Delete it - git `
+            + `still has it - or say in a sentence what replaced it.`);
+    }
+
+    if (found === 0) {
+        console.log(`[check] dead declarations: ${files} file(s) writing to a registry, `
+            + `none of them with content left in a comment`);
+    }
+}
+
 export {
+    check_no_content_is_left_inside_a_comment,
     check_action_branches,
     check_every_enemy_has_a_home,
     check_hidden_tasks_can_be_hinted,
