@@ -280,7 +280,7 @@ async function check_no_english_in_dom() {
 
     let flagged = 0;
     let checked = 0;
-    for (const relative of ["src/display.js", "src/main.js"]) {
+    for (const relative of ["src/display/display.js", "src/main.js"]) {
         const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
 
         for (const literal of read_string_literals(source)) {
@@ -349,7 +349,7 @@ async function check_no_english_in_dom() {
  * check_no_english_in_dom cannot see, so this looks for the shape instead of the text.
  */
 async function check_seasons_go_through_the_accessor() {
-    const relative = "src/display.js";
+    const relative = "src/display/display.js";
     const source = strip_comments(fs.readFileSync(path.join(repo_root, relative), "utf8"));
     const lines = source.split(/\r?\n/);
 

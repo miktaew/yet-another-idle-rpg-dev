@@ -79,7 +79,7 @@ async function check_content_text_ids() {
             //whoever happens to boot the game.
             /translationManager\.getText\(language,\s*"((?:log|ui) [^"]+)"/g,
         ]},
-        { file: "src/display.js", patterns: [
+        { file: "src/display/display.js", patterns: [
             //Interface labels, resolved where they are rendered.
             /translationManager\.getText\(language,\s*"((?:ui) [^"]+)"/g,
         ]},

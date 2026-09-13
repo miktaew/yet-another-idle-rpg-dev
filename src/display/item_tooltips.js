@@ -1,20 +1,20 @@
 /** Item, effect and recipe tooltips: everything drawn on hover. */
 
-import { language, current_location } from "./main.js";
+import { language, current_location } from "../main.js";
 import { format_money } from "./display.js";
-import { effect_templates } from "./active_effects.js";
-import { translationManager } from "./translation.js";
+import { effect_templates } from "../active_effects.js";
+import { translationManager } from "../translation.js";
 import { capitalize_first_letter, insert_HTML } from "./ui_helpers.js";
-import { round_item_price, select_outline_class } from "./misc.js";
-import { character, get_effect_with_bonuses } from "./character.js";
-import { skills } from "./data/skills.js";
-import { traders } from "./traders.js";
-import { current_trader } from "./trade.js";
-import { format_time } from "./game_time.js";
+import { round_item_price, select_outline_class } from "../misc.js";
+import { character, get_effect_with_bonuses } from "../character.js";
+import { skills } from "../data/skills.js";
+import { traders } from "../traders.js";
+import { current_trader } from "../trade.js";
+import { format_time } from "../game_time.js";
 import { Armor, Shield, Weapon, book_stats, getItemRarity, item_log, item_templates,
-         rarity_multipliers } from "./items.js";
+         rarity_multipliers } from "../items.js";
 import { find_recipe_material, get_consumed_quality, get_component_stats, get_recipe_xp_value,
-         recipes } from "./crafting_recipes.js";
+         recipes } from "../crafting_recipes.js";
 
 /*
     format_money is the one name this module takes back out of display.js, and it is

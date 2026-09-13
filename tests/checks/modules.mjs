@@ -191,6 +191,97 @@ async function check_modules_import_what_they_call() {
     }
 }
 
+
+/**
+ * Every source path a check names still exists.
+ *
+ * The checks reach into the source by string - `readFileSync(path.join(repo_root,
+ * "src/items.js"))`, `load_browser_free(repo_root, ["src/quests.js"])` - forty-one paths
+ * across the suite. That is the right way to ask the source a question, and it is also a
+ * reference the compiler cannot see: renaming or moving a file leaves the string pointing at
+ * nothing.
+ *
+ * **Written before P-42's folder fold rather than after it**, because the fold is forty-three
+ * files moving at once and this is the difference between finding out and not. Most of the
+ * readers would throw, which is loud and fine. The ones that would not are the reason this
+ * exists: a check that globs, one that collects several files and skips what it cannot read,
+ * one guarded by `existsSync` that returns early having reported nothing - 115 reads in the
+ * suite against 28 existence guards. A derivation reading the wrong place does not fail, it
+ * lies, and this project has paid for that lesson twice: 171 errors naming materials that
+ * worked perfectly, and 255 saying nothing could give the player a recipe that anyone could
+ * craft.
+ *
+ * The paths are read out of the checks themselves rather than listed, so a check added
+ * tomorrow is covered without anything being maintained here.
+ */
+function check_every_source_path_a_check_names_exists() {
+    const named = new Map();
+
+    const walk = (directory) => {
+        for (const entry of fs.readdirSync(directory, {withFileTypes: true})) {
+            const full = path.join(directory, entry.name);
+            if (entry.isDirectory()) {
+                walk(full);
+                continue;
+            }
+            if (!/\.mjs$/.test(entry.name)) {
+                continue;
+            }
+            const text = fs.readFileSync(full, "utf8");
+            /*
+                Only paths into the game itself. A check naming another check is an import,
+                which the module loader has already resolved by the time this runs.
+            */
+            for (const found of text.matchAll(
+                    /"((?:src|locales|docs)\/[A-Za-z0-9_\/.-]+\.(?:js|json|md))"/g)) {
+                if (!named.has(found[1])) {
+                    named.set(found[1], new Set());
+                }
+                named.get(found[1]).add(path.relative(repo_root, full).replace(/\\/g, "/"));
+            }
+        }
+    };
+    walk(path.join(repo_root, "tests"));
+
+    if (named.size < 20) {
+        error(`only ${named.size} source path(s) could be read out of the checks - `
+            + `check_every_source_path_a_check_names_exists is out of date and would accept `
+            + `anything.`);
+        return;
+    }
+
+    let gone = 0;
+    for (const [target, readers] of named) {
+        if (fs.existsSync(path.join(repo_root, target))) {
+            continue;
+        }
+        gone++;
+        const message = `${[...readers].join(", ")} names "${target}", which does not exist. `
+            + `A check that reaches into the source by string has no compiler to catch a `
+            + `move: depending on how it reads, it either throws or quietly measures nothing `
+            + `and reports everything as fine.`;
+        error(message);
+        /*
+            Said immediately as well as recorded, which no other check does and this one has
+            to. report.mjs collects errors and prints them at the end so a run reports
+            everything it found - but a moved source file usually makes a LATER check throw
+            out of the module loader, which kills the process before that flush. The first
+            attempt at this check was invisible for exactly that reason: it found the missing
+            file, recorded it, and the run died three checks later with
+            ERR_MODULE_NOT_FOUND and no mention of it. This check runs first precisely to
+            explain the crash that is about to happen, so it cannot wait for a summary that
+            will not be reached.
+        */
+        console.error(`[check] ERROR ${message}`);
+    }
+
+    if (gone === 0) {
+        console.log(`[check] source paths: ${named.size} path(s) named by the checks, `
+            + `all of them present`);
+    }
+}
+
 export {
     check_modules_import_what_they_call,
+    check_every_source_path_a_check_names_exists,
 };

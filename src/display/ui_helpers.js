@@ -12,7 +12,7 @@
  * and sorting is locale-dependent.
  */
 
-import { language, language_tags } from "./main.js";
+import { language, language_tags } from "../main.js";
 /**
  * general function for clearing HTML content of an element, for easier management if approach changes
  * @param {HTMLElement} element 

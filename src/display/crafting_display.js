@@ -1,12 +1,12 @@
 /** The crafting window: its pages, its recipe rows and its component pickers. */
 
-import { character } from "./character.js";
-import { current_location, language, language_tags } from "./main.js";
-import { Armor, Shield, Weapon, item_log, item_templates } from "./items.js";
+import { character } from "../character.js";
+import { current_location, language, language_tags } from "../main.js";
+import { Armor, Shield, Weapon, item_log, item_templates } from "../items.js";
 import { clear_HTML_content, insert_HTML, is_element_above_x, remove_class_from_all,
          set_HTML, toggle_exclusive_class } from "./ui_helpers.js";
-import { was_ever_crafted, find_recipe_material, recipes } from "./crafting_recipes.js";
-import { translationManager } from "./translation.js";
+import { was_ever_crafted, find_recipe_material, recipes } from "../crafting_recipes.js";
+import { translationManager } from "../translation.js";
 import { create_item_tooltip, create_recipe_tooltip_content } from "./item_tooltips.js";
 import { action_div, update_displayed_normal_location } from "./display.js";
 

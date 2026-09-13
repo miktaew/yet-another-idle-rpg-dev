@@ -46,8 +46,16 @@ function source_files(dir) {
 function imported_names(repo_root, module_basename) {
     const dir = path.join(repo_root, "src");
     const names = new Set();
+    /*
+        Any specifier whose file IS this module, at whatever depth. It used to be
+        `\.\.?/x\.js` - "./x.js" or "../x.js" - which assumed the module sits at the
+        top of src/. Folding the drawing files into src/display/ made the rest of the
+        game import "./display/display.js", which matched nothing, while the display
+        files kept importing each other as "./display.js", which matched - so the
+        collection quietly narrowed to the family's own imports instead of failing.
+    */
     const pattern = new RegExp(
-        String.raw`import\s*\{([^}]*)\}\s*from\s*"\.\.?/${module_basename}\.js"`, "g");
+        String.raw`import\s*\{([^}]*)\}\s*from\s*"[^"]*(?:^|/)${module_basename}\.js"`, "g");
 
     for (const file of source_files(dir)) {
         if (path.basename(file) === `${module_basename}.js`) continue;
@@ -148,9 +156,23 @@ export async function load_browser_free(repo_root, module_path) {
     for (const basename of ["main", "display"]) {
         const names = imported_names(repo_root, basename);
         if (names.length === 0) {
-            throw new Error(`nothing imports from src/${basename}.js any more - this loader is out of date.`);
+            throw new Error(`nothing imports from ${basename}.js any more - this loader is out of date.`);
         }
-        fs.writeFileSync(path.join(temp_dir, "src", `${basename}.js`), stub_source(names));
+        /*
+            Where the module actually is, rather than where it used to be. Writing the
+            stub to src/<basename>.js left the real file in place once it moved into a
+            folder, so the module under test loaded the genuine display.js and died on
+            `element.replaceChildren is not a function`.
+        */
+        //source_files here returns absolute paths, so it is made relative to the repo
+        //before being joined onto the temporary copy.
+        const found = source_files(path.join(repo_root, "src"))
+            .find(file => path.basename(file) === `${basename}.js`);
+        const located = found && path.relative(repo_root, found);
+        if (!located) {
+            throw new Error(`src/ no longer holds a ${basename}.js - this loader is out of date.`);
+        }
+        fs.writeFileSync(path.join(temp_dir, located), stub_source(names));
     }
 
     /*

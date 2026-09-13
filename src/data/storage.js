@@ -1,5 +1,5 @@
 import { InventoryHaver } from "../components/inventory_component.js";
-import { exit_displayed_storage, update_displayed_storage } from "../display.js";
+import { exit_displayed_storage, update_displayed_storage } from "../display/display.js";
 import { add_to_character_inventory, remove_from_character_inventory, character } from "../character.js";
 
 const player_storage = new InventoryHaver();

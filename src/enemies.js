@@ -1,7 +1,7 @@
 "use strict";
 
 import { get_total_skill_coefficient } from "./character.js";
-import { log_message } from "./display.js";
+import { log_message } from "./display/display.js";
 import { add_active_effect, current_stance, language } from "./main.js";
 import { translationManager } from "./translation.js";
 

@@ -27,7 +27,7 @@ const entry_properties_the_key_carries = ["item"];
  */
 function check_a_sorted_field_is_saved() {
     const display = strip_comments(
-        fs.readFileSync(path.join(repo_root, "src", "inventory_display.js"), "utf8"));
+        fs.readFileSync(path.join(repo_root, "src", "display", "inventory_display.js"), "utf8"));
     const save = strip_comments(
         fs.readFileSync(path.join(repo_root, "src", "save_load.js"), "utf8"));
 
@@ -140,7 +140,7 @@ function comparator_source(display) {
 function check_every_sort_button_is_understood() {
     const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
     const display = strip_comments(
-        fs.readFileSync(path.join(repo_root, "src", "inventory_display.js"), "utf8"));
+        fs.readFileSync(path.join(repo_root, "src", "display", "inventory_display.js"), "utf8"));
     const sort = comparator_source(display);
     if (sort === null) {
         error("inventory sorting: sort_displayed_inventory is gone - this check is out of date.");
@@ -206,7 +206,7 @@ function check_every_sort_button_is_understood() {
 function check_a_remembered_sort_can_be_put_back() {
     const html = fs.readFileSync(path.join(repo_root, "index.html"), "utf8");
     const display = strip_comments(
-        fs.readFileSync(path.join(repo_root, "src", "inventory_display.js"), "utf8"));
+        fs.readFileSync(path.join(repo_root, "src", "display", "inventory_display.js"), "utf8"));
 
     //Which targets the save carries, asked of the function that builds what is saved.
     const state_at = display.indexOf("function inventory_sorting_state(");

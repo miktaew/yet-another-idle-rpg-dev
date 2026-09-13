@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 162 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 163 -->
 
 # Proposals
 
@@ -492,6 +492,31 @@ TS2353 and TS2740 (two thirds of the type errors) actually live.
 **Sequenced:** JSON + models for `items.js` and `crafting_recipes.js` first, because it is
 the one with a measured 404-to-1 argument behind it. Then the folder layout, once the files
 have stopped moving. `main.js` last, and only as far as the panels take it.
+
+**The fold has started, and the first family is in.** `src/display/` holds the nine drawing
+files - `display.js` and the five `*_display.js` modules already split out of it, plus
+`journal_panels.js`, `item_tooltips.js`, `ui_helpers.js` and `particles.js`. `src/` is 36
+top-level files rather than 45, all 124 coverage counts are identical and every gate is green.
+
+**What it cost was two tools, and both failed quietly rather than loudly** - which is the
+finding, not the fold. `generated-items.mjs` spelled out the import statements it stubs,
+path included, and reported itself out of date when the path changed. `browser-free-src.mjs`
+assumed both stubbed modules sit at `src/<name>.js`, and its own "nothing imports this any
+more" guard stayed satisfied because the display files still import each other from inside the
+new folder - so it wrote a stub nobody imports and let the real `display.js` reach for the DOM.
+Both now ask instead of assuming.
+
+**And a guard written before the move, which is why the rest of it was cheap.**
+`check_every_source_path_a_check_names_exists` reads the forty-three source paths the checks
+name as strings and requires each to exist. It prints immediately rather than through
+`report.mjs`, because a moved file usually makes a later check die in the module loader before
+the collected errors are ever flushed.
+
+**Remaining families, in the order they look cheapest:** crafting and trade
+(`crafting.js`, `crafting_recipes.js`, `crafting_component_filling.js`, `trade.js`,
+`traders.js`, `market_saturation.js`), the save files (`save_load.js`, `save_repairs.js`,
+`run_stats.js`), and the world rules (`activities.js`, `combat_stances.js`, `weather.js`,
+`pathfinding.js`, `world_index.js`, `conditions.js`).
 
 #### Why these questions keep coming, and what the measurements say back
 

@@ -17,7 +17,7 @@ import { mark_recipe_crafted, recipes, get_consumed_quality, get_recipe_xp_value
 import { skills, crafting_skill_xp_gains_cap } from "./data/skills.js";
 import {
          log_message,
-        } from "./display.js";
+        } from "./display/display.js";
 import { item_templates, getItemRarity, rarity_multipliers } from "./items.js";
 import { crafting_tags_to_skills } from "./misc.js";
 import { run_stats } from "./run_stats.js";
@@ -29,8 +29,8 @@ import { translationManager } from "./translation.js";
 import { language, current_location, add_xp_to_skill } from "./main.js";
 import { update_displayed_component_choice, update_displayed_crafting_recipes, 
          update_displayed_material_choice, update_item_recipe_tooltips, 
-         update_item_recipe_visibility } from "./crafting_display.js";
-import { update_displayed_character_inventory } from "./inventory_display.js";
+         update_item_recipe_visibility } from "./display/crafting_display.js";
+import { update_displayed_character_inventory } from "./display/inventory_display.js";
 function use_recipe(target, ammount_wanted_to_craft = 1) {
 
     const category = target.parentNode.parentNode.dataset.crafting_category;

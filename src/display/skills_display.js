@@ -1,12 +1,12 @@
 /** The skill bars and the stance list: two panels that share their sorting. */
 
-import { faved_stances, language, language_tags, selected_stance } from "./main.js";
+import { faved_stances, language, language_tags, selected_stance } from "../main.js";
 import { clear_HTML_content, insert_HTML, set_HTML } from "./ui_helpers.js";
-import { character, get_skill_xp_gain, get_total_skill_level } from "./character.js";
-import { expo } from "./misc.js";
+import { character, get_skill_xp_gain, get_total_skill_level } from "../character.js";
+import { expo } from "../misc.js";
 import { stat_label_short } from "./item_tooltips.js";
-import { translationManager } from "./translation.js";
-import { get_next_skill_milestone, get_unlocked_skill_rewards, skills } from "./data/skills.js";
+import { translationManager } from "../translation.js";
+import { get_next_skill_milestone, get_unlocked_skill_rewards, skills } from "../data/skills.js";
 
 /*
     This module takes nothing back out of display.js. The seven pieces of state it looked

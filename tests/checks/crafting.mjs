@@ -485,7 +485,7 @@ function check_the_prediction_and_the_roll_share_one_source() {
     const callers = [];
 
     for (const relative of ["src/crafting_recipes.js", "src/crafting.js",
-                            "src/item_tooltips.js"]) {
+                            "src/display/item_tooltips.js"]) {
         const source = strip_comments(
             fs.readFileSync(path.join(repo_root, relative), "utf8"));
 
@@ -505,7 +505,7 @@ function check_the_prediction_and_the_roll_share_one_source() {
             + `the prediction drifted apart before.`);
     }
 
-    for (const needed of ["src/crafting.js", "src/item_tooltips.js"]) {
+    for (const needed of ["src/crafting.js", "src/display/item_tooltips.js"]) {
         if (!callers.includes(needed)) {
             error(`crafting quality: ${needed} does not call get_consumed_quality. The `
                 + `roll and the tooltip's prediction of it both have to come from that `

@@ -99,7 +99,7 @@ import { refresh_open_journal_panels,
          fill_character_bio,
          retranslate_interface,
          insert_HTML,
-        } from "./display.js";
+        } from "./display/display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, get_hit_chance, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, is_JSON} from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { get_recipe_xp_value, get_component_stats, recipes } from "./crafting_recipes.js";
@@ -135,27 +135,27 @@ import { close_crafting_window, create_displayed_crafting_recipes,
          switch_crafting_recipes_subpage, update_displayed_component_choice, 
          update_displayed_crafting_recipes, update_displayed_material_choice, 
          update_item_recipe_tooltips, update_item_recipe_visibility, 
-         update_recipe_tooltip } from "./crafting_display.js";
+         update_recipe_tooltip } from "./display/crafting_display.js";
 import { booklist_entry_divs, create_new_bestiary_entry, update_bestiary_entry_killcount,
          update_bestiary_entry_tooltip, update_booklist_entry, update_displayed_book,
-         update_displayed_discoveries, update_displayed_lore, update_displayed_titles } from "./journal_panels.js";
+         update_displayed_discoveries, update_displayed_lore, update_displayed_titles } from "./display/journal_panels.js";
 import { create_new_skill_bar, skill_category_order, skill_list, sort_displayed_skills,
          update_all_displayed_skills_xp_gain, update_displayed_faved_stances,
          update_displayed_skill_bar, update_displayed_skill_description,
          update_displayed_skill_xp_gain, update_displayed_stance,
-         update_displayed_stance_list, update_stance_tooltip } from "./skills_display.js";
+         update_displayed_stance_list, update_stance_tooltip } from "./display/skills_display.js";
 import { sort_displayed_inventory, update_displayed_character_inventory,
-         update_displayed_storage_inventory, update_displayed_trader_inventory } from "./inventory_display.js";
+         update_displayed_storage_inventory, update_displayed_trader_inventory } from "./display/inventory_display.js";
 import { is_title_earned, titles } from "./data/titles.js";
 //At the end of the list on purpose: main.js's import order is load-bearing and a
 //new edge goes last. ui_helpers.js imports nothing from the cycle, so it is safe here.
-import { place_tooltip_vertically } from "./ui_helpers.js";
+import { place_tooltip_vertically } from "./display/ui_helpers.js";
 import { rolls_a_sighting } from "./data/marrowmoth.js";
 import { accept_from_board, accepted_jobs, give_up_from_board, job_after_kill,
          job_is_done, jobs_held_at_once, overdue_jobs, refreshed_board,
          standing_lost_for_giving_up, standing_paid_for,
          without_overdue_jobs } from "./guild_jobs.js";
-import { update_displayed_guild_board } from "./guild_display.js";
+import { update_displayed_guild_board } from "./display/guild_display.js";
 const save_key = "save data";
 const dev_save_key = "dev save data";
 const backup_key = "backup save";

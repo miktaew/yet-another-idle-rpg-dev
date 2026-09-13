@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 162 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 163 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -491,6 +491,31 @@ ama becerilerin çoğu `get_effect_description` fonksiyonu taşıyor, yani malze
 `items.js` içindeki kalan saf-veri aileleri ucuz olanlar — ve bir de dosyalar hareket etmeyi
 bıraktıktan sonraya dizilmiş olan klasör düzeni. Aynı okumayı üç kez değil bir kez yapmak demek ve TS2353 ile TS2740'ın (tür
 hatalarının üçte ikisi) gerçekten yaşadığı yer de burası.
+
+**Katlama başladı ve ilk aile içeride.** `src/display/`, dokuz çizim dosyasını tutuyor —
+`display.js` ve ondan çoktan ayrılmış beş `*_display.js` modülü, artı `journal_panels.js`,
+`item_tooltips.js`, `ui_helpers.js` ve `particles.js`. `src/` 45 yerine 36 üst düzey dosya,
+124 kapsama sayısının hepsi aynı ve bütün kapılar yeşil.
+
+**Maliyeti iki araç oldu ve ikisi de gürültüyle değil sessizce bozuldu** — asıl bulgu katlama
+değil bu. `generated-items.mjs`, devre dışı bıraktığı import ifadelerini yolu dahil tam
+yazmıştı ve yol değişince kendisini güncel değil diye bildirdi. `browser-free-src.mjs`,
+stub'ladığı iki modülün `src/<ad>.js`te durduğunu varsayıyordu ve kendi "artık bunu hiçbir şey
+import etmiyor" muhafızı memnun kaldı, çünkü ekran dosyaları yeni klasörün içinden birbirini
+import etmeye devam ediyordu — yani kimsenin import etmediği bir stub yazdı ve gerçek
+`display.js`in DOM'a uzanmasına izin verdi. İkisi de artık varsaymıyor, soruyor.
+
+**Ve taşımadan önce yazılmış bir muhafız; geri kalanının ucuz olmasının sebebi o.**
+`check_every_source_path_a_check_names_exists`, kontrollerin metin olarak adlandırdığı kırk üç
+kaynak yolunu okuyup her birinin var olmasını şart koşuyor. `report.mjs` üzerinden değil anında
+yazıyor, çünkü taşınmış bir dosya genellikle sonraki bir kontrolün modül yükleyicisinde
+ölmesine yol açıyor ve toplanan hatalar hiç basılamıyor.
+
+**Kalan aileler, en ucuz göründükleri sırayla:** zanaat ve ticaret (`crafting.js`,
+`crafting_recipes.js`, `crafting_component_filling.js`, `trade.js`, `traders.js`,
+`market_saturation.js`), kayıt dosyaları (`save_load.js`, `save_repairs.js`, `run_stats.js`) ve
+dünya kuralları (`activities.js`, `combat_stances.js`, `weather.js`, `pathfinding.js`,
+`world_index.js`, `conditions.js`).
 
 **Sıralanmış hâli:** önce `items.js` ve `crafting_recipes.js` için JSON + modeller, çünkü
 arkasında ölçülmüş 404'e 1 gibi bir argüman olan tek iş bu. Sonra klasör düzeni, dosyalar

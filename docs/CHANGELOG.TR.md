@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 139 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 140 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,54 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### Çizim dosyaları src/display/ altına taşındı, ve fark etmeyen iki araç
+
+P-42'nin klasör katlaması; dosyalar durduktan sonraya diziliydi ve şimdi durdular. Önce ekran
+ailesi, çünkü projenin çoktan adlandırdığı aile o: bu dokuzun beşi `display.js`'ten elle
+ayrılmış ve adında `_display` taşıyor. Yani bu, olay için uydurulmuş bir sınıflandırma değil,
+var olan bir ailenin katlanması. `src/` 45 yerine 36 üst düzey dosya.
+
+**Önce bir muhafız yazıldı ve daha bir saat dolmadan kendini hak etti.** Kontroller kaynağa
+metinle uzanıyor — suite genelinde kırk üç yol — ve bu, hiçbir derleyicinin göremediği bir
+referans. `check_every_source_path_a_check_names_exists` o metinleri kontrollerin kendisinden
+okuyup her birinin var olmasını şart koşuyor.
+
+Ayrıca **anında yazmak** zorunda, ki burada başka hiçbir kontrol öyle yapmıyor. `report.mjs`
+hataları toplayıp sonda basıyor, böylece bir koşu bulduğu her şeyi bildiriyor; ama taşınmış bir
+kaynak dosyası genellikle *sonraki* bir kontrolün modül yükleyicisinden patlamasına yol açıyor
+ve bu, o toplu basımdan önce süreci öldürüyor. Bu kontrolün ilk sürümü tam bu yüzden görünmezdi:
+eksik dosyayı buldu, kaydetti ve koşu üç kontrol sonra `ERR_MODULE_NOT_FOUND` ile öldü, ondan
+hiç söz edilmeden. Olacak çökmeyi açıklamak için ilk sırada çalışıyor, dolayısıyla
+ulaşılmayacak bir özeti bekleyemez.
+
+**Sonra iki araç, bu projenin sürekli karşılaştığı biçimde yanıldı: sessizce.**
+
+`tests/lib/generated-items.mjs`, bileşen üreticisini çalıştırmadan önce iki import'u
+devre dışı bırakıyor ve onları yolu dahil tam olarak yazmıştı. Katlama `"./ui_helpers.js"`i
+`"./display/ui_helpers.js"` yaptı, o da artık var olmayan bir metni aradı ve **kendisini**
+güncel değil diye bildirdi — dört kez, hiçbir şeyi bozmayan bir taşıma için. Artık import'ları
+adlandırıyor ve ifadeyi nereden import ediyorsa oradan buluyor; çünkü yol, sorduğu sorunun
+parçası hiç değildi.
+
+`tests/lib/browser-free-src.mjs` daha kötüydü, çünkü kendi muhafızı o yanılırken memnundu.
+Import döngüsünü kırmak için `main.js` ve `display.js`i stub'lıyor; `./x.js` ya da `../x.js`
+yazımını eşleştirip stub'ı `src/x.js`e yazıyor. Katlama iki yarıyı birden bozdu: oyunun geri
+kalanı artık `"./display/display.js"` diyor ve bu hiçbir şeyle eşleşmedi, ekran dosyaları ise
+birbirini `"./display.js"` diye import etmeye devam etti ve bu eşleşti. Yani yakalaması gereken
+kontrol — *"artık hiçbir şey src/display.js'ten import etmiyor"* — ailenin kendi import'larıyla
+mutlu kaldı, stub kimsenin import etmediği bir yola gitti ve gerçek `display.js` yüklenip DOM'a
+uzandı. Artık iki yarı da varsayılmıyor, soruluyor: modül `src/` altında bulunuyor ve bir
+import, specifier'ı o dosyayı hangi derinlikte olursa olsun adlandırıyorsa sayılıyor.
+
+**JSON taşımalarındaki gibi kanıtlandı:** `npm run check`teki 124 kapsama sayısının hepsi satır
+satır aynı, `check:bundle` değerlendiriyor, `check:save` gerçek bir dışa aktarmaya karşı
+geçiyor ve 232 test yeşil. Negatif test, stub'ı varsayılan yola geri koyarak yapıldı — `npm
+test`, `element.replaceChildren is not a function` ile ölüyor; bu da yükleyicinin stub'ı yerine
+gerçek çizim kodunu çalıştırması demek.
+
+Katlanacak üç aile daha var — zanaat ve ticaret sistemleri, kayıt dosyaları, içerik kayıtları —
+ve sıranın ucuz olduğu artık biliniyor: muhafız, taşımanın unuttuğu her şeyi adıyla söylüyor.
 
 ### Var gibi yapan 118 eşya
 

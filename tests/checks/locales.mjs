@@ -505,7 +505,7 @@ async function check_duration_units_have_rows() {
     const before = errors.length;
 
     const source = strip_comments(
-        fs.readFileSync(path.join(repo_root, "src/display.js"), "utf8"));
+        fs.readFileSync(path.join(repo_root, "src/display/display.js"), "utf8"));
     const declaration = /const duration_units\s*=\s*\[([^\]]*)\]/.exec(source);
     if (!declaration) {
         error("src/display.js no longer declares `const duration_units = [...]` - "

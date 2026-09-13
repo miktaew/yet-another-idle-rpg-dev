@@ -681,7 +681,7 @@ async function check_equipment_slot_names() {
         is cut - which is a check breaking on correct work.
     */
     let map = null;
-    for (const file of ["src/inventory_display.js", "src/display.js"]) {
+    for (const file of ["src/display/inventory_display.js", "src/display/display.js"]) {
         const full = path.join(repo_root, file);
         if (!fs.existsSync(full)) continue;
         map = strip_comments(fs.readFileSync(full, "utf8"))

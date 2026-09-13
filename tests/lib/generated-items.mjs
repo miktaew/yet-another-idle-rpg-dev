@@ -24,11 +24,33 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
 
-const item_import =
-    'import { Armor, ArmorComponent, item_templates, ShieldComponent, WeaponComponent } from "./items.js";';
-//capitalize_first_letter moved to ui_helpers.js, so that a module lifted out of
-//display.js can have it without importing display.js back.
-const display_import = 'import { capitalize_first_letter } from "./ui_helpers.js";';
+/*
+    The imports this stubs out, named rather than spelled.
+
+    They used to be written out in full, path included, and folding the drawing files into
+    src/display/ turned `"./ui_helpers.js"` into `"./display/ui_helpers.js"` - so this helper
+    went looking for a string that no longer existed and reported ITSELF out of date, four
+    times, for a move that broke nothing. What it wants is "drop the imports whose names the
+    shim below provides", and where they are imported from is not part of that question.
+
+    capitalize_first_letter lives in ui_helpers rather than display so that a module lifted
+    out of display.js can have it without importing display.js back.
+*/
+const stubbed_imports = [
+    ["Armor", "ArmorComponent", "item_templates", "ShieldComponent", "WeaponComponent"],
+    ["capitalize_first_letter"],
+];
+
+/** The import statement that brings `names` in, wherever it brings them from. */
+const import_of = (source, names) => {
+    for (const statement of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*"[^"]+"\s*;/g)) {
+        const imported = statement[1].split(",").map(name => name.trim()).filter(Boolean);
+        if (names.every(name => imported.includes(name))) {
+            return statement[0];
+        }
+    }
+    return null;
+};
 
 const shim = [
     "const item_templates = {};",
@@ -55,13 +77,17 @@ export async function load_generated_item_templates(repo_root) {
     }
 
     let source = fs.readFileSync(generator_path, "utf8").split("\r\n").join("\n");
-    if (!source.includes(item_import) || !source.includes(display_import)) {
-        return {
-            generated: null,
-            problem: "src/crafting_component_filling.js no longer has the imports this stubs out",
-        };
+    for (const names of stubbed_imports) {
+        const statement = import_of(source, names);
+        if (!statement) {
+            return {
+                generated: null,
+                problem: `src/crafting_component_filling.js no longer imports `
+                    + `${names.join(", ")} - this check is out of date`,
+            };
+        }
+        source = source.replace(statement, "");
     }
-    source = source.replace(item_import, "").replace(display_import, "");
 
     const temp_dir = fs.mkdtempSync(path.join(os.tmpdir(), "yairp-generated-"));
     const temp_file = path.join(temp_dir, "generator.mjs");

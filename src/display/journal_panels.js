@@ -1,19 +1,19 @@
 /** The journal's panels: the bestiary, the book list, the lore page and Discoveries. */
 
-import { get_current_book, global_flags, language } from "./main.js";
-import { translationManager } from "./translation.js";
+import { get_current_book, global_flags, language } from "../main.js";
+import { translationManager } from "../translation.js";
 import { capitalize_first_letter, clear_HTML_content, compare_display_names, insert_HTML,
          matches_search, set_HTML } from "./ui_helpers.js";
-import { book_stats, item_log, item_templates } from "./items.js";
-import { enemy_killcount, enemy_templates } from "./enemies.js";
-import { locations } from "./data/locations.js";
-import { dialogues } from "./data/dialogues.js";
-import { skills } from "./data/skills.js";
-import { titles } from "./data/titles.js";
-import { traders } from "./traders.js";
-import { game_state } from "./game_state.js";
+import { book_stats, item_log, item_templates } from "../items.js";
+import { enemy_killcount, enemy_templates } from "../enemies.js";
+import { locations } from "../data/locations.js";
+import { dialogues } from "../data/dialogues.js";
+import { skills } from "../data/skills.js";
+import { titles } from "../data/titles.js";
+import { traders } from "../traders.js";
+import { game_state } from "../game_state.js";
 import { enemy_zones, item_sources, lore_unit_of, lore_units, lore_threads, lore_thread_of,
-         training_places } from "./world_index.js";
+         training_places } from "../world_index.js";
 import { create_item_tooltip, create_item_tooltip_content, obscure_name } from "./item_tooltips.js";
 import {
 

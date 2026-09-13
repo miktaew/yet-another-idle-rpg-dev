@@ -573,7 +573,7 @@ const registries = {
 */
 {
     const { place_tooltip_vertically: place } =
-        await load_browser_free(repo_root, "src/ui_helpers.js");
+        await load_browser_free(repo_root, "src/display/ui_helpers.js");
 
     //Room below: straight under the pointer, shift included.
     check("a tooltip with room below sits under the cursor",
@@ -1482,7 +1482,7 @@ const translationManager = globalThis.__real_tm;
         So update_game_action_finish_button must take the answer and never look at the
         character or the action's state.
     */
-    const display = fs.readFileSync(path.join(repo_root, "src/display.js"), "utf8");
+    const display = fs.readFileSync(path.join(repo_root, "src/display/display.js"), "utf8");
     const at = display.indexOf("function update_game_action_finish_button");
     check("the action box's finish button is still built where this expects", at !== -1);
 

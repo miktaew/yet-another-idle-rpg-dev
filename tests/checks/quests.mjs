@@ -120,7 +120,7 @@ async function check_visible_tasks_can_be_finished() {
  * hint path cannot quietly grow its own copy or go without.
  */
 async function check_hints_say_when_they_cannot_point() {
-    const display_path = path.join(repo_root, "src/display.js");
+    const display_path = path.join(repo_root, "src/display/display.js");
     if (!fs.existsSync(display_path)) {
         error("src/display.js is missing - this check is out of date.");
         return;

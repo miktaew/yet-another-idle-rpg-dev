@@ -126,7 +126,8 @@ import {
     check_no_unused_locale_rows,
     check_translations_have_no_english,
 } from "./checks/locales.mjs";
-import { check_modules_import_what_they_call } from "./checks/modules.mjs";
+import { check_modules_import_what_they_call,
+         check_every_source_path_a_check_names_exists } from "./checks/modules.mjs";
 import { check_imports_resolve } from "./checks/imports.mjs";
 import { check_save_keys_round_trip, check_an_export_names_its_version,
          check_saved_character_fields_are_read_back } from "./checks/save_contract.mjs";
@@ -156,6 +157,13 @@ import {
     check_language_switch_repaints,
     check_site,
 } from "./checks/site.mjs";
+
+/*
+    First, because it is a precondition for the rest: every check below reaches into the
+    source by string, and a path that has moved either throws somewhere confusing or is
+    quietly measured as nothing. Reported by name here, before anything tries to import it.
+*/
+check_every_source_path_a_check_names_exists();
 
 check_site();
 check_interpolated_pairs();
@@ -199,7 +207,7 @@ await check_ui_ids_exist();
 await check_creation_panel_values();
 check_item_name_collisions();
 await check_recipe_item_names();
-await check_modules_import_what_they_call();
+check_modules_import_what_they_call();
 await check_imports_resolve();
 await check_save_keys_round_trip();
 check_saved_character_fields_are_read_back();

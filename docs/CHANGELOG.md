@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 139 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 140 -->
 
 # Changelog
 
@@ -20,6 +20,56 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### The drawing files move into src/display/, and two tools that did not notice
+
+P-42's folder fold, sequenced after the files stopped moving - which they now have. The
+display family first, because it is the one the project had already named: five of these nine
+were split out of `display.js` by hand and carry `_display` in the name. This is a fold of an
+existing family rather than a taxonomy invented for the occasion. `src/` is 36 top-level files
+rather than 45.
+
+**A guard was written first, and it earned itself inside the hour.** The checks reach into the
+source by string - forty-three paths across the suite - and that is a reference no compiler
+can see. `check_every_source_path_a_check_names_exists` reads those strings out of the checks
+themselves and requires each to exist.
+
+It also has to **print immediately**, which nothing else here does. `report.mjs` collects
+errors and prints them at the end so a run reports everything it found; but a moved source
+file usually makes a *later* check throw out of the module loader, which kills the process
+before that flush. The first version of this check was invisible for exactly that reason: it
+found the missing file, recorded it, and the run died three checks later with
+`ERR_MODULE_NOT_FOUND` and no mention of it. It runs first to explain a crash that is about to
+happen, so it cannot wait for a summary that will not be reached.
+
+**And then two tools got it wrong in the way this project keeps meeting: quietly.**
+
+`tests/lib/generated-items.mjs` stubs out two imports before running the component generator,
+and spelled them out in full, path included. The fold turned `"./ui_helpers.js"` into
+`"./display/ui_helpers.js"`, so it went looking for a string that no longer existed and
+reported **itself** out of date - four times, for a move that broke nothing. It names the
+imports now and finds the statement wherever it imports from, because a path was never part of
+the question it was asking.
+
+`tests/lib/browser-free-src.mjs` was worse, because its own guard was satisfied while it was
+wrong. It stubs `main.js` and `display.js` to break the import cycle, matching specifiers
+spelled `./x.js` or `../x.js` and writing the stub to `src/x.js`. The fold broke both halves:
+the rest of the game now says `"./display/display.js"`, which matched nothing, while the
+display files kept importing each other as `"./display.js"`, which matched. So the check that
+would have caught it - *"nothing imports from src/display.js any more"* - stayed happy on the
+family's own imports, the stub went to a path nobody imports, and the real `display.js` loaded
+and reached for the DOM. Both halves are asked rather than assumed now: the module is located
+under `src/`, and an import counts if its specifier names that file at any depth.
+
+**Proved the way the JSON moves were:** all 124 coverage counts in `npm run check` identical
+line for line, `check:bundle` evaluating, `check:save` passing against a real export, and 232
+tests green. Negative-tested by putting the stub back at the assumed path - `npm test` dies on
+`element.replaceChildren is not a function`, which is the loader running the real drawing code
+instead of its stub.
+
+Three more families to fold - the crafting and trade systems, the save files, the content
+registries - and the order is now known to be cheap: the guard names anything the move
+forgets.
 
 ### The 118 items that were only pretending to exist
 

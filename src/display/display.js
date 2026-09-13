@@ -1,10 +1,10 @@
 "use strict";
 
-import { traders, inventory_templates } from "./traders.js";
-import { game_state } from "./game_state.js";
-import { current_trader, to_buy, to_sell } from "./trade.js";
-import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "./data/skills.js";
-import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "./character.js";
+import { traders, inventory_templates } from "../traders.js";
+import { game_state } from "../game_state.js";
+import { current_trader, to_buy, to_sell } from "../trade.js";
+import { skills, get_unlocked_skill_rewards, get_next_skill_milestone } from "../data/skills.js";
+import { character, get_skill_xp_gain, get_hero_xp_gain, get_skills_overall_xp_gain, get_total_skill_coefficient, get_total_skill_level, get_effect_with_bonuses, cold_status_temperatures, get_character_cold_tolerance, lowest_tolerable_temperature, get_skill_xp_gain_bonus, tool_slots } from "../character.js";
 import { current_enemies, game_options, 
     can_work, current_location, 
     active_effects, enough_time_for_earnings, 
@@ -17,35 +17,35 @@ import { current_enemies, game_options,
     language,
     language_tags,
     favourite_items,
-    get_effective_skill_xp_gain} from "./main.js";
-import { dialogues } from "./data/dialogues.js";
-import { activities } from "./activities.js";
-import { format_time, split_duration, current_game_time, seasons } from "./game_time.js";
-import { get_guild_rank } from "./reputation.js";
-import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
-import { favourite_locations, get_location_type_penalty, location_types, locations } from "./data/locations.js";
-import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
-import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
+    get_effective_skill_xp_gain} from "../main.js";
+import { dialogues } from "../data/dialogues.js";
+import { activities } from "../activities.js";
+import { format_time, split_duration, current_game_time, seasons } from "../game_time.js";
+import { get_guild_rank } from "../reputation.js";
+import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "../items.js";
+import { favourite_locations, get_location_type_penalty, location_types, locations } from "../data/locations.js";
+import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "../enemies.js";
+import { expo, get_hit_chance, round_item_price, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "../misc.js"
 import { set_HTML, insert_HTML, clear_HTML_content, compare_display_names,
     capitalize_first_letter, uncapitalize_first_letter, toggle_exclusive_class,
     remove_class_from_all, is_element_above_x, matches_search } from "./ui_helpers.js";
-//import { stances } from "./combat_stances.js";
-import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "./crafting_recipes.js";
+//import { stances } from "../combat_stances.js";
+import { get_recipe_xp_value, find_recipe_material, get_component_stats, recipes } from "../crafting_recipes.js";
 import { lore_units, lore_unit_of,
     enemy_zones, zones_for_enemy_tag, item_sources, training_places,
     first_available_opener,
-    quest_task_advancers } from "./world_index.js";
-import { effect_templates } from "./active_effects.js";
-import { player_storage } from "./data/storage.js";
-import { quests } from "./quests.js";
-import { get_current_light_level, get_current_light_level_for_roofed_location, get_current_temperature_smoothed, is_raining } from "./weather.js";
+    quest_task_advancers } from "../world_index.js";
+import { effect_templates } from "../active_effects.js";
+import { player_storage } from "../data/storage.js";
+import { quests } from "../quests.js";
+import { get_current_light_level, get_current_light_level_for_roofed_location, get_current_temperature_smoothed, is_raining } from "../weather.js";
 import { PointyStarParticle, RainParticle, SnowParticle } from "./particles.js";
-import { get_game_version } from "./game_version.js";
-import { process_conditions } from "./conditions.js";
-import { translationManager } from "./translation.js";
-import { playable_races } from "./races.js";
-import { config } from "./config.js";
-import { height_stats } from "./person.js";
+import { get_game_version } from "../game_version.js";
+import { process_conditions } from "../conditions.js";
+import { translationManager } from "../translation.js";
+import { playable_races } from "../races.js";
+import { config } from "../config.js";
+import { height_stats } from "../person.js";
 import { create_effect_tooltip, create_item_tooltip, create_item_tooltip_content,
          create_recipe_tooltip_content, obscure_name, rarity_colors, rarity_outlines,
          stat_label_short } from "./item_tooltips.js";

@@ -43,7 +43,7 @@ import {
          update_displayed_quest,
          update_displayed_reputation,
          update_displayed_time,
-        } from "./display.js";
+        } from "./display/display.js";
 import { enemy_killcount } from "./enemies.js";
 import { game_state } from "./game_state.js";
 import { restored_board } from "./guild_jobs.js";
@@ -58,11 +58,11 @@ import { run_stats } from "./run_stats.js";
 import { add_to_trader_inventory } from "./trade.js";
 import { traders } from "./traders.js";
 import { translationManager } from "./translation.js";
-import { create_displayed_crafting_recipes } from "./crafting_display.js";
-import { create_new_bestiary_entry, update_booklist_entry } from "./journal_panels.js";
-import { skill_category_order, skill_list, update_displayed_stance_list } from "./skills_display.js";
+import { create_displayed_crafting_recipes } from "./display/crafting_display.js";
+import { create_new_bestiary_entry, update_booklist_entry } from "./display/journal_panels.js";
+import { skill_category_order, skill_list, update_displayed_stance_list } from "./display/skills_display.js";
 import { inventory_sorting_state, restore_inventory_sorting,
-         update_displayed_character_inventory } from "./inventory_display.js";
+         update_displayed_character_inventory } from "./display/inventory_display.js";
 import { titles } from "./data/titles.js";
 /**
  * puts all important stuff into a string

@@ -45,10 +45,10 @@ import { crafting_component_manager } from "./crafting_component_filling.js";
 import { droplist, enemy_killcount, enemy_templates } from "./enemies.js";
 import {
 
-        } from "./display.js";
+        } from "./display/display.js";
 import { language } from "./main.js";
 import { translationManager } from "./translation.js";
-import { update_bestiary_entry_tooltip } from "./journal_panels.js";
+import { update_bestiary_entry_tooltip } from "./display/journal_panels.js";
 
 const rarity_multipliers = {
     trash: 1, //low quality alone makes these so bad that no additional nerf should be needed

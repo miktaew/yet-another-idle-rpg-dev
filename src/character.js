@@ -11,7 +11,7 @@ import {
          update_displayed_item_log,
          refresh_open_journal_panels,
          update_displayed_location_types,
-        } from "./display.js";
+        } from "./display/display.js";
 import { active_effects, current_location, current_stance, favourite_consumables, favourite_items, language, remove_consumable_from_favourites, remove_item_from_favourites } from "./main.js";
 import { current_game_time, is_night } from "./game_time.js";
 //The level-up message is player-facing text, so this file needs the locale. It
@@ -23,8 +23,8 @@ import { height_stats, Person } from "./person.js";
 import { playable_races } from "./races.js";
 import { config } from "./config.js";
 import { update_all_displayed_skills_xp_gain, update_displayed_skill_level,
-         update_displayed_skill_xp_gain } from "./skills_display.js";
-import { update_displayed_character_inventory } from "./inventory_display.js";
+         update_displayed_skill_xp_gain } from "./display/skills_display.js";
+import { update_displayed_character_inventory } from "./display/inventory_display.js";
 
 const base_block_chance = 0.75; //+20 from the skill
 const base_xp_cost = 10;

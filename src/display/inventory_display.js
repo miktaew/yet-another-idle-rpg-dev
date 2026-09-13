@@ -1,15 +1,15 @@
 /** The three inventories and the trade window, which share their sorting and rows. */
 
-import { character, tool_slots } from "./character.js";
+import { character, tool_slots } from "../character.js";
 import { current_location, favourite_consumables, favourite_items, get_current_book,
-         language, language_tags } from "./main.js";
-import { translationManager } from "./translation.js";
+         language, language_tags } from "../main.js";
+import { translationManager } from "../translation.js";
 import { clear_HTML_content, compare_display_names, insert_HTML, set_HTML } from "./ui_helpers.js";
-import { book_stats, getItemFromKey, item_templates } from "./items.js";
-import { player_storage } from "./data/storage.js";
-import { traders } from "./traders.js";
-import { current_trader, to_buy, to_sell } from "./trade.js";
-import { round_item_price } from "./misc.js";
+import { book_stats, getItemFromKey, item_templates } from "../items.js";
+import { player_storage } from "../data/storage.js";
+import { traders } from "../traders.js";
+import { current_trader, to_buy, to_sell } from "../trade.js";
+import { round_item_price } from "../misc.js";
 import { create_item_tooltip, rarity_colors, rarity_outlines } from "./item_tooltips.js";
 import { action_div, format_money, trade_div, update_displayed_quest_item_counts } from "./display.js";
 

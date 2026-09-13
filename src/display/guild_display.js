@@ -12,20 +12,20 @@
  * `guild_jobs.js` decides what goes on it. This file only renders what those two agree on.
  */
 
-import { language } from "./main.js";
-import { game_state } from "./game_state.js";
-import { character } from "./character.js";
-import { dialogues } from "./data/dialogues.js";
-import { item_templates } from "./items.js";
-import { translationManager } from "./translation.js";
+import { language } from "../main.js";
+import { game_state } from "../game_state.js";
+import { character } from "../character.js";
+import { dialogues } from "../data/dialogues.js";
+import { item_templates } from "../items.js";
+import { translationManager } from "../translation.js";
 import { clear_HTML_content, insert_HTML } from "./ui_helpers.js";
-import { get_guild_rank } from "./reputation.js";
+import { get_guild_rank } from "../reputation.js";
 import { enemy_tag_label } from "./journal_panels.js";
 import { accepted_jobs, job_is_done, job_progress, jobs_held_at_once,
-         standing_lost_for_giving_up, standing_paid_for } from "./guild_jobs.js";
-import { current_game_time } from "./game_time.js";
-import { item_sources } from "./world_index.js";
-import { locations } from "./data/locations.js";
+         standing_lost_for_giving_up, standing_paid_for } from "../guild_jobs.js";
+import { current_game_time } from "../game_time.js";
+import { item_sources } from "../world_index.js";
+import { locations } from "../data/locations.js";
 
 /**
  * Whether the player knows there is a board.
