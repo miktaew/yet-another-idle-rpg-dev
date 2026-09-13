@@ -143,16 +143,16 @@ function create_defender_div(i) {
     }
 
     const health_div = document.createElement("div");
-    health_div.classList.add("enemy_health_div");
+    health_div.classList.add("enemy_health_div", "health_div");
 
     const healthbar_max_div = document.createElement("div");
-    healthbar_max_div.classList.add("enemy_healthbar_max");
+    healthbar_max_div.classList.add("enemy_healthbar_max", "healthbar_max");
 
     const healthbar_current_div = document.createElement("div");
-    healthbar_current_div.classList.add("enemy_healthbar_current");
+    healthbar_current_div.classList.add("enemy_healthbar_current", "healthbar_current");
 
     const enemy_health_value = document.createElement("div");
-    enemy_health_value.classList.add("enemy_health_value");
+    enemy_health_value.classList.add("enemy_health_value", "health_value");
 
     healthbar_max_div.appendChild(healthbar_current_div);
     health_div.appendChild(healthbar_max_div);
@@ -255,17 +255,17 @@ function update_displayed_health_of_defenders() {
     const defenders_div = current_combat.defenders_ui_slot;
     for(let i = 0; i < defenders.length; i++) {
         if(defenders[i].is_alive) {
-            defenders_div.children[i].children[0].style.filter = "brightness(100%)";
+            defenders_div.children[i].style.filter = "brightness(100%)";
         } else {
-            defenders_div.children[i].children[0].style.filter = "brightness(30%)";
+            defenders_div.children[i].style.filter = "brightness(30%)";
             update_defender_stats();
         }
 
         //update size of health bar
-        defenders_div.children[i].querySelector(".enemy_healthbar_current").style.width = 
+        defenders_div.children[i].querySelector(".healthbar_current").style.width = 
             Math.max(0, 100*defenders[i].stats.health/defenders[i].stats.max_health) + "%";
 
-        defenders_div.children[i].querySelector(".enemy_health_value").innerText = `${Math.ceil(defenders[i].stats.health)}/${Math.ceil(defenders[i].stats.max_health)} hp`;
+        defenders_div.children[i].querySelector(".health_value").innerText = `${Math.ceil(defenders[i].stats.health)}/${Math.ceil(defenders[i].stats.max_health)} hp`;
     }
 }
 
@@ -274,12 +274,18 @@ function update_displayed_health_of_fighter({fighter_index, is_attacker}) {
     const fighter_div = is_attacker?current_combat.attacker_ui_slot.children[fighter_index] : current_combat.defenders_ui_slot.children[fighter_index];
 
     if(fighter.is_alive) {
-        fighter_div.children[0].style.filter = "brightness(100%)";
+        fighter_div.style.filter = "brightness(100%)";
     } else {
-        fighter_div.children[0].style.filter = "brightness(30%)";
+        fighter_div.style.filter = "brightness(30%)";
         update_defender_stats();
         update_attacker_stats();
     }
+
+    fighter_div.querySelector(".healthbar_current").style.width = 
+            Math.max(0, 100*fighter.getFullStats().health/fighter.getFullStats().max_health) + "%";
+
+    fighter_div.querySelector(".health_value").innerText = `${Math.ceil(fighter.getFullStats().health)}/${Math.ceil(fighter.getFullStats().max_health)} hp`;
+    
 }
 
 function update_attack_bar({fighter_index, is_attacker, progress}) {
@@ -289,7 +295,7 @@ function update_attack_bar({fighter_index, is_attacker, progress}) {
 
 function do_onhit_animation({fighter_index, is_attacker}) {
     const animations = (is_attacker ? attacker_animations : defender_animations);
-    const fighter_div = (is_attacker ? current_combat.defenders_ui_slot : current_combat.attackers_ui_slot).children[fighter_index];
+    const fighter_div = (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot).children[fighter_index];
     animations[fighter_index]?.cancel(); //likely unnecessary, but won't hurt
     animations[fighter_index] = fighter_div.animate(onhitAnimation, onhitAnimationTiming);
 }
@@ -300,7 +306,7 @@ function remove_onhit_animation({fighter_index, is_attacker}) {
 
 function do_onstart_animation({fighter_index, is_attacker}) {
     const animations = (is_attacker ? attacker_animations : defender_animations);
-    const fighter_div = (is_attacker ? current_combat.defenders_ui_slot : current_combat.attackers_ui_slot).children[fighter_index];
+    const fighter_div = (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot).children[fighter_index];
     
     animations[fighter_index]?.cancel(); //almost certainly unnecessary
     animations[fighter_index] =  fighter_div.animate(onstartAnimation, onstartAnimationTiming);

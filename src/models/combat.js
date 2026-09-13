@@ -8,7 +8,7 @@ import { enemy_tag_to_skill_mapping } from "../enemies.js";
 import { item_templates } from "../items.js";
 import { add_xp_to_character, add_xp_to_skill, change_stance, current_stance, finish_combat_round, game_options, game_stats, kill_target, kill_player, process_current_loot, selected_stance, tickrate, use_stamina } from "../main.js";
 import { get_hit_chance } from "../misc.js";
-import { do_onhit_animation, do_onstart_animation, fill_attacker_divs, fill_defender_divs, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_defenders, update_displayed_health_of_fighter } from "../ui/combat_display.js";
+import { do_onhit_animation, do_onstart_animation, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_defenders, update_displayed_health_of_fighter } from "../ui/combat_display.js";
 
 let maximum_time_correction = 10;
 
@@ -34,8 +34,8 @@ class Combat {
     constructor({
         attackers = [], //in standard case, player
         defenders = [], //in standard case, enemies
-        attackers_ui_slot, //this is expected to have no children, otherwise they might get deleted
-        defenders_ui_slot, //this is expected to have no children, otherwise they might get deleted
+        attackers_ui_slot, //this is expected to have no pre-existing children, otherwise they might get deleted
+        defenders_ui_slot, //this is expected to have no pre-existing children, otherwise they might get deleted
         is_special_combat, //true -> skips loot, rewards, location progress, etc (esp since it might not even involve player)
         show_stance_controls, //generally just ignore it let it be auto set
     }) {
@@ -45,23 +45,28 @@ class Combat {
         this.defenders_ui_slot = defenders_ui_slot || document.getElementById(config.ui_element_for_enemy_display);
         this.is_special_combat = is_special_combat ?? false;
         this.show_stance_controls = show_stance_controls ?? !this.is_special_combat;
+        this.is_ended = false;
     }
 
     #setupDisplay() {
-        fill_attacker_divs(this.attackers, this.attackers_ui_slot);
-        fill_defender_divs(this.defenders, this.defenders_ui_slot);
+        fill_fighter_divs();
     }
 
     reset() {
+        this.clearAllAttackLoops();
+        this.clearUI();
+
         for(let i = 0; i < this.attackers.length; i++) {
             this.attackers[i].is_alive = true;
         }
         for(let i = 0; i < this.defenders.length; i++) {
             this.defenders[i].is_alive = true;
         }
+    }
 
-        this.clearAllAttackLoops();
-        this.clearUI();
+    end() {
+        this.is_ended = true;
+        this.reset();
     }
 
     clearUI() {
@@ -78,10 +83,6 @@ class Combat {
 
     start() {
         this.#setupDisplay();
-
-        //do something with stats for standarized access, or just add levelable component to enemies? 
-        //start a combat loop interval
-
 
         this.#data.attackers.attack_cooldowns = this.attackers.map(x => 1/x.getFullStats().attack_speed);
         this.#data.defenders.attack_cooldowns = this.defenders.map(x => 1/x.getFullStats().attack_speed);
@@ -100,7 +101,6 @@ class Combat {
             }
         });
 
-        fill_fighter_divs();
         update_displayed_health_of_defenders();
 
         for(let i = 0; i < this.defenders.length; i++) {
@@ -174,23 +174,24 @@ class Combat {
 
         update_attack_bar({fighter_index, is_attacker, progress: count/60});
 
-        const target_data = is_attacker ? this.#data.attackers : this.#data.defenders;
+        const fighter_data = is_attacker ? this.#data.attackers : this.#data.defenders;
 
         if(is_new) {
-            target_data.time_variance_acumulators[fighter_index] = 0;
-            target_data.timer_adjustments[fighter_index] = 0;
+            fighter_data.time_variance_acumulators[fighter_index] = 0;
+            fighter_data.timer_adjustments[fighter_index] = 0;
         }
 
         this.clearAttackLoop({fighter_index, is_attacker});
-        target_data.attack_loops[fighter_index] = setTimeout(() => {
-            target_data.timers[fighter_index] = [];
-            target_data.timers[fighter_index][0] = Date.now();
-            target_data.time_variance_acumulators[fighter_index] = Date.now();
+        fighter_data.attack_loops[fighter_index] = setTimeout(() => {
+            if(this.is_ended) { return; }
+            fighter_data.timers[fighter_index] = [];
+            fighter_data.timers[fighter_index][0] = Date.now();
+            fighter_data.time_variance_acumulators[fighter_index] = Date.now();
 
-            target_data.time_variance_acumulators[fighter_index] += 
-                ((target_data.timers[fighter_index][0] - target_data.timers[fighter_index][1]) - actual_cooldown*1000/(60*tickrate))
+            fighter_data.time_variance_acumulators[fighter_index] += 
+                ((fighter_data.timers[fighter_index][0] - fighter_data.timers[fighter_index][1]) - actual_cooldown*1000/(60*tickrate))
 
-            target_data.timers[fighter_index][1] = Date.now();
+            fighter_data.timers[fighter_index][1] = Date.now();
 
             update_attack_bar({fighter_index, is_attacker, progress: count/60});
             count++;
@@ -214,28 +215,29 @@ class Combat {
                 if((is_attacker ? this.defenders : this.attackers).filter(enemy => enemy.is_alive).length != 0) { //set next loop if there's still an enemy left;
                     this.setAttackLoop({fighter_index, base_cooldown, is_attacker});
                 } else { //all enemies defeated, do relevant things and set new combat if applicable
-                    if(this.is_special_combat) { 
+                    if(this.is_special_combat) {
                         this.clearAllAttackLoops();
                     } else {
-                        finish_combat_round(this.is_special_combat);                        
+                        finish_combat_round(this.is_special_combat);             
                     }
                 }
             } else {
                 this.doAttackLoop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, count, is_new: false});
             }
 
-            if(Math.abs(target_data.time_variance_acumulators[fighter_index] <= maximum_time_correction/tickrate)) {
-                target_data.timer_adjustments[fighter_index] = target_data.time_variance_acumulators[fighter_index];
+            if(Math.abs(fighter_data.time_variance_acumulators[fighter_index] <= maximum_time_correction/tickrate)) {
+                fighter_data.timer_adjustments[fighter_index] = fighter_data.time_variance_acumulators[fighter_index];
             } else {
-                if(target_data.time_variance_acumulators[fighter_index] > maximum_time_correction/tickrate) {
-                    target_data.timer_adjustments[fighter_index] = maximum_time_correction/tickrate;
+                //limits the maximum correction, just to be safe
+                if(fighter_data.time_variance_acumulators[fighter_index] > maximum_time_correction/tickrate) {
+                    fighter_data.timer_adjustments[fighter_index] = maximum_time_correction/tickrate;
                 } else {
-                    if(target_data.time_variance_acumulators[fighter_index] < -maximum_time_correction/tickrate) {
-                        target_data.timer_adjustments[fighter_index] = -maximum_time_correction/tickrate;
+                    if(fighter_data.time_variance_acumulators[fighter_index] < -maximum_time_correction/tickrate) {
+                        fighter_data.timer_adjustments[fighter_index] = -maximum_time_correction/tickrate;
                     }
                 }
-            } //limits the maximum correction, just to be safe
-        }, actual_cooldown*1000/(60*tickrate) - target_data.timer_adjustments[fighter_index]);
+            }
+        }, actual_cooldown*1000/(60*tickrate) - fighter_data.timer_adjustments[fighter_index]);
     }
 
     /**
@@ -411,7 +413,9 @@ class Combat {
             }
         }
 
-
+        if(game_options.do_enemy_onhit_animations) {
+            do_onhit_animation({fighter_index: (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target), is_attacker: !is_attacker});
+        }
 
         if(fainted) {
             if(target.tags.main_character) {
@@ -435,20 +439,15 @@ class Combat {
                     }
                 }
                 
-                const index = (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target);
+                const target_index = (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target);
 
-                kill_target({fighter_index: index, is_attacker: !is_attacker});
-                this.clearAttackLoop({fighter_index: index, is_attacker: !is_attacker});
-                
-                //todo: check if any opponent is alive?
+                kill_target({fighter_index, target_index, is_target_an_attacker: !is_attacker});
+                this.clearAttackLoop({fighter_index: target_index, is_attacker: !is_attacker});
             }
         } else {
             if(!this.is_special_combat && target.tags.main_character) {
                 update_displayed_health();
             } else {
-                if(game_options.do_enemy_onhit_animations) {
-                    do_onhit_animation({fighter_index, is_attacker});
-                }
                 update_displayed_health_of_fighter({fighter_index, is_attacker});
             }
         }
@@ -464,7 +463,9 @@ class Combat {
     }
 
     clearAttackLoop({fighter_index, is_attacker}) {
-        clearTimeout(is_attacker ? this.#data.attackers.attack_loops[fighter_index] : this.#data.defenders.attack_loops[fighter_index]);
+        clearTimeout(
+            (is_attacker ? this.#data.attackers : this.#data.defenders).attack_loops[fighter_index]
+        );
     }
 
     /**

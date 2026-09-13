@@ -2229,7 +2229,7 @@ i {
 		top: 386px;
 		display: var(--character_combat_div_display);
 	}
-		#character_stance_name {
+		#character_stance_div {
 			padding: 3px;
 			margin-top: 2px;
 			margin-bottom: 2px;
@@ -2247,7 +2247,7 @@ i {
 				background-color:#232f47;
 				text-align: left;
 			}
-			#character_stance_name:hover #character_stance_selection, #character_stance_selection:hover {
+			#character_stance_div:hover #character_stance_selection, #character_stance_selection:hover {
 				display: block;
 			}
 

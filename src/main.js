@@ -92,7 +92,7 @@ import { end_activity_animation,
          fill_character_bio,
          insert_HTML,
         } from "./display.js";
-import { fill_fighter_divs, update_defender_stats, update_displayed_fighter_stats, } from "./ui/combat_display.js";
+import { fill_fighter_divs, update_defender_stats, update_displayed_fighter_stats, update_displayed_health_of_defenders, update_displayed_health_of_fighter, } from "./ui/combat_display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { recipes, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
@@ -178,14 +178,6 @@ let was_starry = false;
 
 //current Combat object
 let current_combat = null;
-
-const enemy_attack_loops = {};
-let enemy_attack_cooldowns;
-let character_attack_loop;
-
-let character_timer_variance_accumulator = 0;
-let character_timer_adjustment = 0;
-let character_timers = [];
 
 //current location
 let current_location;
@@ -589,7 +581,6 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
     if(current_combat) {
         end_combat();
     }
-    end_combat();
 
     if(!location) {
         throw `No such location as "${location_id}"`;
@@ -1442,16 +1433,20 @@ function finish_combat_round(was_special_combat) {
  * @param {Enemy} enemy 
  * @return {Boolean} if that was the last of an enemy group
  */
-function kill_target({fighter_index, is_attacker, do_quest_events = true, is_special_combat}) {
-    const target = is_attacker ? current_combat.attackers[fighter_index] : current_combat.defenders[fighter_index];
-    const fighter = is_attacker ? current_combat.defenders[fighter_index] : current_combat.attackers[fighter_index];
+function kill_target({target_index, fighter_index, is_target_an_attacker, do_quest_events = true, is_special_combat}) {
+    //target is the one getting killed, fighter is the one attacking the target
+    const target = is_target_an_attacker ? current_combat.attackers[target_index] : current_combat.defenders[target_index];
+    const fighter = is_target_an_attacker ? current_combat.defenders[fighter_index] : current_combat.attackers[fighter_index];
 
     if(target.tags.main_character) {
         console.error("Main character was designed as a target of kill_target()!");
-    }
 
+    }
+    
     target.is_alive = false;
-    if(target.add_to_bestiary && is_attacker && !is_special_combat) {
+    update_displayed_health_of_fighter({fighter_index: target_index, is_attacker: is_target_an_attacker});
+
+    if(target.add_to_bestiary && is_target_an_attacker && !is_special_combat) {
         if(enemy_killcount[target.name]) {
             enemy_killcount[target.name] += 1;
             update_bestiary_entry_killcount(target.name);
@@ -2250,7 +2245,7 @@ function remove_location_from_favourites({location_id, update_choices = true}) {
 
 function end_combat() {
     if(current_combat) {
-        current_combat.reset();
+        current_combat.end();
         current_combat = null;
     }
 }
@@ -2699,7 +2694,7 @@ function switch_action_box_content() {
 function character_equip_item(item_key) {
     character.equipItemFromInventory(item_key);
     if(current_combat) {
-        reset_combat_loops(true);
+        current_combat.resetCombatLoops(true);
         update_defender_stats();
     } else if(current_location.tags.safe_zone) {
         //update resource gathering tooltips in case there's a skill lvl bonus change
@@ -2715,7 +2710,7 @@ function character_equip_item(item_key) {
 function character_unequip_item(item_slot) {
     character.unequipItem(item_slot);
     if(current_combat) {
-        reset_combat_loops(true);
+        current_combat.resetCombatLoops(true);
     }
 }
 
