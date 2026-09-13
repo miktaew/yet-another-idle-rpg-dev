@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 165 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 166 -->
 
 # Proposals
 
@@ -743,101 +743,6 @@ pointing at it, so a region reached from two places would make the traces decora
 first piece to be built must be measured the way P-14's were, because the brief's six focuses
 are not six pieces of work - two of them (navigation, stance combat) are properties a region
 has rather than features it contains.
-
-### P-45 — The four skills that stop at ten `blocked`
-
-The owner's request: *"let us raise the upper levels of the max-level-10 skills like night
-vision, literacy, sleeping, farming."*
-
-**Measured, and it is exactly those four.** The game's skills group by `max_level` like this:
-
-| cap | how many | which |
-|---|---|---|
-| 10 | **4** | Night vision, Farming, Sleeping, Literacy |
-| 20 | 1 | Presence sensing |
-| 25 | 1 | Haggling |
-| 30 | 16 | the stances, Shield blocking, Stance mastery … |
-| 40 | 7 | Perception, Breathing, Regeneration … |
-| 50 | 5 | Running, Climbing, Swimming … |
-| 60 | 32 | Combat, Evasion, Unarmed … |
-
-So the four are not a tier, they are the floor - and the next rung up holds one skill. A
-player who levels any of them hits the ceiling long before anything else in the game stops
-moving.
-
-**What has to be decided before any number is picked, because a cap is not just a number.**
-Each of these four has milestones and an effect that scales with level, so raising a cap
-without extending the milestones gives levels that buy nothing - which is worse than a cap,
-because the xp is real and the reward is not. `get_next_skill_milestone` and
-`get_unlocked_skill_rewards` are what would have to be fed.
-
-**And two of the four have effects that cannot simply keep scaling.** Sleeping and Night
-vision both reduce a penalty; a penalty reduced past nought is a bonus, and that is a
-different design decision from "let it go further". Literacy speeds reading and Farming
-feeds an activity, so those two extend cleanly.
-
-**A maxed skill keeps its xp, so raising a cap loses nothing - measured, because the owner
-asked.** *"Literacy is level 10 now, does it keep taking xp? It needs to keep taking xp even
-at maximum, and if there is an increase there should be no loss."* There is none:
-`Skill.add_xp` writes `this.total_xp` **unconditionally**, before the
-`if(this.current_level < this.max_level)` branch that stops the level moving; the save stores
-`{total_xp}` and nothing else; and the loader rebuilds the level by replaying that xp. So a
-cap raised later converts the accumulated xp into levels on the next load, with no migration
-and nothing to repair.
-
-That removes the risk this proposal would otherwise have had to carry, and it changes the
-order: the caps can be raised whenever the milestones are ready, without racing to do it
-before players bank xp against them.
-
-**Guard.** `check_skill_effect_descriptions` and the milestone checks already hold a skill to
-describing what it does at every level it can reach, so a cap raised past its milestones
-should fail there rather than needing a new check. Worth confirming before relying on it.
-
-**BLOCKED on Q-16, 2026-09-03, by a measurement this proposal did not have.** Every one of
-these skills expresses its effect as a **fraction of the way to its own cap** - the game's
-standard idiom, used ten times across stances, pathfinding, regeneration and crafting quality.
-So raising a cap does not extend the curve, it **re-scales** it, and every level below the new
-cap gets weaker:
-
-| skill | effect | at level 10 today | at level 10 if the cap were 20 | at 20 |
-|---|---|---|---|---|
-| Night vision | `0.5 + 0.5 × level/max` | 1.000 (no darkness penalty) | **0.750** | 1.000 |
-| Sleeping | heal `× (1 + level/max)` | 2.000× | **1.500×** | 2.000× |
-
-A player who has already maxed either would open the game to a straight nerf, and the ceiling
-would not move at all. That is the opposite of what was asked for, and no choice of number
-avoids it - the divisor has to change, and what it changes to is a balance decision.
-
-**One correction to this proposal's own reading while we are here.** It says *"Sleeping and
-Night vision both reduce a penalty"*. Measured, only Night vision does - `light_modifier` runs
-0.5 to 1.0, so past 1.0 would be seeing better in the dark than in daylight. Sleeping
-multiplies healing and extends cleanly with a frozen divisor. Literacy is milestones only, and
-Farming rides `max_level_coefficient`, which has the same re-scaling problem in a different
-shape.
-
-### Q-16 — What do levels 11-20 of the four capped skills give? `open`
-
-Three answers, and they differ for the player rather than for the code:
-
-- **A - freeze the divisor at 10.** Level 10 keeps exactly today's effect and 11-20 go past
-  it. Cleanest for Sleeping (healing keeps climbing). For Night vision it means a light
-  modifier above 1.0, which is a new thing: seeing better than daylight.
-- **B - cap the effect, extend only the milestones.** Nobody's current effect changes at all
-  and 11-20 hand out the xp multipliers and stat flats these four already deal in. The most
-  conservative, and the one that needs no balance call - but a player who reaches 20 in Night
-  vision sees no more than at 10.
-- **C - raise the caps and accept the re-scale.** Rejected here rather than offered: it takes
-  effect away from players who already earned it, silently, on load.
-
-**PROPOSED: B for Night vision, A for the other three.** It keeps the one effect that cannot
-grow past its own ceiling from having to, and lets the three that can, grow. What it costs is
-that Night vision's higher levels are worth having for their milestones rather than for the
-dark - which is worth saying in its effect description rather than leaving the player to
-notice.
-
-No xp is at risk either way: `Skill.add_xp` writes `total_xp` unconditionally and the loader
-rebuilds levels from it, so a cap raised later converts banked xp into levels on the next load.
-That was measured for this proposal already and it is why this can wait.
 
 ### P-46 — The changelog page remembers where you were `open`
 

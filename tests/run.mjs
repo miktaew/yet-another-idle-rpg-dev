@@ -39,6 +39,7 @@ import {
     check_no_action_hides_on_a_recurring_condition,
     check_no_content_is_left_inside_a_comment,
     check_an_activity_reward_is_processed,
+    check_a_frozen_curve_is_not_divided_by_the_cap,
     check_the_discoveries_search_reads_what_it_shows,
 } from "./checks/content.mjs";
 import {
@@ -246,6 +247,7 @@ check_a_reputation_region_opens_something();
 check_no_action_hides_on_a_recurring_condition();
 check_no_content_is_left_inside_a_comment();
 check_an_activity_reward_is_processed();
+await check_a_frozen_curve_is_not_divided_by_the_cap();
 check_the_discoveries_search_reads_what_it_shows();
 check_actions_can_explain_failure();
 check_content_object_keys();

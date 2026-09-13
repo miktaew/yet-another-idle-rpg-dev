@@ -3389,7 +3389,7 @@ function get_location_type_penalty(type, stage, stat, category) {
             activity_name: "fieldwork",
             starting_text: "activity Village fieldwork starting",
             get_payment: () => {
-                return 15 + Math.round(25 * get_total_skill_level("Farming")/skills["Farming"].max_level);
+                return 15 + Math.round(25 * Math.min(1, get_total_skill_level("Farming")/skills["Farming"].scaling_cap));
             },
             is_unlocked: false,
             working_period: 60*2,
@@ -4079,7 +4079,7 @@ function get_location_type_penalty(type, stage, stat, category) {
             activity_name: "fieldwork",
             starting_text: "activity Town farms fieldwork starting",
             get_payment: () => {
-                return 30 + Math.round(30 * get_total_skill_level("Farming")/skills["Farming"].max_level);
+                return 30 + Math.round(30 * Math.min(1, get_total_skill_level("Farming")/skills["Farming"].scaling_cap));
             },
             is_unlocked: false,
             working_period: 60*2,

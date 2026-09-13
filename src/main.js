@@ -1327,13 +1327,19 @@ function do_resting() {
 
 function do_sleeping() {
     if(character.stats.full.health < character.stats.full.max_health) {
-        const sleeping_heal_ammount = Math.round(Math.max(character.stats.full.max_health * 0.04, 5) * (1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level) * (1 + 3*get_total_skill_level("Regeneration")/skills["Regeneration"].max_level));
+        /*
+            Sleeping divides by scaling_cap rather than max_level: its cap moved to 20 (Q-16,
+            answered A) and the curve stays where it was written, so level 10 still doubles
+            the healing and level 20 triples it. Regeneration is untouched - its cap has not
+            moved, and for it the two numbers are the same.
+        */
+        const sleeping_heal_ammount = Math.round(Math.max(character.stats.full.max_health * 0.04, 5) * (1 + get_total_skill_level("Sleeping")/skills["Sleeping"].scaling_cap) * (1 + 3*get_total_skill_level("Regeneration")/skills["Regeneration"].max_level));
         
         update_health({ammount_to_restore: sleeping_heal_ammount});
     }
 
     if(character.stats.full.stamina < character.stats.full.max_stamina) {
-        const sleeping_stamina_ammount = Math.round(Math.max(character.stats.full.max_stamina/30, 5) * (1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level));
+        const sleeping_stamina_ammount = Math.round(Math.max(character.stats.full.max_stamina/30, 5) * (1 + get_total_skill_level("Sleeping")/skills["Sleeping"].scaling_cap));
 
         character.stats.full.stamina += (sleeping_stamina_ammount);
         if(character.stats.full.stamina > character.stats.full.max_stamina) {

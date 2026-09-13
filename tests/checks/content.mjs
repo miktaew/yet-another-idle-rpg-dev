@@ -2299,7 +2299,81 @@ function check_the_discoveries_search_reads_what_it_shows() {
         + `through one function`);
 }
 
+
+/**
+ * A skill whose curve is frozen is not still divided by its cap.
+ *
+ * The game expresses a skill's effect as a fraction of the way to mastery - `level /
+ * max_level` - in the Skill class and in six hand-written formulas outside it. That idiom
+ * makes raising a cap dangerous in a way nothing else in this project is: it does not extend
+ * the skill, it **re-scales** it, and every level below the new cap gets weaker while the
+ * ceiling stays exactly where it was. Sleeping's healing would have gone from 2.0x to 1.5x at
+ * level 10 for a player who had already earned it, silently, on the next load.
+ *
+ * `scaling_cap` is the answer (Q-16): the level a curve reaches full strength at, defaulting
+ * to `max_level` so nothing changed for the other sixty skills. The Skill class divides by it.
+ * **The hand-written formulas are the exposure**, because they live in character.js and
+ * main.js and nothing connects them to the skill's own declaration - one was missed while
+ * this was being written, and the measurement caught it: Night vision read 0.750 at level 10
+ * where it had read 1.000.
+ *
+ * So: for every skill that has frozen its curve, no file outside skills.js may divide that
+ * skill's level by its `max_level`. Read from the registry rather than a list, so a fifth
+ * skill raising its cap is covered the day it does.
+ */
+async function check_a_frozen_curve_is_not_divided_by_the_cap() {
+    const [skills_module] = await load_browser_free(repo_root, ["src/data/skills.js"]);
+    const skills = skills_module.skills ?? {};
+
+    const frozen = Object.values(skills).filter(
+        (skill) => skill.scaling_cap !== undefined && skill.scaling_cap !== skill.max_level);
+
+    if (Object.keys(skills).length < 50) {
+        error(`only ${Object.keys(skills).length} skill(s) loaded - `
+            + `check_a_frozen_curve_is_not_divided_by_the_cap would accept anything.`);
+        return;
+    }
+    if (frozen.length === 0) {
+        console.log("[check] frozen curves: none, so no formula can re-scale one");
+        return;
+    }
+
+    let divisions = 0;
+    for (const relative of source_files(repo_root)) {
+        if (relative.endsWith("data/skills.js")) {
+            continue;   //the class itself, which divides by scaling_cap on purpose
+        }
+        const source = strip_comments(
+            fs.readFileSync(path.join(repo_root, relative), "utf8"));
+
+        for (const skill of frozen) {
+            const pattern = new RegExp(
+                `skills\\[\\s*"${skill.skill_id}"\\s*\\]\\.max_level`, "g");
+            for (const found of source.matchAll(pattern)) {
+                const before = source.slice(Math.max(0, found.index - 40), found.index);
+                if (!/\/\s*$/.test(before)) {
+                    continue;   //naming the cap is fine; dividing by it is not
+                }
+                divisions++;
+                error(`${relative} divides by skills["${skill.skill_id}"].max_level, and `
+                    + `that skill's curve is frozen at ${skill.scaling_cap} while its cap is `
+                    + `${skill.max_level}. Every level at or below ${skill.scaling_cap} would `
+                    + `come out weaker than it is today, with the ceiling unmoved - which is `
+                    + `a loss the player takes on the next load with nothing said. Divide by `
+                    + `scaling_cap.`);
+            }
+        }
+    }
+
+    if (divisions === 0) {
+        console.log(`[check] frozen curves: ${frozen.length} skill(s) with a raised cap `
+            + `(${frozen.map((skill) => skill.skill_id).join(", ")}), none of them still `
+            + `divided by it`);
+    }
+}
+
 export {
+    check_a_frozen_curve_is_not_divided_by_the_cap,
     check_an_activity_reward_is_processed,
     check_the_discoveries_search_reads_what_it_shows,
     check_no_content_is_left_inside_a_comment,

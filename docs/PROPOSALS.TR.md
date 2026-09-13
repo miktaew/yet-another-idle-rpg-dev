@@ -1,4 +1,4 @@
-<!-- doc-source: docs/PROPOSALS.md  doc-version: 165 -->
+<!-- doc-source: docs/PROPOSALS.md  doc-version: 166 -->
 
 > **Kanonik dosya: [PROPOSALS.md](PROPOSALS.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -747,102 +747,6 @@ gösteriyor; iki yerden varılan bir bölge, izleri süs hâline getirir. Ve in�
 parça, P-14'ünkiler gibi ölçülmek zorunda; çünkü brief'in altı odağı altı iş parçası değil —
 ikisi (navigasyon, duruş dövüşü) bir bölgenin içerdiği özellikler değil, sahip olduğu
 niteliklerdir.
-
-### P-45 — Onda duran dört beceri `blocked`
-
-Sahibinin talebi: *"night vision, literacy, sleeping, farming gibi lv 10 max yeteneklerin üst
-seviyelerini arttıralım."*
-
-**Ölçüldü ve tam olarak o dördü.** Oyunun becerileri `max_level`e göre şöyle gruplanıyor:
-
-| tavan | kaç | hangileri |
-|---|---|---|
-| 10 | **4** | Night vision, Farming, Sleeping, Literacy |
-| 20 | 1 | Presence sensing |
-| 25 | 1 | Haggling |
-| 30 | 16 | duruşlar, Shield blocking, Stance mastery … |
-| 40 | 7 | Perception, Breathing, Regeneration … |
-| 50 | 5 | Running, Climbing, Swimming … |
-| 60 | 32 | Combat, Evasion, Unarmed … |
-
-Yani bu dördü bir kademe değil, zeminin kendisi — ve bir üst basamakta tek bir beceri var.
-Bunlardan birini yükselten bir oyuncu, oyundaki başka hiçbir şey durmadan çok önce tavana
-çarpıyor.
-
-**Bir sayı seçilmeden önce karara bağlanması gerekenler, çünkü tavan yalnızca bir sayı
-değil.** Bu dördünün her birinin milestone'ları ve seviyeyle ölçeklenen bir etkisi var; yani
-milestone'ları uzatmadan tavanı yükseltmek, hiçbir şey satın almayan seviyeler veriyor — ki
-bu tavandan kötü, çünkü tecrübe gerçek, ödül değil. Beslenmesi gerekenler
-`get_next_skill_milestone` ve `get_unlocked_skill_rewards`.
-
-**Ve dördünden ikisinin etkisi öylece ölçeklenemez.** Sleeping ile Night vision bir cezayı
-azaltıyor; sıfırın ötesine azaltılmış bir ceza bonustur ve bu, "daha ileri gitsin"den farklı
-bir tasarım kararı. Literacy okumayı hızlandırıyor, Farming bir aktiviteyi besliyor; o ikisi
-temiz biçimde uzuyor.
-
-**Tavana ulaşmış bir beceri xp'sini tutuyor, yani tavanı yükseltmek hiçbir şey
-kaybettirmiyor — sahibi sorduğu için ölçüldü.** *"literacy şu an seviye 10, hala exp almaya
-devam eder mi? maximuma ulaşsa da exp almaya devam etmesi gerekiyor ve eğer bir arttırım
-olursa kayıp yaşanmaması gerek."* Kayıp yok: `Skill.add_xp`, `this.total_xp`'yi
-**koşulsuz** yazıyor — seviyeyi durduran `if(this.current_level < this.max_level)` dalından
-önce; kayıt yalnızca `{total_xp}` saklıyor; ve yükleyici seviyeyi o xp'yi tekrar oynatarak
-kuruyor. Yani sonradan yükseltilen bir tavan, birikmiş xp'yi bir sonraki yüklemede seviyeye
-çeviriyor — migration yok, onarılacak bir şey yok.
-
-Bu, bu önerinin aksi hâlde taşımak zorunda olacağı riski ortadan kaldırıyor ve sırayı da
-değiştiriyor: tavanlar, oyuncular onlara karşı xp biriktirmeden önce yetişme telaşı olmadan,
-milestone'lar hazır olduğunda yükseltilebilir.
-
-**Muhafız.** `check_skill_effect_descriptions` ve milestone kontrolleri, bir beceriyi
-ulaşabildiği her seviyede ne yaptığını anlatmaya çoktan bağlıyor; yani milestone'larının
-ötesine yükseltilmiş bir tavanın orada düşmesi lazım, yeni bir kontrole gerek kalmadan.
-Buna güvenmeden önce doğrulanmaya değer.
-
-**Q-16 ÜZERİNDEN BLOKE EDİLDİ, 2026-09-03; bu proposal'ın sahip olmadığı bir ölçümle.** Bu
-becerilerin her biri etkisini **kendi tavanına ne kadar kaldığının oranı** olarak ifade
-ediyor — oyunun standart deyimi; duruşlarda, yol bulmada, yenilenmede ve zanaat kalitesinde
-toplam on yerde kullanılıyor. Yani bir tavanı yükseltmek eğriyi uzatmıyor, **yeniden
-ölçekliyor** ve yeni tavanın altındaki her seviye zayıflıyor:
-
-| beceri | etki | bugün 10. seviyede | tavan 20 olsa 10. seviyede | 20'de |
-|---|---|---|---|---|
-| Gece görüşü | `0.5 + 0.5 × seviye/tavan` | 1.000 (karanlık cezası yok) | **0.750** | 1.000 |
-| Uyku | iyileşme `× (1 + seviye/tavan)` | 2.000× | **1.500×** | 2.000× |
-
-İkisinden birini çoktan maksimuma çıkarmış bir oyuncu, oyunu düpedüz bir zayıflatmayla açardı
-ve tavandaki etki hiç değişmezdi. Bu, istenenin tam tersi ve hiçbir sayı seçimi bundan
-kaçınmıyor — bölenin değişmesi gerekiyor ve neye değişeceği bir denge kararı.
-
-**Hazır buradayken bu proposal'ın kendi okumasına bir düzeltme.** *"Uyku ve gece görüşü ikisi
-de bir cezayı azaltıyor"* diyor. Ölçüldü, yalnızca gece görüşü öyle — `light_modifier` 0.5 ile
-1.0 arasında gidiyor, yani 1.0'ın ötesi karanlıkta gündüzden iyi görmek olurdu. Uyku
-iyileşmeyi çarpıyor ve dondurulmuş bir bölenle temiz uzuyor. Okuryazarlık yalnızca milestone,
-Çiftçilik ise `max_level_coefficient` üzerinden gidiyor; onda da aynı yeniden ölçekleme sorunu
-başka bir biçimde var.
-
-### Q-16 — Tavanı onda duran dört becerinin 11-20. seviyeleri ne veriyor? `open`
-
-Üç cevap ve farkları kodda değil oyuncuda:
-
-- **A — böleni 10'da dondur.** 10. seviye bugünkü etkisini birebir koruyor, 11-20 onun ötesine
-  geçiyor. Uyku için en temizi (iyileşme tırmanmaya devam ediyor). Gece görüşü içinse 1.0'ın
-  üstünde bir ışık çarpanı demek, ki bu yeni bir şey: gündüzden iyi görmek.
-- **B — etkiyi tavanla, yalnızca milestone'ları uzat.** Hiç kimsenin mevcut etkisi değişmiyor
-  ve 11-20, bu dördünün zaten kullandığı xp çarpanlarını ve stat artışlarını dağıtıyor. En
-  muhafazakârı ve denge kararı gerektirmeyeni — ama gece görüşünde 20'ye ulaşan oyuncu 10'da
-  gördüğünden fazlasını görmüyor.
-- **C — tavanları yükselt ve yeniden ölçeklemeyi kabul et.** Sunulmak yerine burada
-  reddediliyor: çoktan hak edilmiş etkiyi, sessizce, açılışta oyuncudan geri alıyor.
-
-**ÖNERİ: Gece görüşü için B, diğer üçü için A.** Kendi tavanının ötesine büyüyemeyecek tek
-etkiyi büyümek zorunda bırakmıyor, büyüyebilecek üçünün büyümesine izin veriyor. Maliyeti,
-gece görüşünün üst seviyelerinin karanlık için değil milestone'ları için değerli olması — ki
-bunu oyuncunun fark etmesine bırakmak yerine etki açıklamasında söylemeye değer.
-
-Hiçbir xp risk altında değil: `Skill.add_xp`, `total_xp`i koşulsuz yazıyor ve yükleyici
-seviyeleri ondan yeniden kuruyor, yani sonradan yükseltilen bir tavan biriken xp'yi bir
-sonraki açılışta seviyeye çeviriyor. Bu, bu proposal için zaten ölçülmüştü ve beklemesinin
-mümkün olmasının sebebi de bu.
 
 ### P-46 — Changelog sayfası nerede kaldığını hatırlıyor `open`
 

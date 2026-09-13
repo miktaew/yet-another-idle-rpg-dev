@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 142 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 143 -->
 
 # Changelog
 
@@ -20,6 +20,45 @@ Turkish counterpart: [CHANGELOG.TR.md](CHANGELOG.TR.md).
 ---
 
 ## 2026-09-02
+
+### v0.7.57 - the four skills that stopped at ten, and the divisor nobody could see
+
+The owner answered Q-16 with "A/B": **A** for sleeping, farming and literacy - freeze the
+curve where it is calibrated and let the levels above go further - and **B** for night vision,
+whose effect stays where it is while the new levels pay in milestones.
+
+**Why it was a question at all.** Every one of these four expresses its effect as a fraction
+of the way to its own cap, `level / max_level`, which is this game's idiom in ten places.
+Raising a cap therefore does not extend a skill, it **re-scales** it: night vision at level 10
+would have gone from 1.000 to 0.750 and sleeping's healing from 2.0x to 1.5x, for players who
+had already earned them, with the ceilings unmoved. No choice of number avoids that. The
+divisor had to change, and what it changes to is a balance decision that was the owner's.
+
+**`scaling_cap` is the answer**: the level at which a curve reaches full strength, defaulting
+to `max_level` so the other sixty skills are untouched. `Skill.get_coefficient` and
+`get_level_bonus` divide by it. The four set it to 10 and raise their caps to 20.
+
+Measured after, which is the only reason this entry can claim anything: night vision 1.000 at
+10 and 1.000 at 20, sleeping 2.0x at 10 and 3.0x at 20, farming 2.0x and 4.0x, literacy
+unchanged in coefficient because it pays purely in milestones. Every value at level 10 is
+identical to what it was.
+
+**The hand-written formulas are where this was going to go wrong, and it did.** Six of them
+live in character.js, main.js and locations.js, and nothing connects them to a skill's own
+declaration. Night vision's was missed on the first pass - the measurement read 0.750 at level
+10, the exact nerf the whole exercise exists to avoid - and the guard written afterwards found
+two more in locations.js that I had not thought about at all: the fieldwork and harvest wages,
+which would have paid a level-10 farmer 20 instead of 40 for work they were already doing.
+
+So `check_a_frozen_curve_is_not_divided_by_the_cap` reads the registry for skills whose curve
+is frozen and refuses any division by their `max_level` outside skills.js. It is derived, so a
+fifth skill raising its cap is covered the day it does.
+
+**Levels 11-20 are written in the vocabulary these four already use** - xp multipliers and
+small stat flats - and nothing at 10 or below was touched. Four new rank names, in both
+languages. And **no experience was at risk**, which P-45 had measured earlier: `total_xp`
+accumulates unconditionally and the loader rebuilds levels from it, so anything banked against
+the old ceiling becomes levels on the next load with no migration.
 
 ### v0.7.56 - a chest in the bay, and a search that finds what it shows
 

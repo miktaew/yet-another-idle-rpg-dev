@@ -1,4 +1,4 @@
-<!-- doc-source: docs/CHANGELOG.md  doc-version: 142 -->
+<!-- doc-source: docs/CHANGELOG.md  doc-version: 143 -->
 
 > **Kanonik dosya: [CHANGELOG.md](CHANGELOG.md).** Bu çeviri bilgilendirme
 > amaçlıdır. Çelişki hâlinde İngilizce dosya geçerlidir.
@@ -22,6 +22,45 @@ geldiğinde buraya girer.
 ---
 
 ## 2026-09-02
+
+### v0.7.57 - onda duran dört beceri ve kimsenin göremediği bölen
+
+Sahibi Q-16'yı "A/B" diye cevapladı: uyku, çiftçilik ve okuryazarlık için **A** — eğriyi
+kalibre edildiği yerde dondur, üstündeki seviyeler daha ileri gitsin — ve gece görüşü için
+**B**: etkisi olduğu yerde kalıyor, yeni seviyeler dönüm noktalarıyla ödüyor.
+
+**Bunun neden bir soru olduğu.** Dördü de etkisini kendi tavanına giden yolun oranı olarak
+yazıyor: `seviye / max_level`, ki bu oyunun on yerdeki deyimi. Dolayısıyla bir tavanı
+yükseltmek beceriyi uzatmıyor, **yeniden ölçekliyor**: gece görüşü 10. seviyede 1.000'den
+0.750'ye, uykunun iyileşmesi 2.0x'ten 1.5x'e düşecekti — hem de onları çoktan hak etmiş
+oyuncular için ve tavanlar hiç kımıldamadan. Hiçbir sayı seçimi bundan kaçınmıyor. Bölenin
+değişmesi gerekiyordu ve neye değişeceği sahibinin denge kararıydı.
+
+**Cevap `scaling_cap`**: bir eğrinin tam güce ulaştığı seviye; varsayılanı `max_level`, yani
+diğer altmış beceri hiç etkilenmiyor. `Skill.get_coefficient` ve `get_level_bonus` ona
+bölüyor. Dördü onu 10 yapıp tavanlarını 20'ye çıkarıyor.
+
+Sonrasında ölçüldü, ki bu girdinin bir şey iddia edebilmesinin tek sebebi bu: gece görüşü
+10'da 1.000 ve 20'de 1.000, uyku 10'da 2.0x ve 20'de 3.0x, çiftçilik 2.0x ve 4.0x,
+okuryazarlığın katsayısı değişmedi çünkü tamamen dönüm noktalarıyla ödüyor. 10. seviyedeki her
+değer eskisiyle birebir aynı.
+
+**İşin yanlış gideceği yer el yazısı formüllerdi ve gitti de.** Altı tanesi character.js,
+main.js ve locations.js içinde yaşıyor ve hiçbiri becerinin kendi bildirimine bağlı değil.
+Gece görüşününki ilk geçişte kaçtı — ölçüm 10. seviyede 0.750 okudu, yani bütün bu işin
+önlemek için var olduğu zayıflamanın ta kendisi — ve sonradan yazılan muhafız, locations.js'te
+hiç aklıma gelmemiş iki tane daha buldu: tarla işi ve hasat yevmiyeleri; 10. seviyedeki bir
+çiftçiye zaten yaptığı iş için 40 yerine 20 ödeyeceklerdi.
+
+Bu yüzden `check_a_frozen_curve_is_not_divided_by_the_cap`, eğrisi dondurulmuş becerileri
+kayıttan okuyup skills.js dışında onların `max_level`'ına yapılan her bölmeyi reddediyor.
+Türetilmiş olduğu için tavanını yükselten beşinci bir beceri, yükselttiği gün kapsama giriyor.
+
+**11-20. seviyeler bu dördünün zaten kullandığı dille yazıldı** — tecrübe çarpanları ve küçük
+stat artışları — ve 10 ve altındaki hiçbir şeye dokunulmadı. İki dilde dört yeni kademe adı.
+Ve **hiçbir tecrübe risk altında değildi**, ki P-45 bunu daha önce ölçmüştü: `total_xp` koşulsuz
+birikiyor ve yükleyici seviyeleri ondan yeniden kuruyor, yani eski tavana karşı biriken her şey
+bir sonraki açılışta migration'sız seviyeye dönüşüyor.
 
 ### v0.7.56 - körfezde bir sandık ve gösterdiğini bulan bir arama
 

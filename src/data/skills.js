@@ -46,6 +46,7 @@ class Skill {
                   description, 
                   flavour_text, 
                   max_level = 60, 
+                  scaling_cap,
                   max_level_coefficient = 1, 
                   max_level_bonus = 0, 
                   base_xp_cost = 40, 
@@ -71,6 +72,19 @@ class Skill {
         this.flavour_text = flavour_text;
         this.current_level = 0; //initial lvl
         this.max_level = max_level; //max possible lvl, dont make it too high
+        /*
+            The level at which this skill's curve reaches full strength. Defaults to
+            max_level, so nothing changes for any skill that does not set it.
+
+            It exists because a coefficient is a fraction of the cap - `level / max_level` -
+            so raising a cap does not extend a skill, it RE-SCALES it, and every level below
+            the new cap gets weaker. Sleeping's healing would have dropped from 2.0x to 1.5x
+            at level 10 for a player who had already earned it, with the ceiling unmoved.
+            Q-16 is the owner's answer: freeze the curve where it was calibrated and let the
+            levels above it go further.
+        */
+        this.scaling_cap = scaling_cap ?? max_level;
+
         this.max_level_coefficient = max_level_coefficient; //multiplicative bonus for levels
         this.max_level_bonus = max_level_bonus; //other type bonus for levels
         this.current_xp = 0; // how much of xp_to_next_lvl there is currently
@@ -341,18 +355,20 @@ class Skill {
         return gains;
     }
     get_coefficient({scaling_type, skill_level}) { //starts from 1
+        //Against scaling_cap rather than max_level - see the constructor. They are the
+        //same number for every skill whose cap has not been raised past its curve.
         //maybe lvl as param, with current lvl being used if it's undefined?
         switch (scaling_type) {
             case "flat":
-                return 1 + Math.round((this.max_level_coefficient - 1) * (skill_level || this.current_level) / this.max_level * 1000) / 1000;
+                return 1 + Math.round((this.max_level_coefficient - 1) * (skill_level || this.current_level) / this.scaling_cap * 1000) / 1000;
             case "multiplicative":
-                return Math.round(Math.pow(this.max_level_coefficient, (skill_level || this.current_level) / this.max_level) * 1000) / 1000;
+                return Math.round(Math.pow(this.max_level_coefficient, (skill_level || this.current_level) / this.scaling_cap) * 1000) / 1000;
             default: //same as on multiplicative
-                return Math.round(Math.pow(this.max_level_coefficient, (skill_level || this.current_level) / this.max_level) * 1000) / 1000;
+                return Math.round(Math.pow(this.max_level_coefficient, (skill_level || this.current_level) / this.scaling_cap) * 1000) / 1000;
         }
     }
     get_level_bonus(level) { //starts from 0
-        return this.max_level_bonus * (level || this.current_level) / this.max_level;
+        return this.max_level_bonus * (level || this.current_level) / this.scaling_cap;
     }
     get_parent_xp_multiplier() {
         if(!this.parent_skill) {
@@ -1316,11 +1332,21 @@ function format_skill_rewards(milestone){
                                         }
                                     });
     skills["Night vision"] = new Skill({
-                                    names: {0: "Night vision", 5: "Owl eyes"},
+                                    names: {0: "Night vision", 5: "Owl eyes", 12: "Night-eyed"},
                                     description: "desc skill Night vision",
                                     base_xp_cost: 600,
                                     xp_scaling: 1.9,
-                                    max_level: 10,
+                                    /*
+                                        Q-16, answered B: the cap moves to 20 and the light
+                                        does not. `light_modifier` runs 0.5 to 1.0, where 1.0
+                                        is darkness costing nothing - past it would be seeing
+                                        better in the dark than in daylight, which is a
+                                        different thing from being good at seeing in the
+                                        dark. So 11-20 pay in what this skill already deals
+                                        in: what the dark teaches you to notice.
+                                    */
+                                    max_level: 20,
+                                    scaling_cap: 10,
                                     category: "Environmental",
                                     get_effect_description: () => {
                                         return translationManager.getText(language, "skill effect Night vision");
@@ -1371,7 +1397,38 @@ function format_skill_rewards(milestone){
                                             stats: {
                                                 intuition: {multiplier: 1.05},
                                             }
-                                        }
+                                        },
+                                        12: {
+                                            stats: {
+                                                intuition: {flat: 1},
+                                            },
+                                        },
+                                        14: {
+                                            xp_multipliers: {
+                                                "Presence sensing": 1.1,
+                                                Perception: 1.1,
+                                            },
+                                        },
+                                        16: {
+                                            stats: {
+                                                intuition: {multiplier: 1.05},
+                                            },
+                                        },
+                                        18: {
+                                            xp_multipliers: {
+                                                Evasion: 1.1,
+                                                "Shield blocking": 1.1,
+                                            },
+                                        },
+                                        20: {
+                                            xp_multipliers: {
+                                                "Presence sensing": 1.25,
+                                                Perception: 1.15,
+                                            },
+                                            stats: {
+                                                intuition: {multiplier: 1.1},
+                                            },
+                                        },
                                     }
                             });
     skills["Presence sensing"] = new Skill({
@@ -2333,11 +2390,19 @@ function format_skill_rewards(milestone){
 //work related
 (function(){
     skills["Farming"] = new Skill({
-                                names: {0: "Farming", 5: "Master farmer"}, 
+                                names: {0: "Farming", 5: "Master farmer", 14: "Land-wise"}, 
                                 description: "desc skill Farming",
                                 base_xp_cost: 40,
                                 category: "Activity",
-                                max_level: 10,
+                                /*
+                                    Q-16, answered A: the cap moves to 20 and the curve stays
+                                    calibrated where it was written, so a farmer at 10 keeps
+                                    exactly the coefficient they have today and 11-20 go past
+                                    it. Without scaling_cap the same raise would have made
+                                    every level below 20 weaker.
+                                */
+                                max_level: 20,
+                                scaling_cap: 10,
                                 xp_scaling: 1.6,
                                 max_level_coefficient: 2,
                                 milestones: {
@@ -2419,17 +2484,20 @@ function format_skill_rewards(milestone){
 //non-work activity related
 (function(){
     skills["Sleeping"] = new Skill({
-                                    names: {0: "Sleeping", 5: "Deep sleep"}, 
+                                    names: {0: "Sleeping", 5: "Deep sleep", 12: "Unbroken rest"}, 
                                     description: "desc skill Sleeping",
                                     get_effect_description: ()=>{
-                                        return translationManager.getText(language, "skill effect Sleeping", {v1: Math.round(100*(1 + get_total_skill_level("Sleeping")/skills["Sleeping"].max_level))/100});
+                                        return translationManager.getText(language, "skill effect Sleeping", {v1: Math.round(100*(1 + get_total_skill_level("Sleeping")/skills["Sleeping"].scaling_cap))/100});
                                     },
                                     base_xp_cost: 1000,
                                     flavour_text: "skill flavour Sleeping",
                                     visibility_treshold: 300,
                                     xp_scaling: 2,
                                     category: "Activity",
-                                    max_level: 10,
+                                    //Q-16, answered A - see Farming above for why the curve
+                                    //is frozen rather than stretched.
+                                    max_level: 20,
+                                    scaling_cap: 10,
                                     max_level_coefficient: 2.5,    
                                     milestones: {
                                         2: {
@@ -5119,11 +5187,15 @@ function format_skill_rewards(milestone){
         }
     });
     skills["Literacy"] = new Skill({
-        names: {0: "Literacy", 5: "Well-read"}, 
+        names: {0: "Literacy", 5: "Well-read", 14: "Deep reader"}, 
         description: "desc skill Literacy",
         category: "Character",
         base_xp_cost: 120,
-        max_level: 10,
+        //Q-16, answered A. Literacy pays in milestones rather than a coefficient, so
+        //scaling_cap changes nothing for it - it is set for the same reason the comment
+        //above exists: the next person raising a cap should find the pair together.
+        max_level: 20,
+        scaling_cap: 10,
         xp_scaling: 2,
         milestones: {
             1: {
@@ -5163,6 +5235,34 @@ function format_skill_rewards(milestone){
                     hero: 1.2,
                     "Strength of mind": 1.2,
                     all_skill: 1.2,
+                },
+            },
+            12: {
+                xp_multipliers: {
+                    "Strength of mind": 1.1,
+                },
+            },
+            14: {
+                xp_multipliers: {
+                    hero: 1.1,
+                    all_skill: 1.1,
+                },
+            },
+            16: {
+                xp_multipliers: {
+                    all: 1.05,
+                },
+            },
+            18: {
+                xp_multipliers: {
+                    "Strength of mind": 1.15,
+                },
+            },
+            20: {
+                xp_multipliers: {
+                    hero: 1.25,
+                    "Strength of mind": 1.25,
+                    all_skill: 1.25,
                 },
             },
         }

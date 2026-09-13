@@ -601,7 +601,15 @@ character.stats.add_location_penalties = function() {
                 }
 
                 if(current_location.light_level === "dark" || current_location.light_level === "normal" && is_night(current_game_time)) {
-                        light_modifier = 0.5 + 0.5* get_total_skill_level("Night vision")/skills["Night vision"].max_level;
+                        /*
+                            Against scaling_cap, not max_level: the cap moved to 20 (Q-16,
+                            answered B) and this curve stays where it was calibrated, so a
+                            player at level 10 sees exactly what they saw before. Clamped at
+                            1, which is darkness costing nothing - past it would be seeing
+                            better in the dark than in daylight. Levels 11-20 pay in
+                            milestones instead.
+                        */
+                        light_modifier = Math.min(1, 0.5 + 0.5* get_total_skill_level("Night vision")/skills["Night vision"].scaling_cap);
                         character.stats.multiplier.light_level.evasion_points = light_modifier;
                         character.stats.multiplier.light_level.attack_points = light_modifier;
                 } else {
