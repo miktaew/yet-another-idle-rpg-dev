@@ -2222,7 +2222,18 @@ Multiplies AP with daggers by ${Math.round((character.getTotalSkillCoefficient({
         visibility_treshold: 0,
         get_effect_description: () => {
             let value = character.getTotalSkillCoefficient({skill_id:"Butchering",scaling_type:"multiplicative"});
-            return `Multiplies drop chances from Beasts by ${Math.round(value*100)/100}`;},
+            return `Multiplies drop chances from Beasts by ${Math.round(value * 100) / 100}`;
+        },
+        milestones: {
+            12: {
+                unlocks: {
+                    recipes: [
+                        {category: "alchemy", subcategory: "items", recipe_id: "Bufonite"},
+                        {category: "alchemy", subcategory: "items", recipe_id: "Frog trophy"},
+                    ]
+                }
+            }
+        }
     });
     skills["Woodworking"] = new Skill({
         skill_id: "Woodworking", 

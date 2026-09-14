@@ -1660,6 +1660,31 @@ book_stats["Counting Mice"] = new BookData({
         material_type: "pelt",
     });
 
+    item_templates["Toxin gland"] = new Material({
+        description: "Ripe with frog toxin. Handle with care",
+        value: 80,
+    });
+    item_templates["Bufonite"] = new Material({
+        description: "A pearl-like gem made from fog toxins that crystallized over the years",
+        value: 130,
+    });
+
+    item_templates["Bandersnatch claw"] = new Material({
+        description: "The huge claw a bandersnatch does the snatching with",
+        value: 100,
+    });
+    item_templates["Frumious claw"] = new Material({
+        description: "A vicious claw of a bandernatch, sharpened by snatching countless prey",
+        value: 250,
+    });
+
+    item_templates["Monster bone"] = new Material({
+        name: "Monster bone",
+        description: "Mutated and dark bone of a monster. Strong enough to support weight regular bones would crumble under",
+        value: 100,
+        material_type: "bone",
+    });
+
 })();
 
 //gatherable materials
@@ -1825,7 +1850,6 @@ book_stats["Counting Mice"] = new BookData({
         value: 8,
     });
 
-
     item_templates["Ratfish"] = new Material({
         name: "Ratfish",
         description: "A small sweetwater fish, named after its unremarkable coloration and propensity to travel in large groups",
@@ -1842,13 +1866,20 @@ book_stats["Counting Mice"] = new BookData({
         value: 10,
         material_type: "small fish",
     });
-
     item_templates["Mackerel shark"] = new Material({
         name: "Mackerel shark",
         description: "A shark small enough to fit in a stream. Makes up for its size with its feistiness and big mouth",
         use_quality: true,
         base_size: 35,
         value: 85,
+        material_type: "medium fish",
+    });
+    item_templates["Carp"] = new Material({
+        name: "Carp",
+        description: "It hasn't grown into any of its more powerful forms yet, so its meat is still fatty and plump",
+        use_quality: true,
+        base_size: 50,
+        value: 150,
         material_type: "medium fish",
     });
     item_templates["Trout"] = new Material({
@@ -1859,13 +1890,20 @@ book_stats["Counting Mice"] = new BookData({
         value: 110,
         material_type: "medium fish",
     });
-
-    item_templates["Carp"] = new Material({
-        name: "Carp",
-        description: "It hasn't grown into any of its more powerful forms yet, so its meat is still fatty and plump",
+    item_templates["Salmon"] = new Material({
+        name: "Salmon",
+        description: "",
         use_quality: true,
-        base_size: 50,
+        base_size: 70,
         value: 150,
+        material_type: "medium fish",
+    });
+    item_templates["Pike"] = new Material({
+        name: "Pike",
+        description: "",
+        use_quality: true,
+        base_size: 80,
+        value: 160,
         material_type: "medium fish",
     });
     item_templates["Catfish"] = new Material({
@@ -1874,6 +1912,40 @@ book_stats["Counting Mice"] = new BookData({
         use_quality: true,
         base_size: 100,
         value: 200,
+        material_type: "large fish",
+    });
+    item_templates["Eel"] = new Material({
+        name: "Eel",
+        description: "This long fish is long. And tasty",
+        use_quality: true,
+        base_size: 150,
+        value: 300,
+        material_type: "large fish",
+    });
+    item_templates["Coelacanth"] = new Material({
+        name: "Coelacanth",
+        description: "",
+        use_quality: true,
+        base_size: 200,
+        value: 500,
+        material_type: "large fish",
+    });
+
+    //swamp
+    item_templates["Lamprey"] = new Material({
+        name: "Lamprey",
+        description: "A vampiric fish that attaches to passersby with its horrid mouth",
+        use_quality: true,
+        base_size: 60,
+        value: 200,
+        material_type: "medium fish",
+    });
+    item_templates["Lungfish"] = new Material({
+        name: "Lungfish",
+        description: "A strange fish that can walk on land",
+        use_quality: true,
+        base_size: 80,
+        value: 300,
         material_type: "large fish",
     });
 })();
@@ -3518,6 +3590,35 @@ function add_gear() {
                 },
                 defense: {
                     multiplier: 1.15,
+                },
+            }
+        });
+
+        item_templates["Frog trophy"] = new Artifact({
+            name: "Frog trophy",
+            value: 600,
+            stats: {
+                intuition: {
+                    multiplier: 1.1,
+                },
+            },
+            base_bonus_skill_levels: {
+                "Poison resistance": 3
+            }
+        });
+
+        item_templates["Bandersnatch trophy"] = new Artifact({
+            name: "Bandersnatch trophy",
+            value: 700,
+            stats: {
+                armor_penetration: {
+                    flat: 100,
+                },
+                crit_rate: {
+                    flat: 0.03,
+                },
+                attack_points: {
+                    multiplier: 1.2,
                 },
             }
         });
