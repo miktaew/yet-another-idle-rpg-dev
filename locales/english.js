@@ -747,6 +747,8 @@ const ui = {
     "ui show bio": "Bio",
     "ui show tools": "Tools",
 
+    "ui exit": "Exit",
+
     "option textsize": "Increase textsize for dialogues and activities",
     "option bar outline": "Text outline on xp/stamina/mana/health bars",
     "option tooltip outline": "Text outline in item tooltips",

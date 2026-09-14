@@ -180,7 +180,10 @@ class Person{
      * @returns 
      */
     addXPToSkill({skill, xp_to_add, should_info, use_bonus, add_to_parent, cap_gained_xp, is_from_loading}) {
-        const results = this.getLevelableComponent().addXPToSkill({skill, xp_to_add, xp_multiplier: this.xp_multiplier, should_info, use_bonus, add_to_parent, cap_gained_xp, is_from_loading});
+        const results = this
+            .getLevelableComponent()
+            .addXPToSkill(
+                {skill, xp_to_add, xp_multiplier: this.xp_multiplier, should_info, use_bonus, add_to_parent, cap_gained_xp, is_from_loading, owner: this});
 
         if(results.gains) {
             this.addSkillMilestoneBonus(results.gains);
@@ -495,7 +498,7 @@ class Person{
         if(!item) {
             this.addAllEquipmentBonus();
             
-            this._updateStats();
+            this.#updateStats();
         } else {
             const prev_item = equipment[item.equip_slot];
             this.unequipItem(item.equip_slot, true);
@@ -503,7 +506,7 @@ class Person{
             
             this.addAllEquipmentBonus();
             
-            this._updateStats();
+            this.#updateStats();
 
             /*
             manage_changed_skill_bonuses(item);
@@ -551,7 +554,7 @@ class Person{
      * full stat recalculation, do not call directly but through the one that has remaining display updates
      * @returns object with skills that need to have their display updated
      */
-    _updateStats() {
+    #updateStats() {
         const levelable = this.getLevelableComponent();
         const equipment = this.getEquipment();
         const skills_needing_update = {};
@@ -653,7 +656,7 @@ class Person{
         const initial_block_strength = levelable.stats.full.block_strength;
 
         this.addLocationPenalties();
-        const skills_needing_display_update = this._updateStats();
+        const skills_needing_display_update = this.#updateStats();
 
         if(skills_needing_display_update["hero"] || skills_needing_display_update["all"]) {
             this.updateDisplayedXPBonuses();

@@ -14,7 +14,6 @@ import { game_options,
     unlocked_beds,
     favourite_consumables,
     travel_times, 
-    language,
     favourite_items,
     get_context} from "./main.js";
 import { activities } from "./activities.js";
@@ -22,8 +21,8 @@ import { format_time, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, location_types, locations } from "./data/locations.js";
 import { get_location_type_penalty } from "./models/location.js";
-import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
-import { expo, format_reading_time, stat_names, get_hit_chance, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
+import { enemy_killcount, enemy_templates } from "./enemies.js";
+import { expo, format_reading_time, stat_names, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { recipes, get_recipe_xp_value, find_recipe_material, get_component_stats } from "./crafting_recipes.js";
 import { effect_templates } from "./active_effects.js";
@@ -37,7 +36,6 @@ import { playable_races } from "./races.js";
 import { config } from "./config.js";
 import { height_stats } from "./models/person.js";
 import NPCRegistry from "./data/npcs.js";
-import { fill_defender_divs } from "./ui/combat_display.js";
 let activity_anim; //for the activity and gameAction animation interval
 
 let location_choice_divs = {}; //for dropdowns
@@ -73,11 +71,9 @@ let dynamic_loot_message = null;
 
 //enemy info
 const combat_div = document.getElementById("combat_div");
-const enemies_div = document.getElementById("enemies_div");
 
 const enemy_count_div = document.getElementById("enemy_count_div");
 const clear_count_div = document.getElementById("clear_count_div");
-
 
 //character health display
 const current_health_value_div = document.getElementById("character_health_value");
@@ -2087,7 +2083,7 @@ function update_displayed_normal_location(location) {
     if(location.housing?.isUnlocked()) { 
         const start_sleeping_div = document.createElement("div");
         
-        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translationManager.getText(language, location.housing.text_to_sleep));
+        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translationManager.getText(location.housing.text_to_sleep));
         start_sleeping_div.id = "start_sleeping_div";
         start_sleeping_div.setAttribute('onclick', 'start_sleeping()');
 
@@ -4063,7 +4059,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(language, dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translationManager.getText(dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'))`);
@@ -4074,7 +4070,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
         Object.keys(dialogue.actions).forEach(key => { //add buttons for actions
             if(dialogue.actions[key].canBeDisplayed(get_context())) { 
                 const dialogue_action_div = document.createElement("div");
-                insert_HTML(dialogue_action_div, `${translationManager.getText(language, dialogue.actions[key].starting_text)}`);
+                insert_HTML(dialogue_action_div, `${translationManager.getText(dialogue.actions[key].starting_text)}`);
                 dialogue_action_div.classList.add("dialogue_textline");
                 dialogue_action_div.setAttribute("data-location_action", key);
                 dialogue_action_div.setAttribute("onclick", `start_game_action(this.getAttribute('data-location_action'), event)`);
@@ -4128,7 +4124,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(language,dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translationManager.getText(dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'), ${origin})`); //additional param compared to when there's no textlines passed
@@ -4148,7 +4144,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
 }
 
 function update_displayed_textline_answer({text, is_description}) {
-    text = translationManager.getText(language, text);
+    text = translationManager.getText(text);
     
     if(is_description) {
         document.getElementById("dialogue_answer_div").innerText =  "*"+text+"*";
@@ -5450,17 +5446,17 @@ function change_completed_quest_visibility() {
 function fill_character_bio() {
     const bio = character.getBioComponent();
     const age_div = document.getElementById("character_age_div");
-    age_div.innerText = translationManager.getText(language, "age") + ": "+ translationManager.getText(language, bio.age);
+    age_div.innerText = translationManager.getText("age") + ": "+ translationManager.getText(bio.age);
 
     const height_div = document.getElementById("character_height_div");
-    height_div.innerText = translationManager.getText(language, "height") + ": "+ translationManager.getText(language, bio.height);
+    height_div.innerText = translationManager.getText("height") + ": "+ translationManager.getText(bio.height);
 
     if(config.use_height_bonuses && Object.keys(height_stats[bio.height]).length > 0) {
         height_div.appendChild(create_height_tooltip(bio.height, "character_height_tooltip"));
     }
 
     const race_div = document.getElementById("character_race_div");
-    race_div.innerText = translationManager.getText(language, "race") + ": "+ translationManager.getText(language, playable_races[bio.race].name);
+    race_div.innerText = translationManager.getText("race") + ": "+ translationManager.getText(playable_races[bio.race].name);
 
     race_div.appendChild(create_race_tooltip(playable_races[bio.race], "character_race_tooltip"));
 }
@@ -5471,9 +5467,9 @@ function create_race_tooltip(race, css_class) {
 
     let tooltip_content = "";
 
-    tooltip_content += translationManager.getText(language, race.description);
+    tooltip_content += translationManager.getText(race.description);
     if(race.gameplay_description) {
-        tooltip_content += "\n\n" + translationManager.getText(language, race.gameplay_description);
+        tooltip_content += "\n\n" + translationManager.getText(race.gameplay_description);
     }
 
     if(config.use_racial_bonuses) {
@@ -5484,7 +5480,7 @@ function create_race_tooltip(race, css_class) {
         Object.keys(race.stats).forEach(effect_key => {
             if(race.stats[effect_key].multiplier != null) {
                 tooltip_content +=
-            `\n${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
+            `\n${capitalize_first_letter(translationManager.getText(effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
             }
         });
     }
@@ -5497,7 +5493,7 @@ function create_race_tooltip(race, css_class) {
     Object.keys(race.xp_multipliers).forEach(effect_key => {
         if(race.xp_multipliers[effect_key] != null) {
             tooltip_content +=
-        `\n${capitalize_first_letter(translationManager.getText(language, effect_key))}: x${race.xp_multipliers[effect_key]}`;
+        `\n${capitalize_first_letter(translationManager.getText(effect_key))}: x${race.xp_multipliers[effect_key]}`;
         }
     });
     */
@@ -5516,7 +5512,7 @@ function create_height_tooltip(height_key, css_class) {
     Object.keys(stats).forEach(effect_key => {
         if(stats[effect_key].multiplier != null) {
             tooltip_content +=
-        `${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
+        `${capitalize_first_letter(translationManager.getText(effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
         }
     });
     

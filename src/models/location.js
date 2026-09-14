@@ -348,7 +348,8 @@ class CombatZone extends BaseLocation {
             } else {
                 newEnemy = new Enemy({...enemy, stats: {...enemy.stats, attack_count: enemy.stats.attack_count || 1}});
             }
-            newEnemy.is_alive = true;
+            newEnemy.is_alive = true
+            newEnemy.init();
 
             enemies.push(newEnemy);
         }

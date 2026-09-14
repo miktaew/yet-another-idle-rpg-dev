@@ -8,7 +8,7 @@ import { enemy_tag_to_skill_mapping } from "../enemies.js";
 import { item_templates } from "../items.js";
 import { add_xp_to_character, add_xp_to_skill, change_stance, current_stance, finish_combat_round, game_options, game_stats, kill_target, kill_player, process_current_loot, selected_stance, tickrate, use_stamina } from "../main.js";
 import { get_hit_chance } from "../misc.js";
-import { do_onhit_animation, do_onstart_animation, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_defenders, update_displayed_health_of_fighter } from "../ui/combat_display.js";
+import { do_onhit_animation, do_onstart_animation, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_fighter } from "../ui/combat_display.js";
 
 let maximum_time_correction = 10;
 
@@ -91,9 +91,8 @@ class Combat {
 
         //scale all attacks to be not faster than 1 per second
         const cooldown_multiplier = fastest_cooldown < 1 ? 1/fastest_cooldown : 1;
-            
         Object.keys(this.#data).forEach(fighter_type => {
-            for(let i = 0; i < this.#data[fighter_type].length; i++) {
+            for(let i = 0; i < this.#data[fighter_type].attack_cooldowns.length; i++) {
                 this.#data[fighter_type].attack_cooldowns[i] *= cooldown_multiplier;
                 this.#data[fighter_type].time_variance_acumulators[i] = 0;
                 this.#data[fighter_type].timer_adjustments[i] = 0;
@@ -101,16 +100,16 @@ class Combat {
             }
         });
 
-        update_displayed_health_of_defenders();
-
         for(let i = 0; i < this.defenders.length; i++) {
             if(game_options.do_enemy_onhit_animations) {
                 do_onstart_animation({fighter_index: i, is_attacker: false});
             }
             this.setAttackLoop({fighter_index: i, is_attacker: false, base_cooldown: this.#data.defenders.attack_cooldowns[i]});
+            update_displayed_health_of_fighter({fighter_index: i, is_attacker: false});
         }
         for(let i = 0; i < this.attackers.length; i++) {
             this.setAttackLoop({fighter_index: i, is_attacker: true, base_cooldown: this.#data.attackers.attack_cooldowns[i]});
+            update_displayed_health_of_fighter({fighter_index: i, is_attacker: true});
         }
     }
 
@@ -169,6 +168,7 @@ class Combat {
     }
 
     doAttackLoop({fighter_index, is_attacker, base_cooldown, actual_cooldown, attack_power, targets, target_count, is_new = false, count = 0}) {
+        if(this.is_ended) { return; }
 
         const fighter = is_attacker ? this.attackers[fighter_index] : this.defenders[fighter_index];
 
@@ -317,6 +317,7 @@ class Combat {
 
         damages_dealt = damages_dealt.sort((a,b)=>b-a);
 
+
         if(target.hasShield()) {
             if(target.getFullStats().block_chance > Math.random()) {//BLOCKED THE ATTACK
 
@@ -344,6 +345,8 @@ class Combat {
             const hit_chance = 
                 get_hit_chance(fighter.getFullStats().attack_points * hit_chance_modifier, target.getFullStats().agility * evasion_chance_modifier * Math.sqrt(target.getFullStats().intuition ?? 1));
 
+            const xp_to_add = target.isWearingArmor() ? fighter.xp_value : fighter.xp_value * 1.5;
+
             if(hit_chance < Math.random()) { //EVADED ATTACK
                 log_message(target.name + " evaded an attack", (!this.is_special_combat && fighter.tags.main_character ? "hero_missed" : "enemy_missed"));
 
@@ -356,7 +359,7 @@ class Combat {
                 return; //damage fully evaded, nothing more can happen
             } else {
                 if(!this.is_special_combat && target.tags.main_character){
-                    add_xp_to_skill({skill: skills["Evasion"], xp_to_add: target.xp_value*target_count_xp_modifier/2});
+                    add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add*target_count_xp_modifier/2});
                 }
             }
         }
@@ -365,6 +368,7 @@ class Combat {
 
         game_stats.total_hits_taken += (!this.is_special_combat && target.tags.main_character);
         game_stats.total_hits_done += (!this.is_special_combat && fighter.tags.main_character);
+
         if(fighter.getFullStats().crit_rate > Math.random()){
             damages_dealt = damages_dealt.map(val => val*fighter.getFullStats().crit_multiplier);
             critted = true;
@@ -417,6 +421,8 @@ class Combat {
             do_onhit_animation({fighter_index: (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target), is_attacker: !is_attacker});
         }
 
+        const target_index = (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target);
+
         if(fainted) {
             if(target.tags.main_character) {
                 kill_player({is_combat: true});
@@ -439,16 +445,15 @@ class Combat {
                     }
                 }
                 
-                const target_index = (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target);
-
                 kill_target({fighter_index, target_index, is_target_an_attacker: !is_attacker});
                 this.clearAttackLoop({fighter_index: target_index, is_attacker: !is_attacker});
             }
         } else {
             if(!this.is_special_combat && target.tags.main_character) {
                 update_displayed_health();
+                update_displayed_health_of_fighter({fighter_index: target_index, is_attacker: !is_attacker});
             } else {
-                update_displayed_health_of_fighter({fighter_index, is_attacker});
+                update_displayed_health_of_fighter({fighter_index: target_index, is_attacker: !is_attacker});
             }
         }
     }
@@ -485,7 +490,7 @@ class Combat {
         const cooldown_multiplier = fastest_cooldown < 1 ? 1/fastest_cooldown : 1;
             
         Object.keys(this.#data).forEach(fighter_type => {
-            for(let i = 0; i < this.#data[fighter_type].length; i++) {
+            for(let i = 0; i < this.#data[fighter_type].attack_cooldowns.length; i++) {
                 
                 if(fighter_type === "attackers" && this.attackers[i].tags.main_character) {
                     this.setAttackLoop({fighter_index: i, is_attacker: true, base_cooldown: this.#data.attackers.attack_cooldowns[i], skip_persistence_xp_for_stance_change})

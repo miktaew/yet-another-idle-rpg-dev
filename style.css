@@ -983,6 +983,29 @@ input[type=checkbox], input[type=radio] {
 	display: block;
 }
 
+.health_div:not(.enemy_health_div) {
+    height: 18px;
+    width: 100%;
+}
+
+    .healthbar_max:not(.enemy_healthbar_max) {
+        border: 2px solid rgb(199, 0, 0);
+        background-color: rgba(255, 46, 46, 0.3);
+        height: 16px;
+    }
+    .healthbar_current:not(.enemy_healthbar_current) {
+        background-color: red;
+        width: 100%;
+        height: 100%;
+        margin-right: auto;
+    }
+    .health_value:not(.enemy_health_value) {
+        position: relative;
+        top: -18px;
+        width: 100%;
+        text-align: center;
+    }
+
 .skill_tooltip {
 	display: none;
 	background-color: var(--tooltip_background_color);
@@ -2136,6 +2159,42 @@ i {
 	background-color: rgba(255, 241, 117, 0.4);
 }
 
+#combat_window {
+    height: 600px;
+    width: 1000px;
+    position: absolute;
+    z-index: 100;
+    background-image: var(--background_gradient);
+    border: 5px solid white;
+    outline: 5px solid gray;
+    padding: 5px;
+    margin-top: 50px;
+    margin-left: 50px;
+}
+#attacker_box {
+    height: 560px;
+    width: 400px;
+    float: left;
+    overflow-y: auto;
+    top: 20px;
+}
+#defender_box {
+    height: 560px;
+    width: 400px;
+    overflow-y: auto;
+    margin-right: 0px;
+    margin-left: auto;
+}
+#combat_window_exit {
+    border: 2px solid gray;
+    width: 100px;
+    text-align: center;
+    padding: 5px;
+    font-size: 24px;
+    bottom: 0px;
+    left: 460px;
+    position: absolute;
+}
 
 #combat_div {
 	width: 400px;
@@ -2188,7 +2247,6 @@ i {
 					.attack_stat_veryshort {
 						width: 52px;
 					}
-
 				.enemy_health_div {
 					margin-bottom: 0px;
 					height: 18px;
@@ -2254,7 +2312,8 @@ i {
 		.attacker_attack_bar {
 			background-color: rgb(156, 0, 156);
 			height: 20px;
-		}			
+            top: 40px;
+		}
 		.attack_stats {
 			text-align: left;
 		}		

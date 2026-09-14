@@ -92,7 +92,7 @@ import { end_activity_animation,
          fill_character_bio,
          insert_HTML,
         } from "./display.js";
-import { fill_fighter_divs, update_defender_stats, update_displayed_fighter_stats, update_displayed_health_of_defenders, update_displayed_health_of_fighter, } from "./ui/combat_display.js";
+import { update_displayed_fighters_stats, update_displayed_health_of_fighter, } from "./ui/combat_display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
 import { stances } from "./combat_stances.js";
 import { recipes, get_recipe_xp_value, get_component_stats } from "./crafting_recipes.js";
@@ -143,6 +143,7 @@ const play_button = document.getElementById("loading_screen_play_button");
 const languages = {
     english: "english",
 };
+
 let language = languages.english;
 
 let is_loading_error = false;
@@ -1365,7 +1366,7 @@ function change_stance({stance_id, is_temporary = false}) {
     character.updateStatsAndDisplay();
     if(current_combat && !current_combat.is_special_combat) {
         current_combat.resetCombatLoops(true); //param will be used to award 'Persistence' xp only when change was due to low stamina and not to a player click
-        update_displayed_fighter_stats();
+        update_displayed_fighters_stats();
     }
 }
 
@@ -2695,7 +2696,7 @@ function character_equip_item(item_key) {
     character.equipItemFromInventory(item_key);
     if(current_combat) {
         current_combat.resetCombatLoops(true);
-        update_defender_stats();
+        update_displayed_fighters_stats();
     } else if(current_location.tags.safe_zone) {
         //update resource gathering tooltips in case there's a skill lvl bonus change
         //done on any change as of now, but could be slightly optimized
@@ -5799,6 +5800,64 @@ function enable_dev_console() {
             return `${flag} = ${value}`;
         },
 
+        simulate_combat: ({use_hero, fighter_locations}) => {
+            if(current_location.combat_zone) {
+
+                console.warn('Cannot simulate while another fight is happening - retreated from ongoing combat');
+            }
+
+            for(let i = 0; i < fighter_locations.length; i++) {
+                if(!locations[fighter_locations[i]]) {
+                    console.error('No such location as '+location[fighter_locations[i]]);
+                    return;
+                }
+            }
+
+            let attackers;
+            let defenders;
+
+            if(use_hero) {
+                attackers = [character];
+                defenders = locations[fighter_locations[0]].get_next_enemies();
+            } else {
+                attackers = locations[fighter_locations[0]].get_next_enemies();
+                defenders = locations[fighter_locations[1]].get_next_enemies();
+            }
+
+            let combat_window = document.getElementById("combat_window");
+            if(!combat_window) {
+                combat_window = document.createElement("div");
+                combat_window.id = "combat_window";
+
+                const attacker_box = document.createElement("div");
+                attacker_box.id = "attacker_box";
+                const defender_box = document.createElement("div");
+                defender_box.id = "defender_box";
+
+                const exit_button = document.createElement("div");
+                exit_button.id = "combat_window_exit";
+                exit_button.innerText = translationManager.getText("ui exit");
+
+                exit_button.addEventListener("click", () => {
+                    change_location({location_id: current_location.id});
+                    combat_window.remove();
+                });
+
+                combat_window.append(attacker_box, defender_box, exit_button);
+            }
+
+            document.body.append(combat_window);
+            
+            current_combat = new Combat({
+                attackers,
+                defenders,
+                attackers_ui_slot: combat_window.querySelector("#attacker_box"),
+                defenders_ui_slot: combat_window.querySelector("#defender_box"),
+                is_special_combat: true,
+            });
+            current_combat.start();
+        },
+
         list_effects: () => list(effect_templates),
         list_items: () => list(item_templates),
         list_locations: () => list(locations),
@@ -5812,8 +5871,7 @@ function enable_dev_console() {
 
     Object.keys(helpers).forEach(name => { window[name] = helpers[name]; });
 
-    console.log("Dev console is active.");
-    console.log("Available functions:\n");
+    console.log("Dev console is active. Available functions:\n");
     console.log(Object.keys(helpers).join("(),\n") + "()");
 }
 
@@ -5991,7 +6049,7 @@ export {
     process_rewards,
     get_context,
     travel_times,
-    language,
+    language, languages,
     add_active_effect, add_xp_to_character,
     favourite_items, remove_item_from_favourites,
     run,

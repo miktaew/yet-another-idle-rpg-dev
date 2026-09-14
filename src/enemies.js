@@ -1,6 +1,7 @@
 "use strict";
 
 import LevelableComponent from "./components/levelable_component.js";
+import { config } from "./config.js";
 import { character } from "./data/character.js";
 import { log_message } from "./display.js";
 import { add_active_effect } from "./main.js";
@@ -93,6 +94,13 @@ class Enemy {
         //try to limit the usage of those 3
     }
 
+    init() {
+        const levelable = this.getLevelableComponent();
+        levelable.stats.full.attack_power = this.stats.attack;
+        levelable.stats.full.attack_points = levelable.stats.full.dexterity * Math.sqrt(levelable.stats.full.intuition);
+        levelable.stats.full.evasion_points = levelable.stats.full.agility * Math.sqrt(levelable.stats.full.intuition);
+    }
+
     getLevelableComponent() {
         return this.#levelable;
     }
@@ -111,6 +119,10 @@ class Enemy {
 
     isWearingArmor() {
         return false;
+    }
+
+    getEquipment() {
+        return {};
     }
 
     /**
@@ -226,7 +238,7 @@ const enemy_abilites = {
         rank: 1,
         size: "small",
         tags: ["living", "beast", "wolf rat"],
-        stats: {health: 20, attack: 4, agility: 5, dexterity: 4, magic: 0, intuition: 5, attack_speed: 0.8, defense: 0},
+        stats: {health: 20, attack: 4, agility: 5, dexterity: 4, magic: 0, intuition: 5, attack_speed: .8, defense: 0},
         loot_list: [
             {item_name: "Rat tail", chance: 0.04},
             {item_name: "Rat fang", chance: 0.04},

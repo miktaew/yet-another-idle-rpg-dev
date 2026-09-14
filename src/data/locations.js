@@ -2477,13 +2477,13 @@ There's another gate on the wall in front of you, but you have a strange feeling
             success_conditions: [
                 {
                     skills: {
-                        "Weightlifting": 21,
+                        "Weightlifting": 22,
                     }
                 },
             ],
             display_conditions: {
                 skills: {
-                    "Weightlifting": 24,
+                    "Weightlifting": 20,
                 }
             },
             rewards: {
