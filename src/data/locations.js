@@ -2198,6 +2198,27 @@ There's another gate on the wall in front of you, but you have a strange feeling
             },
             require_tool: true,
         }),
+        "fishing": new LocationActivity({
+            activity_name: "fishing",
+            starting_text: "Try fishing in the river rapids",
+            availability_seasons: ["Spring", "Summer", "Autumn"],
+            skill_xp_per_tick: 3,
+            is_unlocked: true,
+            gained_resources: {
+                resources: [
+                    {name: "Ratfish", chance: [0.3, 0.4]},
+                    {name: "Minnow", chance: [0.2, 0.3]},
+                    {name: "Trout", chance: [0.2, 0.3]},
+                    { name: "Mackerel shark", chance: [0.02, 0.05] },
+                    { name: "Salmon", chance: [0.1, 0.2] },
+                    { name: "Pike", chance: [0.1, 0.2] },
+                ], 
+                time_period: [120, 30],
+                skill_required: [5, 25],
+                roll_quality: true,
+            },
+            require_tool: true,
+        })
     };
 	
     locations["Lake beach"].activities = {
@@ -2240,6 +2261,26 @@ There's another gate on the wall in front of you, but you have a strange feeling
             starting_text: "Run along the shore",
             skill_xp_per_tick: 10,
             is_unlocked: true,
+        }),
+        "fishing": new LocationGatheringActivity({
+            activity_name: "fishing",
+            starting_text: "Try fishing in the lake",
+            skill_xp_per_tick: 7,
+            is_unlocked: true,
+            gained_resources: {
+                resources: [
+                    { name: "Ratfish", chance: [0.2, 0.7] },
+                    { name: "Carp", chance: [0.3, 0.5] },
+                    { name: "Salmon", chance: [0.2, 0.4] },
+                    { name: "Catfish", chance: [0.015, 0.3] },
+                    { name: "Pike", chance: [0.1, 0.3] },
+                    { name: "Eel", chance: [0.01, 0.2] }
+                ],
+                time_period: [120, 30],
+                skill_required: [15, 27],
+                roll_quality: true,
+            },
+            require_tool: true,
         }),
     };
 
@@ -2292,7 +2333,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 resources: [
                     { name: "Ratfish", chance: [0.2, 0.8] },
                     { name: "Carp", chance: [0.1, 0.5] },
-                    { name: "Mackerel shark", chance: [0.05, 0.2] },
+                    { name: "Salmon", chance: [0.1, 0.3] },
                     { name: "Catfish", chance: [0.01, 0.1] }
                 ],
                 time_period: [120, 30],
@@ -2319,8 +2360,50 @@ There's another gate on the wall in front of you, but you have a strange feeling
             is_unlocked: false,
             unlock_text: "As you finish driving the stone crabs from the rock shelter behind the waterfall, you feel a strange sense of serenity from the sounds bouncing off the rocks. This spot, surrounded by soft noise and solid stone, seems perfect to sit down and focus your mind",
         }),
+        "fishing": new LocationGatheringActivity({
+            activity_name: "fishing",
+            starting_text: "Try fishing in the basin",
+            skill_xp_per_tick: 8,
+            is_unlocked: true,
+            gained_resources: {
+                resources: [
+                    { name: "Ratfish", chance: [0.2, 0.7] },
+                    { name: "Carp", chance: [0.3, 0.5] },
+                    { name: "Salmon", chance: [0.2, 0.4] },
+                    { name: "Catfish", chance: [0.015, 0.3] },
+                    { name: "Pike", chance: [0.1, 0.3] },
+                    { name: "Eel", chance: [0.01, 0.2] },
+                    { name: "Coelacanth", chance: [0.01, 0.1] }
+                ],
+                time_period: [120, 30],
+                skill_required: [15, 30],
+                roll_quality: true,
+            },
+            require_tool: true,
+        }),
     };
-	
+
+    locations["Swampland fields"].activities = {
+        "fishing": new LocationGatheringActivity({
+            activity_name: "fishing",
+            starting_text: "Try fishing in the murky waters",
+            skill_xp_per_tick: 10,
+            is_unlocked: true,
+            gained_resources: {
+                resources: [
+                    { name: "Ratfish", chance: [0.3, 0.6] },
+                    { name: "Pike", chance: [0.2, 0.5] },
+                    { name: "Lamprey", chance: [0.2, 0.4] },
+                    { name: "Lungfish", chance: [0.1, 0.2] },
+                ],
+                time_period: [120, 30],
+                skill_required: [20, 35],
+                roll_quality: true,
+            },
+            require_tool: true,
+        }),
+
+    };
     locations["Swampland tribe"].activities = {
         "herbalism": new LocationGatheringActivity({
             activity_name: "herbalism",

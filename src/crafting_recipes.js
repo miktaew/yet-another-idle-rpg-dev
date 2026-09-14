@@ -1350,6 +1350,15 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [18,25],
         recipe_skill: "Butchering",
     });
+    butchering_recipes.items["Frumious claw"] = new ItemRecipe({
+        name: "Frumious claw",
+        recipe_type: "material",
+        materials: [{material_id: "Bandersnatch claw", count: 50}], 
+        result: {result_id: "Frumious claw", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [20,27],
+        recipe_skill: "Butchering",
+    });
     butchering_recipes.items["Sinew"] = new ItemRecipe({
         name: "Sinew",
         recipe_type: "material",
@@ -1368,6 +1377,16 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         result: {result_id: "Potash", count: 1},
         success_chance: [0.5,1],
         recipe_level: [10,20],
+        recipe_skill: "Alchemy",
+    });
+    alchemy_recipes.items["Bufonite"] = new ItemRecipe({
+        name: "Bufonite",
+        is_unlocked: false,
+        recipe_type: "material",
+        materials: [{material_id: "Toxin gland", count: 50}], 
+        result: {result_id: "Bufonite", count: 1},
+        success_chance: [0.5,1],
+        recipe_level: [15,23],
         recipe_skill: "Alchemy",
     });
 })();
@@ -1930,6 +1949,16 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [15,25],
         recipe_skill: "Crafting",
     });
+    alchemy_recipes.items["Frog trophy"] = new ItemRecipe({
+        name: "Frog trophy",
+        recipe_type: "equipment",
+        is_unlocked: false,
+        materials: [{material_id: "Bufonite", count: 4}],
+        result: {result_id: "Frog trophy", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [18,28],
+        recipe_skill: "Alchemy",
+    });
     crafting_recipes.items["Crab trophy"] = new ItemRecipe({
         name: "Crab trophy",
         recipe_type: "equipment",
@@ -1937,6 +1966,18 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         result: {result_id: "Crab trophy", count: 1},
         success_chance: [0.3,1],
         recipe_level: [22,30],
+        recipe_skill: "Crafting",
+    });
+    crafting_recipes.items["Bandersnatch trophy"] = new ItemRecipe({
+        name: "Bandersnatch trophy",
+        recipe_type: "equipment",
+        materials: [
+            { material_id: "Wolf trophy", count: 1},
+            { material_id: "Frumious claw", count: 4 }
+        ],
+        result: {result_id: "Bandersnatch trophy", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [25,35],
         recipe_skill: "Crafting",
     });
 
