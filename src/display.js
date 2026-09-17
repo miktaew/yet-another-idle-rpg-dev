@@ -4,7 +4,7 @@ import { current_trader, to_buy, to_sell } from "./trade.js";
 import { skills } from "./data/skills.js";
 import { get_next_skill_milestone, get_unlocked_skill_rewards } from "./models/skill.js";
 import { character, cold_status_temperatures, lowest_tolerable_temperature } from "./data/character.js";
-import { current_enemies, game_options, 
+import { game_options, 
     can_work, current_location, 
     active_effects, enough_time_for_earnings, 
     get_current_book, last_location_with_bed, 
@@ -14,7 +14,6 @@ import { current_enemies, game_options,
     unlocked_beds,
     favourite_consumables,
     travel_times, 
-    language,
     favourite_items,
     get_context} from "./main.js";
 import { activities } from "./activities.js";
@@ -22,8 +21,8 @@ import { format_time, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
 import { favourite_locations, location_types, locations } from "./data/locations.js";
 import { get_location_type_penalty } from "./models/location.js";
-import { enemy_killcount, enemy_tag_to_skill_mapping, enemy_templates } from "./enemies.js";
-import { expo, format_reading_time, stat_names, get_hit_chance, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
+import { enemy_killcount, enemy_templates } from "./enemies.js";
+import { expo, format_reading_time, stat_names, round_item_price, format_working_time, task_type_names, celsius_to_fahrenheit, is_a_older_than_b, select_outline_class } from "./misc.js"
 //import { stances } from "./combat_stances.js";
 import { recipes, get_recipe_xp_value, find_recipe_material, get_component_stats } from "./crafting_recipes.js";
 import { effect_templates } from "./active_effects.js";
@@ -37,6 +36,7 @@ import { playable_races } from "./races.js";
 import { config } from "./config.js";
 import { height_stats } from "./models/person.js";
 import NPCRegistry from "./data/npcs.js";
+import { stances } from "./combat_stances.js";
 let activity_anim; //for the activity and gameAction animation interval
 
 let location_choice_divs = {}; //for dropdowns
@@ -72,43 +72,9 @@ let dynamic_loot_message = null;
 
 //enemy info
 const combat_div = document.getElementById("combat_div");
-const enemies_div = document.getElementById("enemies_div");
 
 const enemy_count_div = document.getElementById("enemy_count_div");
 const clear_count_div = document.getElementById("clear_count_div");
-
-//enemy onhit animation
-const onhitAnimation = [
-    {
-        "backgroundColor": "rgba(0, 0, 0, 0)",
-        "rotate": "0deg",
-    },
-    {
-        "backgroundColor": "rgba(255, 0, 0, 0.2)",
-        "rotate": "0.3deg",
-    }
-]
-const onhitAnimationTiming = {
-    duration: 100,
-	iterations: 2,
-    direction: "alternate",
-}
-
-const onstartAnimation = [
-    {
-        "opacity": "0.2",
-        "backgroundColor": "rgba(0, 124, 17, 0.2)",
-    },
-    {
-        "opacity": "1",
-    },
-]
-const onstartAnimationTiming = {
-    duration: 800,
-	iterations: 1,
-}
-
-const enemy_animations = {};
 
 //character health display
 const current_health_value_div = document.getElementById("character_health_value");
@@ -198,8 +164,6 @@ const other_combat_divs = {attack_points: document.getElementById("hit_chance_sl
                           };
 
 let effect_divs = {};
-
-const character_attack_bar = document.getElementById("character_attack_bar");
 
 //equipment slots
 const equipment_slots_divs = {head: document.getElementById("head_slot"), torso: document.getElementById("torso_slot"),
@@ -569,7 +533,7 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         });
     }
 
-    if (item.component_stats) {
+    if(item.component_stats) {
         if(item.component_tier) {
             item_tooltip += `<br><br>Component tier: ${item.component_tier}`;
         }
@@ -2053,90 +2017,6 @@ function update_displayed_book(book_id) {
     document.getElementById("action_progress_bar").style.width = 385*percent+"px";
 }
 
-/**
- * sets visibility of divs for enemies (based on how many there are in current combat),
- * and enemies' AP / EP
- * 
- * called when new enemies get loaded and when player stats change
- */
-function update_displayed_enemies() {
-    const full_stats = character.getFullStats();
-
-    for(let i = 0; i < 8; i++) { //go to max enemy count
-        if(i < current_enemies.length) {
-            enemies_div.children[i].children[0].style.display = null;
-            set_HTML(enemies_div.children[i].children[0].children[0], current_enemies[i].name)
-
-            let disp_speed;
-
-            if(current_enemies[i].stats.attack_speed > 20) {
-                disp_speed = Math.round(current_enemies[i].stats.attack_speed);
-            } else if (current_enemies[i].stats.attack_speed > 2) {
-                disp_speed = Math.round(current_enemies[i].stats.attack_speed*10)/10;
-            } else {
-                disp_speed = Math.round(current_enemies[i].stats.attack_speed*100)/100;
-            }
-
-            let hero_hit_chance_modifier = current_enemies.filter(enemy => enemy.is_alive).length**(-1/4); // down to ~ 60% if there's full 8 enemies
-            let hero_evasion_chance_modifier = current_enemies.filter(enemy => enemy.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
-
-            let target = current_enemies[i];
-            Object.keys(target.tags).forEach(enemy_tag => {
-                if(enemy_tag_to_skill_mapping[enemy_tag]) {
-                    for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
-                        const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
-                        const {modifier_to_hit_chance, modifier_to_evasion} = skill.get_stat_modifiers();
-                        hero_hit_chance_modifier *= modifier_to_hit_chance || 1;
-                        hero_evasion_chance_modifier *= modifier_to_evasion || 1;
-                    }
-                }
-            });
-        
-            const evasion_chance = 1 - get_hit_chance(full_stats.attack_points*hero_hit_chance_modifier, current_enemies[i].stats.agility * Math.sqrt(current_enemies[i].stats.intuition ?? 1));
-            let hit_chance = get_hit_chance(current_enemies[i].stats.dexterity * Math.sqrt(current_enemies[i].stats.intuition ?? 1), full_stats.evasion_points*hero_evasion_chance_modifier);
-
-            if(character.getEquipment()["off-hand"]?.offhand_type === "shield") { //has shield
-                hit_chance = 1;
-            }
-
-            let html_string = `Atk: ${current_enemies[i].stats.attack}dmg`;
-            
-            if(current_enemies[i].stats.attack_count > 1) {
-                html_string +=` x${current_enemies[i].stats.attack_count}`;
-            }
-            enemies_div.children[i].children[0].children[1].children[0].innerText = html_string;
-            enemies_div.children[i].children[0].children[1].children[1].innerText = `Spd: ${disp_speed}`;
-            enemies_div.children[i].children[0].children[1].children[2].innerText = `Hit: ${Math.min(100,Math.max(0,Math.round(100*hit_chance)))}%`; //100% if shield!
-            enemies_div.children[i].children[0].children[1].children[3].innerText = `Ddg: ${Math.min(100,Math.max(0,Math.round(100*evasion_chance)))}%`;
-            enemies_div.children[i].children[0].children[1].children[4].innerText = `Def: ${current_enemies[i].stats.defense}`;
-
-        } else {
-            enemies_div.children[i].children[0].style.display = "none"; //just hide it
-        }     
-    }
-}
-
-/**
- * updates displayed health and healthbars of enemies
- */
-function update_displayed_health_of_enemies() {
-    for(let i = 0; i < current_enemies.length; i++) {
-        if(current_enemies[i].is_alive) {
-            enemies_div.children[i].children[0].style.filter = "brightness(100%)";
-        } else {
-            enemies_div.children[i].children[0].style.filter = "brightness(30%)";
-            update_displayed_enemies();
-        }
-
-        //update size of health bar
-        enemies_div.children[i].children[0].children[2].children[0].children[0].style.width = 
-            Math.max(0, 100*current_enemies[i].stats.health/current_enemies[i].stats.max_health) + "%";
-
-            enemies_div.children[i].children[0].children[2].children[1].innerText = `${Math.ceil(current_enemies[i].stats.health)}/${Math.ceil(current_enemies[i].stats.max_health)} hp`;
-
-    }
-}
-
 function update_displayed_normal_location(location) {
     clear_action_div();
     clear_HTML_content(location_types_div);
@@ -2204,7 +2084,7 @@ function update_displayed_normal_location(location) {
     if(location.housing?.isUnlocked()) { 
         const start_sleeping_div = document.createElement("div");
         
-        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translationManager.getText(language, location.housing.text_to_sleep));
+        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translationManager.getText(location.housing.text_to_sleep));
         start_sleeping_div.id = "start_sleeping_div";
         start_sleeping_div.setAttribute('onclick', 'start_sleeping()');
 
@@ -3662,27 +3542,33 @@ function update_displayed_stats() {
         update_stat_description(key);
     });
 
-    const attack_stats = document.getElementById("attack_stats");
+    const attack_stats = document.querySelector?.("[data-character_attack_div]")?.getElementById?.("attack_stats");
 
     const ap = Math.round(full_stats.attack_points);
     other_combat_divs.attack_points.innerText = `${ap}`;
 
     if(equipment["off-hand"] != null && equipment["off-hand"].offhand_type === "shield") { //HAS SHIELD
         const dp = (full_stats.block_chance*100).toFixed(1)
-        other_combat_divs.defensive_action.innerText = "Block :";
-        other_combat_divs.defensive_points.innerText = `${dp}%`;
+        other_combat_divs.defensive_action.classList.remove("stat_name");
+        other_combat_divs.defensive_action.classList.add("stat_name_short");
+        other_combat_divs.defensive_points.classList.remove("stat_value");
+        other_combat_divs.defensive_points.classList.add("stat_value_long");
+        other_combat_divs.defensive_action.innerText = "Block:";
+        other_combat_divs.defensive_points.innerText = `${dp}% / ${expo({number: character.getBlockStrength()})}`;
         other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = "Chance to block an attack";
-
-        attack_stats.children[3].innerText = `Block : ${Math.round(dp)}%`;
     }
     else { //NO SHIELD
         const ep = Math.round(full_stats.evasion_points);
+        other_combat_divs.defensive_action.classList.remove("stat_name_short");
+        other_combat_divs.defensive_action.classList.add("stat_name");
+        other_combat_divs.defensive_points.classList.remove("stat_value_long");
+        other_combat_divs.defensive_points.classList.add("stat_value");
         other_combat_divs.defensive_action.innerText = "EP : ";
         other_combat_divs.defensive_points.innerText = `${ep}`;
         other_combat_divs.defensive_points.parentNode.children[2].children[0].innerText = 
         "Evasion points, a total value of everything that contributes to the evasion chance, except for some situational skills and modifiers";
 
-        attack_stats.children[3].innerText = `EP: ${Math.round(ep)} `;
+        if(attack_stats) attack_stats.children[3].innerText = `EP: ${Math.round(ep)} `;
     }
 
     update_stat_description("defensive_points");
@@ -3695,10 +3581,12 @@ function update_displayed_stats() {
     } else {
         atk = Math.round(10*atk)/10;
     }
-    attack_stats.children[0].innerText = `Atk: ${atk}`;
-    attack_stats.children[1].innerText = `Spd: ${Math.round(character.getAttackSpeed()*100)/100}`;
-    attack_stats.children[2].innerText = `AP:  ${Math.round(ap)}`;
-    attack_stats.children[4].innerText = `Def: ${Math.round(full_stats.defense)} `;
+    if(attack_stats) {
+        attack_stats.children[0].innerText = `Atk: ${atk}`;
+        attack_stats.children[1].innerText = `Spd: ${Math.round(character.getAttackSpeed()*100)/100}`;
+        attack_stats.children[2].innerText = `AP:  ${Math.round(ap)}`;
+        attack_stats.children[4].innerText = `Def: ${Math.round(full_stats.defense)} `;
+    }
 }
 
 function update_stat_description(stat) {
@@ -4178,7 +4066,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(language, dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translationManager.getText(dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'))`);
@@ -4189,7 +4077,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
         Object.keys(dialogue.actions).forEach(key => { //add buttons for actions
             if(dialogue.actions[key].canBeDisplayed(get_context())) { 
                 const dialogue_action_div = document.createElement("div");
-                insert_HTML(dialogue_action_div, `${translationManager.getText(language, dialogue.actions[key].starting_text)}`);
+                insert_HTML(dialogue_action_div, `${translationManager.getText(dialogue.actions[key].starting_text)}`);
                 dialogue_action_div.classList.add("dialogue_textline");
                 dialogue_action_div.setAttribute("data-location_action", key);
                 dialogue_action_div.setAttribute("onclick", `start_game_action(this.getAttribute('data-location_action'), event)`);
@@ -4243,7 +4131,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(language,dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translationManager.getText(dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'), ${origin})`); //additional param compared to when there's no textlines passed
@@ -4263,7 +4151,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
 }
 
 function update_displayed_textline_answer({text, is_description}) {
-    text = translationManager.getText(language, text);
+    text = translationManager.getText(text);
     
     if(is_description) {
         document.getElementById("dialogue_answer_div").innerText =  "*"+text+"*";
@@ -4768,8 +4656,14 @@ function update_displayed_skill_xp_gain(skill) {
     if(!skill_bar_divs[skill.category] || !skill_bar_divs[skill.category][skill.skill_id]){
         return;
     }
-    const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*character.getSkillXPGain(skill.skill_id))/100 || 1;
-    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], `XP gain: x${xp_gain}<br><span>XP cost scaling: x${skill.xp_scaling}</span>`);
+    const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*character.getSkillXPGain(skill.skill_id))/100 ?? 1;
+    let html_content = `XP gain: x${xp_gain}<br>`;
+    if(skill.can_level) {
+        html_content += "<span>XP cost scaling: x${skill.xp_scaling}</span>"
+    } else {
+        html_content += "<br>This skill cannot receive xp and levels can only be gained from temporary sources."
+    }
+    set_HTML(skill_bar_divs[skill.category][skill.skill_id].children[0].children[2].children[1], html_content);
 }
 
 function update_all_displayed_skills_xp_gain(){
@@ -4862,8 +4756,7 @@ function update_skill_category_order() {
 /**
  * @description updates the list of stances, 
  */
-function update_displayed_stance_list(stances, current_stance) {
-
+function update_displayed_stance_list(current_stance) {
     clear_HTML_content(stance_list);
 
     Object.keys(stance_bar_divs).forEach(bar => {
@@ -4977,11 +4870,18 @@ function update_stance_tooltip(stance) {
 
 /**
  * 
- * @param {Stance} stance current stance 
+ * @param {Object} stance current stance 
  */
 function update_displayed_stance(stance) {
+    const stance_div = document.getElementById("character_stance_div");
+    
     stance_bar_divs[stance.id].children[1].children[0].checked = true;
-    document.getElementById("character_stance_name").children[0].innerText = stance.name;
+
+    if(!stance_div) {
+        return;
+    }
+
+    stance_div.children[0].innerText = stance.name;
 
     const selection = document.getElementById("character_stance_selection");
 
@@ -4994,10 +4894,9 @@ function update_displayed_stance(stance) {
     }
 }
 
-function update_displayed_faved_stances(stances) {
-    
+function update_displayed_faved_stances() {    
     const list = document.getElementById("character_stance_selection");
-    clear_HTML_content(list);
+    
     let html_content = "";
     Object.keys(faved_stances).forEach(stance => {
         stance_bar_divs[stance].children[0].children[0].checked = true;
@@ -5006,35 +4905,36 @@ function update_displayed_faved_stances(stances) {
             <label for="stances_quick_select_${stance}">${stances[stance].name}</div>`;
     });
 
-    insert_HTML(list, html_content);
 
-    //different stamina cost: cheaper first; same stamina cost: sort alphabetically
-    [...list.children].sort((a,b)=>{
-        const stance_a = stances[a.getAttribute("data-stance")];
-        const stance_b = stances[b.getAttribute("data-stance")];
+    if(list) {
+        set_HTML(list, html_content);
 
-        if(!stance_a || !stance_b) {
-            console.error(`No such stance as either '${stance_a}' or '${stance_b}'!`);
-        }
-        
-        if(stance_a.stamina_cost < stance_b.stamina_cost) {
-            return -1;
-        } else if(stance_a.stamina_cost > stance_b.stamina_cost) {
-            return 1;
-        } else {
-            if(stance_a.name > stance_b.name) {
+        //different stamina cost: cheaper first; same stamina cost: sort alphabetically
+        [...list.children].sort((a,b)=>{
+            const stance_a = stances[a.getAttribute("data-stance")];
+            const stance_b = stances[b.getAttribute("data-stance")];
+
+            if(!stance_a || !stance_b) {
+                console.error(`No such stance as either '${stance_a}' or '${stance_b}'!`);
+            }
+            
+            if(stance_a.stamina_cost < stance_b.stamina_cost) {
+                return -1;
+            } else if(stance_a.stamina_cost > stance_b.stamina_cost) {
                 return 1;
             } else {
-                return -1;
+                if(stance_a.name > stance_b.name) {
+                    return 1;
+                } else {
+                    return -1;
+                }
             }
+        }).forEach(node=>list.appendChild(node));
+
+        //mark selected stance as checked in quick selection
+        if(list.children && list.querySelector(`[data-stance='${selected_stance}']`)) {
+            list.querySelector(`[data-stance='${selected_stance}']`).children[0].checked = true;
         }
-    }).forEach(node=>list.appendChild(node));
-
-    //mark selected stance as checked in quick selection
-
-    const selection = document.getElementById("character_stance_selection");
-    if(selection.children && selection.querySelector(`[data-stance='${selected_stance}']`)) {
-        selection.querySelector(`[data-stance='${selected_stance}']`).children[0].checked = true;
     }
 }
 
@@ -5301,30 +5201,6 @@ function clear_skill_list(){
     //remove skill bars from display
 }
 
-function update_enemy_attack_bar(enemy_id, num) {
-    enemies_div.children[enemy_id].querySelector(".enemy_attack_bar").style.width = `${Math.min(num*100,100)}%`;
-}
-
-function do_enemy_onhit_animation(enemy_id) {
-    const enemy_div = enemies_div.children[enemy_id];
-    enemy_animations[enemy_id]?.cancel(); //almost certainly unnecessary
-    enemy_animations[enemy_id] = enemy_div.animate(onhitAnimation, onhitAnimationTiming);
-}
-
-function remove_enemy_onhit_animation(enemy_id) {
-    enemy_animations[enemy_id]?.cancel();
-}
-
-function do_enemy_onstart_animation(enemy_id) {
-    const enemy_div = enemies_div.children[enemy_id];
-    enemy_animations[enemy_id]?.cancel(); //almost certainly unnecessary
-    enemy_animations[enemy_id] =  enemy_div.animate(onstartAnimation, onstartAnimationTiming);
-}
-
-function update_character_attack_bar(num) {
-    character_attack_bar.style.width = `${Math.min(num*100,100)}%`;
-}
-
 /**
  * Adds quest to display
  * @param {String} quest_id 
@@ -5575,17 +5451,17 @@ function change_completed_quest_visibility() {
 function fill_character_bio() {
     const bio = character.getBioComponent();
     const age_div = document.getElementById("character_age_div");
-    age_div.innerText = translationManager.getText(language, "age") + ": "+ translationManager.getText(language, bio.age);
+    age_div.innerText = translationManager.getText("age") + ": "+ translationManager.getText(bio.age);
 
     const height_div = document.getElementById("character_height_div");
-    height_div.innerText = translationManager.getText(language, "height") + ": "+ translationManager.getText(language, bio.height);
+    height_div.innerText = translationManager.getText("height") + ": "+ translationManager.getText(bio.height);
 
     if(config.use_height_bonuses && Object.keys(height_stats[bio.height]).length > 0) {
         height_div.appendChild(create_height_tooltip(bio.height, "character_height_tooltip"));
     }
 
     const race_div = document.getElementById("character_race_div");
-    race_div.innerText = translationManager.getText(language, "race") + ": "+ translationManager.getText(language, playable_races[bio.race].name);
+    race_div.innerText = translationManager.getText("race") + ": "+ translationManager.getText(playable_races[bio.race].name);
 
     race_div.appendChild(create_race_tooltip(playable_races[bio.race], "character_race_tooltip"));
 }
@@ -5596,9 +5472,9 @@ function create_race_tooltip(race, css_class) {
 
     let tooltip_content = "";
 
-    tooltip_content += translationManager.getText(language, race.description);
+    tooltip_content += translationManager.getText(race.description);
     if(race.gameplay_description) {
-        tooltip_content += "\n\n" + translationManager.getText(language, race.gameplay_description);
+        tooltip_content += "\n\n" + translationManager.getText(race.gameplay_description);
     }
 
     if(config.use_racial_bonuses) {
@@ -5609,7 +5485,7 @@ function create_race_tooltip(race, css_class) {
         Object.keys(race.stats).forEach(effect_key => {
             if(race.stats[effect_key].multiplier != null) {
                 tooltip_content +=
-            `\n${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
+            `\n${capitalize_first_letter(translationManager.getText(effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
             }
         });
     }
@@ -5622,7 +5498,7 @@ function create_race_tooltip(race, css_class) {
     Object.keys(race.xp_multipliers).forEach(effect_key => {
         if(race.xp_multipliers[effect_key] != null) {
             tooltip_content +=
-        `\n${capitalize_first_letter(translationManager.getText(language, effect_key))}: x${race.xp_multipliers[effect_key]}`;
+        `\n${capitalize_first_letter(translationManager.getText(effect_key))}: x${race.xp_multipliers[effect_key]}`;
         }
     });
     */
@@ -5641,7 +5517,7 @@ function create_height_tooltip(height_key, css_class) {
     Object.keys(stats).forEach(effect_key => {
         if(stats[effect_key].multiplier != null) {
             tooltip_content +=
-        `${capitalize_first_letter(translationManager.getText(language, effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
+        `${capitalize_first_letter(translationManager.getText(effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
         }
     });
     
@@ -5889,7 +5765,7 @@ export {
     update_displayed_money,
     log_message,
     clear_action_div,
-    update_displayed_enemies, update_displayed_health_of_enemies, update_displayed_normal_location, update_displayed_combat_location,
+    update_displayed_normal_location, update_displayed_combat_location,
     log_loot,
     update_displayed_equipment, update_displayed_health, update_displayed_stamina, update_displayed_stats, update_displayed_effects, update_displayed_effect_durations,
     capitalize_first_letter,
@@ -5905,10 +5781,7 @@ export {
     clear_skill_bars,
     update_displayed_ongoing_activity,
     clear_skill_list,
-    update_character_attack_bar,
     clear_message_log,
-    update_enemy_attack_bar, 
-    do_enemy_onhit_animation, remove_enemy_onhit_animation, do_enemy_onstart_animation,
     remove_fast_travel_choice,
     create_new_bestiary_entry, update_bestiary_entry, update_bestiary_entry_killcount, clear_bestiary, update_bestiary_entry_tooltip,
     start_reading_display,
@@ -5947,5 +5820,5 @@ export {
     set_light_based_background_color,
     unassign_dynamic_loot_message,
     fill_character_bio, create_race_tooltip, create_height_tooltip,
-    insert_HTML
+    insert_HTML, clear_HTML_content
 }

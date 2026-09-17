@@ -14,6 +14,7 @@ import { Person } from "./person.js";
 class Hero extends Person {
     constructor(data) {
         super(data);
+        
         this.titles = {};
         this.reputation = { //effects would go up to 1000?
                 Village: 0,
@@ -29,6 +30,8 @@ class Hero extends Person {
         equipments["person"][this.id] = this.getEquipmentComponent();
         levels["person"][this.id] = this.getLevelableComponent();
         bios[this.id] = this.getBioComponent();
+
+        this.tags = data.tags;
 
         this.is_inventory_viewable = true; //just so code knows whether certain items in inventory need to have their displays updated in certain situations
     }
@@ -128,16 +131,19 @@ class Hero extends Person {
     /**
      * only supports multiplicative penalties for now
      */
-    addLocationPenalties(location) {
+    addLocationPenalties(location = current_location) {
         const levelable = this.getLevelableComponent();
 
+        
+        
         let effects = {};
         let light_modifier = 1;
         
         if(location) {
-            if(!location.tags.safe_zone) {
-                effects = location.get_total_effect().hero_penalty;
-            }
+            //if(!location.tags.safe_zone) {
+            
+            effects = location.get_total_effect().hero_penalty;
+            //}
 
             if(location.light_level === "dark" || location.light_level === "normal" && is_night()) {
                 light_modifier = 0.5 + 0.5 * this.getTotalSkillLevel("Night vision")/skills["Night vision"].max_level;
@@ -147,8 +153,8 @@ class Hero extends Person {
                 levelable.stats.multiplier.light_level.evasion_points = 1;
                 levelable.stats.multiplier.light_level.attack_points = 1;
             }
+        
         }
-
         levelable.stats.multiplier.environment = {};
         levelable.stats.flat.environment = {};
         Object.keys(effects.multipliers || {}).forEach(effect => {

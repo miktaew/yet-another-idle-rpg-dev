@@ -53,6 +53,7 @@ class Person{
     constructor(data){
         this.id = data.id || data.name;
         this.name = data.name || "";
+        this.is_alive = true;
         this.getName = data.getName || function(){return this.name};
         this.#inventory = new InventoryComponent(data.inventory);
         this.#equipment = new EquipmentComponent(data.equipment);
@@ -63,6 +64,10 @@ class Person{
 
         this.xp_multiplier = 1;
         this.skill_xp_multiplier = 1;
+
+        this.on_hit = data.on_hit || (()=>{});
+        this.on_damaged = data.on_damaged || (()=>{});
+        this.on_death = data.on_death || (()=>{});
     }
 
     getInventoryComponent() {
@@ -71,6 +76,16 @@ class Person{
 
     getItems() {
         return this.getInventoryComponent().getItems();
+    }
+
+    hasShield() {
+        return this.getEquipment()["off-hand"]?.offhand_type === "shield";
+    }
+
+    getBlockStrength() {
+        const shield_block = this.getEquipment()["off-hand"]?.getShieldStrength();
+        const block_mult = (this.getEquipment()["off-hand"]?.tags?.ignore_skill?1:(this?.getStats?.()?.total_multiplier?.block_strength||1));
+        return shield_block * block_mult || 1;
     }
 
     /**
@@ -171,7 +186,10 @@ class Person{
      * @returns 
      */
     addXPToSkill({skill, xp_to_add, should_info, use_bonus, add_to_parent, cap_gained_xp, is_from_loading}) {
-        const results = this.getLevelableComponent().addXPToSkill({skill, xp_to_add, xp_multiplier: this.xp_multiplier, should_info, use_bonus, add_to_parent, cap_gained_xp, is_from_loading});
+        const results = this
+            .getLevelableComponent()
+            .addXPToSkill(
+                {skill, xp_to_add, xp_multiplier: this.xp_multiplier, should_info, use_bonus, add_to_parent, cap_gained_xp, is_from_loading, owner: this});
 
         if(results.gains) {
             this.addSkillMilestoneBonus(results.gains);
@@ -437,13 +455,15 @@ class Person{
         return this.getLevelableComponent().getFullStats();
     }
 
-    
     /**
      * 
      * @param {*}
      * @returns [actual damage taken; Boolean if target should faint] 
      */
     takeDamage({damage_values, can_faint = true, give_skill_xp = true, defense_modifier = 0}) {
+
+        //TODO: move this to levelable, only make a shortcut in Person?
+
         /*
         TODO:
                 - damage types: "physical", "elemental", "magic"
@@ -484,7 +504,7 @@ class Person{
         if(!item) {
             this.addAllEquipmentBonus();
             
-            this._updateStats();
+            this.#updateStats();
         } else {
             const prev_item = equipment[item.equip_slot];
             this.unequipItem(item.equip_slot, true);
@@ -492,7 +512,7 @@ class Person{
             
             this.addAllEquipmentBonus();
             
-            this._updateStats();
+            this.#updateStats();
 
             /*
             manage_changed_skill_bonuses(item);
@@ -540,7 +560,7 @@ class Person{
      * full stat recalculation, do not call directly but through the one that has remaining display updates
      * @returns object with skills that need to have their display updated
      */
-    _updateStats() {
+    #updateStats() {
         const levelable = this.getLevelableComponent();
         const equipment = this.getEquipment();
         const skills_needing_update = {};
@@ -642,7 +662,7 @@ class Person{
         const initial_block_strength = levelable.stats.full.block_strength;
 
         this.addLocationPenalties();
-        const skills_needing_display_update = this._updateStats();
+        const skills_needing_display_update = this.#updateStats();
 
         if(skills_needing_display_update["hero"] || skills_needing_display_update["all"]) {
             this.updateDisplayedXPBonuses();

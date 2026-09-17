@@ -1,6 +1,9 @@
 "use strict";
 
 const config = {
+
+    enable_dev_mode: false, //allows access to some cheat-y function in browser console, like giving item, changing locations, speeding game up, etc
+
     trade_price_recovery_flat: 5, //flat recovery of market saturation
     trade_price_recovery_ratio: 1/360, //% recover of market saturation
     //larger of two is used (sold count * ratio or flat value)
@@ -38,9 +41,9 @@ const config = {
     equipment_crafting_quality_precision: 2,
     item_crafting_quality_precision: 4,
 
-    enable_dev_mode: false,
+    ui_element_for_enemy_display: "enemies_div",
+    ui_element_for_hero_combat_display: "character_combat_management",
 };
-
 
 
 export {config};

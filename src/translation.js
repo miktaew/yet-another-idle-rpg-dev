@@ -18,7 +18,7 @@ class TranslationManager {
         }
     };
 
-    getText = (language, text_id) => {
+    getText = (text_id, language = default_language) => {
         if(!translations[language]?.[text_id]) {
             //todo: try fallback to default if a different language is being used
             //will need to init the default first, if it's not loaded yet
@@ -38,7 +38,7 @@ class TranslationManager {
     translateUI = async(language) => {
         const translatables = document.querySelectorAll('[data-translation]');
         translatables.forEach(elem => {
-            elem.innerText = this.getText(language, elem.dataset.translation);
+            elem.innerText = this.getText(elem.dataset.translation, language);
         });
 
     };

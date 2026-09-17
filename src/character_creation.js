@@ -30,7 +30,7 @@ class CharacterCreator {
     create_race_button(race) {
         const race_button = document.createElement("div");
         race_button.classList.add("race_selection_button");
-        race_button.innerText = translationManager.getText(language, race.name);
+        race_button.innerText = translationManager.getText(race.name);
         race_button.dataset.race_id = race.race_id;
 
         race_button.addEventListener("click", event => {
@@ -49,7 +49,7 @@ class CharacterCreator {
 
         
         if(race.alternative_name) {
-            race_button.innerText += `\n(${uncapitalize_first_letter(translationManager.getText(language, race.alternative_name))})`;
+            race_button.innerText += `\n(${uncapitalize_first_letter(translationManager.getText(race.alternative_name))})`;
         }
 
         race_button.appendChild(create_race_tooltip(race, "race_choice_tooltip"));

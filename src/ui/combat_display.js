@@ -1,0 +1,435 @@
+"use strict";
+
+import { skills } from "../data/skills.js";
+import { clear_HTML_content, set_HTML, update_displayed_faved_stances, update_displayed_health, update_displayed_stance } from "../display.js";
+import { enemy_tag_to_skill_mapping } from "../enemies.js";
+import { current_combat, selected_stance } from "../main.js";
+import { get_hit_chance } from "../misc.js";
+
+//enemy onhit animation
+const onhitAnimation = [
+    {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "rotate": "0deg",
+    },
+    {
+        "backgroundColor": "rgba(255, 0, 0, 0.2)",
+        "rotate": "0.3deg",
+    }
+]
+const onhitAnimationTiming = {
+    duration: 100,
+	iterations: 2,
+    direction: "alternate",
+}
+
+const onstartAnimation = [
+    {
+        "opacity": "0.2",
+        "backgroundColor": "rgba(0, 124, 17, 0.2)",
+    },
+    {
+        "opacity": "1",
+    },
+]
+const onstartAnimationTiming = {
+    duration: 800,
+	iterations: 1,
+}
+
+const attacker_animations = {};
+const defender_animations = {};
+
+
+function fill_attacker_divs() {
+    for(let i = 0; i < current_combat.attackers.length; i++) {
+        if(!current_combat.is_special_combat && current_combat.attackers_ui_slot.children.length > 0 && i == 0) {
+            continue;
+        }
+        current_combat.attackers_ui_slot.appendChild(create_attacker_div(i));
+    }
+
+    if(current_combat.attackers[0].tags.main_character) {
+        update_displayed_faved_stances();
+        update_displayed_stance(selected_stance);
+    }
+}
+
+function create_attacker_div(i) {
+    const attacker_div = document.createElement("div");
+    attacker_div.id = `attacker_${i}_div`;
+    attacker_div.classList.add("attacker_div", "fighter_div");
+
+    const attack_stats = document.createElement("div");
+    attack_stats.classList.add("fighter_stats");
+
+    const attack_stat_divs = Array.from({length: 5}, () => document.createElement("div"));
+
+    attack_stat_divs[0].classList.add("attack_stat", "attack_stat_long");
+    attack_stat_divs[1].classList.add("attack_stat", "attack_stat_short");
+    attack_stat_divs[2].classList.add("attack_stat", "attack_stat_long");
+    attack_stat_divs[3].classList.add("attack_stat", "attack_stat_short");
+    attack_stat_divs[4].classList.add("attack_stat", "attack_stat_short");
+
+    attack_stats.append(...attack_stat_divs);
+
+    if(current_combat.attackers[i].tags.main_character) {
+
+        attacker_div.dataset.character_attack_div = true;
+        
+        const stance_div = document.createElement("div");
+        stance_div.id = "character_stance_div";
+
+        const name_span = document.createElement("span");
+        //name_span.innerText = "Normal stance";
+
+        const stance_selection = document.createElement("div");
+        stance_selection.id = "character_stance_selection";
+
+        stance_div.appendChild(name_span);
+        stance_div.appendChild(stance_selection);
+
+        attacker_div.appendChild(stance_div);
+        attacker_div.appendChild(attack_stats);
+    } else {
+        const name_div = document.createElement("div");
+        name_div.classList.add("fighter_name");
+        attacker_div.appendChild(name_div);
+
+        attacker_div.appendChild(attack_stats);
+
+        const health_div = document.createElement("div");
+        health_div.classList.add("health_div");
+
+        const healthbar_max_div = document.createElement("div");
+        healthbar_max_div.classList.add("healthbar_max");
+
+        const healthbar_current_div = document.createElement("div");
+        healthbar_current_div.classList.add("healthbar_current");
+
+        const health_value = document.createElement("div");
+        health_value.classList.add("health_value");
+
+        healthbar_max_div.appendChild(healthbar_current_div);
+        health_div.appendChild(healthbar_max_div);
+        health_div.appendChild(health_value);
+
+        attacker_div.appendChild(health_div);
+    }
+
+    const attacker_attack_bar = document.createElement("div");
+    attacker_attack_bar.classList.add("attacker_attack_bar", "fighter_attack_bar");
+    attacker_attack_bar.dataset.attack_bar = true;
+
+    attacker_div.appendChild(attacker_attack_bar);
+    
+    return attacker_div;
+}
+
+function clear_defender_divs() {
+    const parent = document.getElementsByClassName("defender_div")[0]?.parentNode;
+    if(parent) {
+        clear_HTML_content(parent);
+    }
+}
+
+function fill_defender_divs() {
+    clear_defender_divs();
+    for(let i = 0; i < current_combat.defenders.length; i++) {
+        current_combat.defenders_ui_slot.appendChild(create_defender_div(i));
+    }
+}
+
+function create_defender_div(i) {
+    const fighter_div = document.createElement("div");
+    fighter_div.id = `defender_${i}_div`;
+    fighter_div.classList.add("fighter_div", "enemy_div");
+
+    const name_div = document.createElement("div");
+    name_div.classList.add("enemy_name", "fighter_name");
+
+    const stats_div = document.createElement("div");
+    stats_div.classList.add("enemy_stats", "fighter_stats");
+    
+    for(let i = 0; i < 5; i++) {
+        const stat_div = document.createElement("div");
+        stat_div.classList.add("enemy_stat", (i==0||i==2||i==3)?"enemy_stat_long":"enemy_stat_short");
+        stats_div.appendChild(stat_div);
+    }
+
+    const health_div = document.createElement("div");
+    health_div.classList.add("enemy_health_div", "health_div");
+
+    const healthbar_max_div = document.createElement("div");
+    healthbar_max_div.classList.add("enemy_healthbar_max", "healthbar_max");
+
+    const healthbar_current_div = document.createElement("div");
+    healthbar_current_div.classList.add("enemy_healthbar_current", "healthbar_current");
+
+    const enemy_health_value = document.createElement("div");
+    enemy_health_value.classList.add("enemy_health_value", "health_value");
+
+    healthbar_max_div.appendChild(healthbar_current_div);
+    health_div.appendChild(healthbar_max_div);
+    health_div.appendChild(enemy_health_value);
+
+    const enemy_attack_bar = document.createElement("div");
+    enemy_attack_bar.classList.add("enemy_attack_bar", "fighter_attack_bar");
+    enemy_attack_bar.dataset.attack_bar = true;
+
+    fighter_div.appendChild(name_div);
+    fighter_div.appendChild(stats_div);
+    fighter_div.appendChild(health_div);
+    fighter_div.appendChild(enemy_attack_bar);
+
+    return fighter_div;
+}
+
+function fill_fighter_divs() {
+    if(!current_combat.is_special_combat) {
+        while(current_combat.attackers_ui_slot.children.length > 1) {
+            current_combat.attackers_ui_slot.removeChild(current_combat.attackers_ui_slot.lastChild);
+        }
+    } else {
+        current_combat.attackers_ui_slot.replaceChildren();
+    }
+
+    current_combat.defenders_ui_slot.replaceChildren();
+    fill_attacker_divs();
+    fill_defender_divs();
+    update_displayed_fighters_stats();
+}
+
+function update_displayed_fighters_stats() {
+    const defenders = current_combat.defenders;
+    const attackers = current_combat.attackers;
+
+    for(let i = 0; i < defenders.length; i++) { 
+        update_fighter_stats({fighter_index: i, is_attacker: false});
+    }
+
+    for(let i = 0; i < attackers.length; i++) { 
+        update_fighter_stats({fighter_index: i, is_attacker: true});
+    }
+}
+
+function update_fighter_stats({fighter_index, is_attacker}) {
+    const full_stats = current_combat.attackers[0].getFullStats(); //ends up ignored if there's more than 1 attacker
+
+    const fighter_div = (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot).children[fighter_index];
+    const fighters = (is_attacker ? current_combat.attackers : current_combat.defenders);
+    const fighter = fighters[fighter_index];
+    const fighter_stats = fighter.getFullStats();
+
+    const opponents = (is_attacker ? current_combat.defenders : current_combat.attackers);
+
+    const includes_player = opponents.filter(op => op.tags.main_character).length > 0;
+
+    fighter_div.children[0].style.display = null;
+
+    if(fighter_div.querySelector(".fighter_name")) {
+        set_HTML(fighter_div.querySelector(".fighter_name"), fighter.name);
+    }
+
+    let disp_speed;
+
+    const attack_speed = fighter_stats.attack_speed;
+    if(attack_speed > 20) {
+        disp_speed = Math.round(attack_speed);
+    } else if (attack_speed > 2) {
+        disp_speed = Math.round(attack_speed*10)/10;
+    } else {
+        disp_speed = Math.round(attack_speed*100)/100;
+    }
+
+    let hit_chance_modifier = fighters.filter(enemy => enemy.is_alive).length**(-1/4); // down to ~ 60% if there's full 8 enemies
+    let evasion_chance_modifier = fighters.filter(enemy => enemy.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
+
+    if(includes_player && !is_attacker) {
+        Object.keys(fighter.tags).forEach(enemy_tag => {
+            if(enemy_tag_to_skill_mapping[enemy_tag]) {
+                for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
+                    const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
+                    const {modifier_to_hit_chance, modifier_to_evasion} = skill.get_stat_modifiers();
+                    hit_chance_modifier *= modifier_to_hit_chance || 1;
+                    evasion_chance_modifier *= modifier_to_evasion || 1;
+                }
+            }
+        });
+    }
+
+    const evasion_chance = 1 - get_hit_chance(full_stats.attack_points*hit_chance_modifier, fighter.getFullStats().evasion_points);
+    let hit_chance = get_hit_chance(fighter.getFullStats().attack_points, full_stats.evasion_points*evasion_chance_modifier);
+
+    if(fighter.getEquipment()["off-hand"]?.offhand_type === "shield") { //has shield
+        hit_chance = 1;
+    }
+
+    let text_string = `Atk: ${Math.round(fighter_stats.attack_power)}dmg`;
+    
+    if(fighter_stats.attack_count > 1) {
+        text_string +=` x${fighter_stats.attack_count}`;
+    }
+
+    const stats_div = fighter_div.querySelector(".fighter_stats");
+
+    // opponents[0].hasShield() => show hit as 100%
+
+    const total_block = fighter.getBlockStrength();
+
+    stats_div.children[0].innerText = text_string;
+    stats_div.children[1].innerText = `| Spd: ${disp_speed}`;
+    stats_div.children[2].innerText = opponents.length == 1 ? 
+        (opponents[0].hasShield() ? `| Hit: 100% 🛡️` : `| Hit: ${Math.min(100,Math.max(0,Math.round(100*hit_chance)))}%`) : `| AP: ${Math.round(fighter.getFullStats().attack_points)}`;
+    
+    stats_div.children[3].innerText = fighter.hasShield() ? 
+        `| 🛡️: ${Math.round(total_block)}2345` : (opponents.length == 1 ? `| Ddg: ${Math.min(100,Math.max(0,Math.round(100*evasion_chance)))}%` : `| EP: ${Math.round(fighter.getFullStats().evasion_points)}`);
+    stats_div.children[4].innerText = `| Def: ${fighter_stats.defense}`;
+}
+
+function update_attacker_stats() {
+    //todo
+}
+
+function update_defender_stats() {
+    const full_stats = current_combat.attackers[0].getFullStats();
+
+    const defenders_div = current_combat.defenders_ui_slot;
+    const defenders = current_combat.defenders;
+    const attackers = current_combat.attackers;
+    const includes_player = attackers.filter(attacker => attacker.tags.main_character).length > 0;
+
+    for(let i = 0; i < defenders.length; i++) { 
+        defenders_div.children[i].children[0].style.display = null;
+
+        set_HTML(defenders_div.children[i].querySelector(".enemy_name"), current_combat.defenders[i].name);
+
+        let disp_speed;
+
+        if(defenders[i].stats.attack_speed > 20) {
+            disp_speed = Math.round(defenders[i].stats.attack_speed);
+        } else if (defenders[i].stats.attack_speed > 2) {
+            disp_speed = Math.round(defenders[i].stats.attack_speed*10)/10;
+        } else {
+            disp_speed = Math.round(defenders[i].stats.attack_speed*100)/100;
+        }
+
+        let hero_hit_chance_modifier = defenders.filter(enemy => enemy.is_alive).length**(-1/4); // down to ~ 60% if there's full 8 enemies
+        let hero_evasion_chance_modifier = defenders.filter(enemy => enemy.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
+
+        if(includes_player) {
+            let target = defenders[i];
+            Object.keys(target.tags).forEach(enemy_tag => {
+                if(enemy_tag_to_skill_mapping[enemy_tag]) {
+                    for(let i = 0; i < enemy_tag_to_skill_mapping[enemy_tag].length; i++) {
+                        const skill = skills[enemy_tag_to_skill_mapping[enemy_tag][i]];
+                        const {modifier_to_hit_chance, modifier_to_evasion} = skill.get_stat_modifiers();
+                        hero_hit_chance_modifier *= modifier_to_hit_chance || 1;
+                        hero_evasion_chance_modifier *= modifier_to_evasion || 1;
+                    }
+                }
+            });
+        }
+    
+        const evasion_chance = 1 - get_hit_chance(full_stats.attack_points*hero_hit_chance_modifier, defenders[i].stats.agility * Math.sqrt(defenders[i].stats.intuition ?? 1));
+        let hit_chance = get_hit_chance(defenders[i].stats.dexterity * Math.sqrt(defenders[i].stats.intuition ?? 1), full_stats.evasion_points*hero_evasion_chance_modifier);
+
+        if(attackers[0].getEquipment()["off-hand"]?.offhand_type === "shield") { //has shield
+            hit_chance = 1;
+        }
+
+        let text_string = `Atk: ${defenders[i].stats.attack}dmg`;
+        
+        if(defenders[i].stats.attack_count > 1) {
+            text_string +=` x${defenders[i].stats.attack_count}`;
+        }
+
+        const stats_div = defenders_div.children[i].querySelector(".enemy_stats");
+
+        stats_div.children[0].innerText = text_string;
+        stats_div.children[1].innerText = `Spd: ${disp_speed}`;
+        stats_div.children[2].innerText = attackers.length == 1 ? `Hit: ${Math.min(100,Math.max(0,Math.round(100*hit_chance)))}%` : `AP: ${Math.round(full_stats.attack_points)}`;
+        stats_div.children[3].innerText = attackers.length == 1 ? `Ddg: ${Math.min(100,Math.max(0,Math.round(100*evasion_chance)))}%` : `EP: ${Math.round(full_stats.evasion_points)}`;
+        stats_div.children[4].innerText = `Def: ${defenders[i].stats.defense}`;
+    }
+}
+
+/**
+ * updates displayed health and healthbars of enemies
+ */
+function update_displayed_health_of_defenders() {
+    const defenders = current_combat.defenders;
+    const defenders_div = current_combat.defenders_ui_slot;
+    for(let i = 0; i < defenders.length; i++) {
+        if(defenders[i].is_alive) {
+            defenders_div.children[i].style.filter = "brightness(100%)";
+        } else {
+            defenders_div.children[i].style.filter = "brightness(30%)";
+            update_displayed_fighters_stats();
+        }
+
+        //update size of health bar
+        defenders_div.children[i].querySelector(".healthbar_current").style.width = 
+            Math.max(0, 100*defenders[i].stats.health/defenders[i].stats.max_health) + "%";
+
+        defenders_div.children[i].querySelector(".health_value").innerText = `${Math.ceil(defenders[i].stats.health)}/${Math.ceil(defenders[i].stats.max_health)} hp`;
+    }
+}
+
+function update_displayed_health_of_fighter({fighter_index, is_attacker}) {
+    const fighter = is_attacker?current_combat.attackers[fighter_index] : current_combat.defenders[fighter_index];
+    const fighter_div = is_attacker?current_combat.attackers_ui_slot.children[fighter_index] : current_combat.defenders_ui_slot.children[fighter_index];
+    
+    if(fighter.is_alive) {
+        fighter_div.style.filter = "brightness(100%)";
+    } else {
+        fighter_div.style.filter = "brightness(30%)";
+        update_displayed_fighters_stats();
+    }
+
+    if(fighter.tags.main_character) {
+        update_displayed_health();
+        if(!fighter_div.querySelector(".healthbar_current")) {
+            return;
+        }
+    }
+
+    fighter_div.querySelector(".healthbar_current").style.width = 
+            Math.max(0, 100*fighter.getFullStats().health/fighter.getFullStats().max_health) + "%";
+
+    fighter_div.querySelector(".health_value").innerText = `${Math.ceil(fighter.getFullStats().health)}/${Math.ceil(fighter.getFullStats().max_health)} hp`;
+    
+}
+
+function update_attack_bar({fighter_index, is_attacker, progress}) {
+    (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot)
+        .children.item(fighter_index).querySelector("[data-attack_bar]").style.width = `${Math.min(progress*100,100)}%`;
+}
+
+function do_onhit_animation({fighter_index, is_attacker}) {
+    const animations = (is_attacker ? attacker_animations : defender_animations);
+    const fighter_div = (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot).children[fighter_index];
+    animations[fighter_index]?.cancel(); //likely unnecessary, but won't hurt
+    animations[fighter_index] = fighter_div.animate(onhitAnimation, onhitAnimationTiming);
+}
+
+function remove_onhit_animation({fighter_index, is_attacker}) {
+    (is_attacker ? attacker_animations[fighter_index] : defender_animations[fighter_index])?.cancel();
+}
+
+function do_onstart_animation({fighter_index, is_attacker}) {
+    const animations = (is_attacker ? attacker_animations : defender_animations);
+    const fighter_div = (is_attacker ? current_combat.attackers_ui_slot : current_combat.defenders_ui_slot).children[fighter_index];
+    
+    animations[fighter_index]?.cancel(); //almost certainly unnecessary
+    animations[fighter_index] =  fighter_div.animate(onstartAnimation, onstartAnimationTiming);
+
+}
+
+export {
+    fill_attacker_divs, fill_fighter_divs,
+    update_displayed_health_of_defenders,
+    do_onhit_animation, remove_onhit_animation, do_onstart_animation,
+    update_attack_bar,
+    update_displayed_health_of_fighter, update_displayed_fighters_stats,
+}

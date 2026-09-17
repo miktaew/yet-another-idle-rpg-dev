@@ -747,6 +747,8 @@ const ui = {
     "ui show bio": "Bio",
     "ui show tools": "Tools",
 
+    "ui exit": "Exit",
+
     "option textsize": "Increase textsize for dialogues and activities",
     "option bar outline": "Text outline on xp/stamina/mana/health bars",
     "option tooltip outline": "Text outline in item tooltips",
@@ -758,7 +760,7 @@ const ui = {
     "option fahrenheit": "Use Fahrenheit instead of Celsius",
     "option animate background": "Enable rain/snow/stars animations",
     "option background color": "Enable light-level based background color change",
-    "option combat animation": "Enable on-hit / on-appear animations for enemies",
+    "option combat animation": "Enable on-hit / on-appear animations for combat",
     "option skip loading": "Automatically skip the loading screen",
     "option kemonomimi": "Enable kemonomimi mode",
 };
