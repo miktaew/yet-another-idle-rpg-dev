@@ -1,6 +1,7 @@
 "use strict";
 import AvailabilityComponent from "../components/availability_component.js";
 import { availabilities, availability_havers } from "../data/component_references.js";
+import { MixedRewards, Rewards } from "../rewards.js";
 
 availabilities["action"] = {};
 
@@ -43,7 +44,17 @@ class GameAction{
         this.check_conditions_on_finish = data.check_conditions_on_finish || true;
         //means an action with duration can be attempted even if conditions are not met;
         //setting it to false will check them on start instead
-        this.rewards = data.rewards || {}; //{unlocks, money, items,move_to}?
+        this.rewards = new Rewards(data.rewards || {});
+        this.failure_rewards = new Rewards(data.failure_rewards || {});
+        /*
+            rewards and failure_rewards can include chance key (value 0 to 1);
+            can be either just a reward object or an array of reward objects
+            for multi-element array, one or none will be selected based on random roll (value between their sum and 1 will choose one, value between 0 and sum will chose none)
+        */
+
+        this.mixed_rewards = new MixedRewards(data.mixed_rewards || []);
+        this.mixed_failure_rewards = new MixedRewards(data.mixed_failure_rewards || []);
+
         this.attempt_duration = data.attempt_duration || 0; //0 means instantaneous, otherwise there's a progress bar
         this.success_chances = data.success_chances || [1,1];
         //chances to succeed; to guarantee that multiple attempts will be needed, just make a few consecutive actions with same text

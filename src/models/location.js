@@ -9,6 +9,7 @@ import { skills } from "../data/skills.js";
 import { location_types } from "../data/locations.js";
 import { character } from "../data/character.js";
 import { availability_havers } from "../data/component_references.js";
+import { Rewards } from "../rewards.js";
 
 
 availabilities["location"] = {};
@@ -96,7 +97,7 @@ class BaseLocation {
         temperature_range_modifier = 1,
         temperature_modifier = 0,
         is_under_roof = false,
-        entrance_rewards, //rewards gained on entering it, to be used for unlocks
+        entrance_rewards = {}, //rewards gained on entering it
     }) {
 
 
@@ -111,7 +112,7 @@ class BaseLocation {
 
         this.light_level = light_level; //not really used for this type
         this.tags = tags;
-        this.entrance_rewards = entrance_rewards;
+        this.entrance_rewards = new Rewards(entrance_rewards);
 
         this.is_temperature_static = is_temperature_static; //true -> uses static temperature, either provided or default
         this.static_temperature = static_temperature;
@@ -182,7 +183,7 @@ class SafeLocation extends BaseLocation {
                 temperature_range_modifier = 1,
                 temperature_modifier = 0,
                 is_under_roof = false,
-                entrance_rewards, //rewards gained on entering it, to be used for unlocks
+                entrance_rewards, //rewards gained on entering it, because why not
             }) {
         // always a safe zone
 
@@ -241,7 +242,7 @@ class CombatZone extends BaseLocation {
                  repeatable_reward = {},
                  entrance_rewards = {},
                  light_level = null, //generally handled through type for those
-                 rewards_with_clear_requirement = [],
+                 rewards_with_clear_requirement = [], //array of Rewards objects, with `required_clear_count: Number` on each
                  otherUnlocks,
                  unlock_text,
                  is_challenge = false,
@@ -306,8 +307,8 @@ class CombatZone extends BaseLocation {
         this.parent_location = parent_location;
 
         this.leave_text = leave_text; //text on option to leave
-        this.first_reward = first_reward; //reward for first clear
-        this.repeatable_reward = repeatable_reward; //reward for each clear, including first; all unlocks should be in this, just in case
+        this.first_reward = new Rewards(first_reward); //reward for first clear
+        this.repeatable_reward = new Rewards(repeatable_reward); //reward for each clear, including first; all unlocks should be in this, just in case
         this.rewards_with_clear_requirement = rewards_with_clear_requirement; //rewards that are only given on N-th clear
 
         this.is_challenge = is_challenge;

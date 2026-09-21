@@ -6,7 +6,6 @@ import { loot_sold_count, market_region_mapping, recover_item_prices, trickle_ma
 import { locations, favourite_locations, location_types } from "./data/locations.js";
 import { skills } from "./data/skills.js";
 import { which_skills_affect_skill } from "./models/skill.js";
-import { dialogue_owners } from "./components/dialogue_component.js";
 import { enemy_killcount, enemy_templates, tags_for_droprate_modifier_skills } from "./enemies.js";
 import { is_in_trade, start_trade, cancel_trade, accept_trade, exit_trade,
          add_to_buying_list, remove_from_buying_list, add_to_selling_list, remove_from_selling_list} from "./trade.js";
@@ -100,7 +99,6 @@ import { game_version, get_game_version } from "./game_version.js";
 import { ActiveEffect, effect_templates } from "./active_effects.js";
 import { open_storage, close_storage, move_item_to_storage, remove_item_from_storage, player_storage, is_storage_open } from "./data/storage.js";
 import { Verify_Game_Objects } from "./verifier.js";
-import { ReputationManager } from "./reputation.js";
 import { quests, questManager, active_quests } from "./quests.js";
 import { get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { Pathfinder, speed_modifiers_from_skills } from "./pathfinding.js";
@@ -115,8 +113,9 @@ import { flag_to_status, status_to_flag } from "./components/availability_compon
 import { height_values } from "./models/person.js";
 import { playable_races } from "./races.js";
 import { fill_availability_methods } from "./component_management.js";
-import { traders } from "./data/traders.js";
 import Combat from "./models/combat.js";
+import { Rewards } from "./rewards.js";
+import { ReputationManager } from "./reputation.js";
 
 fill_availability_methods();
 
@@ -560,6 +559,21 @@ function option_do_dynamic_loot_message(option) {
     }
 }
 
+function update_pathing() {
+    pathfinder = new Pathfinder();
+    pathfinder.fill_connections(locations);
+    travel_times = {};
+    travel_times[current_location.id] = pathfinder.find_shortest_paths(current_location.id);
+}
+
+/**
+ * Changes current_location value without triggering a full location change
+ * @param {String} location_key 
+ */
+function change_current_location(location_key) {
+    current_location = locations[location_key];
+}
+
 /**
  * 
  * @param {Object} params
@@ -850,6 +864,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
                 action.completion_count++;
             }
             process_rewards({rewards: action.rewards, source_type: "action", source_name: dialogue_key || current_location.id});
+            process_mixed_rewards({mixed_rewards: action.mixed_rewards, source_type: "action", source_name: dialogue_key || current_location.id});
             is_won = true;
         } else {
             //random loss
@@ -858,6 +873,9 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
             result_message = lines?.length
                 ? lines[Math.floor(lines.length * Math.random())]
                 : result_message;
+
+            process_rewards({rewards: action.failure_rewards, source_type: "action", source_name: dialogue_key || current_location.id});
+            process_mixed_rewards({mixed_rewards: action.mixed_failure_rewards, source_type: "action", source_name: dialogue_key || current_location.id});
         }
 
         const success_conditions = action.getAvailabilityComponent().success_conditions;
@@ -1157,6 +1175,387 @@ function do_reading() {
 function get_current_book() {
     return is_reading;
 }
+
+
+/**
+ * processes rewards and logs all necessary messages
+ * @param {Object} rewards_data
+ * @param {Object} rewards_data.rewards //the standard object with rewards
+ * @param {String} rewards_data.source_type //location, gameAction, textline
+ * @param {Boolean} rewards_data.is_first_clear //exclusively for location rewards (and only for a single message to be logged)
+ * @param {Boolean} rewards_data.inform_overall //if unlocks are to be logged
+ * @param {Boolean} rewards_data.inform_textline //if textline unlock is to be logged (requires inform_overall to also be true)
+ * @param {String} rewards_data.source_name //in case it's needed for logging a message
+ * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
+ */
+function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
+   
+    if(rewards.chance && (Math.random() > rewards.chance)) {
+        return;
+    }
+
+    let was_any_location_availability_changed = false;
+    let is_current_location_reload_needed = false;
+    if(rewards.messages && !is_from_loading) {
+        for(let i = 0; i < rewards.messages.length; i++) {
+            log_message(rewards.messages[i]);
+        }
+    }
+
+    if(rewards.money && typeof rewards.money === "number" && !only_unlocks) {
+        if(inform_overall) {
+            log_message(`%HeroName% earned ${format_money(rewards.money)}`);
+        }
+        add_money_to_character(rewards.money);
+    }
+
+    if(rewards.xp && typeof rewards.xp === "number" && !only_unlocks) {
+        if(source_type === "location") {
+            if(inform_overall) {
+                if(is_first_clear) {
+                    log_message(`Obtained ${rewards.xp}xp for clearing ${source_name} for the first time`, "location_reward");
+                } else {
+                    log_message(`Obtained additional ${rewards.xp}xp for clearing ${source_name}`, "location_reward");
+                }
+            }
+        } else {
+            //other sources
+            log_message(`Gained ${rewards.xp}xp`, "location_reward");
+        }
+        add_xp_to_character(rewards.xp);
+    }
+
+    if(rewards.skill_xp && !only_unlocks) {
+        Object.keys(rewards.skill_xp).forEach(skill_key => {
+            if(typeof rewards.skill_xp[skill_key] === "number") {
+                if(inform_overall) {
+                    log_message(`%HeroName% gained ${rewards.skill_xp[skill_key]}xp to ${skills[skill_key].getName()}`);
+                }
+                add_xp_to_skill({skill: skills[skill_key], xp_to_add: rewards.skill_xp[skill_key], cap_gained_xp: false});
+            }
+        });
+    }
+    
+    if(rewards.locations) {
+        for(let i = 0; i < rewards.locations.length; i++) {
+            was_any_location_availability_changed = 
+                unlock_location({location: locations[rewards.locations[i].location], skip_message: (inform_overall && rewards.locations[i].skip_message || is_from_loading)}) 
+                || was_any_location_availability_changed;
+                
+        }
+    }
+
+    if(rewards.flags) {
+        for(let i = 0; i < rewards.flags.length; i++) {
+            const flag = global_flags[rewards.flags[i]];
+            global_flags[rewards.flags[i]] = true;
+            if(!flag && flag_unlock_texts[rewards.flags[i]] && inform_overall) {
+                log_message(`${flag_unlock_texts[rewards.flags[i]]}`, "activity_unlocked");
+            }
+        }
+    }
+
+    if(rewards.textlines) {
+        for(let i = 0; i < rewards.textlines.length; i++) {
+            let any_unlocked = false;
+            
+            const dialogue = dialogues[rewards.textlines[i].dialogue || rewards.textlines[i].npc];
+            for(let j = 0; j < rewards.textlines[i].lines.length; j++) {
+                if(!dialogue.textlines[rewards.textlines[i].lines[j]].isUnlocked()) {
+                    any_unlocked = true;
+                    dialogue.textlines[rewards.textlines[i].lines[j]].setUnlocked();
+                }
+            }
+
+            if(any_unlocked && inform_textline && inform_overall && !rewards.textlines[i].skip_message && source_name !== rewards.textlines[i].dialogue && dialogue_owners[dialogue.name]) {
+                log_message(`You should talk to ${NPCRegistry.get(dialogue_owners[dialogue.name]).getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})}`, "dialogue_unlocked");
+                //maybe do this only when there's just 1 dialogue with changes?
+            }
+        }
+    }
+
+    if(rewards.npcs) {
+        for(let i = 0; i < rewards.npcs?.length; i++) {
+            const npc = NPCRegistry.get(rewards.npcs[i].npc);
+            if(!npc.isUnlocked()) {
+                npc.setUnlocked();
+                if(!rewards.npcs[i].skip_message) {
+                    log_message(`You can now interact with ${npc.name}`, "activity_unlocked");
+                }
+            }
+        }
+    }
+
+    if(rewards.dialogues) {
+        for(let i = 0; i < rewards.dialogues?.length; i++) {
+            const dialogue = dialogues[rewards.dialogues[i]]
+            if(!dialogue.isUnlocked()) {
+                dialogue.setUnlocked();
+                log_message(`You can now talk with ${dialogue.name}`, "activity_unlocked");
+            }
+        }
+    }
+
+    if(rewards.traders) { 
+        for(let i = 0; i < rewards.traders.length; i++) {
+            const trader = traders[rewards.traders[i].trader];
+            if(!trader.isUnlocked()) {
+                trader.setUnlocked();
+                if(!rewards.traders[i].skip_message) {
+                    if(trader.getUnlockMessage()) {
+                        log_message(trader.getUnlockMessage(), "activity_unlocked");
+                    } else {
+                        log_message(`You can now trade with ${trader.name}`, "activity_unlocked");
+                    }
+                }
+            }
+        }
+    }
+
+    if(rewards.housing) {
+        for(let i = 0; i < rewards.housing.length; i++){
+            locations[rewards.housing[i]].housing.setUnlocked();
+
+            if(favourite_locations[rewards.housing[i]]) {
+                //unfavourite the location as it will be added to fast travel anyways due to having housing=true
+                remove_location_from_favourites({location_id: rewards.housing[i]});
+            }
+        }
+    }
+
+    if(rewards.crafting) {
+        for(let i = 0; i < rewards.crafting.length; i++) {
+            locations[rewards.crafting[i]].crafting.setUnlocked();
+            log_message(`You can now use a crafting station in ${locations[rewards.crafting[i]].name}`, "activity_unlocked");
+        }
+    }
+
+    if(rewards.global_activities) {
+        for(let i = 0; i < rewards.global_activities?.length; i++) {
+            unlock_global_activity({activity_id: rewards.global_activities[i]});
+        }
+    }
+
+    if(rewards.activities) {
+        for(let i = 0; i < rewards.activities?.length; i++) {
+            if(!locations[rewards.activities[i].location].activities[rewards.activities[i].activity].tags?.gathering || global_flags.is_gathering_unlocked) {
+
+                unlock_activity({location: locations[rewards.activities[i].location].name, 
+                                activity: locations[rewards.activities[i].location].activities[rewards.activities[i].activity],
+                                skip_message: is_from_loading,
+                            });
+
+            }
+        }
+    }
+
+    if(rewards.actions) {
+        for(let i = 0; i < rewards.actions?.length; i++) {
+            if(rewards.actions[i].dialogue) {
+                const dialogue = dialogues[rewards.actions[i].dialogue];
+                unlock_action({
+                                dialogue: dialogue.name,
+                                action: dialogue.actions[rewards.actions[i].action],
+                                skip_message: is_from_loading,
+                            });
+            } else if(rewards.actions[i].location){
+                unlock_action({
+                                location: locations[rewards.actions[i].location]?.name,
+                                action: locations[rewards.actions[i].location].actions[rewards.actions[i].action],
+                                skip_message: is_from_loading,
+                            });
+            }
+        }
+    }
+
+    if(rewards.stances) {  
+        for(let i = 0; i < rewards.stances.length; i++) {
+            unlock_combat_stance(rewards.stances[i]);
+        }
+    }
+
+    if(rewards.skills) {
+        for(let i = 0; i < rewards.skills.length; i++) {
+            if(!skills[rewards.skills[i]].isUnlocked()) {
+                
+                skills[rewards.skills[i]].setUnlocked();
+                create_new_skill_bar(skills[rewards.skills[i]]);
+                update_displayed_skill_bar(skills[rewards.skills[i]], false);
+                if(inform_overall) {
+                    log_message(`Unlocked new skill: ${skills[rewards.skills[i]].getName()}`);
+                }
+
+                if(source_type === "skill") {
+                    if(!which_skills_affect_skill[rewards.skills[i]]) {
+                        which_skills_affect_skill[rewards.skills[i]] = [];
+                    }
+
+                    if(skills[source_name]) {
+                        which_skills_affect_skill[rewards.skills[i]].push(source_name);
+                        //shouldn't cause issues, as it will only trigger on skill unlocks by other skills
+                    } else {
+                        console.error(`Tried to register skill "${source_name}" as related to "${rewards.skills[i]}", but the former does not exist!`);
+                    }
+                }
+
+                //update all related skills; may be none if unlock was not from another skill, so need to check with '?'
+                for(let j = 0; j < which_skills_affect_skill[rewards.skills[i]]?.length; j++) {
+                    update_displayed_skill_bar(skills[which_skills_affect_skill[rewards.skills[i]][j]], false);
+                }
+            }
+        }
+    }
+
+    if(rewards.recipes) {
+        for(let i = 0; i < rewards.recipes.length; i++) {
+            if(!recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].isUnlocked()) {
+                recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].setUnlocked();
+                if(inform_overall) {
+                    log_message(`Unlocked new recipe: ${recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].name}`);
+                }
+            }
+        }
+    }
+
+    if(rewards.quests) {
+        for(let i = 0; i < rewards.quests.length; i++) {
+            if(!questManager.isQuestActive(rewards.quests[i]) && !questManager.isQuestFinished(rewards.quests[i])) {
+                questManager.startQuest({quest_id: rewards.quests[i]});
+                if(inform_overall) {
+                    //log_message(`Received a new quest: ${quests[rewards.quests[i]].getQuestName()}`);
+                    //already done in quests
+                }
+            }
+        }
+    }
+
+    if(rewards.quest_progress) {
+        for(let i = 0; i < rewards.quest_progress.length; i++) {
+            const quest_id = rewards.quest_progress[i].quest_id;
+            const task_index = rewards.quest_progress[i].task_index;
+            if(task_index == quests[quest_id].getCompletedTaskCount()) {
+                if(quests[quest_id]?.quest_tasks[task_index]) {
+                    questManager.finishQuestTask({quest_id: quest_id, task_index: task_index, skip_warning: true});
+                } else {
+                    console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
+                }
+            }
+        }
+    }
+
+    if(rewards.locks) {
+        if(rewards.locks.textlines) {
+            Object.keys(rewards.locks.textlines).forEach(dialogue_key => {
+                const dialogue = dialogues[dialogue_key];
+                for(let i = 0; i < rewards.locks.textlines[dialogue_key].length; i++) {
+                    dialogue.textlines[rewards.locks.textlines[dialogue_key][i]].setLocked();
+                }
+            });
+        }
+        if(rewards.locks.npcs) {
+            for(let i = 0; i < rewards.locks.npcs.length; i++) {
+                NPCRegistry.get(rewards.locks.npcs[i]).setLocked();
+                if(current_location.npcs.includes(rewards.locks.npcs[i])) {
+                    is_current_location_reload_needed = true;
+                }
+            }
+        }
+        if(rewards.locks.locations) {
+            for(let i = 0; i < rewards.locks.locations.length; i++) {
+                was_any_location_availability_changed = lock_location({location: locations[rewards.locks.locations[i]]}) || was_any_location_availability_changed;
+            }
+        }
+
+        if(rewards.locks.quests) {
+            for(let i = 0; i < rewards.locks.quests.length; i++) {
+                questManager.finishQuest({quest_id: rewards.locks.quests[i], skip_rewards: true})
+            }
+        }
+        if(rewards.locks.actions) {
+            for(let i = 0; i < rewards.locks.actions.length; i++) {
+                lock_action({
+                            dialogue_key: rewards.locks.actions[i].dialogue,
+                            location_key: rewards.locks.actions[i].location,
+                            action_key: rewards.locks.actions[i].action
+                        });
+            }
+        }
+    }
+
+    if(rewards.items && !only_unlocks) {
+        for(let i = 0; i < rewards.items.length; i++) {
+            const entry = rewards.items[i];
+            const is_bare_name = typeof entry === "string";
+            const item_id = is_bare_name ? entry : entry.item;
+            const template = item_templates[item_id];
+
+            if(!template) {
+                console.error(`No such item as "${item_id}" - reward skipped.`);
+                continue;
+            }
+
+            const count = is_bare_name ? 1 : (entry.count || 1);
+            const quality = is_bare_name ? undefined : entry.quality;
+
+            const item = quality ? getItem({...template, quality}) : template;
+
+            log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
+            character.addToInventory([{item_key: item.getInventoryKey(), count}]);
+        }
+    }
+    if(rewards.reputation) {
+        Object.keys(rewards.reputation).forEach(region => {
+            ReputationManager.add_reputation({region, reputation: rewards.reputation[region]});
+        });
+        update_displayed_reputation();
+    }
+
+    if(was_any_location_availability_changed && !is_from_loading) {
+        update_pathing();
+        //shouldn't need any display updates
+    }
+
+    if(rewards.move_to && !only_unlocks) {
+        if(source_type !== "action") {
+            change_location({location_id: rewards.move_to.location});
+        } else {
+            //changes the current_location without breaking the action display (finishing it will trigger location reload anyway)
+            change_current_location(rewards.move_to.location);
+        }
+    } else if(is_current_location_reload_needed) {
+        change_location({location_id: current_location.id});
+    }
+
+    if(rewards.active_effects && !only_unlocks) {
+        Object.keys(rewards.active_effects).forEach(effect_key => {
+            add_active_effect(effect_key, rewards.active_effects[effect_key]);
+        });
+    }
+}
+
+/**
+ * 
+ * @param {Object} rewards_data
+ * @param {Array} rewards_data.mixed_rewards [{chance_to_be_in_mix, rewards: [Rewards]}]
+ */
+function process_mixed_rewards({mixed_rewards, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false}) {
+    const arr = mixed_rewards.rewards_array;
+    for(let i = 0; i < arr.length; i++) {
+        if(arr[i].chance_to_be_in_mix && (Math.random() > arr[i].chance_to_be_in_mix)) {
+            continue;
+        }
+
+        const selected_rewards = arr[i].possible_rewards[random_range(0, arr[i].possible_rewards.length-1)];
+
+        //todo: group rewards together, process only once
+        
+        process_rewards({
+            rewards: selected_rewards,
+            source_type, source_name, is_first_clear, inform_overall, inform_textline, only_unlocks, is_from_loading: false,
+        });
+    }
+}
+
 
 /**
  * 
@@ -1750,390 +2149,6 @@ function get_location_rewards(location) {
     //return if need be; additional check in case it was already performed by rewards
     if(should_return && current_location?.tags.combat_zone) {
         change_location({location_id: current_location.parent_location.id}); //go back to parent location, only on first clear
-    }
-}
-
-
-/*
-    The reward keys process_rewards reads, and the lock keys it reads inside `locks`.
-
-    Here so that a key it does NOT read gets said out loud. data/locations.js has a
-    reward written as `action:` where the function reads `rewards.actions`, so that
-    reward has never done anything - and nothing said so, because the skill_xp next to it
-    worked. A typo in a content file should not be invisible.
-*/
-const reward_keys = [
-    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
-    "housing", "items", "locations", "locks", "messages", "money", "move_to", "npcs",
-    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
-    "textlines", "traders", "xp",
-];
-const special_keys = ["required_clear_count"];
-const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];
-
-function warn_about_unread_reward_keys(rewards, source_type, source_name) {
-    const where = source_name ? ` (${source_type} "${source_name}")` : "";
-    const valid_keys = [...reward_keys, ...special_keys];
-    for(const key of Object.keys(rewards)) {
-        if(!valid_keys.includes(key)) {
-            console.warn(`Reward key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${valid_keys.join(", ")}.`);
-        }
-    }
-    for(const key of Object.keys(rewards.locks || {})) {
-        if(!lock_keys.includes(key)) {
-            console.warn(`Lock key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${lock_keys.join(", ")}.`);
-        }
-    }
-}
-
-/**
- * processes rewards and logs all necessary messages
- * @param {Object} rewards_data
- * @param {Object} rewards_data.rewards //the standard object with rewards
- * @param {String} rewards_data.source_type //location, gameAction, textline
- * @param {Boolean} rewards_data.is_first_clear //exclusively for location rewards (and only for a single message to be logged)
- * @param {Boolean} rewards_data.inform_overall //if unlocks are to be logged
- * @param {Boolean} rewards_data.inform_textline //if textline unlock is to be logged (requires inform_overall to also be true)
- * @param {String} rewards_data.source_name //in case it's needed for logging a message
- * @param {Boolean} rewards_data.only_unlocks //processes only unlock-type rewards (skips money, item, etc; doesn't skip rep)
- */
-function process_rewards({rewards = {}, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false, is_from_loading = false}) {
-    warn_about_unread_reward_keys(rewards, source_type, source_name); //remember to update keys it accepts if process_rewards gets expanded to new ones
-    let was_any_location_availability_changed = false;
-    let is_current_location_reload_needed = false;
-    if(rewards.messages && !is_from_loading) {
-        for(let i = 0; i < rewards.messages.length; i++) {
-            log_message(rewards.messages[i]);
-        }
-    }
-
-    if(rewards.money && typeof rewards.money === "number" && !only_unlocks) {
-        if(inform_overall) {
-            log_message(`%HeroName% earned ${format_money(rewards.money)}`);
-        }
-        add_money_to_character(rewards.money);
-    }
-
-    if(rewards.xp && typeof rewards.xp === "number" && !only_unlocks) {
-        if(source_type === "location") {
-            if(inform_overall) {
-                if(is_first_clear) {
-                    log_message(`Obtained ${rewards.xp}xp for clearing ${source_name} for the first time`, "location_reward");
-                } else {
-                    log_message(`Obtained additional ${rewards.xp}xp for clearing ${source_name}`, "location_reward");
-                }
-            }
-        } else {
-            //other sources
-            log_message(`Gained ${rewards.xp}xp`, "location_reward");
-        }
-        add_xp_to_character(rewards.xp);
-    }
-
-    if(rewards.skill_xp && !only_unlocks) {
-        Object.keys(rewards.skill_xp).forEach(skill_key => {
-            if(typeof rewards.skill_xp[skill_key] === "number") {
-                if(inform_overall) {
-                    log_message(`%HeroName% gained ${rewards.skill_xp[skill_key]}xp to ${skills[skill_key].getName()}`);
-                }
-                add_xp_to_skill({skill: skills[skill_key], xp_to_add: rewards.skill_xp[skill_key], cap_gained_xp: false});
-            }
-        });
-    }
-    
-    if(rewards.locations) {
-        for(let i = 0; i < rewards.locations.length; i++) {
-            was_any_location_availability_changed = 
-                unlock_location({location: locations[rewards.locations[i].location], skip_message: (inform_overall && rewards.locations[i].skip_message || is_from_loading)}) 
-                || was_any_location_availability_changed;
-                
-        }
-    }
-
-    if(rewards.flags) {
-        for(let i = 0; i < rewards.flags.length; i++) {
-            const flag = global_flags[rewards.flags[i]];
-            global_flags[rewards.flags[i]] = true;
-            if(!flag && flag_unlock_texts[rewards.flags[i]] && inform_overall) {
-                log_message(`${flag_unlock_texts[rewards.flags[i]]}`, "activity_unlocked");
-            }
-        }
-    }
-
-    if(rewards.textlines) {
-        for(let i = 0; i < rewards.textlines.length; i++) {
-            let any_unlocked = false;
-            
-            const dialogue = dialogues[rewards.textlines[i].dialogue || rewards.textlines[i].npc];
-            for(let j = 0; j < rewards.textlines[i].lines.length; j++) {
-                if(!dialogue.textlines[rewards.textlines[i].lines[j]].isUnlocked()) {
-                    any_unlocked = true;
-                    dialogue.textlines[rewards.textlines[i].lines[j]].setUnlocked();
-                }
-            }
-
-            if(any_unlocked && inform_textline && inform_overall && !rewards.textlines[i].skip_message && source_name !== rewards.textlines[i].dialogue && dialogue_owners[dialogue.name]) {
-                log_message(`You should talk to ${NPCRegistry.get(dialogue_owners[dialogue.name]).getName({is_mofu_mofu_enabled: global_flags.is_mofu_mofu_enabled})}`, "dialogue_unlocked");
-                //maybe do this only when there's just 1 dialogue with changes?
-            }
-        }
-    }
-
-    if(rewards.npcs) {
-        for(let i = 0; i < rewards.npcs?.length; i++) {
-            const npc = NPCRegistry.get(rewards.npcs[i].npc);
-            if(!npc.isUnlocked()) {
-                npc.setUnlocked();
-                if(!rewards.npcs[i].skip_message) {
-                    log_message(`You can now interact with ${npc.name}`, "activity_unlocked");
-                }
-            }
-        }
-    }
-
-    if(rewards.dialogues) {
-        for(let i = 0; i < rewards.dialogues?.length; i++) {
-            const dialogue = dialogues[rewards.dialogues[i]]
-            if(!dialogue.isUnlocked()) {
-                dialogue.setUnlocked();
-                log_message(`You can now talk with ${dialogue.name}`, "activity_unlocked");
-            }
-        }
-    }
-
-    if(rewards.traders) { 
-        for(let i = 0; i < rewards.traders.length; i++) {
-            const trader = traders[rewards.traders[i].trader];
-            if(!trader.isUnlocked()) {
-                trader.setUnlocked();
-                if(!rewards.traders[i].skip_message) {
-                    if(trader.getUnlockMessage()) {
-                        log_message(trader.getUnlockMessage(), "activity_unlocked");
-                    } else {
-                        log_message(`You can now trade with ${trader.name}`, "activity_unlocked");
-                    }
-                }
-            }
-        }
-    }
-
-    if(rewards.housing) {
-        for(let i = 0; i < rewards.housing.length; i++){
-            locations[rewards.housing[i]].housing.setUnlocked();
-
-            if(favourite_locations[rewards.housing[i]]) {
-                //unfavourite the location as it will be added to fast travel anyways due to having housing=true
-                remove_location_from_favourites({location_id: rewards.housing[i]});
-            }
-        }
-    }
-
-    if(rewards.crafting) {
-        for(let i = 0; i < rewards.crafting.length; i++) {
-            locations[rewards.crafting[i]].crafting.setUnlocked();
-            log_message(`You can now use a crafting station in ${locations[rewards.crafting[i]].name}`, "activity_unlocked");
-        }
-    }
-
-    if(rewards.global_activities) {
-        for(let i = 0; i < rewards.global_activities?.length; i++) {
-            unlock_global_activity({activity_id: rewards.global_activities[i]});
-        }
-    }
-
-    if(rewards.activities) {
-        for(let i = 0; i < rewards.activities?.length; i++) {
-            if(!locations[rewards.activities[i].location].activities[rewards.activities[i].activity].tags?.gathering || global_flags.is_gathering_unlocked) {
-
-                unlock_activity({location: locations[rewards.activities[i].location].name, 
-                                activity: locations[rewards.activities[i].location].activities[rewards.activities[i].activity],
-                                skip_message: is_from_loading,
-                            });
-
-            }
-        }
-    }
-
-    if(rewards.actions) {
-        for(let i = 0; i < rewards.actions?.length; i++) {
-            if(rewards.actions[i].dialogue) {
-                const dialogue = dialogues[rewards.actions[i].dialogue];
-                unlock_action({
-                                dialogue: dialogue.name,
-                                action: dialogue.actions[rewards.actions[i].action],
-                                skip_message: is_from_loading,
-                            });
-            } else if(rewards.actions[i].location){
-                unlock_action({
-                                location: locations[rewards.actions[i].location]?.name,
-                                action: locations[rewards.actions[i].location].actions[rewards.actions[i].action],
-                                skip_message: is_from_loading,
-                            });
-            }
-        }
-    }
-
-    if(rewards.stances) {  
-        for(let i = 0; i < rewards.stances.length; i++) {
-            unlock_combat_stance(rewards.stances[i]);
-        }
-    }
-
-    if(rewards.skills) {
-        for(let i = 0; i < rewards.skills.length; i++) {
-            if(!skills[rewards.skills[i]].isUnlocked()) {
-                
-                skills[rewards.skills[i]].setUnlocked();
-                create_new_skill_bar(skills[rewards.skills[i]]);
-                update_displayed_skill_bar(skills[rewards.skills[i]], false);
-                if(inform_overall) {
-                    log_message(`Unlocked new skill: ${skills[rewards.skills[i]].getName()}`);
-                }
-
-                if(source_type === "skill") {
-                    if(!which_skills_affect_skill[rewards.skills[i]]) {
-                        which_skills_affect_skill[rewards.skills[i]] = [];
-                    }
-
-                    if(skills[source_name]) {
-                        which_skills_affect_skill[rewards.skills[i]].push(source_name);
-                        //shouldn't cause issues, as it will only trigger on skill unlocks by other skills
-                    } else {
-                        console.error(`Tried to register skill "${source_name}" as related to "${rewards.skills[i]}", but the former does not exist!`);
-                    }
-                }
-
-                //update all related skills; may be none if unlock was not from another skill, so need to check with '?'
-                for(let j = 0; j < which_skills_affect_skill[rewards.skills[i]]?.length; j++) {
-                    update_displayed_skill_bar(skills[which_skills_affect_skill[rewards.skills[i]][j]], false);
-                }
-            }
-        }
-    }
-
-    if(rewards.recipes) {
-        for(let i = 0; i < rewards.recipes.length; i++) {
-            if(!recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].isUnlocked()) {
-                recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].setUnlocked();
-                if(inform_overall) {
-                    log_message(`Unlocked new recipe: ${recipes[rewards.recipes[i].category][rewards.recipes[i].subcategory][rewards.recipes[i].recipe_id].name}`);
-                }
-            }
-        }
-    }
-
-    if(rewards.quests) {
-        for(let i = 0; i < rewards.quests.length; i++) {
-            if(!questManager.isQuestActive(rewards.quests[i]) && !questManager.isQuestFinished(rewards.quests[i])) {
-                questManager.startQuest({quest_id: rewards.quests[i]});
-                if(inform_overall) {
-                    //log_message(`Received a new quest: ${quests[rewards.quests[i]].getQuestName()}`);
-                    //already done in quests
-                }
-            }
-        }
-    }
-
-    if(rewards.quest_progress) {
-        for(let i = 0; i < rewards.quest_progress.length; i++) {
-            const quest_id = rewards.quest_progress[i].quest_id;
-            const task_index = rewards.quest_progress[i].task_index;
-            if(task_index == quests[quest_id].getCompletedTaskCount()) {
-                if(quests[quest_id]?.quest_tasks[task_index]) {
-                    questManager.finishQuestTask({quest_id: quest_id, task_index: task_index, skip_warning: true});
-                } else {
-                    console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
-                }
-            }
-        }
-    }
-
-    if(rewards.locks) {
-        if(rewards.locks.textlines) {
-            Object.keys(rewards.locks.textlines).forEach(dialogue_key => {
-                const dialogue = dialogues[dialogue_key];
-                for(let i = 0; i < rewards.locks.textlines[dialogue_key].length; i++) {
-                    dialogue.textlines[rewards.locks.textlines[dialogue_key][i]].setLocked();
-                }
-            });
-        }
-        if(rewards.locks.npcs) {
-            for(let i = 0; i < rewards.locks.npcs.length; i++) {
-                NPCRegistry.get(rewards.locks.npcs[i]).setLocked();
-                if(current_location.npcs.includes(rewards.locks.npcs[i])) {
-                    is_current_location_reload_needed = true;
-                }
-            }
-        }
-        if(rewards.locks.locations) {
-            for(let i = 0; i < rewards.locks.locations.length; i++) {
-                was_any_location_availability_changed = lock_location({location: locations[rewards.locks.locations[i]]}) || was_any_location_availability_changed;
-            }
-        }
-
-        if(rewards.locks.quests) {
-            for(let i = 0; i < rewards.locks.quests.length; i++) {
-                questManager.finishQuest({quest_id: rewards.locks.quests[i], skip_rewards: true})
-            }
-        }
-        if(rewards.locks.actions) {
-            for(let i = 0; i < rewards.locks.actions.length; i++) {
-                lock_action({
-                            dialogue_key: rewards.locks.actions[i].dialogue,
-                            location_key: rewards.locks.actions[i].location,
-                            action_key: rewards.locks.actions[i].action
-                        });
-            }
-        }
-    }
-
-    if(rewards.items && !only_unlocks) {
-        for(let i = 0; i < rewards.items.length; i++) {
-            const entry = rewards.items[i];
-            const is_bare_name = typeof entry === "string";
-            const item_id = is_bare_name ? entry : entry.item;
-            const template = item_templates[item_id];
-
-            if(!template) {
-                console.error(`No such item as "${item_id}" - reward skipped.`);
-                continue;
-            }
-
-            const count = is_bare_name ? 1 : (entry.count || 1);
-            const quality = is_bare_name ? undefined : entry.quality;
-
-            const item = quality ? getItem({...template, quality}) : template;
-
-            log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
-            character.addToInventory([{item_key: item.getInventoryKey(), count}]);
-        }
-    }
-
-    if(rewards.reputation) {
-        Object.keys(rewards.reputation).forEach(region => {
-            ReputationManager.add_reputation({region, reputation: rewards.reputation[region]});
-        });
-        update_displayed_reputation();
-    }
-
-    if(was_any_location_availability_changed && !is_from_loading) {
-        //pathing update
-        pathfinder = new Pathfinder();
-        pathfinder.fill_connections(locations);
-        travel_times = {};
-        travel_times[current_location.id] = pathfinder.find_shortest_paths(current_location.id);
-
-        //shouldn't need any display updates
-    }
-
-    if(rewards.move_to && !only_unlocks) {
-        if(source_type !== "action") {
-            change_location({location_id: rewards.move_to.location});
-        } else {
-            current_location = locations[rewards.move_to.location];
-        }
-    } else if(is_current_location_reload_needed) {
-        change_location({location_id: current_location.id});
     }
 }
 
@@ -2841,7 +2856,10 @@ function change_item_favourite_status(target, item_key) {
  * @param {Boolean} was_xp_added whether this code should skip xp gain for relevant skill (if such exists) 
  * @returns {Boolean} whether effect was in fact applied (it wasn't active, it had shorter duration, or a weaker was active)
  */
-function add_active_effect(effect_key, duration, was_xp_added){
+function add_active_effect(effect_key, duration = 1, skip_xp){
+    if(!effect_templates[effect_key]) {
+        throw new Error(`No such active effect available as "${effect_key}"`);
+    }
     let do_not_apply_because_stronger_is_active = false; //readable names are good, right?
     const was_already_active = active_effects[effect_key];
     const old_duration = active_effects[effect_key]?.duration ?? 0;
@@ -2883,7 +2901,7 @@ function add_active_effect(effect_key, duration, was_xp_added){
     }
 
     //no need to check for whether effect was activated, code won't reach this point if it wasn't
-    if(!was_xp_added) {
+    if(!skip_xp) {
         //update consuming-related skills if relevant tags are present
         Object.keys(skill_consumable_tags).forEach(skill_id => {
             if(effect_templates[effect_key].tags[skill_consumable_tags[skill_id]]) {
@@ -4346,31 +4364,31 @@ function load(save_data) {
         if(is_a_older_than_b(save_data["game version"], "v0.5.1")) {
             //compatibility for some dialogues
             process_rewards({
-                rewards: {
+                rewards: new Rewards({
                     textlines: [{npc: "village elder", lines: ["crab rumors"]}]
-                },
+                }),
                 inform_overall: false,
             });
 
             if(NPCRegistry.get("villageGuard").getDialogueComponent().textlines["hello"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         flags: ["is_guard_met"],
                         textlines: [
                             {npc: "villageElder", lines: ["about guard"]},
                             {npc: "oldCraftsman", lines: ["about guard"]},
                             {npc: "villageMillers", lines: ["about guard"]},
                         ],
-                    },
+                    }),
                     inform_overall: false,
                 });
             }
 
             if(NPCRegistry.get("villageGuard").getDialogueComponent().textlines["wide"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         textlines: [{npc: "villageGuard", lines: ["hi", "tips 2", "serious", "teach more"]}]
-                    },
+                    }),
                     inform_overall: false,
                 });
             }
@@ -4381,29 +4399,29 @@ function load(save_data) {
             let supervisor = NPCRegistry.get("farmSupervisor").getDialogueComponent();
             if(supervisor.textlines["defeated boars"].isFinished() && !supervisor.textlines["troubled"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         textlines: [{npc: "farmSupervisor", lines: ["troubled unavailable"]}]
-                    },
+                    }),
                     inform_overall: false,
                 });
             }
             const elder = NPCRegistry.get("villageElder").getDialogueComponent();
             if(elder.textlines["money"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         textlines: [{npc: "villageElder", lines: ["other work"]}]
-                    },
+                    }),
                     inform_overall: false,
                 });
             }
 
             if(elder.textlines["cleared cave"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         locks: {
                             textlines: {"villageElder": ["leave for materials"]}
                         }
-                    },
+                    }),
                     inform_overall: false,
                 });
             }
@@ -4570,9 +4588,9 @@ function load(save_data) {
         if(is_a_older_than_b(save_data["game version"], "v0.5.1.11")) {
             if(locations["Lake beach"].actions["create lake camp"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         crafting: ["Lake beach"],
-                    }, 
+                    }), 
                     inform_overall: false
                 });
             }
@@ -4585,9 +4603,9 @@ function load(save_data) {
 
             if(locations["Lake beach"].actions["create lake camp"].isFinished()) {
                 process_rewards({
-                    rewards: {
+                    rewards: new Rewards({
                         housing: ["Lake beach"],
-                    }, 
+                    }), 
                     inform_overall: false
                 });
             }
@@ -6047,7 +6065,6 @@ export {
     unlocked_beds,
     favourite_consumables,
     remove_consumable_from_favourites,
-    process_rewards,
     get_context,
     travel_times,
     language, languages,
@@ -6059,4 +6076,17 @@ export {
     game_stats, 
     kill_target, kill_player,
     process_current_loot,
+    add_money_to_character,
+    unlock_location,
+    flag_unlock_texts,
+    remove_location_from_favourites,
+    unlock_global_activity,
+    unlock_activity,
+    unlock_action,
+    unlock_combat_stance,
+    lock_location,
+    lock_action,
+    update_pathing,
+    change_location, change_current_location,
+    process_rewards,
 };

@@ -45,6 +45,7 @@ import { droplist, enemy_killcount, enemy_templates } from "./enemies.js";
 import { update_bestiary_entry_tooltip } from "./display.js";
 import AvailabilityComponent from "./components/availability_component.js";
 import { availabilities, availability_havers } from "./data/component_references.js";
+import { Rewards } from "./rewards.js";
 
 availabilities["item"] = {};
 
@@ -1099,7 +1100,7 @@ class BookData{
         this.literacy_xp_rate = literacy_xp_rate;
         this.finish_reward = finish_reward;
         this.bonuses = bonuses;
-        this.rewards = rewards;
+        this.rewards = new Rewards(rewards);
     }
 }
 
@@ -1302,7 +1303,7 @@ book_stats["Medicine for dummies"] = new BookData({
         ],
         skill_xp: {
             "Medicine": 20,
-        }
+        },
     },
     bonuses: {
         xp_multipliers: {
@@ -1346,8 +1347,7 @@ book_stats["A Glint On The Sand"] = new BookData({
             {location: "Village", activity: "sand"},
             {location: "Lake beach", activity: "sand"}
 		]
-    }
-	
+    },
 });
 
 book_stats["Shellfish desires"] = new BookData({
@@ -1377,7 +1377,7 @@ book_stats["Wood for Witches"] = new BookData({
             {category: "alchemy", subcategory: "items", recipe_id: "Sulfur"},
             {category: "smelting", subcategory: "items", recipe_id: "Alchemical Wood"},
         ],
-    }
+    },
 });
 
 book_stats["Counting Mice"] = new BookData({

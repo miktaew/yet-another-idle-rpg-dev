@@ -1,6 +1,7 @@
 "use strict";
 
 import { availability_havers } from "../data/component_references.js";
+import { Rewards } from "../rewards.js";
 import AvailabilityComponent from "./availability_component.js";
 
 const dialogue_owners = {};
@@ -51,7 +52,8 @@ class Textline {
                 getText,
                 is_branch_only = false,
                 is_unlocked,
-                rewards = {textlines: [],
+                rewards = {
+                        textlines: [],
                         locations: [],
                         dialogues: [],
                         traders: [],
@@ -78,14 +80,16 @@ class Textline {
         this.is_branch_only = is_branch_only; //if true, textline won't be displayed in overall view and instead will only be available as a branch dialogue
         this.rewards = rewards || {};
         this.branches_into = branches_into;
+
+        this.rewards = new Rewards(rewards);
         
-        this.rewards.textlines = rewards.textlines || [];
-        this.rewards.locations = rewards.locations || [];
-        this.rewards.dialogues = rewards.dialogues || [];
-        this.rewards.traders = rewards.traders || [];
-        this.rewards.stances = rewards.stances || [];
-        this.rewards.flags = rewards.flags || [];
-        this.rewards.items = rewards.items || [];
+        this.rewards.textlines ||= [];
+        this.rewards.locations ||= [];
+        this.rewards.dialogues ||= [];
+        this.rewards.traders ||= [];
+        this.rewards.stances ||= [];
+        this.rewards.flags ||= [];
+        this.rewards.items ||= [];
         
         this.required_flags = required_flags; //generally could be handled via display_conditions but offers a bit more freedom allowing a condition of /not/ having a flag too
 

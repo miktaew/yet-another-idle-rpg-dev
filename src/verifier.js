@@ -462,100 +462,77 @@ function Verify_Game_Objects() {
     return results[1] == 0;
 }
 
-//valid reward keys for additional check
-//todo: move to verifier
-const reward_keys = [
-    "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
-    "housing", "items", "locations", "locks", "messages", "money", "move_to", "npcs",
-    "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
-    "textlines", "traders", "xp",
-];
-const special_keys = ["required_clear_count"];
-const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];
-
-function warn_about_unread_reward_keys(rewards, source_type, source_name) {
-    const where = source_name ? ` (${source_type} "${source_name}")` : "";
-    const valid_keys = [...reward_keys, ...special_keys];
-    for(const key of Object.keys(rewards)) {
-        if(!valid_keys.includes(key)) {
-            console.warn(`Reward key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${valid_keys.join(", ")}.`);
-        }
-    }
-    for(const key of Object.keys(rewards.locks || {})) {
-        if(!lock_keys.includes(key)) {
-            console.warn(`Lock key "${key}"${where} is not read by process_rewards, meaning it will do nothing. Valid keys: ${lock_keys.join(", ")}.`);
-        }
-    }
-}
-
 function verify_rewards(rewards, source_type, source_key, subsource_key) {
     //todo
     //doesn't yet cover: actions, activities, global activities, locking, quest unlocks, traders, money, reputation, items, flags
     let is_correct = true;
+    let rewards_to_process;
 
-    Object.keys(rewards).forEach(reward_type => {
-        if(reward_type === "xp" && typeof rewards[reward_type] !== 'number') {
-            console.error(create_reward_error_message(source_type, source_key, subsource_key) + "wrong kind of reward of 'xp' type, should be Number but found '"+typeof rewards[reward_type]+"'");
-            is_correct = false;
-        } else if(reward_type === "skill_xp") {
-            Object.keys(rewards[reward_type]).forEach(skill_id =>{
-                if(!skills[skill_id]) {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + "wrong skill id for 'skill_xp', no such skill as '"+skill_id+"'");
-                    is_correct = false;
-                }
-                if(typeof rewards[reward_type][skill_id] !== 'number') {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + "wrong kind of reward of 'skill xp' type for '" +skill_id+"', should be Number but found '"+typeof rewards[reward_type][skill_id]+"'");
-                    is_correct = false;
-                }
-            });
-        } else if(reward_type === "locations") {
-            for(let i = 0; i < rewards[reward_type].length; i++) {
-                if(!locations[rewards[reward_type][i].location]) {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent location '${rewards[reward_type][i].location}' listed for unlocks`);
-                    is_correct = false;
-                }
+    if(!Array.isArray(rewards)) {
+        rewards_to_process = [rewards];
+    } else {
+        rewards_to_process = rewards;
+    }
+
+    for(let i = 0; i < rewards_to_process.length; i++) {
+        Object.keys(rewards_to_process[i]).forEach(reward_type => {
+            if(!rewards_to_process[i][reward_type]) {
+                return; //nullish value is not an issue
             }
-        } else if(reward_type === "textlines") {
-            for(let i = 0; i < rewards[reward_type].length; i++) {
-                if(!dialogues[rewards[reward_type][i].dialogue]) {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent dialogue '${rewards[reward_type][i].dialogue}' listed for textline unlocks`);
+
+            if(reward_type === "xp" && typeof rewards_to_process[i][reward_type] !== 'number') {
+                console.error(create_reward_error_message(source_type, source_key, subsource_key) + "wrong kind of reward of 'xp' type, should be Number but found '"+typeof rewards_to_process[i][reward_type]+"'");
+                is_correct = false;
+            } else if(reward_type === "skill_xp") {
+                Object.keys(rewards_to_process[i][reward_type]).forEach(skill_id =>{
+                    if(!skills[skill_id]) {
+                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + "wrong skill id for 'skill_xp', no such skill as '"+skill_id+"'");
+                        is_correct = false;
+                    }
+                    if(typeof rewards_to_process[i][reward_type][skill_id] !== 'number') {
+                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + "wrong kind of reward of 'skill xp' type for '" +skill_id+"', should be Number but found '"+typeof rewards_to_process[i][reward_type][skill_id]+"'");
+                        is_correct = false;
+                    }
+                });
+            } else if(reward_type === "locations") {
+                for(let j = 0; j < rewards_to_process[i][reward_type].length; j++) {
+                    if(!locations[rewards_to_process[i][reward_type][j].location]) {
+                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent location '${rewards_to_process[i][reward_type][j].location}' listed for unlocks`);
+                        is_correct = false;
+                    }
+                }
+            } else if(reward_type === "textlines") {
+                for(let j = 0; j < rewards_to_process[i][reward_type].length; j++) {
+                    if(!dialogues[rewards_to_process[i][reward_type][j].dialogue]) {
+                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent dialogue '${rewards_to_process[i][reward_type][j].dialogue}' listed for textline unlocks`);
+                        is_correct = false;
+                    }
+                    for(let k = 0; k < rewards_to_process[i][reward_type][j].lines.length; k++) {
+                        if(!dialogues[rewards_to_process[i][reward_type][j].dialogue].textlines[rewards_to_process[i][reward_type][j].lines[k]]) {
+                            console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent textline '${rewards_to_process[i][reward_type][j].lines[k]}' listed for unlocks in dialogue '${rewards_to_process[i][reward_type][j].dialogue}'`);
+                            is_correct = false;
+                        }
+                    }
+                }
+            } else if(reward_type === "move_to") {
+                if(!locations[rewards_to_process[i][reward_type].location]) {
+                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent location '${rewards_to_process[i][reward_type].location}' listed for moving to`);
                     is_correct = false;
                 }
-                for(let j = 0; j < rewards[reward_type][i].lines.length; j++) {
-                    if(!dialogues[rewards[reward_type][i].dialogue].textlines[rewards[reward_type][i].lines[j]]) {
-                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent textline '${rewards[reward_type][i].lines[j]}' listed for unlocks in dialogue '${rewards[reward_type][i].dialogue}'`);
+            } else if(reward_type === "quest_progress") {
+                for(let j = 0; j < rewards_to_process[i][reward_type].length; j++) {
+                    if(!quests[rewards_to_process[i][reward_type][j].quest_id]) {
+                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent quest '${rewards_to_process[i][reward_type][j].quest_id}' listed for progressing`);
+                        is_correct = false;
+                    }
+                    if(quests[rewards_to_process[i][reward_type][j].quest_id].quest_tasks.length < rewards_to_process[i][reward_type][j].task_index) {
+                        console.error(create_reward_error_message(source_type, source_key, subsource_key) + `too high task index for progressing quest '${rewards_to_process[i][reward_type][j].quest_id}'`);
                         is_correct = false;
                     }
                 }
             }
-        } else if(reward_type === "move_to") {
-            if(!locations[rewards[reward_type].location]) {
-                console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent location '${rewards[reward_type].location}' listed for moving to`);
-                is_correct = false;
-            }
-        } else if(reward_type === "quest_progress") {
-            for(let i = 0; i < rewards[reward_type].length; i++) {
-                if(!quests[rewards[reward_type][i].quest_id]) {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + `non-existent quest '${rewards[reward_type][i].quest_id}' listed for progressing`);
-                    is_correct = false;
-                }
-                if(quests[rewards[reward_type][i].quest_id].quest_tasks.length < rewards[reward_type][i].task_index) {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + `too high task index for progressing quest '${rewards[reward_type][i].quest_id}'`);
-                    is_correct = false;
-                }
-            }
-        } else if(![...reward_keys, ...special_keys].includes(reward_type)) {
-            console.error(create_reward_error_message(source_type, source_key, subsource_key) + "unsupported type of reward: '"+reward_type+"'");
-            is_correct = false;
-        } else if(reward_type === "locks") {
-            for(const key of Object.keys(rewards.locks || {})) {
-                if(!lock_keys.includes(key)) {
-                    console.error(create_reward_error_message(source_type, source_key, subsource_key) + "unsupported type of reward: '"+key+"'");
-                    is_correct = false;
-                }
-            }
-        }
-    });
+        });
+    }
 
     return is_correct;
 }

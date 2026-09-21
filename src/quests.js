@@ -3,7 +3,8 @@
 import AvailabilityComponent from "./components/availability_component.js";
 import { availabilities, availability_havers } from "./data/component_references.js";
 import { add_quest_to_display, log_message, update_displayed_quest, update_displayed_quest_task } from "./display.js";
-import { process_rewards } from "./main.js";
+import { Rewards } from "./rewards.js";
+import { process_rewards } from "./main.js"
 
 availabilities["quest"] = {};
 
@@ -26,7 +27,7 @@ class QuestTask {
     {
         this.task_description = task_description;
         this.task_condition = task_condition;
-        this.task_rewards = task_rewards;
+        this.task_rewards = new Rewards(task_rewards);
         this.is_hidden = is_hidden;
         this.#availability = new AvailabilityComponent({is_finished});
         this.skip_message = skip_message;
@@ -56,7 +57,7 @@ class Quest {
                 questline, //questline for grouping or something, skippable
                 quest_tasks = [], //an array of tasks that need to be completed one by one
                 quest_condition, //conditions for task to be completed; can be skipped if it's meant to be achieved via some rewards object; works the same as in QuestTask
-                quest_rewards, //may include a new quest to automatically start
+                quest_rewards = {}, //may include a new quest to automatically start
                 display_priority = Infinity, //the lower, the higher up it will show
                 is_hidden = false, //hidden quests are not visible and are meant to function as additional unlock mechanism; name and description are skipped
                 is_finished = false,
@@ -69,7 +70,7 @@ class Quest {
         this.questline = questline;
         this.quest_tasks = quest_tasks;
         this.quest_description = quest_description;
-        this.quest_rewards = quest_rewards || {};
+        this.quest_rewards = new Rewards(quest_rewards);
         this.display_priority = display_priority; 
         this.is_hidden = is_hidden;
         this.is_repeatable = is_repeatable;
@@ -364,7 +365,7 @@ const questManager = {
                 { location: "Eastern mill", action: "unlock weightlifting" },
                 { location: "Eastern mill", action: "unlock balancing"}
             ],
-        }
+        },
     });
 
     quests["Village expansion"] = new Quest({
@@ -384,6 +385,7 @@ const questManager = {
             new QuestTask({task_description: "[To be continued]"}), //tbc, duh
         ],
         quest_rewards: {
+            //todo, once quest is completable
         }
     });
 
@@ -400,7 +402,7 @@ const questManager = {
             reputation: {
                 Town: 40,
             }
-        }
+        },
     });
     quests["Light in the darkness"] = new Quest({
         quest_name: "Light in the darkness",
@@ -436,7 +438,7 @@ const questManager = {
             reputation: {
                 Town: 60,
             }
-        }
+        },
     });
 })();
 
@@ -459,7 +461,7 @@ const questManager = {
         ],
         quest_rewards: {
             textlines: [{dialogue: "village elder", lines: ["more training"], skip_message: true}],
-        }
+        },
     });
     quests["Swimming alternative unlock"] = new Quest({
         //climbing can still be unlocked via fights in the cave

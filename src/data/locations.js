@@ -3402,7 +3402,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             attempt_duration: 60,
             success_chances: [0.2, 1],
             rewards: {
-                action: [{ location: "Forest lake", action: "mining" }],
+                actions: [{ location: "Forest lake", action: "mining" }],
                 skill_xp: { Swimming: 800, Breathing: 800, Perception: 800, },
             },
         }),

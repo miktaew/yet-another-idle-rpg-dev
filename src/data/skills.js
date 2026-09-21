@@ -1841,8 +1841,8 @@ Multiplies AP with daggers by ${Math.round((character.getTotalSkillCoefficient({
             }
         },
         get_effect_description: ()=> {
-        let value = character.getTotalSkillCoefficient({skill_id:"Equilibrium",scaling_type:"multiplicative"});
-        return `Multiplies agility by ${Math.round(value*100)/100}`;
+            let value = character.getTotalSkillCoefficient({skill_id:"Equilibrium",scaling_type:"multiplicative"});
+            return `Multiplies agility by ${Math.round(value*100)/100}`;
         },
     });
 
