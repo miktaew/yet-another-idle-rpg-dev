@@ -113,6 +113,8 @@ class Rewards {
             //OR
             String // item key; 
             // just that, count will be defaulted to 1; can be mixed, e.g. items: ["Fresh bread", {item: "Stale bread", count:5 }]
+            
+            semi-important: rewards listed as strings instead of objects will never be grouped in display, applies also to what's defined in mixed rewards
         ]
         */
         this.active_effects = data.active_effects;
@@ -149,9 +151,6 @@ class MixedRewards {
         chance_to_be_in_mix will be assumed to be 100% if not provided;
 
         included Rewards objects can still have individual chance provided, but it doesn't really make much sense to do it?
-
-        safer to put unlocks in those than in regular rewards, as mixed rewards will not be reprocessed on loading,
-        but unlocks being random might still annoy player quite a bit
 
         do not include reputation, as it's something that is recalculated on loading and should only be in non-random sources
 

@@ -116,6 +116,7 @@ import { fill_availability_methods } from "./component_management.js";
 import Combat from "./models/combat.js";
 import { Rewards } from "./rewards.js";
 import { ReputationManager } from "./reputation.js";
+import { traders } from "./data/traders.js";
 
 fill_availability_methods();
 
@@ -1235,6 +1236,35 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             }
         });
     }
+
+    if(rewards.items && !only_unlocks) {
+        for(let i = 0; i < rewards.items.length; i++) {
+            const entry = rewards.items[i];
+            const is_bare_name = typeof entry === "string";
+            const item_id = is_bare_name ? entry : entry.item;
+            const template = item_templates[item_id];
+
+            if(!template) {
+                console.error(`No such item as "${item_id}" - reward skipped.`);
+                continue;
+            }
+
+            const count = is_bare_name ? 1 : (entry.count || 1);
+            const quality = is_bare_name ? undefined : entry.quality;
+
+            const item = quality ? getItem({...template, quality}) : template;
+
+            log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
+            character.addToInventory([{item_key: item.getInventoryKey(), count}]);
+        }
+    }
+
+    if(rewards.active_effects && !only_unlocks) {
+        Object.keys(rewards.active_effects).forEach(effect_key => {
+            log_message(`%HeroName% obtained became subjected to ${effect_templates[effect_key].name}`);
+            add_active_effect(effect_key, rewards.active_effects[effect_key]);
+        });
+    }
     
     if(rewards.locations) {
         for(let i = 0; i < rewards.locations.length; i++) {
@@ -1482,27 +1512,6 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         }
     }
 
-    if(rewards.items && !only_unlocks) {
-        for(let i = 0; i < rewards.items.length; i++) {
-            const entry = rewards.items[i];
-            const is_bare_name = typeof entry === "string";
-            const item_id = is_bare_name ? entry : entry.item;
-            const template = item_templates[item_id];
-
-            if(!template) {
-                console.error(`No such item as "${item_id}" - reward skipped.`);
-                continue;
-            }
-
-            const count = is_bare_name ? 1 : (entry.count || 1);
-            const quality = is_bare_name ? undefined : entry.quality;
-
-            const item = quality ? getItem({...template, quality}) : template;
-
-            log_message(`%HeroName% obtained "${item.getName()} x${count}"`);
-            character.addToInventory([{item_key: item.getInventoryKey(), count}]);
-        }
-    }
     if(rewards.reputation) {
         Object.keys(rewards.reputation).forEach(region => {
             ReputationManager.add_reputation({region, reputation: rewards.reputation[region]});
@@ -1525,12 +1534,6 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
     } else if(is_current_location_reload_needed) {
         change_location({location_id: current_location.id});
     }
-
-    if(rewards.active_effects && !only_unlocks) {
-        Object.keys(rewards.active_effects).forEach(effect_key => {
-            add_active_effect(effect_key, rewards.active_effects[effect_key]);
-        });
-    }
 }
 
 /**
@@ -1538,8 +1541,11 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
  * @param {Object} rewards_data
  * @param {Array} rewards_data.mixed_rewards [{chance_to_be_in_mix, rewards: [Rewards]}]
  */
-function process_mixed_rewards({mixed_rewards, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true, only_unlocks = false}) {
+function process_mixed_rewards({mixed_rewards, source_type, source_name, is_first_clear, inform_overall = true, inform_textline = true}) {
     const arr = mixed_rewards.rewards_array;
+
+    const total_rewards = {};
+
     for(let i = 0; i < arr.length; i++) {
         if(arr[i].chance_to_be_in_mix && (Math.random() > arr[i].chance_to_be_in_mix)) {
             continue;
@@ -1547,13 +1553,73 @@ function process_mixed_rewards({mixed_rewards, source_type, source_name, is_firs
 
         const selected_rewards = arr[i].possible_rewards[random_range(0, arr[i].possible_rewards.length-1)];
 
-        //todo: group rewards together, process only once
-        
+        if(selected_rewards.money) {
+            total_rewards.money = (total_rewards.money || 0) + selected_rewards.money;
+        }
+
+        if(selected_rewards.xp) {
+            total_rewards.xp = (total_rewards.xp || 0 ) + selected_rewards.xp;
+        }
+
+        if(selected_rewards.skill_xp) {
+            if(!total_rewards.skill_xp) {
+                total_rewards.skill_xp = {};
+            }
+            Object.keys(selected_rewards.skill_xp).forEach(skill_id => {
+                total_rewards.skill_xp = (total_rewards.skill_xp || 0)  + selected_rewards.skill_xp[skill_id];
+            });
+        }
+
+        if(selected_rewards.items) {
+            if(!total_rewards.items) {
+                total_rewards.items = [];
+            }
+            for(let i = 0; i < selected_rewards.items.length; i++) {
+                if(typeof selected_rewards.items[i] === "string") {
+                    total_rewards.items.push(selected_rewards.items[i]);
+                } else {
+                    let found = false;
+                    for(let j = 0; j < total_rewards.items.length; j++) {
+                        if(typeof total_rewards.items[j] === "string") {
+                            continue;
+                        } else {
+                            if(total_rewards.items[j].item === selected_rewards.items[i].item && total_rewards.items[j].quality === selected_rewards.items[i].quality) {
+                                found = true;
+                                total_rewards.items[j].count = (total_rewards.items[j].count || 1) + (selected_rewards.items[i].count || 1);
+                            }
+                        }
+                    }
+                    if(!found) {
+                        total_rewards.items.push(selected_rewards.items[i]);
+                    }
+                }
+            }
+        }
+
+        //effect durations are summed
+        if(selected_rewards.active_effects) {
+            if(!total_rewards.active_effects) {
+                total_rewards.active_effects = {};
+            }
+            Object.keys(selected_rewards.active_effects).forEach(effect_id => {
+                total_rewards.active_effects[effect_id] = total_rewards.active_effects[effect_id] ?? 0;
+                total_rewards.active_effects[effect_id] += selected_rewards.active_effects[effect_id];
+            });
+        }
+
+        //unlocks can just be processed here since there's nothing to sum up anyway
         process_rewards({
             rewards: selected_rewards,
-            source_type, source_name, is_first_clear, inform_overall, inform_textline, only_unlocks, is_from_loading: false,
+            source_type, source_name, is_first_clear, inform_overall, inform_textline, only_unlocks: true, is_from_loading: false,
         });
+        
     }
+    
+    //non-unlock rewards get processed together because it looks better in message log; unlocks will go through it again, but won't do anything new
+    process_rewards({
+        rewards: total_rewards,
+        source_type, source_name, is_first_clear, inform_overall, inform_textline, only_unlocks: false, is_from_loading: false,
+    });
 }
 
 
