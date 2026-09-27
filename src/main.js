@@ -593,19 +593,7 @@ function translate(text_id, params = []) {
 function get_dynamic_translation(key) {
     const bio = character.getBioComponent();
     if(key === "gendered playful") {
-        if(bio.gender != "male") {
-            if(bio.age != "middle-aged") {
-                return "Onee-chan";
-            } else {
-                return "Baa-chan";
-            }
-        } else {
-            if(bio.age != "middle-aged") {
-                return "Onii-chan";
-            } else {
-                return "Jii-chan";
-            }
-        }
+        return bio.gender === "male" ? (bio.age === "middle-aged" ? "Jii-san" : "Onii-san") : (bio.age === "middle-aged" ? "Baa-san" : "Onee-san");
     } else if(key === "HeroName") {
         return character.name;
     }
