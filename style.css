@@ -74,8 +74,14 @@
     --height_choice_tooltip_top: 0px;
     --height_choice_tooltip_left: 0px;
 
+    --gender_choice_tooltip_top: 0px;
+    --gender_choice_tooltip_left: 0px;
+
     --character_race_tooltip_top: 0px;
     --character_race_tooltip_left: 0px;
+
+    --character_gender_tooltip_top: 0px;
+    --character_gender_tooltip_left: 0px;
 
     --character_height_tooltip_top: 0px;
     --character_height_tooltip_left: 0px;
@@ -287,17 +293,19 @@ input[type=checkbox], input[type=radio] {
         position: absolute;
         top: 50px;
         left: 10px;
-        font-style: italic;  
+        width: 350px;
+        font-style: italic;
+        font-size: 16px;
     }
     #hero_creation_panel_content {
         position: absolute;
         top: 150px;
         left: 100px;
         width: 1000px;
-        height: 400px;
+        height: 500px;
         border: 5px dashed gray;
         background-image: var(--background_gradient);
-        font-size: 18px;
+        font-size: 17px;
     }
 
     #hero_creation_panel_name {
@@ -315,21 +323,45 @@ input[type=checkbox], input[type=radio] {
     #hero_creation_panel_age_selection {
         position: absolute;
         top: 150px;
-        left: 24px;
+        left: 12px;
     }
 
     #hero_creation_panel_height_selection {
         position: absolute;
+        top: 390px;
+        left: 12px;
+    }
+
+    #hero_creation_panel_gender_selection {
+        position: absolute;
         top: 270px;
-        left: 24px;
+        left: 12px;
+        width: 350px;
     }
 
     #age_selection, #height_selection {
         top: 20px;
-        left: 20px;
+        left: 32px;
         position: absolute;
         z-index: 1;
+        text-wrap: wrap;
     }
+    
+    #gender_selection {
+        top: 20px;
+        left: 32px;
+        position: absolute;
+        z-index: 1;
+        text-wrap: wrap;
+    }
+        .gender_selection_button:hover .gender_choice_tooltip {
+            display: block;
+        }
+            .gender_choice_tooltip {
+                top: var(--gender_choice_tooltip_top);
+                left: var(--gender_choice_tooltip_left);
+                max-width: 240px;
+            }
         .height_selection_button:hover .height_choice_tooltip {
             display: block;
         }
@@ -338,7 +370,7 @@ input[type=checkbox], input[type=radio] {
                 left: var(--height_choice_tooltip_left);
                 max-width: max-content;
             }
-    #age_selection > div, #height_selection > div {
+    #age_selection > div, #height_selection > div, #gender_selection > div {
         width: 160px;
         text-align: center;
         border: 1px solid gray;
@@ -351,7 +383,7 @@ input[type=checkbox], input[type=radio] {
         top: 20px;
         left: 360px;
         width: 600px;
-        height: 320px;
+        height: 400px;
         border: 1px solid gray;
     }
 
@@ -403,7 +435,7 @@ input[type=checkbox], input[type=radio] {
             .race_selection_list {
                 overflow-y: scroll;
                 overflow-x: hidden;
-                max-height: 320px;
+                max-height: 400px;
             }
 
     #hero_creation_panel_confirmation_wrapper {
@@ -864,7 +896,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, #export_button_tooltip, 
-.race_choice_tooltip, .height_choice_tooltip, .character_race_tooltip, .character_height_tooltip  {
+.race_choice_tooltip, .height_choice_tooltip, .gender_choice_tooltip, .character_race_tooltip, .character_gender_tooltip, .character_height_tooltip  {
 	display: none;
 	text-align: left;
 	color: white;
@@ -2052,14 +2084,25 @@ i {
     #character_race_div:hover .character_race_tooltip {
         display: block;
     }
-    .character_race_tooltip {
-        display: none;
-        top: var(--character_race_tooltip_top);
-        left: var(--character_race_tooltip_left);
-        max-width: 480px;
-        min-width: 150px;
-        width: max-content;
+        .character_race_tooltip {
+            display: none;
+            top: var(--character_race_tooltip_top);
+            left: var(--character_race_tooltip_left);
+            max-width: 480px;
+            min-width: 150px;
+            width: max-content;
+        }
+    #character_gender_div:hover .character_gender_tooltip {
+        display: block;
     }
+        .character_gender_tooltip {
+            display: none;
+            top: var(--character_gender_tooltip_top);
+            left: var(--character_gender_tooltip_left);
+            max-width: 480px;
+            min-width: 150px;
+            width: max-content;
+        }
 
     #character_height_div:hover .character_height_tooltip {
         display: block;

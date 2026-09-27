@@ -5,6 +5,7 @@ class BioComponent {
         this.age = data.age;
         this.height = data.height;
         this.race = data.race;
+        this.gender = data.gender;
     }
 
     getBio() {
@@ -12,6 +13,7 @@ class BioComponent {
             age: this.age, 
             height: this.height, 
             race: this.race,
+            gender: this.gender,
         }
     }
 }

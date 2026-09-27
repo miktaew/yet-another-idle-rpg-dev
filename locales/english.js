@@ -213,8 +213,8 @@ const dialogues = {
     "mofu#millers cleared answ": "[Cat] Nice job! \n[Mouse] Now where is that grain? \n [Cat] Oh right, it was supposed to be delivered by now. "
             +"\n[Mouse] Could you search the village for a cart loaded with bags of grain that's 'supposed' to be heading our way?",
     "millers delivered": "Your delivery has arrived.",
-    "millers delivered answ": "[Red] Thanks \n[Gray] Thank you! \n[Red] And here's your reward.",
-    "mofu#millers delivered answ": "[Cat] Thanks \n[Mouse] Thank you! \n[Cat] And here's your reward.",
+    "millers delivered answ": "[Red] Thanks \n[Gray] Thank you! \n[Red] And here's your reward, {%dynamic(gendered playful)%}.",
+    "mofu#millers delivered answ": "[Cat] Thanks \n[Mouse] Thank you! \n[Cat] And here's your reward, {%dynamic(gendered playful)%}.",
     "millers kiss": "So about that kiss you promised...",
     "millers kiss answ": "[Red] Yes? Which one of us do you want it from?",
     "mofu#millers kiss answ": "[Cat] Yes? Which one of us do you want it from?",
@@ -721,10 +721,17 @@ const racial = {
 
 const ui = {
     "ui create": "Create your hero",
-    "ui cosmetic": "Everything here is purely cosmetic",
+    "ui cosmetic": "Everything in this entire panel is purely cosmetic",
     "ui name selection": "Name (can be changed at any time):",
+    "ui gender selection": "Gender presentation (perception, not identity):",
     "ui age selection": "Age (relative to race's aging):",
     "ui height selection": "Height (relative to race average):",
+    "ui female": "Female",
+    "ui male": "Male",
+    "ui ambiguous": "ambiguous",
+    "ui female tooltip": "NPCs will assume you to be a woman",
+    "ui male tooltip": "NPCs will assume you to be a man",
+    "ui ambiguous tooltip": "Some NPCs will assume you to be a woman, some to be a man",
     "ui young": "Young adult",
     "ui adult": "Adult",
     "ui middle aged": "Middle aged",
@@ -775,6 +782,10 @@ const bio = {
     "average": "Average",
     "tall": "Tall",
     "race": "Race",
+    "gender": "Gender presentation",
+    "female": "Female",
+    "male": "Male",
+    "ambiguous": "Ambiguous"
 }
 
 const stats = {

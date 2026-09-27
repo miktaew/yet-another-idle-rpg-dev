@@ -78,6 +78,14 @@
                         <label for="hero_creation_name_field" data-translation="ui name selection"></label><br>
                         <input type = "text" id = "hero_creation_name_field" value="Hero"> 
                     </div>
+                    <div id = "hero_creation_panel_gender_selection">
+                        <div data-translation="ui gender selection"></div>
+                        <div id="gender_selection" class="activable_buttons">
+                            <div class="gender_selection_button" data-translation="ui female" data-gender="female"></div>
+                            <div class="gender_selection_button active_selection_button" data-translation="ui ambiguous" data-gender="ambiguous" class="active_selection_button"></div>
+                            <div class="gender_selection_button" data-translation="ui male" data-gender="male"></div>
+                        </div> 
+                    </div>
                     <div id = "hero_creation_panel_height_selection">
                         <div data-translation="ui height selection"></div>
                         <div id="height_selection" class="activable_buttons">
@@ -573,6 +581,9 @@
 
                         <div id = "character_bio_div">
                             <div id="character_age_div" class="character_bio_entry">
+
+                            </div>
+                            <div id="character_gender_div" class="character_bio_entry">
 
                             </div>
                             <div id = "character_height_div" class="character_bio_entry">
@@ -1359,7 +1370,9 @@
                 const character_bio_div = document.getElementById("character_bio_div");
                 const hero_race_selection = document.getElementById("hero_creation_panel_race_selection");
                 const hero_height_selection = document.getElementById("height_selection");
+                const hero_gender_selection = document.getElementById("gender_selection");
                 const hero_race_div = document.getElementById("character_race_div");
+                const hero_gender_div = document.getElementById("character_gender_div");
                 const hero_height_div = document.getElementById("character_height_div");
 
                 const stats_div = document.getElementById("character_stats_div");
@@ -1417,6 +1430,12 @@
                         target_classes: ["character_bio_entry"],
                     },
                     {
+                        element: hero_gender_div,
+                        top_variable: "--character_gender_tooltip_top",
+                        left_variable: "--character_gender_tooltip_left",
+                        target_classes: ["character_bio_entry"],
+                    },
+                    {
                         element: hero_height_div,
                         top_variable: "--character_height_tooltip_top",
                         left_variable: "--character_height_tooltip_left",
@@ -1459,6 +1478,11 @@
                         element: hero_height_selection,
                         top_variable: "--height_choice_tooltip_top",
                         left_variable: "--height_choice_tooltip_left",
+                    },
+                    {
+                        element: hero_gender_selection,
+                        top_variable: "--gender_choice_tooltip_top",
+                        left_variable: "--gender_choice_tooltip_left",
                     },
                     
                 ];

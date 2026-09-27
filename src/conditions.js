@@ -266,17 +266,17 @@ const process_conditions = (conditions, context) => {
 
     if(conditions[0].relative_height) {
         if(conditions[0].relative_height.at_least) {
-            if(context.height_values[conditions[0].relative_height.at_least] < context.height_values[character.bio.height]) {
+            if(context.height_values[conditions[0].relative_height.at_least] < context.height_values[character.getBioComponent().height]) {
                 met = 0;
             }
         }
         if(conditions[0].relative_height.exactly) {
-            if(conditions[0].relative_height.at_least !== character.bio.height) {
+            if(conditions[0].relative_height.at_least !== character.getBioComponent().height) {
                 met = 0;
             }
         }
         if(conditions[0].relative_height.at_most) {
-            if(context.height_values[conditions[0].relative_height.at_most] > context.height_values[character.bio.height]) {
+            if(context.height_values[conditions[0].relative_height.at_most] > context.height_values[character.getBioComponent().height]) {
                 met = 0;
             }
         }
@@ -301,13 +301,13 @@ const process_conditions = (conditions, context) => {
     }
 
     if(conditions[0].race) {
-        if(character.bio.race !== conditions[0].race) {
+        if(character.getBioComponent().race !== conditions[0].race) {
             met = 0;
         }
     }
 
     if(conditions[0].race_type) {
-        const race = context.playable_races[character.bio.race];
+        const race = context.playable_races[character.getBioComponent().race];
         let is_any_met = false;
         Object.keys(conditions[0].race_type.any || {}).forEach(race_type => {
             if(race.tags[race_type]) {

@@ -15,7 +15,8 @@ import { game_options,
     favourite_consumables,
     travel_times, 
     favourite_items,
-    get_context} from "./main.js";
+    get_context,
+    translate} from "./main.js";
 import { activities } from "./activities.js";
 import { format_time, current_game_time, seasons } from "./game_time.js";
 import { book_stats, item_templates, Weapon, Armor, Shield, rarity_multipliers, getItemRarity, getItemFromKey, item_log } from "./items.js";
@@ -31,7 +32,6 @@ import { quests } from "./quests.js";
 import { get_current_light_level, get_current_light_level_for_roofed_location, get_current_temperature_smoothed, is_raining } from "./weather.js";
 import { PointyStarParticle, RainParticle, SnowParticle } from "./particles.js";
 import { get_game_version } from "./game_version.js";
-import { translationManager } from "./translation.js";
 import { playable_races } from "./races.js";
 import { config } from "./config.js";
 import { height_stats } from "./models/person.js";
@@ -2084,7 +2084,7 @@ function update_displayed_normal_location(location) {
     if(location.housing?.isUnlocked()) { 
         const start_sleeping_div = document.createElement("div");
         
-        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translationManager.getText(location.housing.text_to_sleep));
+        insert_HTML(start_sleeping_div, '<i class="material-icons">bed</i>  ' + translate(location.housing.text_to_sleep));
         start_sleeping_div.id = "start_sleeping_div";
         start_sleeping_div.setAttribute('onclick', 'start_sleeping()');
 
@@ -4066,7 +4066,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translate(dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'))`);
@@ -4077,7 +4077,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
         Object.keys(dialogue.actions).forEach(key => { //add buttons for actions
             if(dialogue.actions[key].canBeDisplayed(get_context())) { 
                 const dialogue_action_div = document.createElement("div");
-                insert_HTML(dialogue_action_div, `${translationManager.getText(dialogue.actions[key].starting_text)}`);
+                insert_HTML(dialogue_action_div, `${translate(dialogue.actions[key].starting_text)}`);
                 dialogue_action_div.classList.add("dialogue_textline");
                 dialogue_action_div.setAttribute("data-location_action", key);
                 dialogue_action_div.setAttribute("onclick", `start_game_action(this.getAttribute('data-location_action'), event)`);
@@ -4131,7 +4131,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
                 }
                 
                 const textline_div = document.createElement("div");
-                insert_HTML(textline_div, `"${translationManager.getText(dialogue.textlines[key].name)}"`);
+                insert_HTML(textline_div, `"${translate(dialogue.textlines[key].name)}"`);
                 textline_div.classList.add("dialogue_textline");
                 textline_div.setAttribute("data-textline", key);
                 textline_div.setAttribute("onclick", `start_textline(this.getAttribute('data-textline'), ${origin})`); //additional param compared to when there's no textlines passed
@@ -4151,7 +4151,7 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
 }
 
 function update_displayed_textline_answer({text, is_description}) {
-    text = translationManager.getText(text);
+    text = translate(text);
     
     if(is_description) {
         document.getElementById("dialogue_answer_div").innerText =  "*"+text+"*";
@@ -5451,19 +5451,23 @@ function change_completed_quest_visibility() {
 function fill_character_bio() {
     const bio = character.getBioComponent();
     const age_div = document.getElementById("character_age_div");
-    age_div.innerText = translationManager.getText("age") + ": "+ translationManager.getText(bio.age);
+    age_div.innerText = translate("age") + ": "+ translate(bio.age);
+
+    const gender_div = document.getElementById("character_gender_div");
+    gender_div.innerText = translate("gender") + ": "+ translate(bio.gender);
 
     const height_div = document.getElementById("character_height_div");
-    height_div.innerText = translationManager.getText("height") + ": "+ translationManager.getText(bio.height);
+    height_div.innerText = translate("height") + ": "+ translate(bio.height);
 
     if(config.use_height_bonuses && Object.keys(height_stats[bio.height]).length > 0) {
         height_div.appendChild(create_height_tooltip(bio.height, "character_height_tooltip"));
     }
 
     const race_div = document.getElementById("character_race_div");
-    race_div.innerText = translationManager.getText("race") + ": "+ translationManager.getText(playable_races[bio.race].name);
+    race_div.innerText = translate("race") + ": "+ translate(playable_races[bio.race].name);
 
     race_div.appendChild(create_race_tooltip(playable_races[bio.race], "character_race_tooltip"));
+    gender_div.appendChild(create_gender_tooltip(bio.gender, "character_gender_tooltip"));
 }
 
 function create_race_tooltip(race, css_class) {
@@ -5472,9 +5476,9 @@ function create_race_tooltip(race, css_class) {
 
     let tooltip_content = "";
 
-    tooltip_content += translationManager.getText(race.description);
+    tooltip_content += translate(race.description);
     if(race.gameplay_description) {
-        tooltip_content += "\n\n" + translationManager.getText(race.gameplay_description);
+        tooltip_content += "\n\n" + translate(race.gameplay_description);
     }
 
     if(config.use_racial_bonuses) {
@@ -5485,7 +5489,7 @@ function create_race_tooltip(race, css_class) {
         Object.keys(race.stats).forEach(effect_key => {
             if(race.stats[effect_key].multiplier != null) {
                 tooltip_content +=
-            `\n${capitalize_first_letter(translationManager.getText(effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
+            `\n${capitalize_first_letter(translate(effect_key+" long"))}: x${race.stats[effect_key].multiplier}`;
             }
         });
     }
@@ -5498,7 +5502,7 @@ function create_race_tooltip(race, css_class) {
     Object.keys(race.xp_multipliers).forEach(effect_key => {
         if(race.xp_multipliers[effect_key] != null) {
             tooltip_content +=
-        `\n${capitalize_first_letter(translationManager.getText(effect_key))}: x${race.xp_multipliers[effect_key]}`;
+        `\n${capitalize_first_letter(translate(effect_key))}: x${race.xp_multipliers[effect_key]}`;
         }
     });
     */
@@ -5517,9 +5521,20 @@ function create_height_tooltip(height_key, css_class) {
     Object.keys(stats).forEach(effect_key => {
         if(stats[effect_key].multiplier != null) {
             tooltip_content +=
-        `${capitalize_first_letter(translationManager.getText(effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
+        `${capitalize_first_letter(translate(effect_key+" long"))}: x${stats[effect_key].multiplier}\n`;
         }
     });
+    
+    tooltip.innerText = tooltip_content;
+
+    return tooltip;
+}
+
+function create_gender_tooltip(gender_key, css_class) {
+    const tooltip = document.createElement("div");
+    tooltip.classList.add(css_class);
+
+    let tooltip_content = translate("ui " + gender_key + " tooltip");
     
     tooltip.innerText = tooltip_content;
 
@@ -5819,6 +5834,6 @@ export {
     set_HTML,
     set_light_based_background_color,
     unassign_dynamic_loot_message,
-    fill_character_bio, create_race_tooltip, create_height_tooltip,
+    fill_character_bio, create_race_tooltip, create_height_tooltip, create_gender_tooltip,
     insert_HTML, clear_HTML_content
 }

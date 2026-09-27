@@ -560,6 +560,57 @@ function option_do_dynamic_loot_message(option) {
     }
 }
 
+
+/**
+ * Main translation wrapper. Supports 3 text placeholders:
+ * 
+ * {%param(value)%}, which requires additional array of params and inserts them at specified order
+ * 
+ * {%translation(key)%}, which is self explanatory
+ * 
+ * and {%dynamic(key)%}, which dynamically selects string based on the key, requires manual setup for each (see get_dynamic_translation function)
+ * @param {*} text_id 
+ * @param {*} params
+ * @returns 
+ */
+function translate(text_id, params = []) {    
+    let text = translationManager.getText(text_id, language);
+    const regex = /\{%\s*(\w+)\s*(?:\(([^)]*)\))?\s*%\}/g; //scary stuff
+
+    text = text.replace(regex, (_, name, value) => {
+        if(name === "param") {
+            return params[value] ?? "";
+        } else if(name === "dynamic") {
+            return get_dynamic_translation(value);
+        } else if(name === "translation") {
+            return translationManager.getText(value, language);
+        }
+    });
+
+    return text;
+}
+
+function get_dynamic_translation(key) {
+    const bio = character.getBioComponent();
+    if(key === "gendered playful") {
+        if(bio.gender != "male") {
+            if(bio.age != "middle-aged") {
+                return "Onee-chan";
+            } else {
+                return "Baa-chan";
+            }
+        } else {
+            if(bio.age != "middle-aged") {
+                return "Onii-chan";
+            } else {
+                return "Jii-chan";
+            }
+        }
+    } else if(key === "HeroName") {
+        return character.name;
+    }
+}
+
 function update_pathing() {
     pathfinder = new Pathfinder();
     pathfinder.fill_connections(locations);
@@ -5384,7 +5435,7 @@ function update() {
                     if(game_options.auto_use_when_longest_runs_out) {
                         return b.duration-a.duration;
                     } else {
-                         return a.duration-b.duration;
+                        return a.duration-b.duration;
                     }
                 });
 
@@ -5921,7 +5972,7 @@ function enable_dev_console() {
 
                 const exit_button = document.createElement("div");
                 exit_button.id = "combat_window_exit";
-                exit_button.innerText = translationManager.getText("ui exit");
+                exit_button.innerText = translate("ui exit");
 
                 exit_button.addEventListener("click", () => {
                     change_location({location_id: current_location.id});
@@ -6155,4 +6206,5 @@ export {
     update_pathing,
     change_location, change_current_location,
     process_rewards,
+    translate
 };
