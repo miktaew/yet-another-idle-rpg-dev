@@ -2134,6 +2134,21 @@ There's another gate on the wall in front of you, but you have a strange feeling
             availability_seasons: ["Spring", "Summer", "Autumn"],
             skill_xp_per_tick: 2,
         }),
+        "harvesting": new LocationGatheringActivity({
+            activity_name: "harvesting",
+            starting_text: "Help at the orchards in exhange for some fruit",
+            is_unlocked: false,
+            gained_resources: {
+                resources: [
+                    {name: "Apple", ammount: [[1,1], [1,3]], chance: [0.1, 1]},
+                ], 
+                time_period: [120, 30],
+                skill_required: [0, 15]
+            },
+            availability_time: {start: 6, end: 20},
+            availability_seasons: ["Spring", "Summer", "Autumn"],
+            skill_xp_per_tick: 1,
+        }),
         "animal care": new LocationGatheringActivity({
             activity_name: "animal care",
             starting_text: "Take care of local sheep in exchange for some wool",
@@ -2304,11 +2319,11 @@ There's another gate on the wall in front of you, but you have a strange feeling
         "woodcutting": new LocationGatheringActivity({
             activity_name: "woodcutting",
             starting_text: "Harvest wood from the weeping willows",
-            skill_xp_per_tick: 10,
+            skill_xp_per_tick: 5,
             is_unlocked: true,
             gained_resources: {
-                resources: [{name: "Piece of willow wood", ammount: [[1,1], [2,5]], chance: [0.3, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}],
-                time_period: [20, 10],
+                resources: [{name: "Piece of willow wood", ammount: [[1,1], [1,2]], chance: [0.3, 1]}, {name: "Tree sap", ammount: [[1,1], [1,1]], chance: [0.01, 0.1]}],
+                time_period: [30, 10],
                 skill_required: [12, 25]
             }
         }),
@@ -3384,7 +3399,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             },
             success_conditions: [
                 {
-                  skills: {
+                    skills: {
                         "Swimming": 10,
                         "Breathing": 10,
                         Perception: 2,
@@ -3461,6 +3476,7 @@ You try to make out the details of what looks like a bird flying in the distance
             },
         }),
     };
+
 })();
 
 //setup ids

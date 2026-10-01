@@ -1766,7 +1766,7 @@ book_stats["Counting Mice"] = new BookData({
     item_templates["Piece of willow wood"] = new Material({
         description: "Not suitable for weapons, but may have other uses",
         value: 5,
-        //material_type: "raw wood", //too easy to obtain compared to wood logs
+        material_type: "raw wood",
     });
 
     item_templates["Stone brick"] = new Material({
@@ -4149,6 +4149,14 @@ function add_gear() {
         tags: {"drink": true},
     });
 
+    item_templates["Apple"] = new UsableItem({
+        name: "Apple",
+        description: "A staple crop of good and evil",
+        value: 20,
+        effects: [{effect: "Basic meal", duration: 10}],
+        tags: {"food": true},
+    });
+
     item_templates["Carrot"] = new UsableItem({
         name: "Carrot", description: "A delicious root that can be eaten raw",
         value: 20,
@@ -4415,7 +4423,8 @@ function add_gear() {
         description: "Fermented apple juice with a slightly sweet, tart, and refreshing aroma",
         value: 100,
         effects: [{effect: "Well hydrated", duration: 120}, {effect: "Tipsy", duration: 30}],
-        tags: {"food": true},
+        recovery_chances: {"Glass bottle": 0.6},
+        tags: {"drink": true},
     });
     item_templates["Black coffee"] = new UsableItem({
         name: "Black coffee",

@@ -198,6 +198,15 @@ class Gathering extends Training {
         is_unlocked: true,
     });
 
+    //distinct from fieldwork - both use farming as a skill, one rewards money, the other items
+    activities["harvesting"] = new Gathering({
+        name: "harvesting",
+        action_text: "Tending to plants",
+        description: "Take care of plants",
+        base_skills_names: ["Farming"],
+        is_unlocked: true,
+    });
+
     activities["fishing"] = new Gathering({
         name: "fishing",
         action_text: "Waiting for a bite",

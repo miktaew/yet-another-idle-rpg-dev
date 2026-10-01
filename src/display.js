@@ -253,6 +253,10 @@ function obscure_name(item_id) {
     return item_log.is_known(item_id) ? item_templates[item_id].getName() : "???";
 }
 
+function obscure_name_to_type(item_id) {
+    return item_log.is_known(item_id) ? item_templates[item_id].getName() : "Unknown " + (item_templates[item_id].material_type || item_templates[item_id].component_type || "material");
+}
+
 function create_floating_effect(text, pos) {
     const effect_elem = document.createElement("div");
     pos.x = pos.x + Math.random()*80-40;
@@ -3163,7 +3167,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
             const material = find_recipe_material({material: recipe.materials[i], ignore_stop: true});
 
             //base type
-            let main_name = recipe.materials[i].material_type ? "Any " + recipe.materials[i].material_type + ":" : obscure_name(recipe.materials[i].material_id);
+            let main_name = recipe.materials[i].material_type ? "Any " + recipe.materials[i].material_type + ":" : obscure_name_to_type(recipe.materials[i].material_id);
             let any_available = recipe.materials[i].count <= material.count;
 
             tooltip += `<span style="color:${any_available?"lime":"red"}"><b>${main_name} x${material.count}/${recipe.materials[i].count}</b></span><br>`;
@@ -3184,7 +3188,7 @@ function create_recipe_tooltip_content({category, subcategory, recipe_id, materi
         tooltip += `<br>Result: <br><div class="recipe_result">${create_item_tooltip_content({item: item_templates[recipe.getResult().result_id], options: {skip_quality: true, anchor_tooltip: true}})}</div>`;
     } else if(!components) {
         //some component
-        let name = obscure_name(material.material_id);
+        let name = obscure_name_to_type(material.material_id);
 
         //TODO maybe allow material type?
         tooltip += `Material required:<br>`;
