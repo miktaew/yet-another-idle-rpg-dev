@@ -437,6 +437,8 @@ const enemy_abilites = {
         loot_list: [
             {item_name: "Frog meat", chance: 0.08},
             {item_name: "Frog hide", chance: 0.05},
+            {item_name: "Toxin gland", chance: 0.1},
+            {item_name: "Bufonite", chance: 0.002},
             {item_name: "Weak monster bone", chance: 0.05},
         ],
         size: enemy_sizes.LARGE,

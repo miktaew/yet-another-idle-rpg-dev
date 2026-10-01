@@ -1038,7 +1038,10 @@ const dialogues = {};
                 text: "sup animals answ",
                 required_flags: {yes: ["is_gathering_unlocked"]},
                 rewards: {
-                    activities: [{location: "Town farms", activity: "animal care"}],
+                    activities: [
+                        { location: "Town farms", activity: "animal care" },
+                        { location: "Town farms", activity: "harvesting" }
+                    ],
                 },
                 locks_lines: ["animals"],
             }),

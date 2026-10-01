@@ -1242,7 +1242,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
     woodworking_recipes.items["Wicker"] = new ItemRecipe({
         name: "Wicker",
         recipe_type: "material",
-        materials: [{material_id: "Piece of willow wood", count: 6}], 
+        materials: [{material_id: "Piece of willow wood", count: 2}], 
         result: {result_id: "Wicker", count: 1},
         success_chance: [0.2,1],
         recipe_level: [7,17],
@@ -1251,8 +1251,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
     woodworking_recipes.items["Willow bark"] = new ItemRecipe({
         name: "Willow bark",
         recipe_type: "material",
-        materials: [{material_id: "Piece of willow wood", count: 2}], 
-        result: {result_id: "Willow bark", count: 1},
+        materials: [{material_id: "Piece of willow wood", count: 1}], 
+        result: {result_id: "Willow bark", count: 3},
         success_chance: [0.1,1],
         recipe_level: [10,25],
         recipe_skill: "Woodworking",
@@ -1636,6 +1636,17 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [5,12],
         recipe_skill: "Cooking",
     });
+    cooking_recipes.items["Apple pie"] = new ItemRecipe({
+        name: "Apple pie",
+        recipe_type: "usable",
+        materials: [{ material_id: "Flour", count: 5 },
+                    { material_id: "Apple", count: 5 }
+                ], 
+        result: {result_id: "Apple pie", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [10,18],
+        recipe_skill: "Cooking",
+    });
     cooking_recipes.items["Bread kwas"] = new ItemRecipe({
         name: "Bread kwas",
         recipe_type: "usable",
@@ -1645,6 +1656,17 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         result: {result_id: "Bread kwas", count: 1},
         success_chance: [0.3,1],
         recipe_level: [10,15],
+        recipe_skill: "Cooking",
+    });
+    cooking_recipes.items["Cider"] = new ItemRecipe({
+        name: "Cider",
+        recipe_type: "usable",
+        materials: [{material_id: "Apple", count: 4}, 
+                    {material_id: "Glass bottle", count: 1}
+                ], 
+        result: {result_id: "Cider", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [12,18],
         recipe_skill: "Cooking",
     });
     cooking_recipes.items["Fish skewer"] = new ItemRecipe({
