@@ -317,7 +317,8 @@ const dialogues = {
     "sup bonemeal": "More bonemeal, you say?",
     "sup bonemeal answ": "Absolutely! I know the lower price might not be the most appealing, but at least it's stable, unlike the market, and at times might be a lot better than what any trader would pay you for it.",
     "sup animals": "Do you sell anything?",
-    "sup animals answ": "Sorry, I'm not allowed to. However if you were to help us produce something, I could let you take part of it. It just so happens our sheep need shearing, if you're interested in some free wool.",
+    "sup animals answ": "Sorry, I'm not allowed to. However if you were to help us produce something, I could let you take part of it. "+
+                        "For example our sheep need shearing, if you're interested in some free wool. There's also a lot of work with harvesting apples at the orchards during the season.",
     "sup fight0": "Do you have any task that requires some good old violence?",
     "sup fight0 answ": "I kinda do, but you don't seem strong enough for that. I'm sorry.",
     "sup fight": "Do you have any task that requires some good old violence?",
