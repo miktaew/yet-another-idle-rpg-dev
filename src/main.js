@@ -568,7 +568,8 @@ function option_do_dynamic_loot_message(option) {
  * 
  * {%translation(key)%}, which is self explanatory
  * 
- * and {%dynamic(key)%}, which dynamically selects string based on the key, requires manual setup for each (see get_dynamic_translation function)
+ * and {%dynamic(key)%}, which dynamically selects string based on the key, requires manual setup for each (see get_dynamic_translation function);
+ * intended mostly for smaller text inserts based on age/race/gender/height
  * @param {*} text_id 
  * @param {*} params
  * @returns 

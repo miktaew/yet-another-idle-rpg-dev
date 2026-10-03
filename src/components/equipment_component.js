@@ -2,7 +2,6 @@
 
 const equipments = {};
 
-//extended by Trader and Person (with Person having up to two Inventories, one directly and one via Trader component)
 class EquipmentComponent {
     
     constructor() {

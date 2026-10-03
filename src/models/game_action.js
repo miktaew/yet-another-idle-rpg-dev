@@ -57,7 +57,7 @@ class GameAction{
 
         this.attempt_duration = data.attempt_duration || 0; //0 means instantaneous, otherwise there's a progress bar
         this.success_chances = data.success_chances || [1,1];
-        //chances to succeed; to guarantee that multiple attempts will be needed, just make a few consecutive actions with same text
+        //chances to succeed; first (0th?) value can be a 0; to guarantee that multiple attempts will be needed, just make a few consecutive actions with same text
         this.keep_progress = data.keep_progress || false;
         //will make progress persist through leaving the action and through save/load; 
         //should be used only for actions that guarantee success if conditions are met, to not encourage save scumming
