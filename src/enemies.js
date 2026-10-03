@@ -605,6 +605,36 @@ const enemy_abilites = {
             {item_name: "Giant snake skin", chance: 0.01},
         ]
     });
+    enemy_templates["Grizzly bear"] = new Enemy({
+        name: "Grizzly bear",
+        description: "An especially vicious version of the already mighty and dangerous predator with thicker skin, sharper teeth, and more dangerous claws",
+        xp_value: 120,
+        rank: 9,
+        tags: ["living", "beast"],
+        stats: {health: 12000, attack: 800, agility: 180, dexterity: 250, intuition: 250, magic: 0, attack_speed: 0.9, defense: 600},
+        loot_list: [
+            {item_name: "Animal fat", chance: 0.1},
+            {item_name: "Bear hide", chance: 0.1},
+            {item_name: "Bear claw", chance: 0.2},
+            {item_name: "Sharp bear claw", chance: 0.005},
+        ],
+        size: enemy_sizes.LARGE,
+    });
+
+    enemy_templates["Bandersnatch"] = new Enemy({
+        name: "Bandersnatch",
+        description: "An ambush predator that prefers to hide its body high in the trees and swipe at prey with its extremely elongated limbs and neck",
+        xp_value: 100,
+        rank: 8,
+        tags: ["living", "beast"],
+        stats: {health: 4000, attack: 720, agility: 260, dexterity: 320, intuition: 360, magic: 0, attack_speed: 1.5, defense: 80},
+        loot_list: [
+            {item_name: "Bandersnatch claw", chance: 0.12},
+            {item_name: "Wolf pelt", chance: 0.12},
+            {item_name: "Monster bone", chance: 0.02},
+            {item_name: "Frumious claw", chance: 0.0015}
+        ],
+        size: enemy_sizes.MEDIUM,
 })();
 
 
