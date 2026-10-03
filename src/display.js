@@ -4663,7 +4663,7 @@ function update_displayed_skill_xp_gain(skill) {
     const xp_gain = Math.round(100*skill.get_parent_xp_multiplier()*character.getSkillXPGain(skill.skill_id))/100 ?? 1;
     let html_content = `XP gain: x${xp_gain}<br>`;
     if(skill.can_level) {
-        html_content += "<span>XP cost scaling: x${skill.xp_scaling}</span>"
+        html_content += `<span>XP cost scaling: x${skill.xp_scaling}</span>`
     } else {
         html_content += "<br>This skill cannot receive xp and levels can only be gained from temporary sources."
     }

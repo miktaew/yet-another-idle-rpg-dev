@@ -820,7 +820,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Piece of goat leather", count: 3, result_id: "Goat leather hat"},
             {material_id: "Linen cloth", count: 3, result_id: "Linen bandanna"},
             {material_id: "Piece of frog leather", count: 3, result_id: "Batrachian hat"},
-            {material_id: "Piece of snakeskin leather", count: 3, result_id: "Snakeskin hat"}
+            {material_id: "Piece of snakeskin leather", count: 3, result_id: "Snakeskin hat"},
+            {material_id: "Silk cloth", count: 3, result_id: "Silk bandanna"}
         ],
         item_type: "Armor",
         component_type: "helmet interior",
@@ -836,7 +837,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Piece of goat leather", count: 5, result_id: "Goat leather vest"},
             {material_id: "Linen cloth", count: 5, result_id: "Linen vest"},
             {material_id: "Piece of frog leather", count: 5, result_id: "Batrachian vest"},
-            {material_id: "Piece of snakeskin leather", count: 5, result_id: "Snakeskin vest"}
+            {material_id: "Piece of snakeskin leather", count: 5, result_id: "Snakeskin vest"},
+            {material_id: "Silk cloth", count: 5, result_id: "Silk shirt"}
         ],
         item_type: "Armor",
         component_type: "chestplate interior",
@@ -852,7 +854,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Piece of goat leather", count: 3, result_id: "Goat leather pants"},
             {material_id: "Linen cloth", count: 3, result_id: "Linen leggings"},
             {material_id: "Piece of frog leather", count: 3, result_id: "Batrachian pants"},
-            {material_id: "Piece of snakeskin leather", count: 3, result_id: "Snakeskin leggings"}
+            {material_id: "Piece of snakeskin leather", count: 3, result_id: "Snakeskin leggings"},
+            {material_id: "Silk cloth", count: 3, result_id: "Silk pants"}
         ],
         item_type: "Armor",
         component_type: "leg armor interior",
@@ -867,7 +870,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Piece of goat leather", count: 2, result_id: "Goat leather gloves"},
             {material_id: "Linen cloth", count: 2, result_id: "Linen gloves"},
             {material_id: "Piece of frog leather", count: 2, result_id: "Batrachian gloves"},
-            {material_id: "Piece of snakeskin leather", count: 2, result_id: "Snakeskin gloves"}
+            {material_id: "Piece of snakeskin leather", count: 2, result_id: "Snakeskin gloves"},
+            {material_id: "Silk cloth", count: 2, result_id: "Silk gloves"}
         ],
         item_type: "Armor",
         component_type: "glove interior",
@@ -891,7 +895,8 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
     crafting_recipes.equipment["Amulet"] = new ComponentRecipe({
         name: "Amulet",
         materials: [
-            {material_id: "Wool cloth", count: 5, result_id: "Wool scarf"}
+            {material_id: "Wool cloth", count: 5, result_id: "Wool scarf"},
+            {material_id: "Silk cloth", count: 5, result_id: "Silk scarf"}
         ],
         item_type: "Amulet",
         recipe_skill: "Crafting",
@@ -1066,6 +1071,16 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         success_chance: [0.1,1],
         recipe_skill: "Crafting",
         recipe_level: [22,30],
+    });
+    crafting_recipes.items["Silk cloth"] = new ItemRecipe({
+        name: "Silk cloth",
+        is_unlocked: false,
+        recipe_type: "material",
+        materials: [{material_id: "Coccoon", count: 5}], 
+        result: {result_id: "Silk cloth", count: 1},
+        success_chance: [0.1,1],
+        recipe_skill: "Crafting",
+        recipe_level: [26,35],
     });
     crafting_recipes.items["Glass phial"] = new ItemRecipe({
         name: "Glass phial",

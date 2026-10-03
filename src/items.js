@@ -1851,6 +1851,16 @@ book_stats["Counting Mice"] = new BookData({
         value: 8,
     });
 
+    item_templates["Coccoon"] = new Material({
+        name: "Coccoon",
+        description: "A bundle of coccoons, each of them woven from fibers that could be made into a fine material",
+        value: 25,
+        material_type: "raw fabric",
+    });
+})();
+
+//fish
+(function(){
     item_templates["Ratfish"] = new Material({
         name: "Ratfish",
         description: "A small sweetwater fish, named after its unremarkable coloration and propensity to travel in large groups",
@@ -3649,6 +3659,23 @@ function add_gear() {
                 }
             }
         });
+        item_templates["Silk scarf"] = new Amulet({
+            value: 1000,
+            item_tier: 5,
+            use_quality: true,
+            description: "A long, heroically billowing scarf",
+            stats: {
+                crit_rate: {
+                    flat: 0.01,
+                },
+                attack_points: {
+                    multiplier: 1.1,
+                },
+                cold_tolerance: {
+                    flat: 2,
+                }
+            }
+        });
         item_templates["Warrior's necklace"] = new Amulet({
             value: 1000,
             tags: {unique: true, unsellable: true},
@@ -4008,6 +4035,11 @@ function add_gear() {
 	item_templates["Linen cloth"] = new Material({
         description: "Bolt of durable and thin cloth that won't restrict mobility",
         value: 14,
+        material_type: "fabric",
+    });
+    item_templates["Silk cloth"] = new Material({
+        description: "Durable, yet light and soft, can be made into comfortable clothing",
+        value: 50,
         material_type: "fabric",
     });
 
