@@ -635,6 +635,7 @@ const enemy_abilites = {
             {item_name: "Frumious claw", chance: 0.0015}
         ],
         size: enemy_sizes.MEDIUM,
+    });
 })();
 
 
@@ -714,6 +715,7 @@ const enemy_abilites = {
         stats: {health: 22000, attack: 400, agility: 450, dexterity: 700, intuition: 100, magic: 0, attack_speed: 1.6, attack_count: 2, defense: 2000},
         loot_list: [{item_name: "Giant crab claw", chance: 1}],
     });
+
     enemy_templates["Warthog"] = new Enemy({
         name: "Warthog",
         description: "A large, aggressive porcine creature with a tough hide and large tusks",
@@ -733,13 +735,13 @@ const enemy_abilites = {
 
 })();
 
-    Object.keys(enemy_templates).forEach(enemy_key => {
-        enemy_templates[enemy_key].id = enemy_key;
+Object.keys(enemy_templates).forEach(enemy_key => {
+    enemy_templates[enemy_key].id = enemy_key;
 
-        enemy_templates[enemy_key].loot_list.forEach(item => {
-            droplist[item.item_name] = true;
-        });
+    enemy_templates[enemy_key].loot_list.forEach(item => {
+        droplist[item.item_name] = true;
     });
+});
 
 
 export {Enemy, enemy_templates, enemy_killcount, tags_for_droprate_modifier_skills, enemy_tag_to_skill_mapping, droplist};
