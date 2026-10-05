@@ -1260,12 +1260,12 @@ There's another gate on the wall in front of you, but you have a strange feeling
         is_temperature_static: true,
         static_temperature: 20,
     });
-    locations["Adventurer's guild"] = new SafeLocation({
+    locations["Adventurers' guild"] = new SafeLocation({
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: `A local home of a big and influential guild that brings together all the kinds of adventurers and mercenaries, making it easier to find work and to be recognized. `
                     +`Building is well lit, with a crowd inside. People have all the kinds of equipment, some are alone and some are in groups. Some are waiting to report their most `
                     +`recent achievements, while others are drinking and celebrating.`,
-        name: "Adventurer's guild",
+        name: "Adventurers' guild",
         is_unlocked: true,
         getBackgroundNoises: function() {
             let noises = [
@@ -1318,7 +1318,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
     locations["Town square"].connected_locations.push(
         {location: locations["Cat cafe"], travel_time: 4},
         {location: locations["Nekomimi cafe"], travel_time: 4},
-        {location: locations["Adventurer's guild"], travel_time: 4},
+        {location: locations["Adventurers' guild"], travel_time: 4},
         {location: locations["Mages guild"], travel_time: 4},
         {location: locations["Antique store"], travel_time: 4}
 
