@@ -1679,6 +1679,21 @@ book_stats["Counting Mice"] = new BookData({
         value: 250,
     });
 
+    item_templates["Gryphon feather"] = new Material({
+        description: "A steely feather of a gryphon, very light and strong",
+        value: 150,
+    });
+    item_templates["Gryphon pinion"] = new Material({
+        description: "A particularly majestic feather from a gryphon",
+        value: 400,
+    });
+    
+    item_templates["Monster beak"] = new Material({
+        name: "Monster bone",
+        description: "The huge beak of a bird-like monster. Sharp and strong enough to be fashined into a weapon",
+        value: 250
+    });
+
     item_templates["Monster bone"] = new Material({
         name: "Monster bone",
         description: "Mutated and dark bone of a monster. Strong enough to support weight regular bones would crumble under",
@@ -3634,6 +3649,14 @@ function add_gear() {
             }
         });
 
+        item_templates["Gryphon trophy"] = new Artifact({
+            name: "Gryphon trophy",
+            value: 700,
+            stats: {
+                //TODO
+            }
+        });
+
         item_templates["Simple dream catcher"] = new Artifact({
             name: "Simple dream catcher",
             description: "Sinew netting stretched over a willow hoop. You don't know how it works or what it does, but it makes you feel safer. It's design came to you in a dream",
@@ -4109,6 +4132,11 @@ function add_gear() {
     item_templates["Processed weak monster bone"] = new Material({
         description: "Polished and cleaned bones of a weak monster, just waiting to be turned into a piece of equipment",
         value: 40,
+        material_type: "bone",
+    });
+    item_templates["Processed monster bone"] = new Material({
+        description: "Polished and cleaned bones of a dangerous monster, just waiting to be turned into a piece of equipment",
+        value: 90,
         material_type: "bone",
     });
 

@@ -221,6 +221,9 @@ const enemy_abilites = {
         add_active_effect(
             statuses[Math.floor(Math.random() * statuses.length)],
             duration);
+    },
+    stone_gaze(duration) {
+
     }
 };
 
@@ -620,6 +623,22 @@ const enemy_abilites = {
         ],
         size: enemy_sizes.LARGE,
     });
+    enemy_templates["Owlbear"] = new Enemy({
+        name: "Owlbear",
+        description: "A squat, burly species of gryphon, with the front part of an owl and the hindquarters of a bear. While its large heft makes it worse at flying than its kin, it is still more agile than it looks",
+        xp_value: 180,
+        rank: 10,
+        tags: ["living", "beast"],
+        stats: {health: 18000, attack: 900, agility: 240, dexterity: 300, intuition: 300, magic: 0, attack_speed: 1, defense: 700},
+        loot_list: [
+            {item_name: "Animal fat", chance: 0.2},
+            {item_name: "Bear hide", chance: 0.2},
+            {item_name: "Gryphon feather", chance: 0.1},
+            {item_name: "Gryphon pinion", chance: 0.002},
+            {item_name: "Monster beak", chance: 0.005},
+        ],
+        size: enemy_sizes.LARGE,
+    });
 
     enemy_templates["Bandersnatch"] = new Enemy({
         name: "Bandersnatch",
@@ -636,6 +655,18 @@ const enemy_abilites = {
         ],
         size: enemy_sizes.MEDIUM,
     });
+
+    enemy_templates["Grizzly squirrel"] = new Enemy({
+        name: "Grizzly squirrel",
+        description: "Small and furious",
+        xp_value: 40,
+        rank: 6,
+        size: enemy_sizes.SMALL,
+        tags: ["living", "beast"],
+        stats: {health: 800, attack: 320, agility: 300, dexterity: 240, intuition: 240, magic: 0, attack_speed: 3, defense: 80},
+        loot_list: []
+    });
+
 })();
 
 
