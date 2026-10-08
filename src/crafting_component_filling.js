@@ -275,6 +275,14 @@ const material_properties = {
         ],
         name: "turtleshell"
     },
+    "frumious": {
+        tier: 4,
+        weight: 80,
+        strength: 80,
+        types: [
+            component_types.SHORT_BLADE,
+        ]
+    },
     "white iron": {
         tier: 4,
         weight: 130,

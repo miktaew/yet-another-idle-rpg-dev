@@ -438,6 +438,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Low quality iron ingot", count: 2, result_id: "Cheap iron short blade"},
             {material_id: "Iron ingot", count: 2, result_id: "Iron short blade"},
             {material_id: "Steel ingot", count: 2, result_id: "Steel short blade"},
+            {material_id: "Frumious claw", count: 1, result_id: "Frumious short blade"},
         ],
         item_type: "Component",
         recipe_skill: "Forging"
@@ -511,6 +512,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Short hilt",
         materials: [
             {material_id: "Processed weak monster bone", count: 1, result_id: "Weak bone short handle"},
+            {material_id: "Processed monster bone", count: 1, result_id: "Bone short handle"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -519,6 +521,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Medium handle",
         materials: [
             {material_id: "Processed weak monster bone", count: 2, result_id: "Weak bone medium handle"},
+            {material_id: "Processed monster bone", count: 2, result_id: "Bone medium handle"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -527,6 +530,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         name: "Long shaft",
         materials: [
             {material_id: "Processed weak monster bone", count: 4, result_id: "Weak bone long handle"},
+            {material_id: "Processed monster bone", count: 4, result_id: "Bone long handle"},
         ],
         item_type: "Component",
         recipe_skill: "Crafting",
@@ -1282,6 +1286,16 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [10,20],
         recipe_skill: "Butchering",
     });
+    butchering_recipes.items["Processed monster bone"] = new ItemRecipe({
+        name: "Processed monster bone",
+        recipe_type: "material",
+        materials: [{material_id: "Monster bone", count: 5}], 
+        result: {result_id: "Processed monster bone", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [30,40],
+        recipe_skill: "Butchering",
+    });
+
     smelting_recipes.items["Charcoal"] = new ItemRecipe({
         name: "Charcoal",
         recipe_type: "material",
@@ -1372,6 +1386,15 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         result: {result_id: "Frumious claw", count: 1},
         success_chance: [0.3,1],
         recipe_level: [20,27],
+        recipe_skill: "Butchering",
+    });
+    butchering_recipes.items["Gryphon pinion"] = new ItemRecipe({
+        name: "Gryphon pinion",
+        recipe_type: "material",
+        materials: [{material_id: "Gryphon feather", count: 50}], 
+        result: {result_id: "Gryphon pinion", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [22,30],
         recipe_skill: "Butchering",
     });
     butchering_recipes.items["Sinew"] = new ItemRecipe({
@@ -2015,6 +2038,19 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         result: {result_id: "Bandersnatch trophy", count: 1},
         success_chance: [0.3,1],
         recipe_level: [25,35],
+        recipe_skill: "Crafting",
+    });
+    crafting_recipes.items["Gryphon trophy"] = new ItemRecipe({
+        name: "Gryphon trophy",
+        recipe_type: "equipment",
+        materials: [
+            { material_id: "Gryphon feather", count: 10},
+            { material_id: "Gryphon pinion", count: 4 },
+            { material_id: "Monster beak", count: 1 }
+        ],
+        result: {result_id: "Gryphon trophy", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [27,35],
         recipe_skill: "Crafting",
     });
 

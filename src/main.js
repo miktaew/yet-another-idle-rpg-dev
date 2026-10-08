@@ -1952,7 +1952,7 @@ function kill_target({target_index, fighter_index, is_target_an_attacker, do_que
     target.is_alive = false;
     update_displayed_health_of_fighter({fighter_index: target_index, is_attacker: is_target_an_attacker});
 
-    if(target.add_to_bestiary && is_target_an_attacker && !is_special_combat) {
+    if(target.add_to_bestiary && !is_target_an_attacker && !is_special_combat) {
         if(enemy_killcount[target.name]) {
             enemy_killcount[target.name] += 1;
             update_bestiary_entry_killcount(target.name);

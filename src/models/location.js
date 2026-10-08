@@ -337,8 +337,8 @@ class CombatZone extends BaseLocation {
         const enemies = [];
         let enemy_group = [];
 
-        if(this.enemy_groups_list.length > 0 && this.enemy_groups_killed%this.predefined_lineup_on_nth_group == 0 && (this.enemy_groups_killed > 0 || this.predefined_lineup_on_nth_group == 0)) { // PREDEFINED GROUPS EXIST
-
+        if(this.enemy_groups_list.length > 0 && this.enemy_groups_killed%this.predefined_lineup_on_nth_group == 0 && (this.enemy_groups_killed > 0 || this.predefined_lineup_on_nth_group == 1)) { // PREDEFINED GROUPS EXIST
+            
             if(this.is_enemy_groups_list_random) { 
                 //choose randomly
                 const index = Math.floor(Math.random() * this.enemy_groups_list.length);
