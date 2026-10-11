@@ -814,9 +814,65 @@ const dialogues = {};
             "enter": new Textline({
                 name: "g guard hello",
                 text: "g guard hello answ",
+            }),
+            "enter 2": new Textline({
+                name: "g guard entry",
+                text: "g guard entry answ",
+                is_unlocked: false,
+                locks_lines: ["enter", "enter 2"],
+                rewards: {
+                    textlines: [{dialogue: "gate guard", lines: ["entry rep", "entry remind"]}],
+                    actions: [{dialogue: "gate guard", action: "pay fee"}],
+                }
             }), 
+            "entry remind": new Textline({
+                name: "g guard entry remind",
+                text: "g guard entry remind answ",
+                is_unlocked: false,
+            }), 
+            "entry rep": new Textline({
+                name: "g guard entry rep",
+                text: "g guard entry rep answ",
+                is_unlocked: false,
+                locks_lines: ["entry rep", "entry remind"],
+                rewards: {
+                    locations: [{location: "Town square"}],
+                    locks: {
+                        actions: [{dialogue: "gate guard", action: "pay fee"}]
+                    }
+                },
+                display_conditions: {
+                    reputation: {Town: 15} //destroy the gang, do both quests at the farm
+                },
+            }),
         },
         description: "g guard description",
+        actions: {
+            "pay fee": new DialogueAction({
+                action_id: "pay fee",
+                is_unlocked: false,
+                starting_text: "g guard entry money",
+                description: "",
+                action_text: "",
+                success_text: "g guard entry money answ",
+                display_conditions: {
+                    money: 15000,
+                },
+                success_conditions: [{
+                    money: 15000,
+                }],
+                attempt_duration: 0,
+                success_chances: [1],
+                rewards: {
+                    locations: [{location: "Town square"}],
+                    locks: {
+                        textlines: {
+                            "gate guard": ["entry rep", "entry remind"],
+                        }
+                    }
+                },
+            }),
+        }
     });
     dialogues["suspicious man"] = new DialogueComponent({
         name: "suspicious man",
@@ -849,10 +905,18 @@ const dialogues = {};
                 text: "sus defeated answ",
                 locks_lines: ["defeated"],
                 rewards: {
-                    textlines: [{dialogue: "suspicious man", lines: ["behave", "situation"]}],
+                    textlines: [
+                        {dialogue: "suspicious man", lines: ["behave", "situation"]},
+                        {dialogue: "gate guard", lines: ["enter 2"]},
+                    ],
+
                     quest_progress: [
                         {quest_id: "Lost memory", task_index: 3},
-                    ]
+                    ],
+
+                    locks: {
+                        textlines: {"gate guard": ["enter"]},
+                    }
                 },
             }), 
             "behave": new Textline({ 
@@ -861,7 +925,9 @@ const dialogues = {};
                 text: "sus behave answ",
                 locks_lines: ["defeated"],
                 rewards: {
-                    textlines: [{dialogue: "suspicious man", lines: ["situation", "boss"]}],
+                    textlines: [
+                        {dialogue: "suspicious man", lines: ["situation", "boss"]},
+                    ],
                 },
             }), 
             "boss": new Textline({ 
@@ -869,6 +935,14 @@ const dialogues = {};
                 is_unlocked: false,
                 text: "sus boss answ",
                 locks_lines: ["boss"],
+                rewards: {
+                    textlines: [
+                        {dialogue: "gate guard", lines: ["enter 2"]},
+                    ],
+                    locks: {
+                        textlines: {"gate guard": ["enter"]},
+                    }
+                }
             }), 
             "situation": new Textline({
                 name: "sus situation",
@@ -906,15 +980,29 @@ const dialogues = {};
                 name: "sus behave 2",
                 is_unlocked: false,
                 text: "sus behave 2 answ",
+                rewards: {
+                    textlines: [
+                        {dialogue: "gate guard", lines: ["enter 2"]}, //for saves from before
+                    ],
+                    locks: {
+                        textlines: {"gate guard": ["enter"]}, //for saves from before
+                    }
+                }
             }),
             "behave 3": new Textline({ 
                 name: "sus behave 3",
                 is_unlocked: false,
                 text: "sus behave 3 answ",
                 rewards: {
-                    textlines: [{dialogue: "suspicious man", lines: ["tricks"]}],
+                    textlines: [
+                        {dialogue: "suspicious man", lines: ["tricks"]},
+                        {dialogue: "gate guard", lines: ["enter 2"]}, //for saves from before
+                    ],
                     dialogues: ["old woman of the slums"],
                     actions: [{dialogue: "suspicious man", action: "headpat"}],
+                    locks: {
+                        textlines: {"gate guard": ["enter"]}, //for saves from before
+                    }
                 }
             }),
             "tricks": new Textline({ 

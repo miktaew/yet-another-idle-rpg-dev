@@ -130,6 +130,20 @@ class Rewards {
                 "dialogue_key": [String] //an array with textline keys
             },
             npcs: [String] //an array with npc keys
+            actions: [
+                {
+
+                    action: String //action key
+                    
+                    location_key: String
+
+                    or
+
+                    dialogue_key: String
+
+                }
+
+            ]
         }
         */
 

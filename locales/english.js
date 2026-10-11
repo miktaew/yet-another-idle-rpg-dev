@@ -258,7 +258,20 @@ const dialogues = {
     "g guard description": "You see a massive man in a steel chainmail, with a spear in his hand and a sword on his belt.",
     "mofu#g guard description": "You see a massive, hairy man with round ears and a tiny tail. He's clad in a steel chainmail, with a spear in his hand and an axe on his belt.",
     "g guard hello": "Hello, can I get in?",
-    "g guard hello answ": "The town is currently closed to everyone who isn't a citizen or a merchant guild's member. No exceptions.",
+    "g guard hello answ": "The town is currently closed to everyone who isn't a citizen or a merchant guild's member.",
+
+    "g guard entry": "I was told by a reliable source that I can actually be allowed inside if I meet some conditions. Is that correct?",
+    "g guard entry answ": "I guess. Fee of 10 silver coins, or just, I don't know, help around enough for my superiors to notice and decide you're not a troublemaker. "
+                         +"How you do that without entering, that's not my business.",
+
+    "g guard entry remind": "Could you remind me what to do to get in?",
+    "g guard entry remind answ": "Fee of 15 silver coins, or help around and hope someone notices.",
+
+    "g guard entry rep": "I think I have done enough, haven't I?",
+    "g guard entry rep answ": "Yeah, well, I guess. Just go inside and don't stand here the all day.",
+
+    "g guard entry money": '"This should cover the entry fee."',
+    "g guard entry money answ": "Guard quickly counts the money, then tells you to move.",
     
     //SUSPICIOUS GUY / PUPPY
     "sus description 1": "You see a young man in shabby clothes and with messy hair, who keeps looking around. He appears to have some nervous ticks, or maybe he's just really stressed. He notices you and stares.",
@@ -272,7 +285,7 @@ const dialogues = {
     "sus hello answ": "Y-you! You should be dead! *the man pulls out a dagger*",
     "sus defeated": "What was that about?",
     "sus defeated answ": "I... We... It was my group that robbed you. I thought you came back from your grave for revenge... Please, I don't know anything. "
-        +"If you want answers, ask my ex-boss. He's somewhere in the town.",
+        +"If you want answers, ask my ex-boss. He's somewhere in the town. Just ask the guard about entry, I know there are some ways to be allowed in.",
     "sus behave": "Are you behaving yourself?",
     "sus behave answ": "Y-yes, boss! Please don't beat me again!",
     "sus boss": "Stop calling me 'boss'",

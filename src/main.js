@@ -233,7 +233,7 @@ let time_adjustment = 0;
 let start_date;
 let end_date;
 
-let current_dialogue;
+let current_dialogue; //this actually holds key of current npc, todo
 const active_effects = {};
 //e.g. health regen from food
 
@@ -871,8 +871,10 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
     end_activity_animation(true);
 
     let action;
+    let dialogue_id;
     if(dialogue_key) {
         action = NPCRegistry.get(dialogue_key).getDialogueComponent().actions[action_key];
+        dialogue_id = NPCRegistry.get(dialogue_key).getDialogueComponent().id;
     } else {
         action = current_location.actions[action_key];
     }
@@ -901,7 +903,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
 
             result_message = action.getSuccessText({character});
             if(!action.getAvailabilityComponent().isRepeatable()) {
-                lock_action({dialogue_key, location_key: current_location.id, action_key});
+                lock_action({dialogue_key: dialogue_id, location_key: current_location.id, action_key});
             } else {
                 action.completion_count++;
             }
@@ -1051,7 +1053,7 @@ function unlock_action(action_data) {
 
 function lock_action({location_key, dialogue_key, action_key}) {
     if(dialogue_key) {
-        NPCRegistry.get(dialogue_key).getDialogueComponent().actions[action_key].setFinished();
+        dialogues[dialogue_key].actions[action_key].setFinished();
     } else  {
         locations[location_key].actions[action_key].setFinished();
     }
@@ -6185,17 +6187,8 @@ export {
     game_stats, 
     kill_target, kill_player,
     process_current_loot,
-    add_money_to_character,
-    unlock_location,
     flag_unlock_texts,
     remove_location_from_favourites,
-    unlock_global_activity,
-    unlock_activity,
-    unlock_action,
-    unlock_combat_stance,
-    lock_location,
-    lock_action,
-    update_pathing,
     change_location, change_current_location,
     process_rewards,
     translate
