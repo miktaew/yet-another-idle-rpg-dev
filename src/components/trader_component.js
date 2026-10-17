@@ -19,6 +19,7 @@ class TraderComponent {
     constructor({
                 name,
                 trade_text,
+                trade_from_dialogue_text,
                 unlock_message = null,
                 refresh_time = 4,
                 refresh_shift = 0,
@@ -30,6 +31,7 @@ class TraderComponent {
         
         this.name = name;
         this.trade_text = trade_text;
+        this.trade_from_dialogue_text = trade_from_dialogue_text || "Trade";
         this.last_refresh = -1;  
         //just the day_count from game_time at which trader was supposedly last refreshed
 

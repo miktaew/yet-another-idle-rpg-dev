@@ -10,7 +10,7 @@ import { quests } from "./quests.js";
 import { market_region_mapping } from "./market_saturation.js";
 import { translations } from "./translation.js";
 import { recipes } from "./crafting_recipes.js";
-import { language } from "./main.js";
+import { get_context, language } from "./main.js";
 import { translations_for_verifier } from "../locales/english.js";
 import NPCRegistry from "./data/npcs.js";
 
@@ -334,7 +334,7 @@ function Verify_Game_Objects() {
                 has_issue = true;
                 console.error(`Textline "${textline_key}" in "${key}" has no translation provided for starting text for your chosen language "${language}"`);
             }
-            if(!translations[language][textline.getText()]) {
+            if(!translations[language][textline.getText(get_context())]) {
                 //might miss something if there are multiple options provided
                 has_issue = true;
                 console.error(`Textline "${textline_key}" in "${key}" has no translation provided for answer text for your chosen language "${language}"`);

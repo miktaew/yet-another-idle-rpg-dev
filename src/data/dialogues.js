@@ -424,11 +424,12 @@ const dialogues = {};
             
             "more training": new Textline({
                 name: "elder training",
-                getText: (context) => {
+                possible_texts: ["elder training answ 1", "elder training answ 2"],
+                getText: function(context){
                     if(context?.season === "Winter") {
-                        return "elder training answ 2";
+                        return this.possible_texts[1];
                     } else {
-                        return "elder training answ 1";
+                        return this.possible_texts[0];
                     }
                 },
                 is_unlocked: false,
@@ -859,7 +860,10 @@ const dialogues = {};
                     money: 15000,
                 },
                 success_conditions: [{
-                    money: 15000,
+                    money: {
+                        number: 15000,
+                        remove: true,
+                    },
                 }],
                 attempt_duration: 0,
                 success_chances: [1],
@@ -927,7 +931,11 @@ const dialogues = {};
                 rewards: {
                     textlines: [
                         {dialogue: "suspicious man", lines: ["situation", "boss"]},
+                        {dialogue: "gate guard", lines: ["enter 2"]}, //for saves from before
                     ],
+                    locks: {
+                            textlines: {"gate guard": ["enter"]}, //for saves from before
+                    }
                 },
             }), 
             "boss": new Textline({ 
@@ -1266,7 +1274,18 @@ const dialogues = {};
         textlines: {
             "hi": new Textline({
                 name: "proprietress hi",
-                text: "proprietress hi answ",
+                possible_texts: ["proprietress hi answ", "proprietress hi answ cat", "proprietress hi answ dog", "proprietress hi answ rare"],
+                getText: function(context){
+                    if(context.character.getBio().race === "nekomimi") {
+                        return this.possible_texts[1];
+                    } else if(context.character.getBio().race === "inumimi") {
+                        return this.possible_texts[2];
+                    } else if(context.character.getRaceTags().exotic) {
+                        return this.possible_texts[3];
+                    } else {
+                        return this.possible_texts[0];
+                    }
+                },
                 is_unlocked: true,
                 rewards: {
                     textlines: [{dialogue: "nekomimi proprietress", lines: ["offer"]}],
@@ -1276,27 +1295,23 @@ const dialogues = {};
             "offer": new Textline({
                 name: "proprietress offer",
                 text: "proprietress offer answ",
+                is_unlocked: false,
                 rewards: {
-                    textlines: [{dialogue: "nekomimi proprietress", lines: ["special", "puns"]}],
-                    //todo: unlock trade
+                    textlines: [{dialogue: "nekomimi proprietress", lines: ["special"]}],
+                    traders: [{trader: "nekomimi trader"}],
                 },
                 locks_lines: ["offer"],
             }),
             "special": new Textline({
                 name: "proprietress special",
                 text: "proprietress special answ",
+                is_unlocked: false,
                 rewards: {
-                    //todo: unlock paid action
+                    actions: [{location: "Nekomimi cafe", action: "private time"}],
                 },
                 locks_lines: ["special"],
             }),
-            "puns": new Textline({
-                name: "proprietress puns",
-                text: "proprietress puns answ",
-                locks_lines: ["puns"],
-            }),
         }
-
     });
 
     dialogues["swampland chief"] = new DialogueComponent({

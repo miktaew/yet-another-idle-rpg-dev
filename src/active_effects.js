@@ -472,6 +472,20 @@ class ActiveEffect {
     });
 })();
 
+//general buffs and blessings
+(()=>{
+    effect_templates["Fluffy bliss"] = new ActiveEffect({
+        name: "Fluffy bliss",
+        description: "Mofu mofu....",
+        effects: {
+            xp_multipliers: {
+                all: 1.05,
+            }
+        },
+        tags: { "buff": true},
+    });
+})();
+
 effect_templates["Recovering"] = new ActiveEffect({
     name: "Recovering",
     effects: {

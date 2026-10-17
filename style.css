@@ -651,7 +651,7 @@ input[type=checkbox], input[type=radio] {
 	color: rgb(171, 171, 255);
  }
 
- .action_travel, .activity_unavailable, .start_dialogue,  .end_dialogue_button, .start_trade, .start_game_action, .dialogue_trade, .choices_return_button, .start_activity, #action_status_div, #action_end_div {
+ .action_travel, .activity_unavailable, .start_dialogue,  .end_dialogue_button, .start_trade, .start_game_action, .choices_return_button, .start_activity, #action_status_div, #action_end_div {
 	text-align: left;
 	font-size: 20px;
 	border-top: 1px dotted white;
@@ -810,7 +810,7 @@ input[type=checkbox], input[type=radio] {
 .dialogue_textline:hover, .end_dialogue_button:hover, .dialogue_trade:hover, .backstep_dialogue_button:hover {
 	background-color: #2c3953;
 }
-.dialogue_textline {
+.dialogue_textline, .dialogue_trade {
 	text-align: center;
 	font-size: var(--options_action_textsize);
 

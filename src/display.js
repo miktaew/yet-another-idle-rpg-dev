@@ -722,7 +722,7 @@ function create_effect_tooltip({effect_name, duration, add_bonus=false}) {
         //Same three cases models/skill.js handles, including category_ - which this copy
         //did not, so a category target would have asked the skill registry for it.
         const name = capitalize_first_letter(xp_target_name(xp_multipliers[0]));
-        if(tooltip_html_content) {
+        if(tooltip_html_content || tooltip.innerText) {
             tooltip_html_content += `<br>${name} xp gain: x${effects.xp_multipliers[xp_multipliers[0]]}`;
         } else {
             tooltip_html_content = `${name} xp gain: x${effects.xp_multipliers[xp_multipliers[0]]}`;
@@ -4092,12 +4092,14 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
 
         if(npc.tags.trader) {
             const trader = npc.getTraderComponent();
-            const trade_div = document.createElement("div");
-            insert_HTML(trade_div, `<i class="material-icons">storefront</i>  ` + trader.trade_text);
-            trade_div.classList.add("dialogue_trade")
-            trade_div.setAttribute("data-trader", npc_id);
-            trade_div.setAttribute("onclick", "startTrade(this.getAttribute('data-trader'))")
-            action_div.appendChild(trade_div);
+            if(trader.canBeDisplayed(get_context())) {
+                const trade_div = document.createElement("div");
+                insert_HTML(trade_div, `<i class="material-icons">storefront</i>  ` + trader.trade_from_dialogue_text);
+                trade_div.classList.add("dialogue_trade")
+                trade_div.setAttribute("data-trader", npc_id);
+                trade_div.setAttribute("onclick", "startTrade(this.getAttribute('data-trader'))")
+                action_div.appendChild(trade_div);
+            }
         }
 
         const end_dialogue_div = document.createElement("div");

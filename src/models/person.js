@@ -105,11 +105,19 @@ class Person{
         return this.#bio;
     }
 
+    getBio() {
+        return this.getBioComponent().getBio();
+    }
+
+    getRaceTags() {
+        return playable_races[this.getBio().race].tags;
+    }
+
     getHeight() {
-        return this.getBioComponent().height;
+        return this.getBio().height;
     }
     getRace(){
-        return this.getBioComponent().race;
+        return this.getBio().race;
     }
 
     getNumericalHeight() {

@@ -1289,8 +1289,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
     locations["Nekomimi cafe"] = new SafeLocation({
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: `A nekomimi café in the center of town. Multiple catboys and catgirls are busy with a mix of work and silliness, sometimes properly serving drinks and snacks and sometimes just acting the way their four legged equivalents tend to do.`,
-        name: "Nekomimi café",
+        name: "Nekomimi cafe",
         is_unlocked: true,
+        market_region: "Town",
         getBackgroundNoises: function() {
             let noises = [
                 "Meow", "Nya", "Mrrr", "Mrrrp meow", "Mrrrp mrrrp",
@@ -3682,6 +3683,36 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
             },
         }),
     };
+
+    locations["Nekomimi cafe"].actions = {
+        "private time": new GameAction({
+            action_id: "private time",
+            starting_text: "Pay 10S for some private time with one of the employees",
+            description: "It's surely worth it",
+            success_text: "You spend an hour in a private room with the person you chose, patting their head and scratching their ears. "
+                         +"For a moment, you question whether you shouldn't be the one getting paid for this instead, but nah, it's worth its price.",
+            display_conditions: {
+                money: {
+                    number: 10000,
+                }
+            },
+            success_conditions: [
+                {
+                    money: {
+                        number: 10000,
+                        remove: true,
+                    }
+                },
+            ],
+            attempt_duration: 0,
+            success_chances: [1],
+            repeatable: true,
+            rewards: {
+                progress_timer: 60, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
+                active_effects: {"Fluffy bliss": 1800}, //30 in-game hours, or half an irl hour at default tickrate
+            },
+        }),
+    }
 
 })();
 

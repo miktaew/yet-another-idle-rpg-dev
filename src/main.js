@@ -925,6 +925,10 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         const success_conditions = action.getAvailabilityComponent().success_conditions;
         const start_conditions = action.getAvailabilityComponent().start_conditions;
 
+        if(success_conditions[0].money?.remove) {
+            character.money -= success_conditions[0].money.number;
+            update_displayed_money();
+        }
         Object.keys(success_conditions[0]?.items_by_id || {}).forEach(item_id => {
             //no need to check if they are in inventory, as without them action would have been conditionally failed before reaching here
             if(success_conditions[0].items_by_id[item_id].remove) {
@@ -1032,6 +1036,8 @@ function unlock_activity(activity_data) {
 function unlock_action(action_data) {
     if(!action_data.action.isUnlocked()) {
         action_data.action.setUnlocked();
+        
+        console.log(action_data);
         
         if(!action_data.skip_message) {
             let message = "";
@@ -1516,6 +1522,13 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
         }
     }
 
+    if(rewards.progress_timer) {
+        progress_time({value: rewards.progress_timer});
+        if(inform_overall) {
+            log_message(`Some time has passed...`);
+        }
+    }
+
     if(rewards.locks) {
         if(rewards.locks.textlines) {
             Object.keys(rewards.locks.textlines).forEach(dialogue_key => {
@@ -1813,15 +1826,12 @@ function start_textline(textline_key){
 }
 
 /**
- * Attaches some context to textline's .getText()
+ * Attaches context to textline's .getText()
  * @param {Textline} textline 
  * @returns textline answer
  */
 function get_textline_answer(textline) {
-    return textline.getText({
-            season: current_game_time.getSeason(),
-            //to be expanded with more stuff when needed
-        });
+    return textline.getText(get_context());
 }
 
 /**
@@ -4763,7 +4773,7 @@ function load(save_data) {
             });
             set_loot_sold_count(loot_count);
             
-            if(NPCRegistry.get("old craftsman").getDialogueComponent().textlines["learn"].isFinished()) {
+            if(NPCRegistry.get("oldCraftsman").getDialogueComponent().textlines["learn"].isFinished()) {
                 character.addToInventory([{item_id: "Old shovel"}]);
             }
         } else if(is_a_older_than_b(save_data["game version"], "v0.5.0.22") && is_a_older_than_b("v0.5", save_data["game version"])) {
@@ -4888,6 +4898,7 @@ function load(save_data) {
         if(is_a_older_than_b(save_data["game version"], "v0.5.0")){
             
             let elder = NPCRegistry.get("villageElder").getDialogueComponent();
+            let puppy = NPCRegistry.get("suspiciousMan").getDialogueComponent();
             //memory line
             questManager.startQuest({quest_id: "Lost memory", should_inform: false});
             if(elder.textlines["what happened"].isFinished()) {
@@ -4898,8 +4909,7 @@ function load(save_data) {
 
                     if(elder.textlines["cleared cave"].isFinished()) {
                         questManager.finishQuestTask({quest_id: "Lost memory", task_index: 2, skip_message: true});
-    
-                        if(elder.textlines["defeated"].isFinished()) {
+                        if(puppy.textlines["defeated"].isFinished()) {
                             questManager.finishQuestTask({quest_id: "Lost memory", task_index: 3, skip_message: true});
                         }
                     }
@@ -4923,7 +4933,7 @@ function load(save_data) {
                 }
             }
 
-            let puppy = NPCRegistry.get("suspiciousMan").getDialogueComponent();
+            
             //slums line
             if(puppy.textlines["gang"].isFinished()) {
                 questManager.startQuest({quest_id: "Light in the darkness", should_inform: false});

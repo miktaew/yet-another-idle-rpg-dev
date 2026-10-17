@@ -36,7 +36,7 @@ class Race {
 const race_tags = {
     COMMON: "common",
     RARE: "rare",
-    EXOTIC: "exotic", //not another stage of rarity, rather something that would be uncommon in an average place
+    EXOTIC: "exotic", //not another stage of rarity, rather something that would be uncommon in the main region (so outside of swamp)
     KEMONOMIMI: "kemonomimi",
     DEFAULT: "default", //only use it for one race
 }

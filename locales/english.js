@@ -261,7 +261,7 @@ const dialogues = {
     "g guard hello answ": "The town is currently closed to everyone who isn't a citizen or a merchant guild's member.",
 
     "g guard entry": "I was told by a reliable source that I can actually be allowed inside if I meet some conditions. Is that correct?",
-    "g guard entry answ": "I guess. Fee of 10 silver coins, or just, I don't know, help around enough for my superiors to notice and decide you're not a troublemaker. "
+    "g guard entry answ": "I guess. Fee of 15 silver coins, or just, I don't know, help around enough for my superiors to notice and decide you're not a troublemaker. "
                          +"How you do that without entering, that's not my business.",
 
     "g guard entry remind": "Could you remind me what to do to get in?",
@@ -362,15 +362,20 @@ const dialogues = {
             +" Despite seeming more like a scribe, he's buff and tanned.",
 
     //NEKOMIMI PROPRIETRESS (NEKOMIMI CAFE)
-    "nekomimi proprietress description": "lorem ipsum",
-    "proprietress hi": "lorem ipsum",
-    "proprietress hi answ": "lorem ipsum",
-    "proprietress offer": "lorem ipsum",
-    "proprietress offer answ": "lorem ipsum",
-    "proprietress special": "lorem ipsum",
-    "proprietress special answ": "lorem ipsum",
-    "proprietress puns": "lorem ipsum",
-    "proprietress puns answ": "lorem ipsum",
+    "nekomimi proprietress description": "You see a nekomimi woman with an ornamental smoking pipe in her hands. It seems to be just a decoration meant to make her look more prestigious, "
+                                        +"as it's clearly empty and there's not even a hint of tobacco smell coming from the pipe or from the woman. She has plum-colored hair, "
+                                        +"and her bangs cover one eye. She's dressed in a risque way, wearing an off-shoulder kimono (held by a small, barely noticeable strap) that almost reveals her bossom, "
+                                        +"but her modest proportions make the look much less provocative than she likely intended.",
+    "proprietress hi": "Hello",
+    "proprietress hi answ": "Hi there, cutie. I hope you will enjoy your stay with us and have fun~",
+    "proprietress hi answ cat": "Hi there, cutie. If you're looking for work, we don't have any free spots. But if you're here to enjoy yourself among your own kind, then I hope you will have fun~",
+    "proprietress hi answ dog": `Hi there, cutie. We don't often get your kind here, but you are as welcome as any other guest. Just please don't go "bau bau" at anyone and remember that when a cat wags `
+                               +`their tail it likely means irritation or anger, rather than happiness. I hope you will enjoy your time with us~`,
+    "proprietress hi answ rare": "Hi there, cutie. I don't think we've served your kind before, but I hope you will enjoy your stay and have lots of fun~",
+    "proprietress offer": "What does this place have in offer?",
+    "proprietress offer answ": `Great and cute service, food and drinks, and if you feel generous, there's the "special service"~`,
+    "proprietress special": `What's that "special service" thing?`,
+    "proprietress special answ": "For a mere 10 pieces of silver, you can get an hour of personal private time with any of our maids, boy or girl, you choose~", //I swear this is not what it seems
     
     //SWAMPCHIEF
     "swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches. You approach the hut, calling out in greeting, but getting no response. As you step closer, you see a large man in thick scaly armor wielding a great trident emerge. He points the trident at you as he takes a firm stance.",

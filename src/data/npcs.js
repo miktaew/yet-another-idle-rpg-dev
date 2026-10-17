@@ -70,7 +70,7 @@ NPCRegistry.add("oldWomanOfTheSlums", new NPC({name: "old woman of the slums", d
 
 NPCRegistry.add("gateGuard", new NPC({name: "gate guard", dialogue: dialogues["gate guard"]}));
 NPCRegistry.add("farmSupervisor", new NPC({name: "farm supervisor", dialogue: dialogues["farm supervisor"]}));
-NPCRegistry.add("nekomimiProprietress", new NPC({name: "nekomimi proprietress",dialogue: dialogues["nekomimi proprietress"]}));
+NPCRegistry.add("nekomimiProprietress", new NPC({name: "nekomimi proprietress",dialogue: dialogues["nekomimi proprietress"], trader: traders["nekomimi trader"]}));
 
 NPCRegistry.add("swamplandChief", new NPC({name: "swampland chief", dialogue: dialogues["swampland chief"]}));
 NPCRegistry.add("swamplandCook", new NPC({name: "swampland cook", dialogue: dialogues["swampland cook"]}));
@@ -81,7 +81,7 @@ NPCRegistry.add("swamplandScout", new NPC({name: "swampland scout", dialogue: di
 NPCRegistry.add("villageTrader", new NPC({name: "village trader", trader: traders["village trader"]}));
 NPCRegistry.add("suspiciousTrader", new NPC({name: "suspicious trader", trader: traders["suspicious trader"]}));
 NPCRegistry.add("swamplandTrader", new NPC({name: "swampland trader", trader: traders["swampland trader"]}));
-NPCRegistry.add("nekomimiTrader", new NPC({name: "nekomimi trader", trader: traders["nekomimi trader"]}));
+//NPCRegistry.add("nekomimiTrader", new NPC({name: "nekomimi trader", trader: traders["nekomimi trader"]}));
 NPCRegistry.add("catCafeTrader", new NPC({name: "cat cafe trader", trader: traders["cat cafe trader"]}));
 
 export default NPCRegistry;

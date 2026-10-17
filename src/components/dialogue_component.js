@@ -49,6 +49,7 @@ class Textline {
     constructor({
                 name,
                 text,
+                possible_texts,
                 getText,
                 is_branch_only = false,
                 is_unlocked,
@@ -73,6 +74,9 @@ class Textline {
     {
         this.name = name; // displayed option to click, don't make it too long
         this.text = text; // what's shown after clicking
+        this.possible_texts = possible_texts; 
+        //if getText is custom, provide all possible texts through possible_texts and then just return value at index; 
+        //this allows existing mechanisms to check if text keys are correct
         this.getText = getText || function(){return this.text;};
         this.otherUnlocks = otherUnlocks || function(){return;};
 

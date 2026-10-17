@@ -355,7 +355,7 @@ const npc_key_mapping = {
     "village trader": "villageTrader",
     "suspicious trader": "suspiciousTrader",
     "swampland trader": "swamplandTrader",
-    "nekomimi trader": "nekomimiTrader",
+    "nekomimi trader": "nekomimiProprietress",
     "cat cafe trader": "catCafeTrader",
 }
 const trader_key_mapping = {

@@ -385,7 +385,8 @@ Adds ${skills["Unarmed"].getCurrentLvl()/10} base damage to unarmed attacks`;
                                 names: {0: "Broad arc"}, 
                                 parent_skill: "Stance mastery",
                                 description: "A special technique that allows striking multiple enemies at once, although at a cost of lower overall efficiency." 
-                                            +" <br>Divides gained xp by number of enemies attacked, reduces drop rate in proportion to that number (down to 1/4th against 8).",
+                                            +" <br>Divides gained xp by number of enemies attacked, reduces drop rate in proportion to that number (down to 1/4th against 8;"
+                                            +" killing 2 at once will still give more total loot than killing 1).",
                                 max_level_coefficient: 2,
                                 base_xp_cost: 60,
                                 category: "Stance",

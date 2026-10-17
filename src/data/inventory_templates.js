@@ -518,7 +518,7 @@ inventory_templates["Swamp"] =
     })
 ];
 
-inventory_templates["Cat cafe"] = 
+inventory_templates["Cafe trader"] = 
 [
     new TradeItemGroup({
         items: [

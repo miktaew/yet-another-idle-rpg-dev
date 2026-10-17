@@ -36,10 +36,6 @@ class Hero extends Person {
         this.is_inventory_viewable = true; //just so code knows whether certain items in inventory need to have their displays updated in certain situations
     }
 
-    getBio() {
-        return this.getBioComponent().getBio();
-    }
-
     //stupid little thing for a stupid easter egg
     isRat() {
         return this.name.match(/\b(?<![\w])rat\b/i);

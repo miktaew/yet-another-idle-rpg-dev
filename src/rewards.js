@@ -122,6 +122,9 @@ class Rewards {
         this.move_to = data.move_to;
         //{location: String} //location key
 
+        this.progress_timer = data.progress_timer;
+        //Number, flat number of in-game minutes to move timer forwards by
+
         this.locks = data.locks;
         /*
         {
@@ -177,7 +180,7 @@ const reward_keys = [
     "actions", "activities", "crafting", "dialogues", "flags", "global_activities",
     "housing", "items", "locations", "locks", "messages", "money", "move_to", "npcs",
     "quest_progress", "quests", "recipes", "reputation", "skill_xp", "skills", "stances",
-    "textlines", "traders", "xp", "active_effects",
+    "textlines", "traders", "xp", "active_effects", "progress_timer",
 ];
 const special_keys = ["required_clear_count", "chance"];
 const lock_keys = ["actions", "locations", "npcs", "quests", "textlines"];

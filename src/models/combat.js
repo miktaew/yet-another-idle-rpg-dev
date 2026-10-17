@@ -270,8 +270,9 @@ class Combat {
         //based on raw opponent count instead of only on living ones, because Mik sometimes is a benevolent cat
 
         const target_count_xp_modifier = opponent_count_xp_multiplier/target_count;
+        //penalty for xp from attacking, since multi-target attacks would be too powerful at farming xp otherwise
+        
         const fighter_count_xp_modifier = fighter_count_xp_multiplier/fighters.length;
-        //with penalty for xp from attacking, since multi-target attacks would be too powerful at farming xp otherwise
 
         let evasion_chance_modifier = fighters.filter(x => x.is_alive).length**(-1/3); //down to .5 if there's full 8 enemies (multiple attackers make it harder to evade attacks)
         let defense_modifier = 0;
@@ -335,7 +336,7 @@ class Combat {
                 }
                 
                 if(!this.is_special_combat && target.tags.main_character) {
-                    add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: fighter.xp_value*target_count_xp_modifier});
+                    add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: fighter.xp_value*fighter_count_xp_modifier});
                 }
 
                 const blocked = target.getEquipment()["off-hand"].getShieldStrength() * (target.getEquipment()["off-hand"].tags.ignore_skill?1:target.getStats().total_multiplier.block_strength);
@@ -348,7 +349,7 @@ class Combat {
                     partially_blocked = true;
                 }
             } else if(!this.is_special_combat && target.tags.main_character){
-                add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: fighter.xp_value*target_count_xp_modifier/2});
+                add_xp_to_skill({skill: skills["Shield blocking"], xp_to_add: fighter.xp_value*fighter_count_xp_modifier/2});
             }
         } else { // HAS NO SHIELD
             const hit_chance = 
@@ -368,7 +369,7 @@ class Combat {
                 return; //damage fully evaded, nothing more can happen
             } else {
                 if(!this.is_special_combat && target.tags.main_character){
-                    add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add*target_count_xp_modifier/2});
+                    add_xp_to_skill({skill: skills["Evasion"], xp_to_add: xp_to_add*fighter_count_xp_modifier/2});
                 }
             }
         }
