@@ -9,6 +9,7 @@ import { global_flags } from "../main.js";
 import { availabilities } from "./component_references.js";
 import { LocationType, SafeLocation, CombatZone, ChallengeZone, LocationCrafting, 
     LocationHousing, LocationActivity, LocationGatheringActivity } from "../models/location.js";
+import { activities } from "../activities.js";
 const locations = {}; //contains all the created locations
 const location_types = {};
 
@@ -304,7 +305,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "Filled with very sharp and dangerous objects like traps, falling rocks, or the insides of a machine. Every false move puts you in mortal danger.",
+                description: "Filled with very sharp and dangerous objects like traps, falling rocks, or the insides of a machine. Every false move puts you in mortal danger",
                 related_skill: "Scrambling",
                 effects: {
                     agility: {multiplier: 0.5},
@@ -319,6 +320,41 @@ const favourite_locations = {};
                     agility: {multiplier: 0.2},
                     dexterity: {multiplier: 0.2},
                     health_loss_flat: {flat: -500},
+                }
+            }
+        }
+    });
+
+    //maybe better to have them apply poison/irritated status instead?
+    location_types["miasma"] = new LocationType({
+        name: "miasma",
+        stages: {
+            1: {
+                description: "While not harmful, the stench of this area makes you instinctively hold your breath",
+                related_skill: "Poison resistance",
+                scaling_lvl: 10,
+                effects: {
+                    intuition: { multiplier: 0.75 },
+                    stamina_efficiency: { multiplier: 0.75 }
+                }
+            },
+            2: {
+                description: "Noxious fumes are hurting your lungs and irritating your body",
+                related_skill: "Poison resistance",
+                scaling_lvl: 30,
+                effects: {
+                    intuition: {multiplier: 0.5},
+                    stamina_efficiency: { multiplier: 0.5 },
+                    health_loss_flat: {flat: -15},
+                }
+            },
+            3: {
+                description: "Highly poisonous gas fills the area",
+                related_skill: "Poison resistance",
+                effects: {
+                    intuition: {multiplier: 0.5},
+                    stamina_efficiency: { multiplier: 0.25 },
+                    health_loss_flat: {flat: -150},
                 }
             }
         }
@@ -1014,7 +1050,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
             { enemies: ["Owlbear", "Grizzly squirrel"] },
             { enemies: ["Bandersnatch"]},
             { enemies: ["Bandersnatch", "Grizzly squirrel", "Grizzly squirrel"]},
-            { enemies: ["Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel"] }],
+            { enemies: ["Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel", "Grizzly squirrel"] },
+            { enemies: ["Basilisk"]}
+        ],
         enemy_count: 50,
         is_unlocked: false,
         enemy_stat_variation: 0.2,
@@ -1027,9 +1065,33 @@ There's another gate on the wall in front of you, but you have a strange feeling
         repeatable_reward: {
             xp: 5000,
         },
+        rewards_with_clear_requirement: [
+            {
+                required_clear_count: 4,
+                messages: ["You reach a beautiful meadow. A herd of cow-like creatures is grazing here"],
+                locations: [{location:"Miasma meadow"}]
+            }
+        ],
     });
     locations["Motherwood"].connected_locations.push({location: locations["Bramble path"], travel_time: 60});
 
+    locations["Miasma meadow"] = new CombatZone({
+        description: "A beautiful, sunlit meadow opens in the middle of the dark woods. The plants that grow here are deathly poisonous, and the creatures that graze on them are just as deadly",
+        enemies_list: ["Catoblepas"],
+        enemy_count: 50,
+        is_unlocked: false,
+        enemy_stat_variation: 0.2,
+        name: "Miasma meadow", 
+        types: [{type: "open", stage: 1, xp_gain: 1}, {type: "miasma", stage: 2, xp_gain: 4}],
+        parent_location: locations["Motherwood"],
+        first_reward: {
+            xp: 20000,
+        },
+        repeatable_reward: {
+            xp: 6000,
+        },
+    });
+    locations["Motherwood"].connected_locations.push({location: locations["Miasma meadow"], travel_time: 90});
 
 
     locations["Forest ant nest"] = new CombatZone({ 
@@ -2546,6 +2608,25 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 skill_required: [20, 30]
             },
         }),
+        "herbalism": new LocationGatheringActivity({
+            activity_name: "herbalism",
+            starting_text: "Gather useful plants and mushrooms throughout the forest",
+            skill_xp_per_tick: 7,
+            is_unlocked: false,
+            gained_resources: {
+                resources: [
+                    {name: "Oneberry", chance: [0.2, 0.7]},
+                    {name: "Golmoon leaf", chance: [0.2, 0.7]},
+                    { name: "Belmart leaf", chance: [0.2, 0.7] },
+                    {name: "Cooking herbs", chance: [0.2, 0.7]},
+                    {name: "Edible mushroom", chance: [0.1, 0.8]},
+                    {name: "Toadstool", chance: [0.3, 0.8]}
+                ], 
+                time_period: [120, 20],
+                skill_required: [10, 25]
+            },
+            require_tool: true,
+        }),
     }
 })();
 
@@ -3576,7 +3657,7 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
             starting_text: "Search for useful plants",
             description: "Are there any you can recognize?",
             action_text: "Exploring",
-            success_text: "You find that some flowering bushes are particlularly attractive to a peculiar type of caterpillar, and are positively swarming with them",
+            success_text: "Amongst other, more familiar plants, you find some flowering bushes that seem particlularly attractive to a peculiar type of caterpillar, and are absolutely swarming with them",
             failure_texts: {
                 conditional_loss: ["You are not knowledgeable enough about plants for this..."],
                 random_loss: [
@@ -3588,7 +3669,7 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
             success_conditions: [
                 {
                     skills: {
-                        "Herbalism": 20,
+                        "Herbalism": 10,
                     },
                 },
                 {
@@ -3601,6 +3682,7 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
             attempt_duration: 60,
             success_chances: [0.1, 1],
             rewards: {
+                activities: [{location:"Motherwood", activity: "herbalism"}],
                 actions: [{location:"Motherwood", action: "identify bugs"}],
             },
         }),

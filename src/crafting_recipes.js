@@ -438,7 +438,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Low quality iron ingot", count: 2, result_id: "Cheap iron short blade"},
             {material_id: "Iron ingot", count: 2, result_id: "Iron short blade"},
             {material_id: "Steel ingot", count: 2, result_id: "Steel short blade"},
-            {material_id: "Frumious claw", count: 1, result_id: "Frumious short blade"},
+            {material_id: "Frumious claw", count: 1, result_id: "Frumious blade"},
         ],
         item_type: "Component",
         recipe_skill: "Forging"
@@ -469,6 +469,7 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
             {material_id: "Low quality iron ingot", count: 4, result_id: "Cheap iron hammer head"}, 
             {material_id: "Iron ingot", count: 4, result_id: "Iron hammer head"},
             {material_id: "Steel ingot", count: 4, result_id: "Steel hammer head"},
+            {material_id: "Monster beak", count: 1, result_id: "Beak hammer head"},
         ],
         item_type: "Component",
         recipe_skill: "Forging",
@@ -1441,6 +1442,42 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [1,12],
         recipe_skill: "Crafting",
     });
+    crafting_recipes.items["Wicker basket"] = new ItemRecipe({
+        name: "Wicker basket",
+        is_unlocked: true,
+        recipe_type: "material",
+        materials: [{material_id: "Wicker", count: 4}],
+        result: {result_id: "Wicker basket", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [1,12],
+        recipe_skill: "Crafting",
+    });
+    smelting_recipes.items["Tallow candle"] = new ItemRecipe({
+        name: "Tallow candle",
+        is_unlocked: true,
+        recipe_type: "material",
+        materials: [
+            { material_id: "Animal fat", count: 1 },
+            { material_id: "Wool", count: 1 }
+        ],
+        result: {result_id: "Tallow candle", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [1,12],
+        recipe_skill: "Smelting",
+    });
+    alchemy_recipes.items["Soap"] = new ItemRecipe({
+        name: "Soap",
+        is_unlocked: true,
+        recipe_type: "material",
+        materials: [
+            { material_id: "Animal fat", count: 1 },
+            { material_id: "Potash", count: 1 }
+        ],
+        result: {result_id: "Soap", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [5,17],
+        recipe_skill: "Alchemy",
+    });
 
     woodworking_recipes.items["Makeshift fishing pole"] = new ItemRecipe({
         name: "Makeshift fishing pole",
@@ -1864,6 +1901,26 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [35,60],
         recipe_skill: "Cooking",
     });
+
+    cooking_recipes.items["Cooked mushrooms"] = new ItemRecipe({
+        name: "Cooked mushrooms",
+        recipe_type: "usable",
+        materials: [{material_id: "Edible mushroom", count: 4}], 
+        result: {result_id: "Cooked mushrooms", count: 1},
+        success_chance: [0.5,1],
+        recipe_level: [5,15],
+        recipe_skill: "Cooking",
+    });
+    cooking_recipes.items["Cooked toadstool"] = new ItemRecipe({
+        name: "Cooked mushrooms",
+        recipe_type: "usable",
+        materials: [{material_id: "Toadstool", count: 4}], 
+        result: {result_id: "Cooked toadstool", count: 1},
+        success_chance: [0.5,1],
+        recipe_level: [5,15],
+        recipe_skill: "Cooking",
+    });
+
     
     alchemy_recipes.items["Weak healing powder"] = new ItemRecipe({
         name: "Weak healing powder",
@@ -1943,6 +2000,19 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         result: {result_id: "Thick healing balm", count: 2},
         success_chance: [0.1,1],
         recipe_level: [12,20],
+        recipe_skill: "Alchemy",
+    });
+
+    alchemy_recipes.items["Serum"] = new ItemRecipe({
+        name: "Serum",
+        recipe_type: "usable",
+        is_unlocked: false,
+        materials: [{material_id: "Toxin gland", count: 4},
+                    {material_id: "Glass phial", count: 1},
+        ],
+        result: {result_id: "Serum", count: 1},
+        success_chance: [0.1,1],
+        recipe_level: [10,20],
         recipe_skill: "Alchemy",
     });
 

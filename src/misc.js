@@ -46,6 +46,7 @@ const skill_consumable_tags = {
     "Medicine": "medicine",
     "Gluttony": "food",
     "Poison resistance": "poison",
+    "Strength of mind": "curse",
 }
 
 //additional skill-tag mapping for crafting
