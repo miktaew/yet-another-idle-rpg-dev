@@ -3,7 +3,6 @@
 import LevelableComponent from "./components/levelable_component.js";
 import { config } from "./config.js";
 import { character } from "./data/character.js";
-import { log_message } from "./display.js";
 import { add_active_effect } from "./main.js";
 
 let enemy_templates = {};
@@ -223,7 +222,7 @@ const enemy_abilites = {
             duration);
     },
     stone_gaze(duration) {
-
+        add_active_effect("petrified", duration);
     }
 };
 
@@ -448,23 +447,22 @@ const enemy_abilites = {
         on_hit: (character) => {
             const roll = Math.random();
             if(roll < 0.1) {
-                //todo: add some category for these messages
-                log_message("The frog's long tongue leaves you covered in sticky saliva!", "hero_attacked");
                 add_active_effect("Sticky", 30);
+                return "The frog's long tongue leaves you covered in sticky saliva!";
             } else if (roll < 0.2) {
-                log_message("The frog's attack leaves some of its toxins on you!", "hero_attacked");
                 enemy_abilites.bufotoxin(10);
+                return "The frog's attack leaves some of its toxins on you!";
             }
         },
         on_damaged: (character) => {
             const roll = Math.random();
             if (character.getEquipment().weapon == null && roll < 0.1) {
-                log_message("Touching the frog with your bare hands leaves them covered in toxins!", "hero_attacked");
                 enemy_abilites.bufotoxin(10);
+                return "Touching the frog with your bare hands leaves them covered in toxins!";
             }
             else if (character.getEquipment().weapon != null && roll < 0.05) {
-                log_message("Striking the frog causes some toxins to splash on you!", "hero_attacked");
                 enemy_abilites.bufotoxin(10);
+                return "Striking the frog causes some toxins to splash on you!";
             }
         },
     });
@@ -506,8 +504,8 @@ const enemy_abilites = {
         on_hit: () => {
             const roll = Math.random();
             if(roll < 0.2) {
-                log_message("The dragonfly quickly stabs you with its stinger and retreats", "hero_attacked");
                 add_active_effect("Dragonfly venom", 10);
+                return "The dragonfly quickly stabs you with its stinger and retreats";
             }
         },
     });
@@ -523,8 +521,8 @@ const enemy_abilites = {
         on_hit: () => {
             const roll = Math.random();
             if(roll < 0.2) {
-                log_message("The dragonfly queen quickly stabs you with its large stinger and retreats", "hero_attacked");
                 add_active_effect("Dragonfly queen venom", 10);
+                return "The dragonfly queen quickly stabs you with its large stinger and retreats";
             }
         },
     });
@@ -608,6 +606,7 @@ const enemy_abilites = {
             {item_name: "Giant snake skin", chance: 0.01},
         ]
     });
+
     enemy_templates["Grizzly bear"] = new Enemy({
         name: "Grizzly bear",
         description: "An especially vicious version of the already mighty and dangerous predator with thicker skin, sharper teeth, and more dangerous claws",
@@ -665,6 +664,56 @@ const enemy_abilites = {
         tags: ["living", "beast"],
         stats: {health: 800, attack: 320, agility: 300, dexterity: 240, intuition: 240, magic: 0, attack_speed: 3, defense: 80},
         loot_list: []
+    });
+
+    enemy_templates["Basilisk"] = new Enemy({
+        name: "Basilisk",
+        description: "A many limbed cousin of the alligator. Hypnotizes prey with its bulbous eyes before chomping down",
+        xp_value: 200,
+        rank: 10,
+        size: enemy_sizes.LARGE,
+        tags: ["living", "beast"],
+        stats: {health: 18000, attack: 830, agility: 300, dexterity: 400, intuition: 200, magic: 0, attack_speed: 1.6, defense: 545},
+        loot_list: [
+            {item_name: "Alligator meat", chance: 0.05},
+            {item_name: "Alligator skin", chance: 0.02},
+            {item_name: "Monster bone", chance: 0.02},
+            {item_name: "Evil eye", chance: 0.002},
+        ],
+        on_hit: (character) => {
+            const roll = Math.random();
+            if(roll < 0.3) {
+                enemy_abilites.stone_gaze(30);
+                return "The basilisk makes eye contact!";
+            }
+        },
+    });
+
+    enemy_templates["Catoblepas"] = new Enemy({
+        name: "Catoblepas",
+        description: "A huge bovine creature, with a scaly hide, a shaggy mane and horns so huge it cannot freely lift its head. "
+            + "Because it feeds exclusively on toxic plants, even with its head down it's poisonous breath is enough to drive away most predators. "
+            + "If forced to defend itself by raising its head, it's paralyzing gaze combined with the full extend of its toxic breath is incredibly deadly",
+        xp_value: 300,
+        rank: 11,
+        size: enemy_sizes.LARGE,
+        tags: ["living", "beast"],
+        stats: {health: 25000, attack: 525, agility: 100, dexterity: 100, intuition: 130, magic: 0, attack_speed: 0.3, defense: 545},
+        loot_list: [
+            {item_name: "Monster bone", chance: 0.03},
+            {item_name: "Alligator skin", chance: 0.03},
+            {item_name: "Catoblepas liver", chance: 0.03},
+            {item_name: "Evil eye", chance: 0.003}
+        ],
+        on_hit: (character) => {
+            const roll = Math.random();
+            if(roll < 0.2) {
+                enemy_abilites.stone_gaze(30);
+                add_active_effect("Deadly necrotizing venom", 10);
+                add_active_effect("Infected lungs", 10);
+                return "The catoblepas manages to raise its head and makes eye contact!";
+            }
+        },
     });
 
 })();

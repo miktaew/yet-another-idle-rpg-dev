@@ -8,7 +8,7 @@ import { enemy_tag_to_skill_mapping } from "../enemies.js";
 import { item_templates } from "../items.js";
 import { add_xp_to_character, add_xp_to_skill, change_stance, current_stance, finish_combat_round, game_options, game_stats, kill_target, kill_player, process_current_loot, selected_stance, tickrate, use_stamina } from "../main.js";
 import { get_hit_chance } from "../misc.js";
-import { do_onhit_animation, do_onstart_animation, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_fighter } from "../ui/combat_display.js";
+import { do_onhit_animation, do_onstart_animation, do_effect_animation, fill_fighter_divs, remove_onhit_animation, update_attack_bar, update_displayed_health_of_fighter } from "../ui/combat_display.js";
 
 let maximum_time_correction = 10;
 
@@ -396,8 +396,18 @@ class Combat {
 
         let {damage_taken, fainted} = target.takeDamage({damage_values: damages_dealt, defense_modifier, give_skill_xp: (!this.is_special_combat && target.tags.main_character)});
 
-        target.on_damaged(fighter);
-        fighter.on_hit(target);
+        let msg = target.on_damaged(fighter);
+        if (msg) {
+            do_effect_animation({ fighter_index: (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target), is_attacker: !is_attacker, message: msg });
+            log_message(msg, "hero_attacked");
+        }
+
+        msg = fighter.on_hit(target);
+        if (msg) {
+            do_effect_animation({ fighter_index: (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target), is_attacker: !is_attacker, message: msg });
+            log_message(msg, "hero_attacked");
+        }
+
 
         if(!this.is_special_combat && target.tags.main_character) {
             
@@ -439,7 +449,11 @@ class Combat {
                 return;
             } else {
                 if(fighter.tags.main_character) {
-                    target.on_death(fighter);
+                    msg = target.on_death(fighter);
+                    if (msg) {
+                        do_effect_animation({fighter_index: (is_attacker ? this.defenders : this.attackers).findIndex(x => x === target), is_attacker: !is_attacker, message: msg});
+                        log_message(msg, "hero_attacked");
+                    }
                 }
 
                 log_message(target.name + " was defeated", "enemy_defeated");

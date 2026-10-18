@@ -1666,8 +1666,8 @@ book_stats["Counting Mice"] = new BookData({
         value: 80,
     });
     item_templates["Bufonite"] = new Material({
-        description: "A pearl-like gem made from fog toxins that crystallized over the years",
-        value: 130,
+        description: "A pearl-like gem made from frog toxins that crystallized over the years",
+        value: 200,
     });
 
     item_templates["Bandersnatch claw"] = new Material({
@@ -1675,7 +1675,7 @@ book_stats["Counting Mice"] = new BookData({
         value: 100,
     });
     item_templates["Frumious claw"] = new Material({
-        description: "A vicious claw of a bandernatch, sharpened by snatching countless prey",
+        description: "A vicious claw of a bandersnatch, sharpened by snatching countless prey",
         value: 250,
     });
 
@@ -1689,16 +1689,25 @@ book_stats["Counting Mice"] = new BookData({
     });
     
     item_templates["Monster beak"] = new Material({
-        name: "Monster bone",
         description: "The huge beak of a bird-like monster. Sharp and strong enough to be fashined into a weapon",
         value: 250
     });
 
     item_templates["Monster bone"] = new Material({
-        name: "Monster bone",
         description: "Mutated and dark bone of a monster. Strong enough to support weight regular bones would crumble under",
         value: 100,
         material_type: "bone",
+    });
+
+    item_templates["Evil eye"] = new Material({
+        description: "The eyeball of a moster posessing a powerful gaze weapon",
+        value: 200
+    });
+
+    item_templates["Catoblepas liver"] = new Material({
+        description: "The organ of a catoblepas, able to filter any poison",
+        value: 100,
+        effects: [{effect: "Weak antipoison", duration: 30}],
     });
 
 })();
@@ -1844,6 +1853,20 @@ book_stats["Counting Mice"] = new BookData({
         description: "Common shellfish found in the sand and mud around the lake shore. Can't be eaten raw",
         value: 6,
     });
+
+    item_templates["Edible mushroom"] = new Material({
+        description: "Can't be eaten raw",
+        value: 10,
+    });
+    item_templates["Toadstool"] = new Material({
+        description: "Can't be eaten raw. Probably shouldn't be eaten cooked either",
+        value: 5,
+        effects: [
+            { effect: "Serious food poisoning", duration: 180 },
+            { effect: "Hallucinations", duration: 180 }
+        ],
+    });
+
     item_templates["Wild onion"] = new Material({
         name: "Wild onion",
         description: "A wild root vegetable sometimes used to add flavor to dishes. Can't be eaten raw",
@@ -1860,6 +1883,7 @@ book_stats["Counting Mice"] = new BookData({
         description: "A wild nutrient-rich stem tuber that can be used in a variety of dishes. Can't be eaten raw",
         value: 20,
     });
+
     item_templates["Flour"] = new Material({
         name: "Flour",
         description: "Powdered plant matter, used for making various baked goods",
@@ -4167,6 +4191,19 @@ function add_gear() {
         description: "A small hook made of metal",
         value: 10
     });
+
+    item_templates["Tallow candle"] = new Material({
+        description: "A candle made of animal fat. You currently have no use for it, but someone might give you a good price for it",
+        value: 100,
+    });
+    item_templates["Wicker basket"] = new Material({
+        description: "A bosket woven from willow strands. You currently have no use for it, but someone might give you a good price for it",
+        value: 100,
+    });
+    item_templates["Soap"] = new Material({
+        description: "An alchemical cleaning product. You currently have no use for it, but someone might give you a good price for it",
+        value: 150,
+    });
 })();
 
 //spare parts
@@ -4313,6 +4350,16 @@ function add_gear() {
         effects: [{effect: "Healing balm", duration: 90}],
         tags: {"medicine": true},
     });
+
+    item_templates["Serum"] = new UsableItem({
+        name: "Serum",
+        description: "A conconction made from a monster's poison, used to reverse its effects",
+        value: 150,
+        effects: [{effect: "Weak antipoison", duration: 60}],
+        tags: {"medicine": true},
+    });
+
+
 
     item_templates["Roasted rat meat"] = new UsableItem({
         name: "Roasted rat meat",
@@ -4491,6 +4538,23 @@ function add_gear() {
         description: "Steaming mug of hot, bitter coffee",
         value: 100,
         effects: [{effect: "Coffee", duration: 150}],
+        tags: {"food": true},
+    });
+
+    item_templates["Cooked mushrooms"] = new UsableItem({
+        description: "A basic mushroom dish. Nutricious, but not very filling",
+        value: 50,
+        effects: [{effect: "Basic meal", duration: 60}],
+        tags: {"food": true},
+    });
+    item_templates["Cooked toadstool"] = new UsableItem({
+        description: "A basic dish made from dubious mushrooms",
+        value: 5,
+        effects: [
+            { effect: "Basic meal", duration: 60 },
+            { effect: "Serious food poisoning", duration: 180 },
+            { effect: "Hallucinations", duration: 180 }
+        ],
         tags: {"food": true},
     });
 })();
