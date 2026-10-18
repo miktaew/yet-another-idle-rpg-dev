@@ -87,9 +87,10 @@ import { end_activity_animation,
          update_fav_display,
          update_displayed_item_log,
          set_light_based_background_color,
-         unassign_dynamic_loot_message,
+         unassign_dynamic_messages,
          fill_character_bio,
          insert_HTML,
+         log_location_xp,
         } from "./display.js";
 import { update_displayed_fighters_stats, update_displayed_health_of_fighter, } from "./ui/combat_display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
@@ -196,6 +197,13 @@ const current_loot = {
     total: {},
 }
 
+//xp from current combat zone
+const current_xp = {
+    recent: 0,
+    total: 0,
+    count: 0,
+}
+
 //time needed to travel from A to B
 let travel_times = {};
 let pathfinder;
@@ -255,7 +263,7 @@ const game_options = {
     remember_sorting_options: false, //not in use?
     combat_disable_autoswitch: false,
 
-    do_dynamic_loot_message: false,
+    do_dynamic_loot_message: false, //aplies to location xp message as well
 
     auto_use_when_longest_runs_out: true, //can't actually be changed by a player; despite the name, it decides whether to first use longest-duration item or shortest-duration item
     use_uncivilised_temperature_scale: false, //true -> swap Celsius for Fahrenheit
@@ -1264,8 +1272,10 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
             if(inform_overall) {
                 if(is_first_clear) {
                     log_message(`Obtained ${rewards.xp}xp for clearing ${source_name} for the first time`, "location_reward");
+                } else if(game_options.do_dynamic_loot_message){
+                    log_location_xp(current_xp, source_name);
                 } else {
-                    log_message(`Obtained additional ${rewards.xp}xp for clearing ${source_name}`, "location_reward");
+                    log_message(`Obtained additional ${rewards.xp}xp for clearing ${source_name}`, "location_xp_reward");
                 }
             }
         } else {
@@ -2244,6 +2254,10 @@ function get_location_rewards(location) {
             process_rewards({rewards: location.first_reward, source_type: "location", source_name: location.name, is_first_clear: true, source_id: location.id});
         }
     } else if(location.repeatable_reward.xp && typeof location.repeatable_reward.xp === "number") {
+        current_xp.recent = location.repeatable_reward.xp;
+        current_xp.total += location.repeatable_reward.xp;
+        current_xp.count++;
+        
         process_rewards({rewards: {xp: location.repeatable_reward.xp}, source_type: "location", source_name: location.name, is_first_clear: false, source_id: location.id});
     }
 
@@ -2297,7 +2311,10 @@ function clear_loot_information() {
     //called whenever changing a location or stopping an activity
     current_loot.recent = {};
     current_loot.total = {};
-    unassign_dynamic_loot_message();
+    current_xp.recent = 0;
+    current_xp.total = 0;
+    current_xp.count = 0;
+    unassign_dynamic_messages();
 }
 
 /**

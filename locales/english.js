@@ -781,7 +781,7 @@ const ui = {
     "option bed return": "Return to last bed upon defeat",
     "option remember filters": "Remember message log filters",
     "option dont autoswitch": "Don't autoswitch out from inventory when starting combat",
-    "option dynamic message": "Use a single dynamically updated message for loot",
+    "option dynamic message": "Use dynamically updated messages for loot and for location clear xp",
     "option scientific notation": "Use scientific notation for values over:",
     "option fahrenheit": "Use Fahrenheit instead of Celsius",
     "option animate background": "Enable rain/snow/stars animations",

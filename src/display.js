@@ -69,6 +69,7 @@ const storage_inventory_div = document.getElementById("storage_inventory_div");
 //message log
 const message_log = document.getElementById("message_box_div");
 let dynamic_loot_message = null;
+let dynamic_clear_message = null;
 
 //enemy info
 const combat_div = document.getElementById("combat_div");
@@ -148,6 +149,10 @@ const dynamic_loot_message_types = {
     combat_loot: true,
     gathered_loot: true,
     total_gathered_loot: true,
+}
+
+const dynamic_clear_message_types = {
+    location_xp_reward: true,
 }
 
 
@@ -834,7 +839,10 @@ function end_activity_animation(remove) {
             group_to_add = "message_loot";
             message_count.message_loot += 1;
             break;
-
+        case "location_xp_reward":
+            group_to_add = "message_loot";
+            message_count.message_loot += 1;
+            break;
         case "skill_raised":
             class_to_add = "message_skill_leveled_up";
             group_to_add = "message_unlocks";
@@ -906,6 +914,15 @@ function end_activity_animation(remove) {
         dynamic_loot_message = message;
     }
 
+    if(dynamic_clear_message_types[message_type] && game_options.do_dynamic_loot_message) {
+        if(dynamic_clear_message) {
+            dynamic_clear_message.remove();
+            message_count.message_loot--; //same as above
+        }
+
+        dynamic_clear_message = message;
+    }
+
     if(group_to_add === "message_combat" && message_count.message_combat > 80
     || group_to_add === "message_loot" && message_count.message_loot > 28
     || group_to_add === "message_unlocks" && message_count.message_unlocks > 40
@@ -934,8 +951,9 @@ function end_activity_animation(remove) {
     
 }
 
-function unassign_dynamic_loot_message() {
+function unassign_dynamic_messages() {
     dynamic_loot_message = null;
+    dynamic_clear_message = null;
 }
 
 function format_book_bonuses(bonuses) {
@@ -1041,6 +1059,11 @@ function log_loot({loot_list, is_combat=false, is_a_summary=false, is_dynamic=fa
     
     log_message(message, message_type);
 }
+
+function log_location_xp(current_xp, location_name) {
+    log_message(`Obtained a total of ${current_xp.total}xp (${current_xp.recent}xp x${current_xp.count}) for clearing ${location_name}`, "location_xp_reward");
+}
+
 
 /**
  * Originally created for activities, despite the name, but is now used for actions as well.
@@ -5787,7 +5810,7 @@ export {
     log_message,
     clear_action_div,
     update_displayed_normal_location, update_displayed_combat_location,
-    log_loot,
+    log_loot, log_location_xp,
     update_displayed_equipment, update_displayed_health, update_displayed_stamina, update_displayed_stats, update_displayed_effects, update_displayed_effect_durations,
     capitalize_first_letter,
     format_money,
@@ -5839,7 +5862,7 @@ export {
     update_displayed_item_log,
     set_HTML,
     set_light_based_background_color,
-    unassign_dynamic_loot_message,
+    unassign_dynamic_messages,
     fill_character_bio, create_race_tooltip, create_height_tooltip, create_gender_tooltip,
     insert_HTML, clear_HTML_content
 }
