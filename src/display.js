@@ -2775,8 +2775,8 @@ function open_crafting_window() {
     for (let i = 0; i < elements.length; i++) {
         let is_available = current_location.crafting.tiers[elements[i].dataset.crafting_category]
 
-        elements[i].style.display = is_available ? "" : "none";
-        //TODO maybe just graying it out would make more obvious what is happening?
+        elements[i].style.opacity = is_available ? "1" : "0.33";
+        elements[i].style.pointerEvents = is_available ? "auto" : "none";
 
         if (is_available && !first_available_category) {
             first_available_category = elements[i];

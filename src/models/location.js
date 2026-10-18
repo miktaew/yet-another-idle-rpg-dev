@@ -63,13 +63,13 @@ class LocationCrafting {
         this.#availability = new AvailabilityComponent({is_unlocked});
         this.use_text = use_text;
         this.tiers = {
-            crafting: tiers.crafting || 1,
-            forging: tiers.forging || 1,
-            smelting: tiers.smelting || 1,
-            cooking: tiers.cooking || 1,
-            alchemy: tiers.alchemy || 1,
-            butchering: tiers.butchering || 1,
-            woodworking: tiers.woodworking || 1,
+            crafting: tiers.crafting ?? 0,
+            forging: tiers.forging ?? 0,
+            smelting: tiers.smelting ?? 0,
+            cooking: tiers.cooking ?? 0,
+            alchemy: tiers.alchemy ?? 0,
+            butchering: tiers.butchering ?? 0,
+            woodworking: tiers.woodworking ?? 0,
         }
         
     }

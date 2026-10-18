@@ -9,7 +9,6 @@ import { global_flags } from "../main.js";
 import { availabilities } from "./component_references.js";
 import { LocationType, SafeLocation, CombatZone, ChallengeZone, LocationCrafting, 
     LocationHousing, LocationActivity, LocationGatheringActivity } from "../models/location.js";
-import { activities } from "../activities.js";
 const locations = {}; //contains all the created locations
 const location_types = {};
 
