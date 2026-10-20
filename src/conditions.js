@@ -72,6 +72,8 @@
 
         race: String
 
+        not_race: String
+
         race_type: {
             any: [String],
             all: [String]
@@ -98,11 +100,11 @@ const process_conditions = (conditions, context) => {
     }
 
     //check money
-    if(conditions[0].money && character.money < conditions[0].money) {
+    if(conditions[0].money && character.money < conditions[0].money.number) {
         met = 0;
         return met;
-    } else if(conditions[1]?.money && conditions[1].money > conditions[0].money && character.money < conditions[1].money) {
-        met *= (1 + character.money - conditions[0].money)/(conditions[1].money - conditions[0].money);
+    } else if(conditions[1]?.money && conditions[1].money.number > conditions[0].money.number && character.money < conditions[1].money.number) {
+        met *= (1 + character.money - conditions[0].money.number)/(conditions[1].money.number - conditions[0].money.number);
     }
 
     if(!met) {
@@ -302,6 +304,12 @@ const process_conditions = (conditions, context) => {
 
     if(conditions[0].race) {
         if(character.getBioComponent().race !== conditions[0].race) {
+            met = 0;
+        }
+    }
+
+    if(conditions[0].not_race) {
+        if(character.getBioComponent().race === conditions[0].not_race) {
             met = 0;
         }
     }

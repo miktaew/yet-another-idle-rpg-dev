@@ -1311,6 +1311,15 @@ const dialogues = {};
                 },
                 locks_lines: ["special"],
             }),
+            "something stronger": new Textline({
+                name: "proprietress special 2",
+                text: "proprietress special 2 answ",
+                is_unlocked: false,
+                rewards: {
+                    actions: [{location: "Nekomimi cafe", action: "private time 2"}, {location: "Nekomimi cafe", action: "private time 2 cat"}],
+                },
+                locks_lines: ["something stronger"],
+            }),
         }
     });
 

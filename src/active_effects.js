@@ -362,6 +362,7 @@ class ActiveEffect {
     });
     effect_templates["Tipsy"] = new ActiveEffect({
         name: "Tipsy",
+        description: "You feel funny...",
         effects: {
             stats: {
                 agility: {multiplier: 1.1},

@@ -1044,9 +1044,7 @@ function unlock_activity(activity_data) {
 function unlock_action(action_data) {
     if(!action_data.action.isUnlocked()) {
         action_data.action.setUnlocked();
-        
-        console.log(action_data);
-        
+            
         if(!action_data.skip_message) {
             let message = "";
             if(action_data.location) {
@@ -1257,6 +1255,13 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
     if(rewards.messages && !is_from_loading) {
         for(let i = 0; i < rewards.messages.length; i++) {
             log_message(rewards.messages[i]);
+        }
+    }
+
+    if(rewards.progress_timer) {
+        progress_time({value: rewards.progress_timer});
+        if(inform_overall) {
+            log_message(`Some time has passed...`);
         }
     }
 
@@ -1529,13 +1534,6 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                     console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
                 }
             }
-        }
-    }
-
-    if(rewards.progress_timer) {
-        progress_time({value: rewards.progress_timer});
-        if(inform_overall) {
-            log_message(`Some time has passed...`);
         }
     }
 

@@ -1316,7 +1316,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 "*Horse neighs*", "Violets, lovely violets for sale!", "*Some idiot falls of a roof, luckily it's not high enough to cause any serious injury", 
                 //IFYKYK
 
-                "Newspaper, newest newspaper!", "Fresh bread, only here!", "Bread fresher than on the stale next to me, come and try!",
+                "Newspaper, newest newspaper!", "Fresh bread, only here!", "Bread fresher than on the stall next to me, come and try!",
                 "*Water cascades from the fountain in the center*", "*Pigeon stares at you*", "*A group of pigeons lands on the fountain*",
             ];
             return noises;
@@ -3790,10 +3790,71 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
             repeatable: true,
             rewards: {
                 progress_timer: 60, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
-                active_effects: {"Fluffy bliss": 1800}, //30 in-game hours, or half an irl hour at default tickrate
+                active_effects: {"Fluffy bliss": 1440}, //24 in-game hours, or 24 irl minutes at default tickrate
+                textlines: [{dialogue: "nekomimi proprietress", lines: ["something stronger"], skip_message: true,}],
             },
         }),
-    }
+        "private time 2": new GameAction({
+            action_id: "private time 2",
+            starting_text: "Pay 3G for some private time with multiple employees and with catnip involved",
+            description: "This might be too much even for you",
+            success_text: "You spend two hours in a private room with some of the cutest, friendliest employees this place has to offer, in atmosphere that's heavy with "
+                         +"catnip. You scratch their ears, pat their heads, have them purr all around you, get bunted a lot... If paradise exists in mortal realm, then this is it.",
+            display_conditions: {
+                money: {
+                    number: 300000,
+                },
+                not_race: "nekomimi",
+            },
+            success_conditions: [
+                {
+                    money: {
+                        number: 300000,
+                        remove: true,
+                    }
+                },
+            ],
+            attempt_duration: 0,
+            success_chances: [1],
+            repeatable: true,
+            rewards: {
+                progress_timer: 120, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
+                active_effects: {"Fluffy bliss": 4320}, //72 in-game hours
+            },
+        }),
+        "private time 2 cat": new GameAction({
+            action_id: "private time 2 cat",
+            starting_text: "Pay 3G for some private time with multiple employees and with catnip involved",
+            description: "This might be too much even for you",
+            success_text: "You spend two hours in a private room with some of the cutest, friendliest employees this place has to offer, in atmosphere that's heavy with "
+                         +"catnip, overwhelming your senses and making you act the same way they do. You scratch their ears, pat their heads, have them purr all around you, get bunted a lot, and "
+                         +"you bunt back too. If paradise exists in mortal realm, then this is it.",
+            display_conditions: {
+                money: {
+                    number: 300000,
+                },
+                race: "nekomimi",
+            },
+            success_conditions: [
+                {
+                    money: {
+                        number: 300000,
+                        remove: true,
+                    }
+                },
+            ],
+            attempt_duration: 0,
+            success_chances: [1],
+            repeatable: true,
+            rewards: {
+                progress_timer: 120, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
+                active_effects: {
+                    "Fluffy bliss": 4320, //72 in-game hours
+                    "Tipsy": 120,
+                }, 
+            },
+        }),
+    };
 
 })();
 

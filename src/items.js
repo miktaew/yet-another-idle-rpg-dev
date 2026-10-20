@@ -1918,7 +1918,7 @@ book_stats["Counting Mice"] = new BookData({
     });
     item_templates["Mackerel shark"] = new Material({
         name: "Mackerel shark",
-        description: "A shark small enough to fit in a stream. Makes up for its size with its feistiness and big mouth",
+        description: "A shark small enough to fit in a stream. Makes up for its size with its feistiness and big mouth", //yoho!
         use_quality: true,
         base_size: 35,
         value: 85,
@@ -4081,7 +4081,7 @@ function add_gear() {
     });
 	item_templates["Linen cloth"] = new Material({
         description: "Bolt of durable and thin cloth that won't restrict mobility",
-        value: 14,
+        value: 50,
         material_type: "fabric",
     });
     item_templates["Silk cloth"] = new Material({

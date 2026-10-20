@@ -376,6 +376,9 @@ const dialogues = {
     "proprietress offer answ": `Great and cute service, food and drinks, and if you feel generous, there's the "special service"~`,
     "proprietress special": `What's that "special service" thing?`,
     "proprietress special answ": "For a mere 10 pieces of silver, you can get an hour of personal private time with any of our maids, boy or girl, you choose~", //I swear this is not what it seems
+    "proprietress special 2": `I tried that "special service" you offer and it was exquisite, but now I feel like I need something even more intense.`,
+    "proprietress special 2 answ": "Here's the deal. You, five maids, private room, and air full of catnip vapors. It will cost 3 gold coins, because they might not be "
+                                 + "fit for work for at least a few hours afterwards and will need rest.",
     
     //SWAMPCHIEF
     "swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches. You approach the hut, calling out in greeting, but getting no response. As you step closer, you see a large man in thick scaly armor wielding a great trident emerge. He points the trident at you as he takes a firm stance.",
