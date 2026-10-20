@@ -132,8 +132,9 @@ const global_flags = {
     is_crafting_unlocked: false,
     is_strength_proved: false, //this role could be fulfilled by a quest, but it was originally added before that mechanic; besides, flags are cool and elegant
     is_mofu_mofu_enabled: true,
-    is_guard_met: false,
+    is_guard_met: false, //village guard, for a few textlines
     is_hero_created: false, //changed after going through hero creation panel
+    is_registered_adventurer: false,
 };
 const flag_unlock_texts = {
     is_gathering_unlocked: "You have gained the ability to gather new materials! Remember to equip your tools first <br>[Note: equipped tools do not appear in inventory as you will be swapping them very rarely]",

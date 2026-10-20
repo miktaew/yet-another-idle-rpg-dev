@@ -1329,12 +1329,27 @@ There's another gate on the wall in front of you, but you have a strange feeling
                                                         {location: locations["Town square"], travel_time: 40}
                                                     );
 
+    locations["Gallows"] = new SafeLocation({ 
+        connected_locations: [{location: locations["Town square"], travel_time: 4}],
+        description: `There is a single corpse still hanging, only holding together by some miracle. It's too old and dry to let out any smell. A guard stands at the bottom of `
+                    +"gallows, glancing at you.",
+        name: "Gallows",
+        is_unlocked: true,
+        getBackgroundNoises: function() {
+            let noises = [
+                "*It's all silent*", "*The corpse swings on the wind*", "*A bird tries to poke the corpse, then leaves because it's too old and dried*",
+            ];
+            return noises;
+        },
+    });                                                
+
     locations["Cat cafe"] = new SafeLocation({ 
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: `A cat café in the center of town. There are multiple kitties of all kinds, but two females especially catch your eyes
- - a chubby mackerel tabby with a white belly and neck, and a slender tortoishell that seems blind on the right eye. There's a single worker in the café, a person of ambiguous gender with long ponytail and glasses.`,
+ - a chubby mackerel tabby with a white belly and neck, and a slender tortoishell that seems blind on the right eye.`,
         name: "Cat café",
         is_unlocked: true,
+        market_region: "Town",
         getBackgroundNoises: function() {
             let noises = [
                 "Meow", "Nya", "Mrrr", "Mrrrp meow", "Mrrrp mrrrp",
@@ -1342,6 +1357,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             ];
             return noises;
         },
+        npcs: ["catCafeOwner"],
         is_under_roof: true,
         is_temperature_static: true,
         static_temperature: 20,
@@ -1447,7 +1463,8 @@ There's another gate on the wall in front of you, but you have a strange feeling
         {location: locations["Nekomimi cafe"], travel_time: 4},
         {location: locations["Adventurers' guild"], travel_time: 4},
         {location: locations["Mages guild"], travel_time: 4},
-        {location: locations["Antique store"], travel_time: 4}
+        {location: locations["Antique store"], travel_time: 4},
+        {location: locations["Gallows"], travel_time: 4},
 
     );
 
@@ -3829,6 +3846,96 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
             success_text: "You spend two hours in a private room with some of the cutest, friendliest employees this place has to offer, in atmosphere that's heavy with "
                          +"catnip, overwhelming your senses and making you act the same way they do. You scratch their ears, pat their heads, have them purr all around you, get bunted a lot, and "
                          +"you bunt back too. If paradise exists in mortal realm, then this is it.",
+            display_conditions: {
+                money: {
+                    number: 300000,
+                },
+                race: "nekomimi",
+            },
+            success_conditions: [
+                {
+                    money: {
+                        number: 300000,
+                        remove: true,
+                    }
+                },
+            ],
+            attempt_duration: 0,
+            success_chances: [1],
+            repeatable: true,
+            rewards: {
+                progress_timer: 120, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
+                active_effects: {
+                    "Fluffy bliss": 4320, //72 in-game hours
+                    "Tipsy": 120,
+                }, 
+            },
+        }),
+    };
+    locations["Cat cafe"].actions = {
+        "private time": new GameAction({
+            action_id: "private time",
+            starting_text: "Pay 10S for a cuddling session with some of the cats",
+            description: "It's surely worth it",
+            success_text: "You spend an hour in a private room, constantly being assaulted by fluffy cuddly purring creatures that never seem to have enough.",
+            display_conditions: {
+                money: {
+                    number: 10000,
+                }
+            },
+            success_conditions: [
+                {
+                    money: {
+                        number: 10000,
+                        remove: true,
+                    }
+                },
+            ],
+            attempt_duration: 0,
+            success_chances: [1],
+            repeatable: true,
+            rewards: {
+                progress_timer: 60, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
+                active_effects: {"Fluffy bliss": 1440}, //24 in-game hours, or 24 irl minutes at default tickrate
+                textlines: [{dialogue: "cat cafe owner", lines: ["something stronger"], skip_message: true,}],
+            },
+        }),
+        "private time 2": new GameAction({
+            action_id: "private time 2",
+            starting_text: "Pay 3G for a special cuddly session with cats",
+            description: "This might be too much even for you",
+            success_text: "You spend two hours in a private room, surrounded by cats that are just impossibly friendly and cuddly. Sound of their purring is overwhelming, "
+                         +"their demands for attention unending, and your number of limbs way too low to handle them all. At least the catnip distracts them a bit every now and then, "
+                         +"letting you get a breath of air. If you were to die, this is how you would like to feel when it happens.",
+            display_conditions: {
+                money: {
+                    number: 300000,
+                },
+                not_race: "nekomimi",
+            },
+            success_conditions: [
+                {
+                    money: {
+                        number: 300000,
+                        remove: true,
+                    }
+                },
+            ],
+            attempt_duration: 0,
+            success_chances: [1],
+            repeatable: true,
+            rewards: {
+                progress_timer: 120, //60 in-game minutes, or 1 in-game hour (or 1 irl minute, assuming default tickrate)
+                active_effects: {"Fluffy bliss": 4320}, //72 in-game hours
+            },
+        }),
+        "private time 2 cat": new GameAction({
+            action_id: "private time 2 cat",
+            starting_text: "Pay 3G for a special cuddly session with cats",
+            description: "This might be too much even for you",
+            success_text: "You spend two hours in a private room, surrounded by cats that are just impossibly friendly and cuddly. Sound of their purring is overwhelming, "
+                         +"their demands for attention unending, and your number of limbs way too low to handle them all. The catnip distracts them a bit every now and then, "
+                         +"letting you get a breath of air, but it affects you as well, enhancing the bliss. If you were to die, this is how you would like to feel when it happens.",
             display_conditions: {
                 money: {
                     number: 300000,

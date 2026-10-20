@@ -380,6 +380,21 @@ const dialogues = {
     "proprietress special 2 answ": "Here's the deal. You, five maids, private room, and air full of catnip vapors. It will cost 3 gold coins, because they might not be "
                                  + "fit for work for at least a few hours afterwards and will need rest.",
     
+    //CAT CAFE OWNER                             
+    "cat cafe owner description": "The owner, or whoever this person actually is, sits calmly behind the counter, with a cat on their lap. It seems impossible to "
+                                + "accurately guess their gender. They have light brown hair in long ponytail and wear glasses",
+    "cat cafe hi": "Hello",
+    "cat cafe hi answ": "Hi there. I hope you will enjoy the company of our cats.",
+    "cat cafe hi answ cat": "Hi there. If you're looking for work, try that other cafe. But if you're here to enjoy yourself among some quadruped cats, then I hope you will have fun.",
+    "cat cafe hi answ dog": `Hi there. I hope you will enjoy your time here. Just try not to scare any of the cats and remember that when a cat wags `
+                               +`their tail it usually means that they are unhappy.`,
+    "cat cafe offer": "What does this place have in offer?",
+    "cat cafe offer answ": `Cats. Lots of cats. Also food and drinks. And also "the room", if you're feeling generous~`,
+    "cat cafe special": `What's that "room" thing?`,
+    "cat cafe special answ": "For a mere 10 pieces of silver, you can get an hour in private room with some of our friendliest cats that will just assault you with cuddles and purrs.",
+    "cat cafe special 2": `I tried that "special service" you offer and it was amazing, but now I feel like I need something more.`,
+    "cat cafe special 2 answ": "Okay then. How about... Thrice as many cats, plus air filled with catnip vapors? It will cost 3 gold coins, because they might "
+                                 + "spend rest of the day sleeping and be unavailable to other clients.",                             
     //SWAMPCHIEF
     "swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches. You approach the hut, calling out in greeting, but getting no response. As you step closer, you see a large man in thick scaly armor wielding a great trident emerge. He points the trident at you as he takes a firm stance.",
     "mofu#swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches."

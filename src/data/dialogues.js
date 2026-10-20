@@ -1323,6 +1323,100 @@ const dialogues = {};
         }
     });
 
+    dialogues["cat cafe owner"] = new DialogueComponent({ 
+        //basically a copy of nekomimi cafe, just slightly different descriptions, meant mainly for people playing with fluffy mode off
+        name: "Cafe owner",
+        is_unlocked: true,
+        description: "cat cafe owner description",
+        textlines: {
+            "hi": new Textline({
+                name: "cat cafe hi",
+                possible_texts: ["cat cafe hi answ", "cat cafe hi answ cat", "cat cafe hi answ dog"],
+                getText: function(context){
+                    if(context.character.getBio().race === "nekomimi") {
+                        return this.possible_texts[1];
+                    } else if(context.character.getBio().race === "inumimi") {
+                        return this.possible_texts[2];
+                    } else {
+                        return this.possible_texts[0];
+                    }
+                },
+                is_unlocked: true,
+                rewards: {
+                    textlines: [{dialogue: "cat cafe owner", lines: ["offer"]}],
+                },
+                locks_lines: ["hi"],
+            }),
+            "offer": new Textline({
+                name: "cat cafe offer",
+                text: "cat cafe offer answ",
+                is_unlocked: false,
+                rewards: {
+                    textlines: [{dialogue: "cat cafe owner", lines: ["special"]}],
+                    traders: [{trader: "nekomimi trader"}],
+                },
+                locks_lines: ["offer"],
+            }),
+            "special": new Textline({
+                name: "cat cafe special",
+                text: "cat cafe special answ",
+                is_unlocked: false,
+                rewards: {
+                    actions: [{location: "Cat cafe", action: "private time"}],
+                },
+                locks_lines: ["special"],
+            }),
+            "something stronger": new Textline({
+                name: "cat cafe special 2",
+                text: "cat cafe special 2 answ",
+                is_unlocked: false,
+                rewards: {
+                    actions: [{location: "Cat cafe", action: "private time 2"}, {location: "Cat cafe", action: "private time 2 cat"}],
+                },
+                locks_lines: ["something stronger"],
+            }),
+        }
+    });
+
+    dialogues["gallows guard"] = new DialogueComponent({
+        name: "guard",
+        is_unlocked: true,
+        description: "gallows guard description",
+        textlines: {
+            "hi": new Textline({
+                name: "gallows guard hi",
+                text: "gallows guard hi answ",
+                is_unlocked: true,
+                rewards: {
+                    textlines: [{dialogue: "gallows guard", lines: ["corpse"]}],
+                },
+                locks_lines: ["hi"],
+            }),
+            "corpse": new Textline({
+                name: "gallows guard corpse",
+                text: "gallows guard corpse answ",
+                is_unlocked: false,
+                rewards: {
+                    textlines: [{dialogue: "gallows guard", lines: ["what now"]}],
+                },
+                locks_lines: ["corpse"],
+            }),
+            "what now": new Textline({
+                name: "gallows guard what",
+                text: "gallows guard what answ",
+                is_unlocked: false,
+                rewards: {
+                    move_to: {location: "Town square"},
+                    locations: {location: "Temple"},
+                    locks: {
+                        locations: ["Gallows"],
+                    }
+                },
+                locks_lines: ["what now"],
+            }),
+        }
+    });
+
     dialogues["swampland chief"] = new DialogueComponent({
         //lizard like everyone in triber, aggressive and proud
         name: "swampland chief",
