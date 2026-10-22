@@ -1,5 +1,5 @@
 "use strict";
-import { clamp, slerp } from "../misc.js";
+import { clamp, slerp, random_range } from "../misc.js";
 import AvailabilityComponent from "../components/availability_component.js";
 import { activities } from "../activities.js";
 import { availabilities } from "../data/component_references.js";
@@ -454,7 +454,7 @@ class LocationActivity {
 
         this.applied_effects = applied_effects;
 
-        this.gained_resources = gained_resources; 
+        this.gained_resources = gained_resources ? new GainedResources(gained_resources) : null; 
         /*
             {
                 resources: [{name, ammount: [[min,max], [min,max]], chance: [min,max]}], 
@@ -499,18 +499,14 @@ class LocationActivity {
         }
         gathering_time_needed = Math.floor(slerp(this.gained_resources.time_period, skill_modifier));
 
-        for(let i = 0; i < this.gained_resources.resources.length; i++) {
-
-            const chance = slerp(this.gained_resources.resources[i].chance, skill_modifier);
-            const min = Math.round(slerp([this.gained_resources.resources[i].ammount[0][0], this.gained_resources.resources[i].ammount[1][0]], skill_modifier));
-            const max = Math.round(slerp([this.gained_resources.resources[i].ammount[0][1], this.gained_resources.resources[i].ammount[1][1]], skill_modifier));
-            gained_resources.push({name: this.gained_resources.resources[i].name, count: [min,max], chance: chance});
+        for (let resource of this.gained_resources.resources) {
+            const chance = slerp(resource.chance, skill_modifier);
+            const min = Math.round(slerp([resource.ammount[0][0], resource.ammount[1][0]], skill_modifier));
+            const max = Math.round(slerp([resource.ammount[0][1], resource.ammount[1][1]], skill_modifier));
+            gained_resources.push({name: resource.name, count: [min,max], chance: chance});
         }
 
-        if (!this.gained_resources.roll_quality) {
-            return { gathering_time_needed, gained_resources };
-        }
-        else {
+        if (this.gained_resources.roll_quality) {
             const skill = skills[activities[this.activity_name].base_skills_names[0]];
             const quality_cap = Math.min(Math.round(100+2*character.getTotalSkillLevel(skill.skill_id)),200);
             const quality = (3 * character.getTotalSkillLevel(skill.skill_id) - skill.max_level) + 130/* + (15 * tier)*/;
@@ -518,8 +514,23 @@ class LocationActivity {
                 clamp(Math.round(quality - 15), 10, quality_cap),
                 clamp(Math.round(quality + 10), 10, quality_cap),
             ];
-            return { gathering_time_needed, gained_resources, quality_range}
+            return { gathering_time_needed, gained_resources, quality_range }
+        } else {
+            return { gathering_time_needed, gained_resources };
         }
+    }
+
+class GainedResources {
+    resources;  // [{name, ammount: [[min,max], [min,max]], chance: [min,max]}]
+    time_period;    // [min,max]
+    skill_required; // [min_efficiency, max_efficiency]
+    roll_quality;   // boolean, whether dropped items have quality
+
+    constructor({ resources, time_period, skill_required, roll_quality = false }) {
+        this.resources = resources;
+        this.time_period = time_period;
+        this.skill_required = skill_required;
+        this.roll_quality = roll_quality;
     }
 }
 

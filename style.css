@@ -256,20 +256,24 @@ input[type=checkbox], input[type=radio] {
 		position: relative;
 		border: 3px double gray;
 		font-weight: bold;
+		display: none;
 	}
 
 	.loading_screen_status_good {
 		background-color: rgb(0, 128, 0, 0.5);
+		display: block;
 	}
 
 	.loading_screen_status_errors {
 		color: rgb(255, 73, 73, 0.5);
 		background-color: black;
+		display: block;
 	}
-	
+
 	.loading_screen_status_warnings {
 		color: rgba(255, 230, 0, 0.555);
 		background-color: black;
+		display: block;
 	}
 
 #hero_creation_panel {
@@ -1869,8 +1873,11 @@ i {
 }
 
 #active_effect_count {
-	text-align: right;
-	width: 90px;
+	text-align: center;
+	width: 250px;
+}
+
+#active_effect_count span {
 	font-weight: bold;
 }
 
@@ -2134,7 +2141,7 @@ i {
 #character_effects{
 	position: absolute;
 	top: 158px;
-	left: 100px;
+	left: 70px;
 }
 	#effects_div {
 		font-size: 16px;
@@ -2968,7 +2975,7 @@ i {
 
 #debug_div {
 	position: absolute;
-	width: 100%;
+	width: 90%;
 	z-index: 2;
 	margin-bottom: 100px;
 	padding-bottom: 100px;
@@ -2977,6 +2984,10 @@ i {
 #debug_div td {
 	vertical-align: top;
 }
+
+	#debug_div tr:nth-child(even) {
+		background-color: rgb(48, 57, 77);
+	}
 
 .combat_effect_popup {
 /*	display: none;*/

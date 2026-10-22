@@ -3380,7 +3380,7 @@ function update_displayed_material_choice({category, subcategory, recipe_id, ref
             continue;
         }
 
-        const material = find_recipe_material({material: material_recipe, ignore_stop: true}); //TODO currently doesn't support items with quality
+        const material = find_recipe_material({material: material_recipe, ignore_stop: true});
 
         const item_div = document.createElement("div");
         const name_span = document.createElement("span");
@@ -3815,6 +3815,32 @@ function create_xp_bonus_breakdown(bonus, include_multipliers) {
 function update_displayed_effects() {
     const effect_count = Object.keys(active_effects).length;
     active_effect_count.innerText = effect_count;
+
+    let buffCount = Object.values(active_effects).reduce((total, effect) => {
+        if (effect.tags.buff) {
+            total.buffs++;
+            total.lowestBuff = Math.min(effect.duration, total.lowestBuff);
+        }
+        else {
+            total.debuffs++;
+            total.lowestDebuff = Math.min(effect.duration, total.lowestDebuff);
+        }
+        return total;
+    }, { buffs: 0, debuffs: 0, lowestBuff: Infinity, lowestDebuff: Infinity });
+
+    let displayText = "";
+    if (buffCount.buffs > 0) {
+        displayText += `<b class="comparison_better">${buffCount.buffs} buff${buffCount.buffs > 1 ? "s" : ""} (${format_time({time: {minutes: buffCount.lowestBuff}})})</b> `;
+    }
+    if (buffCount.debuffs > 0) {
+        displayText += `<b class="comparison_worse">${buffCount.debuffs} debuff${buffCount.debuffs > 1 ? "s" : ""} (${format_time({time: {minutes: buffCount.lowestDebuff}})})</b> `;
+    }
+    if (!displayText) {
+        displayText = "No active effects";
+    }
+
+    active_effect_count.innerHTML = displayText;
+
     if(effect_count > 0) {
         //effects exist, refresh the whole displayed content
         clear_HTML_content(active_effects_tooltip);
@@ -5741,6 +5767,14 @@ function set_loading_screen_progress(message) {
 
 function hide_loading_text() {
     document.getElementById("loading_screen_loading_text").classList.add("fade");
+}
+
+function set_loading_screen_success() {
+    const loading_screen_errors_field = document.getElementById("loading_screen_status");
+    loading_screen_errors_field.classList.remove('loading_screen_status_warnings');
+    loading_screen_errors_field.classList.add('loading_screen_status_good');
+
+    loading_screen_errors_field.innerText = 'No issues in the loading process :)';
 }
 
 function set_loading_screen_errors_warning() {

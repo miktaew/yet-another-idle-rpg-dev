@@ -117,6 +117,7 @@ import { fill_availability_methods } from "./component_management.js";
 import Combat from "./models/combat.js";
 import { Rewards } from "./rewards.js";
 import { ReputationManager } from "./reputation.js";
+import { DataViewer } from "./mods/debug_screen.js";
 import { traders } from "./data/traders.js";
 import { dialogue_owners } from "./components/dialogue_component.js";
 
@@ -5531,30 +5532,21 @@ function update() {
 
                     //add resource drops (if defined)
                     if (gained_resources) {
-                        for(let i = 0; i < gained_resources.length; i++) {
-                            if(Math.random() > (1-gained_resources[i].chance)) {
-                                const count = random_range(gained_resources[i].count[0], gained_resources[i].count[1]);
-                                let quality = null;
+                        for(let resource of gained_resources) {
+                            if(Math.random() > (1-resource.chance)) {
+                                const count = random_range(resource.count[0], resource.count[1]);
+                                const quality = quality_range ? Math.round(random_range(quality_range[0], quality_range[1]) / 4) * 4 : null;
 
-                                //quality
-                                if (quality_range) {
-                                    quality = Math.round(random_range(quality_range[0], quality_range[1]) / 4) * 4;
-                                }
+                                items.push({item_id: resource.name, quality: quality, count: count});
 
-                                items.push({item_id: gained_resources[i].name, quality: quality, count: count});
 
-                                game_stats.gathered_materials[gained_resources[i].name] = (game_stats.gathered_materials[gained_resources[i].name] || 0) + count;
+                                game_stats.gathered_materials[resource.name] = (game_stats.gathered_materials[resource.name] || 0) + count;
+                                current_activity.gathered_materials[resource.name] = (current_activity.gathered_materials[resource.name] || 0) + count;
                             }
                         }
 
                         if(items.length > 0) {
                             process_current_loot({loot_list: items});
-                            
-
-                            for(let i = 0; i < items.length; i++) {
-                                current_activity.gathered_materials[items[i].item_id] = (current_activity.gathered_materials[items[i].item_id] + items[i].count || items[i].count);
-                            }
-                        
                             character.addToInventory(items);
                         }
 
@@ -5883,6 +5875,7 @@ function set_game_speed(multiplier) {
  */
 function enable_dev_console() {
     const list = (registry) => Object.keys(registry).sort();
+    const dataViewer = new DataViewer();
 
     const real_add_active_effect = add_active_effect;
 
@@ -6014,6 +6007,9 @@ function enable_dev_console() {
             current_combat.start();
         },
 
+        show_data_viewer: () => dataViewer.show_debug_window(),
+        sort_data_viewer: (key) => dataViewer.sort(key),
+
         list_effects: () => list(effect_templates),
         list_items: () => list(item_templates),
         list_locations: () => list(locations),
@@ -6131,7 +6127,7 @@ function add_all_active_effects(duration){
 update_displayed_equipment();
 sort_displayed_inventory({sort_by: "name", target: "character"});
 
-if(game_options.skip_play_button) {
+if (game_options.skip_play_button && !is_loading_error) {
     play_button.click();
 }
 
@@ -6186,9 +6182,11 @@ if(is_on_dev()) {
     );
 }
 
-if(config.enable_dev_mode) {
+if (config.enable_dev_mode) {
+    const dataViewer = new DataViewer();
     enable_dev_console();
 }
+
 export { 
     current_combat,
     current_location,

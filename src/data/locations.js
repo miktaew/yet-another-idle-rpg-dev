@@ -2110,7 +2110,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
 
     locations["Eastern mill"].activities = {
         "balancing": new LocationActivity({
-            activity_name: "climbing",
+            activity_name: "balancing",
             starting_text: "Stay on top of the windmill sails",
             skill_xp_per_tick: 15,
             is_unlocked: false,
@@ -2611,6 +2611,18 @@ There's another gate on the wall in front of you, but you have a strange feeling
     };
 
     locations["Motherwood"].activities = {
+        "climbing": new LocationActivity({
+            activity_name: "climbing",
+            starting_text: "Try climbing the massive trees",
+            skill_xp_per_tick: 7,
+            is_unlocked: true,
+        }),
+        "balancing": new LocationActivity({
+            activity_name: "balancing",
+            starting_text: "Stand on the tallest treetop",
+            skill_xp_per_tick: 10,
+            is_unlocked: false,
+        }),
         "animal care": new LocationGatheringActivity({
             activity_name: "animal care",
             starting_text: "Delicately harvest silkworm coccoons",
@@ -3739,6 +3751,53 @@ You almost muster the courage to venture in, but hesitate at the last moment`],
                 recipes: [
                     {category: "crafting", subcategory: "items", recipe_id: "Silk cloth"},
                 ]
+            },
+        }),
+        "unlock balancing": new GameAction({
+            action_id: "unlock balancing",
+            starting_text: "Climb to the top of the tallest tree",
+            description: "See what the view from up there is like",
+            action_text: "Reaching for the next branch",
+            success_text: "You finally reach the top. Now, staying there is a whole different thing...",
+            failure_texts: {
+                conditional_loss: [
+                    "You can't even see the top from here. Maybe if you were better at climbing and balancing..."
+                ],
+                random_loss: [
+                    "The tree was just too tall",
+                    "You couln't find the right branch",
+                    "You fell down",
+                    "The branch snaps under your weight",
+                    "The treetop bends under your weight"
+                ],
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Climbing": 10,
+                        "Equilibrium": 5,
+                    },
+                    stats: {
+                        strength: 100,
+                        agility: 200
+                    }
+                },
+                {
+                    skills: {
+                        "Climbing": 30,
+                        "Equilibrium": 20,
+                    },
+                    stats: {
+                        strength: 200,
+                        agility: 500
+                    },
+                },
+            ],
+            attempt_duration: 20,
+            success_chances: [0.2, 1],
+            rewards: {
+                skill_xp: {"Climbing": 10000},
+                activities: [{location:"Motherwood", activity:"balancing"}],
             },
         }),
     };
