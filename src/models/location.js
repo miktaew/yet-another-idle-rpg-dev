@@ -519,6 +519,7 @@ class LocationActivity {
             return { gathering_time_needed, gained_resources };
         }
     }
+}
 
 class GainedResources {
     resources;  // [{name, ammount: [[min,max], [min,max]], chance: [min,max]}]
