@@ -3677,7 +3677,28 @@ function add_gear() {
             name: "Gryphon trophy",
             value: 700,
             stats: {
-                //TODO
+                attack_points: {
+                    multiplier: 1.15,
+                },
+                attack_power: {
+                    multiplier: 1.15,
+                },
+            },
+            base_bonus_skill_levels: {
+                "Spatial awareness": 4
+            }
+        });
+
+        item_templates["Little kings trophy"] = new Artifact({
+            name: "Trophy of Little Kings",
+            value: 700,
+            stats: {
+                attack_points: {
+                    multiplier: 1.25,
+                },
+            },
+            base_bonus_skill_levels: {
+                "Presence sensing": 4
             }
         });
 

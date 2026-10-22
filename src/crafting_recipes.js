@@ -2123,6 +2123,17 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [27,35],
         recipe_skill: "Crafting",
     });
+    crafting_recipes.items["Little kings trophy"] = new ItemRecipe({
+        name: "Little kings trophy",
+        recipe_type: "equipment",
+        materials: [
+            { material_id: "Evil eye", count: 4}
+        ],
+        result: {result_id: "Little kings trophy", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [27,35],
+        recipe_skill: "Crafting",
+    });
 
     crafting_recipes.items["Simple dream catcher"] = new ItemRecipe({
         name: "Simple dream catcher",
