@@ -76,6 +76,19 @@ const ALL_SHIELD_COMPS = [component_types.SHIELD_HANDLE, component_types.SHIELD_
 const ALL_INTERIORS = [component_types.HELMET_INTERIOR, component_types.CHESTPLATE_INTERIOR, component_types.LEG_ARMOR_INTERIOR, component_types.SHOE_INTERIOR, component_types.GLOVE_INTERIOR];
 const ALL_EXTERIORS = [component_types.HELMET_EXTERIOR, component_types.CHESTPLATE_EXTERIOR, component_types.LEG_ARMOR_EXTERIOR, component_types.SHOE_EXTERIOR, component_types.GLOVE_EXTERIOR];
 
+
+const component_groups = {
+    "wood": { tier: 1, weight: 60, strength: 60, types: [...ALL_WEAPON_HANDLES, ...ALL_SHIELD_COMPS], },
+    "cloth": [],
+    "leather": [],
+    "metal": [],
+    "bone": [],
+
+    "hard leather": [],
+    "mail": [],
+    "plate": []
+}
+
 /**
  * 100 is a default value for most cases
  * 50 is the minimum weight for weapon handles, going lower will result in heavier components of same material being faster (i.e. long faster than short)
@@ -89,6 +102,7 @@ const material_properties = {
         weight: 60,
         strength: 60,
         name: "simple wooden",
+        group: "wood",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS
@@ -98,6 +112,7 @@ const material_properties = {
         tier: 1,
         weight: 100,
         strength: 100,
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -111,6 +126,7 @@ const material_properties = {
         strength: 70,
         handling: 50,
         warmth: 110,
+        group: "leather",
         types: [
             component_types.HELMET_INTERIOR, component_types.CHESTPLATE_INTERIOR, component_types.LEG_ARMOR_INTERIOR, component_types.SHOE_INTERIOR
             //no glove, material implied to be too crappy for them
@@ -120,6 +136,7 @@ const material_properties = {
         tier: 2,
         weight: 60,
         strength: 60,
+        group: "wood",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS,
@@ -130,6 +147,7 @@ const material_properties = {
         tier: 2,
         weight: 100,
         strength: 100,
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -142,6 +160,7 @@ const material_properties = {
         weight: 100,
         strength: 100,
         warmth: 80,
+        group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -152,6 +171,7 @@ const material_properties = {
         weight: 60,
         strength: 60,
         warmth: 100,
+        group: "hard leather",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -162,6 +182,7 @@ const material_properties = {
         strength: 70,
         warmth: 110,
         handling: 20,
+        group: "leather",
         types: [
             ...ALL_INTERIORS,
         ],
@@ -172,6 +193,7 @@ const material_properties = {
         strength: 50,
         warmth: 140,
         handling: 80,
+        group: "cloth",
         types: [
             ...ALL_INTERIORS,
         ],
@@ -180,6 +202,7 @@ const material_properties = {
         tier: 3,
         weight: 60,
         strength: 60,
+        group: "wood",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS,
@@ -189,6 +212,7 @@ const material_properties = {
         tier: 3,
         weight: 80,
         strength: 80,
+        group: "bone",
         types: [
             ...ALL_WEAPON_HANDLES,
         ]
@@ -197,6 +221,7 @@ const material_properties = {
         tier: 3,
         weight: 100,
         strength: 100,
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -209,6 +234,7 @@ const material_properties = {
         weight: 100,
         strength: 100,
         warmth: 80,
+        group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -219,6 +245,7 @@ const material_properties = {
         weight: 160,
         strength: 160,
         warmth: 80,
+        group: "plate",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -229,6 +256,7 @@ const material_properties = {
         weight: 60,
         strength: 60,
         warmth: 100,
+        group: "hard leather",
         types: [
             ...ALL_EXTERIORS,
         ]
@@ -239,6 +267,7 @@ const material_properties = {
         strength: 100,
         warmth: 110,
         handling: 20,
+        group: "leather",
         types: [
             ...ALL_INTERIORS,
         ]
@@ -247,6 +276,7 @@ const material_properties = {
         tier: 4,
         weight: 60,
         strength: 60,
+        group: "wood",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS
@@ -256,6 +286,7 @@ const material_properties = {
         tier: 4,
         weight: 80,
         strength: 80,
+        group: "bone",
         types: [
             ...ALL_WEAPON_HANDLES,
         ],
@@ -275,10 +306,32 @@ const material_properties = {
         ],
         name: "turtleshell"
     },
+    "turtle shellplate": {
+        tier: 4,
+        weight: 100,
+        strength: 140,
+        warmth: 100,
+        group: "plate",
+        types: [
+            ...ALL_EXTERIORS,
+        ]
+    },
+    "gryphonfeather": {
+        tier: 4,
+        weight: 80,
+        strength: 100,
+        warmth: 100,
+        group: "mail",
+        types: [
+            ...ALL_EXTERIORS,
+        ],
+        value: 360,
+    },
     "a monster bodypart": {
         tier: 4,
         weight: 80,
         strength: 80,
+        group: "bone",
         types: [
             component_types.SHORT_BLADE,
             component_types.HAMMER_HEAD,
@@ -293,6 +346,7 @@ const material_properties = {
         tier: 4,
         weight: 130,
         strength: 100,
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -305,6 +359,7 @@ const material_properties = {
         weight: 130,
         strength: 100,
         warmth: 80,
+        group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -315,6 +370,7 @@ const material_properties = {
         weight: 200,
         strength: 200,
         warmth: 80,
+        group: "plate",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -324,6 +380,7 @@ const material_properties = {
         tier: 4,
         weight: 80,
         strength: 110,
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -336,6 +393,7 @@ const material_properties = {
         weight: 80,
         strength: 110,
         warmth: 80,
+        group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -346,6 +404,7 @@ const material_properties = {
         weight: 140,
         strength: 180,
         warmth: 80,
+        group: "plate",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -356,15 +415,7 @@ const material_properties = {
         weight: 60,
         strength: 60,
         warmth: 100,
-        types: [
-            ...ALL_EXTERIORS,
-        ]
-    },
-    "turtle shellplate": {
-        tier: 4,
-        weight: 100,
-        strength: 140,
-        warmth: 100,
+        group: "leather",
         types: [
             ...ALL_EXTERIORS,
         ]
@@ -375,6 +426,7 @@ const material_properties = {
         strength: 50,
         warmth: 110,
         handling: 80,
+        group: "cloth",
         types: [
             ...ALL_INTERIORS,
         ],
@@ -385,6 +437,7 @@ const material_properties = {
         strength: 40,
         warmth: 110,
         handling: 100,
+        group: "cloth",
         types: [
             ...ALL_INTERIORS,
         ],
@@ -393,6 +446,7 @@ const material_properties = {
         tier: 5,
         weight: 60,
         strength: 60,
+        group: "wood",
         types: [
             ...ALL_WEAPON_HANDLES,
             ...ALL_SHIELD_COMPS,
@@ -404,6 +458,7 @@ const material_properties = {
         strength: 100,
         warmth: 80,
         name: "white",
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -416,6 +471,7 @@ const material_properties = {
         weight: 100,
         strength: 120,
         warmth: 80,
+        group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -426,6 +482,7 @@ const material_properties = {
         weight: 200,
         strength: 240,
         warmth: 80,
+        group: "plate",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -437,6 +494,7 @@ const material_properties = {
         strength: 110,
         warmth: 80,
         name: "black",
+        group: "metal",
         types: [
             ...ALL_WEAPON_HEADS,
             ...ALL_WEAPON_HANDLES,
@@ -449,6 +507,7 @@ const material_properties = {
         weight: 80,
         strength: 110,
         warmth: 80,
+        group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -459,6 +518,7 @@ const material_properties = {
         weight: 140,
         strength: 180,
         warmth: 80,
+        group: "plate",
         types: [
             ...ALL_EXTERIORS,
         ],
@@ -469,6 +529,7 @@ const material_properties = {
         weight: 60,
         strength: 60,
         warmth: 90,
+        group: "hard leather",
         types: [
             ...ALL_EXTERIORS,
         ]
@@ -479,6 +540,7 @@ const material_properties = {
         strength: 100,
         warmth: 90,
         handling: 100,
+        group: "leather",
         types: [
             ...ALL_INTERIORS,
         ],
@@ -492,6 +554,7 @@ const material_properties = {
         tier: 5,
         weight: 80,
         strength: 80,
+        group: "bone",
         types: [
             ...ALL_WEAPON_HANDLES,
         ]
