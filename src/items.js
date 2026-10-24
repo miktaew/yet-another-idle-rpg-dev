@@ -3281,6 +3281,8 @@ function add_gear_components() {
                 }
             }
         });
+
+
         item_templates["Batrachian cape"] = new Cape({
             name: "Batrachian cape", 
             description: "A slippery cape made from frogskin. Technically waterproof, but doesn't cover your entire body",
@@ -3293,6 +3295,22 @@ function add_gear_components() {
                 },
                 cold_tolerance: {
                     flat: 4,
+                }
+            }
+        });
+
+        item_templates["Gryphonfeather cape"] = new Cape({
+            name: "Gryphonfeather cape", 
+            description: "A dazzling cape of gryphon feathers, light and aerodynamic",
+            value: 1500,
+            item_tier: 5,
+            base_defense: 6,
+            base_stats: {
+                agility: {
+                    multiplier: 1.05,
+                },
+                cold_tolerance: {
+                    flat: 6,
                 }
             }
         });
@@ -4122,6 +4140,12 @@ function add_gear() {
         material_type: "chainmail",
     });
 
+    item_templates["Gryphonfeather mail"] = new Material({
+        description: "Mail made of interlocking gryphon feathers. It is surprisingly durable while being light as, well, a feather",
+        value: 90,
+        material_type: "chainmail",
+    });
+
     item_templates["White iron chainmail"] = new Material({
         description: "Dozens of tiny white iron rings linked together, very heavy. Nowhere near a wearable form, turning it into armor will still take a lot of effort and focus",
         value: 105,
@@ -4377,6 +4401,7 @@ function add_gear() {
         description: "A conconction made from a monster's poison, used to reverse its effects",
         value: 150,
         effects: [{effect: "Weak antipoison", duration: 60}],
+        recovery_chances: {"Glass phial": 0.75},
         tags: {"medicine": true},
     });
 
@@ -4490,6 +4515,7 @@ function add_gear() {
         description: "An incredibly complex meal that's difficult to make, but it's got an indescribable taste",
         value: 100,
         effects: [{ effect: "Varied seafood meal", duration: 90 }],
+        recovery_chances: {"Glass bottle": 0.6},
         tags: {"food": true},
     });
 	

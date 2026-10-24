@@ -23,10 +23,11 @@ class DataViewer {
             const tabs = document.createElement("div");
 
 
-            const tabNames = ["Mobs", "Materials", "Unlocks [WIP]"];
+            const tabNames = ["Mobs", "Materials", "Crafting mats", "Unlocks [WIP]"];
             const tabMethods = [
                 () => this.list_enemies(),
                 () => this.show_materials(),
+                () => this.list_crafting_materials(),
                 () => this.show_unlocks()];
 
             for (var i = 0; i < tabNames.length; i++) {
@@ -59,12 +60,12 @@ class DataViewer {
             return material_properties[key];
         });
 
-
-
-        this.window_content.innerHTML = this.tabulate_data(this.current_keys, this.current_data, "tier");
+        this.window_content.innerHTML = this.tabulate_data("tier");
     }
 
     tabulate_data(sort_by) {
+        console.log(sort_by);
+
         let keys = this.current_keys;
         let values = this.current_data;
 
@@ -233,7 +234,7 @@ class DataViewer {
 
     list_enemies() {
         //enemies
-        const elist = Object.entries(enemy_templates).sort((a, b) => a[1].xp_value - b[1].xp_value);
+        const elist = Object.entries(enemy_templates).sort((a, b) => (a[1].rank != b[1].rank ? a[1].rank - b[1].rank : a[1].xp_value - b[1].xp_value));
 
         let html = `<table>
         <tr>
@@ -270,9 +271,46 @@ class DataViewer {
         }
 
         html += "</table>";
-        console.log(this);
-        console.log(this.window_content);
         this.window_content.innerHTML = html;
+    }
+
+    list_crafting_materials() {
+        const materials = {};
+
+        for (let recipe_type of Object.values(recipes)) {
+            for (let recipe_group of Object.values(recipe_type)) {
+                for (let recipe of Object.values(recipe_group)) {
+                    if (!recipe.materials) {
+                        continue;
+                    }
+
+                    for (let material of recipe.materials) {
+                        let mat_id = material.material_id || material.material_type;
+                        let result = material.result_id || recipe.result.result_id
+
+                        if (!materials[mat_id]) {
+                            materials[mat_id] = {
+                                key: mat_id
+                            }
+                        }
+                        if (!materials[mat_id][recipe.recipe_skill]) {
+                            materials[mat_id][recipe.recipe_skill] = [];
+                        }
+                        materials[mat_id][recipe.recipe_skill].push(result);
+                    }
+                }
+            }
+        }
+
+
+        console.log(materials);
+        console.log(Object.values(materials));
+
+        this.current_keys = ["key", "Crafting", "Smelting", "Forging", "Woodworking", "Butchering", "Cooking", "Alchemy"];
+        this.current_data = Object.values(materials);
+
+        this.window_content.innerHTML = this.tabulate_data("key");
+
     }
 
     list_rewards(rewards) {

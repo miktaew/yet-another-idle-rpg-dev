@@ -716,6 +716,87 @@ const enemy_abilites = {
         },
     });
 
+    //    enemy_templates["Warthog"] = new Enemy({
+    //    name: "Warthog",
+    //    description: "A large, aggressive porcine creature with a tough hide and large tusks",
+    //    xp_value: 30,
+    //    add_to_bestiary: false,
+    //    rank: 8,
+    //    tags: ["living", "beast"],
+    //    stats: {health: 12000, attack: 600, agility: 80, dexterity: 800, intuition: 100, magic: 0, attack_speed: 0.6, defense: 600},
+    //    loot_list: [
+    //        {item_name: "Boar hide", chance: 0.08},
+    //        {item_name: "Boar meat", chance: 0.1},
+    //        {item_name: "Boar tusk", chance: 0.05},
+    //        {item_name: "High quality boar tusk", chance: 0.005},
+    //    ],
+    //    size: enemy_sizes.LARGE,
+    //});
+    //    enemy_templates["Direwolf hunter"] = new Enemy({
+    //    name: "Direwolf hunter",
+    //    description: "A powerful wild wolf variant of unmatched ferocity, the strongest and heaviest out of all direwolves",
+    //    xp_value: 30,
+    //    rank: 7,
+    //    tags: ["living", "beast"],
+    //    stats: {health: 2000, attack: 240, agility: 130, dexterity: 80, intuition: 90, magic: 0, attack_speed: 1.1, defense: 40},
+    //    loot_list: [
+    //        {item_name: "Wolf fang", chance: 0.12},
+    //        {item_name: "Wolf pelt", chance: 0.06},
+    //        {item_name: "Weak monster bone", chance: 0.02},
+    //        {item_name: "High quality wolf fang", chance: 0.0015}
+    //    ],
+    //    size: enemy_sizes.MEDIUM,
+    //});
+
+
+    //TODO unicorn
+    enemy_templates["Unicorn"] = new Enemy({
+        name: "Unicorn",
+        description: "",
+        xp_value: 15,
+        rank: 6,
+        tags: ["living", "beast"],
+        size: enemy_sizes.MEDIUM,
+        stats: {health: 1200, attack: 150, agility: 100, dexterity: 70, magic: 0, intuition: 60, attack_speed: 0.5, defense: 60},
+        loot_list: [
+            {item_name: "Mountain goat hide", chance: 0.04},
+            {item_name: "Goat meat", chance: 0.02},
+            {item_name: "Mountain goat horn", chance: 0.02},
+            {item_name: "Pristine mountain goat horn", chance: 0.0005},
+        ],
+    });
+
+
+    //	enemy_templates["Snapping turtle"] = new Enemy({
+    //    name: "Snapping turtle",
+    //    description: "A large turtle with an incredibly dense shell",
+    //    xp_value: 250,      //in between alligator and snake because it'll probably take the longest to kill during post-completion grinding
+    //    rank: 10,
+    //    size: enemy_sizes.MEDIUM,
+    //    tags: ["living", "beast", "aquatic"],
+    //    stats: {health: 22000, attack: 525, agility: 230, dexterity: 220, intuition: 130, magic: 0, attack_speed: 0.9, defense: 1000},
+    //    loot_list: [
+    //        {item_name: "Turtle meat", chance: 0.02},
+    //        {item_name: "Turtle shell", chance: 0.005},
+    //    ]
+    //});
+
+    //TODO
+    enemy_templates["Almiraj"] = new Enemy({
+        name: "Almiraj",
+        description: "",
+        xp_value: 30,
+        rank: 7,
+        tags: ["living", "beast"],
+        stats: {health: 2000, attack: 480, agility: 260, dexterity: 80, intuition: 180, magic: 0, attack_speed: 0.8, defense: 40},
+        loot_list: [
+            {item_name: "Wolf fang", chance: 0.12},
+            {item_name: "Wolf pelt", chance: 0.06},
+            {item_name: "Weak monster bone", chance: 0.02},
+            {item_name: "High quality wolf fang", chance: 0.0015}
+        ],
+        size: enemy_sizes.MEDIUM,
+    });
 })();
 
 
