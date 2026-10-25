@@ -256,7 +256,6 @@ input[type=checkbox], input[type=radio] {
 		position: relative;
 		border: 3px double gray;
 		font-weight: bold;
-		display: none;
 	}
 
 	.loading_screen_status_good {

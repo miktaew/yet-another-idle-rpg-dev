@@ -1341,12 +1341,15 @@ There's another gate on the wall in front of you, but you have a strange feeling
             ];
             return noises;
         },
+        npcs: ["gallowsGuard"],
     });                                                
 
     locations["Cat cafe"] = new SafeLocation({ 
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
-        description: `A cat café in the center of town. There are multiple kitties of all kinds, but two females especially catch your eyes
- - a chubby mackerel tabby with a white belly and neck, and a slender tortoishell that seems blind on the right eye.`,
+        description: "A cat café in the center of town. There are multiple kitties of all kinds, but some especially catch your eyes. " //obviously it's just some of my old cats [*]
+                    +"there's a chubby mackerel tabby with a white belly and neck, sitting right next to a slender tortoishell that seems blind on the right eye. " //Fran and Mona
+                    +"They seem to be in a balanced state of mutual tolerance, rather than friends. "
+                    +"A bit further you see a regular mackerel tabby that sleeps cuddled with a mostly white cat with a few small black spots.", //Edgar and Ida
         name: "Cat café",
         is_unlocked: true,
         market_region: "Town",
@@ -1366,7 +1369,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
     locations["Nekomimi cafe"] = new SafeLocation({
         connected_locations: [{location: locations["Town square"], travel_time: 4}],
         description: `A nekomimi café in the center of town. Multiple catboys and catgirls are busy with a mix of work and silliness, sometimes properly serving drinks and snacks and sometimes just acting the way their four legged equivalents tend to do.`,
-        name: "Nekomimi cafe",
+        name: "Nekomimi café",
         is_unlocked: true,
         market_region: "Town",
         getBackgroundNoises: function() {
@@ -1416,20 +1419,24 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 "Don't be stupid, everyone knows the world is a cube", "I wanted to report...", "Congratulations, that's another task completed!",
                 "Gonna reach next rank soon, I hope", "That advancement exam was absurd...",
                 "After my next dungeon dive, I will seriously ask him to marry me", "Sorry? What's a death flag?",
-                "Haha, I did it!", "With this, I can finally retire! Or maybe... just one more...", "Anything is better than rats",
-                "Just one bite and all that was left of my team leader was a pair of bloodied legs... I'm never going back there, no way.",
-                "Give us drinks, we are celebrating!", "So, that one time we stumbled upon a pair of bloodied legs, just standing upright in front of a boss chamber...",
+                "Haha, I did it!", "With this, I can finally retire! Or maybe... just one more...", "Okay, just one more dungeon run, my team needs their leader", 
+                "Just one bite and all that was left of my team leader was a pair of bloodied legs... I'm never going back there, no way.", "She was about to retire after that...",
+                "So, that one time we stumbled upon a pair of bloodied legs, just standing upright in front of a boss chamber...", "Give us drinks, we are celebrating!",
                 "I will never get idiots who dive in the dungeon, it's too risky", "Personally? I would rather do simple small requests my entire life than risk meeting one of those...",
-                "Right? And then I deliver it and they say nuh uh, this isn't what we asked for, but it was EXACTLY was they asked for",
+                "Right? And then I deliver it and they say nuh uh, this isn't what we asked for, but it was EXACTLY what they asked for",
+                "Anything is better than rats",
 
-                "Remember what we talked about last time?", "Took me a few trips, but I actually saw them...", "...they maybe just reached adulthood, and yet...",
-                "...they were just rushing through floor after floor...", "...every spear stab was a kill...", "...every sword swing was a kill...", "...every strange spell was a kill...",
+                "Remember what we talked about last time?", "Took me a few trips, but I actually saw them...", "...they looked like they just reached adulthood, and yet...",
+                "...they were just rushing through floor after floor...", "...every spear stab was a kill...", "...every sword swing was a kill...", "...each of their strange spells was a kill...",
                 "...and they really were strange...", "...I'm serious, I've never seen magic like that...", "...it was as if shadows were alive...", "...actually, while I didn't see that one...",
-                "...my teammate swears shadows detached from the wall...", "...and then they took a shape of a spike...", "...one thrust, and the floor boss was gone...",
+                "...my teammate swears shadows detached from the wall...", "...and then they took a shape of a spike...", "...one thrust, and the floor boss was gone...", "...I did see another of them in action though...",
+                "...so like, there was a big monster, and then suddenly crystal spikes ripped him apart from inside...",
 
                 "Okay, so like, imagine a kobold...", "Okay, and now, imagine three kobolds. In a trenchcoat...", "That's a classic, right?", "Now imagine three fat rats in a trenchcoat, pretending to be a kobold",
                 "And now... Imagine three of those, too dumb to realize they are all the same...", "Standing on top of one another, wearing one larger trenchcoat...", "No, I'm serious!",
                 "I swear, my cousin's brother's dog's groomer's aunt's husband saw it happen with his own eyes!",
+                //a bunch of random "haha funi" stuff plus some cringy OC inserts, most of which won't even make sense,
+                //because chances of anything being shown in correct order are absurdly low
             ];
             if(!global_flags.is_mofu_mofu_enabled) {
                 noises.push("...but you know the craziest thing?", "I swear that two of them had cat tails...", "I wasn't drunk, they had cat tails and cat ears...", "...the other two seemed human though");
@@ -1465,7 +1472,48 @@ There's another gate on the wall in front of you, but you have a strange feeling
         {location: locations["Mages guild"], travel_time: 4},
         {location: locations["Antique store"], travel_time: 4},
         {location: locations["Gallows"], travel_time: 4},
+    );
 
+    locations["Temple district"] = new SafeLocation({
+        connected_locations: [{location: locations["Town square"], travel_time: 20}],
+        description: `Temple district is clearly the cleanest, most well-kept, best organized part of town. Rows of trees and bushes along the roads, `
+                    +`a public garden beyond a short wall, a few fountains here and there, and a small stream flowing through a shallow channel. `
+                    +`There's even an orphanage and a public school. And then, of course, multiple buildings used solely by clergy. Some of them are residential buildings for `
+                    +`local clergy, others are harder to recognize, and then there's a large impressive temple in the middle, in shape of a half-circle, `
+                    +`with rows of columns along the flat side and with way too much ornamentation.`,
+        name: "Temple district",
+        is_unlocked: true,
+        getBackgroundNoises: function() {
+            let noises = [
+            ];
+            return noises;
+        },
+    });
+    locations["Town square"].connected_locations.push(
+        {location: locations["Temple district"], travel_time: 20},
+    );
+
+    locations["Temple"] = new SafeLocation({
+        connected_locations: [{location: locations["Temple district"], travel_time: 4}],
+        description: `Insides of the temple are not as ornamented as outsides, with the entire internal structure organized to keep the focus on series of altars that `
+                    +`stretch equally spaced along the whole of the curved wall. There seems to be some kind of ritual circle in the middle, with a single priest standing `
+                    +`next to it patiently.`,
+        name: "Temple",
+        npcs: ["templePriest"],
+        is_unlocked: true,
+        getBackgroundNoises: function() {
+            let noises = [
+                "Come on, make that face more yellow, it will be fun!", "I can't just paint Grand Priest's face so yellow, that would be disrespectful...", // ¯\_(ツ)_/¯
+                "Someone starts quietly singing some religious anthem",
+            ];
+            return noises;
+        },
+        is_under_roof: true,
+        is_temperature_static: true,
+        static_temperature: 20,
+    });
+    locations["Temple district"].connected_locations.push(
+        {location: locations["Temple"], travel_time: 4},
     );
 
     locations["Mountain path"] = new SafeLocation({

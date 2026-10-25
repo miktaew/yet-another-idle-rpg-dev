@@ -395,8 +395,25 @@ const dialogues = {
     "cat cafe special 2": `I tried that "special service" you offer and it was amazing, but now I feel like I need something more.`,
     "cat cafe special 2 answ": "Okay then. How about... Thrice as many cats, plus air filled with catnip vapors? It will cost 3 gold coins, because they might "
                                  + "spend rest of the day sleeping and be unavailable to other clients.",                             
+    
+    "gallows guard description": "The lonely guard is clearly bored beyond anything. The kind of person that is constantly pondering on whether she should just quit her job, "+
+                                "but knows she needs to have some kind of income and can't find anything else. She keeps glancing at you as if almost hoping that you would try doing anything "
+                                +"that could be an excuse to leave her post for even a moment. She's equipped with a typical for this town set of steel chainmail, spear, and sword.",
+    "gallows guard hi": "Hi.",
+    "gallows guard hi answ": "...hello.",
+    "gallows guard corpse": "May I know who's corpse this is?",
+    "gallows guard corpse answ": "A criminal... Sigh, not like I have anything better to do. They were a leader of a gang that made quite a mess in the "
+                                +"areas surrounding our town. Robberies, murders, taking slaves, stuff like that. Tried to get into the town with "
+                                +"all their money, got caught very quickly due to having bad temper and to trying to pay with money that was, "
+                                +"in the most literal sense of the word, covered in blood. Sure, it was old and dried, but still blood. Then they "
+                                +"admitted to everything quite easily during investigation. Must have been a mix of alcohol and bravado, but it "
+                                +"made for one of quickest death sentences in last decade, or so I was told.",
+    "gallows guard what": "Sounds like this's who I was looking for. I was robbed some time ago and knocked out, lost my memories too. Honestly I don't know what to do now.",
+    "gallows guard what answ": "Can't help you with that, sorry. However... It might be worth checking the local temple if you haven't done that yet, just ask for help "
+                              +"with this specific issue and who knows, they might have some kind of healing magic or a ritual that would work for your problem.",
     //SWAMPCHIEF
-    "swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches. You approach the hut, calling out in greeting, but getting no response. As you step closer, you see a large man in thick scaly armor wielding a great trident emerge. He points the trident at you as he takes a firm stance.",
+    "swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches. You approach the hut, calling out in greeting, but getting no response. "
+                            +"As you step closer, you see a large man in thick scaly armor wielding a great trident emerge. He points the trident at you as he takes a firm stance.",
     "mofu#swampchief description 1": "Looking around the encampment, you see a large hut framed by banners and lit torches."
             +" You approach the hut, calling out in greeting, but getting no response."
             +" As you step closer, you see a large man in thick scaly armor wielding a great trident emerge, his thick scaly tail resting behind him."

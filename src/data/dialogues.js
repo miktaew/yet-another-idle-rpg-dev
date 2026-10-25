@@ -1406,16 +1406,48 @@ const dialogues = {};
                 text: "gallows guard what answ",
                 is_unlocked: false,
                 rewards: {
-                    move_to: {location: "Town square"},
-                    locations: {location: "Temple"},
-                    locks: {
-                        locations: ["Gallows"],
-                    }
+                    textlines: [{dialogue: "temple priest", lines: ["memory"]}],
                 },
                 locks_lines: ["what now"],
             }),
         }
     });
+
+    dialogues["temple priest"] = new DialogueComponent({
+        name: "priest",
+        is_unlocked: true,
+        description: "temple priest description",
+        textlines: {
+            "hi": new Textline({
+                name: "temple priest hi",
+                text: "temple priest hi answ",
+                is_unlocked: true,
+                rewards: {
+                    textlines: [{dialogue: "temple priest", lines: ["services"]}],
+                },
+                locks_lines: ["hi"],
+            }),
+            "services": new Textline({
+                name: "temple priest services",
+                text: "temple priest services answ",
+                is_unlocked: false,
+                rewards: {
+                    //todo
+                },
+                locks_lines: ["services"],
+            }),
+            "memory": new Textline({
+                name: "temple priest memory",
+                text: "temple priest memory answ",
+                is_unlocked: false,
+                rewards: {
+                    //todo
+                },
+                locks_lines: ["memory"],
+            }),
+        }
+    });
+
 
     dialogues["swampland chief"] = new DialogueComponent({
         //lizard like everyone in triber, aggressive and proud

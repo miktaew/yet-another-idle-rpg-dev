@@ -60,28 +60,33 @@ class NPCRegistryC {
 
 const NPCRegistry = new NPCRegistryC();
 
+//village
 NPCRegistry.add("villageElder", new NPC({name: "village elder", dialogue: dialogues["village elder"]}));
 NPCRegistry.add("villageGuard", new NPC({name: "village guard", dialogue: dialogues["village guard"]}));
 NPCRegistry.add("oldCraftsman", new NPC({name: "old craftsman", dialogue: dialogues["old craftsman"]}));
 NPCRegistry.add("villageMillers", new NPC({name: "village millers", dialogue: dialogues["village millers"]}));
+NPCRegistry.add("villageTrader", new NPC({name: "village trader", trader: traders["village trader"]}));
 
+
+//slums
 NPCRegistry.add("suspiciousMan", new NPC({name: "suspicious man", dialogue: dialogues["suspicious man"]}));
 NPCRegistry.add("oldWomanOfTheSlums", new NPC({name: "old woman of the slums", dialogue: dialogues["old woman of the slums"]}));
+NPCRegistry.add("suspiciousTrader", new NPC({name: "suspicious trader", trader: traders["suspicious trader"]}));
 
+//town
 NPCRegistry.add("gateGuard", new NPC({name: "gate guard", dialogue: dialogues["gate guard"]}));
 NPCRegistry.add("gallowsGuard", new NPC({name: "gallows guard", dialogue: dialogues["gallows guard"]}));
 NPCRegistry.add("farmSupervisor", new NPC({name: "farm supervisor", dialogue: dialogues["farm supervisor"]}));
 NPCRegistry.add("nekomimiProprietress", new NPC({name: "nekomimi proprietress", dialogue: dialogues["nekomimi proprietress"], trader: traders["nekomimi trader"]}));
 NPCRegistry.add("catCafeOwner", new NPC({name: "cat cafe owner", dialogue: dialogues["cat cafe owner"], trader: traders["cat cafe trader"]}));
+NPCRegistry.add("templePriest", new NPC({name: "temple priest", dialogue: dialogues["temple priest"]}));
 
+//swamp
 NPCRegistry.add("swamplandChief", new NPC({name: "swampland chief", dialogue: dialogues["swampland chief"]}));
 NPCRegistry.add("swamplandCook", new NPC({name: "swampland cook", dialogue: dialogues["swampland cook"]}));
 NPCRegistry.add("swamplandTailor", new NPC({name: "swampland tailor", dialogue: dialogues["swampland tailor"]}));
 NPCRegistry.add("swamplandTanner", new NPC({name: "swampland tanner", dialogue: dialogues["swampland tanner"]}));
 NPCRegistry.add("swamplandScout", new NPC({name: "swampland scout", dialogue: dialogues["swampland scout"]}));
-
-NPCRegistry.add("villageTrader", new NPC({name: "village trader", trader: traders["village trader"]}));
-NPCRegistry.add("suspiciousTrader", new NPC({name: "suspicious trader", trader: traders["suspicious trader"]}));
 NPCRegistry.add("swamplandTrader", new NPC({name: "swampland trader", trader: traders["swampland trader"]}));
 
 export default NPCRegistry;
