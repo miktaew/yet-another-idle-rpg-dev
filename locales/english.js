@@ -381,8 +381,9 @@ const dialogues = {
                                  + "fit for work for at least a few hours afterwards and will need rest.",
     
     //CAT CAFE OWNER                             
-    "cat cafe owner description": "The owner, or whoever this person actually is, sits calmly behind the counter, with a cat on their lap. It seems impossible to "
-                                + "accurately guess their gender. They have light brown hair in long ponytail and wear glasses",
+    "cat cafe owner description": "The owner, or whoever this person actually is, sits calmly behind the counter, with a cat on their lap and another "
+                                + "cat just laying on their shoulders, basically wrapped around the back of the owner's neck. That must feel really nice and warm... "
+                                + "It seems impossible to accurately guess their gender. They have light brown hair in long ponytail and wear glasses",
     "cat cafe hi": "Hello",
     "cat cafe hi answ": "Hi there. I hope you will enjoy the company of our cats.",
     "cat cafe hi answ cat": "Hi there. If you're looking for work, try that other cafe. But if you're here to enjoy yourself among some quadruped cats, then I hope you will have fun.",
