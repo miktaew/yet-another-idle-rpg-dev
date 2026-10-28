@@ -2099,7 +2099,7 @@ function update_displayed_normal_location(location) {
             const crafting_button = document.createElement("div");
             crafting_button.classList.add("location_choices", "choice_craft");
             crafting_button.setAttribute("onclick", 'openCraftingWindow()');
-            insert_HTML(crafting_button, `<i class="material-icons">construction</i> ${location.crafting.use_text}`);
+            insert_HTML(crafting_button, `<i class="material-icons">construction</i> ${translate(location.crafting.use_text)}`);
             location_choice_divs["crafting"] = crafting_button;
             //action_div.appendChild(crafting_button);
         }
@@ -2723,7 +2723,7 @@ function create_location_types_display(current_location){
         type_div.classList.add("location_type_div");
 
         const type_tooltip = document.createElement("div");
-        let type_tooltip_html_content = location_types[current_location.types[i].type].stages[current_location.types[i].stage].description;
+        let type_tooltip_html_content = translate(location_types[current_location.types[i].type].stages[current_location.types[i].stage].description);
         type_tooltip.classList.add("location_type_tooltip");
 
         const {type, stage} = current_location.types[i];

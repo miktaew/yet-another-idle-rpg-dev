@@ -923,11 +923,59 @@ const locations = {
     "sleep text bedroll": "Take a nap on the bedroll",
     "sleep text cot": "Take a nap on the cot",
     "sleep text open cot": "Lie down on an open cot",
+    
+    "craft default": "Try to craft something",
+    "craft cook": "Cook something on a campfire",
+    "craft tribe": "Use the tribe's workhuts to craft something",
 }
 
-const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...misc_texts, ...locations};
+const location_types = {
+    "bright desc 1": "A place that's always lit, no matter the time of the day",
+    "bright desc 2": "An extremely bright place, excessive light makes it hard to keep eyes open",
+    "bright desc 3": "A place with so much light that an average person would go blind in an instant",
 
-const translations_for_verifier = { dialogues, racial, ui, stats, skills, bio, misc_texts, locations };
+    "dark desc 1": "It's dark here, comparable to a bright night",
+    "dark desc 2": "An extremely dark place, darker than most of the nights",
+    "dark desc 3": "Pure darkness with not even a tiniest flicker of light",
+
+    "narrow desc 1": "A narrow area where there's not much place for maneuvering",
+    "narrow desc 2": "A very tight and narrow area where there's not much place for maneuvering",
+    "narrow desc 3": "An area so cramped that it's a miracle you can even move",
+    "narrow desc 4": "Are you trying to die? One step the wrong way and you will fall to your death!",
+
+    "open desc 1": "A completely open area where attacks can come from any direction",
+    "open desc 2": "An area that's completely open and simultanously obstructs your view, making it hard to predict where an attack will come from",
+
+    "thin air desc 1": "Place with thinner air, which negatively impacts your body",
+    "thin air desc 2": "Place with very thin air, heavily affecting your body",
+
+    "eldritch desc 1": "This place brings a strong sense of unease",
+    "eldritch desc 2": "This place goes against the laws of the world",
+
+    "rough desc 1": "The loose sand and jagged rocks make it harder to fight effectively",
+    "rough desc 2": "A boggy marshland is a terrible location to fight for your life in",
+    "rough desc 3": "The muck somehow causes you to slip even while holding you firmly in place",
+
+    "wet desc 1": "Attempting to stay dry in conditions like these is impossible",
+
+    "aquatic desc 1": "Wading in water up to your knees restricts your movement",
+    "aquatic desc 2": "With most of your body submerged, it's hard to move",
+    "aquatic desc 3": "Fully underwater and with no ground under your feet, the moves you learned on land will help you little",
+    "aquatic desc 4": "Crushed by the immense pressure of the oceanic abyss",
+
+    "perilous desc 1": "Littered with sharp and dangerous objects like thorns or broken glass. Every move risks injury",
+    "perilous desc 2": "Filled with very sharp and dangerous objects like traps, falling rocks, or the insides of a machine. Every false move puts you in mortal danger",
+    "perilous desc 3": "An extremely dangerous place, like a raging inferno or the stomach of a beast. Every move risk certain death",
+
+    "miasma desc 1": "While not harmful, the stench of this area makes you instinctively hold your breath",
+    "miasma desc 2": "Noxious fumes are hurting your lungs and irritating your body",
+    "miasma desc 3": "Highly poisonous gas fills the area",
+}
+
+const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...misc_texts, ...locations, ...location_types};
+//separation exists purely for easier management
+
+const translations_for_verifier = { dialogues, racial, ui, stats, skills, bio, misc_texts, locations, location_types };
 //kept separately so that it's also possible to check for accidental overwrites
 
 export default english;

@@ -19,10 +19,10 @@ const favourite_locations = {};
         name: "bright",
         stages: {
             1: {
-                description: "A place that's always lit, no matter the time of the day",
+                description: "bright desc 1",
             },
             2: {
-                description: "An extremely bright place, excessive light makes it hard to keep eyes open",
+                description: "bright desc 2",
                 related_skill: "Dazzle resistance",
                 effects: {
                     attack_points: {multiplier: 0.5},
@@ -30,7 +30,7 @@ const favourite_locations = {};
                 }
             },
             3: {
-                description: "A place with so much light that an average person would go blind in an instant",
+                description: "bright desc 3",
                 related_skill: "Dazzle resistance",
                 effects: {
                     attack_points: {multiplier: 0.1},
@@ -43,12 +43,12 @@ const favourite_locations = {};
         name: "dark",
         stages: {
             1: {
-                description: "It's dark here, comparable to a bright night",
+                description: "dark desc 1",
                 related_skill: "Night vision",
                 //no effects here, since in this case they are provided via the overall "night" penalty
             },
             2: {
-                description: "An extremely dark place, darker than most of the nights",
+                description: "dark desc 2",
                 related_skill: "Night vision",
                 effects: {
                     //they dont need to be drastic since they apply on top of 'night' penalty
@@ -57,7 +57,7 @@ const favourite_locations = {};
                 }
             },
             3: {
-                description: "Pure darkness with not even a tiniest flicker of light",
+                description: "dark desc 3",
                 related_skill: "Presence sensing",
                 effects: {
                     attack_points: {multiplier: 0.15},
@@ -70,7 +70,7 @@ const favourite_locations = {};
         name: "narrow",
         stages: {
             1: {
-                description: "A narrow area where there's not much place for maneuvering",
+                description: "narrow desc 1",
                 related_skill: "Tight maneuvers",
                 scaling_lvl: 20,
                 effects: {
@@ -78,7 +78,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "A very tight and narrow area where there's not much place for maneuvering",
+                description: "narrow desc 2",
                 related_skill: "Tight maneuvers",
                 effects: {
                     evasion_points: {multiplier: 0.333},
@@ -86,7 +86,7 @@ const favourite_locations = {};
                 scaling_lvl: 40,
             },
             3: {
-                description: "An area so cramped that it's a miracle you can even move",
+                description: "narrow desc 3",
                 related_skill: "Tight maneuvers",
                 effects: {
                     evasion_points: {
@@ -98,7 +98,7 @@ const favourite_locations = {};
                 }        
             },
             4: {
-                description: "Are you trying to die? One step the wrong way and you fall to your death!",
+                description: "narrow desc 4",
                 related_skill: "Tight maneuvers",
                 effects: {
                     evasion_points: {
@@ -116,7 +116,7 @@ const favourite_locations = {};
         name: "open",
         stages: {
             1: {
-                description: "A completely open area where attacks can come from any direction",
+                description: "open desc 1",
                 related_skill: "Spatial awareness",
                 scaling_lvl: 30,
                 effects: {
@@ -124,7 +124,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "An area that's completely open and simultanously obstructs your view, making it hard to predict where an attack will come from",
+                description: "open desc 2",
                 related_skill: "Spatial awareness",
                 effects: {
                     evasion_points: {multiplier: 0.5},
@@ -136,7 +136,7 @@ const favourite_locations = {};
         name: "thin air",
         stages: {
             1: {
-                description: "Place with thinner air, which negatively impacts your body",
+                description: "thin air desc 1",
                 related_skill: "Breathing",
                 scaling_lvl: 25,
                 effects: {
@@ -148,7 +148,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "Place with very thin air, heavily affecting your body",
+                description: "thin air desc 2",
                 related_skill: "Breathing",
                 effects: {
                     stamina_efficiency: {multiplier: 0.1},
@@ -164,7 +164,7 @@ const favourite_locations = {};
         name: "eldritch",
         stages: {
             1: {
-                description: "This place brings a strong sense of unease",
+                description: "eldritch desc 1",
                 related_skill: "Strength of mind",
                 scaling_lvl: 30,
                 effects: {
@@ -176,7 +176,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "This place goes against the laws of the world",
+                description: "eldritch desc 2",
                 related_skill: "Strength of mind",
                 effects: {
                     agility: {multiplier: 0.3},
@@ -192,7 +192,7 @@ const favourite_locations = {};
         name: "rough",
         stages: {
             1: {
-                description: "The loose sand and jagged rocks make it harder to fight effectively",
+                description: "rough desc 1",
                 related_skill: "Scrambling",
                 scaling_lvl: 20, 
                 effects: {
@@ -204,7 +204,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "A boggy marshland is a terrible location to fight for your life in",
+                description: "rough desc 2",
                 related_skill: "Scrambling",
 				scaling_lvl: 30,
                 effects: {
@@ -216,7 +216,7 @@ const favourite_locations = {};
                 }
             },
 			3: {
-                description: "The muck somehow causes you to slip even while holding you firmly in place",
+                description: "rough desc 3",
                 related_skill: "Scrambling",
 				scaling_lvl: 60, //not implemented, intended for if in slick high viscosity fluids above waist height
                 effects: {
@@ -233,7 +233,7 @@ const favourite_locations = {};
         name: "wet",
         stages: {
             1: {
-                description: "Attempting to stay dry in conditions like this is impossible",
+                description: "wet desc 1",
                 applied_effects: [{effect: "Wet", duration: 30}]
             }
         }
@@ -243,7 +243,7 @@ const favourite_locations = {};
         name: "aquatic",
         stages: {
             1: {
-                description: "Wading in water up to your knees restricts your movement",
+                description: "aquatic desc 1",
                 related_skill: "Swimming",
                 scaling_lvl: 30,
                 effects: {
@@ -254,7 +254,7 @@ const favourite_locations = {};
                 applied_effects: [{effect: "Wet", duration: 30}]
             },
             2: {
-                description: "With most of your body submerged, it's hard to move",
+                description: "aquatic desc 2",
                 related_skill: "Swimming",
                 scaling_lvl: 40,
                 effects: {
@@ -266,7 +266,7 @@ const favourite_locations = {};
                 applied_effects: [{effect: "Wet", duration: 30}]
             },
             3: {
-                description: "Fully underwater and with no ground under your feet, the moves you learned on land will help you little",
+                description: "aquatic desc 3",
                 related_skill: "Swimming",
                 effects: {
                     agility: {multiplier: 0.1},
@@ -277,7 +277,7 @@ const favourite_locations = {};
                 applied_effects: [{effect: "Wet", duration: 30}]
             },
             4: {
-                description: "Crushed by the immense pressure of the oceanic abyss",
+                description: "aquatic desc 4",
                 related_skill: "Swimming",
                 effects: {
                     agility: {multiplier: 0.01},
@@ -294,7 +294,7 @@ const favourite_locations = {};
         name: "perilous",
         stages: {
             1: {
-                description: "Littered with sharp and dangerous objects like thorns or broken glass. Every move risks injury",
+                description: "perilous desc 1",
                 related_skill: "Scrambling",
                 scaling_lvl: 30,
                 effects: {
@@ -304,7 +304,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "Filled with very sharp and dangerous objects like traps, falling rocks, or the insides of a machine. Every false move puts you in mortal danger",
+                description: "perilous desc 2",
                 related_skill: "Scrambling",
                 effects: {
                     agility: {multiplier: 0.5},
@@ -313,7 +313,7 @@ const favourite_locations = {};
                 }
             },
             3: {
-                description: "An extremely dangerous place, like a raging inferno or the stomach of a beast. Every move risk certain death",
+                description: "perilous desc 3",
                 related_skill: "Scrambling",
                 effects: {
                     agility: {multiplier: 0.2},
@@ -329,7 +329,7 @@ const favourite_locations = {};
         name: "miasma",
         stages: {
             1: {
-                description: "While not harmful, the stench of this area makes you instinctively hold your breath",
+                description: "miasma desc 1",
                 related_skill: "Poison resistance",
                 scaling_lvl: 10,
                 effects: {
@@ -338,7 +338,7 @@ const favourite_locations = {};
                 }
             },
             2: {
-                description: "Noxious fumes are hurting your lungs and irritating your body",
+                description: "miasma desc 2",
                 related_skill: "Poison resistance",
                 scaling_lvl: 30,
                 effects: {
@@ -348,7 +348,7 @@ const favourite_locations = {};
                 }
             },
             3: {
-                description: "Highly poisonous gas fills the area",
+                description: "miasma desc 3",
                 related_skill: "Poison resistance",
                 effects: {
                     intuition: {multiplier: 0.5},
@@ -415,7 +415,7 @@ const favourite_locations = {};
         name: "Village", 
         crafting: new LocationCrafting({
             is_unlocked: true, 
-            use_text: "Try to craft something", 
+            use_text: "craft default", 
             tiers: {
                 crafting: 1,
                 forging: 1,
@@ -1308,7 +1308,9 @@ There's another gate on the wall in front of you, but you have a strange feeling
 
     locations["Town square"] = new SafeLocation({ 
         connected_locations: [{location: locations["Town outskirts"], travel_time: 40}],
-        description: "The town's center of life, connected to all the markets, guilds, and other important places",
+        description: "The town's center of life, connected to all the markets, guilds, and other important places. Multiple stores and cafe's can be seen "
+                    +"around, and there are a few larger roads that lead away from it. The less busy one seems to go towards a temple district, while "
+                    +"the other, filled with people, clearly leads to artisans' quarter.",
         name: "Town square",
         is_unlocked: false,
         getBackgroundNoises: function() {
@@ -1516,6 +1518,38 @@ There's another gate on the wall in front of you, but you have a strange feeling
         {location: locations["Temple"], travel_time: 4},
     );
 
+    locations["Artisans' quarter"] = new SafeLocation({
+        connected_locations: [{location: locations["Town square"], travel_time: 30}],
+        description: "A rather large part of the town is dedicated solely to all kinds of craft and to related trade. There's almost everything here: "
+                    +"stores with raw materials, workshops, lesser guilds, loud noises and strange smells. A row of trees separates this area from the rest of the "
+                    +"town, in what seems to be a futile attempt to make it less of an annoyance for other citizens.",
+        name: "Artisans' quarter",
+        is_unlocked: true,
+        getBackgroundNoises: function() {
+            let noises = [
+            ];
+            return noises;
+        },
+    });
+    locations["Town square"].connected_locations.push(
+        {location: locations["Artisans' quarter"], travel_time: 30},
+    );
+
+    locations["Dungeon entrance"] = new SafeLocation({
+        connected_locations: [{location: locations["Town square"], travel_time: 25}],
+        description: "",
+        name: "Dungeon entrance",
+        is_unlocked: true,
+        getBackgroundNoises: function() {
+            let noises = [
+            ];
+            return noises;
+        },
+    });
+    locations["Town square"].connected_locations.push(
+        {location: locations["Dungeon entrance"], travel_time: 25},
+    );
+
     locations["Mountain path"] = new SafeLocation({
         connected_locations: [{location: locations["Nearby cave"], custom_text: "Climb down to [Nearby Cave]", travel_time: 20, travel_time_skills: ["Climbing"]}],
         description: "A treacherous path high above the village",
@@ -1555,7 +1589,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         }),
         crafting: new LocationCrafting({
             is_unlocked: true,
-            use_text: "Cook something on a campfire",
+            use_text: "craft cook",
             tiers: {
                 cooking: 1
             }
@@ -1707,7 +1741,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         }),
         crafting: new LocationCrafting({
             is_unlocked: false,
-            use_text: "Cook something on a campfire",
+            use_text: "craft cook",
             tiers: {
                 cooking: 1
             }
@@ -1841,7 +1875,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         is_unlocked: false,
         crafting: new LocationCrafting({
             is_unlocked: false,
-            use_text: "Use the tribe's workhuts to craft something", 
+            use_text: "craft tribe",
             tiers: {
                 crafting: 2,
                 forging: 1,
