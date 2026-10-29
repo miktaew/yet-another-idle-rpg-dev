@@ -711,6 +711,10 @@ function change_location({location_id, event, skip_travel_time = false, do_quest
         }
     }
 
+    if(current_location.housing?.isUnlocked()) {
+        unlocked_beds[location_id] = true;
+    }
+
     process_rewards({rewards: current_location.entrance_rewards});
 }
 
