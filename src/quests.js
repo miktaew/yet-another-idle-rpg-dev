@@ -318,7 +318,9 @@ const questManager = {
             new QuestTask({is_hidden: true}), //so that the 1st task is completed but the next is not yet displayed
             new QuestTask({task_description: "Help with the wolf rat infestation"}), //talk to elder after dealing with them
             new QuestTask({task_description: "Continue your search"}), //talk to suspicious guy
-            new QuestTask({task_description: "Get into the town (tbc)"}), //not yet possible
+            new QuestTask({task_description: "Get into the town and find a new lead"}),
+            new QuestTask({task_description: "Go to the temple and inquire about restoring your memory"}),
+            new QuestTask({task_description: "Get the ritual done"}),
         ]
     });
 

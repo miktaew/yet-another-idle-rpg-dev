@@ -64,6 +64,7 @@ class Textline {
                         locks: {},
                         //reputation reward from textlines is currently not supported
                         },
+                delayed_rewards = [],
                 branches_into = [],
                 locks_lines = [], //for lines to be locked in >same< dialogue
                 //it's a simplified version of doing rewards: {locks: textlines: {...blah blah blah, values from it are actually autofilled in that form in a script at the end of this file
@@ -105,8 +106,8 @@ class Textline {
         }
         //related text lines that get locked; might be itself, might be some previous line 
         //e.g. line finishing quest would also lock line like "remind me what I was supposed to do"
-        //should be alright if it's limited only to lines in same Dialogue
-        //just make sure there won't be Dialogues with ALL lines unavailable
+
+        this.delayed_rewards = delayed_rewards;
     }
     
     getAvailabilityComponent() {

@@ -120,6 +120,7 @@ import { ReputationManager } from "./reputation.js";
 import { DataViewer } from "./mods/debug_screen.js";
 import { traders } from "./data/traders.js";
 import { dialogue_owners } from "./components/dialogue_component.js";
+import { delayed_rewards } from "./delayed_rewards.js";
 
 fill_availability_methods();
 
@@ -136,6 +137,7 @@ const global_flags = {
     is_guard_met: false, //village guard, for a few textlines
     is_hero_created: false, //changed after going through hero creation panel
     is_registered_adventurer: false,
+    are_temple_blessings_unlocked: false,
 };
 const flag_unlock_texts = {
     is_gathering_unlocked: "You have gained the ability to gather new materials! Remember to equip your tools first <br>[Note: equipped tools do not appear in inventory as you will be swapping them very rarely]",
@@ -246,6 +248,8 @@ let end_date;
 let current_dialogue; //this actually holds key of current npc, todo
 const active_effects = {};
 //e.g. health regen from food
+
+const pending_rewards = {};
 
 let selected_stance = stances["normal"];
 let current_stance = stances["normal"];
@@ -1691,6 +1695,32 @@ function process_mixed_rewards({mixed_rewards, source_type, source_name, is_firs
 
 /**
  * 
+ * @param {Object} data
+ * @param {Object} data.delayed_rewards {id, delay} 
+ */
+function prepare_delayed_rewards({delayed_rewards, source_type, inform_textline, source_name}) {
+    if(!pending_rewards[delayed_rewards.id]) {
+        pending_rewards[delayed_rewards.id] = {delay: delayed_rewards.delay};
+    } else {
+        pending_rewards[delayed_rewards.id].delay = Math.min(delayed_rewards.delay, pending_rewards[delayed_rewards.id].delay);
+    }
+
+    pending_rewards[delayed_rewards.id].source = {source_type, inform_textline, source_name};
+}
+
+function tick_delayed_rewards(time_in_minutes = 1) {
+    Object.keys(pending_rewards).forEach(key => {
+        pending_rewards[key].delay -= (time_in_minutes ?? 1);
+
+        if(pending_rewards[key].delay <= 0) {
+            process_rewards({rewards: delayed_rewards[key], ...pending_rewards[key].source});
+            delete pending_rewards[key];
+        }
+    });
+}
+
+/**
+ * 
  * @param {*} selected_activity location activity property (job or training)
  * @returns if current time is within working hours
  */
@@ -1808,7 +1838,8 @@ function start_textline(textline_key){
     const dialogue = NPCRegistry.get(current_dialogue).getDialogueComponent();
     const textline = dialogue.textlines[textline_key];
 
-    process_rewards({rewards: textline.rewards, source_type: "textline", inform_textline: false, source_name: current_dialogue})
+    process_rewards({rewards: textline.rewards, source_type: "textline", inform_textline: false, source_name: current_dialogue});
+    prepare_delayed_rewards({delayed_rewards: textline.delayed_rewards, source_type: "textline", inform_textline: false, source_name: current_dialogue});
 
     if(textline.otherUnlocks) {
         textline.otherUnlocks();
@@ -3340,6 +3371,8 @@ function create_save() {
         save_data["is_sleeping"] = is_sleeping;
 
         save_data["active_effects"] = active_effects;
+
+        save_data["pending_rewards"] = pending_rewards;
 
         save_data["enemy_killcount"] = enemy_killcount;
         save_data["item_log"] = item_log.items;
@@ -5036,6 +5069,14 @@ function load(save_data) {
             });
         }
 
+        Object.keys(save_data.pending_rewards).forEach(key => {
+            prepare_delayed_rewards({
+                delayed_rewards: {id: save_data.pending_rewards.id, delay: save_data.pending_rewards.delay}, 
+                ...save_data.pending_rewards.source
+            });
+        });
+        
+
         set_loading_screen_progress("Doing some finishing pats");
 
         if(save_data.favourite_locations) {
@@ -5249,6 +5290,7 @@ function update_timer(time_in_minutes) {
     }
     
     update_displayed_time();
+    tick_delayed_rewards(time_in_minutes);
 }
 
 function progress_time({value = 0, source}) {

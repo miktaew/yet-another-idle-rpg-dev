@@ -3,6 +3,7 @@
 import DialogueAction from "../models/dialogue_action.js";
 
 import {DialogueComponent, Textline} from "../components/dialogue_component.js";
+import { Rewards } from "../rewards.js";
 
 const dialogues = {};
 
@@ -1409,6 +1410,9 @@ const dialogues = {};
                 is_unlocked: false,
                 rewards: {
                     textlines: [{dialogue: "temple priest", lines: ["memory"]}],
+                    quest_progress: [
+                        {quest_id: "Lost memory", task_index: 4},
+                    ],
                 },
                 locks_lines: ["what now"],
             }),
@@ -1434,7 +1438,7 @@ const dialogues = {};
                 text: "temple priest services answ",
                 is_unlocked: false,
                 rewards: {
-                    //todo
+                    flags: ["are_temple_blessings_unlocked"], //better this way since they are likely to be expanded
                 },
                 locks_lines: ["services"],
             }),
@@ -1442,12 +1446,46 @@ const dialogues = {};
                 name: "temple priest memory",
                 text: "temple priest memory answ",
                 is_unlocked: false,
-                rewards: {
-                    //todo
-                },
+                rewards: new Rewards({
+                    quest_progress: [
+                        {quest_id: "Lost memory", task_index: 4},
+                    ],
+                    textlines: [{dialogue: "temple priest", lines: ["remind", "agree"]}],
+                }),
                 locks_lines: ["memory"],
             }),
-        }
+            "remind": new Textline({
+                name: "temple priest remind",
+                text: "temple priest remind answ",
+                is_unlocked: false,
+                rewards: new Rewards({
+                    textlines: [{dialogue: "temple priest", lines: ["services"]}],
+                }),
+            }),
+            "agree": new Textline({
+                name: "temple priest agree",
+                text: "temple priest agree answ",
+                is_unlocked: false,
+                delayed_rewards: [
+                    {
+                        delay: 60*24*7,
+                        id: "temple_ritual",
+                    }
+                ],
+                locks_lines: ["agree"],
+            }),
+            "restore": new Textline({
+                name: "temple priest restore",
+                text: "temple priest restore answ",
+                is_unlocked: false,
+                locks_lines: ["remind", "restore"],
+                rewards: new Rewards({
+                    quest_progress: [
+                        {quest_id: "Lost memory", task_index: 5},
+                    ],
+                }),
+            }),
+        },
     });
 
 
