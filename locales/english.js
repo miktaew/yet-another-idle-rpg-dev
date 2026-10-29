@@ -372,6 +372,7 @@ const dialogues = {
     "proprietress hi answ dog": `Hi there, cutie. We don't often get your kind here, but you are as welcome as any other guest. Just please don't go "bau bau" at anyone and remember that when a cat wags `
                                +`their tail it likely means irritation or anger, rather than happiness. I hope you will enjoy your time with us~`,
     "proprietress hi answ rare": "Hi there, cutie. I don't think we've served your kind before, but I hope you will enjoy your stay and have lots of fun~",
+    "proprietress hi answ mouse": "Hi there, cutie. We love having your kind here, I'm sure you will get to enjoy some special attention. Just try to not get eaten~",
     "proprietress offer": "What does this place have in offer?",
     "proprietress offer answ": `Great and cute service, food and drinks, and if you feel generous, there's the "special service"~`,
     "proprietress special": `What's that "special service" thing?`,

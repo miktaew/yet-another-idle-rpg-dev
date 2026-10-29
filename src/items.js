@@ -1115,6 +1115,7 @@ class Book extends Item {
         this.tags["book"] = true;
 
         this.saturates_market = false; //uncraftable and limited, no point
+        this.additional_description = item_data.additional_description; //for after the book is finished
     }
 
     /**
@@ -1398,6 +1399,7 @@ book_stats["Counting Mice"] = new BookData({
         name: "ABC for kids",
         description: "The simplest book on the market",
         value: 100,
+        additional_description: `A stands for a rat... <br>Note on the side seems to be a part of some lyrics, starting with "P is for Priceless", but you can't make out the rest of it`,
     });
     item_templates["Old combat manual"] = new Book({
         name: "Old combat manual",
@@ -1413,6 +1415,7 @@ book_stats["Counting Mice"] = new BookData({
         name: "Medicine for dummies",
         description: "A simple book about healing, describing how to create some basic medicines",
         value: 320,
+        additional_description: "Believe it or not, bleeding to death is a bad thing. A healing medicine can help prevent it from happening.",
     });
     item_templates["Butchering and you"] = new Book({
         name: "Butchering and you",
@@ -1442,7 +1445,8 @@ book_stats["Counting Mice"] = new BookData({
     item_templates["Counting Mice"] = new Book({
         name: "Counting Mice",
         description: "A simple book on how to count using mice and other animals for refence on how to do simple addition",
-        value: 120
+        value: 120,
+        additional_description: "One mouse, two mice, three mice, four mice, five mice, six mice, seven mice, eight mice, nine mice, ten mice, eleven mine, twelve mice...",
     });
 	
 })();

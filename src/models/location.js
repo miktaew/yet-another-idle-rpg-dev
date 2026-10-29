@@ -89,6 +89,7 @@ class BaseLocation {
         is_unlocked = true, 
         types = [], //{type, xp per tick}
         light_level = "normal",
+        description_texts, 
         getDescription,
         tags = {},
         is_temperature_static = false,
@@ -106,6 +107,7 @@ class BaseLocation {
         this.#availability = new AvailabilityComponent({is_unlocked});
         availabilities["location"][this.id] = this.#availability;
         this.description = description;
+        this.description_texts = description_texts; //put all possible values used in getDescription in this so they can be verified properly
         this.getDescription = getDescription || function(){return description;}
 
         this.types = types;

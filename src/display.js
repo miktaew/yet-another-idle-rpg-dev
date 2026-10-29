@@ -613,6 +613,9 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
                 }
             }
         }
+        if(item.additional_description) {
+            item_tooltip += `<br><br><span class="italic">${item.additional_description}</span>`;
+        }
     }
 
     if(item.material_type) {

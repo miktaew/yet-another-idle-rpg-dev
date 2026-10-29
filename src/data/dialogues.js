@@ -1274,7 +1274,7 @@ const dialogues = {};
         textlines: {
             "hi": new Textline({
                 name: "proprietress hi",
-                possible_texts: ["proprietress hi answ", "proprietress hi answ cat", "proprietress hi answ dog", "proprietress hi answ rare"],
+                possible_texts: ["proprietress hi answ", "proprietress hi answ cat", "proprietress hi answ dog", "proprietress hi answ rare", "proprietress hi answ mouse"],
                 getText: function(context){
                     if(context.character.getBio().race === "nekomimi") {
                         return this.possible_texts[1];
@@ -1282,6 +1282,8 @@ const dialogues = {};
                         return this.possible_texts[2];
                     } else if(context.character.getRaceTags().exotic) {
                         return this.possible_texts[3];
+                    } else if(context.character.getBio().race === "nezumimi") {
+                        return this.possible_texts[4];
                     } else {
                         return this.possible_texts[0];
                     }
