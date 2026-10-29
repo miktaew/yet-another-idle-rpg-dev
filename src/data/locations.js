@@ -1018,7 +1018,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
 
     locations["Primeval forest"] = new CombatZone({
         description: "Dangerous beasts roam here",
-        enemies_list: ["Grizzly bear", "Bandersnatch", "Grizzly squirrel"],
+        enemies_list: ["Grizzly bear", "Bandersnatch", "Grizzly squirrel", "Grand old boar", "Boar matriarch"],
         enemy_count: 50,
         enemy_group_size: [1,2],
         is_unlocked: true,
@@ -2570,6 +2570,13 @@ There's another gate on the wall in front of you, but you have a strange feeling
             is_unlocked: true,
             applied_effects: [{ effect: "Wet", duration: 30 }],
         }),
+        "running": new LocationActivity({
+            activity_name: "running",
+            starting_text: "Run across the lake on lilypads",
+            skill_xp_per_tick: 15,
+            is_unlocked: false,
+        }),
+
         "woodcutting": new LocationGatheringActivity({
             activity_name: "woodcutting",
             starting_text: "Harvest wood from the weeping willows",
@@ -2980,7 +2987,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         "unlock balancing": new GameAction({
             action_id: "unlock balancing",
             starting_text: "Climb atop the sails",
-            description: "See what the view from up there is like.",
+            description: "See what the view from up there is like",
             action_text: "Navigating the moving spars",
             success_text: "You finally reach the top. Now, staying there is a whole different thing...",
             failure_texts: {
@@ -3722,6 +3729,56 @@ There's another gate on the wall in front of you, but you have a strange feeling
                 skill_xp: { Swimming: 800, Breathing: 800, Perception: 800, },
             },
         }),
+
+        "unlock running": new GameAction({
+            action_id: "unlock running",
+            starting_text: "Run across the lake",
+            description: "If you're just fast enough, the lilypads should hold your weight just long enough",
+            action_text: "Aimimg for the next lilypad",
+            success_text: "You manage to run to the other side of the lake without falling in. Challenging yourself like this again might make for good training",
+            failure_texts: {
+                conditional_loss: [
+                    "You would have to be crazy good at running to even enteratain this idea"
+                ],
+                random_loss: [
+                    "The sails take you back to the bottom",
+                    "You lose your way and end up going down",
+                    "The wind is too strong, you can only cling for your dear life until the sails take you back down",
+                    "You end as you began",
+                    "*Hey, get down from there! This ain't no ride!*"
+                ],
+            },
+            conditions: [
+                {
+                    skills: {
+                        "Running": 25,
+                        "Equilibrium": 10,
+                    },
+                    stats: {
+                        "dexterity": 300,
+                        agility: 400
+                    }
+                },
+                {
+                    skills: {
+                        "Running": 50,
+                        "Equilibrium": 20,
+                    },
+                    stats: {
+                        dexterity: 600,
+                        agility: 1000
+                    },
+                },
+            ],
+            attempt_duration: 60,
+            success_chances: [0.2, 1],
+            rewards: {
+                skill_xp: {"Running": 30000},
+                activities: [{location:"Forest lake", activity:"running"}],
+            },
+        }),
+
+
         "gaze": new GameAction({
             action_id: "gaze",
             action_name: "Follow where the river leads",
