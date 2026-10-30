@@ -271,7 +271,9 @@ class LevelableComponent extends StatHaver {
      * @returns total xp gains for provided skill 
      */
     getSkillXPGain(skill_name) {
-        return (this.xp_bonuses.total_multiplier[skill_name] || 1) * this.getSkillXPGainBonus(skill_name) * skills[skill_name].can_level? 1 : 0;
+        return skills[skill_name].can_level
+            ? (this.xp_bonuses.total_multiplier[skill_name] || 1) * this.getSkillXPGainBonus(skill_name)
+            : 0;
     }
 
     /**

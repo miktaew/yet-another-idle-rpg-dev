@@ -943,7 +943,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         const success_conditions = action.getAvailabilityComponent().success_conditions;
         const start_conditions = action.getAvailabilityComponent().start_conditions;
 
-        if(success_conditions[0].money?.remove) {
+        if(success_conditions[0]?.money?.remove) {
             character.money -= success_conditions[0].money.number;
             update_displayed_money();
         }
@@ -4344,6 +4344,9 @@ function load(save_data) {
                         const trader_availability = npc.getTraderAvailability();
                         
                         write_availability_status(trader_availability, save_data.traders[trader_key]);
+                        if(trader_key === "suspicious trader") {
+                            trader_availability.setStatus({is_unlocked: true, is_locked: false, is_finished: false});
+                        }
                         
                         let trader_item_list = [];
 
@@ -4520,7 +4523,7 @@ function load(save_data) {
                             });
                         }
 
-                        trader.last_refresh = save_data.traders[trader_key].last_refresh;
+                        trader.last_refresh = save_data.traders[trader_key].last_refresh ?? -1;
                         trader.emptyInventory();
                         trader.addToInventory(trader_item_list);
                     }
