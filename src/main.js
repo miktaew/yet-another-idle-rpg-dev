@@ -1853,16 +1853,6 @@ function start_textline(textline_key){
     //start_dialogue(current_dialogue);
     let text = get_textline_answer(textline);
 
-    //a very stupid easter egg that totally won't be annoying - 1% chance to have a random word in dialogue replaced with "rat" if your hero's name contains that word
-    if(character.isRat()) {
-        if(Math.random() <= 0.01) {
-            const words = text.split(" ");
-            const index = Math.floor(words.length * Math.random());
-            words[index] = "rat";
-            text = words.join(" ");
-        }
-    }
-
     if(textline.branches_into?.length) {
         fill_action_box({content_type: "dialogue_branch", data: {text: text, npc_id: current_dialogue, textlines: textline.branches_into}});
     } else {

@@ -4210,6 +4210,25 @@ function update_displayed_dialogue({npc_id, textlines, origin}) {
 
 function update_displayed_textline_answer({text, is_description}) {
     text = translate(text);
+
+    //a very stupid easter egg that totally won't be annoying - 1% chance to have a random word in dialogue replaced with "rat" if your hero's name contains that word
+    if(character.isRat()) {
+        if(Math.random() <= 1) {
+            const words = text.split(" ");
+            const index = Math.floor(words.length * Math.random());
+            if(words[index].length === 3) {
+                words[index] === "rat";
+            } else if(words[index].length > 3){
+                let index_to_cut = 0;
+                if(words[index][0] === words[index][0].toUpperCase()) {
+                    index_to_cut = 1;
+                }
+                words[index] = words[index].slice(0, index_to_cut) + "rat" + words[index].slice(index_to_cut + 3);
+            }
+
+            text = words.join(" ");
+        }
+    }
     
     if(is_description) {
         document.getElementById("dialogue_answer_div").innerText =  "*"+text+"*";
