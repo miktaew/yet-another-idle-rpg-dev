@@ -2,7 +2,7 @@
 
 import { config } from "../config.js";
 import { character } from "../data/character.js";
-import { skills } from "../data/skills.js";
+import { skills, weapon_type_to_skill } from "../data/skills.js";
 import { log_message, update_displayed_health, update_stance_tooltip } from "../display.js";
 import { enemy_tag_to_skill_mapping } from "../enemies.js";
 import { item_templates } from "../items.js";
@@ -375,6 +375,12 @@ class Combat {
         }
 
         //if this point is reached, attack has successfully struck its target, possibly partially blocked on the way
+
+        if(!this.is_special_combat && fighter.tags.main_character) {
+            const weapon = fighter.getEquipment().weapon;
+            const skill_id = weapon ? weapon_type_to_skill[weapon.weapon_type] : "Unarmed";
+            add_xp_to_skill({skill: skills[skill_id], xp_to_add: target.xp_value*target_count_xp_modifier});
+        }
 
         game_stats.total_hits_taken += (!this.is_special_combat && target.tags.main_character);
         game_stats.total_hits_done += (!this.is_special_combat && fighter.tags.main_character);
