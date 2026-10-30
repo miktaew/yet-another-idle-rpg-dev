@@ -935,7 +935,7 @@ function finish_game_action({action_key, conditions_status, dialogue_key}){
         const success_conditions = action.getAvailabilityComponent().success_conditions;
         const start_conditions = action.getAvailabilityComponent().start_conditions;
 
-        if(success_conditions[0].money?.remove) {
+        if(success_conditions[0]?.money?.remove) {
             character.money -= success_conditions[0].money.number;
             update_displayed_money();
         }
