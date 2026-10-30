@@ -146,7 +146,7 @@ class Combat {
             }
         }
 
-        let target_count = 1;
+        let target_count = current_stance.target_count;
         if(fighter.tags?.main_character && !this.is_special_combat) {
             if(target_count > 1 && current_stance.related_skill) {
                 target_count = target_count + Math.round(target_count * fighter.getTotalSkillLevel(current_stance.related_skill)/skills[current_stance.related_skill].max_level);
@@ -209,7 +209,7 @@ class Combat {
                 let leveled = false;
 
                 for(let i = 0; i < targets.length; i++) {
-                    this.doCombatAction({fighter_index: i, is_attacker, target: targets[i], attack_power, target_count: targets.length});
+                    this.doCombatAction({fighter_index, is_attacker, target: targets[i], attack_power, target_count: targets.length});
                 }
 
                 if(fighter.tags?.main_character && current_stance.related_skill) {
