@@ -81,6 +81,11 @@ NPCRegistry.add("nekomimiProprietress", new NPC({name: "nekomimi proprietress", 
 NPCRegistry.add("catCafeOwner", new NPC({name: "cat cafe owner", dialogue: dialogues["cat cafe owner"], trader: traders["cat cafe trader"]}));
 NPCRegistry.add("templePriest", new NPC({name: "temple priest", dialogue: dialogues["temple priest"]}));
 
+NPCRegistry.add("townSmith", new NPC({name: "town smith", dialogue: dialogues["town smith"]}));
+NPCRegistry.add("resourceTrader", new NPC({name: "resource trader", trader: traders["resource trader"]}));
+NPCRegistry.add("weaponTrader", new NPC({name: "weapon trader", trader: traders["weapon trader"]}));
+NPCRegistry.add("armorTrader", new NPC({name: "armor trader", trader: traders["armor trader"]}));
+
 //swamp
 NPCRegistry.add("swamplandChief", new NPC({name: "swampland chief", dialogue: dialogues["swampland chief"]}));
 NPCRegistry.add("swamplandCook", new NPC({name: "swampland cook", dialogue: dialogues["swampland cook"]}));

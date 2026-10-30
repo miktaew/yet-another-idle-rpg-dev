@@ -1527,9 +1527,20 @@ There's another gate on the wall in front of you, but you have a strange feeling
         is_unlocked: true,
         getBackgroundNoises: function() {
             let noises = [
+                "Ore! Lots of ore for sell!",
+                "*Two horse carriages end up stuck in an awkward position, blocking the traffic for a moment.*",
+                "Come here to buy whatever wood you could dream of!",
+                "*Clink click*",
+                "*Clank clank*",
+                "Weapons that will pierce any armor, only here!",
+                "Armors that no weapon can pierce, only here!",
             ];
             return noises;
         },
+        npcs: [
+            
+
+        ]
     });
     locations["Town square"].connected_locations.push(
         {location: locations["Artisans' quarter"], travel_time: 30},
@@ -3741,11 +3752,8 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     "You would have to be crazy good at running to even enteratain this idea"
                 ],
                 random_loss: [
-                    "The sails take you back to the bottom",
-                    "You lose your way and end up going down",
-                    "The wind is too strong, you can only cling for your dear life until the sails take you back down",
-                    "You end as you began",
-                    "*Hey, get down from there! This ain't no ride!*"
+                    "You miss and fall in the water",
+                    "You land too hard on a lilypad and break it",
                 ],
             },
             conditions: [

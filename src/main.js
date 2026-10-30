@@ -5128,10 +5128,10 @@ function load(save_data) {
             });
         }
 
-        Object.keys(save_data.pending_rewards).forEach(key => {
+        Object.keys(save_data.pending_rewards || {}).forEach(key => {
             prepare_delayed_rewards({
-                delayed_rewards: {id: save_data.pending_rewards.id, delay: save_data.pending_rewards.delay}, 
-                ...save_data.pending_rewards.source
+                delayed_rewards: {id: save_data.pending_rewards[key].id, delay: save_data.pending_rewards[key].delay}, 
+                ...save_data.pending_rewards[key].source
             });
         });
         
