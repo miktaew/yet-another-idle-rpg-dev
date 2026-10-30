@@ -37,6 +37,7 @@ const droplist = {};
 class Enemy {
 
     #levelable;
+    active_effects = {};
 
     constructor({
         name, 
@@ -49,8 +50,8 @@ class Enemy {
         size = "small",
         add_to_bestiary = true,
         tags = [],
-        on_hit = (attacker) => { },
-        on_damaged = (target) => { },
+        on_hit = (target, succeeded) => { },
+        on_damaged = (attacker) => { },
         on_death = (attacker) => { },
     }) {
                     
@@ -172,8 +173,10 @@ class Enemy {
         
         for (let i = 0; i < this.loot_list.length; i++) {
             item = this.loot_list[i];
-            if(item.chance * this.get_droprate_modifier(drop_chance_modifier) >= Math.random()) {
-                // checks if it should drop
+            if (enemy_killcount[this.name] % Math.round(1/item.chance) == 0 //bad luck mitigation - guaranteed drop every nth kill
+                || item.chance * this.get_droprate_modifier(drop_chance_modifier) >= Math.random()    // checks if it should drop
+            ) {
+            
                 let item_count = 1;
                 if("count" in item) {
                     item_count = Math.round(Math.random() * (item["count"]["max"] - item["count"]["min"]) + item["count"]["min"]);
@@ -208,6 +211,140 @@ class Enemy {
     }
     getBlockStrength() {
         return 0;
+    }
+
+//atk/spd/hit/ddg/def/attack_count?
+
+    addActiveEffectBonus(active_effects) {
+        const levelable = this.getLevelableComponent();
+
+        //method copies from hero class
+        //enemies don't have stats split by category, or update stats method, so the calculations will be simpler and less accurate
+        //leaving the changed/removed lines from hero for reference/comparison in case we decide to 
+        //TODO merge them into a single method in the stathaver / levelable / other class?
+
+        levelable.stats.flat.active_effects = {};
+        levelable.stats.multiplier.active_effects = {};
+        //levelable.bonus_skill_levels.flat.active_effects = {};
+        //levelable.xp_bonuses.multiplier.active_effects = {};
+
+        Object.keys(active_effects).forEach(effect_key => {
+            let multiplier = 1;
+
+            //let effects = this.getEffectWithBonuses(active_effects[effect_key]);
+            let effects = active_effects[effect_key];
+            for(const [key, value] of Object.entries(effects.stats)) {
+                if(value.flat) {
+                    levelable.stats.flat.active_effects[key] = (levelable.stats.flat.active_effects[key] || 0) + value.flat*multiplier;
+                }
+
+                if(value.multiplier) {
+                    levelable.stats.multiplier.active_effects[key] = (levelable.stats.multiplier.active_effects[key] || 1) * value.multiplier*multiplier;
+                }
+
+            }
+            //for(const [key, value] of Object.entries(effects.bonus_skill_levels)) {
+            //    levelable.bonus_skill_levels.flat.active_effects[key] = (levelable.bonus_skill_levels.flat.active_effects[key] || 0) + value;
+            //}
+            //for(const [key, value] of Object.entries(effects.xp_multipliers)) {
+            //    levelable.xp_bonuses.multiplier.active_effects[key] = (levelable.xp_bonuses.multiplier.active_effects[key] || 1) * value;
+            //}
+        });
+
+        //TODO update stats -> full = (base + flat.active_eff) *multiplier. active_eff
+        this.#updateStats();
+    }
+
+    #updateStats() {
+        const levelable = this.getLevelableComponent();
+        //const equipment = this.getEquipment();
+        //const skills_needing_update = {};
+        const missing_health = Math.max((levelable.stats.full["max_health"] - levelable.stats.full["health"]), 0) || 0;   
+        const missing_stamina = Math.max((levelable.stats.full["max_stamina"] - levelable.stats.full["stamina"]), 0) || 0;   
+        const missing_mana = Math.max((levelable.stats.full["max_mana"] - levelable.stats.full["mana"]), 0) || 0;   
+        //to avoid fully restoring all whenever this function is called
+
+        //Object.keys(levelable.bonus_skill_levels.full).forEach(bonus_target => {
+        //    if(bonus_target.includes("category_")) {
+        //        return;
+        //        //this does not get calculated separately as it will instead be included individually for each skill
+        //    }
+            
+        //    const category = "category_"+skills[bonus_target].category;
+        //    levelable.bonus_skill_levels.full[bonus_target] = 
+        //            (levelable.bonus_skill_levels.flat.equipment[bonus_target] || 0) 
+        //            + (levelable.bonus_skill_levels.flat.active_effects[bonus_target] || 0) 
+        //            + (levelable.bonus_skill_levels.flat.skills[bonus_target] || 0)
+        //            + (levelable.bonus_skill_levels.flat.equipment[category] || 0) 
+        //            + (levelable.bonus_skill_levels.flat.active_effects[category] || 0) 
+        //            + (levelable.bonus_skill_levels.flat.skills[category] || 0);
+            
+        //    const bonus = levelable.bonus_skill_levels.full[bonus_target];
+
+        //    if(bonus != 0){
+        //        this.updateDisplayedSkillLevel(skills[bonus_target]);
+        //    }        
+        //});
+
+        //this.addAllSkillLevelBonus();
+        //this.addAllStanceBonus();
+
+        Object.keys(levelable.stats.full).forEach(stat => {
+            let stat_sum = 0;
+            let stat_mult = 1;
+
+            //if(stat === "block_chance") {
+            //    stat_sum = config.base_block_chance + Math.round(this.getTotalLevelBonus("Shield blocking") * 10000)/10000;
+            //} else if(stat === "attack_points") {
+            //    stat_sum = Math.sqrt(levelable.stats.full.intuition) * levelable.stats.full.dexterity * this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id:"Combat"});
+            //} else if(stat === "evasion_points") {
+            //    stat_sum = levelable.stats.full.agility * Math.sqrt(levelable.stats.full.intuition) * this.getTotalSkillCoefficient({scaling_type: "multiplicative", skill_id:"Evasion"});
+            //} else {
+                //just sum all flats
+                Object.values(levelable.stats.flat).forEach(piece => {
+                    stat_sum += (piece[stat] || 0);
+                });
+            //}
+
+            Object.values(levelable.stats.multiplier).forEach(piece => {
+                stat_mult *= (piece[stat] || 1);
+            });
+
+            levelable.stats.full[stat] = (levelable.base_stats[stat] + stat_sum) * stat_mult;
+
+            levelable.stats.total_flat[stat] =  levelable.base_stats[stat] + stat_sum;
+            levelable.stats.total_multiplier[stat] = stat_mult || 1;
+
+            if(stat === "health") {
+                levelable.stats.full.health = Math.max(0, levelable.stats.full["max_health"] - missing_health);
+            } else if(stat === "stamina") {
+                levelable.stats.full.stamina = Math.max(0, levelable.stats.full["max_stamina"] - missing_stamina);
+            } else if(stat === "mana") {
+                levelable.stats.full.mana = Math.max(0, levelable.stats.full["max_mana"] - missing_mana);
+            }
+        });
+
+        
+        //if(equipment.weapon != null) { 
+        //    //has weapon
+        //    levelable.stats.full.attack_power = (levelable.stats.full.strength/10) * equipment.weapon.getAttack() * levelable.stats.total_multiplier.attack_power;
+        //} else {
+        //    //has no weapon
+        //    //levelable.stats.full.attack_power = (levelable.stats.full.strength/10) * (1+skills["Unarmed"].getCurrentLvl()*0.1) * levelable.stats.total_multiplier.attack_power;
+        //    levelable.stats.full.attack_power = (levelable.stats.full.strength/10) * levelable.stats.total_multiplier.attack_power * levelable.stats.full.unarmed_power;
+        //}
+        
+        levelable.stats.total_flat.attack_power = levelable.stats.full.attack_power/levelable.stats.total_multiplier.attack_power;
+        //Object.keys(levelable.xp_bonuses.total_multiplier).forEach(bonus_target => {
+        //    levelable.xp_bonuses.total_multiplier[bonus_target] = 
+        //            (levelable.xp_bonuses.multiplier.race[bonus_target] || 1)
+        //            * (levelable.xp_bonuses.multiplier.levels[bonus_target] || 1)
+        //            * (levelable.xp_bonuses.multiplier.skills[bonus_target] || 1)
+        //            * (levelable.xp_bonuses.multiplier.books[bonus_target] || 1)
+        //            * (levelable.xp_bonuses.multiplier.active_effects[bonus_target] || 1);
+        //});
+
+        //return skills_needing_update;
     }
 }
 
@@ -396,6 +533,38 @@ const enemy_abilites = {
             {item_name: "High quality boar tusk", chance: 0.0005},
         ],
         size: enemy_sizes.MEDIUM,
+    });
+
+    enemy_templates["Boar matriarch"] = new Enemy({
+        name: "Boar matriarch",
+        description: "A huge boar sow, enraged by threatening her children",
+        xp_value: 20,
+        rank: 6,
+        tags: ["living", "beast"],
+        stats: {health: 2400, attack: 300, agility: 80, dexterity: 500, intuition: 100, magic: 0, attack_speed: 1.5, defense: 70},
+        loot_list: [
+            {item_name: "Boar hide", chance: 0.08},
+            {item_name: "Boar meat", chance: 0.05},
+            {item_name: "Boar tusk", chance: 0.05},
+            {item_name: "High quality boar tusk", chance: 0.002},
+        ],
+        size: enemy_sizes.LARGE,
+    });
+
+    enemy_templates["Grand old boar"] = new Enemy({
+        name: "Grand old boar",
+        description: "An ancient, solitary boar. Giant in stature and honed by age",
+        xp_value: 30,
+        rank: 7,
+        tags: ["living", "beast"],
+        stats: {health: 4800, attack: 400, agility: 100, dexterity: 600, intuition: 150, magic: 0, attack_speed: 1, defense: 105},
+        loot_list: [
+            {item_name: "Boar hide", chance: 0.12},
+            {item_name: "Boar meat", chance: 0.08},
+            {item_name: "Boar tusk", chance: 0.1},
+            {item_name: "High quality boar tusk", chance: 0.005},
+        ],
+        size: enemy_sizes.LARGE,
     });
 
     enemy_templates["Angry mountain goat"] = new Enemy({
@@ -716,39 +885,6 @@ const enemy_abilites = {
         },
     });
 
-    //    enemy_templates["Warthog"] = new Enemy({
-    //    name: "Warthog",
-    //    description: "A large, aggressive porcine creature with a tough hide and large tusks",
-    //    xp_value: 30,
-    //    add_to_bestiary: false,
-    //    rank: 8,
-    //    tags: ["living", "beast"],
-    //    stats: {health: 12000, attack: 600, agility: 80, dexterity: 800, intuition: 100, magic: 0, attack_speed: 0.6, defense: 600},
-    //    loot_list: [
-    //        {item_name: "Boar hide", chance: 0.08},
-    //        {item_name: "Boar meat", chance: 0.1},
-    //        {item_name: "Boar tusk", chance: 0.05},
-    //        {item_name: "High quality boar tusk", chance: 0.005},
-    //    ],
-    //    size: enemy_sizes.LARGE,
-    //});
-    //    enemy_templates["Direwolf hunter"] = new Enemy({
-    //    name: "Direwolf hunter",
-    //    description: "A powerful wild wolf variant of unmatched ferocity, the strongest and heaviest out of all direwolves",
-    //    xp_value: 30,
-    //    rank: 7,
-    //    tags: ["living", "beast"],
-    //    stats: {health: 2000, attack: 240, agility: 130, dexterity: 80, intuition: 90, magic: 0, attack_speed: 1.1, defense: 40},
-    //    loot_list: [
-    //        {item_name: "Wolf fang", chance: 0.12},
-    //        {item_name: "Wolf pelt", chance: 0.06},
-    //        {item_name: "Weak monster bone", chance: 0.02},
-    //        {item_name: "High quality wolf fang", chance: 0.0015}
-    //    ],
-    //    size: enemy_sizes.MEDIUM,
-    //});
-
-
     //TODO unicorn
     enemy_templates["Unicorn"] = new Enemy({
         name: "Unicorn",
@@ -765,21 +901,6 @@ const enemy_abilites = {
             {item_name: "Pristine mountain goat horn", chance: 0.0005},
         ],
     });
-
-
-    //	enemy_templates["Snapping turtle"] = new Enemy({
-    //    name: "Snapping turtle",
-    //    description: "A large turtle with an incredibly dense shell",
-    //    xp_value: 250,      //in between alligator and snake because it'll probably take the longest to kill during post-completion grinding
-    //    rank: 10,
-    //    size: enemy_sizes.MEDIUM,
-    //    tags: ["living", "beast", "aquatic"],
-    //    stats: {health: 22000, attack: 525, agility: 230, dexterity: 220, intuition: 130, magic: 0, attack_speed: 0.9, defense: 1000},
-    //    loot_list: [
-    //        {item_name: "Turtle meat", chance: 0.02},
-    //        {item_name: "Turtle shell", chance: 0.005},
-    //    ]
-    //});
 
     //TODO
     enemy_templates["Almiraj"] = new Enemy({

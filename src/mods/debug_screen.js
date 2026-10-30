@@ -1,8 +1,10 @@
 "use strict";
 
-import { locations } from "../data/locations.js"
-import { enemy_templates } from "../enemies.js"
-//import { Material, Book, BookData, item_templates, book_stats } from "../items.js"
+import { skills } from "../data/skills.js";
+import { activities } from "../activities.js";
+import { locations, location_types } from "../data/locations.js"
+import { enemy_killcount, enemy_templates } from "../enemies.js"
+import { Material, Book, BookData, item_templates, book_stats, item_log } from "../items.js"
 //import { inventory_templates, TradeItem } from "../traders.js"
 import { recipes, ItemRecipe } from "../crafting_recipes.js"
 import { material_properties } from "../crafting_component_filling.js";
@@ -23,11 +25,13 @@ class DataViewer {
             const tabs = document.createElement("div");
 
 
-            const tabNames = ["Mobs", "Materials", "Crafting mats", "Unlocks [WIP]"];
+            const tabNames = ["Mobs", "Materials", "Crafting mats", "Training", "Locations", "Unlocks [WIP]"];
             const tabMethods = [
                 () => this.list_enemies(),
                 () => this.show_materials(),
                 () => this.list_crafting_materials(),
+                () => this.show_training(),
+                () => this.show_areas(),
                 () => this.show_unlocks()];
 
             for (var i = 0; i < tabNames.length; i++) {
@@ -61,6 +65,146 @@ class DataViewer {
         });
 
         this.window_content.innerHTML = this.tabulate_data("tier");
+    }
+
+    show_training() {
+        const table = [];
+        const location_list = Object.values(locations);
+
+        for (let zone of location_list) {
+            if (!zone.activities) {
+                continue;
+            }
+            for (let a of Object.values(zone.activities)) {
+                if(a.gained_skills) {
+                    Object.keys(a.gained_skills).forEach(skill_key => {
+                        table.push({
+                            key: "activity:" + zone.name + "/" + a.activity_id + "/" + skill_key,
+                            type: "activity",
+                            skill: skill_key,
+                            zone: zone.name,
+                            xp: a.gained_skills[skill_key],
+                            description: a.starting_text,
+                        });
+                    });
+                } else {
+                    const skill_names = activities[a.activity_name].base_skills_names;
+                    for (let i = 0; i < skill_names?.length; i++) {
+                        const skill_key = skill_names[i];
+                        table.push({
+                            key: "activity:" + zone.name + "/" + a.activity_id + "/" + skill_key,
+                            type: "activity",
+                            skill: skill_key,
+                            zone: zone.name,
+                            xp: a.skill_xp_per_tick,
+                            description: a.starting_text,
+                        });
+                    }
+                }
+            }
+        }
+
+        for (let zone of location_list) {
+            if (!zone.parent_location) {
+                continue;
+            }
+
+            for (let typeKey of zone.types) {
+                const type = location_types[typeKey.type].stages[typeKey.stage];
+                if (!type.related_skill) {
+                    continue;
+                }
+
+                table.push({
+                    key: "combat:" + zone.name + "/" + typeKey.type,
+                    type: "combat",
+                    skill: type.related_skill,
+                    zone: zone.parent_location.name + "/" + zone.name,
+                    xp: typeKey.xp_gain,
+                    description: typeKey.type + " " + typeKey.stage,
+                });
+            }
+        }
+
+        
+        table.sort((a, b) => a.xp-b.xp);
+
+        this.current_keys = ["type", "skill", "xp", "zone", "description"];
+        this.current_data = table;// Object.values(materials);
+
+        this.window_content.innerHTML = this.tabulate_data("skill");
+
+    }
+
+    show_areas() {
+        //TODO location -> connected_locations[0]
+        //parent_location
+
+        const table = [];
+
+        for (let zone of Object.values(locations)) {
+            //name, type, parent, children
+
+            console.log(this.get_area_progress(zone));
+        }
+    }
+
+    get_area_progress(location) {
+        if (!location.parent_location) {
+            return;
+        }
+
+        const result = {
+            location_id: location.name,
+            mobs: 0,
+            mobs_needed: 0,
+            clears: 0,
+            clears_needed: 1,
+            drops: 0,
+            drops_needed: 0
+        };
+
+        //clears
+        if (location.rewards_with_clear_requirement.length > 0) {
+            result.clears_needed = location.rewards_with_clear_requirement[location.rewards_with_clear_requirement.length - 1].required_clear_count
+        }
+
+        result.clears = Math.min(location.enemy_groups_killed, result.clears_needed);
+
+        //enemies discovered
+        let mobs = [...location.enemies_list];
+        for (let m of location.enemy_groups_list) {
+            mobs.push(...m.enemies);
+        }
+        mobs = new Set(mobs);
+        result.mobs_needed = mobs.size;
+
+        //items discovered
+        const drops = new Set();
+
+        for (let m of mobs) {
+            if (enemy_killcount[m]) {
+                result.mobs++
+            }
+            if (!enemy_templates[m].loot_list) {
+                continue;
+            }
+
+            for (let drop of enemy_templates[m].loot_list) {
+                drops.add(drop.item_name);
+            };
+        }
+
+        result.drops_needed = drops.size;
+        for (let d of drops) {
+            if (item_log.is_known(d)) {
+                result.drops++;
+            }
+        }
+
+        result.total = (result.clears / result.clears_needed) * (result.mobs / result.mobs_needed) * ((result.drops +1) / (result.drops_needed + 1))
+
+        return result;
     }
 
     tabulate_data(sort_by) {

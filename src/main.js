@@ -3094,6 +3094,61 @@ function add_active_effect(effect_key, duration = 1, skip_xp){
     return old_duration < active_effects[effect_key].duration;
 }
 
+//TODO - wip
+function add_active_effect_to_enemy(target, effect_key, duration = 1, skip_xp){
+    if(!effect_templates[effect_key]) {
+        throw new Error(`No such active effect available as "${effect_key}"`);
+    }
+
+    let active_effects = target.active_effects;
+
+    let do_not_apply_because_stronger_is_active = false; //readable names are good, right?
+    const was_already_active = active_effects[effect_key];
+    const old_duration = active_effects[effect_key]?.duration ?? 0;
+
+    if(!was_already_active) {
+        Object.keys(active_effects).forEach(effect => {
+            if(do_not_apply_because_stronger_is_active) {
+                return;
+            }
+            Object.keys(effect_templates[effect].group_tags).forEach(group_tag => {
+                if(do_not_apply_because_stronger_is_active) {
+                    return;
+                }
+                if(group_tag in effect_templates[effect_key].group_tags) {
+                    if(effect_templates[effect].group_tags[group_tag] > effect_templates[effect_key].group_tags[group_tag]) {
+                        //stronger effect is active, skip
+                        do_not_apply_because_stronger_is_active = true; 
+                    } else {
+                        //existing effect is weaker, aply the effect normally, remove the weaker
+                        delete active_effects[effect];
+                    }
+                }
+            });
+        });
+
+        if(do_not_apply_because_stronger_is_active) {
+            //shouldn't need any recalculations or display updates as nothing was changed
+            return;
+        }
+    } else {
+        delete active_effects[effect_key];
+    }
+    active_effects[effect_key] = new ActiveEffect({...effect_templates[effect_key], duration});
+    update_displayed_effects();
+    
+    if(!was_already_active) {
+        target.addActiveEffectBonus(active_effects);
+        target.updateStatsAndDisplay();
+    }
+
+    //no need to check for whether effect was activated, code won't reach this point if it wasn't
+
+    return old_duration < active_effects[effect_key].duration;
+}
+
+
+
 function add_xp_to_activity_skills() {
     if(current_activity.gained_skills) {
         const gained_skills = current_activity.gained_skills;
