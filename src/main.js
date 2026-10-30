@@ -4262,6 +4262,11 @@ function load(save_data) {
                         const trader_availability = npc.getTraderAvailability();
                         
                         write_availability_status(trader_availability, save_data.traders[trader_key]);
+                        console.log("IN TRADER");
+                        if(trader_key === "suspicious trader") {
+                            console.log("IN SUS TRADER");
+                            trader_availability.setStatus({is_unlocked: true, is_locked: false, is_finished: false});
+                        }
                         
                         let trader_item_list = [];
 
@@ -4438,7 +4443,7 @@ function load(save_data) {
                             });
                         }
 
-                        trader.last_refresh = save_data.traders[trader_key].last_refresh;
+                        trader.last_refresh = save_data.traders[trader_key].last_refresh ?? -1;
                         trader.emptyInventory();
                         trader.addToInventory(trader_item_list);
                     }
