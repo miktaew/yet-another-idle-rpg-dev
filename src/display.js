@@ -121,8 +121,10 @@ const quest_hiding_button = document.getElementById("quest_hiding_button");
 
 const data_entry_divs = {
     reputation: document.getElementById("data_tab_reputation_div"),
-    item_log: document.getElementById("data_tab_item_log_div")
 };
+
+const items_entry_divs = {};
+const items_list = document.getElementById("data_tab_item_log_div");
 
 let skill_sorting = "name";
 let skill_sorting_direction = "asc";
@@ -1160,70 +1162,37 @@ function create_trade_buttons() {
 function sort_displayed_inventory({sort_by, target = "character", change_direction = false}) {
     let plus;
     let minus;
+
+
+    if (sort_by) {
+        if(change_direction) {
+            if(sort_by === inventory_sorting[target]) {
+                if(inventory_sorting_direction[target] === "asc") {
+                    inventory_sorting_direction[target] = "desc";
+                } else {
+                    inventory_sorting_direction[target] = "asc";
+                }
+            } else {
+                inventory_sorting_direction[target] = "asc";
+            }
+        }
+    }
+    else {
+        sort_by = inventory_sorting[target];
+    }
+
+    //target = trader_inventory_div;
+    plus = inventory_sorting_direction[target]==="asc"?1:-1;
+    minus = inventory_sorting_direction[target]==="asc"?-1:1;
+    inventory_sorting[target] = sort_by || "name";
+
+
     if(target === "trader") {
-        if(sort_by){
-            if(change_direction) {
-                if(sort_by === trader_inventory_sorting) {
-                    if(trader_inventory_sorting_direction === "asc") {
-                        trader_inventory_sorting_direction = "desc";
-                    } else {
-                        trader_inventory_sorting_direction = "asc";
-                    }
-                } else {
-                    trader_inventory_sorting_direction = "asc";
-                }
-            }
-        } else {
-            sort_by = trader_inventory_sorting;
-        }
-
         target = trader_inventory_div;
-        plus = trader_inventory_sorting_direction==="asc"?1:-1;
-        minus = trader_inventory_sorting_direction==="asc"?-1:1;
-        trader_inventory_sorting = sort_by || "name";
-
     } else if(target === "character") {
-        if(sort_by) {
-            if(change_direction){
-                if(sort_by === character_inventory_sorting) {
-                    if(character_inventory_sorting_direction === "asc") {
-                        character_inventory_sorting_direction = "desc";
-                    } else {
-                        character_inventory_sorting_direction = "asc";
-                    }
-                } else {
-                    character_inventory_sorting_direction = "asc";
-                }
-            }
-        } else {
-            sort_by = character_inventory_sorting;
-        }
         target = inventory_div;
-        plus = character_inventory_sorting_direction==="asc"?1:-1;
-        minus = character_inventory_sorting_direction==="asc"?-1:1;
-        character_inventory_sorting = sort_by || "name";
     } else if(target === "storage"){
-        if(sort_by) {
-            if(change_direction){
-                if(sort_by === storage_sorting) {
-                    if(storage_sorting_direction === "asc") {
-                        storage_sorting_direction = "desc";
-                    } else {
-                        storage_sorting_direction = "asc";
-                    }
-                } else {
-                    storage_sorting_direction = "asc";
-                }
-            }
-        } else {
-            sort_by = storage_sorting;
-        }
-
         target = storage_inventory_div;
-        plus = storage_sorting_direction==="asc"?1:-1;
-        minus = storage_sorting_direction==="asc"?-1:1;
-        storage_sorting = sort_by || "name";
-
     } else {
         console.warn(`Something went wrong, no such inventory as '${target}'`);
         return;
@@ -1361,7 +1330,7 @@ function sort_displayed_inventory({sort_by, target = "character", change_directi
                 }
             }
 
-        } else if(sort_by === "price") {
+        } else {
             
             let value_a = Number.parseInt(a.getAttribute(`data-item_value`));
             let value_b = Number.parseInt(b.getAttribute(`data-item_value`));
@@ -4037,12 +4006,14 @@ function update_displayed_reputation() {
     });
 }
 
-//TODO: some display polishing + maybe move to a dedicated tab?
 function update_displayed_item_log() {
+    clear_HTML_content(items_list);
 
-    set_HTML(data_entry_divs.item_log,`<div id='item_log_header'>Item log</div>`)
-
-    let html_content = "<table id='item_log_table'><tr><th width='100%'>Item</th><th>Best</th><th>Total</th></tr>";
+    let html_content = `<div class="data_entry">
+    <span class="data_entry_name"><b>Item</b></span>
+    <span class="data_entry_value"><b>Record</b></span>
+    <span class="data_entry_value"><b>Total</b></span>
+</div>`;
 
     Object.values(item_log.items).forEach(item => {
         if(!item_templates[item.id] || item_templates[item.id].components) {
@@ -4054,25 +4025,21 @@ function update_displayed_item_log() {
             */
         }
 
-        const name = item_templates[item.id]?.getName() || item.id;
-
-        html_content += `<tr><td>${name}</td ><td>`;
+        html_content += `<div class="data_entry"><span class="data_entry_name">${item_templates[item.id]?.getName() || item.id}</span>`;
 
         if(item.quality_highest > 0 && item_templates[item.id].use_quality) {
             const color = rarity_colors[getItemRarity(item.quality_highest)];
             const outline_class = select_outline_class(color);
             //html_content += `${item.quality_lowest}-${item.quality_highest}%`;
-            html_content += `<span class="${outline_class}" style="color: ${color}">${item.quality_highest}%</span>`; 
+            html_content += `<span class="${outline_class} data_entry_value" style="color: ${color}">${item.quality_highest}%</span>`; 
             //skip the lowest and show just the highest, seems better for display purposes?
         }
 
-        html_content += `</td><td>${item.number < 1e6? item.number : expo({number: item.number, precision: 2, treshold: 6})}</td></tr>`;
-        //html_content += `</td><td>${item.number}</td>${create_item_tooltip(item_templates[item.id]).outerHTML}</tr>`;
+        html_content += `<span class="data_entry_value">${item.number < 1e6? item.number : expo({number: item.number, precision: 2, treshold: 6})}</span></div>`;
+        //html_content += create_item_tooltip(item_templates[item.id]).outerHTML;
     });
 
-    html_content += "</table>";
-
-    insert_HTML(data_entry_divs.item_log, html_content);
+    insert_HTML(items_list, html_content);
 }
 
 

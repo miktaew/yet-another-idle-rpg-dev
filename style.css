@@ -2517,16 +2517,16 @@ i {
 				height: 255px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div, #item_box_div {
 				width: 100%;
 				overflow-y: scroll;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div {
 				height: 284px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div{
+			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div {
 				display: none;
 			}
 
@@ -2544,15 +2544,15 @@ i {
 				.bestiary_entry_div:hover, .anthology_entry_div:hover {
 					background-color: var(--active_button_color);
 				}
-					.bestiary_entry_name, .anthology_entry_name {
+					.bestiary_entry_name, .anthology_entry_name, .data_entry_name {
 						float: left;
-						width:295px;
+						width: 295px;
 						text-align: left;
 						padding-left: 5px;
 					}
-					.bestiary_entry_kill_count {
+					.bestiary_entry_kill_count, .data_entry_value {
 						text-align: right;
-						width:90px;
+						width: 90px;
 						padding-right: 5px;
 					}
 
@@ -2583,15 +2583,6 @@ i {
         border: 1px solid gray;
         border-collapse: collapse;
     }
-
-.data_entry_value {
-	width: 90px;
-	text-align: right;
-}
-
-.data_entry_name {
-	width: 300px;
-}
 
 #skills_and_stances_div {
 	left: 820px;

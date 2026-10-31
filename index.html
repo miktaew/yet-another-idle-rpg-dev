@@ -408,6 +408,7 @@
                         <div id = "journal_show_bestiary" class = "journal_control_button" onclick = "showBestiary()"> Bestiary </div>
                         <div id = "journal_show_books" class = "journal_control_button" onclick = "showReadBooks()"> Anthology </div>
                         <div id = "journal_show_data" class = "journal_control_button" onclick = "showData()"> Data </div>
+                        <div id = "journal_show_items" class = "journal_control_button" onclick = "showItems()"> Catalogue </div>
                     </div>
                     <div id = "journal_content_div">
                         <div id = "quests_box_div">
@@ -433,13 +434,13 @@
 
                             </div>
                         </div>
-                        <div id = "data_box_div">
-                            <div id = "data_list">
-                                <div id = "data_tab_reputation_div">
-                                </div>
-                                <div id = "data_tab_item_log_div">
-                                </div>
+                        <div id="data_box_div">
+                            <div id="data_list">
+                                <div id="data_tab_reputation_div"></div>
                             </div>
+                        </div>
+                        <div id="item_box_div">
+                            <div id="data_tab_item_log_div"></div>
                         </div>
                     </div>
                 </div>
@@ -910,6 +911,9 @@
 
             function showData() {
                 changeTab(document.getElementById("data_box_div"));
+            }
+            function showItems() {
+                changeTab(document.getElementById("item_box_div"));
             }
             function showQuests() {
                 changeTab(document.getElementById("quests_box_div"));
