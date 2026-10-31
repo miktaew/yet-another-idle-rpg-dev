@@ -1739,6 +1739,17 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_level: [10,18],
         recipe_skill: "Cooking",
     });
+    cooking_recipes.items["Oneberry cookies"] = new ItemRecipe({
+        name: "Oneberry cookies",
+        recipe_type: "usable",
+        materials: [{ material_id: "Flour", count: 3 },
+                    { material_id: "Oneberry", count: 6 }
+                ], 
+        result: {result_id: "Oneberry cookie", count: 6},
+        success_chance: [0.1,1],
+        recipe_level: [12,20],
+        recipe_skill: "Cooking",
+    });
     cooking_recipes.items["Bread kwas"] = new ItemRecipe({
         name: "Bread kwas",
         recipe_type: "usable",

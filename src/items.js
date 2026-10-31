@@ -4569,6 +4569,17 @@ function add_gear() {
         effects: [{effect: "Sweet dessert", duration: 180}],
         tags: {"food": true},
     });
+
+    item_templates["Oneberry cookie"] = new UsableItem({
+        name: "Oneberry cookie",
+        description: "A cookie made with healing berries. Not as effective as properly prepared medicine, but a lot tastier",
+        value: 20,
+        effects: [
+            { effect: "Sweet dessert", duration: 30 },
+            { effect: "Weak healing potion", duration: 3 }
+        ],
+        tags: {"food": true},
+    });
     item_templates["Carrot cake"] = new UsableItem({
         name: "Carrot cake",
         description: "A moist carrot cake, with raisins and nuts, topped with cream cheese frosting",
