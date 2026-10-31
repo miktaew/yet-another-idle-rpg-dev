@@ -129,14 +129,17 @@ const items_list = document.getElementById("data_tab_item_log_div");
 let skill_sorting = "name";
 let skill_sorting_direction = "asc";
 
-let trader_inventory_sorting = "name";
-let trader_inventory_sorting_direction = "asc";
+const inventory_sorting = {
+    character: "name",
+    trader: "name",
+    storage: "name",
+}
 
-let storage_sorting = "name";
-let storage_sorting_direction = "asc";
-
-let character_inventory_sorting = "name";
-let character_inventory_sorting_direction = "asc";
+const inventory_sorting_direction = {
+    character: "asc",
+    trader: "asc",
+    storage: "asc",
+}
 
 const message_count = {
     message_combat: 0,
