@@ -5157,6 +5157,8 @@ function load(save_data) {
         character.updateStatsAndDisplay();
         update_displayed_character_inventory();
 
+        update_all_displayed_skills_xp_gain();
+
         update_displayed_health();
         //load current health
         

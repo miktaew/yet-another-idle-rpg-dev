@@ -352,7 +352,7 @@ const material_properties = {
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ],
-        value: 160,
+        value: 640,
     },
     "white iron chainmail": {
         tier: 4,
@@ -363,7 +363,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 320,
+        value: 960,
     },
     "white iron plate": {
         tier: 4,
@@ -374,7 +374,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 480,
+        value: 1280,
     },
     "black iron": {
         tier: 4,
@@ -386,7 +386,7 @@ const material_properties = {
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ],
-        value: 160,
+        value: 640,
     },
     "black iron chainmail": {
         tier: 4,
@@ -397,7 +397,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 320,
+        value: 960,
     },
     "black iron plate": {
         tier: 4,
@@ -408,7 +408,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 480,
+        value: 1280,
     },
     "bear leather": {
         tier: 4,
@@ -464,7 +464,7 @@ const material_properties = {
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ],
-        value: 200,
+        value: 800,
     },
     "white chainmail": {
         tier: 5,
@@ -475,7 +475,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 400,
+        value: 1200,
     },
     "white plate": {
         tier: 5,
@@ -486,7 +486,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 600,
+        value: 1600,
     },
     "black steel": {
         tier: 5,
@@ -500,7 +500,7 @@ const material_properties = {
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ],
-        value: 200,
+        value: 800,
     },
     "black chainmail": {
         tier: 5,
@@ -511,7 +511,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 400,
+        value: 1200,
     },
     "black plate": {
         tier: 5,
@@ -522,7 +522,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 600
+        value: 1600
     },
     "alligator": {
         tier: 5,

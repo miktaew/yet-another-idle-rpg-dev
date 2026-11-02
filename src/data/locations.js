@@ -1307,7 +1307,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
     locations["Slums"].connected_locations.push({location: locations["Gang hideout"], travel_time: 10});
 
     locations["Town square"] = new SafeLocation({ 
-        connected_locations: [{location: locations["Town outskirts"], travel_time: 40}],
+        connected_locations: [{location: locations["Town outskirts"], travel_time: 50}],
         description: "The town's center of life, connected to all the markets, guilds, and other important places. Multiple stores and cafe's can be seen "
                     +"around, and there are a few larger roads that lead away from it. The less busy one seems to go towards a temple district, while "
                     +"the other, filled with people, clearly leads to artisans' quarter.",
@@ -1328,7 +1328,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
     locations["Town outskirts"].connected_locations.push(
                                                         {location: locations["Town farms"], travel_time: 60}, 
                                                         {location: locations["Slums"], travel_time: 60}, 
-                                                        {location: locations["Town square"], travel_time: 40}
+                                                        {location: locations["Town square"], travel_time: 50}
                                                     );
 
     locations["Gallows"] = new SafeLocation({ 
@@ -1525,6 +1525,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
                     +"town, in what seems to be a futile attempt to make it less of an annoyance for other citizens.",
         name: "Artisans' quarter",
         is_unlocked: true,
+        market_region: "Town",
         getBackgroundNoises: function() {
             let noises = [
                 "Ore! Lots of ore for sell!",
@@ -1538,8 +1539,10 @@ There's another gate on the wall in front of you, but you have a strange feeling
             return noises;
         },
         npcs: [
-            
-
+            "townSmith",
+            "resourceTrader",
+            "weaponTrader",
+            "armorTrader",
         ]
     });
     locations["Town square"].connected_locations.push(

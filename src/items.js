@@ -1739,13 +1739,13 @@ book_stats["Counting Mice"] = new BookData({
     item_templates["White iron ore"] = new Material({
         name: "White iron ore",
         description: "A dense and heavy cousin of iron, with a surprising white gleam. Extremely strong after being smelt, at the cost of very high mass.",
-        value: 10,
+        value: 40,
         material_type: "raw metal",
     });
     item_templates["Black iron ore"] = new Material({
         name: "Black iron ore",
         description: "A light and strong cousing of iron, with a seemingly impossible black gleam. After being smelt, very strong and very light.",
-        value: 10,
+        value: 40,
         material_type: "raw metal",
     });
     item_templates["Silver ore"] = new Material({
@@ -3343,6 +3343,30 @@ function add_gear() {
                 handle: "Wooden long handle"
             }
         });
+        item_templates["Black iron spear"] = new Weapon({
+            components: {
+                head: "Black iron short blade",
+                handle: "Ash wood long handle"
+            }
+        });
+        item_templates["White iron spear"] = new Weapon({
+            components: {
+                head: "White iron short blade",
+                handle: "Ash wood long handle"
+            }
+        });
+        item_templates["Black spear"] = new Weapon({
+            components: {
+                head: "Black short blade",
+                handle: "Hickory long handle"
+            }
+        });
+        item_templates["White spear"] = new Weapon({
+            components: {
+                head: "White short blade",
+                handle: "Hickory long handle"
+            }
+        });
         
         item_templates["Cheap iron dagger"] = new Weapon({
             components: {
@@ -3360,6 +3384,30 @@ function add_gear() {
             components: {
                 head: "Steel short blade",
                 handle: "Wooden short handle",
+            }
+        });
+        item_templates["Black iron dagger"] = new Weapon({
+            components: {
+                head: "Black iron short blade",
+                handle: "Ash wood short handle"
+            }
+        });
+        item_templates["White iron dagger"] = new Weapon({
+            components: {
+                head: "White iron short blade",
+                handle: "Ash wood short handle"
+            }
+        });
+        item_templates["Black dagger"] = new Weapon({
+            components: {
+                head: "Black short blade",
+                handle: "Hickory short handle"
+            }
+        });
+        item_templates["White dagger"] = new Weapon({
+            components: {
+                head: "White short blade",
+                handle: "Hickory short handle"
             }
         });
         
@@ -3381,6 +3429,30 @@ function add_gear() {
                 handle: "Wooden short handle",
             }
         });
+        item_templates["Black iron sword"] = new Weapon({
+            components: {
+                head: "Black iron long blade",
+                handle: "Ash wood short handle"
+            }
+        });
+        item_templates["White iron sword"] = new Weapon({
+            components: {
+                head: "White iron long blade",
+                handle: "Ash wood short handle"
+            }
+        });
+        item_templates["Black sword"] = new Weapon({
+            components: {
+                head: "Black long blade",
+                handle: "Hickory short handle"
+            }
+        });
+        item_templates["White sword"] = new Weapon({
+            components: {
+                head: "White long blade",
+                handle: "Hickory short handle"
+            }
+        });
         
         item_templates["Cheap iron axe"] = new Weapon({
             components: {
@@ -3400,6 +3472,30 @@ function add_gear() {
                 handle: "Wooden medium handle",
             }
         });
+        item_templates["Black iron axe"] = new Weapon({
+            components: {
+                head: "Black iron axe head",
+                handle: "Ash wood medium handle"
+            }
+        });
+        item_templates["White iron axe"] = new Weapon({
+            components: {
+                head: "White iron axe head",
+                handle: "Ash wood medium handle"
+            }
+        });
+        item_templates["Black axe"] = new Weapon({
+            components: {
+                head: "Black axe head",
+                handle: "Hickory medium handle"
+            }
+        });
+        item_templates["White axe"] = new Weapon({
+            components: {
+                head: "White axe head",
+                handle: "Hickory medium handle"
+            }
+        });
         
         item_templates["Cheap iron battle hammer"] = new Weapon({
             components: {
@@ -3417,6 +3513,30 @@ function add_gear() {
             components: {
                 head: "Steel hammer head",
                 handle: "Wooden medium handle",
+            }
+        });
+        item_templates["Black iron battle hammer"] = new Weapon({
+            components: {
+                head: "Black iron hammer head",
+                handle: "Ash wood medium handle"
+            }
+        });
+        item_templates["White iron battle hammer"] = new Weapon({
+            components: {
+                head: "White iron hammer head",
+                handle: "Ash wood medium handle"
+            }
+        });
+        item_templates["Black battle hammer"] = new Weapon({
+            components: {
+                head: "Black hammer head",
+                handle: "Hickory medium handle"
+            }
+        });
+        item_templates["White battle hammer"] = new Weapon({
+            components: {
+                head: "White hammer head",
+                handle: "Hickory medium handle"
             }
         });
     })();
@@ -3996,25 +4116,25 @@ function add_gear() {
 
     item_templates["White iron ingot"] = new Material({
         description: "A cousin of iron, much heavier but also very much stronger",
-        value: 70,
+        value: 160,
         material_type: "metal",
     });
 
     item_templates["Black iron ingot"] = new Material({
         description: "A cousin of iron, lighter and much stronger",
-        value: 70,
+        value: 160,
         material_type: "metal",
     });
 
     item_templates["White steel ingot"] = new Material({
         description: "A very strong and very heavy alloy",
-        value: 120,
+        value: 400,
         material_type: "metal",
     });
 
     item_templates["Black steel ingot"] = new Material({
         description: "A strong and light alloy",
-        value: 120,
+        value: 400,
         material_type: "metal",
     });
 
@@ -4572,7 +4692,7 @@ function add_gear() {
 
     item_templates["Oneberry cookie"] = new UsableItem({
         name: "Oneberry cookie",
-        description: "A cookie made with healing berries. Not as effective as properly prepared medicine, but a lot tastier",
+        description: "A cookie made with healing berries. Nowhere near as effective as properly prepared medicine, but a lot tastier",
         value: 20,
         effects: [
             { effect: "Sweet dessert", duration: 30 },

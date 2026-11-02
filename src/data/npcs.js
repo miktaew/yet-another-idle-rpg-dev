@@ -83,6 +83,8 @@ NPCRegistry.add("templePriest", new NPC({name: "temple priest", dialogue: dialog
 
 NPCRegistry.add("townSmith", new NPC({name: "town smith", dialogue: dialogues["town smith"]}));
 NPCRegistry.add("resourceTrader", new NPC({name: "resource trader", trader: traders["resource trader"]}));
+NPCRegistry.add("processedResourceTrader", new NPC({name: "processed resource trader", trader: traders["processed resource trader"]}));
+NPCRegistry.add("townAlchemist", new NPC({name: "town alchemist", dialogue: dialogues["town alchemist"], trader: traders["town alchemist"]}));
 NPCRegistry.add("weaponTrader", new NPC({name: "weapon trader", trader: traders["weapon trader"]}));
 NPCRegistry.add("armorTrader", new NPC({name: "armor trader", trader: traders["armor trader"]}));
 

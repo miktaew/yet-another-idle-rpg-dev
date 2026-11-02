@@ -7,6 +7,7 @@ import { getItem, item_templates } from "../items.js";
 import InventoryComponent, { inventories } from "./inventory_component.js";
 import AvailabilityComponent from "./availability_component.js";
 import { availabilities, availability_havers } from "../data/component_references.js";
+import { config } from "../config.js";
 
 inventories["trader"] = {};
 availabilities["trader"] = {};
@@ -98,17 +99,35 @@ class TraderComponent {
             //inventory_template[i] is a TradeItemGroup = {start_conditions?, items}
             if(inventory_template[i].canBeStarted(context)) {
                 for(let j = 0; j < inventory_template[i].items.length; j++){
-                    if(inventory_template[i].items[j].canBeStarted(context)  && inventory_template[i].items[j].chance >= Math.random()) {
+                    if(inventory_template[i].items[j].canBeStarted(context) && inventory_template[i].items[j].chance >= Math.random()) {
                         let item_count = inventory_template[i].items[j].count.length == 1 ?
                         inventory_template[i].items[j].count[0] : Math.round(Math.random() *
                             (inventory_template[i].items[j].count[1] - inventory_template[i].items[j].count[0]) + inventory_template[i].items[j].count[0]);
                         
                         if(inventory_template[i].items[j].quality) {
+                            /*
                             let quality = Math.round(Math.random() *
                                 (inventory_template[i].items[j].quality[1] - inventory_template[i].items[j].quality[0]) + inventory_template[i].items[j].quality[0]);
 
                             const item = getItem({...item_templates[inventory_template[i].items[j].item_name], quality});
                             items[item.getInventoryKey()] = { item: item, count: item_count };
+                            */
+                            for(let k = 0; k < item_count; k++) {
+                                console.log(inventory_template[i].items[j].item_name)
+                                let quality = Math.round(Math.random() *
+                                    (inventory_template[i].items[j].quality[1] - inventory_template[i].items[j].quality[0]) + inventory_template[i].items[j].quality[0]);
+                                const precision = 
+                                    item_templates[inventory_template[i].items[j].item_name].tags.equipment ? config.equipment_crafting_quality_precision : config.item_crafting_quality_precision;
+                                quality = Math.round(quality/precision)*precision;
+                                const item = getItem({...item_templates[inventory_template[i].items[j].item_name], quality});
+                                
+                                if(!items[item.getInventoryKey()]) {
+                                    items[item.getInventoryKey()] = { item: item, count: 1 };
+                                } else {
+                                    items[item.getInventoryKey()].count++;
+                                }
+                                
+                            }
                         } else {
                             items[item_templates[inventory_template[i].items[j].item_name].getInventoryKey()] = { item: getItem(item_templates[inventory_template[i].items[j].item_name]), count: item_count }; 
                         }

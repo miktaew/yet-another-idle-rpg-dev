@@ -16,22 +16,39 @@ const traders = {};
     traders["suspicious trader"] = new TraderComponent({
         inventory_template: "Slums",
         is_unlocked: true,
-        profit_margin: 6,
+        profit_margin: 8,
     });
     traders["swampland trader"] = new TraderComponent({
         inventory_template: "Swamp",
         is_unlocked: true,
         profit_margin: 7,
     });
+
     traders["nekomimi trader"] = new TraderComponent({
         inventory_template: "Cafe trader",
         is_unlocked: false,
-        profit_margin: 20, //it's the kind of place where you pay for the company as much as for the food
+        profit_margin: 24,
     });
     traders["cat cafe trader"] = new TraderComponent({
         inventory_template: "Cafe trader",
         is_unlocked: false,
-        profit_margin: 18, //it's the kind of place where you pay for the company as much as for the food, but slightly less
+        profit_margin: 24,
+    });
+
+    traders["resource trader"] = new TraderComponent({
+        inventory_template: "Resource trader",
+        is_unlocked: true,
+        profit_margin: 20,
+    });
+    traders["weapon trader"] = new TraderComponent({
+        inventory_template: "Weapon trader",
+        is_unlocked: true,
+        profit_margin: 20,
+    });
+    traders["armor trader"] = new TraderComponent({
+        inventory_template: "Armor trader",
+        is_unlocked: true,
+        profit_margin: 20,
     });
 })();
 

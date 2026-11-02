@@ -23,6 +23,9 @@ const item_conditions = { //key: conditions, for easier assignment
     },
     swamp_quest_done: {
         quests_finished: ["In Times of Need"],
+    },
+    registered_adventurer: {
+        flags: ["is_registered_adventurer"],
     }
 }
 
@@ -530,10 +533,116 @@ inventory_templates["Cafe trader"] =
             new TradeItem({item_name: "Fish steak", count: [4,6]}),
             new TradeItem({item_name: "Apple pie", count: [4,6]}),
             new TradeItem({item_name: "Carrot cake", count: [4,6]}),
+            new TradeItem({item_name: "Oneberry cookie", count: [8,12]}), //more, because they are smaller or something
             new TradeItem({item_name: "Cider", count: [4,6]}),
             new TradeItem({item_name: "Black coffee", count: [4,6]}),
         ]
     })
+]
+
+inventory_templates["Resource trader"] = 
+[
+    new TradeItemGroup({
+        items: [
+            new TradeItem({item_name: "Iron ore", count: [240,320]}),
+            new TradeItem({item_name: "Atratan ore", count: [240,320]}),
+            new TradeItem({item_name: "Coal", count: [240,320]}),
+            new TradeItem({item_name: "Charcoal", count: [240,320]}),
+            new TradeItem({item_name: "Wood log", count: [240,320]}),
+            new TradeItem({item_name: "Ash wood log", count: [240,320]}),
+            new TradeItem({item_name: "Piece of willow wood", count: [240,320]}),
+
+            new TradeItem({item_name: "Cooking herbs", count: [240,320]}),
+
+            new TradeItem({item_name: "Wolf pelt", count: [240,320]}),
+            new TradeItem({item_name: "Boar hide", count: [240,320]}),
+            new TradeItem({item_name: "Mountain goat hide", count: [240,320]}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.registered_adventurer,
+        items: [
+            new TradeItem({item_name: "White iron ore", count: [120,200]}),
+            new TradeItem({item_name: "Black iron ore", count: [120,200]}),
+
+            new TradeItem({item_name: "Bear hide", count: [120,200]}),
+
+            new TradeItem({item_name: "Hickory wood log", count: [120,200]}),
+        ],
+    }),
+]
+
+inventory_templates["Processed resource trader"] = 
+[
+    new TradeItemGroup({
+        items: [
+            new TradeItem({item_name: "Iron ingot", count: [120,200]}),
+            new TradeItem({item_name: "Steel ingot", count: [120,200]}),
+
+            new TradeItem({item_name: "Raw Glass", count: [60,100]}),
+
+            new TradeItem({item_name: "Processed wood", count: [120,200]}),
+            new TradeItem({item_name: "Processed ash wood", count: [120,200]}),
+
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.registered_adventurer,
+        items: [
+            new TradeItem({item_name: "White iron ingot", count: [60,100]}),
+            new TradeItem({item_name: "Black iron ingot", count: [60,100]}),
+
+            new TradeItem({item_name: "Alchemical Wood", count: [60,100]}),
+            new TradeItem({item_name: "Processed hickory wood", count: [60,100]}),
+        ],
+    }),
+]
+
+inventory_templates["Alchemist"] = 
+[
+    new TradeItemGroup({
+        items: [
+            new TradeItem({item_name: "Belmart leaf", count: [240,320]}),
+            new TradeItem({item_name: "Golmoon leaf", count: [240,320]}),
+            new TradeItem({item_name: "Oneberry", count: [240,320]}),
+
+
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.registered_adventurer,
+        items: [
+
+        ],
+    }),
+]
+
+inventory_templates["Weapon trader"] = 
+[
+    new TradeItemGroup({
+        items: [
+            new TradeItem({item_name: "Steel dagger", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel sword", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel spear", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel battle hammer", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel axe", count: [1,3], quality: [100,140]}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.registered_adventurer,
+        items: [
+            new TradeItem({item_name: "Black iron dagger", count: [1,3], quality: [100,140], chance: 0.9}),
+            new TradeItem({item_name: "White iron dagger", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "Black iron sword", count: [1,3], quality: [100,140], chance: 0.9}),
+            new TradeItem({item_name: "White iron sword", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "Black iron spear", count: [1,3], quality: [100,140], chance: 0.9}),
+            new TradeItem({item_name: "White iron spear", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "Black iron axe", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "White iron axe", count: [1,3], quality: [100,140], chance: 0.9}),
+            new TradeItem({item_name: "Black iron battle hammer", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "White iron battle hammer", count: [1,3], quality: [100,140], chance: 0.9}),
+        ],
+    }),
 ]
 
 export default inventory_templates;
