@@ -143,12 +143,13 @@ class LevelableComponent extends StatHaver {
         
         const new_name = skill.getName();
         if(skill.parent_skill && add_to_parent) {
-            if(skillXP.total_xp > skills[skill.parent_skill].total_xp) {
+            const parentXP = this.getSkillXPObject({skill_id: skill.parent_skill});
+            if(skillXP.total_xp > parentXP.total_xp) {
                 /*
                     add xp to parent if skill would now have more than the parent
                     calc xp ammount so that it's no more than the difference between child and parent
                 */
-                let xp_for_parent = Math.min(skillXP.total_xp - skills[skill.parent_skill].total_xp, xp_to_add);
+                let xp_for_parent = Math.min(skillXP.total_xp - parentXP.total_xp, xp_to_add);
                 this.addXPToSkill({skill: skills[skill.parent_skill], xp_to_add: xp_for_parent, should_info, use_bonus: false, add_to_parent, cap_gained_xp: false});
             }
         }
