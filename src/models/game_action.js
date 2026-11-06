@@ -5,6 +5,8 @@ import { MixedRewards, Rewards } from "../rewards.js";
 
 availabilities["action"] = {};
 
+const game_actions = [];
+
 class GameAction{
 
 
@@ -66,13 +68,19 @@ class GameAction{
         this.unlock_text = data.unlock_text;
 
         this.completion_count = 0;
+        this.tags = data.tags || {};
 
         this.#availability = new AvailabilityComponent({...data, repeatable: data.repeatable ?? false});
         availabilities["action"][this.action_id] = this.getAvailabilityComponent();
+        game_actions.push(this);
     }
 
     getAvailabilityComponent() {
         return this.#availability;
+    }
+
+    getStatus() {
+        return this.getAvailabilityComponent().getStatus();
     }
 
     getCurrentProgress() {
@@ -93,5 +101,36 @@ class GameAction{
 }
 
 availability_havers.push(GameAction);
+
+
+/**
+ * 
+ * @param {Object} param0
+ * @param {Array} param0.required tags that need to be present
+ * @param {Array} param0.forbidden tags that need to be not present
+ * @param {Boolean} param0.unique_only whether to count additional completions of repeatable actions
+ */
+function get_action_count({required = [], forbidden = [], unique_only = true, completed = true}) {
+    let count = 0;
+    for(let i = 0; i < game_actions.length; i++) {
+        let met = true;
+        for(let j = 0; j < required.length; j++) {
+            if(!game_actions[i].tags[required[j]]) {
+                met = false;
+                break;
+            }
+        }
+        for(let j = 0; j < required.length; j++) {
+            if(game_actions[i].tags[forbidden[j]]) {
+                met = false;
+                break;
+            }
+        }
+        if(met && (!completed || game_actions[i].isFinished())) {
+            count += (unique_only ? 1  : game_actions[i].getCompletionCount());
+        }
+    }
+    return count;
+}
 
 export {GameAction};

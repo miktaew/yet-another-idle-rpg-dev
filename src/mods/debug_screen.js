@@ -192,7 +192,7 @@ class DataViewer {
 
             for (let drop of enemy_templates[m].loot_list) {
                 drops.add(drop.item_name);
-            };
+            }
         }
 
         result.drops_needed = drops.size;

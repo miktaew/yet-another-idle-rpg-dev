@@ -584,6 +584,12 @@ inventory_templates["Processed resource trader"] =
             new TradeItem({item_name: "Processed wood", count: [120,200]}),
             new TradeItem({item_name: "Processed ash wood", count: [120,200]}),
 
+            new TradeItem({item_name: "Processed wolf pelt", count: [120,200]}),
+            new TradeItem({item_name: "Piece of boar leather", count: [120,200]}),
+            new TradeItem({item_name: "Processed boar hide", count: [120,200]}),
+            new TradeItem({item_name: "Piece of wolf leather", count: [120,200]}),
+            new TradeItem({item_name: "Processed goat hide", count: [80,120]}),
+            new TradeItem({item_name: "Piece of goat leather", count: [80,120]}),
         ],
     }),
     new TradeItemGroup({
@@ -594,6 +600,9 @@ inventory_templates["Processed resource trader"] =
 
             new TradeItem({item_name: "Alchemical Wood", count: [60,100]}),
             new TradeItem({item_name: "Processed hickory wood", count: [60,100]}),
+
+            new TradeItem({item_name: "Processed bear hide", count: [60,100]}),
+            new TradeItem({item_name: "Piece of bear leather", count: [60,100]}),
         ],
     }),
 ]
@@ -606,13 +615,16 @@ inventory_templates["Alchemist"] =
             new TradeItem({item_name: "Golmoon leaf", count: [240,320]}),
             new TradeItem({item_name: "Oneberry", count: [240,320]}),
 
+            new TradeItem({item_name: "Healing powder", count: [60,100]}),
 
         ],
     }),
     new TradeItemGroup({
         start_conditions: item_conditions.registered_adventurer,
         items: [
+            new TradeItem({item_name: "Silver thistle", count: [120,200]}),
 
+            new TradeItem({item_name: "Potent healing powder", count: [40,80]}),
         ],
     }),
 ]
@@ -632,14 +644,14 @@ inventory_templates["Weapon trader"] =
         start_conditions: item_conditions.registered_adventurer,
         items: [
             new TradeItem({item_name: "Black iron dagger", count: [1,3], quality: [100,140], chance: 0.9}),
-            new TradeItem({item_name: "White iron dagger", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "White iron dagger", count: [1,3], quality: [100,140], chance: 0.3}),
             new TradeItem({item_name: "Black iron sword", count: [1,3], quality: [100,140], chance: 0.9}),
-            new TradeItem({item_name: "White iron sword", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "White iron sword", count: [1,3], quality: [100,140], chance: 0.3}),
             new TradeItem({item_name: "Black iron spear", count: [1,3], quality: [100,140], chance: 0.9}),
-            new TradeItem({item_name: "White iron spear", count: [1,3], quality: [100,140], chance: 0.4}),
-            new TradeItem({item_name: "Black iron axe", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "White iron spear", count: [1,3], quality: [100,140], chance: 0.3}),
+            new TradeItem({item_name: "Black iron axe", count: [1,3], quality: [100,140], chance: 0.3}),
             new TradeItem({item_name: "White iron axe", count: [1,3], quality: [100,140], chance: 0.9}),
-            new TradeItem({item_name: "Black iron battle hammer", count: [1,3], quality: [100,140], chance: 0.4}),
+            new TradeItem({item_name: "Black iron battle hammer", count: [1,3], quality: [100,140], chance: 0.3}),
             new TradeItem({item_name: "White iron battle hammer", count: [1,3], quality: [100,140], chance: 0.9}),
         ],
     }),

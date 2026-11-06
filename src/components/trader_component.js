@@ -113,7 +113,6 @@ class TraderComponent {
                             items[item.getInventoryKey()] = { item: item, count: item_count };
                             */
                             for(let k = 0; k < item_count; k++) {
-                                console.log(inventory_template[i].items[j].item_name)
                                 let quality = Math.round(Math.random() *
                                     (inventory_template[i].items[j].quality[1] - inventory_template[i].items[j].quality[0]) + inventory_template[i].items[j].quality[0]);
                                 const precision = 
