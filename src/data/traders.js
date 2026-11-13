@@ -50,6 +50,11 @@ const traders = {};
         is_unlocked: true,
         profit_margin: 20,
     });
+    traders["town alchemist"] = new TraderComponent({
+        inventory_template: "Alchemist",
+        is_unlocked: true,
+        profit_margin: 20,
+    });
 })();
 
 

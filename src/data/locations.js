@@ -1543,6 +1543,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             "resourceTrader",
             "weaponTrader",
             "armorTrader",
+            'townAlchemist',
         ]
     });
     locations["Town square"].connected_locations.push(
