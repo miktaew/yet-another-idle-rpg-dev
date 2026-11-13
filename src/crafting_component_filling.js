@@ -464,7 +464,7 @@ const material_properties = {
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ],
-        value: 800,
+        value: 1280,
     },
     "white chainmail": {
         tier: 5,
@@ -475,7 +475,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 1200,
+        value: 1920,
     },
     "white plate": {
         tier: 5,
@@ -486,12 +486,12 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 1600,
+        value: 2560,
     },
     "black steel": {
         tier: 5,
         weight: 80,
-        strength: 110,
+        strength: 120,
         warmth: 80,
         name: "black",
         group: "metal",
@@ -500,18 +500,18 @@ const material_properties = {
             ...ALL_WEAPON_HANDLES,
             component_types.SHIELD_BASE,
         ],
-        value: 800,
+        value: 1280,
     },
     "black chainmail": {
         tier: 5,
         weight: 80,
-        strength: 110,
+        strength: 120,
         warmth: 80,
         group: "mail",
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 1200,
+        value: 1920,
     },
     "black plate": {
         tier: 5,
@@ -522,7 +522,7 @@ const material_properties = {
         types: [
             ...ALL_EXTERIORS,
         ],
-        value: 1600
+        value: 2560
     },
     "alligator": {
         tier: 5,
@@ -561,20 +561,27 @@ const material_properties = {
     },
 };
 
-const custom_names = {
-    "linen": {}, "wool": {}, "silk": {}, "iron chainmail": {}, "steel chainmail": {}, "snakeskin": {}, "a monster bodypart": {}
-};
+
+const custom_names = {};
+Object.keys(material_properties).forEach(key => custom_names[key]={});
+
 custom_names["linen"][component_types.HELMET_INTERIOR] = "Linen bandanna";
 custom_names["silk"][component_types.HELMET_INTERIOR] = "Silk bandanna";
 custom_names["linen"][component_types.LEG_ARMOR_INTERIOR] = "Linen leggings";
 custom_names["wool"][component_types.CHESTPLATE_INTERIOR] = "Wool shirt";
 custom_names["silk"][component_types.CHESTPLATE_INTERIOR] = "Silk shirt";
-custom_names["iron chainmail"][component_types.CHESTPLATE_EXTERIOR] = "Iron chainmail vest";
-custom_names["steel chainmail"][component_types.CHESTPLATE_EXTERIOR] = "Steel chainmail vest";
 custom_names["snakeskin"][component_types.LEG_ARMOR_INTERIOR] = "Snakeskin leggings";
 custom_names["snakeskin"][component_types.SHOE_INTERIOR] = "Snakeskin boots";
 custom_names["a monster bodypart"][component_types.SHORT_BLADE] = "Frumious blade";
 custom_names["a monster bodypart"][component_types.HAMMER_HEAD] = "Beak hammer head";
+
+const rename_chestpiece_to_vest = [
+    "iron chainmail", "steel chainmail", "white iron chainmail", "black iron chainmail", "white chainmail", "black chainmail", 
+    "steel plate", "white iron plate", "black iron plate", "white plate", "black plate",
+];
+for(let i = 0; i < rename_chestpiece_to_vest.length; i++) {
+    custom_names[rename_chestpiece_to_vest[i]][component_types.CHESTPLATE_EXTERIOR] = capitalize_first_letter(rename_chestpiece_to_vest[i]) + " vest";
+}
 
 const armor_names = {};
 armor_names[component_types.CHESTPLATE_EXTERIOR] = "armor";

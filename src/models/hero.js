@@ -10,8 +10,12 @@ import { skill_consumable_tags } from "../misc.js";
 import { skills } from "../data/skills.js";
 import { levels, bios } from "../data/component_references.js";
 import { Person } from "./person.js";
+import { guild_members, GuildMemberComponent } from "../components/guild_member_component.js";
 
 class Hero extends Person {
+
+    #guild_member_component;
+
     constructor(data) {
         super(data);
         
@@ -25,11 +29,14 @@ class Hero extends Person {
 
         this.id = data.id;
 
+        this.#guild_member_component = new GuildMemberComponent();
+
         //assign them directly, as hero is not placed in NPCRegistry (obviously) so it can't be handled by it
         inventories["person"][this.id] = this.getInventoryComponent();
         equipments["person"][this.id] = this.getEquipmentComponent();
         levels["person"][this.id] = this.getLevelableComponent();
         bios[this.id] = this.getBioComponent();
+        guild_members["person"][this.id] = this.getGuildMemberComponent();
 
         this.tags = data.tags;
 
@@ -39,6 +46,10 @@ class Hero extends Person {
     //stupid little thing for a stupid easter egg
     isRat() {
         return this.name.match(/\b(?<![\w])rat\b/i);
+    }
+
+    getGuildMemberComponent() {
+        return this.#guild_member_component;
     }
 
     getOwnedMoney() {

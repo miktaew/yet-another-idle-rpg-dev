@@ -26,6 +26,11 @@ const item_conditions = { //key: conditions, for easier assignment
     },
     registered_adventurer: {
         flags: ["is_registered_adventurer"],
+    },
+    rank_1_adventurer: {
+        guild_ranks: {
+            "Adventurer": 1,
+        }
     }
 }
 
@@ -605,6 +610,13 @@ inventory_templates["Processed resource trader"] =
             new TradeItem({item_name: "Piece of bear leather", count: [60,100]}),
         ],
     }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.rank_1_adventurer,
+        items: [
+            new TradeItem({item_name: "White steel ingot", count: [40,70]}),
+            new TradeItem({item_name: "Black steel ingot", count: [40,70]}),
+        ],
+    }),
 ]
 
 inventory_templates["Alchemist"] = 
@@ -616,14 +628,16 @@ inventory_templates["Alchemist"] =
             new TradeItem({item_name: "Oneberry", count: [240,320]}),
 
             new TradeItem({item_name: "Healing powder", count: [60,100]}),
-
+            new TradeItem({item_name: "Oneberry juice", count: [60,100]}),
+            new TradeItem({item_name: "Healing potion", count: [60,100]}),
+            new TradeItem({item_name: "Healing balm", count: [60,100]}),
+            new TradeItem({item_name: "Serum", count: [60,100]}),
         ],
     }),
     new TradeItemGroup({
         start_conditions: item_conditions.registered_adventurer,
         items: [
             new TradeItem({item_name: "Silver thistle", count: [120,200]}),
-
             new TradeItem({item_name: "Potent healing powder", count: [40,80]}),
         ],
     }),
@@ -653,6 +667,57 @@ inventory_templates["Weapon trader"] =
             new TradeItem({item_name: "White iron axe", count: [1,3], quality: [100,140], chance: 0.9}),
             new TradeItem({item_name: "Black iron battle hammer", count: [1,3], quality: [100,140], chance: 0.3}),
             new TradeItem({item_name: "White iron battle hammer", count: [1,3], quality: [100,140], chance: 0.9}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.rank_1_adventurer,
+        items: [
+
+        ],
+    }),
+]
+
+inventory_templates["Armor trader"] = 
+[
+    new TradeItemGroup({
+        items: [
+            new TradeItem({item_name: "Steel chainmail armor", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel chainmail helmet", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel chainmail pants", count: [1,3], quality: [100,140]}),
+
+            new TradeItem({item_name: "Steel plate armor", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel plate helmet", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Steel plate pants", count: [1,3], quality: [100,140]}),
+
+            new TradeItem({item_name: "Steel shield", count: [1,3], quality: [100,140]}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.registered_adventurer,
+        items: [
+            new TradeItem({item_name: "Black iron chainmail armor", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Black iron chainmail helmet", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Black iron chainmail pants", count: [1,3], quality: [100,140]}),
+
+            new TradeItem({item_name: "White iron plate armor", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "White iron plate helmet", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "White iron plate pants", count: [1,3], quality: [100,140]}),
+
+            new TradeItem({item_name: "Black iron shield", count: [1,3], quality: [100,140]}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.rank_1_adventurer,
+        items: [
+            new TradeItem({item_name: "Black chainmail armor", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Black chainmail helmet", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "Black chainmail pants", count: [1,3], quality: [100,140]}),
+
+            new TradeItem({item_name: "White plate armor", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "White plate helmet", count: [1,3], quality: [100,140]}),
+            new TradeItem({item_name: "White plate pants", count: [1,3], quality: [100,140]}),
+
+            new TradeItem({item_name: "Black shield", count: [1,3], quality: [100,140]}),
         ],
     }),
 ]

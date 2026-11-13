@@ -617,10 +617,14 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
                     item_tooltip += `<br>- new recipes`;
                 }
             }
+            if(item.flavor_description) {
+                item_tooltip += `<br><br><span class="italic">"${item.flavor_description}"</span>`;
+            }
+            if(item.additional_description) {
+                item_tooltip += `<br><br><span>${item.additional_description}</span>`;
+            }
         }
-        if(item.additional_description) {
-            item_tooltip += `<br><br><span class="italic">${item.additional_description}</span>`;
-        }
+        
     }
 
     if(item.material_type) {

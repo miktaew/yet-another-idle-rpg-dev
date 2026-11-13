@@ -78,6 +78,10 @@
             any: [String],
             all: [String]
         }
+
+        guild_ranks: {
+            "guild_key": Number
+        }
     }
 */
 
@@ -329,6 +333,14 @@ const process_conditions = (conditions, context) => {
 
         Object.keys(conditions[0].race_type.all || {}).forEach(race_type => {
             if(!race.tags[race_type]) {
+                met = 0;
+            }
+        });
+    }
+
+    if(conditions[0].guild_ranks) {
+        Object.keys(conditions[0].guild_ranks).forEach(guild => {
+            if(character.getGuildMemberComponent().getGuildRank({guild_id: guild}) < conditions[0].guild_ranks[guild]) {
                 met = 0;
             }
         });

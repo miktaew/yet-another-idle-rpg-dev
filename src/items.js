@@ -1115,7 +1115,8 @@ class Book extends Item {
         this.tags["book"] = true;
 
         this.saturates_market = false; //uncraftable and limited, no point
-        this.additional_description = item_data.additional_description; //for after the book is finished
+        this.additional_description = item_data.additional_description; //for after the book is finished, non-italic
+        this.flavor_description = item_data.flavor_description; //for after the book is finished, italic
     }
 
     /**
@@ -1390,7 +1391,20 @@ book_stats["Counting Mice"] = new BookData({
             Haggling: 1.05,
         },
     }
-
+});
+book_stats["Tragedy of the wise master"] = new BookData({
+    required_time: 240,
+    literacy_xp_rate: 5,
+    bonuses: {
+        multipliers: {
+            max_health: 1.1,
+        },
+        xp_multipliers: {
+            Regeneration: 1.2,
+            Fortitude: 1.2,
+            all: 1.1,
+        },
+    }
 });
 
 //books
@@ -1399,7 +1413,7 @@ book_stats["Counting Mice"] = new BookData({
         name: "ABC for kids",
         description: "The simplest book on the market",
         value: 100,
-        additional_description: `A stands for a rat... <br>Note on the side seems to be a part of some lyrics, starting with "P is for Priceless", but you can't make out the rest of it`,
+        flavor_description: `A stands for a rat... <br>Note on the side seems to be a part of some lyrics, starting with "P is for Priceless", but you can't make out the rest of it`,
     });
     item_templates["Old combat manual"] = new Book({
         name: "Old combat manual",
@@ -1415,7 +1429,7 @@ book_stats["Counting Mice"] = new BookData({
         name: "Medicine for dummies",
         description: "A simple book about healing, describing how to create some basic medicines",
         value: 320,
-        additional_description: "Believe it or not, bleeding to death is a bad thing. A healing medicine can help prevent it from happening.",
+        flavor_description: "Believe it or not, bleeding to death is a bad thing. A healing medicine can help prevent it from happening.",
     });
     item_templates["Butchering and you"] = new Book({
         name: "Butchering and you",
@@ -1446,7 +1460,15 @@ book_stats["Counting Mice"] = new BookData({
         name: "Counting Mice",
         description: "A simple book on how to count using mice and other animals for refence on how to do simple addition",
         value: 120,
-        additional_description: "One mouse, two mice, three mice, four mice, five mice, six mice, seven mice, eight mice, nine mice, ten mice, eleven mine, twelve mice...",
+        flavor_description: "One mouse, two mice, three mice, four mice, five mice, six mice, seven mice, eight mice, nine mice, ten mice, eleven mine, twelve mice...",
+    });
+    item_templates["Tragedy of the wise master"] = new Book({
+        name: "Tragedy of the wise master",
+        description: "A tragic story that seems deeply ironic",
+        value: 2000,
+        flavor_description: "Ironic...",
+        additional_description: "The story is deeply tragic yet also highly stimulating intellectually, containing a set of dichotomies "
+                               +"complex enough that an entire thesis could be written about them",
     });
 	
 })();

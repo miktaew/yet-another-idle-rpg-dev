@@ -1,16 +1,12 @@
 "use strict";
 
+const guild_members = {person: {}};
+
 class GuildMemberComponent {
-    constructor({guilds = {}, guild_xp = {}, guild_rank = {}}) {
+    constructor({guilds = {}, guild_xp = {}, guild_ranks = {}} = {}) {
         this.guilds = guilds; //a bit reduntant since keys from latter two be used instead, but feels a bit more readable
         this.guild_xp = guild_xp;
-        this.guild_rank = guild_rank;
-
-        /*
-            xp and rep separately?
-            xp solely for earning ranks, doesn't carry over, need some X for each subsequent rank (doubling should be fine)
-            
-        */
+        this.guild_ranks = guild_ranks;
     }
 
     joinGuild({guild_id}) {
@@ -20,7 +16,7 @@ class GuildMemberComponent {
 
         this.guilds[guild_id] = true;
         this.guild_xp[guild_id] = 0
-        this.guild_rank[guild_id] = 0;
+        this.guild_ranks[guild_id] = 0;
     }
 
     getGuilds() {
@@ -48,15 +44,17 @@ class GuildMemberComponent {
             return;
         }
 
-        if(this.guild_rank[guild_id] <= target_rank) {
+        if(this.guild_ranks[guild_id] <= target_rank) {
             return;
         }
 
-        this.guild_rank[guild_id] = target_rank;
-        this.guild_xp[guild_id] = 0;
+        this.guild_ranks[guild_id] = target_rank;
     }
 
     getGuildRank({guild_id}) {
-        return this.guild_rank[guild_id];
+        return this.guild_ranks[guild_id];
     }
 }
+
+
+export {guild_members, GuildMemberComponent};

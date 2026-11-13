@@ -157,6 +157,10 @@ input[type=checkbox], input[type=radio] {
 	font-style: italic;
 }
 
+.hidden {
+    display: none;
+}
+
 #hits_counter {
     height: 28px;
     padding: 6px;
