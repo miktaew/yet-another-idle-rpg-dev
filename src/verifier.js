@@ -13,6 +13,8 @@ import { recipes } from "./crafting_recipes.js";
 import { get_context, language } from "./main.js";
 import { translations_for_verifier } from "../locales/english.js";
 import NPCRegistry from "./data/npcs.js";
+import { traders } from "./data/traders.js";
+import inventory_templates from "./data/inventory_templates.js";
 
 const trc = 1000000; //time rounding precision
 
@@ -292,6 +294,39 @@ function Verify_Game_Objects() {
         console.log(`Finished verifying enemies in: ${Math.round(trc*(end_time-start_time))/trc}s\nFound issue in ${enemy_results[1]} out of ${enemy_results[0]}`);
     } else {
         console.log(`Finished verifying ${enemy_results[0]} in: ${Math.round(trc*(end_time-start_time))/trc}s\nNo issues were found.`);
+    }
+
+    start_time = performance.now();
+    let trader_results = [0,0];
+    console.log("Began verifying traders and inventory templates.");
+    for(const [key, ] of Object.entries(traders)) {
+        let has_issue = false;
+        const template = inventory_templates[traders[key].inventory_template];
+
+        if(!template) {
+            has_issue = true;
+            console.error(`Trader "${key}" uses non-existent inventory template "${traders[key].inventory_template}"`);
+        } else {
+            for(let i = 0; i < template.length; i++) {
+                for(let j = 0; j < template[i].items.length; j++) {
+                    if(!item_templates[template[i].items[j].item_name]) {
+                        has_issue = true;
+                        console.error(`Inventory template "${traders[key].inventory_template}" uses non-existent item "${template[i].items[j].item_name}"`);
+                    }
+                }
+            }
+        }
+
+        trader_results[0]++;
+        trader_results[1]+=has_issue;
+        results[0]++;
+        results[1]+=has_issue;
+    }
+    end_time = performance.now();
+    if(trader_results[1] > 0) {
+        console.log(`Finished verifying traders in: ${Math.round(trc*(end_time-start_time))/trc}s\nFound issue in ${trader_results[1]} out of ${trader_results[0]}`);
+    } else {
+        console.log(`Finished verifying ${trader_results[0]} traders in: ${Math.round(trc*(end_time-start_time))/trc}s\nNo issues were found.`);
     }
 
     start_time = performance.now();
