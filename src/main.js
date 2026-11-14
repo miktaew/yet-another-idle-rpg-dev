@@ -5677,6 +5677,7 @@ function update() {
                         if(can_work(activity)) {
                             divs[i].classList.remove("activity_unavailable");
                             divs[i].classList.add("start_activity");
+                            divs[i].setAttribute("onclick", "start_activity(this.getAttribute('data-activity'));");
                         } else {
                             divs[i].classList.remove("start_activity");
                             divs[i].classList.add("activity_unavailable");
