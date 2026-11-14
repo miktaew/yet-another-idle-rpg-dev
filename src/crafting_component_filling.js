@@ -928,6 +928,7 @@ const crafting_component_manager = {
                         let attack_speed_multiplier = 1;
                         let cold_tolerance_bonus = 0;
                         let stamina_efficiency_multiplier = 1;
+                        let block_multiplier = 1;
 
                         agility_multiplier = Math.min(1,Math.round(100*(
                                 1 - (material_count*(material.weight-50))/2500
@@ -940,6 +941,11 @@ const crafting_component_manager = {
                         stamina_efficiency_multiplier = Math.min(1,Math.round(100*(
                             1 - (material_count*(material.weight-50))/2500
                         ))/100);
+
+                        block_multiplier = Math.min(1,Math.round(100*(
+                            1 + (material_count*(material.weight-130))/4000
+                        ))/100);
+
 
                         cold_tolerance_bonus = ((material.warmth || 100) - 100)/20;
 
@@ -957,6 +963,10 @@ const crafting_component_manager = {
 
                         if(stamina_efficiency_multiplier !== 1) {
                             add_properties(component_stats, {stamina_efficiency: {multiplier: stamina_efficiency_multiplier}});
+                        }
+
+                        if(block_multiplier !== 0) {
+                            add_properties(component_stats, {block_strength: {multiplier: block_multiplier}});
                         }
 
                         item = new ArmorComponent({
