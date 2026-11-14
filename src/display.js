@@ -2005,6 +2005,7 @@ function update_fav_display(node, is_fav) {
 function update_displayed_book(book_id) {
     const book = item_templates[book_id];
     const book_key = book.getInventoryKey();
+
     if(book.isFinished()) {
         item_divs[book_key].classList.add("book_finished");
         item_divs[book_key].classList.remove("book_active");
@@ -2018,8 +2019,7 @@ function update_displayed_book(book_id) {
     item_divs[book_key].getElementsByClassName("item_book")[0].appendChild(create_item_tooltip(book));
 
 
-
-    let percent = Math.min(book_stats[book_key].accumulated_time / book_stats[book_key].required_time, 1);
+    let percent = Math.min(book_stats[book_id].accumulated_time / book_stats[book_id].required_time, 1);
     document.getElementById("action_progress_bar").style.width = 385*percent+"px";
 }
 

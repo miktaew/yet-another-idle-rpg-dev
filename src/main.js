@@ -1227,7 +1227,7 @@ function do_reading() {
     const book = book_stats[is_reading];
     add_xp_to_skill({skill: skills["Literacy"], xp_to_add: book.literacy_xp_rate});
 
-    if(book.isFinished()) {
+    if(item_templates[is_reading].isFinished()) {
         log_message(`Finished the book "${is_reading}"`);
         update_booklist_entry(is_reading, true);
         end_reading();
