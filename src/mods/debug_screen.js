@@ -8,6 +8,7 @@ import { Material, Book, BookData, item_templates, book_stats, item_log } from "
 //import { inventory_templates, TradeItem } from "../traders.js"
 import { recipes, ItemRecipe } from "../crafting_recipes.js"
 import { material_properties } from "../crafting_component_filling.js";
+import { draw_map } from "./map.js";
 
 class DataViewer {
     debug_window;
@@ -25,13 +26,14 @@ class DataViewer {
             const tabs = document.createElement("div");
 
 
-            const tabNames = ["Mobs", "Materials", "Crafting mats", "Training", "Locations", "Unlocks [WIP]"];
+            const tabNames = ["Mobs", "Materials", "Crafting mats", "Training", "Locations", "Map", "Unlocks [WIP]"];
             const tabMethods = [
                 () => this.list_enemies(),
                 () => this.show_materials(),
                 () => this.list_crafting_materials(),
                 () => this.show_training(),
                 () => this.show_areas(),
+                () => this.show_map(),
                 () => this.show_unlocks()];
 
             for (var i = 0; i < tabNames.length; i++) {
@@ -142,11 +144,50 @@ class DataViewer {
 
         const table = [];
 
-        for (let zone of Object.values(locations)) {
+        for (let location of Object.values(locations)) {
             //name, type, parent, children
 
-            console.log(this.get_area_progress(zone));
+            if (location.connected_locations) {
+                let i = 0;
+                for (let connection of location.connected_locations) {
+                    i++;
+                    if (!show_combat && !(connection.location instanceof Location)) {
+                        continue;
+                    }
+
+                    let next_is_combat = connection.location instanceof Combat_zone;
+
+
+                    if (!map_nodes[connection.location.id]) {
+                        let next_angle = (i +1) / (location.connected_locations.length) * 360 + angle;
+                        let dist = Math.sqrt(connection.travel_time) * (next_is_combat ? 10 : 20) + 10;
+
+                        let [next_x, next_y] = circle_pos(dist, next_angle);
+                        draw_location(connection.location, x + next_x, y + next_y, next_angle);
+                    }
+
+                    if (next_is_combat) {
+                        draw_combat_connection(map_nodes[location.id], map_nodes[connection.location.id]);
+                    }
+                    else {
+                        draw_map_connection(map_nodes[location.id], map_nodes[connection.location.id]);
+                    }
+                }
+            }
+
+            console.log(this.get_area_progress(location));
         }
+    }
+
+    show_map() {
+        this.window_content.innerHTML += `
+            <div style="position: absolute; top: 100px; left: 100px">
+                <canvas id="map_canvas" width="3000" height="3000" style="border: 1px solid white; position: absolute; background-color: #AE81DB; z-index:3; overflow: scroll">
+                </canvas>
+                <div id="map_labels" style="border: 1px solid white; width: 3000px; height: 3000px; position: absolute; left: 0; top: 0; z-index: 4"></div>
+            </div>
+        `;
+        draw_map();
     }
 
     get_area_progress(location) {

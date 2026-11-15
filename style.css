@@ -2983,6 +2983,13 @@ i {
 		background-color: rgb(48, 57, 77);
 	}
 
+.map_label {
+	position: absolute;
+	border: 1px solid white;
+	background: black;
+	translate: -50% -50%;
+}
+
 .combat_effect_popup {
 /*	display: none;*/
 	opacity: 0%;
