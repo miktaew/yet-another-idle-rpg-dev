@@ -474,7 +474,7 @@ const favourite_locations = {};
         },
         npcs: ["villageMillers"],
     });
-    locations["Village"].connected_locations.push({location: locations["Eastern mill"], travel_time: 30});
+    locations["Village"].connected_locations.push({location: locations["Eastern mill"], travel_time: 30, azimuth: 85});
 
     locations["Eastern storehouse"] = new CombatZone({
         name: "Eastern storehouse",
@@ -589,7 +589,7 @@ const favourite_locations = {};
         is_unlocked: false,
         is_under_roof: true,
     });
-    locations["Village"].connected_locations.push({location: locations["Nearby cave"], travel_time: 60});
+    locations["Village"].connected_locations.push({location: locations["Nearby cave"], travel_time: 60, azimuth: 5});
     //remember to always add it like that, otherwise travel will be possible only in one direction and location might not even be reachable
 
     locations["Cave room"] = new CombatZone({
@@ -625,7 +625,7 @@ const favourite_locations = {};
             },
         ],
     });
-    locations["Nearby cave"].connected_locations.push({location: locations["Cave room"], travel_time: 5});
+    locations["Nearby cave"].connected_locations.push({location: locations["Cave room"], travel_time: 5, azimuth: 90});
 
     locations["Cave depths"] = new CombatZone({
         description: "It's dark. And full of rats", 
@@ -742,10 +742,10 @@ const favourite_locations = {};
     });
 
     locations["Nearby cave"].connected_locations.push(
-        {location: locations["Cave depths"], travel_time: 20}, 
-        {location: locations["Hidden tunnel"], custom_text: "Enter the [Hidden tunnel]", travel_time: 40}, 
-        {location: locations["Pitch black tunnel"], custom_text: "Go into the [Pitch black tunnel]", travel_time: 60},
-        {location: locations["Mysterious gate"], custom_text: "Go to the [Mysterious gate]", travel_time: 90}
+        {location: locations["Cave depths"], travel_time: 20, azimuth: 95}, 
+        {location: locations["Hidden tunnel"], custom_text: "Enter the [Hidden tunnel]", travel_time: 40, azimuth: 100}, 
+        {location: locations["Pitch black tunnel"], custom_text: "Go into the [Pitch black tunnel]", travel_time: 60, azimuth: 105},
+        {location: locations["Mysterious gate"], custom_text: "Go to the [Mysterious gate]", travel_time: 90, azimuth: 110}
     );
 
     locations["Writhing tunnel"] = new CombatZone({
@@ -775,7 +775,7 @@ const favourite_locations = {};
         unlock_text: "You see something. You struggle to comprehend it. When you finally understand, you regret it instantly. It might have been better to be born blind."
     });
 
-    locations["Nearby cave"].connected_locations.push({location: locations["Writhing tunnel"], travel_time: 100});
+    locations["Nearby cave"].connected_locations.push({location: locations["Writhing tunnel"], travel_time: 100, azimuth: 115});
 
     locations["Mysterious depths"] = new SafeLocation({ //not yet unlockable
         connected_locations: [{location: locations["Nearby cave"], custom_text: "Climb back up to the main level of [Nearby cave]", travel_time: 100}], 
@@ -795,7 +795,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         is_under_roof: true,
     });
 
-    locations["Nearby cave"].connected_locations.push({location: locations["Mysterious depths"], custom_text: "Climb down to [Mysterious depths]", travel_time: 120});
+    locations["Nearby cave"].connected_locations.push({location: locations["Mysterious depths"], custom_text: "Climb down to [Mysterious depths]", travel_time: 120, azimuth: 120});
 
     locations["Forest road"] = new SafeLocation({ 
         connected_locations: [{location: locations["Village"], travel_time: 240}],
@@ -808,7 +808,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         },
         is_unlocked: false,
     });
-    locations["Village"].connected_locations.push({location: locations["Forest road"], custom_text: "Leave the village towards [Forest road]", travel_time: 240});
+    locations["Village"].connected_locations.push({location: locations["Forest road"], custom_text: "Leave the village towards [Forest road]", travel_time: 240, azimuth: -85});
 
     locations["Forest"] = new CombatZone({
         description: "Forest surrounding the village, a dangerous place", 
@@ -881,7 +881,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             }
         ],
     });
-    locations["Forest road"].connected_locations.push({location: locations["Forest clearing"], custom_text: "Go towards the [Forest clearing] in the north", travel_time: 60});
+    locations["Forest road"].connected_locations.push({location: locations["Forest clearing"], custom_text: "Go towards the [Forest clearing] in the north", travel_time: 60, azimuth: -5});
 
     locations["Carya Canyon"] = new SafeLocation({ 
         connected_locations: [{location: locations["Forest road"], travel_time: 300}],
@@ -894,7 +894,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         },
         is_unlocked: false,
     });
-    locations["Forest road"].connected_locations.push({location: locations["Carya Canyon"], custom_text: "Hike to [Carya Canyon]", travel_time: 120});
+    locations["Forest road"].connected_locations.push({location: locations["Carya Canyon"], custom_text: "Hike to [Carya Canyon]", travel_time: 120, azimuth: 185});
     
     locations["Precarious tree bridge"] = new ChallengeZone({
         description: "A warthog heard the commotion and is guarding the way across.", 
@@ -952,7 +952,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         temperature_range_modifier: 0.8,
         is_under_roof: true,
     });
-    locations["Forest road"].connected_locations.push({location: locations["Forest den"], custom_text: "Enter the [Forest den]", travel_time: 90});
+    locations["Forest road"].connected_locations.push({location: locations["Forest den"], custom_text: "Enter the [Forest den]", travel_time: 90, azimuth: -85});
 
     locations["Bears' den"] = new CombatZone({
         description: "A dark, smelly cave in the heart of the forest, with massive bones spread around the entrance",
@@ -982,7 +982,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         getBackgroundNoises: () => ["*Mosquitoes buzzing*", "*Frogs croaking*", "*something splashes in the water*", "*an animal comes out to drink*", "Quack", "Quack!"],
         is_unlocked: false,
     });
-    locations["Forest road"].connected_locations.push({ location: locations["Forest lake"], travel_time: 120 });
+    locations["Forest road"].connected_locations.push({ location: locations["Forest lake"], travel_time: 120, azimuth: -95 });
 
     locations["Frogs"] = new CombatZone({
         description: "Battling at the lake's edge",
@@ -1014,7 +1014,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         getBackgroundNoises: () => ["*something is watching you*", "*something howls in the distance*", "*You step on the bones of some large animal*", "*something brushes against your leg*"],
         is_unlocked: false,
     });
-    locations["Forest lake"].connected_locations.push({ location: locations["Motherwood"], custom_text: "Follow where the river leads", travel_time: 30 });
+    locations["Forest lake"].connected_locations.push({ location: locations["Motherwood"], custom_text: "Follow where the river leads", travel_time: 30, azimuth: -95 });
 
     locations["Primeval forest"] = new CombatZone({
         description: "Dangerous beasts roam here",
@@ -1124,7 +1124,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         is_unlocked: true,
         npcs: ["gateGuard"],
     });
-    locations["Forest road"].connected_locations.push({location: locations["Town outskirts"], custom_text: "Go towards the [Town outskirts]", travel_time: 240});
+    locations["Forest road"].connected_locations.push({location: locations["Town outskirts"], custom_text: "Go towards the [Town outskirts]", travel_time: 240, azimuth: -5});
 
     locations["Slums"] = new SafeLocation({ 
         connected_locations: [{location: locations["Town outskirts"], travel_time: 60}],
@@ -1326,8 +1326,8 @@ There's another gate on the wall in front of you, but you have a strange feeling
     });
 
     locations["Town outskirts"].connected_locations.push(
-                                                        {location: locations["Town farms"], travel_time: 60}, 
-                                                        {location: locations["Slums"], travel_time: 60}, 
+                                                        {location: locations["Town farms"], travel_time: 60, azimuth: 5}, 
+                                                        {location: locations["Slums"], travel_time: 60, azimuth: 185}, 
                                                         {location: locations["Town square"], travel_time: 50}
                                                     );
 
@@ -1577,7 +1577,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         temperature_modifier: -2,
         unlock_text: "Thanks to your hard effort, you reached a narrow safe spot where you can rest a bit",
     });
-    locations["Nearby cave"].connected_locations.push({location: locations["Mountain path"], custom_text: "Climb up to [Mountain path]", travel_time: 60, travel_time_skills: ["Climbing"]});
+    locations["Nearby cave"].connected_locations.push({location: locations["Mountain path"], custom_text: "Climb up to [Mountain path]", travel_time: 60, travel_time_skills: ["Climbing"], azimuth: 1});
 
     locations["Small flat area in mountains"] = new SafeLocation({
         connected_locations: [{location: locations["Mountain path"], travel_time: 120}],
@@ -1652,7 +1652,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         name: "Downstream from the village",
         is_unlocked: false,
     });
-    locations["Village"].connected_locations.push({location: locations["Downstream from the village"], custom_text: "Hike down the river", travel_time: 2160});
+    locations["Village"].connected_locations.push({location: locations["Downstream from the village"], custom_text: "Hike down the river", travel_time: 2160, azimuth: -170});
 
     locations["Riverbank"] = new SafeLocation({ 
         connected_locations: [{location: locations["Village"], custom_text: "Make the long hike back to the [Village]", travel_time: 2160}], 
@@ -1676,7 +1676,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         name: "Riverbank",
         is_unlocked: false,
     });
-    locations["Village"].connected_locations.push({location: locations["Riverbank"], custom_text: "Hike down the river", travel_time: 2160});
+    locations["Village"].connected_locations.push({location: locations["Riverbank"], custom_text: "Hike down the river", travel_time: 2160, azimuth: -170});
   
 	locations["Downstream from the village"].connected_locations.push({location: locations["Riverbank"], custom_text: "Move down to the [Riverbank]", travel_time: 30});
 
@@ -1705,7 +1705,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
             },
         ],
     });
-    locations["Riverbank"].connected_locations.push({location: locations["Riverbank shore"], custom_text: "Climb down to the [Riverbank shore]", travel_time: 15});
+    locations["Riverbank"].connected_locations.push({location: locations["Riverbank shore"], custom_text: "Climb down to the [Riverbank shore]", travel_time: 15, azimuth: 180});
 	
     locations["Further downstream"] = new SafeLocation({ 
         connected_locations: [{location: locations["Riverbank"], custom_text: "Go back along the path you've made to the [Riverbank]", travel_time: 240}], 
@@ -1789,7 +1789,7 @@ There's another gate on the wall in front of you, but you have a strange feeling
         name: "Waterfall basin",
         is_unlocked: false,
     });
-    locations["Lake beach"].connected_locations.push({location: locations["Waterfall basin"], custom_text: "Rappel down to the [Waterfall basin]", travel_time: 40, travel_time_skills: ["Climbing"]});
+    locations["Lake beach"].connected_locations.push({location: locations["Waterfall basin"], custom_text: "Rappel down to the [Waterfall basin]", travel_time: 40, travel_time_skills: ["Climbing"], azimuth: 180});
 
     locations["Crab spawning grounds"] = new CombatZone({
         description: "First an enormous crab nest, then an enormous crab's nest, and now this??",       //final punchline to the "big crab nest/big crabs' nest/big crab's nest" setup
