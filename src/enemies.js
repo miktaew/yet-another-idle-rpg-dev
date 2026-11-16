@@ -592,6 +592,7 @@ const enemy_abilites = {
         stats: {health: 6000, attack: 600, agility: 160, dexterity: 200, intuition: 200, magic: 0, attack_speed: 0.8, defense: 500},
         loot_list: [
             {item_name: "Bear hide", chance: 0.05},
+            {item_name: "Bear meat", chance: 0.1},
             {item_name: "Bear claw", chance: 0.1},
             {item_name: "Sharp bear claw", chance: 0.002},
         ],
@@ -784,7 +785,7 @@ const enemy_abilites = {
         tags: ["living", "beast"],
         stats: {health: 12000, attack: 800, agility: 180, dexterity: 250, intuition: 250, magic: 0, attack_speed: 0.9, defense: 600},
         loot_list: [
-            {item_name: "Animal fat", chance: 0.1},
+            {item_name: "Bear meat", chance: 0.1},
             {item_name: "Bear hide", chance: 0.1},
             {item_name: "Bear claw", chance: 0.2},
             {item_name: "Sharp bear claw", chance: 0.005},

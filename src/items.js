@@ -1577,7 +1577,14 @@ book_stats["Tragedy of the wise master"] = new BookData({
         value: 25,
         material_type: "miscellaneous",
     });
-	
+
+    item_templates["Bear meat"] = new Material({
+        name: "Bear meat",
+        description: "Rich, fatty tenderloins taken from a ferocious bear",
+        value: 50,
+        material_type: "raw meat",
+    });
+		
     item_templates["Bear hide"] = new Material({
         description: "A strong hide of a wild bear, so strong that even steel struggles against it",
         value: 50,
@@ -2031,573 +2038,6 @@ function add_gear_components() {
 
     //weapon components:
     (function(){
-        /*
-        item_templates["Cheap short iron blade"] = new WeaponComponent({
-            name: "Cheap short iron blade", description: "Crude blade made of iron. Perfect length for a dagger, but could be also used for a spear",
-            component_type: "short blade",
-            value: 70,
-            component_tier: 1,
-            name_prefix: "Cheap iron",
-            attack_value: 5,
-            component_stats: {
-                crit_rate: {
-                    flat: 0.06,
-                },
-                attack_speed: {
-                    multiplier: 1.20,
-                },
-                evasion_points: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Short iron blade"] = new WeaponComponent({
-            name: "Short iron blade", description: "A good iron blade. Perfect length for a dagger, but could be also used for a spear",
-            component_type: "short blade",
-            value: 160,
-            component_tier: 2,
-            name_prefix: "Iron",
-            attack_value: 8,
-            component_stats: {
-                crit_rate: {
-                    flat: 0.08,
-                },
-                attack_speed: {
-                    multiplier: 1.30,
-                },
-                evasion_points: {
-                    multiplier: 1.13,
-                }
-            }
-        });
-        item_templates["Short steel blade"] = new WeaponComponent({
-            name: "Short steel blade", description: "A good steel blade. Perfect length for a dagger, but could be also used for a spear",
-            component_type: "short blade",
-            value: 240,
-            component_tier: 3,
-            name_prefix: "Steel",
-            attack_value: 11,
-            component_stats: {
-                crit_rate: {
-                    flat: 0.1,
-                },
-                attack_speed: {
-                    multiplier: 1.35,
-                },
-                evasion_points: {
-                    multiplier: 1.2,
-                }
-            }
-        });
-        
-        item_templates["Cheap long iron blade"] = new WeaponComponent({
-            name: "Cheap long iron blade", description: "Crude blade made of iron, with a perfect length for a sword",
-            component_type: "long blade",
-            value: 100,
-            name_prefix: "Cheap iron",
-            component_tier: 1,
-            attack_value: 8,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.10,
-                },
-                crit_rate: {
-                    flat: 0.02,
-                },
-                attack_points: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Long iron blade"] = new WeaponComponent({
-            name: "Long iron blade", description: "Good blade made of iron, with a perfect length for a sword",
-            component_type: "long blade",
-            value: 210,
-            name_prefix: "Iron",
-            component_tier: 2,
-            attack_value: 13,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.15,
-                },
-                crit_rate: {
-                    flat: 0.04,
-                },
-                attack_points: {
-                    multiplier: 1.13,
-                }
-            }
-        });
-        item_templates["Long steel blade"] = new WeaponComponent({
-            name: "Long steel blade", description: "Good blade made of steel, with a perfect length for a sword",
-            component_type: "long blade",
-            value: 310,
-            name_prefix: "Steel",
-            component_tier: 3,
-            attack_value: 18,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.2,
-                },
-                crit_rate: {
-                    flat: 0.05,
-                },
-                attack_points: {
-                    multiplier: 1.2,
-                }
-            }
-        });
-        
-        item_templates["Cheap iron axe head"] = new WeaponComponent({
-            name: "Cheap iron axe head", description: "A heavy axe head made of low quality iron",
-            component_type: "axe head",
-            value: 100,
-            name_prefix: "Cheap iron",
-            component_tier: 1,
-            attack_value: 10,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.9,
-                }
-            }
-        });
-        item_templates["Iron axe head"] = new WeaponComponent({
-            name: "Iron axe head", description: "A heavy axe head made of steel",
-            component_type: "axe head",
-            value: 210,
-            name_prefix: "Iron",
-            component_tier: 2,
-            attack_value: 16,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.95,
-                }
-            }
-        });
-        item_templates["Steel axe head"] = new WeaponComponent({
-            name: "Steel axe head", description: "A heavy axe head made of steel",
-            component_type: "axe head",
-            value: 310,
-            name_prefix: "Steel",
-            component_tier: 3,
-            attack_value: 22,
-        });
-        
-        item_templates["Cheap iron hammer head"] = new WeaponComponent({
-            name: "Cheap iron hammer head", description: "A crude ball made of low quality iron, with a small hole for the handle",
-            component_type: "hammer head",
-            value: 100,
-            name_prefix: "Cheap iron",
-            component_tier: 1,
-            attack_value: 12,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.8,
-                }
-            }
-        });
-        item_templates["Iron hammer head"] = new WeaponComponent({
-            name: "Iron hammer head", description: "A crude ball made of iron, with a small hole for the handle",
-            component_type: "hammer head",
-            value: 210,
-            name_prefix: "Iron",
-            component_tier: 2,
-            attack_value: 19,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.85,
-                }
-            }
-        });
-        item_templates["Steel hammer head"] = new WeaponComponent({
-            name: "Steel hammer head", description: "A blocky piece of steel, with a small hole for the handle",
-            component_type: "hammer head",
-            value: 300,
-            name_prefix: "Steel",
-            component_tier: 3,
-            attack_value: 26,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.9,
-                }
-            }
-        });
-        
-        item_templates["Simple short wooden hilt"] = new WeaponComponent({
-            name: "Simple short wooden hilt", description: "A short handle for a sword or maybe a dagger",
-            component_type: "short handle",
-            value: 8,
-            component_tier: 1,
-        });
-        
-        item_templates["Short wooden hilt"] = new WeaponComponent({
-            name: "Short wooden hilt", description: "A short handle for a sword or maybe a dagger",
-            component_type: "short handle",
-            value: 32,
-            component_tier: 2,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Short ash wood hilt"] = new WeaponComponent({
-            name: "Short ash wood hilt", description: "A short handle for a sword or maybe a dagger",
-            component_type: "short handle",
-            value: 48,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.1,
-                }
-            }
-        });
-        item_templates["Short hickory wood hilt"] = new WeaponComponent({
-            name: "Short hickory wood hilt", description: "A short handle for a sword or maybe a dagger",
-            component_type: "short handle",
-            value: 48,
-            component_tier: 4,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.15,
-                }
-            }
-        });
-        item_templates["Short alchemical wood hilt"] = new WeaponComponent({
-            name: "Short alchemical wood hilt", description: "A short handle for a sword or maybe a dagger",
-            component_type: "short handle",
-            value: 64,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.2,
-                }
-            }
-        });
-        
-        item_templates["Simple medium wooden handle"] = new WeaponComponent({
-            name: "Simple medium wooden handle", description: "A medium handle for an axe or a hammer",
-            component_type: "medium handle",
-            value: 16,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.95,
-                }
-            }
-        });
-        item_templates["Medium wooden handle"] = new WeaponComponent({
-            name: "Medium wooden handle", description: "A medium handle for an axe or a hammer",
-            component_type: "medium handle",
-            value: 64,
-            component_tier: 2,
-        });
-        item_templates["Medium ash wood handle"] = new WeaponComponent({
-            name: "Medium ash wood handle", description: "A medium handle for an axe or a hammer",
-            component_type: "medium handle",
-            value: 96,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Medium hickory wood handle"] = new WeaponComponent({
-            name: "Medium hickory wood handle", description: "A medium handle for an axe or a hammer",
-            component_type: "medium handle",
-            value: 128,
-            component_tier: 4,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.1,
-                }
-            }
-        });
-        item_templates["Medium alchemical wood handle"] = new WeaponComponent({
-            name: "Medium alchemical wood handle", description: "A medium handle for an axe or a hammer",
-            component_type: "medium handle",
-            value: 172,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.15,
-                }
-            }
-        });
-        
-        item_templates["Simple long wooden shaft"] = new WeaponComponent({
-            name: "Simple long wooden shaft", description: "A long shaft for a spear, somewhat uneven",
-            component_type: "long handle",
-            value: 24,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.9,
-                },
-            }
-        });
-        item_templates["Long wooden shaft"] = new WeaponComponent({
-            name: "Long wooden shaft",
-            description: "A long shaft for a spear, somewhat uneven",
-            component_type: "long handle",
-            value: 100,
-            component_tier: 2,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.95,
-                },
-            }
-        });
-        item_templates["Long ash wood shaft"] = new WeaponComponent({
-            name: "Long ash wood shaft",
-            description: "A long shaft for a spear",
-            component_type: "long handle",
-            value: 150,
-            component_tier: 3,
-            
-        });
-        item_templates["Long hickory wood shaft"] = new WeaponComponent({
-            name: "Long hickory wood shaft", description: "A long shaft for a spear",
-            component_type: "long handle",
-            value: 200,
-            component_tier: 4,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Long alchemical wood shaft"] = new WeaponComponent({
-            name: "Long alchemical wood shaft", description: "A long shaft for a spear",
-            component_type: "long handle",
-            value: 250,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.1,
-                }
-            }
-        });
-        
-        item_templates["Cheap short iron hilt"] = new WeaponComponent({
-            name: "Cheap short iron hilt", description: "A short handle for a sword or maybe a dagger, heavy",
-            component_type: "short handle",
-            value: 56,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.9,
-                },
-                attack_power: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Short iron hilt"] = new WeaponComponent({
-            name: "Short iron hilt", description: "A short handle for a sword or maybe a dagger, heavy",
-            component_type: "short handle",
-            value: 80,
-            component_tier: 2,
-            component_stats: {
-                attack_power: {
-                    multiplier: 1.05,
-                }
-            }
-        });
-        item_templates["Short steel hilt"] = new WeaponComponent({
-            name: "Short steel hilt", description: "A short handle for a sword or maybe a dagger, heavy",
-            component_type: "short handle",
-            value: 120,
-            component_tier: 3,
-            component_stats: {
-                attack_power: {
-                    multiplier: 1.1,
-                }
-            }
-        });
-        
-        item_templates["Cheap medium iron handle"] = new WeaponComponent({
-            name: "Cheap medium iron handle", description: "A medium handle for an axe or a hammer, very heavy",
-            component_type: "medium handle",
-            value: 64,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.7,
-                },
-                attack_power: {
-                    multiplier: 1.2,
-                }
-            }
-        });
-        item_templates["Medium iron handle"] = new WeaponComponent({
-            name: "Medium iron handle", description: "A medium handle for an axe or a hammer, very heavy",
-            component_type: "medium handle",
-            value: 100,
-            component_tier: 2,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.8,
-                },
-                attack_power: {
-                    multiplier: 1.2,
-                }
-            }
-        });
-        item_templates["Medium steel handle"] = new WeaponComponent({
-            name: "Medium steel handle", description: "A medium handle for an axe or a hammer, very heavy",
-            component_type: "medium handle",
-            value: 150,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.8,
-                },
-                attack_power: {
-                    multiplier: 1.27,
-                }
-            }
-        });
-        
-        item_templates["Cheap long iron shaft"] = new WeaponComponent({
-            name: "Cheap long iron shaft", description: "A long shaft for a spear, extremely heavy",
-            component_type: "long handle",
-            value: 92,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.5,
-                },
-                attack_power: {
-                    multiplier: 1.6,
-                }
-            }
-        });
-        item_templates["Long iron shaft"] = new WeaponComponent({
-            name: "Long iron shaft",
-            description: "A long shaft for a spear, extremely heavy",
-            component_type: "long handle",
-            value: 128,
-            component_tier: 2,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.6,
-                },
-                attack_power: {
-                    multiplier: 1.6,
-                }
-            }
-        });
-        item_templates["Long steel shaft"] = new WeaponComponent({
-            name: "Long steel shaft",
-            description: "A long shaft for a spear, extremely heavy",
-            component_type: "long handle",
-            value: 192,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.6,
-                },
-                attack_power: {
-                    multiplier: 1.75,
-                }
-            }
-        });
-        
-        item_templates["Short weak bone hilt"] = new WeaponComponent({
-            name: "Short weak bone hilt", description: "A short handle for a sword or maybe a dagger, made of a weak monster's bone",
-            component_type: "short handle",
-            value: 120,
-            component_tier: 3,
-            component_stats: {
-                attack_power: {
-                    multiplier: 1.05,
-                },
-                attack_speed: {
-                    multiplier: 1.05,
-                }
-            },
-        });
-        item_templates["Medium weak bone handle"] = new WeaponComponent({
-            name: "Medium weak bone handle", description: "A medium handle for an axe or a hammer, made of a weak monster's bone",
-            component_type: "medium handle",
-            value: 150,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.95,
-                },
-                attack_power: {
-                    multiplier: 1.1,
-                },
-            }
-        });
-        item_templates["Long weak bone shaft"] = new WeaponComponent({
-            name: "Long weak bone shaft",
-            description: "A long shaft for a spear, made of weak monster's bone",
-            component_type: "long handle",
-            value: 192,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.8,
-                },
-                attack_power: {
-                    multiplier: 1.25,
-                }
-            }
-        });
-        
-        item_templates["Turtleshell hilt"] = new WeaponComponent({
-            name: "Turtleshell hilt",
-            description: "A short handle for a sword or maybe a dagger, made of turtle shellplate",
-            component_type: "short handle",
-            value: 140,
-            component_tier: 4,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.05,
-                },
-                attack_points: {
-                    multiplier: 1.1,
-                }
-            }
-        });
-        item_templates["Turtleshell handle"] = new WeaponComponent({
-            name: "Turtleshell handle",
-            description: "A medium handle for an axe or a hammer, made of turtle shellplate",
-            component_type: "medium handle",
-            value: 190,
-            component_tier: 4,
-            component_stats: {
-                attack_points: {
-                    multiplier: 1.1,
-                },
-                attack_power: {
-                    multiplier: 1.1,
-                },
-            }
-        });
-        item_templates["Turtleshell shaft"] = new WeaponComponent({
-            name: "Turtleshell shaft",
-            description: "A long shaft for a spear, made of turtle shellplate",
-            component_type: "long handle",
-            value: 250,
-            component_tier: 4,
-            component_stats: {
-                attack_power: {
-                    multiplier: 1.2,
-                },
-                attack_speed: {
-                    multiplier: 0.95,
-                },
-                attack_points: {
-                    multiplier: 1.1,
-                }
-            }
-        });
-        */
         
     })();
 
@@ -2638,69 +2078,6 @@ function add_gear_components() {
 
     //clothing (functions both as weak armor and as an armor component) and capes:
     (function(){
-        /*
-        item_templates["Cheap leather vest"] = new Armor({
-            name: "Cheap leather vest",
-            description: "Vest providing very low protection. Better not to know what's it made from",
-            value: 100,
-            component_type: "chestplate interior",
-            base_defense: 2,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.99,
-                },
-                cold_tolerance: {
-                    flat: 1,
-                }
-            }
-        });
-        item_templates["Leather vest"] = new Armor({
-            name: "Leather vest",
-            description: "Comfortable leather vest, offering low protection",
-            value: 300,
-            component_type: "chestplate interior",
-            base_defense: 2,
-            component_tier: 2,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 1,
-                }
-            }
-        });
-        item_templates["Goat leather vest"] = new Armor({
-            name: "Goat leather vest",
-            description: "Comfortable leather vest, offering mediocre protection",
-            value: 450,
-            component_type: "chestplate interior",
-            base_defense: 3,
-            component_tier: 3,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 1,
-                }
-            }
-        });
-        
-        item_templates["Snakeskin vest"] = new Armor({
-            name: "Snakeskin vest",
-            description: "Comfortable snakeskin vest, offering decent protection",
-            value: 1200,
-            component_type: "chestplate interior",
-            base_defense: 7,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.02,
-                },
-                agility: {
-                    multiplier: 1.05,
-                },
-                cold_tolerance: {
-                    flat: -.5,
-                }
-            }
-        });*/
 
         item_templates["Batrachian vest"] = new Armor({
             name: "Batrachian vest", 
@@ -2721,68 +2098,6 @@ function add_gear_components() {
                 "Swimming": 1,
             }
         });
-        /*
-        item_templates["Cheap leather pants"] = new Armor({
-            name: "Cheap leather pants",
-            description: "Leather pants made from cheapest resources available",
-            value: 100,
-            component_type: "leg armor interior",
-            base_defense: 1,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.99,
-                },
-                cold_tolerance: {
-                    flat: 1,
-                }
-            }
-        });
-        item_templates["Leather pants"] = new Armor({
-            name: "Leather pants",
-            description: "Solid leather pants",
-            value: 300,
-            component_type: "leg armor interior",
-            base_defense: 2,
-            component_tier: 2,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });
-        item_templates["Goat leather pants"] = new Armor({
-            name: "Goat leather pants",
-            description: "Solid leather pants",
-            value: 450,
-            component_type: "leg armor interior",
-            base_defense: 3,
-            component_tier: 3,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });
-        item_templates["Snakeskin leggings"] = new Armor({
-            name: "Snakeskin leggings",
-            description: "Solid snakeskin leggings",
-            value: 1200,
-            component_type: "leg armor interior",
-            base_defense: 7,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.01,
-                },
-                agility: {
-                    multiplier: 1.05,
-                },
-                cold_tolerance: {
-                    flat: -.5,
-                }
-            }
-        });*/
 
         item_templates["Batrachian pants"] = new Armor({
             name: "Batrachian pants", 
@@ -2803,69 +2118,6 @@ function add_gear_components() {
                 "Swimming": 1,
             }
         });
-        /*
-        item_templates["Cheap leather hat"] = new Armor({
-            name: "Cheap leather hat",
-            description: "A cheap leather hat to protect your head",
-            value: 100,
-            component_type: "helmet interior",
-            base_defense: 1,
-            component_tier: 1,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 0.99,
-                },
-                cold_tolerance: {
-                    flat: 1,
-                }
-            }
-        });
-        item_templates["Leather hat"] = new Armor({
-            name: "Leather hat",
-            description: "A nice leather hat to protect your head",
-            value: 300,
-            component_type: "helmet interior",
-            base_defense: 2,
-            component_tier: 2,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 1,
-                }
-            }
-        });
-        item_templates["Goat leather hat"] = new Armor({
-            name: "Goat leather hat",
-            description: "A solid leather hat to protect your head",
-            value: 450,
-            component_type: "helmet interior",
-            base_defense: 3,
-            component_tier: 3,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 1,
-                }
-            },
-        });
-        
-        item_templates["Snakeskin hat"] = new Armor({
-            name: "Snakeskin hat",
-            description: "A solid snakeskin hat to protect your head",
-            value: 1200,
-            component_type: "helmet interior",
-            base_defense: 7,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.02,
-                },
-                agility: {
-                    multiplier: 1.03,
-                },
-                cold_tolerance: {
-                    flat: -.5,
-                }
-            }
-        });*/
 
         item_templates["Batrachian hat"] = new Armor({
             name: "Batrachian hat", 
@@ -2900,54 +2152,7 @@ function add_gear_components() {
                 }
             }
         });
-        /*
-        item_templates["Leather gloves"] = new Armor({
-            name: "Leather gloves",
-            description: "Strong leather gloves, perfect for handling rough and sharp objects",
-            value: 300,
-            component_type: "glove interior",
-            base_defense: 1,
-            component_tier: 2,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });
-        item_templates["Goat leather gloves"] = new Armor({
-            name: "Goat leather gloves",
-            description: "Strong leather gloves, perfect for handling rough and sharp objects",
-            value: 450,
-            component_type: "glove interior",
-            base_defense: 2,
-            component_tier: 3,
-            component_stats: {
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });
-        
-        item_templates["Snakeskin gloves"] = new Armor({
-            name: "Snakeskin gloves",
-            description: "Strong snakeskin gloves, perfect for handling rough and sharp objects",
-            value: 1200,
-            component_type: "glove interior",
-            base_defense: 6,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.02,
-                },
-                dexterity: {
-                    multiplier: 1.02,
-                },
-                cold_tolerance: {
-                    flat: -.5,
-                }
-            }
-        });
-        */
+
 
         item_templates["Batrachian gloves"] = new Armor({
             name: "Batrachian gloves", 
@@ -2968,23 +2173,7 @@ function add_gear_components() {
                 "Swimming": 2,
             }
         });
-        /*
-        item_templates["Cheap leather shoes"] = new Armor({
-            name: "Cheap leather shoes",
-            description: "Shoes made of thin and cheap leather. Even then, they are in every single aspect better than not having any",
-            value: 100,
-            component_type: "shoes interior",
-            base_defense: 0,
-            component_tier: 1,
-            component_stats: {
-                agility: {
-                    multiplier: 1.05,
-                },
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });*/
+        
         item_templates["Work shoes"] = new Armor({
             name: "Work shoes",
             description: "Work shoes made of a mix of leather and wool. While they provide no protection, they are very comfortable for moving around",
@@ -3004,64 +2193,6 @@ function add_gear_components() {
                 }
             }
         });
-        /*
-        item_templates["Leather shoes"] = new Armor({
-            name: "Leather shoes",
-            description: "Solid shoes made of leather, a must have for any traveler",
-            value: 300,
-            component_type: "shoes interior",
-            base_defense: 1,
-            component_tier: 2,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.02,
-                },
-                agility: {
-                    multiplier: 1.1,
-                },
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });
-        item_templates["Goat leather shoes"] = new Armor({
-            name: "Goat leather shoes",
-            description: "Strong shoes made of leather, a must have for any traveler",
-            value: 450,
-            component_type: "shoes interior",
-            base_defense: 2,
-            component_tier: 3,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.02,
-                },
-                agility: {
-                    multiplier: 1.15,
-                },
-                cold_tolerance: {
-                    flat: 2,
-                }
-            }
-        });
-        item_templates["Snakeskin boots"] = new Armor({
-            name: "Snakeskin boots",
-            description: "Strong boots made of snakeskin, a must have for any traveler",
-            value: 1200,
-            component_type: "shoes interior",
-            base_defense: 6,
-            component_tier: 5,
-            component_stats: {
-                attack_speed: {
-                    multiplier: 1.05,
-                },
-                agility: {
-                    multiplier: 1.25,
-                },
-                cold_tolerance: {
-                    flat: -.5,
-                }
-            }
-        });*/
 
         item_templates["Batrachian shoes"] = new Armor({
             name: "Batrachian shoes", 
@@ -4396,6 +3527,35 @@ function add_gear() {
         description: "Durable, yet light and soft, can be made into comfortable clothing",
         value: 50,
         material_type: "fabric",
+    });
+
+    item_templates["Stripped bear meat"] = new Material({
+        name: "Stripped bear meat",
+        description: "Bear tenderloins that has been stripped of the fat",
+        value: 60,
+        material_type: "raw meat",
+    });
+
+    item_templates["Grilled bear steak"] = new UsableItem({
+        name: "Grilled bear steak",
+        description: "Greasy, flavorful steak",
+        value: 120,
+        effects: [{effect: "Decent meat meal", duration: 120}],
+        tags: {"food": true},
+    });
+    item_templates["Roasted bear chunks"] = new UsableItem({
+        name: "Roasted bear chunks",
+        description: "Rich roasted chunks of dark meat that are so tender, they fall apart in your mouth",
+        value: 120,
+        effects: [{effect: "Decent meat meal", duration: 90}],
+        tags: {"food": true},
+    });
+    item_templates["Bear sausage"] = new UsableItem({
+        name: "Bear sausage",
+        description: "A delicious sausage made from various cuts bear meat",
+        value: 180,
+        effects: [{effect: "Decent meat meal", duration: 240}],
+        tags: {"food": true},
     });
 
     item_templates["Iron chainmail"] = new Material({

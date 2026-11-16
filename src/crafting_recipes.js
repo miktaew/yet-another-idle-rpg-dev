@@ -1949,6 +1949,47 @@ function get_recipe_xp_value({category, subcategory, recipe_id, material_count, 
         recipe_skill: "Cooking",
     });
 
+    butchering_recipes.items["Stripped bear meat"] = new ItemRecipe({
+        name: "Stripped bear meat",
+        recipe_type: "material",
+        materials: [{material_id: "Bear meat", count: 1}], 
+        result:  {result_id: "Stripped bear meat", count: 1},
+                    //{ material_id: "Animal fat", count: 1 }
+					
+        success_chance: [0.2,1],
+        recipe_level: [12,25],
+        recipe_skill: "Butchering",
+    });
+
+    cooking_recipes.items["Grilled bear steak"] = new ItemRecipe({
+        name: "Grilled bear steak",
+        recipe_type: "usable",
+        materials: [{material_id: "Bear meat", count: 2}],
+        result: {result_id: "Grilled bear steak", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [15,22],
+        recipe_skill: "Cooking",
+    });
+    cooking_recipes.items["Roasted bear chunks"] = new ItemRecipe({
+        name: "Roasted bear chunks",
+        recipe_type: "usable",
+        materials: [{material_id: "Stripped bear meat", count: 2}],
+        result: {result_id: "Roasted bear chunks", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [13,20],
+        recipe_skill: "Cooking",
+    });
+    cooking_recipes.items["Bear sausage"] = new ItemRecipe({
+        name: "Bear sausage",
+        recipe_type: "usable",
+        materials: [{material_id: "Bear meat", count: 1},
+					{material_id: "Stripped bear meat", count: 1}],
+        result: {result_id: "Bear sausage", count: 1},
+        success_chance: [0.3,1],
+        recipe_level: [18,25],
+        recipe_skill: "Cooking",
+    });
+
     
     alchemy_recipes.items["Weak healing powder"] = new ItemRecipe({
         name: "Weak healing powder",
