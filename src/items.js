@@ -3622,6 +3622,101 @@ function add_gear() {
                 external: "Steel chainmail greaves",
             }
         });
+
+        item_templates["Steel plate armor"] = new Armor({
+            components: {
+                internal: "Goat leather vest",
+                external: "Steel plate vest",
+            }
+        });
+        item_templates["Steel plate helmet"] = new Armor({
+            components: {
+                internal: "Goat leather hat",
+                external: "Steel plate helmet armor",
+            }
+        });
+        item_templates["Steel plate pants"] = new Armor({
+            components: {
+                internal: "Goat leather pants",
+                external: "Steel plate greaves",
+            }
+        });
+
+        item_templates["Black iron chainmail armor"] = new Armor({
+            components: {
+                internal: "Goat leather vest",
+                external: "Black iron chainmail vest",
+            }
+        });
+        item_templates["Black iron chainmail helmet"] = new Armor({
+            components: {
+                internal: "Goat leather hat",
+                external: "Black iron chainmail helmet armor",
+            }
+        });
+        item_templates["Black iron chainmail pants"] = new Armor({
+            components: {
+                internal: "Goat leather pants",
+                external: "Black iron chainmail greaves",
+            }
+        });
+
+        item_templates["White iron plate armor"] = new Armor({
+            components: {
+                internal: "Goat leather vest",
+                external: "White iron plate vest",
+            }
+        });
+        item_templates["White iron plate helmet"] = new Armor({
+            components: {
+                internal: "Goat leather hat",
+                external: "White iron plate helmet armor",
+            }
+        });
+        item_templates["White iron plate pants"] = new Armor({
+            components: {
+                internal: "Goat leather pants",
+                external: "White iron plate greaves",
+            }
+        });
+
+        item_templates["Black chainmail armor"] = new Armor({
+            components: {
+                internal: "Goat leather vest",
+                external: "Black chainmail vest",
+            }
+        });
+        item_templates["Black chainmail helmet"] = new Armor({
+            components: {
+                internal: "Goat leather hat",
+                external: "Black chainmail helmet armor",
+            }
+        });
+        item_templates["Black chainmail pants"] = new Armor({
+            components: {
+                internal: "Goat leather pants",
+                external: "Black chainmail greaves",
+            }
+        });
+
+        item_templates["White plate armor"] = new Armor({
+            components: {
+                internal: "Goat leather vest",
+                external: "White plate vest",
+            }
+        });
+        item_templates["White plate helmet"] = new Armor({
+            components: {
+                internal: "Goat leather hat",
+                external: "White plate helmet armor",
+            }
+        });
+        item_templates["White plate pants"] = new Armor({
+            components: {
+                internal: "Goat leather pants",
+                external: "White plate greaves",
+            }
+        });
         
         item_templates["Alligator armor"] = new Armor({
             components: {
@@ -3729,6 +3824,34 @@ function add_gear() {
             components: {
                 shield_base: "Steel shield base",
                 handle: "Ash wood shield handle",
+            }
+        });
+
+        item_templates["Black iron shield"] = new Shield({
+            components: {
+                shield_base: "Black iron shield base",
+                handle: "Hickory shield handle",
+            }
+        });
+
+        item_templates["White iron shield"] = new Shield({
+            components: {
+                shield_base: "White iron shield base",
+                handle: "Hickory shield handle",
+            }
+        });
+
+        item_templates["Black shield"] = new Shield({
+            components: {
+                shield_base: "Black shield base",
+                handle: "Hickory shield handle",
+            }
+        });
+
+        item_templates["White shield"] = new Shield({
+            components: {
+                shield_base: "White shield base",
+                handle: "Hickory shield handle",
             }
         });
         
