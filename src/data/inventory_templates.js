@@ -722,4 +722,71 @@ inventory_templates["Armor trader"] =
     }),
 ]
 
+inventory_templates["Blacksmith"] = 
+[
+    new TradeItemGroup({
+        items: [
+            new TradeItem({item_name: "Short steel blade", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Long steel blade", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel hammer head", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel axe head", count: [1, 3], quality: [110, 150], chance: 0.7}),
+
+
+            new TradeItem({item_name: "Steel chainmail vest", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel chainmail helmet armor", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel chainmail greaves", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel chainmail glove armor", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel chainmail shoe armor", count: [1, 3], quality: [110, 150], chance: 0.7}),
+
+            new TradeItem({item_name: "Steel plate vest", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel plate helmet armor", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel plate greaves", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel plate glove armor", count: [1, 3], quality: [110, 150], chance: 0.7}),
+            new TradeItem({item_name: "Steel plate shoe armor", count: [1, 3], quality: [110, 150], chance: 0.7}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.registered_adventurer,
+        items: [
+            new TradeItem({item_name: "Short black iron blade", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Long black iron blade", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White iron hammer head", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White iron axe head", count: [1, 3], quality: [110, 150], chance: 0.5}),
+
+            new TradeItem({item_name: "Black iron chainmail vest", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black iron chainmail helmet armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black iron chainmail greaves", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black iron chainmail glove armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black iron chainmail shoe armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+
+            new TradeItem({item_name: "White iron plate vest", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White iron plate helmet armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White iron plate greaves", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White iron plate glove armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White iron plate shoe armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+        ],
+    }),
+    new TradeItemGroup({
+        start_conditions: item_conditions.rank_1_adventurer,
+        items: [
+            new TradeItem({item_name: "Short black blade", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Long black blade", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White hammer head", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White axe head", count: [1, 3], quality: [110, 150], chance: 0.5}),
+
+            new TradeItem({item_name: "Black chainmail vest", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black chainmail helmet armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black chainmail greaves", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black chainmail glove armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "Black chainmail shoe armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+
+            new TradeItem({item_name: "White plate vest", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White plate helmet armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White plate greaves", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White plate glove armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+            new TradeItem({item_name: "White plate shoe armor", count: [1, 3], quality: [110, 150], chance: 0.5}),
+        ],
+    }),
+]
+
 export default inventory_templates;
