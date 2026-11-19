@@ -701,6 +701,7 @@ const dialogues = {
 
 const misc_texts = {
     "go back": "Go back",
+    "word tier": "tier",
 }
 
 const racial = {
@@ -826,6 +827,14 @@ const ui = {
     "option combat animation": "Enable on-hit / on-appear animations for combat",
     "option skip loading": "Automatically skip the loading screen",
     "option kemonomimi": "Enable kemonomimi mode",
+
+    "ui crafting": "tinkering",
+    "ui forging": "forging",
+    "ui smelting": "smelting",
+    "ui cooking": "cooking",
+    "ui alchemy": "alchemy",
+    "ui butchering": "butchering",
+    "ui woodworking": "woodworking",
 };
 
 const bio = {

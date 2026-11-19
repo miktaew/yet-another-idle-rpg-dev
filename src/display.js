@@ -2081,6 +2081,8 @@ function update_displayed_normal_location(location) {
             insert_HTML(crafting_button, `<i class="material-icons">construction</i> ${translate(location.crafting.use_text)}`);
             location_choice_divs["crafting"] = crafting_button;
             //action_div.appendChild(crafting_button);
+
+            crafting_button.appendChild(create_crafting_station_tooltip(location.crafting));
         }
     }
 
@@ -2780,6 +2782,17 @@ function close_crafting_window() {
     action_div.style.display = "block";
     document.getElementById("crafting_window").style.display = "none";
     update_displayed_normal_location(current_location);
+}
+
+function create_crafting_station_tooltip(location_crafting) {
+    const tooltip = document.createElement("div");
+    let html_content = "";
+    Object.keys(location_crafting.tiers).forEach(crafting_category => {
+        html_content += capitalize_first_letter(translate("ui " + crafting_category)) + " " + translate("word tier") + ": " + location_crafting.tiers[crafting_category] +"<br>";
+    });
+    tooltip.classList.add("crafting_station_tooltip");
+    insert_HTML(tooltip, html_content);
+    return tooltip;
 }
 
 /**

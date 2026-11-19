@@ -1451,6 +1451,12 @@
                         top_variable: "--race_choice_tooltip_top",
                         left_variable: "--race_choice_tooltip_left",
                     },
+                    {
+                        element: location_actions_div,
+                        top_variable: "--crafting_station_tooltip_top",
+                        left_variable: "--crafting_station_tooltip_left",
+                        target_classes: ["choice_craft"],                  
+                    }
                 ];
 
                 const elements_with_unrestricted_tooltips = [
@@ -1488,8 +1494,7 @@
                         element: hero_gender_selection,
                         top_variable: "--gender_choice_tooltip_top",
                         left_variable: "--gender_choice_tooltip_left",
-                    },
-                    
+                    },                    
                 ];
 
                 const inventory_display_elements = [

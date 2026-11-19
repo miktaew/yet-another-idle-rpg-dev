@@ -903,7 +903,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, #export_button_tooltip, 
-.race_choice_tooltip, .height_choice_tooltip, .gender_choice_tooltip, .character_race_tooltip, .character_gender_tooltip, .character_height_tooltip  {
+.race_choice_tooltip, .height_choice_tooltip, .gender_choice_tooltip, .character_race_tooltip, .character_gender_tooltip, .character_height_tooltip, .crafting_station_tooltip  {
 	display: none;
 	text-align: left;
 	color: white;
@@ -918,7 +918,7 @@ input[type=checkbox], input[type=radio] {
 	border: 1px solid white;
 }
 
-.item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip {
+.item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, .crafting_station_tooltip {
 	max-width: 250px;
 	min-width: 150px;
 	width: max-content;
@@ -928,8 +928,12 @@ input[type=checkbox], input[type=radio] {
 	width: fit-content;
 }
 
+.crafting_station_tooltip {
+    top: var(--crafting_station_tooltip_top);
+	left: var(--crafting_station_tooltip_left);
+}
+
 .recipe_tooltip {
-	width: 250px;
     top: var(--recipe_tooltip_top);
 	left: var(--recipe_tooltip_left);
 }
@@ -1577,6 +1581,10 @@ input[type=checkbox], input[type=radio] {
 
 .selectable_material:hover .recipe_tooltip, .selectable_component:hover .recipe_tooltip{
 	display: block;
+}
+
+.choice_craft:hover .crafting_station_tooltip {
+    display: block;
 }
 
 .crafting_selection {
