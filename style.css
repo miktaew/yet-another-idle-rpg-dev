@@ -2443,9 +2443,7 @@ i {
 	height: 330px;
 	top: 0px
 }
-#journal_content_div {
-	height: 287px;
-}
+
 	#quests_header {
 		width: 100%;
 		text-align: center;
@@ -2517,8 +2515,8 @@ i {
 			margin: 1px;
 			font-size: 18px;
 			flex-grow: 1;
-			padding-left: 20px;
-			padding-right: 20px;
+			padding-left: 10px;
+			padding-right: 10px;
 		}
 
 		.journal_control_button:hover{

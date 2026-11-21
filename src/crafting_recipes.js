@@ -31,7 +31,7 @@ const woodworking_recipes = {items: {}, components: {}};
 */
 
 function round_quality(quality, precision) {
-    return Math.round(quality/precision)*precision;
+    return Math.floor(quality/precision)*precision;
 }
 
 function get_crafting_quality_caps(skill_name) {
