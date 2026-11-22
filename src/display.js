@@ -4060,6 +4060,24 @@ function update_displayed_item_log() {
     });
 
     insert_HTML(items_list, html_content);
+
+    //if(do_sorting) {
+    sort_displayed_item_log();
+    //}
+}
+
+function sort_displayed_item_log() {
+
+    for(let i = 0; i < items_list.children.length; i++) {
+        
+        [...items_list.children].sort((a,b) => {
+            const text_a = a.querySelector(".data_entry_name").innerText;
+            const text_b = b.querySelector(".data_entry_name").innerText;
+
+            return text_a.localeCompare(text_b);
+    
+        }).forEach(node=>items_list.appendChild(node));
+    }
 }
 
 
