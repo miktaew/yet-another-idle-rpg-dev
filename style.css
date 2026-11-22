@@ -2527,16 +2527,16 @@ i {
 				height: 255px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div, #item_box_div {
+			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div, #item_box_div, #achievement_header {
 				width: 100%;
 				overflow-y: scroll;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div {
+			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div, #achievement_header {
 				height: 284px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div {
+			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div, #achievement_header {
 				display: none;
 			}
 

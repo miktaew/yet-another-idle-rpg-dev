@@ -37,6 +37,7 @@ import { config } from "./config.js";
 import { height_stats } from "./models/person.js";
 import NPCRegistry from "./data/npcs.js";
 import { stances } from "./combat_stances.js";
+import { achievements } from "./data/achievements.js";
 let activity_anim; //for the activity and gameAction animation interval
 
 let location_choice_divs = {}; //for dropdowns
@@ -122,6 +123,9 @@ const quest_hiding_button = document.getElementById("quest_hiding_button");
 const data_entry_divs = {
     reputation: document.getElementById("data_tab_reputation_div"),
 };
+
+const achievement_entry_divs = {};
+const achievement_list = document.getElementById("achievement_list");
 
 const items_entry_divs = {};
 const items_list = document.getElementById("data_tab_item_log_div");
@@ -5528,6 +5532,34 @@ function change_completed_quest_visibility() {
     } else {
         document.documentElement.style.setProperty("--completed_quest_display", "block");
     }
+}
+
+function add_achievement_to_display(achievement_id) {
+    if(achievement_entry_divs[achievement_id]) {
+        console.warn(`Tried to add quest "${achievement_id}" to display, but it's already there!`);
+        return;
+    } else if(quests[achievement_id].is_hidden) {
+        //do not display hidden quests (that's the whole point)
+        console.warn(`Tried to add quest "${achievement_id}" to display, but it's a hidden quest!`);
+        return;
+    }
+
+
+    const achievement_div = create_displayed_achievement_content(achievement_id);
+    achievement_entry_divs[achievement_id] = achievement_div;
+    achievement_list.appendChild(achievement_id);
+
+    sort_displayed_achievements();
+}
+
+function sort_displayed_achievements() {
+    
+}
+
+function create_displayed_achievement_content(achievement_id) {
+    const elem = document.createElement("div");
+
+    return elem;
 }
 
 function fill_character_bio() {

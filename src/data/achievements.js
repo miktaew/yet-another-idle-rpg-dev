@@ -40,3 +40,5 @@ Object.keys(achievements).forEach(id => {
     availabilities["achievement"][id] = achievements[id].getAvailabilityComponent();
     availabilities["achievement_notification"][id] = achievements[id].getNotificationComponent();
 });
+
+export { achievements };

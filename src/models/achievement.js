@@ -24,7 +24,7 @@ class Achievement {
         return this.#availability;
     }
 
-    getNotificatonComponent() {
+    getNotificationComponent() {
         return this.#notification;
     }
 }

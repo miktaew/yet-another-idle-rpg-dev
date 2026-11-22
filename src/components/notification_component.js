@@ -5,7 +5,7 @@ import AvailabilityComponent from "./availability_component.js";
 
 class NotificationComponent {
     #availability;
-    constructor({is_unlocked, is_finished}) {
+    constructor({is_unlocked, is_finished} = {}) {
         this.#availability = new AvailabilityComponent({is_unlocked, is_finished});
     }
 }

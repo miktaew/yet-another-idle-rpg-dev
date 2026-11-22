@@ -6,7 +6,7 @@ import { process_conditions } from "../conditions.js";
  * generalized component class for use with anything that might be unlockable - things like locations, dialogues, textlines, traders, actions, activities, etc
  */
 class AvailabilityComponent {
-    constructor({is_unlocked, is_finished, is_locked, display_conditions = {}, start_conditions = {}, success_conditions = [], repeatable, unlock_message}) {
+    constructor({is_unlocked, is_finished, is_locked, display_conditions = {}, start_conditions = {}, success_conditions = [], repeatable, unlock_message} = {}) {
         this.is_unlocked = is_unlocked ?? false;
         //self-explanatory
 
