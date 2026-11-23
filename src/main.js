@@ -123,6 +123,7 @@ import { DataViewer } from "./mods/debug_screen.js";
 import { traders } from "./data/traders.js";
 import { dialogue_owners } from "./components/dialogue_component.js";
 import { delayed_rewards } from "./delayed_rewards.js";
+import { achievements } from "./data/achievements.js";
 
 fill_availability_methods();
 
@@ -1546,6 +1547,21 @@ function process_rewards({rewards = {}, source_type, source_name, is_first_clear
                     console.warn(`Tried to complete ${task_index}'th task for quest '${quest_id}', but either quest or index does not exist!`);
                 }
             }
+        }
+    }
+
+    if(rewards.achievements) {
+        let any = false;
+        for(let i = 0; i < rewards.achievements; i++) {
+            if(!achievements[rewards.achievements[i]].isFinished()) {
+                achievements[rewards.achievements[i]].setFinished();
+                any = true;
+                character.addAchievementBonus(achievements[rewards.achievements[i]].bonuses);
+            }
+        }
+
+        if(any) {
+            character.updateStatsAndDisplay();
         }
     }
 
@@ -3153,6 +3169,14 @@ function add_xp_to_activity_skills() {
             add_xp_to_skill({skill: skills[skill_names[i]], xp_to_add: current_activity.skill_xp_per_tick[i]});
         }
     }
+}
+
+function add_all_achievement_bonuses() {
+    Object.keys(achievements).forEach(id => {
+        if(achievements[id].isFinished()) {
+            character.addAchievementBonus(achievements[id].bonuses);
+        }
+    });
 }
 
 /**
@@ -5156,6 +5180,7 @@ function load(save_data) {
             })
         }
 
+        add_all_achievement_bonuses();
         update_displayed_achievements();
 
         character.updateStatsAndDisplay();

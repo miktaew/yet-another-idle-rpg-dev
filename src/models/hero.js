@@ -57,33 +57,40 @@ class Hero extends Person {
     }
 
     /**
-     * adds skill milestone bonuses to hero stats
-     * called when a new milestone is reached
-     * @param {{flats, multipliers}} bonuses 
+     * 
+     * @param {*} param0 
      */
-    addBookBonus({multipliers = {}, xp_multipliers = {}}) {
+    addBonus({flats = {}, multipliers = {}, xp_multipliers = {}, name}) {
         const levelable = this.getLevelableComponent();
         Object.keys(levelable.base_stats).forEach(stat => {
             if(multipliers[stat]) {
-                levelable.stats.multiplier.books[stat] = (levelable.stats.multiplier.books[stat] || 1) * multipliers[stat];
+                levelable.stats.multiplier[name][stat] = (levelable.stats.multiplier[name][stat] || 1) * multipliers[stat];
             }
         });
        
         if(xp_multipliers?.hero) {
-            levelable.xp_bonuses.multiplier.books.hero = (levelable.xp_bonuses.multiplier.books.hero || 1) * xp_multipliers.hero;
+            levelable.xp_bonuses.multiplier[name].hero = (levelable.xp_bonuses.multiplier[name].hero || 1) * xp_multipliers.hero;
         }
         if(xp_multipliers?.all) {
-            levelable.xp_bonuses.multiplier.books.all = (levelable.xp_bonuses.multiplier.books.all || 1) * xp_multipliers.all;
+            levelable.xp_bonuses.multiplier[name].all = (levelable.xp_bonuses.multiplier[name].all || 1) * xp_multipliers.all;
         }
         if(xp_multipliers?.all_skill) {
-            levelable.xp_bonuses.multiplier.books.all_skill = (levelable.xp_bonuses.multiplier.books.all_skill || 1) * xp_multipliers.all_skill;
+            levelable.xp_bonuses.multiplier[name].all_skill = (levelable.xp_bonuses.multiplier[name].all_skill || 1) * xp_multipliers.all_skill;
         }
 
         Object.keys(skills).forEach(skill => {
             if(xp_multipliers[skill]) {
-                levelable.xp_bonuses.multiplier.books[skill] = (levelable.xp_bonuses.multiplier.books[skill] || 1) * xp_multipliers[skill];
+                levelable.xp_bonuses.multiplier[name][skill] = (levelable.xp_bonuses.multiplier[name][skill] || 1) * xp_multipliers[skill];
             }
         });
+    }
+
+    addBookBonus(data) {
+        this.addBonus({...data, name: "books"});
+    }
+
+    addAchievementBonus(data) {
+        this.addBonus({...data, name: "achievements"});
     }
 
     addActiveEffectBonus(active_effects) {

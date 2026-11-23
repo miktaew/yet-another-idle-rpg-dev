@@ -1,5 +1,7 @@
 "use strict";
 
+import { achievements } from "../data/achievements.js";
+
 
 class StatHaver {
     constructor(data) {
@@ -55,6 +57,7 @@ class StatHaver {
                 books: {},
                 light_level: {},
                 environment: {},
+                achievements: {},
             },
             multiplier: {
                 race: {},
@@ -66,6 +69,7 @@ class StatHaver {
                 stance: {},
                 light_level: {},
                 environment: {},
+                achievements: {},
             },
         };
     }

@@ -16,7 +16,7 @@ const achievements = {};
         bonuses: {
             xp_multipliers: {
                 Perception: 1.1,
-            }
+            },
         },
         is_finished: true,
     });

@@ -51,6 +51,7 @@ class LevelableComponent extends StatHaver {
                 skills: {},
                 //equipment: {},
                 books: {},
+                achievements: {},
                 active_effects: {},
             }
         };
