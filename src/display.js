@@ -5317,7 +5317,7 @@ function add_quest_to_display(quest_id) {
 
 /**
  * updates name, description and task list
- * @param {*} quest_id 
+ * @param {*} quest_id
  * @returns 
  */
 function update_displayed_quest(quest_id) {
@@ -5534,22 +5534,29 @@ function change_completed_quest_visibility() {
     }
 }
 
-function add_achievement_to_display(achievement_id) {
+function update_displayed_achievements() {
+    Object.keys(achievements).forEach(id => {
+        if(achievements[id].isUnlocked()){
+            add_achievement_to_display(id, false);
+        }
+    });
+    sort_displayed_achievements();
+}
+
+function add_achievement_to_display(achievement_id, do_sorting) {
     if(achievement_entry_divs[achievement_id]) {
         console.warn(`Tried to add quest "${achievement_id}" to display, but it's already there!`);
         return;
-    } else if(quests[achievement_id].is_hidden) {
-        //do not display hidden quests (that's the whole point)
-        console.warn(`Tried to add quest "${achievement_id}" to display, but it's a hidden quest!`);
-        return;
     }
-
 
     const achievement_div = create_displayed_achievement_content(achievement_id);
     achievement_entry_divs[achievement_id] = achievement_div;
-    achievement_list.appendChild(achievement_id);
+    achievement_div.classList.add("achievement_div");
+    achievement_list.appendChild(achievement_div);
 
-    sort_displayed_achievements();
+    if(do_sorting) {
+        sort_displayed_achievements();
+    }
 }
 
 function sort_displayed_achievements() {
@@ -5558,6 +5565,8 @@ function sort_displayed_achievements() {
 
 function create_displayed_achievement_content(achievement_id) {
     const elem = document.createElement("div");
+
+    elem.innerText = translate(achievements[achievement_id].name);
 
     return elem;
 }
@@ -5957,5 +5966,6 @@ export {
     set_light_based_background_color,
     unassign_dynamic_messages,
     fill_character_bio, create_race_tooltip, create_height_tooltip, create_gender_tooltip,
-    insert_HTML, clear_HTML_content
+    insert_HTML, clear_HTML_content,
+    add_achievement_to_display, update_displayed_achievements
 }

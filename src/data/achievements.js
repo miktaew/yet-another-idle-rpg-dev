@@ -17,7 +17,8 @@ const achievements = {};
             xp_multipliers: {
                 Perception: 1.1,
             }
-        }
+        },
+        is_unlocked: true,
     });
     achievements["Master of fate"] = new Achievement({
         //for doing the memory restoration ritual
@@ -38,7 +39,7 @@ Object.keys(achievements).forEach(id => {
     achievements[id].achievement_id = id;
 
     availabilities["achievement"][id] = achievements[id].getAvailabilityComponent();
-    availabilities["achievement_notification"][id] = achievements[id].getNotificationComponent();
+    availabilities["achievement_notification"][id] = achievements[id].getNotificationComponent().getAvailabilityComponent();
 });
 
 export { achievements };

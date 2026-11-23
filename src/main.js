@@ -91,6 +91,8 @@ import { end_activity_animation,
          fill_character_bio,
          insert_HTML,
          log_location_xp,
+         add_achievement_to_display,
+         update_displayed_achievements,
         } from "./display.js";
 import { update_displayed_fighters_stats, update_displayed_health_of_fighter, } from "./ui/combat_display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
@@ -5153,6 +5155,8 @@ function load(save_data) {
                 }
             })
         }
+
+        update_displayed_achievements();
 
         character.updateStatsAndDisplay();
         update_displayed_character_inventory();

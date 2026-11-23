@@ -2594,6 +2594,16 @@ i {
         border-collapse: collapse;
     }
 
+    #achievement_list {
+        padding-top: 2px;
+    }
+    
+    .achievement_div {
+        border: 1px solid white;
+        margin-left: 1px;
+        margin-bottom: 3px;
+    }
+
 #skills_and_stances_div {
 	left: 820px;
 	top: 340px;

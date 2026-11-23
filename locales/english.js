@@ -982,10 +982,14 @@ const location_types = {
     "miasma desc 3": "Highly poisonous gas fills the area",
 }
 
-const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...misc_texts, ...locations, ...location_types};
+const achievements = {
+    "achievement rat name": "Rat",
+}
+
+const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...misc_texts, ...locations, ...location_types, ...achievements};
 //separation exists purely for easier management
 
-const translations_for_verifier = { dialogues, racial, ui, stats, skills, bio, misc_texts, locations, location_types };
+const translations_for_verifier = { dialogues, racial, ui, stats, skills, bio, misc_texts, locations, location_types, achievements };
 //kept separately so that it's also possible to check for accidental overwrites
 
 export default english;

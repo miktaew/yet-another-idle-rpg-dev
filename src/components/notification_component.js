@@ -8,6 +8,10 @@ class NotificationComponent {
     constructor({is_unlocked, is_finished} = {}) {
         this.#availability = new AvailabilityComponent({is_unlocked, is_finished});
     }
+
+    getAvailabilityComponent() {
+        return this.#availability;
+    }
 }
 
 availability_havers.push(NotificationComponent);
