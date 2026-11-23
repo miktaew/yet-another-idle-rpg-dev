@@ -605,7 +605,7 @@ function create_item_tooltip_content({item, options={}, is_trade = false}) {
         else {
             item_tooltip += `<br><br>Reading it provided ${character.name} with:`;
             if(Object.keys(book_stats[item.name].bonuses).length > 0) {
-                item_tooltip += `<br>- ${format_book_bonuses(book_stats[item.name].bonuses)}`;
+                item_tooltip += `<br>- ${format_bonuses(book_stats[item.name].bonuses)}`;
             }
             if(book_stats[item.name].rewards?.skills) {
                 if(book_stats[item.name].rewards.skills.length == 1) {
@@ -972,7 +972,7 @@ function unassign_dynamic_messages() {
     dynamic_clear_message = null;
 }
 
-function format_book_bonuses(bonuses) {
+function format_bonuses(bonuses) {
     let formatted = '';
     if(bonuses.stats) {
         const stats = Object.keys(bonuses.stats);
@@ -5536,7 +5536,7 @@ function change_completed_quest_visibility() {
 
 function update_displayed_achievements() {
     Object.keys(achievements).forEach(id => {
-        if(achievements[id].isUnlocked()){
+        if(achievements[id].isFinished()){
             add_achievement_to_display(id, false);
         }
     });
@@ -5565,9 +5565,24 @@ function sort_displayed_achievements() {
 
 function create_displayed_achievement_content(achievement_id) {
     const elem = document.createElement("div");
-
     elem.innerText = translate(achievements[achievement_id].name);
 
+    const tooltip = document.createElement("div");
+    tooltip.classList.add("achievement_tooltip");
+
+    const tooltip_desc = document.createElement("div");
+    tooltip_desc.classList.add("achievement_tooltip_desc");
+    tooltip_desc.innerText = translate(achievements[achievement_id].description);
+
+    const tooltip_bonuses = document.createElement("div");
+    tooltip_bonuses.classList.add("achievement_tooltip_bonuses");
+
+    insert_HTML(tooltip_bonuses, format_bonuses(achievements[achievement_id].bonuses));
+
+    tooltip.appendChild(tooltip_desc);
+    tooltip.appendChild(tooltip_bonuses);
+
+    elem.appendChild(tooltip);
     return elem;
 }
 

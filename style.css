@@ -86,6 +86,9 @@
     --character_height_tooltip_top: 0px;
     --character_height_tooltip_left: 0px;
 
+    --achievement_tooltip_top: 0px;
+    --achievement_tooltip_left: 0px;
+
 	--actions_div_height_default: 420px;
 	--actions_div_height_combat: 120px;
 	--actions_div_height: var(--actions_div_height_default);
@@ -903,7 +906,8 @@ input[type=checkbox], input[type=radio] {
 }
 
 .item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, #export_button_tooltip, 
-.race_choice_tooltip, .height_choice_tooltip, .gender_choice_tooltip, .character_race_tooltip, .character_gender_tooltip, .character_height_tooltip, .crafting_station_tooltip  {
+.race_choice_tooltip, .height_choice_tooltip, .gender_choice_tooltip, .character_race_tooltip, .character_gender_tooltip, .character_height_tooltip, 
+.crafting_station_tooltip, .achievement_tooltip  {
 	display: none;
 	text-align: left;
 	color: white;
@@ -918,7 +922,7 @@ input[type=checkbox], input[type=radio] {
 	border: 1px solid white;
 }
 
-.item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, .crafting_station_tooltip {
+.item_tooltip, .job_tooltip, .location_tooltip, .recipe_tooltip, .crafting_station_tooltip, .achievement_tooltip {
 	max-width: 250px;
 	min-width: 150px;
 	width: max-content;
@@ -981,7 +985,8 @@ input[type=checkbox], input[type=radio] {
 
 .equipment_slot_div:hover .item_tooltip, .trader_item_control:hover .item_tooltip, .inventory_item_control:hover .item_tooltip, 
 .equipped_item_control:hover .item_tooltip, 
-.start_activity:hover .job_tooltip, .activity_unavailable:hover .job_tooltip, #gathering_progress_bar_max:hover .job_tooltip, #location_name_div:hover .location_tooltip, .selectable_component:hover .item_tooltip{
+.start_activity:hover .job_tooltip, .activity_unavailable:hover .job_tooltip, #gathering_progress_bar_max:hover .job_tooltip, #location_name_div:hover .location_tooltip, 
+.selectable_component:hover .item_tooltip, .achievement_div:hover .achievement_tooltip{
 	display: block;
 }
 
@@ -2527,16 +2532,16 @@ i {
 				height: 255px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div, #item_box_div, #achievement_header {
+			#data_box_div, #books_box_div, #bestiary_box_div, #quests_box_div, #item_box_div, #achievement_box_div {
 				width: 100%;
 				overflow-y: scroll;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div, #achievement_header {
+			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div, #achievement_box_div {
 				height: 284px;
 			}
 
-			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div, #achievement_header {
+			#data_box_div, #books_box_div, #bestiary_box_div, #item_box_div, #achievement_box_div {
 				display: none;
 			}
 
@@ -2597,11 +2602,20 @@ i {
     #achievement_list {
         padding-top: 2px;
     }
-    
+
     .achievement_div {
         border: 1px solid white;
         margin-left: 1px;
         margin-bottom: 3px;
+    }
+
+    .achievement_tooltip {
+        top: var(--achievement_tooltip_top);
+        left: var(--achievement_tooltip_left);
+    }
+
+    .achievement_tooltip_bonuses {
+        margin-top: 5px;
     }
 
 #skills_and_stances_div {

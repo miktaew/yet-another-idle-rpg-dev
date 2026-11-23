@@ -16,7 +16,7 @@ class Achievement {
         this.description = data.description;
         this.bonuses = data.bonuses;
         
-        this.#availability = new AvailabilityComponent({is_unlocked: data.is_unlocked});
+        this.#availability = new AvailabilityComponent({is_unlocked: true, is_finished: data.is_finished});
         this.#notification = new NotificationComponent();
     }
 

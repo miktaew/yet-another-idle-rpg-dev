@@ -984,6 +984,7 @@ const location_types = {
 
 const achievements = {
     "achievement rat name": "Rat",
+    "achievement rat desc": "Rat? Rat. You got as close as possible to becoming a rat without receiving the Rat God's blessing",
 }
 
 const english = {...dialogues, ...racial, ...ui, ...stats, ...skills, ...bio, ...misc_texts, ...locations, ...location_types, ...achievements};

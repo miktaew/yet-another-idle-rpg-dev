@@ -18,7 +18,7 @@ const achievements = {};
                 Perception: 1.1,
             }
         },
-        is_unlocked: true,
+        is_finished: true,
     });
     achievements["Master of fate"] = new Achievement({
         //for doing the memory restoration ritual
