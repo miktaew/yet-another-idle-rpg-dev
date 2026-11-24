@@ -49,6 +49,7 @@ class LevelableComponent extends StatHaver {
                 race: {},
                 levels: {},
                 skills: {},
+                skill_milestones: {},
                 //equipment: {},
                 books: {},
                 achievements: {},
@@ -218,35 +219,39 @@ class LevelableComponent extends StatHaver {
      * called when a new milestone is reached
      * @param {{flats, multipliers}} bonuses
      */
-    addSkillMilestoneBonus = function ({stats = {}, xp_multipliers = {}}) {
+    addSkillMilestoneBonus (data) {
+        this.addBonus({...data, name: "skill_milestones"});
+    }
+
+    addBonus({stats = {}, xp_multipliers = {}, name}) {
         Object.keys(stats).forEach(stat => {
             if(stats[stat].flat) {
-                this.stats.flat.skill_milestones[stat] = (this.stats.flat.skill_milestones[stat] || 0) + stats[stat].flat;
+                this.stats.flat[name][stat] = (this.stats.flat[name][stat] || 0) + stats[stat].flat;
             }
             if(stats[stat].multiplier) {
-                this.stats.multiplier.skill_milestones[stat] = (this.stats.multiplier.skill_milestones[stat] || 1) * stats[stat].multiplier;
+                this.stats.multiplier[name][stat] = (this.stats.multiplier[name][stat] || 1) * stats[stat].multiplier;
             }
         });
 
         if(xp_multipliers?.hero) {
-            this.xp_bonuses.multiplier.skills.hero = (this.xp_bonuses.multiplier.skills.hero || 1) * xp_multipliers.hero;
+            this.xp_bonuses.multiplier[name].hero = (this.xp_bonuses.multiplier[name].hero || 1) * xp_multipliers.hero;
         }
         if(xp_multipliers?.all) {
-            this.xp_bonuses.multiplier.skills.all = (this.xp_bonuses.multiplier.skills.all || 1) * xp_multipliers.all;
+            this.xp_bonuses.multiplier[name].all = (this.xp_bonuses.multiplier[name].all || 1) * xp_multipliers.all;
         }
         if(xp_multipliers?.all_skill) {
-            this.xp_bonuses.multiplier.skills.all_skill = (this.xp_bonuses.multiplier.skills.all_skill || 1) * xp_multipliers.all_skill;
+            this.xp_bonuses.multiplier[name].all_skill = (this.xp_bonuses.multiplier[name].all_skill || 1) * xp_multipliers.all_skill;
         }
 
         Object.keys(skills).forEach(skill => {
             if(xp_multipliers[skill]) {
-                this.xp_bonuses.multiplier.skills[skill] = (this.xp_bonuses.multiplier.skills[skill] || 1) * xp_multipliers[skill];
+                this.xp_bonuses.multiplier[name][skill] = (this.xp_bonuses.multiplier[name][skill] || 1) * xp_multipliers[skill];
             }
         });
         Object.keys(skill_categories).forEach(category => {
             const cat = "category_"+category; //meow
             if(xp_multipliers[cat]) {
-                this.xp_bonuses.multiplier.skills[cat] = (this.xp_bonuses.multiplier.skills[cat] || 1) * xp_multipliers[cat];
+                this.xp_bonuses.multiplier[name][cat] = (this.xp_bonuses.multiplier[name][cat] || 1) * xp_multipliers[cat];
             }
         });
     }

@@ -974,27 +974,35 @@ function unassign_dynamic_messages() {
 
 function format_bonuses(bonuses) {
     let formatted = '';
+
     if(bonuses.stats) {
-        const stats = Object.keys(bonuses.stats);
-        
-        formatted = `+${bonuses.stats[stats[0]]} ${stat_names[stats[0]]}`;
-        for(let i = 1; i < stats.length; i++) {
-            formatted += `, +${bonuses.stats[stats[i]]} ${stat_names[stats[i]]}`;
-        }
-    }
+        let temp = '';
+        Object.keys(bonuses.stats).forEach(stat => {
+            if(bonuses.stats[stat].flat) {
+                if(formatted) {
+                    formatted += `, +${bonuses.stats[stat].flat} ${stat_names[stat]}`;
+                } else {
+                    formatted = `+${bonuses.stats[stat].flat} ${stat_names[stat]}`;
+                }
+            }
+            if(bonuses.stats[stat].multiplier) {
+                if(temp) {
+                    temp += `, x${bonuses.stats[stat].multiplier} ${stat_names[stat]}`;
+                } else {
+                    temp = `x${bonuses.stats[stat].multiplier} ${stat_names[stat]}`;
+                }
+            }
+        });
 
-    if(bonuses.multipliers) {
-        const multipliers = Object.keys(bonuses.multipliers);
         if(formatted) {
-            formatted += `, x${bonuses.multipliers[multipliers[0]]} ${stat_names[multipliers[0]]}`;
+            if(temp) {
+                formatted += ", " + temp;
+            }
         } else {
-            formatted = `x${bonuses.multipliers[multipliers[0]]} ${stat_names[multipliers[0]]}`;
-        }
-
-        for(let i = 1; i < multipliers.length; i++) {
-            formatted += `, x${bonuses.multipliers[multipliers[i]]} ${stat_names[multipliers[i]]}`;
+            formatted = temp;
         }
     }
+
     if(bonuses.xp_multipliers) {
         const xp_multipliers = Object.keys(bonuses.xp_multipliers);
         const name = xp_target_name(xp_multipliers[0]);

@@ -1283,8 +1283,8 @@ book_stats["Twist liek a snek"] = new BookData({
         xp_multipliers: {
             Evasion: 1.5,
         },
-        multipliers: {
-            agility: 1.1,
+        stats: {
+            agility: {multiplier: 1.1},
         }
     },
 });
@@ -1396,8 +1396,8 @@ book_stats["Tragedy of the wise master"] = new BookData({
     required_time: 240,
     literacy_xp_rate: 5,
     bonuses: {
-        multipliers: {
-            max_health: 1.1,
+        stats: {
+            max_health: {multiplier: 1.1},
         },
         xp_multipliers: {
             Regeneration: 1.2,

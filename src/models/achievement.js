@@ -14,7 +14,7 @@ class Achievement {
         this.id = data.id;
         this.name = data.name;
         this.description = data.description;
-        this.bonuses = data.bonuses || {};
+        this.bonuses = data.bonuses || {}; //same form as in skill milestones and in books
         
         this.#availability = new AvailabilityComponent({is_unlocked: true, is_finished: data.is_finished});
         this.#notification = new NotificationComponent();

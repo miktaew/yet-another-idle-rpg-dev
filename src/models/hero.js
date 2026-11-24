@@ -56,41 +56,12 @@ class Hero extends Person {
         return this.money;
     }
 
-    /**
-     * 
-     * @param {*} param0 
-     */
-    addBonus({flats = {}, multipliers = {}, xp_multipliers = {}, name}) {
-        const levelable = this.getLevelableComponent();
-        Object.keys(levelable.base_stats).forEach(stat => {
-            if(multipliers[stat]) {
-                levelable.stats.multiplier[name][stat] = (levelable.stats.multiplier[name][stat] || 1) * multipliers[stat];
-            }
-        });
-       
-        if(xp_multipliers?.hero) {
-            levelable.xp_bonuses.multiplier[name].hero = (levelable.xp_bonuses.multiplier[name].hero || 1) * xp_multipliers.hero;
-        }
-        if(xp_multipliers?.all) {
-            levelable.xp_bonuses.multiplier[name].all = (levelable.xp_bonuses.multiplier[name].all || 1) * xp_multipliers.all;
-        }
-        if(xp_multipliers?.all_skill) {
-            levelable.xp_bonuses.multiplier[name].all_skill = (levelable.xp_bonuses.multiplier[name].all_skill || 1) * xp_multipliers.all_skill;
-        }
-
-        Object.keys(skills).forEach(skill => {
-            if(xp_multipliers[skill]) {
-                levelable.xp_bonuses.multiplier[name][skill] = (levelable.xp_bonuses.multiplier[name][skill] || 1) * xp_multipliers[skill];
-            }
-        });
-    }
-
     addBookBonus(data) {
-        this.addBonus({...data, name: "books"});
+        this.getLevelableComponent().addBonus({...data, name: "books"});
     }
 
     addAchievementBonus(data) {
-        this.addBonus({...data, name: "achievements"});
+        this.getLevelableComponent().addBonus({...data, name: "achievements"});
     }
 
     addActiveEffectBonus(active_effects) {
