@@ -126,9 +126,14 @@ const data_entry_divs = {
 
 const achievement_entry_divs = {};
 const achievement_list = document.getElementById("achievement_list");
+const achievement_box = document.getElementById("achievement_box_div");
 
 const items_entry_divs = {};
 const items_list = document.getElementById("data_tab_item_log_div");
+
+const journal_box_to_controller = {
+    achievement_box_div: "journal_show_achievements",
+}
 
 let skill_sorting = "name";
 let skill_sorting_direction = "asc";
@@ -5564,6 +5569,11 @@ function add_achievement_to_display(achievement_id, do_sorting) {
 
     if(do_sorting) {
         sort_displayed_achievements();
+    }
+
+    const controller = document.getElementById(journal_box_to_controller["achievement_box_div"]);
+    if(controller && controller.classList.contains("hidden")) {
+        controller.classList.remove("hidden");
     }
 }
 
