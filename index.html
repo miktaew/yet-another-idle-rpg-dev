@@ -404,11 +404,11 @@
 
                 <div id = "journal_div" class = "box_div">
                     <div id = "journal_control_div" class="activable_buttons flex_wrap">
-                        <div id = "journal_show_quests" class = "journal_control_button active_selection_button" onclick = "showQuests()"> Quests </div>
+                        <div id = "journal_show_quests" class = "journal_control_button active_selection_button notificationable" onclick = "showQuests()"> Quests </div>
                         <div id = "journal_show_bestiary" class = "journal_control_button" onclick = "showBestiary()"> Bestiary </div>
                         <div id = "journal_show_guild" class = "journal_control_button" onclick = "showGuild()"> Guild </div>
                         <div id = "journal_show_books" class = "journal_control_button" onclick = "showReadBooks()"> Anthology </div>
-                        <div id = "journal_show_achievements" class = "journal_control_button hidden" onclick = "showAchievements()"> Achievements </div>
+                        <div id = "journal_show_achievements" class = "journal_control_button hidden" onclick = "showAchievements()" data-notificationable_button> Achievements </div>
                         <div id = "journal_show_data" class = "journal_control_button" onclick = "showData()"> Data </div>
                         <div id = "journal_show_story" class = "journal_control_button" onclick = "showStory()"> Story </div>
                         <div id = "journal_show_items" class = "journal_control_button" onclick = "showItems()"> Catalogue </div>
@@ -453,7 +453,7 @@
 
                             </div>
                         </div>
-                        <div id = "achievement_box_div">
+                        <div id = "achievement_box_div" data-notificationable_tab>
                             <div id = "achievement_list">
 
                             </div>
@@ -1194,7 +1194,12 @@
                 document.body.addEventListener('mousemove', (event)=>{
                     mouse_position = [event.clientX, event.clientY];
                 });
-                
+
+                document.querySelectorAll("[data-notificationable_tab]").forEach(elem => {
+                    elem.addEventListener("mouseover", (event)=>{
+                        process_hovered_notificationable(event);
+                    });
+                });
 
                 function get_scrollbar_thickness() {
 

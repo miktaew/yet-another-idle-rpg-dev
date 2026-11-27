@@ -164,6 +164,12 @@ input[type=checkbox], input[type=radio] {
     display: none;
 }
 
+.active_notification {
+    outline: 2px solid gold !important;
+    color: paleturquoise;
+    font-style: italic;
+}
+
 #hits_counter {
     height: 28px;
     padding: 6px;

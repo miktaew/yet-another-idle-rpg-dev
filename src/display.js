@@ -135,6 +135,8 @@ const journal_box_to_controller = {
     achievement_box_div: "journal_show_achievements",
 }
 
+const notification_sources = new Map();
+
 let skill_sorting = "name";
 let skill_sorting_direction = "asc";
 
@@ -5567,13 +5569,24 @@ function add_achievement_to_display(achievement_id, do_sorting) {
     achievement_div.classList.add("achievement_div");
     achievement_list.appendChild(achievement_div);
 
+    notification_sources.set(achievement_div, achievements[achievement_id]);
+
     if(do_sorting) {
         sort_displayed_achievements();
     }
 
     const controller = document.getElementById(journal_box_to_controller["achievement_box_div"]);
-    if(controller && controller.classList.contains("hidden")) {
-        controller.classList.remove("hidden");
+    
+    if(controller) {
+        if(controller.classList.contains("hidden")) {
+            controller.classList.remove("hidden");
+        }
+
+        if(!achievements[achievement_id].getNotificationComponent().isFinished()) {
+            controller.classList.add("active_notification");
+            achievement_div.classList.add("active_notification");
+            achievement_div.dataset.notification_source = true;
+        }
     }
 }
 
@@ -5602,6 +5615,25 @@ function create_displayed_achievement_content(achievement_id) {
 
     elem.appendChild(tooltip);
     return elem;
+}
+
+function find_notificationable_tab(element) {
+    
+    while(!("notificationable_tab" in element.dataset)) {
+        element = element.parentElement;
+    }
+    return element;
+}
+
+function remove_displayed_notification(element) {
+    element.classList.remove("active_notification");
+    delete element.dataset.notification_source;
+
+    const tab = find_notificationable_tab(element);
+    const controller = document.getElementById(journal_box_to_controller[tab.id]);
+    if(!tab.querySelector("[data-notification_source")) {
+        controller.classList.remove("active_notification");
+    }
 }
 
 function fill_character_bio() {
@@ -6000,5 +6032,7 @@ export {
     unassign_dynamic_messages,
     fill_character_bio, create_race_tooltip, create_height_tooltip, create_gender_tooltip,
     insert_HTML, clear_HTML_content,
-    add_achievement_to_display, update_displayed_achievements
+    add_achievement_to_display, update_displayed_achievements,
+    notification_sources,
+    remove_displayed_notification,
 }

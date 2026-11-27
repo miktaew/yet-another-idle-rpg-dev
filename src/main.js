@@ -91,8 +91,9 @@ import { end_activity_animation,
          fill_character_bio,
          insert_HTML,
          log_location_xp,
-         add_achievement_to_display,
          update_displayed_achievements,
+         notification_sources,
+         remove_displayed_notification,
         } from "./display.js";
 import { update_displayed_fighters_stats, update_displayed_health_of_fighter, } from "./ui/combat_display.js";
 import { compare_game_version, crafting_tags_to_skills, get_component_name, is_a_older_than_b, get_item_mapping, random_range, skill_consumable_tags, rtp, write_availability_status, npc_key_mapping } from "./misc.js";
@@ -3217,6 +3218,34 @@ function get_date() {
     return `${year}-${month}-${day} ${hour}_${minute}_${second}`;
 }
 
+function process_hovered_notificationable(event) {
+    let target = event.target;
+    if("notificationable_tab" in target.dataset || target.querySelector("[data-notificationable_tab]")) {
+        return;
+    }
+
+    while(!("notificationable_tab" in target.dataset) && !("notification_source" in target.dataset)) {
+        target = target.parentElement;
+    }
+
+    if(target.querySelector("[data-notificationable_tab]")) {
+        return;
+    }
+
+    const source = notification_sources.get(target);
+    if(!source) {
+        console.warn('Failed to get source for element with notification!');
+        return;
+    }
+
+    if("notificationable_tab" in target.dataset) {
+        return;
+    }
+
+    source.getNotificationComponent().setFinished();
+    remove_displayed_notification(target);
+}
+
 function is_on_dev() {
     return window.location.href === "https://miktaew.github.io/yet-another-idle-rpg-dev/";
 }
@@ -5963,6 +5992,8 @@ window.loadBackup = load_backup;
 window.importOtherReleaseSave = load_other_release_save;
 window.hardReset = hard_reset;
 window.get_game_version = get_game_version;
+
+window.process_hovered_notificationable = process_hovered_notificationable;
 
 window.run = run;
 
